@@ -9,12 +9,20 @@
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <Version>0.0.0.1</Version>
+
+        <NoWarn>$(NoWarn);IL3050</NoWarn>
+        <NoWarn>$(NoWarn);IL2026</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
         <Content Include="..\..\.dockerignore">
             <Link>.dockerignore</Link>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
+      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
     </ItemGroup>
 
 </Project>

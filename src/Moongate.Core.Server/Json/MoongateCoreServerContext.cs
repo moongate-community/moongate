@@ -9,6 +9,7 @@ namespace Moongate.Core.Server.Json;
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
 [JsonSerializable(typeof(MoongateServerConfig))]
 [JsonSerializable(typeof(NetworkConfig))]
+[JsonSerializable(typeof(WebServerConfig))]
 public partial class MoongateCoreServerContext : JsonSerializerContext
 {
 
