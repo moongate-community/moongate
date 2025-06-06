@@ -1,0 +1,21 @@
+<linker>
+    <assembly fullname="Moongate.Server">
+        <type fullname="Moongate.Server.*" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="Jint">
+        <type fullname="Jint.*" preserve="all"/>
+        <type fullname="Jint.Native.*" preserve="all"/>
+        <type fullname="Jint.Runtime.*" preserve="all"/>
+        <type fullname="Jint.Parser.*" preserve="all"/>
+        <type fullname="Jint.Interpreter.*" preserve="all"/>
+        <type fullname="Jint.Engine" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="DryIoc">
+        <type fullname="DryIoc.ReflectionTools">
+            <method name="GetDefault"/>
+        </type>
+    </assembly>
+
+</linker>

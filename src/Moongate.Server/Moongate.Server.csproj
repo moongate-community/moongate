@@ -25,4 +25,8 @@
       <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+    </ItemGroup>
+
 </Project>
