@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Tests", "tests\Moongate.Tests\Moongate.Tests.csproj", "{3C6E64EE-88A5-4F2C-8154-369A62FFB2B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Server", "src\Moongate.Server\Moongate.Server.csproj", "{91B198A2-8C97-4D79-A016-38139B46B04C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Core", "src\Moongate.Core\Moongate.Core.csproj", "{62F1EFDB-9946-4103-BA48-1B85497770E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Core.Server", "Moongate.Core.Server\Moongate.Core.Server.csproj", "{AA239DA6-79D5-405B-AFF2-265FC7E807B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Core.Network", "Moongate.Core.Network\Moongate.Core.Network.csproj", "{D7D411D6-E07E-4522-9D3A-C3D551538AA8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3C6E64EE-88A5-4F2C-8154-369A62FFB2B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C6E64EE-88A5-4F2C-8154-369A62FFB2B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C6E64EE-88A5-4F2C-8154-369A62FFB2B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C6E64EE-88A5-4F2C-8154-369A62FFB2B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91B198A2-8C97-4D79-A016-38139B46B04C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91B198A2-8C97-4D79-A016-38139B46B04C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91B198A2-8C97-4D79-A016-38139B46B04C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91B198A2-8C97-4D79-A016-38139B46B04C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62F1EFDB-9946-4103-BA48-1B85497770E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62F1EFDB-9946-4103-BA48-1B85497770E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62F1EFDB-9946-4103-BA48-1B85497770E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62F1EFDB-9946-4103-BA48-1B85497770E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA239DA6-79D5-405B-AFF2-265FC7E807B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA239DA6-79D5-405B-AFF2-265FC7E807B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA239DA6-79D5-405B-AFF2-265FC7E807B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA239DA6-79D5-405B-AFF2-265FC7E807B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
