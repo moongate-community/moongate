@@ -14,22 +14,22 @@ public class MoongateTcpClient
     /// <summary>
     /// Event when the client is connected
     /// </summary>
-    public event Action OnConnected;
+    public event Action? OnConnected;
 
     /// <summary>
     /// Event when the client is disconnected
     /// </summary>
-    public event Action OnDisconnected;
+    public event Action? OnDisconnected;
 
     /// <summary>
     /// Event when data is received
     /// </summary>
-    public event Action<ReadOnlyMemory<byte>> OnDataReceived;
+    public event Action<ReadOnlyMemory<byte>>? OnDataReceived;
 
     /// <summary>
     /// Event when an error occurred
     /// </summary>
-    public event Action<Exception> OnError;
+    public event Action<Exception>? OnError;
 
     /// <summary>
     /// Unique identifier for the client
@@ -44,7 +44,7 @@ public class MoongateTcpClient
     /// <summary>
     /// Remote host IP address
     /// </summary>
-    public string Ip { get; private set; }
+    public string? Ip { get; private set; }
 
     public bool HaveCompression { get; set; }
 
