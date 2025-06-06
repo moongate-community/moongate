@@ -7,4 +7,9 @@
         <Version>0.0.0.1</Version>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Nanoid" Version="3.1.0" />
+      <PackageReference Include="Serilog" Version="4.3.0" />
+    </ItemGroup>
+
 </Project>
