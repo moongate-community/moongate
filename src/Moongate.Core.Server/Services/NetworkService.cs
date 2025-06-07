@@ -1,4 +1,6 @@
+using System.Net;
 using Moongate.Core.Network.Servers.Tcp;
+using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Data.Internal.NetworkService;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Packets;
@@ -9,6 +11,8 @@ namespace Moongate.Core.Server.Services;
 
 public class NetworkService : INetworkService
 {
+    private readonly ILogger _logger = Log.ForContext<NetworkService>();
+
     public event INetworkService.ClientConnectedHandler? OnClientConnected;
     public event INetworkService.ClientDisconnectedHandler? OnClientDisconnected;
     public event INetworkService.ClientDataReceivedHandler? OnClientDataReceived;
@@ -23,21 +27,97 @@ public class NetworkService : INetworkService
     private readonly SemaphoreSlim _clientsLock = new(1, 1);
     private readonly List<MoongateTcpClient> _clients = new();
 
-    private readonly ILogger _logger = Log.ForContext<NetworkService>();
 
-    public NetworkService()
+    private readonly MoongateServerConfig _moongateServerConfig;
+
+    public NetworkService(MoongateServerConfig moongateServerConfig)
     {
-
+        _moongateServerConfig = moongateServerConfig;
     }
 
 
-    public Task StartAsync(CancellationToken cancellationToken = default)
+    public async Task StartAsync(CancellationToken cancellationToken = default)
+
     {
-        return Task.CompletedTask;
+    }
+
+    private void StartServer(IPEndPoint endPoint)
+    {
+        try
+        {
+            var tcpServer = new MoongateTcpServer(endPoint.ToString(), endPoint);
+
+            tcpServer.OnClientConnected += OnTcpClientConnected;
+            tcpServer.OnClientDisconnected += OnTcpClientDisconnect;
+            tcpServer.OnClientDataReceived += OnDataReceived;
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to start TCP server on {EndPoint}", endPoint);
+            throw new InvalidOperationException($"Failed to start TCP server on {endPoint}", ex);
+        }
+    }
+
+    private void OnDataReceived(MoongateTcpClient client, ReadOnlyMemory<byte> buffer)
+    {
+    }
+
+    private void OnTcpClientDisconnect(MoongateTcpClient obj)
+    {
+        _clientsLock.Wait();
+        try
+        {
+            _clients.Remove(obj);
+            OnClientDisconnected?.Invoke(obj.Id, obj);
+            _logger.Information("Client disconnected: {ClientId}", obj.Id);
+        }
+        finally
+        {
+            _clientsLock.Release();
+        }
+    }
+
+    private void OnTcpClientConnected(MoongateTcpClient obj)
+    {
+        _clientsLock.Wait();
+        try
+        {
+            _clients.Add(obj);
+            OnClientConnected?.Invoke(obj.Id, obj);
+            _logger.Information("Client connected: {ClientId}", obj.Id);
+        }
+        finally
+        {
+            _clientsLock.Release();
+        }
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
     {
+        _logger.Information("Stopping NetworkService...");
+
+        _clientsLock.Wait(cancellationToken);
+        try
+        {
+            foreach (var client in _clients)
+            {
+                client.Disconnect();
+            }
+            _clients.Clear();
+        }
+        finally
+        {
+            _clientsLock.Release();
+        }
+
+        foreach (var server in _tcpServers)
+        {
+            server.Stop();
+        }
+
+        _tcpServers.Clear();
+
+        _logger.Information("NetworkService stopped.");
         return Task.CompletedTask;
     }
 
@@ -76,6 +156,8 @@ public class NetworkService : INetworkService
     public void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet)
     {
         var packetData = packet.Write();
+
+        SendPacket(client, packetData);
     }
 
     public void SendPacket(MoongateTcpClient client, ReadOnlyMemory<byte> data)
