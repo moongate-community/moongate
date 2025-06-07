@@ -4,6 +4,7 @@ using System.Net.NetworkInformation;
 using Moongate.Core.Directories;
 using Moongate.Core.Extensions.Buffers;
 using Moongate.Core.Network.Compression;
+using Moongate.Core.Network.Extensions;
 using Moongate.Core.Network.Servers.Tcp;
 using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Data.Internal.NetworkService;
@@ -32,7 +33,6 @@ public class NetworkService : INetworkService
     private readonly Dictionary<byte, INetworkService.PacketHandlerDelegate> _handlers = new();
     private readonly Dictionary<byte, PacketDefinitionData> _packetDefinitions = new();
 
-    private readonly Dictionary<byte, int> _packetsLengths = new();
     private readonly Dictionary<byte, Func<IUoNetworkPacket>> _packetBuilders = new();
 
     private readonly List<MoongateTcpServer> _tcpServers = new();
@@ -51,8 +51,11 @@ public class NetworkService : INetworkService
 
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
-
     {
+        foreach (var ipAddress in GetListeningAddresses(new IPEndPoint(IPAddress.Any, _moongateServerConfig.Network.Port)))
+        {
+            StartServer(new IPEndPoint(ipAddress.Address, _moongateServerConfig.Network.Port));
+        }
     }
 
     private void StartServer(IPEndPoint endPoint)
@@ -64,6 +67,12 @@ public class NetworkService : INetworkService
             tcpServer.OnClientConnected += OnTcpClientConnected;
             tcpServer.OnClientDisconnected += OnTcpClientDisconnect;
             tcpServer.OnClientDataReceived += OnDataReceived;
+
+            _logger.Information("Starting TCP server on {EndPoint}", endPoint);
+
+            tcpServer.Start();
+
+            _tcpServers.Add(tcpServer);
         }
         catch (Exception ex)
         {
@@ -308,7 +317,7 @@ public class NetworkService : INetworkService
         _packetDefinitions[opCode] = new PacketDefinitionData(opCode, length, description);
         _logger.Debug(
             "Registered packet: OpCode={OpCode}, Length={Length}, Description={Description}",
-            opCode,
+            opCode.ToPacketString(),
             length,
             description
         );
@@ -332,7 +341,7 @@ public class NetworkService : INetworkService
     {
         _handlers[opCode] += handler;
 
-        _logger.Information("Registered handler for packet OpCode {OpCode}", "0x" + opCode.ToString("X2"));
+        _logger.Information("Registered handler for packet OpCode {OpCode}", opCode.ToPacketString());
     }
 
     public void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet)
@@ -416,7 +425,7 @@ public class NetworkService : INetworkService
         using var sw = new StreamWriter(logPath, true);
 
         var direction = IsReceived ? "<-" : "->";
-        var opCode = "OPCODE: 0x" + buffer.Span[0].ToString("X2");
+        var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
 
         int compressionSize = 0;
         if (haveCompression)
