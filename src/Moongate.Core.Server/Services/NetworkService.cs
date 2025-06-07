@@ -151,7 +151,11 @@ public class NetworkService : INetworkService
 
             if (!_packetBuilders.TryGetValue(packetBuffer.ReadByte(), out var packetBuilder))
             {
-                _logger.Warning("No packet builder found for opcode: 0x{Opcode:X2}", opcode);
+                _logger.Warning(
+                    "No packet builder found for opcode: 0x{Opcode:X2} ({PacketName})",
+                    opcode,
+                    packetDefinition.Description
+                );
                 break;
             }
 
@@ -288,7 +292,6 @@ public class NetworkService : INetworkService
 
     public void RegisterPacket(byte opCode, int length, string description)
     {
-
         if (_packetDefinitions.ContainsKey(opCode))
         {
             _logger.Warning("Packet with OpCode {OpCode} is already registered.", opCode);
