@@ -11,4 +11,9 @@
       <PackageReference Include="DryIoc.dll" Version="5.4.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Moongate.Core.Network\Moongate.Core.Network.csproj" />
+      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
+    </ItemGroup>
+
 </Project>
