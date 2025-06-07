@@ -10,10 +10,15 @@ public interface INetworkService : IMoongateAutostartService
     delegate void ClientDisconnectedHandler(string clientId, MoongateTcpClient client );
     delegate void ClientDataReceivedHandler(string clientId, ReadOnlyMemory<byte>data);
     delegate Task PacketHandlerDelegate(string sessionId, IUoNetworkPacket packet);
+    delegate void PacketSentHandler(string sessionId, ReadOnlyMemory<byte> packet);
+    delegate Task PacketReceivedHandler(string sessionId, IUoNetworkPacket packet);
 
     event ClientConnectedHandler OnClientConnected;
     event ClientDisconnectedHandler OnClientDisconnected;
     event ClientDataReceivedHandler OnClientDataReceived;
+    event PacketSentHandler OnPacketSent;
+    event PacketReceivedHandler OnPacketReceived;
+
 
     void RegisterPacket(byte opCode, int length, string description);
 
@@ -22,8 +27,8 @@ public interface INetworkService : IMoongateAutostartService
 
     void RegisterPacketHandler(byte opCode, PacketHandlerDelegate handler);
 
-    void SendPacket(string clientId, IUoNetworkPacket packet);
-    void SendPacket(string clientId, ReadOnlyMemory<byte> data);
+    void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet);
+    void SendPacket(MoongateTcpClient client, ReadOnlyMemory<byte> data);
 
     void BroadcastPacket(IUoNetworkPacket packet);
     void BroadcastPacket(ReadOnlyMemory<byte> data);

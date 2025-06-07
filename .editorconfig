@@ -1,4 +1,4 @@
-[*]
+[*.cs]
 charset = utf-8
 # We don't specify so people can use their native
 # end_of_line = crlf
