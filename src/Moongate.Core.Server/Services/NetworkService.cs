@@ -32,6 +32,9 @@ public class NetworkService : INetworkService
     private readonly Dictionary<byte, INetworkService.PacketHandlerDelegate> _handlers = new();
     private readonly Dictionary<byte, PacketDefinitionData> _packetDefinitions = new();
 
+    private readonly Dictionary<byte, int> _packetsLengths = new();
+    private readonly Dictionary<byte, Func<IUoNetworkPacket>> _packetBuilders = new();
+
     private readonly List<MoongateTcpServer> _tcpServers = new();
 
     private readonly SemaphoreSlim _clientsLock = new(1, 1);
@@ -146,7 +149,13 @@ public class NetworkService : INetworkService
 
             using var packetBuffer = new SpanReader(currentPacketBuffer.Span);
 
-            var packet = packetDefinition.Builder();
+            if (!_packetBuilders.TryGetValue(packetBuffer.ReadByte(), out var packetBuilder))
+            {
+                _logger.Warning("No packet builder found for opcode: 0x{Opcode:X2}", opcode);
+                break;
+            }
+
+            var packet = packetBuilder();
 
             try
             {
@@ -277,10 +286,8 @@ public class NetworkService : INetworkService
         return Task.CompletedTask;
     }
 
-    public void RegisterPacket<TPacket>(int length, string description) where TPacket : IUoNetworkPacket, new()
+    public void RegisterPacket(byte opCode, int length, string description)
     {
-        var packet = new TPacket();
-        byte opCode = packet.OpCode;
 
         if (_packetDefinitions.ContainsKey(opCode))
         {
@@ -288,13 +295,19 @@ public class NetworkService : INetworkService
             return;
         }
 
-        _packetDefinitions[opCode] = new PacketDefinitionData(opCode, length, description, () => new TPacket());
-        _logger.Information(
+        _packetDefinitions[opCode] = new PacketDefinitionData(opCode, length, description);
+        _logger.Debug(
             "Registered packet: OpCode={OpCode}, Length={Length}, Description={Description}",
             opCode,
             length,
             description
         );
+    }
+
+    public void BindPacket<TPacket>() where TPacket : IUoNetworkPacket, new()
+    {
+        var packet = new TPacket();
+        _packetBuilders[packet.OpCode] = () => new TPacket();
     }
 
     public void RegisterPacketHandler<TPacket>(INetworkService.PacketHandlerDelegate handler)
