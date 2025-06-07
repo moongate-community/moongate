@@ -4,7 +4,7 @@ public interface IUoNetworkPacket
 {
     byte OpCode { get; }
 
-    bool Parse(ReadOnlyMemory<byte> data);
+    bool Read(ReadOnlyMemory<byte> data);
 
     ReadOnlyMemory<byte> Write();
 }

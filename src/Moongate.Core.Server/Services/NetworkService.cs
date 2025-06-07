@@ -1,17 +1,27 @@
+using System.Buffers.Binary;
 using System.Net;
+using System.Net.NetworkInformation;
+using Moongate.Core.Directories;
+using Moongate.Core.Extensions.Buffers;
+using Moongate.Core.Network.Compression;
 using Moongate.Core.Network.Servers.Tcp;
 using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Data.Internal.NetworkService;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
+using Moongate.Core.Server.Types;
+using Moongate.Core.Spans;
 using Serilog;
+using Serilog.Core;
 
 namespace Moongate.Core.Server.Services;
 
 public class NetworkService : INetworkService
 {
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
+
+    private readonly DirectoriesConfig _directoriesConfig;
 
     public event INetworkService.ClientConnectedHandler? OnClientConnected;
     public event INetworkService.ClientDisconnectedHandler? OnClientDisconnected;
@@ -30,9 +40,10 @@ public class NetworkService : INetworkService
 
     private readonly MoongateServerConfig _moongateServerConfig;
 
-    public NetworkService(MoongateServerConfig moongateServerConfig)
+    public NetworkService(MoongateServerConfig moongateServerConfig, DirectoriesConfig directoriesConfig)
     {
         _moongateServerConfig = moongateServerConfig;
+        _directoriesConfig = directoriesConfig;
     }
 
 
@@ -60,6 +71,150 @@ public class NetworkService : INetworkService
 
     private void OnDataReceived(MoongateTcpClient client, ReadOnlyMemory<byte> buffer)
     {
+        var remainingBuffer = buffer;
+
+        _logger.Verbose("Received buffer from client {ClientId}: {Length} bytes", client.Id, buffer.Length);
+
+        /// FIXME: Not beautiful, but it works
+        if (remainingBuffer.Length == 69)
+        {
+            remainingBuffer = remainingBuffer[4..];
+        }
+
+        while (remainingBuffer.Length > 0)
+        {
+            var span = remainingBuffer.Span;
+
+            if (span.Length < 1)
+            {
+                break;
+            }
+
+            byte opcode = span[0];
+
+
+            if (!_packetDefinitions.TryGetValue(opcode, out var packetDefinition))
+            {
+                _logger.Warning("No size defined for packet opcode: 0x{Opcode:X2}", opcode);
+                break;
+            }
+
+            if (!_handlers.TryGetValue(opcode, out var handler))
+            {
+                _logger.Warning("Received unknown packet opcode: 0x{Opcode:X2}", opcode);
+                break;
+            }
+
+            _logger.Verbose(
+                "Processing packet with opcode: 0x{Opcode:X2}, expected size: {ExpectedSize} bytes",
+                opcode,
+                packetDefinition.Length == -1 ? "on byte[2]" : packetDefinition.Length
+            );
+
+            var headerSize = 1;
+            int packetSize;
+
+            if (packetDefinition.Length == -1)
+            {
+                if (span.Length < 2)
+                {
+                    break;
+                }
+
+                headerSize = BinaryPrimitives.ReadUInt16BigEndian(span.Slice(1, 3));
+                packetSize = headerSize;
+
+
+                if (span.Length < packetSize)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                packetSize = packetDefinition.Length;
+
+                if (span.Length < packetSize)
+                {
+                    break;
+                }
+            }
+
+
+            var currentPacketBuffer = remainingBuffer[..packetSize];
+            //LogPacket(client.Id, currentPacketBuffer, true);
+
+            using var packetBuffer = new SpanReader(currentPacketBuffer.Span);
+
+            var packet = packetDefinition.Builder();
+
+            try
+            {
+                var success = packet.Read(currentPacketBuffer.Span.ToArray());
+
+
+                if (!success)
+                {
+                    _logger.Warning("Failed to read packet with opcode: 0x{Opcode:X2}", opcode);
+                    break;
+                }
+
+                DispatchPacket(client.Id, packet);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error reading packet with opcode: 0x{Opcode:X2}", opcode);
+            }
+
+
+            remainingBuffer = remainingBuffer[packetSize..];
+        }
+
+
+        if (remainingBuffer.Length > 0)
+        {
+            _logger.Debug("Remaining unprocessed data: {Length} bytes", remainingBuffer.Length);
+        }
+    }
+
+    private void DispatchPacket(string sessionId, IUoNetworkPacket packet)
+    {
+        var opCode = packet.OpCode;
+
+        _logger.Verbose("Dispatching packet with OpCode: 0x{OpCode:X2} for session {SessionId}", opCode, sessionId);
+
+        if (_handlers.TryGetValue(opCode, out var handler))
+        {
+            MoongateContext.EnqueueAction(
+                $"network_service_session_{sessionId}_opcode{opCode:X2}_handle_packet",
+                () =>
+                {
+                    try
+                    {
+                        handler(sessionId, packet);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Error(
+                            ex,
+                            "Error handling packet with OpCode: 0x{OpCode:X2} for session {SessionId}",
+                            opCode,
+                            sessionId
+                        );
+                        throw new InvalidOperationException(
+                            $"Error handling packet with OpCode: 0x{opCode:X2} for session {sessionId}",
+                            ex
+                        );
+                    }
+                }
+            );
+        }
+        else
+        {
+            _logger.Warning("No handler registered for packet OpCode: 0x{OpCode:X2}", opCode);
+        }
+
+        OnPacketReceived?.Invoke(sessionId, packet);
     }
 
     private void OnTcpClientDisconnect(MoongateTcpClient obj)
@@ -103,6 +258,7 @@ public class NetworkService : INetworkService
             {
                 client.Disconnect();
             }
+
             _clients.Clear();
         }
         finally
@@ -121,15 +277,18 @@ public class NetworkService : INetworkService
         return Task.CompletedTask;
     }
 
-    public void RegisterPacket(byte opCode, int length, string description)
+    public void RegisterPacket<TPacket>(int length, string description) where TPacket : IUoNetworkPacket, new()
     {
+        var packet = new TPacket();
+        byte opCode = packet.OpCode;
+
         if (_packetDefinitions.ContainsKey(opCode))
         {
             _logger.Warning("Packet with OpCode {OpCode} is already registered.", opCode);
             return;
         }
 
-        _packetDefinitions[opCode] = new PacketDefinitionData(opCode, length, description);
+        _packetDefinitions[opCode] = new PacketDefinitionData(opCode, length, description, () => new TPacket());
         _logger.Information(
             "Registered packet: OpCode={OpCode}, Length={Length}, Description={Description}",
             opCode,
@@ -221,4 +380,53 @@ public class NetworkService : INetworkService
             _clientsLock.Release();
         }
     }
+
+    private void LogPacket(string sessionId, ReadOnlyMemory<byte> buffer, bool IsReceived, bool haveCompression = false)
+    {
+        if (!_moongateServerConfig.Network.LogPackets)
+        {
+            return;
+        }
+
+        var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], "packets.log");
+
+        using var sw = new StreamWriter(logPath, true);
+
+        var direction = IsReceived ? "<-" : "->";
+        var opCode = "OPCODE: 0x" + buffer.Span[0].ToString("X2");
+
+        int compressionSize = 0;
+        if (haveCompression)
+        {
+            var tmpInBuffer = buffer.Span.ToArray();
+            Span<byte> tmpOutBuffer = stackalloc byte[tmpInBuffer.Length];
+            compressionSize = NetworkCompression.Compress(tmpInBuffer, tmpOutBuffer);
+        }
+
+        _logger.Verbose(
+            "{Direction} {SessionId} {OpCode} | Data size: {DataSize} bytes | Compression: {Compression}, Compression Size: {CompressionSize}",
+            direction,
+            sessionId,
+            opCode,
+            buffer.Length,
+            haveCompression,
+            compressionSize
+        );
+
+        sw.WriteLine(
+            $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} | {opCode}  | {direction} | Session ID: {sessionId} | Data size: {buffer.Length} bytes"
+        );
+        sw.FormatBuffer(buffer.Span);
+        sw.WriteLine(new string('-', 50));
+    }
+
+
+    public static IEnumerable<IPEndPoint> GetListeningAddresses(IPEndPoint ipep) =>
+        NetworkInterface.GetAllNetworkInterfaces()
+            .SelectMany(adapter =>
+                adapter.GetIPProperties()
+                    .UnicastAddresses
+                    .Where(uip => ipep.AddressFamily == uip.Address.AddressFamily)
+                    .Select(uip => new IPEndPoint(uip.Address, ipep.Port))
+            );
 }

@@ -20,7 +20,8 @@ public interface INetworkService : IMoongateAutostartService
     event PacketReceivedHandler OnPacketReceived;
 
 
-    void RegisterPacket(byte opCode, int length, string description);
+    void RegisterPacket<TPacket>(int length, string description)
+        where TPacket : IUoNetworkPacket, new();
 
     void RegisterPacketHandler<TPacket>(PacketHandlerDelegate handler)
         where TPacket : IUoNetworkPacket, new();
