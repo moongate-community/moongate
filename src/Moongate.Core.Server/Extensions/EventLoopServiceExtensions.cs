@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using Moongate.Core.Extensions;
+using Moongate.Core.Extensions.Strings;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Types;
 using NanoidDotNet;
