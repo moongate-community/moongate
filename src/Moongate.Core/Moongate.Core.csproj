@@ -6,9 +6,13 @@
         <Nullable>enable</Nullable>
         <IsAotCompatible>true</IsAotCompatible>
         <Version>0.0.0.1</Version>
-
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <NoWarn>$(NoWarn);IL3050</NoWarn>
         <NoWarn>$(NoWarn);IL2026</NoWarn>
     </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="CommunityToolkit.HighPerformance" Version="8.4.0" />
+    </ItemGroup>
 
 </Project>
