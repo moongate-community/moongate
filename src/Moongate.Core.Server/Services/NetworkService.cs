@@ -190,6 +190,35 @@ public class NetworkService : INetworkService
         }
     }
 
+    private void InternalDispatchPacket(
+        string sessionId, IUoNetworkPacket packet, INetworkService.PacketHandlerDelegate handler
+    )
+    {
+        MoongateContext.EnqueueAction(
+            $"network_service_session_{sessionId}_opcode{packet.OpCode:X2}_handle_packet",
+            () =>
+            {
+                try
+                {
+                    handler(sessionId, packet);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(
+                        ex,
+                        "Error handling packet with OpCode: 0x{OpCode:X2} for session {SessionId}",
+                        packet.OpCode,
+                        sessionId
+                    );
+                    throw new InvalidOperationException(
+                        $"Error handling packet with OpCode: 0x{packet.OpCode:X2} for session {sessionId}",
+                        ex
+                    );
+                }
+            }
+        );
+    }
+
     private void DispatchPacket(string sessionId, IUoNetworkPacket packet)
     {
         var opCode = packet.OpCode;
@@ -198,29 +227,7 @@ public class NetworkService : INetworkService
 
         if (_handlers.TryGetValue(opCode, out var handler))
         {
-            MoongateContext.EnqueueAction(
-                $"network_service_session_{sessionId}_opcode{opCode:X2}_handle_packet",
-                () =>
-                {
-                    try
-                    {
-                        handler(sessionId, packet);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(
-                            ex,
-                            "Error handling packet with OpCode: 0x{OpCode:X2} for session {SessionId}",
-                            opCode,
-                            sessionId
-                        );
-                        throw new InvalidOperationException(
-                            $"Error handling packet with OpCode: 0x{opCode:X2} for session {sessionId}",
-                            ex
-                        );
-                    }
-                }
-            );
+            InternalDispatchPacket(sessionId, packet, handler);
         }
         else
         {
