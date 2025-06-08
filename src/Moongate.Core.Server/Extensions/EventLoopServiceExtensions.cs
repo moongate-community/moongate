@@ -31,4 +31,12 @@ public static class EventLoopServiceExtensions
     {
         return EnqueueAction(action, EventLoopPriority.Low, actionName);
     }
+
+    public static void EnqueueToLoop(this Action action, EventLoopPriority priority = EventLoopPriority.Normal)
+    {
+        ArgumentNullException.ThrowIfNull(action, nameof(action));
+
+        var id = action.Method.Name.ToSnakeCase() + "_" + Nanoid.Generate();
+        MoongateContext.EventLoopService.EnqueueAction(id, action, priority);
+    }
 }
