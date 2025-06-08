@@ -16,4 +16,8 @@
       <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Events\" />
+    </ItemGroup>
+
 </Project>
