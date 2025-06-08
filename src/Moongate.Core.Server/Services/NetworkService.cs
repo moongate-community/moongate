@@ -154,7 +154,7 @@ public class NetworkService : INetworkService
 
 
             var currentPacketBuffer = remainingBuffer[..packetSize];
-            //LogPacket(client.Id, currentPacketBuffer, true);
+            LogPacket(client.Id, currentPacketBuffer, true);
 
             using var packetBuffer = new SpanReader(currentPacketBuffer.Span);
 
@@ -437,7 +437,8 @@ public class NetworkService : INetworkService
             return;
         }
 
-        var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], "packets.log");
+        var ansiDate = DateTime.UtcNow.ToString("yyyyMMdd");
+        var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], $"packets_{ansiDate}.log");
 
         using var sw = new StreamWriter(logPath, true);
 
@@ -478,4 +479,9 @@ public class NetworkService : INetworkService
                     .Where(uip => ipep.AddressFamily == uip.Address.AddressFamily)
                     .Select(uip => new IPEndPoint(uip.Address, ipep.Port))
             );
+
+    public void Dispose()
+    {
+        _clientsLock.Dispose();
+    }
 }
