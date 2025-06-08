@@ -23,20 +23,15 @@ public abstract class BaseUoPacket : IUoNetworkPacket
         return reader.ReadByte() == OpCode && Read(reader);
     }
 
+    public virtual ReadOnlyMemory<byte> Write(SpanWriter writer)
+    {
+        throw new NotImplementedException();
+    }
+
     protected virtual bool Read(SpanReader reader)
     {
         return false;
     }
 
-    public ReadOnlyMemory<byte> Write()
-    {
-        var writer = new SpanWriter();
-        writer.Write(OpCode);
-        Write(writer);
-        return writer.ToArray();
-    }
 
-    protected virtual void Write(SpanWriter writer)
-    {
-    }
 }

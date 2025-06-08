@@ -1,3 +1,5 @@
+using Moongate.Core.Spans;
+
 namespace Moongate.Core.Server.Interfaces.Packets;
 
 public interface IUoNetworkPacket
@@ -6,5 +8,6 @@ public interface IUoNetworkPacket
 
     bool Read(ReadOnlyMemory<byte> data);
 
-    ReadOnlyMemory<byte> Write();
+    ReadOnlyMemory<byte> Write(SpanWriter writer);
+
 }

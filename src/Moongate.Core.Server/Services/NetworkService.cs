@@ -344,9 +344,24 @@ public class NetworkService : INetworkService
         _logger.Information("Registered handler for packet OpCode {OpCode}", opCode.ToPacketString());
     }
 
+    private int GetPacketSize(IUoNetworkPacket packet)
+    {
+        if (_packetDefinitions.TryGetValue(packet.OpCode, out var definition))
+        {
+            return definition.Length;
+        }
+
+        _logger.Warning("No size defined for packet OpCode: {OpCode}", packet.OpCode.ToPacketString());
+        return -1; // Indicating unknown size
+    }
+
     public void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet)
     {
-        var packetData = packet.Write();
+
+
+        var size = GetPacketSize(packet);
+        var spanWriter = new SpanWriter(size, size != -1);
+        var packetData = packet.Write(spanWriter);
 
         SendPacket(client, packetData);
     }
@@ -375,7 +390,9 @@ public class NetworkService : INetworkService
 
     public void BroadcastPacket(IUoNetworkPacket packet)
     {
-        var packetData = packet.Write();
+        var size = GetPacketSize(packet);
+        var spanWriter = new SpanWriter(size, size != -1);
+        var packetData = packet.Write(spanWriter);
         MoongateContext.EnqueueAction(
             "network_service_broadcast_packet",
             () => InternalBroadcastPacket(packetData)

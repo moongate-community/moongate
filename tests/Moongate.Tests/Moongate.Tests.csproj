@@ -26,4 +26,11 @@
         <Using Include="NUnit.Framework"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Moongate.Core.Network\Moongate.Core.Network.csproj" />
+      <ProjectReference Include="..\..\src\Moongate.Core.Server\Moongate.Core.Server.csproj" />
+      <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj" />
+      <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj" />
+    </ItemGroup>
+
 </Project>
