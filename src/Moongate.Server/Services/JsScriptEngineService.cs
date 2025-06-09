@@ -57,7 +57,7 @@ public class JsScriptEngineService : IScriptEngineService
         typeResolver.MemberNameCreator = MemberNameCreator;
         _jsEngine = new Jint.Engine(options =>
             {
-                options.EnableModules(directoriesConfig["Scripts"]);
+                options.EnableModules(directoriesConfig[DirectoryType.Scripts]);
                 options.AllowClr(GetType().Assembly);
                 options.SetTypeResolver(typeResolver);
             }
@@ -134,7 +134,7 @@ public class JsScriptEngineService : IScriptEngineService
             _nameResolver
         );
 
-        File.WriteAllText(Path.Combine(_directoriesConfig["Scripts"], "index.d.ts"), documentation);
+        File.WriteAllText(Path.Combine(_directoriesConfig[DirectoryType.Scripts], "index.d.ts"), documentation);
 
 
         ExecuteBootstrap();

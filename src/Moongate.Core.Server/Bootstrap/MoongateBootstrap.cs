@@ -30,6 +30,8 @@ public class MoongateBootstrap
 
     private readonly CancellationToken _stopCancellationToken;
     public event MoongateBootstrapDelegates.ConfigureServicesDelegate? ConfigureServices;
+
+    public event MoongateBootstrapDelegates.ConfigureScriptEngineDelegate? ConfigureScriptEngine;
     public event MoongateBootstrapDelegates.ConfigureNetworkServicesDelegate ConfigureNetworkServices;
 
     public event MoongateBootstrapDelegates.ShutdownRequestDelegate ShutdownRequest;
@@ -157,6 +159,7 @@ public class MoongateBootstrap
     public async Task StartAsync()
     {
         ConfigureNetworkServices?.Invoke(_container.Resolve<INetworkService>());
+        ConfigureScriptEngine?.Invoke(_container.Resolve<IScriptEngineService>());
 
         await StartOrStopServices(true);
 
