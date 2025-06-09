@@ -3,6 +3,18 @@
         <type fullname="Moongate.Server.*" preserve="all"/>
     </assembly>
 
+    <assembly fullname="Moongate.Core.Server">
+        <type fullname="Moongate.Core.Server.*" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="Moongate.Core">
+        <type fullname="Moongate.Core.*" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="Moongate.Core.Network">
+        <type fullname="Moongate.Core.Network.*" preserve="all"/>
+    </assembly>
+
     <assembly fullname="Jint">
         <type fullname="Jint.*" preserve="all"/>
         <type fullname="Jint.Native.*" preserve="all"/>
