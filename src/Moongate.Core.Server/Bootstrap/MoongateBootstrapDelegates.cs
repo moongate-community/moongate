@@ -9,4 +9,6 @@ public class MoongateBootstrapDelegates
 
     public delegate void ConfigureNetworkServicesDelegate(INetworkService networkService);
 
+    public delegate void ShutdownRequestDelegate();
+
 }

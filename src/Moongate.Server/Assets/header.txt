@@ -1,0 +1,9 @@
+
+███████████████████████████████▀███████████████████
+█▄─▀█▀─▄█─▄▄─█─▄▄─█▄─▀█▄─▄█─▄▄▄▄██▀▄─██─▄─▄─█▄─▄▄─█
+██─█▄█─██─██─█─██─██─█▄▀─██─██▄─██─▀─████─████─▄█▀█
+▀▄▄▄▀▄▄▄▀▄▄▄▄▀▄▄▄▄▀▄▄▄▀▀▄▄▀▄▄▄▄▄▀▄▄▀▄▄▀▀▄▄▄▀▀▄▄▄▄▄▀
+
+   ++ New generation of Ultima Online server ++
+  !! Please support me on Patreon: https://www.patreon.com/Moongate  !!
+  Source code: https://github.com/moongate-community/moongate

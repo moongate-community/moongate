@@ -5,7 +5,7 @@ namespace Moongate.Core.Server.Extensions;
 
 public static class ServiceRegistrationExtension
 {
-    public static IContainer AddService(IContainer container, Type serviceType, Type implementationType, int priority = 0)
+    public static IContainer AddService(this IContainer container, Type serviceType, Type implementationType, int priority = 0)
     {
         ArgumentNullException.ThrowIfNull(container);
 

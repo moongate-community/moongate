@@ -36,4 +36,9 @@
       </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\**\*" />
+      <EmbeddedResource Include="Assets\**\*" />
+    </ItemGroup>
+
 </Project>

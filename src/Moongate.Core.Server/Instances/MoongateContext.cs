@@ -10,7 +10,7 @@ public static class MoongateContext
     public static bool UseEventLoop { get; set; } = true;
     public static IContainer Container { get; set; }
     public static IEventLoopService EventLoopService => Container.Resolve<IEventLoopService>();
-
+    public static IEventBusService EventBusService => Container.Resolve<IEventBusService>();
     public static INetworkService NetworkService => Container.Resolve<INetworkService>();
 
     /// <summary>
