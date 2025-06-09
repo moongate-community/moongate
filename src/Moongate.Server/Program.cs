@@ -13,9 +13,9 @@ var cancellationTokenSource = new CancellationTokenSource();
 await ConsoleApp.RunAsync(
     args,
     async (
-        LogLevelType logLevel = LogLevelType.Information,
-        string? rootDirectory = "",
-        string? ultimaDirectory = "",
+        LogLevelType logLevel = LogLevelType.Debug,
+        string rootDirectory = "",
+        string ultimaDirectory = "",
         string configFile = "moongate.json"
     ) =>
     {

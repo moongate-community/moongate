@@ -68,8 +68,6 @@ public class NetworkService : INetworkService
             tcpServer.OnClientDisconnected += OnTcpClientDisconnect;
             tcpServer.OnClientDataReceived += OnDataReceived;
 
-            _logger.Information("Starting TCP server on {EndPoint}", endPoint);
-
             tcpServer.Start();
 
             _tcpServers.Add(tcpServer);
@@ -436,11 +434,13 @@ public class NetworkService : INetworkService
         {
             return;
         }
+        var logger = Log.ForContext("NetworkPacket", true);
 
-        var ansiDate = DateTime.UtcNow.ToString("yyyyMMdd");
-        var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], $"packets_{ansiDate}.log");
+        //var ansiDate = DateTime.UtcNow.ToString("yyyyMMdd");
+        // var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], $"packets_{ansiDate}.log");
 
-        using var sw = new StreamWriter(logPath, true);
+        //using var sw = new StreamWriter(logPath, true);
+        var sw = new StringWriter();
 
         var direction = IsReceived ? "<-" : "->";
         var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
@@ -453,21 +453,23 @@ public class NetworkService : INetworkService
             compressionSize = NetworkCompression.Compress(tmpInBuffer, tmpOutBuffer);
         }
 
-        _logger.Verbose(
-            "{Direction} {SessionId} {OpCode} | Data size: {DataSize} bytes | Compression: {Compression}, Compression Size: {CompressionSize}",
-            direction,
-            sessionId,
-            opCode,
-            buffer.Length,
-            haveCompression,
-            compressionSize
-        );
+        // _logger.Verbose(
+        //     "{Direction} {SessionId} {OpCode} | Data size: {DataSize} bytes | Compression: {Compression}, Compression Size: {CompressionSize}",
+        //     direction,
+        //     sessionId,
+        //     opCode,
+        //     buffer.Length,
+        //     haveCompression,
+        //     compressionSize
+        // );
 
         sw.WriteLine(
             $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} | {opCode}  | {direction} | Session ID: {sessionId} | Data size: {buffer.Length} bytes"
         );
         sw.FormatBuffer(buffer.Span);
         sw.WriteLine(new string('-', 50));
+
+        logger.Information(sw.ToString());
     }
 
 

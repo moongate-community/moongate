@@ -44,11 +44,14 @@ public class MoongateBootstrap
         _container = new Container(rules =>
             rules.WithUseInterpretation()
         );
+
+        MoongateContext.Container = _container;
     }
 
     private void LoadConfig()
     {
         _moongateServerConfig = CheckAndLoadConfig(_argsOptions.ConfigFile);
+        _container.RegisterInstance(_moongateServerConfig);
     }
 
     public void Initialize()
@@ -58,12 +61,12 @@ public class MoongateBootstrap
         LoadConfig();
         ConfigureLogging();
 
-        if (!CheckUltimaOnlineDirectory())
-        {
-            throw new DirectoryNotFoundException(
-                "Ultima Online directory not found or not set in the configuration."
-            );
-        }
+        //  if (!CheckUltimaOnlineDirectory())
+        //  {
+        //      throw new DirectoryNotFoundException(
+        //          "Ultima Online directory not found or not set in the configuration."
+        //     );
+        // }
 
         ConfigureDefaultServices();
     }
@@ -73,10 +76,12 @@ public class MoongateBootstrap
         if (string.IsNullOrEmpty(_argsOptions.RootDirectory))
         {
             _argsOptions.RootDirectory = Environment.GetEnvironmentVariable("MOONGATE_ROOT_DIRECTORY") ??
-                                         Path.GetFullPath(_argsOptions.RootDirectory);
+                                         Path.Combine(Directory.GetCurrentDirectory(), "moongate");
         }
 
         _directoriesConfig = new DirectoriesConfig(_argsOptions.RootDirectory, Enum.GetNames<DirectoryType>());
+
+        _container.RegisterInstance(_directoriesConfig);
     }
 
     private void ConfigureLogging()
@@ -145,6 +150,7 @@ public class MoongateBootstrap
             .AddService(typeof(IEventLoopService), typeof(EventLoopService))
             .AddService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .AddService(typeof(ITimerService), typeof(TimerService))
+            .AddService(typeof(INetworkService), typeof(NetworkService))
             ;
     }
 
@@ -152,11 +158,12 @@ public class MoongateBootstrap
     {
         ConfigureNetworkServices?.Invoke(_container.Resolve<INetworkService>());
 
+        await StartOrStopServices(true);
+
         while (!_stopCancellationToken.IsCancellationRequested)
         {
             try
             {
-                await StartOrStopServices(true);
                 await Task.Delay(1000, _stopCancellationToken);
             }
             catch (OperationCanceledException)
@@ -172,11 +179,11 @@ public class MoongateBootstrap
     {
         if (isStart)
         {
-            await MoongateContext.EventBusService.PublishAsync(new ServerStartingEvent(), _stopCancellationToken);
+            await MoongateContext.EventBusService.PublishAsync(new ServerStartingEvent(), CancellationToken.None);
         }
         else
         {
-            await MoongateContext.EventBusService.PublishAsync(new ServerStoppingEvent(), _stopCancellationToken);
+            await MoongateContext.EventBusService.PublishAsync(new ServerStoppingEvent(), CancellationToken.None);
         }
 
         var servicesToLoad = _container.Resolve<List<ServiceDefinitionObject>>();
@@ -193,7 +200,7 @@ public class MoongateBootstrap
                         service.GetType().Name,
                         serviceDefinition.Priority
                     );
-                    await startableService.StartAsync(_stopCancellationToken);
+                    await startableService.StartAsync(CancellationToken.None);
                 }
                 else
                 {
@@ -202,18 +209,18 @@ public class MoongateBootstrap
                         service.GetType().Name,
                         serviceDefinition.Priority
                     );
-                    await startableService.StopAsync(_stopCancellationToken);
+                    await startableService.StopAsync(CancellationToken.None);
                 }
             }
         }
 
         if (isStart)
         {
-            await MoongateContext.EventBusService.PublishAsync(new ServerStartedEvent(), _stopCancellationToken);
+            await MoongateContext.EventBusService.PublishAsync(new ServerStartedEvent(), CancellationToken.None);
         }
         else
         {
-            await MoongateContext.EventBusService.PublishAsync(new ServerStoppedEvent(), _stopCancellationToken);
+            await MoongateContext.EventBusService.PublishAsync(new ServerStoppedEvent(), CancellationToken.None);
         }
     }
 
