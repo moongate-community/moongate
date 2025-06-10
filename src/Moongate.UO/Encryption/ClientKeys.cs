@@ -5,6 +5,6 @@ namespace Moongate.UO.Encryption;
 /// </summary>
 public struct ClientKeys
 {
-    public long Key1 { get; set; }
-    public long Key2 { get; set; }
+    public uint Key1 { get; set; }
+    public uint Key2 { get; set; }
 }
