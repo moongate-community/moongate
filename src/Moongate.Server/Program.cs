@@ -11,6 +11,7 @@ using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
 using Moongate.Server.Modules;
 using Moongate.Server.Services;
+using Moongate.UO.Interfaces;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 
@@ -31,7 +32,7 @@ await ConsoleApp.RunAsync(
             cancellationTokenSource.Cancel(); // Signal cancellation
         };
 
-        var header =ResourceUtils.GetEmbeddedResourceContent("Assets/header.txt", typeof(Program).Assembly);
+        var header = ResourceUtils.GetEmbeddedResourceContent("Assets/header.txt", typeof(Program).Assembly);
 
         Console.WriteLine(header);
 
@@ -52,14 +53,13 @@ await ConsoleApp.RunAsync(
 
             container
                 .AddService(typeof(IVersionService), typeof(VersionService))
-                .AddService(typeof(IScriptEngineService), typeof(JsScriptEngineService) )
+                .AddService(typeof(IScriptEngineService), typeof(JsScriptEngineService))
+                .AddService(typeof(IGameSessionService), typeof(GameSessionService))
+                .AddService(typeof(INetworkService), typeof(NetworkService))
                 ;
         };
 
-        bootstrap.ConfigureScriptEngine += scriptEngine =>
-        {
-            scriptEngine.AddScriptModule(typeof(LoggerModule));
-        };
+        bootstrap.ConfigureScriptEngine += scriptEngine => { scriptEngine.AddScriptModule(typeof(LoggerModule)); };
 
         bootstrap.Initialize();
 

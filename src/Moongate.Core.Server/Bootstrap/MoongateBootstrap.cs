@@ -152,7 +152,7 @@ public class MoongateBootstrap
             .AddService(typeof(IEventLoopService), typeof(EventLoopService))
             .AddService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .AddService(typeof(ITimerService), typeof(TimerService))
-            .AddService(typeof(INetworkService), typeof(NetworkService))
+
             ;
     }
 

@@ -11,12 +11,10 @@ using Moongate.Core.Server.Data.Internal.NetworkService;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
-using Moongate.Core.Server.Types;
 using Moongate.Core.Spans;
 using Serilog;
-using Serilog.Core;
 
-namespace Moongate.Core.Server.Services;
+namespace Moongate.Server.Services;
 
 public class NetworkService : INetworkService
 {
@@ -355,8 +353,6 @@ public class NetworkService : INetworkService
 
     public void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet)
     {
-
-
         var size = GetPacketSize(packet);
         var spanWriter = new SpanWriter(size, size != -1);
         var packetData = packet.Write(spanWriter);
@@ -434,6 +430,7 @@ public class NetworkService : INetworkService
         {
             return;
         }
+
         var logger = Log.ForContext("NetworkPacket", true);
 
         //var ansiDate = DateTime.UtcNow.ToString("yyyyMMdd");

@@ -1,0 +1,85 @@
+using System.Collections.Concurrent;
+using Microsoft.Extensions.ObjectPool;
+using Moongate.Core.Network.Servers.Tcp;
+using Moongate.Core.Server.Interfaces.Services;
+using Moongate.UO.Data.Events.GameSessions;
+using Moongate.UO.Data.Session;
+using Moongate.UO.Interfaces;
+using Serilog;
+using ZLinq;
+
+namespace Moongate.Server.Services;
+
+public class GameSessionService : IGameSessionService
+{
+    private readonly ILogger _logger = Log.ForContext<GameSessionService>();
+
+    private readonly INetworkService _networkService;
+
+    private readonly IEventBusService _eventBusService;
+
+    private readonly ConcurrentDictionary<string, GameNetworkSession> _sessions = new();
+
+    private readonly ObjectPool<GameNetworkSession> _sessionPool =
+        ObjectPool.Create(new DefaultPooledObjectPolicy<GameNetworkSession>());
+
+    public GameSessionService(INetworkService networkService, IEventBusService eventBusService)
+    {
+        _networkService = networkService;
+        _eventBusService = eventBusService;
+        _networkService.OnClientConnected += OnClientConnected;
+        _networkService.OnClientDisconnected += OnClientDisconnected;
+    }
+
+    private void OnClientDisconnected(string clientId, MoongateTcpClient client)
+    {
+        if (_sessions.TryRemove(clientId, out var session))
+        {
+            _logger.Debug("Client {ClientId} disconnected, removing session.", clientId);
+            _eventBusService.PublishAsync(new GameSessionDisconnectedEvent(clientId));
+            session.Dispose();
+            _sessionPool.Return(session);
+        }
+    }
+
+    private void OnClientConnected(string clientId, MoongateTcpClient client)
+    {
+        _logger.Debug("Client {ClientId} connected, adding session.", clientId);
+        var newSession = _sessionPool.Get();
+        newSession.SessionId = clientId;
+        newSession.NetworkClient = client;
+        _sessions[clientId] = newSession;
+
+        _eventBusService.PublishAsync(new GameSessionCreatedEvent(clientId, newSession));
+    }
+
+
+    public GameNetworkSession? GetSession(string sessionId, bool throwIfNotFound = true)
+    {
+        if (_sessions.TryGetValue(sessionId, out var session))
+        {
+            return session;
+        }
+
+        if (throwIfNotFound)
+        {
+            throw new KeyNotFoundException($"Session with ID {sessionId} not found.");
+        }
+
+        return null;
+    }
+
+    public IEnumerable<GameNetworkSession> GetSessions()
+    {
+        return _sessions.Values;
+    }
+
+    public IEnumerable<GameNetworkSession> QuerySessions(Func<GameNetworkSession, bool> predicate)
+    {
+        return _sessions.Values.AsValueEnumerable().Where(predicate).ToList();
+    }
+
+    public void Dispose()
+    {
+    }
+}
