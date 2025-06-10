@@ -15,6 +15,15 @@
         <type fullname="Moongate.Core.Network.*" preserve="all"/>
     </assembly>
 
+    <assembly fullname="Moongate.UO.Data">
+        <type fullname="Moongate.UO.Data.*" preserve="all"/>
+    </assembly>
+
+    <assembly fullname="Moongate.UO">
+        <type fullname="Moongate.UO.*" preserve="all"/>
+    </assembly>
+
+
     <assembly fullname="Jint">
         <type fullname="Jint.*" preserve="all"/>
         <type fullname="Jint.Native.*" preserve="all"/>
