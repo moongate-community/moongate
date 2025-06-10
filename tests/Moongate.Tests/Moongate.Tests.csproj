@@ -31,6 +31,8 @@
       <ProjectReference Include="..\..\src\Moongate.Core.Server\Moongate.Core.Server.csproj" />
       <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj" />
       <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj" />
+      <ProjectReference Include="..\..\src\Moongate.UO.Data\Moongate.UO.Data.csproj" />
+      <ProjectReference Include="..\..\src\Moongate.UO\Moongate.UO.csproj" />
     </ItemGroup>
 
 </Project>
