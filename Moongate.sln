@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Core.Server", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Core.Network", "src\Moongate.Core.Network\Moongate.Core.Network.csproj", "{D7D411D6-E07E-4522-9D3A-C3D551538AA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.UO.Data", "src\Moongate.UO.Data\Moongate.UO.Data.csproj", "{44A401D2-4E8B-4AA3-82A4-EBC3899EF826}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7D411D6-E07E-4522-9D3A-C3D551538AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44A401D2-4E8B-4AA3-82A4-EBC3899EF826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44A401D2-4E8B-4AA3-82A4-EBC3899EF826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44A401D2-4E8B-4AA3-82A4-EBC3899EF826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44A401D2-4E8B-4AA3-82A4-EBC3899EF826}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
