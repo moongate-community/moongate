@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Server.Data.Configs.Runtime;
 using Moongate.Core.Server.Extensions;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
@@ -9,6 +10,9 @@ public static class MoongateContext
 {
     public static bool UseEventLoop { get; set; } = true;
     public static IContainer Container { get; set; }
+
+    public static MoongateRuntimeConfig RuntimeConfig => new();
+
     public static IEventLoopService EventLoopService => Container.Resolve<IEventLoopService>();
     public static IEventBusService EventBusService => Container.Resolve<IEventBusService>();
     public static INetworkService NetworkService => Container.Resolve<INetworkService>();

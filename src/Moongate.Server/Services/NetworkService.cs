@@ -2,8 +2,6 @@ using System.Buffers.Binary;
 using System.Net;
 using System.Net.NetworkInformation;
 using Moongate.Core.Directories;
-using Moongate.Core.Extensions.Buffers;
-using Moongate.Core.Network.Compression;
 using Moongate.Core.Network.Extensions;
 using Moongate.Core.Network.Servers.Tcp;
 using Moongate.Core.Server.Data.Configs.Server;
@@ -25,6 +23,7 @@ public class NetworkService : INetworkService
     public event INetworkService.ClientConnectedHandler? OnClientConnected;
     public event INetworkService.ClientDisconnectedHandler? OnClientDisconnected;
     public event INetworkService.ClientDataReceivedHandler? OnClientDataReceived;
+    public event INetworkService.ClientDataSentHandler? OnClientDataSent;
     public event INetworkService.PacketSentHandler? OnPacketSent;
     public event INetworkService.PacketReceivedHandler? OnPacketReceived;
 
@@ -79,6 +78,7 @@ public class NetworkService : INetworkService
 
     private void OnDataReceived(MoongateTcpClient client, ReadOnlyMemory<byte> buffer)
     {
+        OnClientDataReceived?.Invoke(client.Id, new ReadOnlyMemory<byte>(buffer.ToArray()));
         var remainingBuffer = buffer;
 
         _logger.Verbose("Received buffer from client {ClientId}: {Length} bytes", client.Id, buffer.Length);
@@ -150,7 +150,6 @@ public class NetworkService : INetworkService
 
 
             var currentPacketBuffer = remainingBuffer[..packetSize];
-            LogPacket(client.Id, currentPacketBuffer, true);
 
             using var packetBuffer = new SpanReader(currentPacketBuffer.Span);
 
@@ -357,6 +356,7 @@ public class NetworkService : INetworkService
         var spanWriter = new SpanWriter(size, size != -1);
         var packetData = packet.Write(spanWriter);
 
+        OnPacketSent?.Invoke(client.Id, packet);
         SendPacket(client, packetData);
     }
 
@@ -373,8 +373,10 @@ public class NetworkService : INetworkService
     {
         try
         {
+
             client.Send(data);
-            OnPacketSent?.Invoke(client.Id, data);
+
+            OnClientDataSent?.Invoke(client.Id, data);
         }
         catch (Exception ex)
         {
@@ -424,50 +426,6 @@ public class NetworkService : INetworkService
         }
     }
 
-    private void LogPacket(string sessionId, ReadOnlyMemory<byte> buffer, bool IsReceived, bool haveCompression = false)
-    {
-        if (!_moongateServerConfig.Network.LogPackets)
-        {
-            return;
-        }
-
-        var logger = Log.ForContext("NetworkPacket", true);
-
-        //var ansiDate = DateTime.UtcNow.ToString("yyyyMMdd");
-        // var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], $"packets_{ansiDate}.log");
-
-        //using var sw = new StreamWriter(logPath, true);
-        var sw = new StringWriter();
-
-        var direction = IsReceived ? "<-" : "->";
-        var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
-
-        int compressionSize = 0;
-        if (haveCompression)
-        {
-            var tmpInBuffer = buffer.Span.ToArray();
-            Span<byte> tmpOutBuffer = stackalloc byte[tmpInBuffer.Length];
-            compressionSize = NetworkCompression.Compress(tmpInBuffer, tmpOutBuffer);
-        }
-
-        // _logger.Verbose(
-        //     "{Direction} {SessionId} {OpCode} | Data size: {DataSize} bytes | Compression: {Compression}, Compression Size: {CompressionSize}",
-        //     direction,
-        //     sessionId,
-        //     opCode,
-        //     buffer.Length,
-        //     haveCompression,
-        //     compressionSize
-        // );
-
-        sw.WriteLine(
-            $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} | {opCode}  | {direction} | Session ID: {sessionId} | Data size: {buffer.Length} bytes"
-        );
-        sw.FormatBuffer(buffer.Span);
-        sw.WriteLine(new string('-', 50));
-
-        logger.Information(sw.ToString());
-    }
 
 
     public static IEnumerable<IPEndPoint> GetListeningAddresses(IPEndPoint ipep) =>

@@ -9,9 +9,11 @@ using Moongate.Core.Server.Extensions;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
+using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
 using Moongate.Server.Services;
 using Moongate.UO.Interfaces;
+using Moongate.UO.Interfaces.Services;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 
@@ -56,6 +58,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IScriptEngineService), typeof(JsScriptEngineService))
                 .AddService(typeof(IGameSessionService), typeof(GameSessionService))
                 .AddService(typeof(INetworkService), typeof(NetworkService))
+                .AddService(typeof(PacketLoggerService))
                 ;
         };
 

@@ -252,6 +252,8 @@ public class MoongateBootstrap
 
         config.UltimaOnlineDirectory ??= _argsOptions.UltimaOnlineDirectory;
 
+        MoongateContext.RuntimeConfig.IsPacketLoggingEnabled = config.Network.LogPackets;
+
         return config;
     }
 }

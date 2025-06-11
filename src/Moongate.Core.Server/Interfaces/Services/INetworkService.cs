@@ -9,13 +9,16 @@ public interface INetworkService : IMoongateAutostartService
     delegate void ClientConnectedHandler(string clientId, MoongateTcpClient client );
     delegate void ClientDisconnectedHandler(string clientId, MoongateTcpClient client );
     delegate void ClientDataReceivedHandler(string clientId, ReadOnlyMemory<byte>data);
+    delegate void ClientDataSentHandler(string clientId, ReadOnlyMemory<byte> data);
     delegate Task PacketHandlerDelegate(string sessionId, IUoNetworkPacket packet);
-    delegate void PacketSentHandler(string sessionId, ReadOnlyMemory<byte> packet);
+    delegate Task PacketSentHandler(string sessionId, IUoNetworkPacket packet);
     delegate Task PacketReceivedHandler(string sessionId, IUoNetworkPacket packet);
 
     event ClientConnectedHandler OnClientConnected;
     event ClientDisconnectedHandler OnClientDisconnected;
     event ClientDataReceivedHandler OnClientDataReceived;
+
+    event ClientDataSentHandler OnClientDataSent;
     event PacketSentHandler OnPacketSent;
     event PacketReceivedHandler OnPacketReceived;
 
