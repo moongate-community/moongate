@@ -1,3 +1,4 @@
+using System.Text;
 using Moongate.Core.Server.Data.Internal.Commands;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
@@ -27,18 +28,48 @@ public class CommandSystemService : ICommandSystemService
     public CommandSystemService(IGameSessionService gameSessionService)
     {
         _gameSessionService = gameSessionService;
+
+        // Register default commands
+        RegisterDefaultCommands();
     }
 
-    public void Dispose()
+    private void RegisterDefaultCommands()
     {
+        RegisterCommand("help|?", OnHelpCommand, "Displays this help message.");
+        RegisterCommand("lock|" + _unlockCharacter, OnLockCommand, "Locks the console input. Press '*' to unlock.", AccountLevelType.Admin, CommandSourceType.Console);
+
     }
+
+    private Task OnLockCommand(CommandSystemContext context)
+    {
+        _isConsoleLocked = true;
+        AnsiConsole.Markup("[red]Console locked. Press '*' to unlock.[/]");
+        Console.WriteLine();
+        return Task.CompletedTask;
+    }
+
+    private Task OnHelpCommand(CommandSystemContext context)
+    {
+        // TODO: Show only commands available to the user
+        var helpMessage = new StringBuilder();
+        helpMessage.AppendLine("Available commands:");
+        foreach (var command in _commands.Values.Where(s => s.Source.HasFlag(context.SourceType)))
+        {
+            helpMessage.AppendLine($"- {command.Name}: {command.Description}");
+        }
+
+        context.Print(helpMessage.ToString());
+        return Task.CompletedTask;
+    }
+
+
 
     public void RegisterCommand(
         string commandName, ICommandSystemService.CommandHandlerDelegate handler, string description = "",
         AccountLevelType accountLevel = AccountLevelType.User, CommandSourceType source = CommandSourceType.InGame
     )
     {
-        foreach (var splitCommand in commandName.Split(','))
+        foreach (var splitCommand in commandName.Split('|'))
         {
             var trimmedCommand = splitCommand.Trim().ToLowerInvariant();
             if (_commands.ContainsKey(trimmedCommand))
@@ -57,7 +88,7 @@ public class CommandSystemService : ICommandSystemService
             };
 
             _commands[trimmedCommand] = commandDefinition;
-            _logger.Information("Registered command: {CommandName}", trimmedCommand);
+            _logger.Debug("Registered command: {CommandName}", trimmedCommand);
         }
     }
 
@@ -160,12 +191,14 @@ public class CommandSystemService : ICommandSystemService
                 {
                     break;
                 }
+
                 if (_commandHistoryIndex < _commandHistory.Count - 1)
                 {
                     _commandHistoryIndex++;
                     _inputBuffer = _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex];
                     AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
                 }
+
                 break;
 
             case ConsoleKey.DownArrow:
@@ -173,6 +206,7 @@ public class CommandSystemService : ICommandSystemService
                 {
                     break;
                 }
+
                 if (_commandHistoryIndex > 0)
                 {
                     _commandHistoryIndex--;
@@ -187,6 +221,7 @@ public class CommandSystemService : ICommandSystemService
                     _inputBuffer = string.Empty;
                     AnsiConsole.Markup($"\r{_prompt}");
                 }
+
                 break;
 
             default:
@@ -248,5 +283,9 @@ public class CommandSystemService : ICommandSystemService
     private void OnPrintToConsole(string message, object[] args)
     {
         Console.WriteLine(message, args);
+    }
+
+    public void Dispose()
+    {
     }
 }
