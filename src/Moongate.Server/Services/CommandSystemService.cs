@@ -3,12 +3,13 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
+using Spectre.Console;
 
 namespace Moongate.Server.Services;
 
 public class CommandSystemService : ICommandSystemService
 {
-    private const string _prompt = "Moongate> ";
+    private const string _prompt = "[blue]Moongate> [/]";
     private const char _unlockCharacter = '*';
     private bool _isConsoleLocked = true;
 
@@ -95,16 +96,16 @@ public class CommandSystemService : ICommandSystemService
                     var keyInfo = Console.ReadKey(true);
                     if (_isConsoleLocked)
                     {
-                        if (keyInfo.KeyChar == _unlockCharacter )
+                        if (keyInfo.KeyChar == _unlockCharacter)
                         {
                             _isConsoleLocked = false;
-                            Console.WriteLine("Console unlocked. You can now enter commands.");
+                            AnsiConsole.Markup("[green]Console unlocked.[/]");
                             Console.WriteLine();
-                            Console.Write(_prompt);
+                            AnsiConsole.Markup(_prompt);
                         }
                         else
                         {
-                            Console.WriteLine($"Console is locked. Press {_unlockCharacter} to unlock.");
+                            AnsiConsole.MarkupLine($"[red]Console is locked. Press {_unlockCharacter} to unlock  [/]");
                         }
 
                         continue;
@@ -116,11 +117,11 @@ public class CommandSystemService : ICommandSystemService
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error processing console input.");
-                Console.WriteLine("An error occurred while processing input. Please try again.");
+                AnsiConsole.Markup("[red]An error occurred while processing input. Please try again. [/]");
             }
 
 
-            await Task.Delay(30, cancellationToken);
+            await Task.Delay(10, cancellationToken);
         }
     }
 
@@ -129,7 +130,7 @@ public class CommandSystemService : ICommandSystemService
         _ = Task.Run(
             async () =>
             {
-                Console.Write(_prompt);
+                AnsiConsole.Markup(_prompt);
                 await HookConsoleCommandAsync(cancellationToken);
             },
             cancellationToken
@@ -146,7 +147,10 @@ public class CommandSystemService : ICommandSystemService
 
             case ConsoleKey.Enter:
                 await HandleEnterKey();
-                Console.Write(_prompt);
+                AnsiConsole.Markup(_prompt);
+                break;
+
+            case ConsoleKey.Tab:
                 break;
 
             default:
