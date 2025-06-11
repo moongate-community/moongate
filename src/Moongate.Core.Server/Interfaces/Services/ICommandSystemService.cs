@@ -14,4 +14,6 @@ public interface ICommandSystemService : IMoongateService
         string description = "",
         AccountLevelType accountLevel = AccountLevelType.User,
         CommandSourceType source = CommandSourceType.All);
+
+    Task ExecuteCommandAsync(string commandWithArgs, string sessionId,  AccountLevelType accountLevel, CommandSourceType source);
 }
