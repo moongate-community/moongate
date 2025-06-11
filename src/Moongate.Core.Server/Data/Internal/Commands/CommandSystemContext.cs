@@ -1,6 +1,6 @@
 using Moongate.Core.Server.Types;
 
-namespace Moongate.Core.Server.Data.Internal.CommandSystem;
+namespace Moongate.Core.Server.Data.Internal.Commands;
 
 public class CommandSystemContext
 {

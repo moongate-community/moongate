@@ -15,7 +15,6 @@ namespace Moongate.Server.Loggers;
 
 public class PacketLoggerService : IMoongateService
 {
-
     private readonly IGameSessionService _gameSessionService;
     private readonly INetworkService _networkService;
 
@@ -24,7 +23,7 @@ public class PacketLoggerService : IMoongateService
         _gameSessionService = gameSessionService;
         _networkService = networkService;
 
-        _networkService.OnClientDataReceived+= OnPacketReceived ;
+        _networkService.OnClientDataReceived += OnPacketReceived;
         _networkService.OnClientDataSent += OnPacketSent;
     }
 
@@ -40,23 +39,16 @@ public class PacketLoggerService : IMoongateService
         LogPacket(gameClientSession, packet, false);
     }
 
-    private void LogPacket(GameNetworkSession client, ReadOnlyMemory<byte> buffer, bool IsReceived)
+    private static void LogPacket(GameNetworkSession client, ReadOnlyMemory<byte> buffer, bool IsReceived)
     {
         if (!MoongateContext.RuntimeConfig.IsPacketLoggingEnabled)
         {
             return;
         }
 
-
-
         var logger = Log.ForContext("NetworkPacket", true);
 
-        //var ansiDate = DateTime.UtcNow.ToString("yyyyMMdd");
-        // var logPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], $"packets_{ansiDate}.log");
-
-        //using var sw = new StreamWriter(logPath, true);
-        var sw = new StringWriter();
-
+        using var sw = new StringWriter();
         var direction = IsReceived ? "<-" : "->";
         var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
 
@@ -68,18 +60,8 @@ public class PacketLoggerService : IMoongateService
             compressionSize = NetworkCompression.Compress(tmpInBuffer, tmpOutBuffer);
         }
 
-        // _logger.Verbose(
-        //     "{Direction} {SessionId} {OpCode} | Data size: {DataSize} bytes | Compression: {Compression}, Compression Size: {CompressionSize}",
-        //     direction,
-        //     sessionId,
-        //     opCode,
-        //     buffer.Length,
-        //     haveCompression,
-        //     compressionSize
-        // );
-
         sw.WriteLine(
-            $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} | {opCode}  | {direction} | Session ID: {client.SessionId} | Data size: {buffer.Length} bytes"
+            $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss} | {opCode} | {direction} | Id: {client.SessionId} | Size: {buffer.Length} bytes | Compression: {client.Features.HasFlag(NetworkSessionFeatureType.Compression)} | Compression Size: {compressionSize} bytes"
         );
         sw.FormatBuffer(buffer.Span);
         sw.WriteLine(new string('-', 50));
