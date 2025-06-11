@@ -20,6 +20,8 @@ public class CommandSystemService : ICommandSystemService
 
     private readonly List<string> _commandHistory = new();
 
+    private int _commandHistoryIndex = -1;
+
     private string _inputBuffer = string.Empty;
 
     public CommandSystemService(IGameSessionService gameSessionService)
@@ -151,6 +153,40 @@ public class CommandSystemService : ICommandSystemService
                 break;
 
             case ConsoleKey.Tab:
+                break;
+
+            case ConsoleKey.UpArrow:
+                if (_isConsoleLocked)
+                {
+                    break;
+                }
+                if (_commandHistoryIndex < _commandHistory.Count - 1)
+                {
+                    _commandHistoryIndex++;
+                    _inputBuffer = _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex];
+                    AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
+                }
+                break;
+
+            case ConsoleKey.DownArrow:
+                if (_isConsoleLocked)
+                {
+                    break;
+                }
+                if (_commandHistoryIndex > 0)
+                {
+                    _commandHistoryIndex--;
+                    _inputBuffer = _commandHistory.Count > _commandHistoryIndex
+                        ? _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex]
+                        : string.Empty;
+                    AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
+                }
+                else
+                {
+                    _commandHistoryIndex = -1;
+                    _inputBuffer = string.Empty;
+                    AnsiConsole.Markup($"\r{_prompt}");
+                }
                 break;
 
             default:
