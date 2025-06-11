@@ -152,7 +152,6 @@ public class MoongateBootstrap
             .AddService(typeof(IEventLoopService), typeof(EventLoopService))
             .AddService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))
             .AddService(typeof(ITimerService), typeof(TimerService))
-
             ;
     }
 
@@ -162,6 +161,8 @@ public class MoongateBootstrap
         ConfigureScriptEngine?.Invoke(_container.Resolve<IScriptEngineService>());
 
         await StartOrStopServices(true);
+
+        await _container.Resolve<ICommandSystemService>().StartConsoleAsync(_stopCancellationToken);
 
         while (!_stopCancellationToken.IsCancellationRequested)
         {

@@ -58,6 +58,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IScriptEngineService), typeof(JsScriptEngineService))
                 .AddService(typeof(IGameSessionService), typeof(GameSessionService))
                 .AddService(typeof(INetworkService), typeof(NetworkService))
+                .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(PacketLoggerService))
                 ;
         };

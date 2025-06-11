@@ -16,4 +16,6 @@ public interface ICommandSystemService : IMoongateService
         CommandSourceType source = CommandSourceType.All);
 
     Task ExecuteCommandAsync(string commandWithArgs, string sessionId,  AccountLevelType accountLevel, CommandSourceType source);
+
+    Task StartConsoleAsync(CancellationToken cancellationToken);
 }

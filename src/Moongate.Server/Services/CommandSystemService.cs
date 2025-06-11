@@ -8,9 +8,18 @@ namespace Moongate.Server.Services;
 
 public class CommandSystemService : ICommandSystemService
 {
+    private const string _prompt = "Moongate> ";
+    private const char _unlockCharacter = '*';
+    private bool _isConsoleLocked = true;
+
     private readonly ILogger _logger = Log.ForContext<CommandSystemService>();
     private readonly Dictionary<string, CommandDefinition> _commands = new();
     private readonly IGameSessionService _gameSessionService;
+
+
+    private readonly List<string> _commandHistory = new();
+
+    private string _inputBuffer = string.Empty;
 
     public CommandSystemService(IGameSessionService gameSessionService)
     {
@@ -54,10 +63,10 @@ public class CommandSystemService : ICommandSystemService
     )
     {
         var command = commandWithArgs.Split(' ').FirstOrDefault()?.ToLowerInvariant();
-        var context = CreateCommandContext(commandWithArgs, sessionId , source);
+        var context = CreateCommandContext(commandWithArgs, sessionId, source);
         if (string.IsNullOrEmpty(command) || !_commands.TryGetValue(command, out var commandDefinition))
         {
-            _logger.Warning("Command '{Command}' not found or not registered.", command);
+            context.Print("Unknown command: {0}", commandWithArgs);
             return;
         }
 
@@ -68,13 +77,117 @@ public class CommandSystemService : ICommandSystemService
             return;
         }
 
+        // TODO: Check if the session exists and if the account level is sufficient
+
+        var session = _gameSessionService.GetSession(sessionId);
+
+        await commandDefinition.Handler(context);
+    }
+
+    private async Task HookConsoleCommandAsync(CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                if (Console.KeyAvailable)
+                {
+                    var keyInfo = Console.ReadKey(true);
+                    if (_isConsoleLocked)
+                    {
+                        if (keyInfo.KeyChar == _unlockCharacter )
+                        {
+                            _isConsoleLocked = false;
+                            Console.WriteLine("Console unlocked. You can now enter commands.");
+                            Console.WriteLine();
+                            Console.Write(_prompt);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Console is locked. Press {_unlockCharacter} to unlock.");
+                        }
+
+                        continue;
+                    }
+
+                    await ProcessKeyPress(keyInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error processing console input.");
+                Console.WriteLine("An error occurred while processing input. Please try again.");
+            }
 
 
+            await Task.Delay(30, cancellationToken);
+        }
+    }
 
+    public async Task StartConsoleAsync(CancellationToken cancellationToken)
+    {
+        _ = Task.Run(
+            async () =>
+            {
+                Console.Write(_prompt);
+                await HookConsoleCommandAsync(cancellationToken);
+            },
+            cancellationToken
+        );
+    }
+
+    private async Task ProcessKeyPress(ConsoleKeyInfo keyInfo)
+    {
+        switch (keyInfo.Key)
+        {
+            case ConsoleKey.Backspace:
+                HandleBackspace();
+                break;
+
+            case ConsoleKey.Enter:
+                await HandleEnterKey();
+                Console.Write(_prompt);
+                break;
+
+            default:
+                HandleCharacterInput(keyInfo.KeyChar);
+                break;
+        }
+    }
+
+    private void HandleBackspace()
+    {
+        if (_inputBuffer.Length > 0)
+        {
+            _inputBuffer = _inputBuffer[..^1];
+            Console.Write("\b \b");
+        }
+    }
+
+    private void HandleCharacterInput(char character)
+    {
+        _inputBuffer += character;
+        Console.Write(character);
+    }
+
+    private async Task HandleEnterKey()
+    {
+        if (string.IsNullOrWhiteSpace(_inputBuffer))
+        {
+            return;
+        }
+
+        Console.Write(Environment.NewLine);
+
+        var command = _inputBuffer.Trim();
+        _commandHistory.Add(command);
+        _inputBuffer = string.Empty;
+
+        await ExecuteCommandAsync(command, string.Empty, AccountLevelType.Admin, CommandSourceType.Console);
     }
 
     private CommandSystemContext CreateCommandContext(
-        string command, string sessionId,  CommandSourceType source
+        string command, string sessionId, CommandSourceType source
     )
     {
         var context = new CommandSystemContext
@@ -83,6 +196,7 @@ public class CommandSystemService : ICommandSystemService
             SourceType = source,
             Arguments = command.Split(' ').Skip(1).ToArray(),
         };
+
         if (string.IsNullOrEmpty(sessionId))
         {
             context.OnPrint += OnPrintToConsole;
