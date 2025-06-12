@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.UO.Data", "src\Moo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.UO", "src\Moongate.UO\Moongate.UO.csproj", "{21FA8CCC-140E-47AF-8D91-38A7E5877DD3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Moongate.Core.Persistence", "src\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj", "{FD60C577-8A12-4477-851C-36156C09BAF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,5 +56,9 @@ Global
 		{21FA8CCC-140E-47AF-8D91-38A7E5877DD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21FA8CCC-140E-47AF-8D91-38A7E5877DD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21FA8CCC-140E-47AF-8D91-38A7E5877DD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD60C577-8A12-4477-851C-36156C09BAF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD60C577-8A12-4477-851C-36156C09BAF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD60C577-8A12-4477-851C-36156C09BAF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD60C577-8A12-4477-851C-36156C09BAF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
