@@ -16,9 +16,11 @@ using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
 using Moongate.Server.Persistence;
 using Moongate.Server.Services;
+using Moongate.UO.Commands;
 using Moongate.UO.Data.Persistence;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
+using Moongate.UO.Modules;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
@@ -71,12 +73,18 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(PacketLoggerService))
                 ;
 
+            container.AddService(typeof(AccountCommands));
+
 
             container.RegisterInstance<IEntityReader>(new MoongateEntityWriterReader());
             container.RegisterInstance<IEntityWriter>(new MoongateEntityWriterReader());
         };
 
-        bootstrap.ConfigureScriptEngine += scriptEngine => { scriptEngine.AddScriptModule(typeof(LoggerModule)); };
+        bootstrap.ConfigureScriptEngine += scriptEngine =>
+        {
+            scriptEngine.AddScriptModule(typeof(LoggerModule));
+            scriptEngine.AddScriptModule(typeof(AccountModule));
+        };
 
         bootstrap.Initialize();
 
