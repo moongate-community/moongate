@@ -17,6 +17,7 @@ using Moongate.Server.Modules;
 using Moongate.Server.Persistence;
 using Moongate.Server.Services;
 using Moongate.UO.Commands;
+using Moongate.UO.Data;
 using Moongate.UO.Data.Persistence;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
@@ -84,6 +85,11 @@ await ConsoleApp.RunAsync(
         {
             scriptEngine.AddScriptModule(typeof(LoggerModule));
             scriptEngine.AddScriptModule(typeof(AccountModule));
+        };
+
+        bootstrap.AfterInitialize += (container, config, runtimeConfig) =>
+        {
+            UoFiles.ScanForFiles(runtimeConfig.UoDataPath);
         };
 
         bootstrap.Initialize();

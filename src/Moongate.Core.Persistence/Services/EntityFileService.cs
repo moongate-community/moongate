@@ -31,8 +31,6 @@ namespace Moongate.Core.Persistence.Services;
 
             var filePath = GetFilePath(fileName);
 
-            /// Create backup if file exists
-            //await CreateBackupIfExistsAsync(filePath);
 
             try
             {
@@ -45,7 +43,6 @@ namespace Moongate.Core.Persistence.Services;
                 }
 
                 await writer.WriteAsync();
-                /// Ensure all data is flushed to disk
             }
             catch
             {
