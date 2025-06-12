@@ -4,13 +4,16 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Events.Accounts;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Interfaces.Services;
+using Serilog;
 
 namespace Moongate.Server.Services;
 
 public class AccountService : IAccountService
 {
+    private readonly ILogger _logger = Log.ForContext<AccountService>();
+
     private readonly IEventBusService _eventBusService;
-    private readonly string accountsFilePath = "accounts.mga";
+    private const string accountsFilePath = "accounts.mga";
     private readonly Dictionary<string, UOAccountEntity> _accounts = new();
     private readonly IEntityFileService _entityFileService;
 
@@ -22,14 +25,7 @@ public class AccountService : IAccountService
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        _accounts.Clear();
-
-        var accounts = await _entityFileService.LoadEntitiesAsync<UOAccountEntity>(accountsFilePath);
-
-        foreach (var account in accounts)
-        {
-            _accounts[account.Id] = account;
-        }
+        await LoadAccountAsync();
 
         if (_accounts.Count == 0)
         {
@@ -43,9 +39,22 @@ public class AccountService : IAccountService
         return _entityFileService.SaveEntitiesAsync(accountsFilePath, _accounts.Values);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken = default)
+    private async Task LoadAccountAsync()
     {
-        return Task.CompletedTask;
+        _accounts.Clear();
+
+        var accounts = await _entityFileService.LoadEntitiesAsync<UOAccountEntity>(accountsFilePath);
+
+        foreach (var account in accounts)
+        {
+            _accounts[account.Id] = account;
+        }
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Information("Saving {Count} accounts to file...", _accounts.Count);
+        await SaveAccountsAsync();
     }
 
     public async Task<string> CreateAccount(
@@ -65,7 +74,7 @@ public class AccountService : IAccountService
         await _eventBusService.PublishAsync(new AccountCreatedEvent("", username, accountLevel));
 
 
-        return "";
+        return account.Id;
     }
 
     public void Dispose()
