@@ -42,7 +42,6 @@ public struct EntityDataBlock
 
         var hash = BitConverter.ToUInt64(hashBytes, 0);
 
-        Console.WriteLine($"[DEBUG] Data hash: {hash:X16} for {data.Length} bytes");
         return hash;
     }
 }

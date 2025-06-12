@@ -85,10 +85,10 @@ public class MoongateFileWriter : IDisposable
         await _stream.FlushAsync();
 
         /// Debug logging
-        Console.WriteLine($"[DEBUG] Written {_entities.Count} entities, file size: {_stream.Position} bytes");
+        _logger.Debug($"[DEBUG] Written {_entities.Count} entities, file size: {_stream.Position} bytes");
         foreach (var entity in _entities)
         {
-            Console.WriteLine($"[DEBUG] Entity: {entity.TypeName}, Data size: {entity.DataLength} bytes");
+            _logger.Debug($"[DEBUG] Entity: {entity.TypeName}, Data size: {entity.DataLength} bytes");
         }
     }
 
@@ -153,28 +153,6 @@ public class MoongateFileWriter : IDisposable
         if (!BitConverter.IsLittleEndian)
             Array.Reverse(bytes);
         await _stream.WriteAsync(bytes);
-    }
-
-    /// <summary>
-    /// Compute hash for entity type name using improved algorithm
-    /// </summary>
-    private static ulong ComputeTypeHash(string typeName)
-    {
-        // Debug: stampa il nome del tipo per verificare
-        Console.WriteLine($"[DEBUG] Computing hash for type: '{typeName}'");
-
-        if (string.IsNullOrEmpty(typeName))
-        {
-            Console.WriteLine("[DEBUG] WARNING: Empty type name!");
-            return 0;
-        }
-        var inputBytes = Encoding.UTF8.GetBytes(typeName.ToLowerInvariant());
-        var hashBytes = System.Security.Cryptography.SHA256.HashData(inputBytes);
-
-        var hash = BitConverter.ToUInt64(hashBytes, 0);
-
-        Console.WriteLine($"[DEBUG] Type '{typeName}' → Hash: {hash:X16}");
-        return hash;
     }
 
     public void Dispose()

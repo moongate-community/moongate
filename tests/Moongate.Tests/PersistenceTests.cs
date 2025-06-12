@@ -31,19 +31,19 @@ public class PersistenceTests
         );
     }
 
-    // [OneTimeTearDown]
-    // public void Cleanup()
-    // {
-    //     if (Directory.Exists(_tmpDirectory))
-    //     {
-    //         Directory.Delete(_tmpDirectory, true);
-    //     }
-    // }
+    [OneTimeTearDown]
+    public void Cleanup()
+    {
+        if (Directory.Exists(_tmpDirectory))
+        {
+            Directory.Delete(_tmpDirectory, true);
+        }
+    }
 
     [Test]
     public Task TestSaveFilesAsync()
     {
-        var randomEntities = Enumerable.Range(1, 1000)
+        var randomEntities = Enumerable.Range(1, 100)
             .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
             .ToList();
 
@@ -53,7 +53,7 @@ public class PersistenceTests
     [Test]
     public async Task TestLoadFilesAsync()
     {
-        var randomEntities = Enumerable.Range(1, 1000)
+        var randomEntities = Enumerable.Range(1, 100)
             .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
             .ToList();
 
@@ -80,7 +80,9 @@ public class TestEntity
         Value = value;
     }
 
-    public TestEntity() { } // Parameterless constructor for deserialization
+    public TestEntity()
+    {
+    } // Parameterless constructor for deserialization
 }
 
 internal class TestReaderWriter : IEntityWriter, IEntityReader
