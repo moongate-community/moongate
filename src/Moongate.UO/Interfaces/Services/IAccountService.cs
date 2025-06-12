@@ -5,7 +5,7 @@ namespace Moongate.UO.Interfaces.Services;
 
 public interface IAccountService : IMoongateAutostartService
 {
-    string CreateAccount(string username, string password, AccountLevelType accountLevel = AccountLevelType.User);
+    Task<string> CreateAccount(string username, string password, AccountLevelType accountLevel = AccountLevelType.User);
 
 
 
