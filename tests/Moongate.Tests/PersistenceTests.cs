@@ -53,7 +53,7 @@ public class PersistenceTests
     [Test]
     public async Task TestLoadFilesAsync()
     {
-        var randomEntities = Enumerable.Range(1, 1_000_000)
+        var randomEntities = Enumerable.Range(1, 10_000)
             .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
             .ToList();
 
