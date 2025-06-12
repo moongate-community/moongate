@@ -2,7 +2,7 @@ using System.Text;
 
 namespace Moongate.Core.Persistence.Data;
 
-// <summary>
+/// <summary>
 /// Binary file format for Moongate entities
 /// Format:
 /// [Header: "MOONGATE"] - 8 bytes
@@ -26,5 +26,5 @@ public class MoongateFileFormat
     /// <summary>
     /// Size of each index entry in bytes
     /// </summary>
-    public const int INDEX_ENTRY_SIZE = 16; // 8 bytes type hash + 8 bytes offset
+    public const int INDEX_ENTRY_SIZE = 16; // 8 bytes data hash + 8 bytes offset
 }

@@ -7,4 +7,9 @@
         <Version>0.0.0.1</Version>
     </PropertyGroup> 
 
+    <ItemGroup>
+      <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
+      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
+    </ItemGroup> 
+
 </Project>

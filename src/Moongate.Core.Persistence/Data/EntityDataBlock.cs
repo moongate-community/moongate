@@ -20,10 +20,28 @@ public struct EntityDataBlock
     /// </summary>
     public byte[] Data { get; set; }
 
+    /// <summary>
+    /// Hash of the serialized data for uniqueness
+    /// </summary>
+    public ulong DataHash { get; set; }
+
     public EntityDataBlock(string typeName, byte[] data)
     {
         TypeName = typeName;
         DataLength = (uint)data.Length;
         Data = data;
+        DataHash = ComputeDataHash(data);
+    }
+
+    /// <summary>
+    /// Compute hash from serialized data bytes
+    /// </summary>
+    private static ulong ComputeDataHash(byte[] data)
+    {
+        var hashBytes = System.Security.Cryptography.SHA256.HashData(data);
+
+        var hash = BitConverter.ToUInt64(hashBytes, 0);
+
+        return hash;
     }
 }
