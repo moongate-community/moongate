@@ -2,6 +2,8 @@
 using DryIoc;
 using Moongate.Core.Data.Configs.Services;
 using Moongate.Core.Json;
+using Moongate.Core.Persistence.Interfaces.Entities;
+using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Resources;
 using Moongate.Core.Server.Bootstrap;
 using Moongate.Core.Server.Data.Options;
@@ -11,11 +13,14 @@ using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
 using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
+using Moongate.Server.Persistence;
 using Moongate.Server.Services;
+using Moongate.UO.Data.Persistence;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
+JsonUtils.RegisterJsonContext(UOJsonContext.Default);
 
 var cancellationTokenSource = new CancellationTokenSource();
 
@@ -59,8 +64,15 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IGameSessionService), typeof(GameSessionService))
                 .AddService(typeof(INetworkService), typeof(NetworkService))
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
+                .AddService(typeof(IAccountService), typeof(AccountService))
+                //
+                .AddService(typeof(IEntityFileService), typeof(MoongateEntityWriterReader))
                 .AddService(typeof(PacketLoggerService))
                 ;
+
+
+            container.RegisterInstance<IEntityReader>(new MoongateEntityWriterReader());
+            container.RegisterInstance<IEntityWriter>(new MoongateEntityWriterReader());
         };
 
         bootstrap.ConfigureScriptEngine += scriptEngine => { scriptEngine.AddScriptModule(typeof(LoggerModule)); };

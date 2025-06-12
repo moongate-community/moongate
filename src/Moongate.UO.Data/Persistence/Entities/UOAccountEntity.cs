@@ -1,4 +1,5 @@
 using Moongate.Core.Server.Types;
+using NanoidDotNet;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
@@ -17,4 +18,10 @@ public class UOAccountEntity
     public DateTime LastLogin { get; set; }
 
     public bool IsActive { get; set; }
+
+    public UOAccountEntity()
+    {
+        Id = Nanoid.Generate();
+        Created = DateTime.Now;
+    }
 }
