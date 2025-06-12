@@ -204,6 +204,12 @@ public class MoongateBootstrap
         foreach (var serviceDefinition in servicesToLoad.OrderBy(s => s.Priority))
         {
             var service = _container.Resolve(serviceDefinition.ServiceType);
+
+            if (isStart)
+            {
+                Log.Logger.Debug("Ctor for service: {ServiceName}", service.GetType().Name);
+            }
+
             if (service is IMoongateAutostartService startableService)
             {
                 if (isStart)

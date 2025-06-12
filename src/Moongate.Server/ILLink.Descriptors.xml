@@ -23,8 +23,8 @@
         <type fullname="Moongate.UO.*" preserve="all"/>
     </assembly>
 
-    <assembly fullname="Moongate.Persistence">
-        <type fullname="Moongate.Persistence.*" preserve="all"/>
+    <assembly fullname="Moongate.Core.Persistence">
+        <type fullname="Moongate.Core.Persistence.*" preserve="all"/>
     </assembly>
 
 

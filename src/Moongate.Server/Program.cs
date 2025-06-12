@@ -4,6 +4,7 @@ using Moongate.Core.Data.Configs.Services;
 using Moongate.Core.Json;
 using Moongate.Core.Persistence.Interfaces.Entities;
 using Moongate.Core.Persistence.Interfaces.Services;
+using Moongate.Core.Persistence.Services;
 using Moongate.Core.Resources;
 using Moongate.Core.Server.Bootstrap;
 using Moongate.Core.Server.Data.Options;
@@ -66,7 +67,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(IAccountService), typeof(AccountService))
                 //
-                .AddService(typeof(IEntityFileService), typeof(MoongateEntityWriterReader))
+                .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))
                 ;
 
