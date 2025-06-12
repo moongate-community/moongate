@@ -64,14 +64,15 @@ public class AccountService : IAccountService
         var account = new UOAccountEntity
         {
             Username = username,
-            HashedPassword = password, // In a real application, you should hash the password
+            HashedPassword = password,
             AccountLevel = accountLevel,
             IsActive = true
         };
 
         _accounts[account.Id] = account;
 
-        await _eventBusService.PublishAsync(new AccountCreatedEvent("", username, accountLevel));
+        await _eventBusService.PublishAsync(new AccountCreatedEvent(account.Id, username, accountLevel));
+        _logger.Information("Account created: {Username} with ID: {AccountId}", username, account.Id);
 
 
         return account.Id;
