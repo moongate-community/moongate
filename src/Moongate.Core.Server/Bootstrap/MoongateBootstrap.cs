@@ -28,7 +28,7 @@ public class MoongateBootstrap
 
     private DirectoriesConfig _directoriesConfig;
 
-    private readonly CancellationToken _stopCancellationToken;
+    private readonly CancellationTokenSource _stopCancellationToken;
     public event MoongateBootstrapDelegates.ConfigureServicesDelegate? ConfigureServices;
 
     public event MoongateBootstrapDelegates.ConfigureScriptEngineDelegate? ConfigureScriptEngine;
@@ -38,14 +38,16 @@ public class MoongateBootstrap
 
     private readonly MoongateArgsOptions _argsOptions;
 
-    public MoongateBootstrap(MoongateArgsOptions argsOptions, CancellationToken stopCancellationToken)
+    public MoongateBootstrap(MoongateArgsOptions argsOptions, CancellationTokenSource stopCancellationTokenSource)
     {
-        _stopCancellationToken = stopCancellationToken;
+        _stopCancellationToken = stopCancellationTokenSource;
         _argsOptions = argsOptions;
 
         _container = new Container(rules =>
             rules.WithUseInterpretation()
         );
+
+        _container.RegisterInstance(this);
 
         MoongateContext.Container = _container;
     }
@@ -162,13 +164,13 @@ public class MoongateBootstrap
 
         await StartOrStopServices(true);
 
-        await _container.Resolve<ICommandSystemService>().StartConsoleAsync(_stopCancellationToken);
+        await _container.Resolve<ICommandSystemService>().StartConsoleAsync(_stopCancellationToken.Token);
 
         while (!_stopCancellationToken.IsCancellationRequested)
         {
             try
             {
-                await Task.Delay(1000, _stopCancellationToken);
+                await Task.Delay(1000, _stopCancellationToken.Token);
             }
             catch (OperationCanceledException)
             {
@@ -177,6 +179,13 @@ public class MoongateBootstrap
                 await StopAsync();
             }
         }
+    }
+
+    public Task RequestShutdownAsync()
+    {
+        Log.Logger.Information("Shutdown requested, stopping Moongate");
+        ShutdownRequest?.Invoke();
+        return StopAsync();
     }
 
     private async Task StartOrStopServices(bool isStart)
@@ -231,6 +240,9 @@ public class MoongateBootstrap
     public async Task StopAsync()
     {
         await StartOrStopServices(false);
+        Log.Logger.Information("All services stopped. Moongate is shutting down.");
+        await Log.CloseAndFlushAsync();
+        await _stopCancellationToken.CancelAsync();
     }
 
     private MoongateServerConfig CheckAndLoadConfig(string configName)

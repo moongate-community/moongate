@@ -47,7 +47,7 @@ await ConsoleApp.RunAsync(
             UltimaOnlineDirectory = ultimaDirectory
         };
 
-        var bootstrap = new MoongateBootstrap(moongateArgsOptions, cancellationTokenSource.Token);
+        var bootstrap = new MoongateBootstrap(moongateArgsOptions, cancellationTokenSource);
 
         bootstrap.ConfigureServices += container =>
         {

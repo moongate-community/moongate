@@ -1,5 +1,8 @@
 using System.Text;
+using DryIoc;
+using Moongate.Core.Server.Bootstrap;
 using Moongate.Core.Server.Data.Internal.Commands;
+using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Interfaces.Services;
@@ -37,7 +40,15 @@ public class CommandSystemService : ICommandSystemService
     {
         RegisterCommand("help|?", OnHelpCommand, "Displays this help message.");
         RegisterCommand("lock|" + _unlockCharacter, OnLockCommand, "Locks the console input. Press '*' to unlock.", AccountLevelType.Admin, CommandSourceType.Console);
+        RegisterCommand("exit|shutdown", OnExitCommand, "Exits the application.", AccountLevelType.Admin, CommandSourceType.Console);
+    }
 
+    private async Task OnExitCommand(CommandSystemContext context)
+    {
+        AnsiConsole.Markup("[red]Exiting application in 5 seconds...[/]");
+        var bootstrap = MoongateContext.Container.Resolve<MoongateBootstrap>();
+        await Task.Delay(5000);
+        await bootstrap.RequestShutdownAsync();
     }
 
     private Task OnLockCommand(CommandSystemContext context)
