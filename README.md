@@ -1,4 +1,4 @@
-![](./images/moongate_logo.png)# Moongate Server
+![](./images/moongate_logo.png)
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-.NET%209-blueviolet" alt=".NET 9">
