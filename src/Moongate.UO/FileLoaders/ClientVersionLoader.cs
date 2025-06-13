@@ -3,11 +3,14 @@ using Moongate.UO.Context;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Version;
 using Moongate.UO.Interfaces.FileLoaders;
+using Serilog;
 
 namespace Moongate.UO.FileLoaders;
 
 public class ClientVersionLoader : IFileLoader
 {
+    private readonly ILogger _logger = Log.ForContext<ClientVersionLoader>();
+
     public Task LoadAsync()
     {
         var path = UoFiles.FindDataFile("client.exe");
@@ -35,6 +38,8 @@ public class ClientVersionLoader : IFileLoader
             var buildPart = BinaryPrimitives.ReadUInt16LittleEndian(buffer.AsSpan(offset + 6));
 
             UOContext.ServerClientVersion = new ClientVersion(majorPart, minorPart, buildPart, privatePart);
+
+            _logger.Information("Client version loaded: {Version}", UOContext.ServerClientVersion);
         }
 
         return Task.CompletedTask;

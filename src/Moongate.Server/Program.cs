@@ -20,6 +20,7 @@ using Moongate.Server.Services;
 using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Persistence;
+using Moongate.UO.FileLoaders;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Modules;
@@ -73,12 +74,17 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(INetworkService), typeof(NetworkService))
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(IAccountService), typeof(AccountService))
+                .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
+
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))
                 ;
 
             container.AddService(typeof(AccountCommands));
+
+
+
 
 
             container.RegisterInstance<IEntityReader>(new MoongateEntityWriterReader());
@@ -93,10 +99,14 @@ await ConsoleApp.RunAsync(
 
         bootstrap.AfterInitialize += (container, config ) =>
         {
+            var fileLoaderService = container.Resolve<IFileLoaderService>();
             var directoriesConfig = container.Resolve<DirectoriesConfig>();
             CopyAssetsFilesAsync(directoriesConfig);
 
             UoFiles.ScanForFiles(config.UltimaOnlineDirectory);
+
+            fileLoaderService.AddFileLoader<ClientVersionLoader>();
+
         };
 
         bootstrap.Initialize();
@@ -122,7 +132,6 @@ static async Task CopyAssetsFilesAsync(DirectoriesConfig directoriesConfig)
 
         if (assetFile.FileName.StartsWith("_"))
         {
-            // Skip files that start with an underscore
             continue;
         }
 
