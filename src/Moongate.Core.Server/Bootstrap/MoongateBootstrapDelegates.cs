@@ -11,6 +11,6 @@ public class MoongateBootstrapDelegates
     public delegate void ConfigureScriptEngineDelegate(IScriptEngineService scriptEngine);
     public delegate void ConfigureNetworkServicesDelegate(INetworkService networkService);
     public delegate void ShutdownRequestDelegate();
-    public delegate void AfterInitializeDelegate(IContainer container, MoongateServerConfig serverConfig, MoongateRuntimeConfig runtimeConfig);
+    public delegate void AfterInitializeDelegate(IContainer container, MoongateServerConfig serverConfig);
 
 }

@@ -87,9 +87,9 @@ await ConsoleApp.RunAsync(
             scriptEngine.AddScriptModule(typeof(AccountModule));
         };
 
-        bootstrap.AfterInitialize += (container, config, runtimeConfig) =>
+        bootstrap.AfterInitialize += (container, config ) =>
         {
-            UoFiles.ScanForFiles(runtimeConfig.UoDataPath);
+            UoFiles.ScanForFiles(config.UltimaOnlineDirectory);
         };
 
         bootstrap.Initialize();

@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using Humanizer;
 using Serilog;
 
 namespace Moongate.UO.Data;
@@ -67,10 +68,11 @@ public class UoFiles
             {
                 var fileName = Path.GetFileName(file);
                 var filePath = Path.GetDirectoryName(file);
+                var fileLength = new FileInfo(file).Length;
                 if (filePath != null)
                 {
                     MulPath[fileName.ToLower()] = Path.Combine(filePath, fileName);
-                    _logger.Debug("Found UO {File}", fileName.ToLower());
+                    _logger.Debug("Found UO {File} ({FileLength} bytes)", fileName.ToLower(), fileLength);
                 }
             }
         }

@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Core.Directories;
+using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Server.Data.Configs.Runtime;
 using Moongate.Core.Server.Data.Configs.Server;
@@ -76,7 +77,7 @@ public class MoongateBootstrap
 
         ConfigureDefaultServices();
 
-        AfterInitialize?.Invoke(_container, _moongateServerConfig, MoongateContext.RuntimeConfig);
+        AfterInitialize?.Invoke(_container, _moongateServerConfig );
     }
 
     private void ConfigureDirectories()
@@ -86,6 +87,12 @@ public class MoongateBootstrap
             _argsOptions.RootDirectory = Environment.GetEnvironmentVariable("MOONGATE_ROOT_DIRECTORY") ??
                                          Path.Combine(Directory.GetCurrentDirectory(), "moongate");
         }
+
+        // Resolve path
+        _argsOptions.RootDirectory = _argsOptions.RootDirectory.Replace(
+            "~",
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+        );
 
         _directoriesConfig = new DirectoriesConfig(_argsOptions.RootDirectory, Enum.GetNames<DirectoryType>());
 
@@ -124,11 +131,16 @@ public class MoongateBootstrap
 
     public bool CheckUltimaOnlineDirectory()
     {
+
+
         if (string.IsNullOrEmpty(_moongateServerConfig.UltimaOnlineDirectory))
         {
             Log.Logger.Error("Ultima Online directory is not set in the configuration.");
             return false;
         }
+
+        _moongateServerConfig.UltimaOnlineDirectory = _moongateServerConfig.UltimaOnlineDirectory
+            .ResolvePathAndEnvs();
 
         if (!Directory.Exists(_moongateServerConfig.UltimaOnlineDirectory))
         {
@@ -139,6 +151,7 @@ public class MoongateBootstrap
             return false;
         }
 
+        MoongateContext.RuntimeConfig.UoDataPath = _moongateServerConfig.UltimaOnlineDirectory;
         return true;
     }
 
@@ -275,7 +288,7 @@ public class MoongateBootstrap
 
         config.UltimaOnlineDirectory ??= _argsOptions.UltimaOnlineDirectory;
 
-        MoongateContext.RuntimeConfig.UoDataPath = config.UltimaOnlineDirectory;
+
         MoongateContext.RuntimeConfig.IsPacketLoggingEnabled = config.Network.LogPackets;
 
         return config;
