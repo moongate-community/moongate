@@ -63,7 +63,7 @@ public class MoongateFileReader : IDisposable
             _index[dataHash] = entry;
             _allEntries.Add(entry);
 
-            _logger.Debug($"[DEBUG] Loaded index entry: Hash {dataHash:X16} → Offset {offset}");
+            _logger.Debug("Loaded index entry: Hash {DataHash:X16} → Offset {Offset}", dataHash, offset);
         }
     }
 
@@ -73,8 +73,8 @@ public class MoongateFileReader : IDisposable
     public async Task<List<T>> GetEntitiesAsync<T>() where T : class
     {
         var typeName = typeof(T).FullName;
-        _logger.Debug($"[DEBUG] Looking for entities of type '{typeName}'");
-        _logger.Debug($"[DEBUG] Total entries in index: {_allEntries.Count}");
+        _logger.Debug("Looking for entities of type '{TypeName}'", typeName);
+        _logger.Debug("Total entries in index: {AllEntriesCount}", _allEntries.Count);
 
         var entities = new List<T>();
 
@@ -94,7 +94,7 @@ public class MoongateFileReader : IDisposable
             }
             else
             {
-                _logger.Debug($"[DEBUG] Type mismatch: expected '{typeName}', got '{entityInfo?.TypeName}'");
+                _logger.Debug("Type mismatch: expected '{TypeName}', got '{EntityInfoTypeName}'", typeName, entityInfo?.TypeName);
             }
         }
 
@@ -193,7 +193,7 @@ public class MoongateFileReader : IDisposable
         /// Find registered type
         if (!_typeRegistry.TryGetValue(typeName, out var type))
         {
-            _logger.Debug($"Warning: Type '{typeName}' not registered, skipping entity");
+            _logger.Warning("Warning: Type '{TypeName}' not registered, skipping entity", typeName);
             return null;
         }
 
