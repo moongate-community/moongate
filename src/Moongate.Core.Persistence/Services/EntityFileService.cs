@@ -31,8 +31,6 @@ namespace Moongate.Core.Persistence.Services;
 
             var filePath = GetFilePath(fileName);
 
-            /// Create backup if file exists
-            //await CreateBackupIfExistsAsync(filePath);
 
             try
             {
@@ -45,18 +43,10 @@ namespace Moongate.Core.Persistence.Services;
                 }
 
                 await writer.WriteAsync();
-                /// Ensure all data is flushed to disk
             }
             catch
             {
-                /// Restore backup if save failed
-                await RestoreBackupAsync(filePath);
                 throw;
-            }
-            finally
-            {
-                /// Clean up backup
-                await CleanupBackupAsync(filePath);
             }
         }
 
@@ -107,8 +97,6 @@ namespace Moongate.Core.Persistence.Services;
 
             try
             {
-                /// Create backup before deletion
-                await CreateBackupIfExistsAsync(filePath);
 
                 File.Delete(filePath);
                 return true;
@@ -159,55 +147,6 @@ namespace Moongate.Core.Persistence.Services;
             return Path.Combine(_dataDirectory, fileName);
         }
 
-        /// <summary>
-        /// Create backup of existing file
-        /// </summary>
-        private async Task CreateBackupIfExistsAsync(string filePath)
-        {
-            if (File.Exists(filePath))
-            {
-                var backupPath = filePath + ".backup";
-
-                /// Remove old backup if exists
-                if (File.Exists(backupPath))
-                {
-                    File.Delete(backupPath);
-                }
-
-                File.Copy(filePath, backupPath);
-            }
-        }
-
-        /// <summary>
-        /// Restore backup file
-        /// </summary>
-        private async Task RestoreBackupAsync(string filePath)
-        {
-            var backupPath = filePath + ".backup";
-
-            if (File.Exists(backupPath))
-            {
-                /// Remove corrupted file
-                if (File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
-
-                /// Restore backup
-                File.Move(backupPath, filePath);
-            }
-        }
-
-        /// <summary>
-        /// Clean up backup file
-        /// </summary>
-        private async Task CleanupBackupAsync(string filePath)
-        {
-            var backupPath = filePath + ".backup";
-
-            if (File.Exists(backupPath))
-                File.Delete(backupPath);
-        }
 
         #endregion
     }

@@ -1,10 +1,14 @@
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 
 namespace Moongate.UO.Data.Persistence;
 
 [JsonSerializable(typeof(UOAccountEntity))]
 [JsonSerializable(typeof(UOAccountCharacterEntity))]
+
+[JsonSerializable(typeof(SkillInfo))]
+[JsonSerializable(typeof(SkillInfo[]))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]

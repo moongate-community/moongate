@@ -1,0 +1,12 @@
+{
+  "network": {
+    "port": 2593,
+    "logPackets": false
+  },
+  "webServer": {
+    "port": 23853,
+    "enabled": true
+  },
+  "name": "Moongate Shard",
+  "ultimaOnlineDirectory": "~/uo/"
+}

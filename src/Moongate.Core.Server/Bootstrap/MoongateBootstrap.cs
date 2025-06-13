@@ -1,6 +1,8 @@
 using DryIoc;
 using Moongate.Core.Directories;
+using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Json;
+using Moongate.Core.Server.Data.Configs.Runtime;
 using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Data.Configs.Services;
 using Moongate.Core.Server.Data.Internal.Services;
@@ -30,11 +32,11 @@ public class MoongateBootstrap
 
     private readonly CancellationTokenSource _stopCancellationToken;
     public event MoongateBootstrapDelegates.ConfigureServicesDelegate? ConfigureServices;
-
     public event MoongateBootstrapDelegates.ConfigureScriptEngineDelegate? ConfigureScriptEngine;
     public event MoongateBootstrapDelegates.ConfigureNetworkServicesDelegate ConfigureNetworkServices;
-
     public event MoongateBootstrapDelegates.ShutdownRequestDelegate ShutdownRequest;
+
+    public event MoongateBootstrapDelegates.AfterInitializeDelegate AfterInitialize;
 
     private readonly MoongateArgsOptions _argsOptions;
 
@@ -65,14 +67,17 @@ public class MoongateBootstrap
         LoadConfig();
         ConfigureLogging();
 
-        //  if (!CheckUltimaOnlineDirectory())
-        //  {
-        //      throw new DirectoryNotFoundException(
-        //          "Ultima Online directory not found or not set in the configuration."
-        //     );
-        // }
+        if (!CheckUltimaOnlineDirectory())
+        {
+            throw new DirectoryNotFoundException(
+                "Ultima Online directory not found or not set in the configuration."
+            );
+        }
+
 
         ConfigureDefaultServices();
+
+        AfterInitialize?.Invoke(_container, _moongateServerConfig );
     }
 
     private void ConfigureDirectories()
@@ -82,6 +87,12 @@ public class MoongateBootstrap
             _argsOptions.RootDirectory = Environment.GetEnvironmentVariable("MOONGATE_ROOT_DIRECTORY") ??
                                          Path.Combine(Directory.GetCurrentDirectory(), "moongate");
         }
+
+        // Resolve path
+        _argsOptions.RootDirectory = _argsOptions.RootDirectory.Replace(
+            "~",
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+        );
 
         _directoriesConfig = new DirectoriesConfig(_argsOptions.RootDirectory, Enum.GetNames<DirectoryType>());
 
@@ -120,11 +131,16 @@ public class MoongateBootstrap
 
     public bool CheckUltimaOnlineDirectory()
     {
+
+
         if (string.IsNullOrEmpty(_moongateServerConfig.UltimaOnlineDirectory))
         {
             Log.Logger.Error("Ultima Online directory is not set in the configuration.");
             return false;
         }
+
+        _moongateServerConfig.UltimaOnlineDirectory = _moongateServerConfig.UltimaOnlineDirectory
+            .ResolvePathAndEnvs();
 
         if (!Directory.Exists(_moongateServerConfig.UltimaOnlineDirectory))
         {
@@ -135,6 +151,7 @@ public class MoongateBootstrap
             return false;
         }
 
+        MoongateContext.RuntimeConfig.UoDataPath = _moongateServerConfig.UltimaOnlineDirectory;
         return true;
     }
 
@@ -270,6 +287,7 @@ public class MoongateBootstrap
         JsonUtils.SerializeToFile(config, configPath);
 
         config.UltimaOnlineDirectory ??= _argsOptions.UltimaOnlineDirectory;
+
 
         MoongateContext.RuntimeConfig.IsPacketLoggingEnabled = config.Network.LogPackets;
 
