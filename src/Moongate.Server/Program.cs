@@ -1,6 +1,7 @@
 ﻿using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Data.Configs.Services;
+using Moongate.Core.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Persistence.Interfaces.Entities;
 using Moongate.Core.Persistence.Interfaces.Services;
@@ -22,6 +23,7 @@ using Moongate.UO.Data.Persistence;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Modules;
+using Serilog;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
@@ -43,7 +45,9 @@ await ConsoleApp.RunAsync(
             cancellationTokenSource.Cancel(); // Signal cancellation
         };
 
-        var header = ResourceUtils.GetEmbeddedResourceContent("Assets/header.txt", typeof(Program).Assembly);
+        var header = ResourceUtils.GetEmbeddedResourceContent("Assets/_header.txt", typeof(Program).Assembly);
+
+
 
         Console.WriteLine(header);
 
@@ -89,6 +93,9 @@ await ConsoleApp.RunAsync(
 
         bootstrap.AfterInitialize += (container, config ) =>
         {
+            var directoriesConfig = container.Resolve<DirectoriesConfig>();
+            CopyAssetsFilesAsync(directoriesConfig);
+
             UoFiles.ScanForFiles(config.UltimaOnlineDirectory);
         };
 
@@ -96,4 +103,43 @@ await ConsoleApp.RunAsync(
 
         await bootstrap.StartAsync();
     }
+
+
 );
+
+static async Task CopyAssetsFilesAsync(DirectoriesConfig directoriesConfig)
+{
+    var assets = ResourceUtils.GetEmbeddedResourceNames(typeof(Program).Assembly, "Assets");
+    var files = assets.Select(s => new
+            { Asset = s, FileName = ResourceUtils.ConvertResourceNameToPath(s, "Moongate.Server.Assets") }
+        )
+        .ToList();
+
+
+    foreach (var assetFile in files)
+    {
+        var fileName = Path.Combine(directoriesConfig.Root, assetFile.FileName);
+
+        if (assetFile.FileName.StartsWith("_"))
+        {
+            // Skip files that start with an underscore
+            continue;
+        }
+
+        if (!File.Exists(fileName))
+        {
+            Log.Logger.Information("Copying asset  {FileName}", fileName);
+
+            var content = ResourceUtils.GetEmbeddedResourceContent(assetFile.Asset, typeof(Program).Assembly);
+
+            var directory = Path.GetDirectoryName(fileName);
+
+            if (!string.IsNullOrEmpty(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            await File.WriteAllTextAsync(fileName, content);
+        }
+    }
+}
