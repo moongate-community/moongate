@@ -1,6 +1,8 @@
+using Moongate.Core.Data;
 using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
+using Moongate.Core.Utils;
 using Moongate.UO.Data.Events.Accounts;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Interfaces.Services;
@@ -64,7 +66,7 @@ public class AccountService : IAccountService
         var account = new UOAccountEntity
         {
             Username = username,
-            HashedPassword = password,
+            HashedPassword = HashUtils.CreatePassword(password),
             AccountLevel = accountLevel,
             IsActive = true
         };
@@ -76,6 +78,55 @@ public class AccountService : IAccountService
 
 
         return account.Id;
+    }
+
+    public async Task<bool> ChangePassword(string accountName, string newPassword)
+    {
+        var account =
+            _accounts.Values.FirstOrDefault(a => a.Username.Equals(accountName, StringComparison.OrdinalIgnoreCase));
+        if (account == null)
+        {
+            _logger.Warning("Account not found: {AccountName}", accountName);
+            return false;
+        }
+
+        account.HashedPassword = newPassword;
+        _logger.Information("Password changed for account: {AccountName}", accountName);
+
+        await SaveAccountsAsync();
+
+        return true;
+    }
+
+    public async Task<bool> ChangeLevel(string accountName, AccountLevelType levelType)
+    {
+        var account =
+            _accounts.Values.FirstOrDefault(a => a.Username.Equals(accountName, StringComparison.OrdinalIgnoreCase));
+
+        if (account == null)
+        {
+            return false;
+        }
+
+        account.AccountLevel = levelType;
+
+
+        await SaveAccountsAsync();
+        await _eventBusService.PublishAsync(new AccountLevelChangedEvent(accountName, levelType));
+        return true;
+    }
+
+    public async Task<Result<UOAccountEntity>> LoginAsync(string username, string password)
+    {
+        var account = _accounts.Values.FirstOrDefault(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
+
+        if (account == null || !HashUtils.VerifyPassword(password, account.HashedPassword))
+        {
+            return Result<UOAccountEntity>.Failure("Username and/or password are invalid");
+        }
+
+        await _eventBusService.PublishAsync(new AccountLoginEvent(account.Id, username));
+        return Result<UOAccountEntity>.Success(account);
     }
 
     public void Dispose()
