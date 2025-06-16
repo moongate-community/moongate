@@ -10,9 +10,22 @@ public static class JsonUtils
 
     private static JsonSerializerOptions _jsonSerializerOptions = null!;
 
+    public static List<JsonConverter> JsonConverters { get; } = new()
+    {
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true)
+    };
+
     static JsonUtils()
     {
-         RebuildJsonSerializerContexts();
+        RebuildJsonSerializerContexts();
+    }
+
+    public static void AddJsonConverter(JsonConverter converter)
+    {
+        ArgumentNullException.ThrowIfNull(converter);
+
+        JsonConverters.Add(converter);
+        _jsonSerializerOptions.Converters.Add(converter);
     }
 
     private static void RebuildJsonSerializerContexts()
@@ -20,11 +33,17 @@ public static class JsonUtils
         _jsonSerializerOptions = new JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
             WriteIndented = true,
             AllowTrailingCommas = true,
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            TypeInfoResolver = JsonTypeInfoResolver.Combine(JsonSerializerContexts.ToArray())
+            TypeInfoResolver = JsonTypeInfoResolver.Combine(JsonSerializerContexts.ToArray()),
         };
+
+        foreach (var converter in JsonConverters)
+        {
+            _jsonSerializerOptions.Converters.Add(converter);
+        }
     }
 
     public static void RegisterJsonContext(JsonSerializerContext context)

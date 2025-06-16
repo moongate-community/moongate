@@ -64,7 +64,7 @@ public class LoginHandler : IGamePacketHandler
             session.SendPackets(new LoginDeniedPacket(LoginDeniedReason.AccountBlocked));
             return;
         }
-        
+
         // TODO: Check if account is in use by another session
 
         _logger.Information("Login successful for {Username} on session {SessionId}", packet.Account, session.SessionId);

@@ -2,7 +2,6 @@
 
 RELEASE="Debug"
 IS_AOT=true
-
 # Detect OS and architecture
 UNAME_OS="$(uname -s)"
 UNAME_ARCH="$(uname -m)"
@@ -31,5 +30,4 @@ esac
 # Build and run
 dotnet publish -r "$RID" -o dist -p:PublishAot=$IS_AOT -c $RELEASE src/Moongate.Server &&
   ./dist/Moongate.Server "$@" &&
-  rm -rf moongate &&
   rm -rf dist
