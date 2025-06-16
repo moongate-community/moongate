@@ -15,10 +15,12 @@ using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
 using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
+using Moongate.Server.Packets;
 using Moongate.Server.Persistence;
 using Moongate.Server.Services;
 using Moongate.UO.Commands;
 using Moongate.UO.Data;
+using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Persistence;
 using Moongate.UO.FileLoaders;
 using Moongate.UO.Interfaces;
@@ -63,6 +65,9 @@ await ConsoleApp.RunAsync(
 
         var bootstrap = new MoongateBootstrap(moongateArgsOptions, cancellationTokenSource);
 
+
+
+
         bootstrap.ConfigureServices += container =>
         {
             container.RegisterInstance(new ScriptEngineConfig());
@@ -84,9 +89,6 @@ await ConsoleApp.RunAsync(
             container.AddService(typeof(AccountCommands));
 
 
-
-
-
             container.RegisterInstance<IEntityReader>(new MoongateEntityWriterReader());
             container.RegisterInstance<IEntityWriter>(new MoongateEntityWriterReader());
         };
@@ -96,6 +98,15 @@ await ConsoleApp.RunAsync(
             scriptEngine.AddScriptModule(typeof(LoggerModule));
             scriptEngine.AddScriptModule(typeof(AccountModule));
         };
+
+        bootstrap.ConfigureNetworkServices += networkService =>
+        {
+            PacketRegistration.RegisterPackets(networkService);
+
+            networkService.BindPacket<LoginSeedPacket>();
+            networkService.BindPacket<LoginRequestPacket>();
+        };
+
 
         bootstrap.AfterInitialize += (container, config ) =>
         {

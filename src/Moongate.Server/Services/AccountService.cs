@@ -31,7 +31,7 @@ public class AccountService : IAccountService
 
         if (_accounts.Count == 0)
         {
-            CreateAccount("admin", "admin123", AccountLevelType.Admin);
+            CreateAccount("admin", "admin", AccountLevelType.Admin);
             await SaveAccountsAsync();
         }
     }

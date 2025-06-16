@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.0.75.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-15 09:34:12
+ * Moongate Server v0.0.76.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-06-16 11:14:52
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.0.75.0""
+ * ""0.0.76.0""
  */
 declare const VERSION: string;
 
@@ -53,6 +53,13 @@ declare const accounts: {
      * @param accountLevel string
      */
     createAccount(username: string, password: string, accountLevel?: string): void;
+    /**
+     * Change password of account
+     * @param accountName string
+     * @param newPassword string
+     * @returns boolean
+     */
+    changePassword(accountName: string, newPassword: string): boolean;
 };
 
 

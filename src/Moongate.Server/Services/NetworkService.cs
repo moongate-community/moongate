@@ -107,11 +107,6 @@ public class NetworkService : INetworkService
                 break;
             }
 
-            if (!_handlers.TryGetValue(opcode, out var handler))
-            {
-                _logger.Warning("Received unknown packet opcode: 0x{Opcode:X2}", opcode);
-                break;
-            }
 
             _logger.Verbose(
                 "Processing packet with opcode: 0x{Opcode:X2}, expected size: {ExpectedSize} bytes",

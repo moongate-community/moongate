@@ -361,7 +361,7 @@ public static class PacketRegistration
         networkService.RegisterPacket(0xE1, -1, "Client Type (KR/SA)");
 
         /// KR/2D Client Login/Seed
-        networkService.RegisterPacket(0xEF, -1, "KR/2D Client Login/Seed");
+        networkService.RegisterPacket(0xEF, 21, "KR/2D Client Login/Seed");
     }
 
     #endregion
