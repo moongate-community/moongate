@@ -1,4 +1,5 @@
 using Moongate.Core.Network.Servers.Tcp;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Session;
@@ -6,6 +7,10 @@ namespace Moongate.UO.Data.Session;
 public class GameNetworkSession : IDisposable
 {
     public string SessionId { get; set; }
+
+    public UOAccountEntity Account { get; set; }
+    public int Seed { get; set; }
+
     public NetworkSessionFeatureType Features { get; set; } = NetworkSessionFeatureType.None;
     public NetworkSessionStateType State { get; set; } = NetworkSessionStateType.None;
     public MoongateTcpClient NetworkClient { get; set; }
