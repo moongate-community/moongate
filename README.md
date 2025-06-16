@@ -66,7 +66,7 @@ is built on these core principles:
 ### 🛠️ JavaScript Scripting Engine
 
 - **Jint Engine** - Full-featured JavaScript runtime with .NET interop
-- **Hot-Reload Support** - Modify game logic without server restarts
+- **Planned Hot-Reload Support** - Feature not yet implemented
 - **TypeScript Definitions** - Auto-generated type definitions for development
 - **Module System** - Organized script architecture with module support
 - **Rich API** - Extensive scripting interface for all game systems
@@ -96,11 +96,8 @@ is built on these core principles:
 
 3. **Configure the server**
    ```bash
-   # Copy example configuration
-   cp config/server.example.json config/server.json
-
-   # Edit configuration to set your UO client path
-   nano config/server.json
+   # Edit the configuration to set your UO client path
+   nano moongate/moongate.json
    ```
 
 4. **Run in development mode**
@@ -127,44 +124,29 @@ dotnet publish -r linux-x64 -o dist -p:PublishAot=true -c Release src/Moongate.S
 # Build the Docker image
 docker build -t moongate-server .
 
-# Run with volume mapping for config and scripts
+# Run with volume mapping for configuration and data
 docker run -d \
   -p 2593:2593 \
-  -v ./config:/app/config \
-  -v ./scripts:/app/scripts \
+  -v ./moongate:/app/moongate \
   moongate-server
 ```
 
 ## Configuration
 
-Moongate uses a comprehensive JSON configuration system:
+Moongate uses a simple JSON configuration file:
 
 ```json
 {
-  "Network": {
-    "Port": 2593,
-    "MaxConnections": 1000,
-    "LogPackets": false
+  "network": {
+    "port": 2593,
+    "logPackets": false
   },
-  "UltimaOnlineDirectory": "/path/to/uo/client",
-  "Services": {
-    "EventLoop": {
-      "TickIntervalMs": 25
-    },
-    "ScriptEngine": {
-      "EnableHotReload": true,
-      "ScriptDirectory": "./scripts",
-      "ScriptNameConversion": "CamelCase"
-    },
-    "Diagnostics": {
-      "MetricsIntervalInSeconds": 60,
-      "PidFileName": "moongate.pid"
-    }
+  "webServer": {
+    "port": 23853,
+    "enabled": true
   },
-  "Logging": {
-    "MinimumLevel": "Information",
-    "PacketLogging": false
-  }
+  "name": "Moongate Shard",
+  "ultimaOnlineDirectory": "~/uo/"
 }
 ```
 
@@ -212,20 +194,8 @@ spells.register(new Fireball());
 
 - **Logger Module** - Advanced logging capabilities
 - **Account Module** - User account management
-- **Player Module** - Character manipulation
-- **Item Module** - Item creation and management
-- **Spell Module** - Magic system customization
-- **NPC Module** - AI and behavior scripting
+- *More modules are planned as development progresses*
 
-### 🔥 Hot-Reload Development
-
-Modify scripts while the server is running:
-
-```bash
-# Scripts are automatically reloaded when changed
-echo "logger.info('Server reloaded!');" > scripts/test.js
-# Changes apply immediately without restart
-```
 
 ## Networking & Protocol
 
@@ -276,8 +246,6 @@ dotnet build
 # Run tests
 dotnet test
 
-# Generate documentation
-dotnet run --project tools/DocGenerator
 ```
 
 ### 🧪 Testing
@@ -317,7 +285,7 @@ dotnet test --filter Category=Network
 ```bash
 # Runtime commands via console
 > status              # Show server status
-> reload scripts      # Hot-reload all scripts
+> reload scripts      # (planned) hot-reload all scripts
 > gc                  # Force garbage collection
 > metrics             # Display performance metrics
 > shutdown            # Graceful shutdown
