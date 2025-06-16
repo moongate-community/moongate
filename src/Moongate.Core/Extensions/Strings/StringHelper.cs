@@ -243,23 +243,30 @@ public static class StringHelpers
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int IndexOfTerminator(this Span<byte> buffer, int sizeT) =>
-        sizeT switch
+    public static int IndexOfTerminator(this Span<byte> buffer, int sizeT)
+    {
+        int index = sizeT switch
         {
-            2 => MemoryMarshal.Cast<byte, char>(buffer).IndexOf((char)0) * 2,
-            4 => MemoryMarshal.Cast<byte, uint>(buffer).IndexOf((uint)0) * 4,
+            2 => MemoryMarshal.Cast<byte, char>(buffer).IndexOf((char)0),
+            4 => MemoryMarshal.Cast<byte, uint>(buffer).IndexOf((uint)0),
             _ => buffer.IndexOf((byte)0)
         };
 
-    // TODO: If returns -1, do not multiply by the byte length
+        return index == -1 ? -1 : index * sizeT;
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int IndexOfTerminator(this ReadOnlySpan<byte> buffer, int sizeT) =>
-        sizeT switch
+    public static int IndexOfTerminator(this ReadOnlySpan<byte> buffer, int sizeT)
+    {
+        int index = sizeT switch
         {
-            2 => MemoryMarshal.Cast<byte, char>(buffer).IndexOf((char)0) * 2,
-            4 => MemoryMarshal.Cast<byte, uint>(buffer).IndexOf((uint)0) * 4,
+            2 => MemoryMarshal.Cast<byte, char>(buffer).IndexOf((char)0),
+            4 => MemoryMarshal.Cast<byte, uint>(buffer).IndexOf((uint)0),
             _ => buffer.IndexOf((byte)0)
         };
+
+        return index == -1 ? -1 : index * sizeT;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ReplaceAny(
