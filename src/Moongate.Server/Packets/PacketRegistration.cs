@@ -393,6 +393,9 @@ public static class PacketRegistration
 
         /// Freeshard List
         networkService.RegisterPacket(0xF1, -1, "Freeshard List");
+
+        /// Login Denied
+        networkService.RegisterPacket(0x82, 2, "Login Denied");
     }
 
     #endregion

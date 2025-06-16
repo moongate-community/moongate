@@ -18,7 +18,6 @@ public class LoginRequestPacket : BaseUoPacket
 
     protected override bool Read(SpanReader reader)
     {
-
         Account = reader.ReadAscii(30);
         Password = reader.ReadAscii(30);
         NextLoginKey = reader.ReadByte();

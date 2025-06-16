@@ -329,7 +329,14 @@ public class NetworkService : INetworkService
 
     public void RegisterPacketHandler(byte opCode, INetworkService.PacketHandlerDelegate handler)
     {
-        _handlers[opCode] += handler;
+        if (!_handlers.TryGetValue(opCode, out var existHandler))
+        {
+            _handlers[opCode] = handler;
+        }
+        else
+        {
+            _handlers[opCode] = existHandler + handler;
+        }
 
         _logger.Information("Registered handler for packet OpCode {OpCode}", opCode.ToPacketString());
     }

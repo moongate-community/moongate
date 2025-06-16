@@ -22,10 +22,12 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Persistence;
+using Moongate.UO.Extensions;
 using Moongate.UO.FileLoaders;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Modules;
+using Moongate.UO.PacketHandlers;
 using Serilog;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
@@ -105,6 +107,11 @@ await ConsoleApp.RunAsync(
 
             networkService.BindPacket<LoginSeedPacket>();
             networkService.BindPacket<LoginRequestPacket>();
+
+            // Registering all packet handlers
+
+            networkService.RegisterGamePacketHandler<LoginRequestPacket, LoginHandler>();
+            networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
         };
 
 
