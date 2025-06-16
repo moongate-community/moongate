@@ -358,7 +358,7 @@ A player can log in, see their character on the map, and walk around the world w
 
 - **Documentation** - [Full Wiki](https://github.com/moongate-community/moongate/wiki)
 - **Issues & Bugs** - [GitHub Issues](https://github.com/moongate-community/moongate/issues)
-- **Discord Community** - [Join our server](https://discord.gg/moongate)
+- **Discord Community** - [Join our server](https://discord.gg/3HT7v95b)
 - **Support Development** - [Patreon](https://www.patreon.com/MoongateServer)
 
 ## Contributing
