@@ -27,6 +27,9 @@ public interface INetworkService : IMoongateAutostartService
     void BindPacket<TPacket>()
         where TPacket : IUoNetworkPacket, new();
 
+    bool IsPacketBound<TPacket>()
+        where TPacket : IUoNetworkPacket, new();
+
     void RegisterPacketHandler<TPacket>(PacketHandlerDelegate handler)
         where TPacket : IUoNetworkPacket, new();
 

@@ -50,7 +50,26 @@ public class LoginHandler : IGamePacketHandler
             await HandleLoginRequestAsync(session, loginRequestPacket);
             return;
         }
+
+        if (packet is SelectServerPacket selectServerPacket)
+        {
+            await HandleSelectServerAsync(session, selectServerPacket);
+            return;
+        }
     }
+
+    private Task HandleSelectServerAsync(GameNetworkSession session, SelectServerPacket packet)
+    {
+        _logger.Debug(
+            "Received select server request from {SessionId} for server index {Index}",
+            session.SessionId,
+            packet.SelectedServerIndex
+        );
+
+
+        return Task.CompletedTask;
+    }
+
 
     private Task HandleLoginSeedAsync(GameNetworkSession session, LoginSeedPacket packet)
     {

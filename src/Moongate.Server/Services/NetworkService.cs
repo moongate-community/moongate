@@ -319,6 +319,12 @@ public class NetworkService : INetworkService
         _packetBuilders[packet.OpCode] = () => new TPacket();
     }
 
+    public bool IsPacketBound<TPacket>() where TPacket : IUoNetworkPacket, new()
+    {
+        var packet = new TPacket();
+        return _packetBuilders.ContainsKey(packet.OpCode);
+    }
+
     public void RegisterPacketHandler<TPacket>(INetworkService.PacketHandlerDelegate handler)
         where TPacket : IUoNetworkPacket, new()
     {
@@ -355,7 +361,7 @@ public class NetworkService : INetworkService
     public void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet)
     {
         var size = GetPacketSize(packet);
-        var spanWriter = new SpanWriter(size, size != -1);
+        var spanWriter = new SpanWriter(size == -1 ? 1 : size, size == -1);
         var packetData = packet.Write(spanWriter);
 
         OnPacketSent?.Invoke(client.Id, packet);
@@ -375,7 +381,6 @@ public class NetworkService : INetworkService
     {
         try
         {
-
             client.Send(data);
 
             OnClientDataSent?.Invoke(client.Id, data);
@@ -427,7 +432,6 @@ public class NetworkService : INetworkService
             _clientsLock.Release();
         }
     }
-
 
 
     public static IEnumerable<IPEndPoint> GetListeningAddresses(IPEndPoint ipep) =>
