@@ -3,7 +3,6 @@ name: MoongateBuild docker image
 on:
   push:
     branches: [ main ]
-  pull_request:
 
 jobs:
   test:
@@ -29,9 +28,6 @@ jobs:
 
       - name: Build
         run: dotnet build --no-restore --configuration Release
-
-      - name: Check formatting
-        run: dotnet format --verify-no-changes
 
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal

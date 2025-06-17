@@ -89,6 +89,5 @@ public class LoginHandler : IGamePacketHandler
         session.Account = account;
 
         session.SendPackets(_shareListPacket);
-
     }
 }
