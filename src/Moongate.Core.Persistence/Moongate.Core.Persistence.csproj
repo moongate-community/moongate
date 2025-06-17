@@ -4,12 +4,12 @@
         <TargetFramework>net9.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>0.0.0.1</Version>
-    </PropertyGroup> 
+        <Version>0.0.1</Version>
+    </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
       <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
-    </ItemGroup> 
+    </ItemGroup>
 
 </Project>
