@@ -9,4 +9,5 @@ public class MoongateServerConfig
     public string Name { get; set; } = "Moongate Shard";
 
     public string? UltimaOnlineDirectory { get; set; }
+    public string Language { get; set; } = "enu";
 }

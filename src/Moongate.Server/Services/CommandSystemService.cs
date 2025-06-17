@@ -39,8 +39,39 @@ public class CommandSystemService : ICommandSystemService
     private void RegisterDefaultCommands()
     {
         RegisterCommand("help|?", OnHelpCommand, "Displays this help message.");
-        RegisterCommand("lock|" + _unlockCharacter, OnLockCommand, "Locks the console input. Press '*' to unlock.", AccountLevelType.Admin, CommandSourceType.Console);
-        RegisterCommand("exit|shutdown", OnExitCommand, "Exits the application.", AccountLevelType.Admin, CommandSourceType.Console);
+        RegisterCommand(
+            "lock|" + _unlockCharacter,
+            OnLockCommand,
+            "Locks the console input. Press '*' to unlock.",
+            AccountLevelType.Admin,
+            CommandSourceType.Console
+        );
+        RegisterCommand(
+            "exit|shutdown",
+            OnExitCommand,
+            "Exits the application.",
+            AccountLevelType.Admin,
+            CommandSourceType.Console
+        );
+        RegisterCommand(
+            "diagnostics|diag",
+            OnDiagnosticsCommand,
+            "Displays diagnostic information.",
+            AccountLevelType.Admin,
+            CommandSourceType.Console
+        );
+    }
+
+    private async Task OnDiagnosticsCommand(CommandSystemContext context)
+    {
+        var diagnosticService = MoongateContext.Container.Resolve<IDiagnosticService>();
+        await diagnosticService.CollectMetricsAsync();
+        var metrics = await diagnosticService.GetCurrentMetricsAsync();
+        foreach (var metric in metrics)
+        {
+            AnsiConsole.MarkupLine($"[green]{metric.Name}:[/] {metric.Value}");
+        }
+
     }
 
     private async Task OnExitCommand(CommandSystemContext context)
@@ -72,7 +103,6 @@ public class CommandSystemService : ICommandSystemService
         context.Print(helpMessage.ToString());
         return Task.CompletedTask;
     }
-
 
 
     public void RegisterCommand(

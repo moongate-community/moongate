@@ -1,5 +1,8 @@
+using System.Net;
+using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.UO.Data.Packets;
+using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
@@ -14,9 +17,24 @@ public class LoginHandler : IGamePacketHandler
 
     private readonly IAccountService _accountService;
 
-    public LoginHandler(IAccountService accountService)
+    private readonly ShardListPacket _shareListPacket = new();
+
+    private readonly MoongateServerConfig _serverConfig;
+
+    public LoginHandler(IAccountService accountService, MoongateServerConfig serverConfig)
     {
         _accountService = accountService;
+        _serverConfig = serverConfig;
+
+
+        // TODO: Get address
+        _shareListPacket.AddShard(new GameServerEntry()
+        {
+            ServerName = _serverConfig.Name,
+            Index = 0,
+            IpAddress = IPAddress.Parse("127.0.0.1")
+        });
+
     }
 
     public async Task HandlePacketAsync(GameNetworkSession session, IUoNetworkPacket packet)
@@ -64,11 +82,13 @@ public class LoginHandler : IGamePacketHandler
             session.SendPackets(new LoginDeniedPacket(LoginDeniedReason.AccountBlocked));
             return;
         }
-        
+
         // TODO: Check if account is in use by another session
 
         _logger.Information("Login successful for {Username} on session {SessionId}", packet.Account, session.SessionId);
         session.Account = account;
+
+        session.SendPackets(_shareListPacket);
 
     }
 }

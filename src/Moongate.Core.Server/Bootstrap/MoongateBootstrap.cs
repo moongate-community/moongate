@@ -167,6 +167,7 @@ public class MoongateBootstrap
 
         _container
             .AddService(typeof(IEventBusService), typeof(EventBusService))
+            .AddService(typeof(IDiagnosticService), typeof(DiagnosticService), -1 )
             .AddService(typeof(IEventDispatcherService), typeof(EventDispatcherService))
             .AddService(typeof(IEventLoopService), typeof(EventLoopService))
             .AddService(typeof(ISchedulerSystemService), typeof(SchedulerSystemService))

@@ -1,4 +1,5 @@
-﻿using ConsoleAppFramework;
+﻿using System.Text.Json.Serialization;
+using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Data.Configs.Services;
 using Moongate.Core.Directories;
@@ -22,6 +23,7 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Persistence;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.FileLoaders;
 using Moongate.UO.Interfaces;
@@ -32,6 +34,7 @@ using Serilog;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
+JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
 
 var cancellationTokenSource = new CancellationTokenSource();
 
@@ -124,6 +127,7 @@ await ConsoleApp.RunAsync(
             UoFiles.ScanForFiles(config.UltimaOnlineDirectory);
 
             fileLoaderService.AddFileLoader<ClientVersionLoader>();
+            fileLoaderService.AddFileLoader<SkillLoader>();
 
         };
 

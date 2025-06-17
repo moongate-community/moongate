@@ -8,5 +8,6 @@
     "enabled": true
   },
   "name": "Moongate Shard",
-  "ultimaOnlineDirectory": "~/uo/"
+  "ultimaOnlineDirectory": "~/uo/",
+  "language": "enu"
 }

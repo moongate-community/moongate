@@ -4,6 +4,7 @@ using Moongate.Core.Interfaces.Metrics;
 using Moongate.Core.Server.Data.Configs.Services;
 using Moongate.Core.Server.Data.EventLoop;
 using Moongate.Core.Server.Data.Metrics.EventLoop;
+using Moongate.Core.Server.Events.Events.Diagnostic;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Serilog;
@@ -90,6 +91,7 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         _isRunning = true;
         _cancellationTokenSource = new CancellationTokenSource();
         _loopTask = Task.Run(EventLoopAsync, _cancellationTokenSource.Token);
+        await _eventBusService.PublishAsync(new RegisterMetricEvent(this));
 
         _logger.Information("EventLoopService started with tick interval of {TickIntervalMs}ms", TickIntervalMs);
     }
