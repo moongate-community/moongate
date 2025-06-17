@@ -1,13 +1,13 @@
-name: MoongateBuild docker image
+name: Release
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
-  test:
-    name: Run Tests
+  build-and-publish-docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -36,16 +36,6 @@ jobs:
       - name: Test
         run: dotnet test --no-build --configuration Release --verbosity normal
 
-  build-and-publish-docker:
-    name: Build and Publish Docker Image
-    needs: test
-    runs-on: ubuntu-latest
-
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event_name == 'repository_dispatch'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -55,13 +45,8 @@ jobs:
       - name: Extract project version
         id: project-version
         run: |
-          if [[ "${{ github.event_name }}" == "repository_dispatch" ]]; then
-            VERSION="${{ github.event.client_payload.version }}"
-          else
-            VERSION=$(grep -oP '<Version>\K[^<]+' src/Moongate.Server/Moongate.Server.csproj || echo "0.0.1")
-          fi
+          VERSION=$(grep -oP '<Version>\\K[^<]+' src/Moongate.Server/Moongate.Server.csproj || echo "0.0.1")
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
-          echo "Extracted version: $VERSION"
 
       - name: Build Docker image
         run: |
