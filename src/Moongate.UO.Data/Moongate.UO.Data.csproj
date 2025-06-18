@@ -15,5 +15,12 @@
       <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
       <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Fody" Version="6.9.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+    </ItemGroup>
 
 </Project>

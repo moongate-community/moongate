@@ -98,6 +98,11 @@ public class MoongateTcpClient
         _middlewares.Remove(middleware);
     }
 
+    public void RemoveMiddleware<T>() where T : INetMiddleware
+    {
+        _middlewares.RemoveAll(m => m is T);
+    }
+
     /// <summary>
     /// Peek at data in the buffer without consuming it
     /// </summary>

@@ -71,7 +71,7 @@ public class LoginHandler : IGamePacketHandler
         return Task.CompletedTask;
     }
 
-    public async Task HandlePacketAsync(GameNetworkSession session, IUoNetworkPacket packet)
+    public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {
         if (packet is LoginSeedPacket seedPacket)
         {
@@ -98,7 +98,7 @@ public class LoginHandler : IGamePacketHandler
         }
     }
 
-    private async Task GameServerLoginPacket(GameNetworkSession session, GameServerLoginPacket packet)
+    private async Task GameServerLoginPacket(GameSession session, GameServerLoginPacket packet)
     {
         if (_sessionsInHold.TryRemove(packet.AuthKey, out var sessionInHold))
         {
@@ -109,8 +109,8 @@ public class LoginHandler : IGamePacketHandler
             );
 
             session.Account = await _accountService.GetAccountByIdAsync(sessionInHold.AccountId);
-            session.State = NetworkSessionStateType.Authenticated;
-
+            session.SetState(NetworkSessionStateType.Authenticated);
+            session.SetFeatures(NetworkSessionFeatureType.Compression);
             return;
         }
 
@@ -118,7 +118,7 @@ public class LoginHandler : IGamePacketHandler
         session.Disconnect();
     }
 
-    private Task HandleSelectServerAsync(GameNetworkSession session, SelectServerPacket packet)
+    private Task HandleSelectServerAsync(GameSession session, SelectServerPacket packet)
     {
         _logger.Debug(
             "Received select server request from {SessionId} for server index {Index}",
@@ -143,7 +143,7 @@ public class LoginHandler : IGamePacketHandler
     }
 
 
-    private Task HandleLoginSeedAsync(GameNetworkSession session, LoginSeedPacket packet)
+    private Task HandleLoginSeedAsync(GameSession session, LoginSeedPacket packet)
     {
         _logger.Debug("Received login seed {Seed} from {SessionId}", packet.Seed, session.SessionId);
 
@@ -151,7 +151,7 @@ public class LoginHandler : IGamePacketHandler
         return Task.CompletedTask;
     }
 
-    private async Task HandleLoginRequestAsync(GameNetworkSession session, LoginRequestPacket packet)
+    private async Task HandleLoginRequestAsync(GameSession session, LoginRequestPacket packet)
     {
         _logger.Debug("Received login request from {SessionId} with username {Username}", session.SessionId, packet.Account);
 

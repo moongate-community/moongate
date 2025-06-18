@@ -47,7 +47,7 @@ public class PacketLoggerService : IMoongateService
         LogPacketToConsole(gameClientSession, packet, true);
     }
 
-    private void LogPacketToConsole(GameNetworkSession session, ReadOnlyMemory<byte> buffer, bool isReceived)
+    private void LogPacketToConsole(GameSession session, ReadOnlyMemory<byte> buffer, bool isReceived)
     {
         if (!_moongateServerConfig.Network.LogPacketsToConsole)
         {
@@ -68,7 +68,7 @@ public class PacketLoggerService : IMoongateService
         );
     }
 
-    private void LogPacketToFile(GameNetworkSession client, ReadOnlyMemory<byte> buffer, bool isReceived)
+    private void LogPacketToFile(GameSession client, ReadOnlyMemory<byte> buffer, bool isReceived)
     {
         if (!_moongateServerConfig.Network.LogPacketsToFile)
         {

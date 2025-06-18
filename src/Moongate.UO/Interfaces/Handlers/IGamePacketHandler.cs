@@ -5,5 +5,5 @@ namespace Moongate.UO.Interfaces.Handlers;
 
 public interface IGamePacketHandler
 {
-    Task HandlePacketAsync(GameNetworkSession session, IUoNetworkPacket packet);
+    Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet);
 }

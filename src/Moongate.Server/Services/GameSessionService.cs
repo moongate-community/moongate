@@ -23,10 +23,10 @@ public class GameSessionService : IGameSessionService
 
     private readonly IEventBusService _eventBusService;
 
-    private readonly ConcurrentDictionary<string, GameNetworkSession> _sessions = new();
+    private readonly ConcurrentDictionary<string, GameSession> _sessions = new();
 
-    private readonly ObjectPool<GameNetworkSession> _sessionPool =
-        ObjectPool.Create(new DefaultPooledObjectPolicy<GameNetworkSession>());
+    private readonly ObjectPool<GameSession> _sessionPool =
+        ObjectPool.Create(new DefaultPooledObjectPolicy<GameSession>());
 
     public GameSessionService(INetworkService networkService, IEventBusService eventBusService)
     {
@@ -62,7 +62,7 @@ public class GameSessionService : IGameSessionService
     }
 
 
-    public GameNetworkSession? GetSession(string sessionId, bool throwIfNotFound = true)
+    public GameSession? GetSession(string sessionId, bool throwIfNotFound = true)
     {
         if (_sessions.TryGetValue(sessionId, out var session))
         {
@@ -77,12 +77,12 @@ public class GameSessionService : IGameSessionService
         return null;
     }
 
-    public IEnumerable<GameNetworkSession> GetSessions()
+    public IEnumerable<GameSession> GetSessions()
     {
         return _sessions.Values;
     }
 
-    public IEnumerable<GameNetworkSession> QuerySessions(Func<GameNetworkSession, bool> predicate)
+    public IEnumerable<GameSession> QuerySessions(Func<GameSession, bool> predicate)
     {
         return _sessions.Values.AsValueEnumerable().Where(predicate).ToList();
     }
