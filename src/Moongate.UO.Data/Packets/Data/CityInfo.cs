@@ -1,5 +1,6 @@
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Maps;
 
 namespace Moongate.UO.Data.Packets.Data;
 
@@ -7,7 +8,7 @@ public sealed class CityInfo
 {
     private Point3D _location;
 
-    public CityInfo(string city, string building, int description, int x, int y, int z, int m)
+    public CityInfo(string city, string building, int description, int x, int y, int z, Map m)
     {
         City = city;
         Building = building;
@@ -16,9 +17,9 @@ public sealed class CityInfo
         Map = m;
     }
 
-    // public CityInfo(string city, string building, int x, int y, int z, int m) : this(city, building, 0, x, y, z, m)
-    // {
-    // }
+    public CityInfo(string city, string building, int x, int y, int z, Map m) : this(city, building, 0, x, y, z, m)
+    {
+    }
 
     public CityInfo(string city, string building, int description, int x, int y, int z) : this(
         city,
@@ -27,12 +28,12 @@ public sealed class CityInfo
         x,
         y,
         z,
-        1
+        Map.Trammel
     )
     {
     }
 
-    public CityInfo(string city, string building, int x, int y, int z) : this(city, building, 0, x, y, z, 1)
+    public CityInfo(string city, string building, int x, int y, int z) : this(city, building, 0, x, y, z, Map.Trammel)
     {
     }
 
@@ -66,7 +67,7 @@ public sealed class CityInfo
         set => _location = value;
     }
 
-    public int Map { get; set; }
+    public Map Map { get; set; }
 
     public static int Length => 89;
 
@@ -81,7 +82,7 @@ public sealed class CityInfo
         packetWriter.Write(_location.X);
         packetWriter.Write(_location.Y);
         packetWriter.Write(_location.Z);
-        packetWriter.Write(Map);
+        packetWriter.Write(Map.Index);
         packetWriter.Write(Description);
         packetWriter.Write(0); // 0x00
 
