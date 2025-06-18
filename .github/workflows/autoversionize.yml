@@ -33,6 +33,10 @@ jobs:
       - name: No release required
         if: steps.versionize.outcome != 'success'
         run: echo "Skipping Release. No release required."
+      - name: Set authenticated remote
+        if: steps.versionize.outcome == 'success'
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
       - name: Push changes to GitHub
         if: steps.versionize.outcome == 'success'
         uses: ad-m/github-push-action@master
