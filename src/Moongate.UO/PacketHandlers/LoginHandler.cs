@@ -66,6 +66,15 @@ public class LoginHandler : IGamePacketHandler
             packet.SelectedServerIndex
         );
 
+        var connectToGameServer = new ConnectToGameServerPacket()
+        {
+            ServerAddress = IPAddress.Parse("127.0.0.1"),
+            AuthKey = 29322,
+            ServerPort = 2593
+        };
+
+        session.SendPackets(connectToGameServer);
+
 
         return Task.CompletedTask;
     }

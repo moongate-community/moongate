@@ -14,7 +14,7 @@ public class SelectServerPacket : BaseUoPacket
     protected override bool Read(SpanReader reader)
     {
         SelectedServerIndex = reader.ReadInt16LE();
-        
+
         return true;
     }
 }
