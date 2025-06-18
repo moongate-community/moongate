@@ -26,7 +26,6 @@ using Moongate.UO.Data.Persistence;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.FileLoaders;
-using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Modules;
 using Moongate.UO.PacketHandlers;
@@ -81,6 +80,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(INetworkService), typeof(NetworkService))
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(IAccountService), typeof(AccountService))
+                .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
 
                 //

@@ -19,6 +19,23 @@ public class UOAccountEntity
 
     public bool IsActive { get; set; }
 
+    public List<UOAccountCharacterEntity> Characters { get; set; } = new();
+
+
+    public void AddCharacter(UOMobileEntity mobileEntity)
+    {
+        AddCharacter(new UOAccountCharacterEntity()
+        {
+            Slot = Characters.Count,
+            MobileId = mobileEntity.Id,
+        });
+    }
+
+    public void AddCharacter(UOAccountCharacterEntity character)
+    {
+        Characters.Add(character);
+    }
+
     public UOAccountEntity()
     {
         Id = Nanoid.Generate();
