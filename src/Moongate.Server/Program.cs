@@ -21,6 +21,7 @@ using Moongate.Server.Persistence;
 using Moongate.Server.Services;
 using Moongate.UO.Commands;
 using Moongate.UO.Data;
+using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Persistence;
 using Moongate.UO.Data.Types;

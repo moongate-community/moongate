@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using Moongate.UO.Context;
 using Moongate.UO.Data;
+using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Version;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
