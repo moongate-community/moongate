@@ -217,8 +217,8 @@ public class ClientEncryptorTests
         Assert.That(keys.Key1, Is.Not.EqualTo(keys.Key2));
 
         // Print keys for debugging if needed
-        TestContext.WriteLine($"Key1: 0x{keys.Key1:X8} ({keys.Key1})");
-        TestContext.WriteLine($"Key2: 0x{keys.Key2:X8} ({keys.Key2})");
+        TestContext.Out.WriteLine($"Key1: 0x{keys.Key1:X8} ({keys.Key1})");
+        TestContext.Out.WriteLine($"Key2: 0x{keys.Key2:X8} ({keys.Key2})");
     }
 
     [Test]
