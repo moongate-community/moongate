@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.1.0"></a>
+## [0.1.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.1.0) (2025-06-18)
+
+### Features
+
+* **Entry3D.cs, Entry5D.cs, FileIndex.cs, UOFiles.cs:** Add new data structures Entry3D, Entry5D, FileIndex, and UOFiles class to handle file indexing and data loading functionalities. ([afa1082](https://www.github.com/moongate-community/moongate/commit/afa10826c5d4e24159bb08cb0f15644da3917c00))
+* **Map.cs, MapRules.cs, MapSelectionFlags.cs, Season.cs:** add new map-related classes and enums for managing maps, map rules, map selection flags, and seasons in the game. ([3878b99](https://www.github.com/moongate-community/moongate/commit/3878b997942f1770fe079030ee096f9bf48cc966))
+* **Moongate.UO.Data:** add new tile data structures HuedTile, LandTile, MTile, ([5a5a986](https://www.github.com/moongate-community/moongate/commit/5a5a98651bb41c694fc4364002aa8b052866fd62))
+* **Program.cs:** add Moongate.UO.Data.Files namespace to Program.cs for new Art class ([1307a02](https://www.github.com/moongate-community/moongate/commit/1307a027b0fc390bcecb10443a50e26a08b653db))
+* **StaticTile.cs:** add new struct StaticTile to represent a static tile in the game world ([a80fdd7](https://www.github.com/moongate-community/moongate/commit/a80fdd74a36416fa305c6976bb643f3e911cceca))
+* **Tile.cs:** add new struct Tile with properties for ID and Z, and methods for setting values and comparing tiles ([7f85232](https://www.github.com/moongate-community/moongate/commit/7f85232fbc637427e14c89aabfe80cb3c2903144))
+* **TileMatrix.cs:** add new TileMatrix class to manage tile data for the game ([434949b](https://www.github.com/moongate-community/moongate/commit/434949bee43d685c1ff5e35c01d3a7558bd1adc6))
+
 <a name="0.0.1"></a>
 ## [0.0.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.0.1) (2025-06-18)
 
