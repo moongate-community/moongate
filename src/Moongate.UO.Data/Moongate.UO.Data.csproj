@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsAotCompatible>true</IsAotCompatible>
-        <Version>0.0.0.1</Version>
+        <Version>0.0.1</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <NoWarn>$(NoWarn);IL3050</NoWarn>
         <NoWarn>$(NoWarn);IL2026</NoWarn>
@@ -14,6 +14,13 @@
       <ProjectReference Include="..\Moongate.Core.Network\Moongate.Core.Network.csproj" />
       <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
       <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <PackageReference Include="Fody" Version="6.9.2">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
     </ItemGroup>
 
 </Project>

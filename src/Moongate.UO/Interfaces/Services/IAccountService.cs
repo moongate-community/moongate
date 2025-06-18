@@ -13,5 +13,6 @@ public interface IAccountService : IMoongateAutostartService
 
     Task<bool> ChangeLevel(string accountName, AccountLevelType levelType);
 
+    Task<UOAccountEntity> GetAccountByIdAsync(string accountId);
     Task<Result<UOAccountEntity>> LoginAsync(string username, string password);
 }

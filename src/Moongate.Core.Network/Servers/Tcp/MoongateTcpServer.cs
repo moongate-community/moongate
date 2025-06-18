@@ -148,7 +148,11 @@ public class MoongateTcpServer
             Socket? acceptedSocket = e.AcceptSocket;
 
             // Create a new NetClient using the accepted socket.
-            MoongateTcpClient client = new MoongateTcpClient();
+            var client = new MoongateTcpClient
+            {
+                ServerId = Id
+            };
+
             lock (_clients)
             {
                 _clients.Add(client);

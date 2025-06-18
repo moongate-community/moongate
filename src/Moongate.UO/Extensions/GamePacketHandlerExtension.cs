@@ -22,9 +22,15 @@ public static class GamePacketHandlerExtension
             typeof(TGamePacketHandler).Name
         );
 
+
+        if (!networkService.IsPacketBound<TPacket>())
+        {
+            networkService.BindPacket<TPacket>();
+        }
+
         if (!MoongateContext.Container.IsRegistered<TGamePacketHandler>())
         {
-            MoongateContext.Container.Register<TGamePacketHandler>();
+            MoongateContext.Container.Register<TGamePacketHandler>(Reuse.Singleton);
         }
 
         networkService.RegisterPacketHandler<TPacket>((id, packet) =>

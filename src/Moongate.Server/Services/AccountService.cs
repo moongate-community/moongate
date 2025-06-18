@@ -116,6 +116,18 @@ public class AccountService : IAccountService
         return true;
     }
 
+    public Task<UOAccountEntity> GetAccountByIdAsync(string accountId)
+    {
+
+        if (_accounts.TryGetValue(accountId, out var account))
+        {
+            return Task.FromResult(account);
+        }
+
+        _logger.Warning("Account not found: {AccountId}", accountId);
+        return Task.FromResult<UOAccountEntity>(null);
+    }
+
     public async Task<Result<UOAccountEntity>> LoginAsync(string username, string password)
     {
         var account = _accounts.Values.FirstOrDefault(a => a.Username.Equals(username, StringComparison.OrdinalIgnoreCase));

@@ -18,8 +18,6 @@ public class NetworkService : INetworkService
 {
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
 
-    private readonly DirectoriesConfig _directoriesConfig;
-
     public event INetworkService.ClientConnectedHandler? OnClientConnected;
     public event INetworkService.ClientDisconnectedHandler? OnClientDisconnected;
     public event INetworkService.ClientDataReceivedHandler? OnClientDataReceived;
@@ -40,10 +38,9 @@ public class NetworkService : INetworkService
 
     private readonly MoongateServerConfig _moongateServerConfig;
 
-    public NetworkService(MoongateServerConfig moongateServerConfig, DirectoriesConfig directoriesConfig)
+    public NetworkService(MoongateServerConfig moongateServerConfig)
     {
         _moongateServerConfig = moongateServerConfig;
-        _directoriesConfig = directoriesConfig;
     }
 
 
@@ -319,6 +316,12 @@ public class NetworkService : INetworkService
         _packetBuilders[packet.OpCode] = () => new TPacket();
     }
 
+    public bool IsPacketBound<TPacket>() where TPacket : IUoNetworkPacket, new()
+    {
+        var packet = new TPacket();
+        return _packetBuilders.ContainsKey(packet.OpCode);
+    }
+
     public void RegisterPacketHandler<TPacket>(INetworkService.PacketHandlerDelegate handler)
         where TPacket : IUoNetworkPacket, new()
     {
@@ -348,14 +351,13 @@ public class NetworkService : INetworkService
             return definition.Length;
         }
 
-        _logger.Warning("No size defined for packet OpCode: {OpCode}", packet.OpCode.ToPacketString());
         return -1; // Indicating unknown size
     }
 
     public void SendPacket(MoongateTcpClient client, IUoNetworkPacket packet)
     {
         var size = GetPacketSize(packet);
-        var spanWriter = new SpanWriter(size, size != -1);
+        var spanWriter = new SpanWriter(size == -1 ? 1 : size, size == -1);
         var packetData = packet.Write(spanWriter);
 
         OnPacketSent?.Invoke(client.Id, packet);
@@ -375,7 +377,6 @@ public class NetworkService : INetworkService
     {
         try
         {
-
             client.Send(data);
 
             OnClientDataSent?.Invoke(client.Id, data);
@@ -427,7 +428,6 @@ public class NetworkService : INetworkService
             _clientsLock.Release();
         }
     }
-
 
 
     public static IEnumerable<IPEndPoint> GetListeningAddresses(IPEndPoint ipep) =>

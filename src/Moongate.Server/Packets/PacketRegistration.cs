@@ -396,6 +396,10 @@ public static class PacketRegistration
 
         /// Login Denied
         networkService.RegisterPacket(0x82, 2, "Login Denied");
+
+
+        networkService.RegisterPacket(0x8C, 11, "Connect To Game Server");
+
     }
 
     #endregion

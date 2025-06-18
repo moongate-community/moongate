@@ -1,3 +1,5 @@
+using System.Buffers;
+
 namespace Moongate.Core.Network.Compression;
 
 /// <summary>
@@ -8,17 +10,26 @@ public static class NetworkCompression
     private const int CountIndex = 0;
     private const int ValueIndex = 1;
 
-    // UO packets may not exceed 64kb in length
+    /// <summary>
+    /// UO packets may not exceed 64kb in length
+    /// </summary>
     public const int BufferSize = 0x10000;
 
-    // Optimal compression ratio is 2 / 8;  worst compression ratio is 11 / 8
+    /// <summary>
+    /// Optimal compression ratio is 2 / 8;  worst compression ratio is 11 / 8
+    /// </summary>
     private const int MinimalCodeLength = 2;
+
     private const int MaximalCodeLength = 11;
 
-    // Fixed overhead, in bits, per compression call
+    /// <summary>
+    /// Fixed overhead, in bits, per compression call
+    /// </summary>
     private const int TerminalCodeLength = 4;
 
-    // If our input exceeds this length, we cannot possibly compress it within the buffer
+    /// <summary>
+    /// If our input exceeds this length, we cannot possibly compress it within the buffer
+    /// </summary>
     private const int DefiniteOverflow = (BufferSize * 8 - TerminalCodeLength) / MinimalCodeLength;
 
     private static readonly int[] _huffmanTable =
@@ -76,16 +87,20 @@ public static class NetworkCompression
             return 0; // Input too large to compress
         }
 
-        // Worst case: each byte uses MaximalCodeLength bits
+        /// Worst case: each byte uses MaximalCodeLength bits
         int maxBitsNeeded = (inputLength * MaximalCodeLength) + TerminalCodeLength;
-
-        // Convert to bytes, rounding up for byte alignment
+        /// Convert to bytes, rounding up for byte alignment
         int maxBytesNeeded = (maxBitsNeeded + 7) / 8;
-
-        // Ensure we don't exceed the buffer size limit
+        /// Ensure we don't exceed the buffer size limit
         return Math.Min(maxBytesNeeded, BufferSize);
     }
 
+    /// <summary>
+    /// Compresses input data using Huffman compression algorithm.
+    /// </summary>
+    /// <param name="input">Input data to compress</param>
+    /// <param name="output">Output buffer for compressed data</param>
+    /// <returns>Number of bytes written to output buffer, or 0 if compression failed</returns>
     public static int Compress(ReadOnlySpan<byte> input, Span<byte> output)
     {
         if (input.Length > DefiniteOverflow)
@@ -95,21 +110,18 @@ public static class NetworkCompression
 
         int bitCount = 0;
         int bitValue = 0;
-
         int inputIdx = 0;
         int outputIdx = 0;
 
         while (inputIdx < input.Length)
         {
             int i = input[inputIdx++] << 1;
-
             bitCount += _huffmanTable[i];
             bitValue = (bitValue << _huffmanTable[i]) | _huffmanTable[i + 1];
 
             while (bitCount >= 8)
             {
                 bitCount -= 8;
-
                 if (output.Length < outputIdx + 1)
                 {
                     return 0;
@@ -119,11 +131,11 @@ public static class NetworkCompression
             }
         }
 
-        // terminal code
+        /// Terminal code
         bitCount += _huffmanTable[0x200];
         bitValue = (bitValue << _huffmanTable[0x200]) | _huffmanTable[0x201];
 
-        // align on byte boundary
+        /// Align on byte boundary
         if ((bitCount & 7) != 0)
         {
             bitValue <<= 8 - (bitCount & 7);
@@ -133,7 +145,6 @@ public static class NetworkCompression
         while (bitCount >= 8)
         {
             bitCount -= 8;
-
             if (output.Length < outputIdx + 1)
             {
                 return 0;
@@ -143,5 +154,428 @@ public static class NetworkCompression
         }
 
         return outputIdx;
+    }
+
+    /// <summary>
+    /// Compresses input data and returns the result as a new Memory<byte>.
+    /// This method allocates a new buffer for the compressed output.
+    /// </summary>
+    /// <param name="input">Input data to compress</param>
+    /// <returns>Compressed data as Memory<byte>, or empty if compression failed</returns>
+    public static Memory<byte> CompressToMemory(ReadOnlyMemory<byte> input)
+    {
+        if (input.Length == 0)
+        {
+            return Memory<byte>.Empty;
+        }
+
+        int maxCompressedSize = CalculateMaxCompressedSize(input.Length);
+        if (maxCompressedSize == 0)
+        {
+            return Memory<byte>.Empty; // Input too large or invalid
+        }
+
+        byte[] outputBuffer = new byte[maxCompressedSize];
+        int compressedLength = Compress(input.Span, outputBuffer);
+
+        if (compressedLength == 0)
+        {
+            return Memory<byte>.Empty; // Compression failed
+        }
+
+        /// Return only the used portion of the buffer
+        return new Memory<byte>(outputBuffer, 0, compressedLength);
+    }
+
+    /// <summary>
+    /// Attempts to compress input data in-place using a provided buffer.
+    /// Returns true if compression was successful and beneficial.
+    /// </summary>
+    /// <param name="input">Input data to compress</param>
+    /// <param name="buffer">Working buffer for compression (should be at least CalculateMaxCompressedSize bytes)</param>
+    /// <param name="compressed">Output compressed data if successful</param>
+    /// <returns>True if compression was successful and beneficial, false otherwise</returns>
+    public static bool TryCompress(ReadOnlyMemory<byte> input, Span<byte> buffer, out Memory<byte> compressed)
+    {
+        compressed = Memory<byte>.Empty;
+
+        if (input.Length == 0)
+        {
+            return false;
+        }
+
+        int compressedLength = Compress(input.Span, buffer);
+        if (compressedLength == 0 || compressedLength >= input.Length)
+        {
+            /// Compression failed or wasn't beneficial
+            return false;
+        }
+
+        /// Create a new array with exact size for the compressed data
+        byte[] result = new byte[compressedLength];
+        buffer.Slice(0, compressedLength).CopyTo(result);
+        compressed = result;
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the input data is worth compressing based on size thresholds.
+    /// </summary>
+    /// <param name="inputLength">Length of input data</param>
+    /// <returns>True if compression should be attempted, false otherwise</returns>
+    public static bool ShouldCompress(int inputLength)
+    {
+        /// Don't compress very small packets (compression overhead not worth it)
+        const int minCompressionThreshold = 32;
+
+        return inputLength >= minCompressionThreshold && inputLength <= DefiniteOverflow;
+    }
+
+    /// <summary>
+    /// Decompresses Huffman-compressed data.
+    /// </summary>
+    /// <param name="input">Compressed input data</param>
+    /// <param name="output">Output buffer for decompressed data</param>
+    /// <returns>Number of bytes written to output buffer, or 0 if decompression failed</returns>
+    public static int Decompress(ReadOnlySpan<byte> input, Span<byte> output)
+    {
+        if (input.Length == 0)
+        {
+            return 0;
+        }
+
+        int bitCount = 0;
+        int bitValue = 0;
+        int inputIdx = 0;
+        int outputIdx = 0;
+        int treePosition = 0;
+
+        /// Build decompression tree from huffman table
+        var tree = BuildDecompressionTree();
+
+        while (inputIdx < input.Length && outputIdx < output.Length)
+        {
+            /// Read bits from input
+            while (bitCount < 8 && inputIdx < input.Length)
+            {
+                bitValue = (bitValue << 8) | input[inputIdx++];
+                bitCount += 8;
+            }
+
+            if (bitCount == 0) break;
+
+            /// Process bits through huffman tree
+            while (bitCount > 0 && outputIdx < output.Length)
+            {
+                bitCount--;
+                int bit = (bitValue >> bitCount) & 1;
+
+                /// Navigate through tree
+                if (tree.TryGetValue((treePosition << 1) | bit, out var result))
+                {
+                    if (result.IsLeaf)
+                    {
+                        if (result.Value == 256) /// Terminal code
+                        {
+                            return outputIdx;
+                        }
+
+                        output[outputIdx++] = (byte)result.Value;
+                        treePosition = 0; /// Reset to root
+                    }
+                    else
+                    {
+                        treePosition = result.NextPosition;
+                    }
+                }
+                else
+                {
+                    /// Invalid path in tree
+                    return 0;
+                }
+            }
+        }
+
+        return outputIdx;
+    }
+
+    /// <summary>
+    /// Tree node for huffman decompression
+    /// </summary>
+    private struct TreeNode
+    {
+        public bool IsLeaf;
+        public int Value;
+        public int NextPosition;
+    }
+
+    /// <summary>
+    /// Builds the decompression tree from the huffman table
+    /// </summary>
+    private static Dictionary<int, TreeNode> BuildDecompressionTree()
+    {
+        var tree = new Dictionary<int, TreeNode>();
+        int nextPosition = 1;
+
+        /// Process each entry in huffman table (pairs of length, value)
+        for (int i = 0; i < _huffmanTable.Length; i += 2)
+        {
+            int codeLength = _huffmanTable[i];
+            int codeValue = _huffmanTable[i + 1];
+            int byteValue = i / 2;
+
+            if (codeLength == 0) continue;
+
+            /// Build path through tree for this code
+            int position = 0;
+            for (int bit = codeLength - 1; bit >= 0; bit--)
+            {
+                int bitValue = (codeValue >> bit) & 1;
+                int key = (position << 1) | bitValue;
+
+                if (bit == 0) /// Leaf node
+                {
+                    tree[key] = new TreeNode { IsLeaf = true, Value = byteValue };
+                }
+                else /// Internal node
+                {
+                    if (!tree.TryGetValue(key, out var node) || node.IsLeaf)
+                    {
+                        tree[key] = new TreeNode { IsLeaf = false, NextPosition = nextPosition++ };
+                    }
+
+                    position = tree[key].NextPosition;
+                }
+            }
+        }
+
+        /// Add terminal code (256)
+        tree[0x200] = new TreeNode { IsLeaf = true, Value = 256 };
+
+        return tree;
+    }
+
+    /// <summary>
+    /// Decompresses data and returns the result as a new Memory<byte>.
+    /// </summary>
+    /// <param name="input">Compressed input data</param>
+    /// <param name="maxOutputSize">Maximum expected size of decompressed data</param>
+    /// <returns>Decompressed data as Memory<byte>, or empty if decompression failed</returns>
+    public static Memory<byte> DecompressToMemory(ReadOnlyMemory<byte> input, int maxOutputSize = BufferSize)
+    {
+        if (input.Length == 0)
+        {
+            return Memory<byte>.Empty;
+        }
+
+        byte[] outputBuffer = new byte[maxOutputSize];
+        int decompressedLength = Decompress(input.Span, outputBuffer);
+
+        if (decompressedLength == 0)
+        {
+            return Memory<byte>.Empty;
+        }
+
+        /// Return only the used portion of the buffer
+        return new Memory<byte>(outputBuffer, 0, decompressedLength);
+    }
+
+    /// <summary>
+    /// Attempts to decompress data using a provided buffer.
+    /// </summary>
+    /// <param name="input">Compressed input data</param>
+    /// <param name="buffer">Output buffer for decompressed data</param>
+    /// <param name="decompressed">Decompressed data if successful</param>
+    /// <returns>True if decompression was successful</returns>
+    public static bool TryDecompress(ReadOnlyMemory<byte> input, Span<byte> buffer, out Memory<byte> decompressed)
+    {
+        decompressed = Memory<byte>.Empty;
+
+        if (input.Length == 0)
+        {
+            return false;
+        }
+
+        int decompressedLength = Decompress(input.Span, buffer);
+        if (decompressedLength == 0)
+        {
+            return false;
+        }
+
+        /// Create a new array with exact size for the decompressed data
+        byte[] result = new byte[decompressedLength];
+        buffer.Slice(0, decompressedLength).CopyTo(result);
+        decompressed = result;
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if data appears to be compressed by looking for huffman patterns.
+    /// This is a heuristic check and may not be 100% accurate.
+    /// </summary>
+    /// <param name="data">Data to check</param>
+    /// <returns>True if data appears to be compressed</returns>
+    public static bool IsCompressed(ReadOnlySpan<byte> data)
+    {
+        if (data.Length < 4)
+        {
+            return false;
+        }
+
+        /// Simple heuristic: compressed data tends to have higher entropy
+        /// and specific bit patterns. This is not foolproof.
+        int uniqueBytes = 0;
+        bool[] seen = new bool[256];
+
+        for (int i = 0; i < Math.Min(data.Length, 64); i++)
+        {
+            if (!seen[data[i]])
+            {
+                seen[data[i]] = true;
+                uniqueBytes++;
+            }
+        }
+
+        /// If we see a wide variety of byte values in a small sample,
+        /// it's likely compressed data
+        return uniqueBytes > data.Length / 4;
+    }
+
+    /// <summary>
+    /// Main processing method compatible with ProcessReceive interface.
+    /// Attempts to decompress data, with fallback handling.
+    /// </summary>
+    /// <param name="input">Input data to process</param>
+    /// <param name="output">Processed output data</param>
+    /// <returns>Tuple indicating if processing should halt and bytes consumed</returns>
+    public static (bool halt, int consumedFromOrigin) ProcessReceive(
+        ref ReadOnlyMemory<byte> input, out ReadOnlyMemory<byte> output
+    )
+    {
+        output = input;
+
+        if (input.Length == 0)
+        {
+            return (false, 0);
+        }
+
+        /// Try to detect if data is compressed
+        if (!IsCompressed(input.Span))
+        {
+            /// Data doesn't appear compressed, return as-is
+            output = input;
+            return (false, input.Length);
+        }
+
+        /// Try decompression with a reasonable buffer size
+        byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(BufferSize);
+        try
+        {
+            if (TryDecompress(input, buffer.AsSpan(0, BufferSize), out Memory<byte> decompressed))
+            {
+                output = decompressed;
+                return (false, input.Length);
+            }
+            else
+            {
+                /// Decompression failed, return original data
+                output = input;
+                return (false, input.Length);
+            }
+        }
+        finally
+        {
+            System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+        }
+    }
+
+    /// <summary>
+    /// Advanced ProcessReceive with explicit compression flag.
+    /// Use this when you have a header or flag indicating compression status.
+    /// </summary>
+    /// <param name="input">Input data to process</param>
+    /// <param name="isCompressed">Flag indicating if data is compressed</param>
+    /// <param name="output">Processed output data</param>
+    /// <returns>Tuple indicating if processing should halt and bytes consumed</returns>
+    public static (bool halt, int consumedFromOrigin) ProcessReceiveWithFlag(
+        ref ReadOnlyMemory<byte> input, bool isCompressed, out ReadOnlyMemory<byte> output
+    )
+    {
+        output = input;
+
+        if (input.Length == 0)
+        {
+            return (false, 0);
+        }
+
+        if (!isCompressed)
+        {
+            /// Data is not compressed
+            output = input;
+            return (false, input.Length);
+        }
+
+        /// Data is compressed, attempt decompression
+        byte[] buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(BufferSize);
+        try
+        {
+            if (TryDecompress(input, buffer.AsSpan(0, BufferSize), out Memory<byte> decompressed))
+            {
+                output = decompressed;
+                return (false, input.Length);
+            }
+            else
+            {
+                /// Decompression failed - this is an error condition
+                output = Memory<byte>.Empty;
+                return (true, 0); /// Halt processing due to error
+            }
+        }
+        finally
+        {
+            System.Buffers.ArrayPool<byte>.Shared.Return(buffer);
+        }
+    }
+
+    /// <summary>
+    /// Main processing method compatible with ProcessSend interface.
+    /// Compresses data if beneficial, otherwise returns original data.
+    /// </summary>
+    /// <param name="input">Input data to process</param>
+    /// <param name="output">Processed output data</param>
+    public static void ProcessSend(ref ReadOnlyMemory<byte> input, out ReadOnlyMemory<byte> output)
+    {
+        /// Quick check if compression is worth attempting
+        if (!ShouldCompress(input.Length))
+        {
+            output = input;
+            return;
+        }
+
+        /// Try to compress using a temporary buffer
+        int maxSize = CalculateMaxCompressedSize(input.Length);
+        if (maxSize == 0)
+        {
+            output = input;
+            return;
+        }
+
+        /// Use ArrayPool for better memory management in high-performance scenarios
+        byte[] buffer = ArrayPool<byte>.Shared.Rent(maxSize);
+        try
+        {
+            if (TryCompress(input, buffer.AsSpan(0, maxSize), out Memory<byte> compressed))
+            {
+                output = compressed;
+            }
+            else
+            {
+                output = input;
+            }
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(buffer);
+        }
     }
 }

@@ -56,7 +56,6 @@ await ConsoleApp.RunAsync(
         var header = ResourceUtils.GetEmbeddedResourceContent("Assets/_header.txt", typeof(Program).Assembly);
 
 
-
         Console.WriteLine(header);
 
 
@@ -69,8 +68,6 @@ await ConsoleApp.RunAsync(
         };
 
         var bootstrap = new MoongateBootstrap(moongateArgsOptions, cancellationTokenSource);
-
-
 
 
         bootstrap.ConfigureServices += container =>
@@ -108,17 +105,20 @@ await ConsoleApp.RunAsync(
         {
             PacketRegistration.RegisterPackets(networkService);
 
-            networkService.BindPacket<LoginSeedPacket>();
-            networkService.BindPacket<LoginRequestPacket>();
+            //networkService.BindPacket<LoginSeedPacket>();
+            //networkService.BindPacket<LoginRequestPacket>();
+            //networkService.BindPacket<SelectServerPacket>();
 
             // Registering all packet handlers
 
             networkService.RegisterGamePacketHandler<LoginRequestPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
+            networkService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
+            networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
         };
 
 
-        bootstrap.AfterInitialize += (container, config ) =>
+        bootstrap.AfterInitialize += (container, config) =>
         {
             var fileLoaderService = container.Resolve<IFileLoaderService>();
             var directoriesConfig = container.Resolve<DirectoriesConfig>();
@@ -128,15 +128,12 @@ await ConsoleApp.RunAsync(
 
             fileLoaderService.AddFileLoader<ClientVersionLoader>();
             fileLoaderService.AddFileLoader<SkillLoader>();
-
         };
 
         bootstrap.Initialize();
 
         await bootstrap.StartAsync();
     }
-
-
 );
 
 static async Task CopyAssetsFilesAsync(DirectoriesConfig directoriesConfig)
