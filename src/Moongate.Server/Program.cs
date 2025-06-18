@@ -129,6 +129,12 @@ await ConsoleApp.RunAsync(
 
             fileLoaderService.AddFileLoader<ClientVersionLoader>();
             fileLoaderService.AddFileLoader<SkillLoader>();
+            fileLoaderService.AddFileLoader<BodyDataLoader>();
+            fileLoaderService.AddFileLoader<ProfessionsLoader>();
+            fileLoaderService.AddFileLoader<MultiDataLoader>();
+            fileLoaderService.AddFileLoader<RaceLoader>();
+            fileLoaderService.AddFileLoader<TileDataLoader>();
+            fileLoaderService.AddFileLoader<MapLoader>();
         };
 
         bootstrap.Initialize();
