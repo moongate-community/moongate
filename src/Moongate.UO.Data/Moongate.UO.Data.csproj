@@ -20,7 +20,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" />
+      <PackageReference Include="PropertyChanged.Fody" PrivateAssets="All" Version="4.1.0" />
     </ItemGroup>
 
 </Project>
