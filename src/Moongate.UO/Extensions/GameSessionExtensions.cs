@@ -14,4 +14,9 @@ public static class GameSessionExtensions
             MoongateContext.NetworkService.SendPacket(session.NetworkClient, packet);
         }
     }
+
+    public static void Disconnect(this GameNetworkSession session)
+    {
+        session.NetworkClient.Disconnect();
+    }
 }

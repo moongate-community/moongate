@@ -114,6 +114,7 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<LoginRequestPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
+            networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
         };
 
 

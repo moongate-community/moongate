@@ -30,7 +30,7 @@ public static class GamePacketHandlerExtension
 
         if (!MoongateContext.Container.IsRegistered<TGamePacketHandler>())
         {
-            MoongateContext.Container.Register<TGamePacketHandler>();
+            MoongateContext.Container.Register<TGamePacketHandler>(Reuse.Singleton);
         }
 
         networkService.RegisterPacketHandler<TPacket>((id, packet) =>

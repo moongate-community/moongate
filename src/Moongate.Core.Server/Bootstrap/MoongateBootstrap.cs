@@ -49,6 +49,7 @@ public class MoongateBootstrap
             rules.WithUseInterpretation()
         );
 
+        _container.RegisterInstance(new MoongateRuntimeConfig());
         _container.RegisterInstance(this);
 
         MoongateContext.Container = _container;
@@ -114,7 +115,7 @@ public class MoongateBootstrap
 
         logConfig.MinimumLevel.Is(_argsOptions.LogLevel.ToSerilogLogLevel());
 
-        if (_moongateServerConfig.Network.LogPackets)
+        if (_moongateServerConfig.Network.LogPacketsToFile)
         {
             logConfig.WriteTo.Logger(sub => sub
                 .Filter.ByIncludingOnly(Matching.FromSource("NetworkPacket"))
@@ -290,7 +291,9 @@ public class MoongateBootstrap
         config.UltimaOnlineDirectory ??= _argsOptions.UltimaOnlineDirectory;
 
 
-        MoongateContext.RuntimeConfig.IsPacketLoggingEnabled = config.Network.LogPackets;
+        MoongateContext.RuntimeConfig.IsPacketLoggingFileEnabled = config.Network.LogPacketsToFile;
+
+        MoongateContext.RuntimeConfig.IsPacketLoggingConsoleEnabled = config.Network.LogPacketsToConsole;
 
         return config;
     }

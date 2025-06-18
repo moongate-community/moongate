@@ -11,7 +11,7 @@ public static class MoongateContext
     public static bool UseEventLoop { get; set; } = true;
     public static IContainer Container { get; set; }
 
-    public static MoongateRuntimeConfig RuntimeConfig => new();
+    public static MoongateRuntimeConfig RuntimeConfig => Container.Resolve<MoongateRuntimeConfig>();
 
     public static IEventLoopService EventLoopService => Container.Resolve<IEventLoopService>();
     public static IEventBusService EventBusService => Container.Resolve<IEventBusService>();

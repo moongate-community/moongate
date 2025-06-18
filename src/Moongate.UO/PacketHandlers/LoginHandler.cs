@@ -8,6 +8,7 @@ using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Packets.Sessions;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Moongate.UO.Interfaces.Services;
@@ -89,6 +90,32 @@ public class LoginHandler : IGamePacketHandler
             await HandleSelectServerAsync(session, selectServerPacket);
             return;
         }
+
+        if (packet is GameServerLoginPacket gameServerLoginPacket)
+        {
+            await GameServerLoginPacket(session, gameServerLoginPacket);
+            return;
+        }
+    }
+
+    private async Task GameServerLoginPacket(GameNetworkSession session, GameServerLoginPacket packet)
+    {
+        if (_sessionsInHold.TryRemove(packet.AuthKey, out var sessionInHold))
+        {
+            _logger.Debug(
+                "Auth key {AuthKey} found in hold for session {SessionId}",
+                packet.AuthKey,
+                session.SessionId
+            );
+
+            session.Account = await _accountService.GetAccountByIdAsync(sessionInHold.AccountId);
+            session.State = NetworkSessionStateType.Authenticated;
+
+            return;
+        }
+
+        _logger.Warning("Auth key {AuthKey} not found in hold for session {SessionId}", packet.AuthKey, session.SessionId);
+        session.Disconnect();
     }
 
     private Task HandleSelectServerAsync(GameNetworkSession session, SelectServerPacket packet)

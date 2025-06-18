@@ -23,6 +23,7 @@ public class ConnectToGameServerPacket : BaseUoPacket
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
+        writer.Write(OpCode);
         writer.WriteLE(ServerAddress.ToRawAddress());
         writer.Write((short)ServerPort);
         writer.Write(AuthKey);

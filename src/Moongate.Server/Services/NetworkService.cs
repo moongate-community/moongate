@@ -351,7 +351,6 @@ public class NetworkService : INetworkService
             return definition.Length;
         }
 
-        _logger.Warning("No size defined for packet OpCode: {OpCode}", packet.OpCode.ToPacketString());
         return -1; // Indicating unknown size
     }
 

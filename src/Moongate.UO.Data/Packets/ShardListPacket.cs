@@ -17,7 +17,7 @@ public class ShardListPacket : BaseUoPacket
     {
         writer.Write(OpCode);
 
-        var length = 6 + (39 * Shards.Count);
+        var length = 6 + 40 * Shards.Count;
         writer.Write((ushort)length);
         writer.Write((byte)0x5D);
         writer.Write((ushort)Shards.Count);
