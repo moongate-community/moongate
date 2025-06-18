@@ -18,8 +18,6 @@ public class NetworkService : INetworkService
 {
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
 
-    private readonly DirectoriesConfig _directoriesConfig;
-
     public event INetworkService.ClientConnectedHandler? OnClientConnected;
     public event INetworkService.ClientDisconnectedHandler? OnClientDisconnected;
     public event INetworkService.ClientDataReceivedHandler? OnClientDataReceived;
@@ -40,10 +38,9 @@ public class NetworkService : INetworkService
 
     private readonly MoongateServerConfig _moongateServerConfig;
 
-    public NetworkService(MoongateServerConfig moongateServerConfig, DirectoriesConfig directoriesConfig)
+    public NetworkService(MoongateServerConfig moongateServerConfig)
     {
         _moongateServerConfig = moongateServerConfig;
-        _directoriesConfig = directoriesConfig;
     }
 
 

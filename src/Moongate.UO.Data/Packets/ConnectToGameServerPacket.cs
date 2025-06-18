@@ -9,10 +9,16 @@ public class ConnectToGameServerPacket : BaseUoPacket
 {
     public IPAddress ServerAddress { get; set; }
     public int ServerPort { get; set; }
-    public int AuthKey { get; set; }
+    public uint AuthKey { get; set; }
 
     public ConnectToGameServerPacket() : base(0x8C)
     {
+    }
+    public ConnectToGameServerPacket(IPAddress serverAddress, int serverPort, uint authKey) : this()
+    {
+        ServerAddress = serverAddress;
+        ServerPort = serverPort;
+        AuthKey = authKey;
     }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)

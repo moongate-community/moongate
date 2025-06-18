@@ -17,6 +17,12 @@ public class MoongateTcpClient
     public event Action? OnConnected;
 
     /// <summary>
+    ///  Unique identifier for the server this client is connected to
+    /// </summary>
+    public string ServerId { get; set; }
+
+
+    /// <summary>
     /// Event when the client is disconnected
     /// </summary>
     public event Action? OnDisconnected;

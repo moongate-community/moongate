@@ -1,8 +1,12 @@
+using System.Collections.Concurrent;
 using System.Net;
+using System.Net.NetworkInformation;
 using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Interfaces.Packets;
+using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Data;
+using Moongate.UO.Data.Packets.Sessions;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
@@ -21,20 +25,49 @@ public class LoginHandler : IGamePacketHandler
 
     private readonly MoongateServerConfig _serverConfig;
 
-    public LoginHandler(IAccountService accountService, MoongateServerConfig serverConfig)
+    private readonly ISchedulerSystemService _schedulerSystemService;
+
+    private readonly ConcurrentDictionary<uint, SessionInHoldObject> _sessionsInHold = new();
+
+    public LoginHandler(
+        IAccountService accountService, MoongateServerConfig serverConfig, ISchedulerSystemService schedulerSystemService
+    )
     {
         _accountService = accountService;
         _serverConfig = serverConfig;
+        _schedulerSystemService = schedulerSystemService;
+
+        _schedulerSystemService.RegisterJob("sessionInHoldCleanup", CleanupSessionsInHoldAsync, TimeSpan.FromMinutes(1));
 
 
         // TODO: Get address
-        _shareListPacket.AddShard(new GameServerEntry()
-        {
-            ServerName = _serverConfig.Name,
-            Index = 0,
-            IpAddress = IPAddress.Parse("127.0.0.1")
-        });
+        _shareListPacket.AddShard(
+            new GameServerEntry()
+            {
+                ServerName = _serverConfig.Name,
+                Index = 0,
+                IpAddress = IPAddress.Parse("127.0.0.1")
+            }
+        );
+    }
 
+    private Task CleanupSessionsInHoldAsync()
+    {
+        _logger.Debug("Cleaning up sessions in hold...");
+
+        var now = DateTime.UtcNow;
+        var threshold = now.AddMinutes(-5);
+
+        foreach (var session in _sessionsInHold)
+        {
+            if (session.Value.AddedDatetime < threshold)
+            {
+                _sessionsInHold.TryRemove(session.Key, out _);
+                _logger.Information("Removed session {SessionId} from hold due to inactivity", session.Key);
+            }
+        }
+
+        return Task.CompletedTask;
     }
 
     public async Task HandlePacketAsync(GameNetworkSession session, IUoNetworkPacket packet)
@@ -66,15 +99,18 @@ public class LoginHandler : IGamePacketHandler
             packet.SelectedServerIndex
         );
 
+
+        var authKey = (uint)new Random().Next(1, int.MaxValue);
+
         var connectToGameServer = new ConnectToGameServerPacket()
         {
-            ServerAddress = IPAddress.Parse("127.0.0.1"),
-            AuthKey = 29322,
-            ServerPort = 2593
+            ServerAddress = IPEndPoint.Parse(session.NetworkClient.ServerId).Address,
+            AuthKey = authKey,
+            ServerPort = _serverConfig.Network.Port
         };
 
+        _sessionsInHold.TryAdd(authKey, new SessionInHoldObject(authKey, session.Account.Id, DateTime.Now));
         session.SendPackets(connectToGameServer);
-
 
         return Task.CompletedTask;
     }
