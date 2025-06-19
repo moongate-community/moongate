@@ -1,4 +1,6 @@
 using Moongate.Core.Server.Interfaces.Packets;
+using Moongate.Core.Server.Interfaces.Services;
+using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
@@ -15,10 +17,13 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IMobileService _mobileService;
     private readonly IAccountService _accountService;
 
-    public CharactersHandler(IMobileService mobileService, IAccountService accountService)
+    private readonly IEventBusService _eventBusService;
+
+    public CharactersHandler(IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService)
     {
         _mobileService = mobileService;
         _accountService = accountService;
+        _eventBusService = eventBusService;
     }
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
@@ -78,5 +83,11 @@ public class CharactersHandler : IGamePacketHandler
 
         await _accountService.SaveAsync();
         await _mobileService.SaveAsync();
+        await _eventBusService.PublishAsync(
+            new CharacterCreatedEvent(
+                session.Account.Username,
+                playerMobileEntity
+            )
+        );
     }
 }
