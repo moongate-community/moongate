@@ -27,7 +27,8 @@ namespace Moongate.UO.Data.Persistence;
 [JsonSerializable(typeof(SkillInfo[]))]
 [JsonSerializable(typeof(JsonProfession))]
 [JsonSerializable(typeof(ProfessionInfo))]
-
+[JsonSerializable(typeof(JsonProfession[]))]
+[JsonSerializable(typeof(Dictionary<SkillName, double>))]
 [JsonSerializable(typeof(JsonSkill))]
 [JsonSerializable(typeof(JsonProfessionsRoot))]
 [JsonSerializable(typeof(JsonStat))]

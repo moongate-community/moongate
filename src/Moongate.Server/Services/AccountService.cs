@@ -147,11 +147,11 @@ public class AccountService : IAccountService
 
     public Task LoadAsync(CancellationToken cancellationToken = default)
     {
-        return SaveAccountsAsync();
+        return LoadAccountAsync();
     }
 
     public Task SaveAsync(CancellationToken cancellationToken = default)
     {
-        return LoadAccountAsync();
+        return SaveAccountsAsync();
     }
 }

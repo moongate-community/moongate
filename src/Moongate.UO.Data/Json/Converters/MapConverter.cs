@@ -14,6 +14,6 @@ public class MapConverter : JsonConverter<Map>
         };
 
     public override void Write(Utf8JsonWriter writer, Map value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(value.Name);
+        writer.WriteNumberValue(value.MapID);
 }
 

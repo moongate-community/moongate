@@ -35,14 +35,17 @@ public class UOMobileEntity
     /// Character appearance
     public GenderType Gender { get; set; }
 
-    public Race Race { get; set; }
+
+    [JsonConverter(typeof(RaceConverter))] public Race Race { get; set; }
     public int HairStyle { get; set; }
     public int HairHue { get; set; }
     public int FacialHairStyle { get; set; }
     public int FacialHairHue { get; set; }
     public int SkinHue { get; set; }
 
+    [JsonConverter(typeof(ProfessionInfoConverter))]
     public ProfessionInfo Profession { get; set; }
+
     public Point3D Location { get; set; }
 
     [JsonConverter(typeof(MapConverter))] public Map Map { get; set; }

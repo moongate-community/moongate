@@ -41,13 +41,14 @@ public class CharactersHandler : IGamePacketHandler
 
         var playerMobileEntity = _mobileService.CreateMobile();
 
-        session.Account.Characters.Add(new UOAccountCharacterEntity()
-        {
-            MobileId = playerMobileEntity.Id,
-            Name = characterCreation.CharacterName,
-            Slot = session.Account.Characters.Count + 1,
-
-        });
+        session.Account.Characters.Add(
+            new UOAccountCharacterEntity()
+            {
+                MobileId = playerMobileEntity.Id,
+                Name = characterCreation.CharacterName,
+                Slot = session.Account.Characters.Count + 1,
+            }
+        );
 
         playerMobileEntity.Name = characterCreation.CharacterName;
         playerMobileEntity.Created = DateTime.UtcNow;
@@ -65,7 +66,6 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.Race = characterCreation.Race;
 
 
-
         foreach (var skill in characterCreation.Skills)
         {
             playerMobileEntity.Skills.Add(skill.Skill, skill.Value);
@@ -76,8 +76,7 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.RecalculateMaxStats();
 
 
-
-
-
+        await _accountService.SaveAsync();
+        await _mobileService.SaveAsync();
     }
 }
