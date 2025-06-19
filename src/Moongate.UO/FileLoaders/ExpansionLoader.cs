@@ -22,7 +22,8 @@ public class ExpansionLoader : IFileLoader
     {
         var filePath = Path.Combine(_directoriesConfig[DirectoryType.Data], "expansions.json");
 
-        var expansionsData = JsonUtils.DeserializeFromFile<ExpansionInfo[]>(filePath);
+        ExpansionInfo.Table = JsonUtils.DeserializeFromFile<ExpansionInfo[]>(filePath);
+
 
     }
 }

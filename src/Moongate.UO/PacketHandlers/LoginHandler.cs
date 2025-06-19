@@ -129,7 +129,10 @@ public class LoginHandler : IGamePacketHandler
             characterListPacket.FillCharacters(!characters.Any() ? null : characters);
 
 
-            session.SendPackets(new SupportFeaturesPacket(), characterListPacket);
+
+
+            session.SendPackets(new SupportFeaturesPacket());
+            session.SendPackets(characterListPacket);
 
 
             return;

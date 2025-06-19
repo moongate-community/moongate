@@ -1,5 +1,6 @@
 using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
+using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Types;
 
@@ -95,7 +96,9 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             // }
         }
 
-        var flags = CharacterListFlags.SixthCharacterSlot | CharacterListFlags.SeventhCharacterSlot | CharacterListFlags.ExpansionEJ;
+        var flags = ExpansionInfo.CoreExpansion.CharacterListFlags;
+        flags |= CharacterListFlags.SixthCharacterSlot | CharacterListFlags.SeventhCharacterSlot;
+        //4584
         // {
         writer.Write((int)flags);
         writer.Write((short)-1);

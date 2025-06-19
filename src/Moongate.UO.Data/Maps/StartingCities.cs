@@ -49,5 +49,5 @@ public class StartingCities
 
 
     public static CityInfo[] AvailableStartingCities =>
-        [..NewHavenStartingCities, ..TrammelStartingCities, ..StartingCitiesSA];
+        [..NewHavenStartingCities, ..TrammelStartingCities];
 }
