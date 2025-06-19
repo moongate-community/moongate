@@ -23,6 +23,7 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Packets;
+using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Persistence;
 using Moongate.UO.Data.Types;
@@ -117,6 +118,8 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
+
+            networkService.RegisterGamePacketHandler<CharacterCreationPacket, CharactersHandler>();
         };
 
 
