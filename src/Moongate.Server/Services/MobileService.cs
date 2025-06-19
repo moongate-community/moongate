@@ -67,13 +67,25 @@ public class MobileService : IMobileService
             Id = lastSerial,
         };
 
+        _mobiles[mobile.Id] = mobile;
+
         return mobile;
-        
+
     }
 
 
     public void Dispose()
     {
         // TODO release managed resources here
+    }
+
+    public Task LoadAsync(CancellationToken cancellationToken = default)
+    {
+        return LoadMobilesAsync();
+    }
+
+    public Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+        return SaveMobilesAsync();
     }
 }

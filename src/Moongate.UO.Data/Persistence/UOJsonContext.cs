@@ -4,6 +4,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
@@ -25,6 +26,8 @@ namespace Moongate.UO.Data.Persistence;
 [JsonSerializable(typeof(SkillInfo))]
 [JsonSerializable(typeof(SkillInfo[]))]
 [JsonSerializable(typeof(JsonProfession))]
+[JsonSerializable(typeof(ProfessionInfo))]
+
 [JsonSerializable(typeof(JsonSkill))]
 [JsonSerializable(typeof(JsonProfessionsRoot))]
 [JsonSerializable(typeof(JsonStat))]

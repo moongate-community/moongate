@@ -144,4 +144,14 @@ public class AccountService : IAccountService
     public void Dispose()
     {
     }
+
+    public Task LoadAsync(CancellationToken cancellationToken = default)
+    {
+        return SaveAccountsAsync();
+    }
+
+    public Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+        return LoadAccountAsync();
+    }
 }
