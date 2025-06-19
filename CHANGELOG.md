@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.2.0"></a>
+## [0.2.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.2.0) (2025-06-19)
+
+### Features
+
+* added professions ([a5c3f8e](https://www.github.com/moongate-community/moongate/commit/a5c3f8e53eabef9b88a138132ddf7c289efd9080))
+* added professions ([5af7176](https://www.github.com/moongate-community/moongate/commit/5af7176e5aabd1cf82d8aab4d2e3bb708f8cc615))
+* **Body.cs:** add new struct Body with properties and methods to handle different body types and characteristics ([6706004](https://www.github.com/moongate-community/moongate/commit/67060047de44fa484dcb07ef6bed20a293c76c6b))
+* **CharacterCreationPacket.cs:** add CharacterCreationPacket class to handle character creation data ([d071e65](https://www.github.com/moongate-community/moongate/commit/d071e65fc0bee0eea2f8e7fbd104e9e05a942714))
+* **ClientVersionConverter.cs:** add ClientVersionConverter to handle JSON serialization and deserialization of ClientVersion objects ([6c70d76](https://www.github.com/moongate-community/moongate/commit/6c70d76adfec45cb080dfd2660c4c358ec7be140))
+* **CollectionsExtensions.cs:** add CollectionExtensions class with RandomElement method ([da43b20](https://www.github.com/moongate-community/moongate/commit/da43b20ea760528bb4c265a0b2b5d5d3861c7793))
+* **Compression:** add Deflate class for compression functionality ([8dc9d2b](https://www.github.com/moongate-community/moongate/commit/8dc9d2b6f1f5587a5c7050f9d5d672d723054962))
+* **expansions.json:** add data for various game expansions including their features, map selection flags, character list flags, housing flags, and mobile status version ([c010d8c](https://www.github.com/moongate-community/moongate/commit/c010d8c19a58ecd4de8edd06a1e1b396f9e77fbb))
+* **expansions.json:** add data for various game expansions to support different features and maps ([ce5e052](https://www.github.com/moongate-community/moongate/commit/ce5e052fe7124cd5cda8d79705203e3fcc773968))
+* **index.d.ts:** update Moongate Server version to v0.1.19.0 and update auto-generated documentation timestamp ([9b19f14](https://www.github.com/moongate-community/moongate/commit/9b19f1492b79cdbd0fec5523d52bb369d40d7324))
+* **index.d.ts:** update Moongate Server version to v0.1.7.0 and auto-generated documentation date ([a8e4e45](https://www.github.com/moongate-community/moongate/commit/a8e4e4593060507e6b4774b4297300ff9c754025))
+* **JsonProfession:** add JSON representation classes for professions, skills, stats, and root object ([141def1](https://www.github.com/moongate-community/moongate/commit/141def16b0b552617d4fffc15777bc47dc157bba))
+* **MultiComponentList.cs:** add MultiComponentList class with constructors and methods ([7a89b7e](https://www.github.com/moongate-community/moongate/commit/7a89b7ebe234eae3b3a9fa29175354e430f184d1))
+* **professions:** restructure profession data from txt files to a JSON format for better organization and readability ([0f493fe](https://www.github.com/moongate-community/moongate/commit/0f493fea93bd016d9b1ad9ee41f48fd9ee6046eb))
+* **SupportFeaturesPacket.cs:** add new class SupportFeaturesPacket to handle feature flags in packets ([e79b29c](https://www.github.com/moongate-community/moongate/commit/e79b29cf740e80081041275b387cb8c3b9543e2a))
+* **UOJsonContext.cs:** add support for new classes and converters related to expansions and versions ([7953ac6](https://www.github.com/moongate-community/moongate/commit/7953ac60d06fc5d130a96df19f1f337cdb79b65b))
+
+### Bug Fixes
+
+* **index.d.ts:** update Moongate Server version in TypeScript definitions to v0.1.13.0 ([ba3193f](https://www.github.com/moongate-community/moongate/commit/ba3193fa40d8040f70c089dc540e58a8e2af02fd))
+* **Prof.txt:** remove trailing whitespace in the Skill lines for better consistency ([208c166](https://www.github.com/moongate-community/moongate/commit/208c1663f5bb1c4e9265ec137c96a404846093cc))
+
 <a name="0.1.1"></a>
 ## [0.1.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.1.1) (2025-06-18)
 
