@@ -11,6 +11,8 @@ public class Map : IComparable<Map>, IComparable
     private static readonly Map[] _maps = new Map[0x100];
     private static readonly List<Map> _allMaps = new List<Map>();
 
+    public static int MapCount => _allMaps.Count;
+
     public static Map[] Maps => _maps;
     public static Map Felucca => _maps[0];
     public static Map Trammel => _maps[1];

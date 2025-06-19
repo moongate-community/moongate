@@ -27,7 +27,7 @@ public class ProfessionsLoader : IFileLoader
         {
             var parent = Path.Combine(_directoriesConfig[DirectoryType.Data], "Professions");
 
-            path = Path.Combine(parent, "SE", "Prof.txt");
+            path = Path.Combine(parent, "SA", "Prof.txt");
         }
 
         if (File.Exists(path))

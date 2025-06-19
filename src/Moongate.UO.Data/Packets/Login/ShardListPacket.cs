@@ -2,7 +2,7 @@ using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Packets.Data;
 
-namespace Moongate.UO.Data.Packets;
+namespace Moongate.UO.Data.Packets.Login;
 
 public class ShardListPacket : BaseUoPacket
 {

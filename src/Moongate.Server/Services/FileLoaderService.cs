@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DryIoc;
 using Moongate.UO.Interfaces.FileLoaders;
 using Moongate.UO.Interfaces.Services;
@@ -39,11 +40,12 @@ public class FileLoaderService : IFileLoaderService
 
     public async Task ExecuteLoadersAsync()
     {
+        var startTime = Stopwatch.GetTimestamp();
         foreach (var loader in _fileLoaders)
         {
             try
             {
-                _logger.Information("Executing file loader {LoaderType}", loader.GetType().Name);
+                _logger.Debug("Executing file loader {LoaderType}", loader.GetType().Name);
                 await loader.LoadAsync();
             }
             catch (Exception ex)
@@ -52,6 +54,8 @@ public class FileLoaderService : IFileLoaderService
                 throw;
             }
         }
+
+        _logger.Information("All file loaders executed in {ElapsedMilliseconds} ms", Stopwatch.GetElapsedTime(startTime));
     }
 
     public Task StartAsync(CancellationToken cancellationToken = default)
