@@ -133,6 +133,7 @@ await ConsoleApp.RunAsync(
 
             fileLoaderService.AddFileLoader<ClientVersionLoader>();
             fileLoaderService.AddFileLoader<SkillLoader>();
+            fileLoaderService.AddFileLoader<ExpansionLoader>();
             fileLoaderService.AddFileLoader<BodyDataLoader>();
             fileLoaderService.AddFileLoader<ProfessionsLoader>();
             fileLoaderService.AddFileLoader<MultiDataLoader>();

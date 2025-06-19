@@ -6,8 +6,7 @@ namespace Moongate.UO.Extensions;
 
 public static class GameSessionExtensions
 {
-    public static void SendPackets<TPacket>(this GameSession session, params TPacket[] packets)
-        where TPacket : IUoNetworkPacket
+    public static void SendPackets(this GameSession session, params IUoNetworkPacket[] packets)
     {
         foreach (var packet in packets)
         {

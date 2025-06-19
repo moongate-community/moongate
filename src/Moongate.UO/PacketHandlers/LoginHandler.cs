@@ -4,6 +4,7 @@ using System.Net.NetworkInformation;
 using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
+using Moongate.UO.Data.Events.Features;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Characters;
@@ -128,7 +129,7 @@ public class LoginHandler : IGamePacketHandler
             characterListPacket.FillCharacters(!characters.Any() ? null : characters);
 
 
-            session.SendPackets(characterListPacket);
+            session.SendPackets(new SupportFeaturesPacket(), characterListPacket);
 
 
             return;
