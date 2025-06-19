@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using Moongate.Core.Extensions.Strings;
 
-namespace Moongate.UO.Races.Base;
+namespace Moongate.UO.Data.Races.Base;
 
 public abstract class Race : ISpanParsable<Race>
 {

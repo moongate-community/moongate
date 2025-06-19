@@ -1,8 +1,8 @@
 using Moongate.Core.Extensions.Collections;
 using Moongate.Core.Utils.Random;
-using Moongate.UO.Races.Base;
+using Moongate.UO.Data.Races.Base;
 
-namespace Moongate.UO.Races;
+namespace Moongate.UO.Data.Races;
 
 public class Gargoyle : Race
 {

@@ -1,7 +1,7 @@
 using Moongate.Core.Extensions.Collections;
 using Moongate.Core.Utils.Random;
 
-namespace Moongate.UO.Races.Base;
+namespace Moongate.UO.Data.Races.Base;
 
 public class Elf : Race
 {

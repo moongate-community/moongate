@@ -1,6 +1,6 @@
+using Moongate.UO.Data.Races;
+using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Interfaces.FileLoaders;
-using Moongate.UO.Races;
-using Moongate.UO.Races.Base;
 using Serilog;
 
 namespace Moongate.UO.FileLoaders;
