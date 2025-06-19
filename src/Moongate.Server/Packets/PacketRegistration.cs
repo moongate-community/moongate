@@ -154,6 +154,7 @@ public static class PacketRegistration
         /// Create Character
         networkService.RegisterPacket(0x00, 104, "Create Character");
 
+        networkService.RegisterPacket(0xF8, 106, "Create Character");
         /// Character Creation (KR + SA 3D clients only)
         networkService.RegisterPacket(0x8D, -1, "Character Creation (KR + SA 3D clients only)");
 

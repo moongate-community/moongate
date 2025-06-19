@@ -1,9 +1,8 @@
-using System.Net;
 using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Version;
 
-namespace Moongate.UO.Data.Packets;
+namespace Moongate.UO.Data.Packets.Login;
 
 public class LoginSeedPacket : BaseUoPacket
 {

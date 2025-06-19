@@ -12,4 +12,7 @@ public static class UOContext
 
     public static Dictionary<int, CliLocEntry> LocalizedMessages { get; set; } = new();
 
+
+
+
 }

@@ -6,5 +6,7 @@ public class UOAccountCharacterEntity
 {
     public int Slot { get; set; }
 
+    public string Name { get; set; }
+
     public Serial MobileId { get; set; }
 }

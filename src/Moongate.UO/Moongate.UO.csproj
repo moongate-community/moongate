@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -16,6 +16,10 @@
       <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
       <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
       <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="LibDeflate.Bindings" Version="1.0.2.120" />
     </ItemGroup>
 
 </Project>

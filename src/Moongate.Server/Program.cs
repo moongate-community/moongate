@@ -23,6 +23,8 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Packets;
+using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Persistence;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
@@ -116,6 +118,8 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
+
+            networkService.RegisterGamePacketHandler<CharacterCreationPacket, CharactersHandler>();
         };
 
 
@@ -129,6 +133,13 @@ await ConsoleApp.RunAsync(
 
             fileLoaderService.AddFileLoader<ClientVersionLoader>();
             fileLoaderService.AddFileLoader<SkillLoader>();
+            fileLoaderService.AddFileLoader<ExpansionLoader>();
+            fileLoaderService.AddFileLoader<BodyDataLoader>();
+            fileLoaderService.AddFileLoader<ProfessionsLoader>();
+            fileLoaderService.AddFileLoader<MultiDataLoader>();
+            fileLoaderService.AddFileLoader<RaceLoader>();
+            fileLoaderService.AddFileLoader<TileDataLoader>();
+            fileLoaderService.AddFileLoader<MapLoader>();
         };
 
         bootstrap.Initialize();

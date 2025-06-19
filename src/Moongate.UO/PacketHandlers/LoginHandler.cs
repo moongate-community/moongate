@@ -4,8 +4,12 @@ using System.Net.NetworkInformation;
 using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
+using Moongate.UO.Data.Events.Features;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
+using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Data;
+using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.Sessions;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -13,6 +17,7 @@ using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
+using ZLinq;
 
 namespace Moongate.UO.PacketHandlers;
 
@@ -111,6 +116,25 @@ public class LoginHandler : IGamePacketHandler
             session.Account = await _accountService.GetAccountByIdAsync(sessionInHold.AccountId);
             session.SetState(NetworkSessionStateType.Authenticated);
             session.SetFeatures(NetworkSessionFeatureType.Compression);
+
+            var characters = session.Account.Characters.AsValueEnumerable()
+                .OrderBy(s => s.Slot)
+                .Select(s => new CharacterEntry(s.Name))
+                .ToList();
+            var characterListPacket = new CharactersStartingLocationsPacket
+            {
+                Cities = StartingCities.AvailableStartingCities.ToList(),
+            };
+
+            characterListPacket.FillCharacters(!characters.Any() ? null : characters);
+
+
+
+
+            session.SendPackets(new SupportFeaturesPacket());
+            session.SendPackets(characterListPacket);
+
+
             return;
         }
 

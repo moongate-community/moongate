@@ -23,9 +23,8 @@ namespace Moongate.UO.Data.Geometry;
 
 public struct Point2D
     : IPoint2D, IComparable<Point2D>, IComparable<IPoint2D>, IEquatable<object>, IEquatable<Point2D>,
-        IEquatable<IPoint2D>, ISpanFormattable, ISpanParsable<Point2D>, INotifyPropertyChanged
+        IEquatable<IPoint2D>, ISpanFormattable, ISpanParsable<Point2D>
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     public int X { get; set; }
     public int Y { get; set; }
