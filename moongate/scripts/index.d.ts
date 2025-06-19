@@ -1,6 +1,6 @@
 /**
  * Moongate Server v0.1.19.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-19 20:28:30
+ * Auto-generated documentation on 2025-06-19 22:36:27
  **/
 
 // Constants

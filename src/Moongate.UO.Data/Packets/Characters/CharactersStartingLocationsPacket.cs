@@ -62,7 +62,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
 
         writer.Write(OpCode);
         writer.Write((ushort)length);
-        writer.Write((byte)count); // TODO: It is probably more proper to use count.
+        writer.Write((byte)count);
 
         foreach (var character in Characters)
         {
@@ -73,7 +73,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             }
 
             writer.WriteAscii(character.Name, 30);
-            writer.WriteAscii(character.Password, 30);
+            writer.Clear(30);
         }
 
         writer.Write((byte)Cities.Count);
@@ -90,7 +90,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             writer.Write(ci.X);
             writer.Write(ci.Y);
             writer.Write(ci.Z);
-            writer.Write(ci.Map.Index);
+            writer.Write(ci.Map?.MapID ?? 0);
             writer.Write(ci.Description);
             writer.Write(0);
             // }
@@ -98,8 +98,6 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
 
         var flags = ExpansionInfo.CoreExpansion.CharacterListFlags;
         flags |= CharacterListFlags.SixthCharacterSlot | CharacterListFlags.SeventhCharacterSlot;
-        //4584
-        // {
         writer.Write((int)flags);
         writer.Write((short)-1);
 
