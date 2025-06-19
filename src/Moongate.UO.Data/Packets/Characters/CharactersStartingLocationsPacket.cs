@@ -95,8 +95,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             // }
         }
 
-        var flags = CharacterListFlags.SeventhCharacterSlot |
-                    CharacterListFlags.SixthCharacterSlot;
+        var flags = CharacterListFlags.SixthCharacterSlot | CharacterListFlags.SeventhCharacterSlot | CharacterListFlags.ExpansionEJ;
         // {
         writer.Write((int)flags);
         writer.Write((short)-1);

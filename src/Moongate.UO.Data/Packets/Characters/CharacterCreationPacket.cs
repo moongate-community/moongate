@@ -15,7 +15,6 @@ public class CharacterCreationPacket : BaseUoPacket
     public string CharacterName { get; set; }
     public ClientFlags ClientFlags { get; set; }
     public ProfessionInfo Profession { get; set; }
-
     public List<SkillKeyValue> Skills { get; set; }
 
     public int Intelligence { get; set; }
