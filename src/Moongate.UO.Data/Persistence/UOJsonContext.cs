@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Json;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
@@ -12,9 +13,16 @@ namespace Moongate.UO.Data.Persistence;
 [JsonSerializable(typeof(Serial))]
 [JsonSerializable(typeof(UOMobileEntity))]
 
+
 [JsonConverter(typeof(JsonStringEnumConverter<Stat>))]
 [JsonSerializable(typeof(SkillInfo))]
 [JsonSerializable(typeof(SkillInfo[]))]
+
+[JsonSerializable(typeof(JsonProfession))]
+[JsonSerializable(typeof(JsonSkill))]
+[JsonSerializable(typeof(JsonProfessionsRoot))]
+[JsonSerializable(typeof(JsonStat))]
+
 [JsonSourceGenerationOptions(
     WriteIndented = false,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
