@@ -27,6 +27,11 @@ public class UOAccountEntity
         return Characters.FirstOrDefault(c => c.Slot == slot);
     }
 
+    public UOAccountCharacterEntity? GetCharacter(string name)
+    {
+        return Characters.FirstOrDefault(c => c.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+    }
+
     public void RemoveCharacter(UOAccountCharacterEntity character)
     {
         Characters.Remove(character);

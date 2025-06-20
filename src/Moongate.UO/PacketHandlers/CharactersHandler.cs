@@ -39,6 +39,19 @@ public class CharactersHandler : IGamePacketHandler
             await DeleteCharacterAsync(session, characterDeletion);
             return;
         }
+
+        if (packet is CharacterLoginPacket characterLogin)
+        {
+            await SelectCharacterAsync(session, characterLogin);
+            return;
+        }
+    }
+
+    private async Task SelectCharacterAsync(GameSession session, CharacterLoginPacket packet)
+    {
+        var character = session.Account.GetCharacter(packet.CharacterName);
+
+        await _eventBusService.PublishAsync(new CharacterLoggedEvent(session.SessionId, character.MobileId, character.Name));
     }
 
     private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)

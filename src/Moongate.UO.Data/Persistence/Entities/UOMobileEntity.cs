@@ -35,7 +35,6 @@ public class UOMobileEntity
     /// Character appearance
     public GenderType Gender { get; set; }
 
-
     [JsonConverter(typeof(RaceConverter))] public Race Race { get; set; }
     public int HairStyle { get; set; }
     public int HairHue { get; set; }

@@ -20,6 +20,15 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
         if (characters != null)
         {
             Characters.AddRange(characters);
+
+            if (characters.Count < size)
+            {
+                for (var i = characters.Count; i < size; i++)
+                {
+                    Characters.Add(null);
+                }
+            }
+
         }
         else
         {

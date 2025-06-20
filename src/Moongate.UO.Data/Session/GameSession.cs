@@ -15,6 +15,8 @@ public class GameSession : IDisposable, INotifyPropertyChanged
     public UOAccountEntity Account { get; set; }
     public int Seed { get; set; }
 
+    public int PingSequence { get; set; }
+
     public NetworkSessionFeatureType Features { get; private set; } = NetworkSessionFeatureType.None;
     public NetworkSessionStateType State { get; private set; } = NetworkSessionStateType.None;
     public MoongateTcpClient NetworkClient { get; set; }
