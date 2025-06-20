@@ -20,6 +20,15 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
         if (characters != null)
         {
             Characters.AddRange(characters);
+
+            if (characters.Count < size)
+            {
+                for (var i = characters.Count; i < size; i++)
+                {
+                    Characters.Add(null);
+                }
+            }
+
         }
         else
         {
@@ -32,9 +41,6 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
-        //var client70130 = true;
-        //var textLength = 32;
-
         var highSlot = -1;
 
         for (var i = Characters.Count - 1; i >= 0; i--)
@@ -53,11 +59,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             count = 5;
         }
 
-        var length = 11 + (32 * 2 + 25) * Cities.Count;
-
-        // var length =
-        //     (client70130 ? 11 + (textLength * 2 + 25) * Cities.Count() : 9 + (textLength * 2 + 1) * Cities.Count()) +
-        //    count * 60;
+        var length = (11 + (32 * 2 + 25) * Cities.Count) + count * 60;
 
 
         writer.Write(OpCode);
@@ -85,15 +87,12 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             writer.Write((byte)i);
             writer.WriteAscii(ci.City, 32);
             writer.WriteAscii(ci.Building, 32);
-            //  if (client70130)
-            // {
             writer.Write(ci.X);
             writer.Write(ci.Y);
             writer.Write(ci.Z);
             writer.Write(ci.Map?.MapID ?? 0);
             writer.Write(ci.Description);
             writer.Write(0);
-            // }
         }
 
         var flags = ExpansionInfo.CoreExpansion.CharacterListFlags;

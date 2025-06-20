@@ -67,13 +67,36 @@ public class MobileService : IMobileService
             Id = lastSerial,
         };
 
+        _mobiles[mobile.Id] = mobile;
+
         return mobile;
-        
+
+    }
+
+    public UOMobileEntity? GetMobile(Serial id)
+    {
+        if (_mobiles.TryGetValue(id, out var mobile))
+        {
+            return mobile;
+        }
+
+        _logger.Warning("Mobile with ID {Id} not found.", id);
+        return null;
     }
 
 
     public void Dispose()
     {
         // TODO release managed resources here
+    }
+
+    public Task LoadAsync(CancellationToken cancellationToken = default)
+    {
+        return LoadMobilesAsync();
+    }
+
+    public Task SaveAsync(CancellationToken cancellationToken = default)
+    {
+        return SaveMobilesAsync();
     }
 }

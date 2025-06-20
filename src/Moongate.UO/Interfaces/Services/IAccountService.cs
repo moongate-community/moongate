@@ -1,11 +1,12 @@
 using Moongate.Core.Data;
+using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.UO.Interfaces.Services;
 
-public interface IAccountService : IMoongateAutostartService
+public interface IAccountService : IMoongateAutostartService, IPersistenceLoadSave
 {
     Task<string> CreateAccount(string username, string password, AccountLevelType accountLevel = AccountLevelType.User);
 
