@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.3.0"></a>
+## [0.3.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.3.0) (2025-06-20)
+
+### Features
+
+* **CharactersHandler.cs:** add event bus service to CharactersHandler constructor to publish CharacterCreatedEvent ([1fc282f](https://www.github.com/moongate-community/moongate/commit/1fc282fa95e33b503915f900e959625868b9767f))
+* **moongate:** update Moongate Server version to v0.1.23.0 in TypeScript Definitions ([fd5b8bd](https://www.github.com/moongate-community/moongate/commit/fd5b8bdbb68e83c0648c0bc0a97f08ecc898b759))
+* **moongate:** update Moongate Server version to v0.1.27.0 in TypeScript Definitions ([64edde6](https://www.github.com/moongate-community/moongate/commit/64edde69982d1805b81e76ae6428afa740be8f69))
+* **Moongate:** add IPersistenceLoadSave interface for load and save operations ([9f5620d](https://www.github.com/moongate-community/moongate/commit/9f5620deac8cc1e41189ca01da6f63b9d870191d))
+* **Program.cs:** add support for registering CharacterDeletePacket handler in CharactersHandler to handle character deletion ([2e56b8a](https://www.github.com/moongate-community/moongate/commit/2e56b8a159d7430f3549d5a8bfa8d04a57964e54))
+
 <a name="0.2.0"></a>
 ## [0.2.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.2.0) (2025-06-19)
 
