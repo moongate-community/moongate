@@ -51,6 +51,10 @@ public class CharactersHandler : IGamePacketHandler
     {
         var character = session.Account.GetCharacter(packet.CharacterName);
 
+        var mobile = _mobileService.GetMobile(character.MobileId);
+
+        session.Mobile = mobile;
+
         await _eventBusService.PublishAsync(new CharacterLoggedEvent(session.SessionId, character.MobileId, character.Name));
     }
 
@@ -123,12 +127,12 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.Gender = characterCreation.Gender;
         playerMobileEntity.Race = characterCreation.Race;
 
+        playerMobileEntity.Map = characterCreation.StartingCity.Map;
 
         foreach (var skill in characterCreation.Skills)
         {
             playerMobileEntity.Skills.Add(skill.Skill, skill.Value);
         }
-
         playerMobileEntity.Profession = characterCreation.Profession;
 
         playerMobileEntity.RecalculateMaxStats();

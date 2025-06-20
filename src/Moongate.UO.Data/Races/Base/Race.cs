@@ -1,5 +1,7 @@
 using System.Runtime.CompilerServices;
 using Moongate.Core.Extensions.Strings;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Races.Base;
 
@@ -88,13 +90,13 @@ public abstract class Race : ISpanParsable<Race>
     public abstract int ClipHairHue(int hue);
     public abstract int RandomHairHue();
 
-    //public virtual int Body(MobileEntity m) => m.Alive ? AliveBody(m.Female) : GhostBody(m.Female);
+    public virtual int Body(UOMobileEntity m) => m.IsAlive ? AliveBody(m.Gender == GenderType.Female) : GhostBody(m.Gender == GenderType.Female);
 
-    //public virtual int AliveBody(MobileEntity m) => AliveBody(m.Female);
+    public virtual int AliveBody(UOMobileEntity m) => AliveBody(m.Gender == GenderType.Female);
 
     public virtual int AliveBody(bool female) => female ? FemaleBody : MaleBody;
 
-    //public virtual int GhostBody(MobileEntity m) => GhostBody(m.Female);
+    public virtual int GhostBody(UOMobileEntity m) => GhostBody(m.Gender == GenderType.Female);
 
     public virtual int GhostBody(bool female) => female ? FemaleGhostBody : MaleGhostBody;
 

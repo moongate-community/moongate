@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Converters;
@@ -36,6 +37,8 @@ public class UOMobileEntity
     public GenderType Gender { get; set; }
 
     public Race Race { get; set; }
+
+    public Body Body => Race.Body(this);
     public int HairStyle { get; set; }
     public int HairHue { get; set; }
     public int FacialHairStyle { get; set; }

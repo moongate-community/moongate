@@ -107,6 +107,8 @@ await ConsoleApp.RunAsync(
 
             container.AddService(typeof(AccountCommands));
 
+            container.AddService(typeof(AfterLoginHandler));
+
 
             container.RegisterInstance<IEntityReader>(new MoongateEntityWriterReader());
             container.RegisterInstance<IEntityWriter>(new MoongateEntityWriterReader());
