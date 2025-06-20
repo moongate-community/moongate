@@ -117,16 +117,12 @@ public class LoginHandler : IGamePacketHandler
             session.SetState(NetworkSessionStateType.Authenticated);
             session.SetFeatures(NetworkSessionFeatureType.Compression);
 
-            var characters = session.Account.Characters.AsValueEnumerable()
-                .OrderBy(s => s.Slot)
-                .Select(s => new CharacterEntry(s.Name))
-                .ToList();
             var characterListPacket = new CharactersStartingLocationsPacket
             {
                 Cities = StartingCities.AvailableStartingCities.ToList(),
             };
 
-            characterListPacket.FillCharacters(!characters.Any() ? null : characters);
+            characterListPacket.FillCharacters(session.GetCharactersEntries().Count == 0 ? null : session.GetCharactersEntries());
 
 
 

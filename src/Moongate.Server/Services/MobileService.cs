@@ -73,6 +73,17 @@ public class MobileService : IMobileService
 
     }
 
+    public UOMobileEntity? GetMobile(Serial id)
+    {
+        if (_mobiles.TryGetValue(id, out var mobile))
+        {
+            return mobile;
+        }
+
+        _logger.Warning("Mobile with ID {Id} not found.", id);
+        return null;
+    }
+
 
     public void Dispose()
     {

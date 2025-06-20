@@ -22,13 +22,30 @@ public class UOAccountEntity
     public List<UOAccountCharacterEntity> Characters { get; set; } = new();
 
 
+    public UOAccountCharacterEntity GetCharacter(int slot)
+    {
+        return Characters.FirstOrDefault(c => c.Slot == slot);
+    }
+
+    public void RemoveCharacter(UOAccountCharacterEntity character)
+    {
+        Characters.Remove(character);
+        // Reassign slots after removal
+        for (int i = 0; i < Characters.Count; i++)
+        {
+            Characters[i].Slot = i;
+        }
+    }
+
     public void AddCharacter(UOMobileEntity mobileEntity)
     {
-        AddCharacter(new UOAccountCharacterEntity()
-        {
-            Slot = Characters.Count,
-            MobileId = mobileEntity.Id,
-        });
+        AddCharacter(
+            new UOAccountCharacterEntity()
+            {
+                Slot = Characters.Count,
+                MobileId = mobileEntity.Id,
+            }
+        );
     }
 
     public void AddCharacter(UOAccountCharacterEntity character)

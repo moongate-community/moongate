@@ -4,6 +4,7 @@ using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
@@ -16,7 +17,6 @@ public class CharactersHandler : IGamePacketHandler
 
     private readonly IMobileService _mobileService;
     private readonly IAccountService _accountService;
-
     private readonly IEventBusService _eventBusService;
 
     public CharactersHandler(IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService)
@@ -31,7 +31,47 @@ public class CharactersHandler : IGamePacketHandler
         if (packet is CharacterCreationPacket characterCreation)
         {
             await CreateCharacterAsync(session, characterCreation);
+            return;
         }
+
+        if (packet is CharacterDeletePacket characterDeletion)
+        {
+            await DeleteCharacterAsync(session, characterDeletion);
+            return;
+        }
+    }
+
+    private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)
+    {
+        var character = session.Account.GetCharacter(characterDeletion.Index);
+        var mobileEntity = _mobileService.GetMobile(character.MobileId);
+
+        if (mobileEntity == null)
+        {
+            _logger.Warning(
+                "Character deletion failed for account {AccountName} character: {Character} - Mobile entity not found.",
+                session.Account.Username,
+                character.Name
+            );
+            return;
+        }
+
+        _logger.Information(
+            "Deleting character for account {AccountName} character: {Character}",
+            session.Account.Username,
+            character.Name
+        );
+
+        session.Account.RemoveCharacter(character);
+
+        // TODO: Send Save request
+
+        var charactersAfterDelete = new CharacterAfterDeletePacket();
+        charactersAfterDelete.FillCharacters(
+            session.GetCharactersEntries().Count == 0
+                ? null
+                : session.GetCharactersEntries()
+        );
     }
 
     private async Task CreateCharacterAsync(

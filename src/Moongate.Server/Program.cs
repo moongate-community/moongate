@@ -108,9 +108,6 @@ await ConsoleApp.RunAsync(
         {
             PacketRegistration.RegisterPackets(networkService);
 
-            //networkService.BindPacket<LoginSeedPacket>();
-            //networkService.BindPacket<LoginRequestPacket>();
-            //networkService.BindPacket<SelectServerPacket>();
 
             // Registering all packet handlers
 
@@ -120,6 +117,7 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
 
             networkService.RegisterGamePacketHandler<CharacterCreationPacket, CharactersHandler>();
+            networkService.RegisterGamePacketHandler<CharacterDeletePacket, CharactersHandler>();
         };
 
 
@@ -168,7 +166,7 @@ static async Task CopyAssetsFilesAsync(DirectoriesConfig directoriesConfig)
 
         if (!File.Exists(fileName))
         {
-            Log.Logger.Information("Copying asset  {FileName}", fileName);
+            Log.Logger.Information("Copying asset {FileName}", fileName);
 
             var content = ResourceUtils.GetEmbeddedResourceContent(assetFile.Asset, typeof(Program).Assembly);
 
