@@ -53,7 +53,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             count = 5;
         }
 
-        var length = 11 + (32 * 2 + 25) * Cities.Count;
+        var length = (11 + (32 * 2 + 25) * Cities.Count) + count * 60;
 
         // var length =
         //     (client70130 ? 11 + (textLength * 2 + 25) * Cities.Count() : 9 + (textLength * 2 + 1) * Cities.Count()) +
