@@ -22,11 +22,14 @@ using Moongate.Server.Services;
 using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Json.Converters;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Persistence;
+using Moongate.Uo.Data.Types;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.FileLoaders;
@@ -37,8 +40,18 @@ using Serilog;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
+
 JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
 
+JsonUtils.AddJsonConverter(new SerialConverter());
+JsonUtils.AddJsonConverter(new RaceConverter());
+JsonUtils.AddJsonConverter(new ProfessionInfoConverter());
+JsonUtils.AddJsonConverter(new MapConverter());
+JsonUtils.AddJsonConverter(new ClientVersionConverter());
+JsonUtils.AddJsonConverter(new FlagsConverter<CharacterListFlags>());
+JsonUtils.AddJsonConverter(new FlagsConverter<FeatureFlags>());
+JsonUtils.AddJsonConverter(new FlagsConverter<HousingFlags>());
+JsonUtils.AddJsonConverter(new FlagsConverter<MapSelectionFlags>());
 var cancellationTokenSource = new CancellationTokenSource();
 
 await ConsoleApp.RunAsync(

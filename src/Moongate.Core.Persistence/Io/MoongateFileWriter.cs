@@ -85,10 +85,10 @@ public class MoongateFileWriter : IDisposable
         await _stream.FlushAsync();
 
         /// Debug logging
-        _logger.Debug($"[DEBUG] Written {_entities.Count} entities, file size: {_stream.Position} bytes");
+        _logger.Debug("Written {EntitiesCount} entities, file size: {StreamPosition} bytes", _entities.Count, _stream.Position);
         foreach (var entity in _entities)
         {
-            _logger.Debug($"[DEBUG] Entity: {entity.TypeName}, Data size: {entity.DataLength} bytes");
+            _logger.Debug("Entity: {EntityTypeName}, Data size: {EntityDataLength} bytes", entity.TypeName, entity.DataLength);
         }
     }
 
