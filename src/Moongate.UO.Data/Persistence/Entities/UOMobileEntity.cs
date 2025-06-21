@@ -17,6 +17,12 @@ public class UOMobileEntity
     public string Name { get; set; }
     public string Title { get; set; }
 
+    public int X => Location.X;
+
+    public int Y => Location.Y;
+
+    public int Z => Location.Z;
+
     public int Strength { get; set; } = 10;
     public int Dexterity { get; set; } = 10;
     public int Intelligence { get; set; } = 10;
@@ -35,6 +41,7 @@ public class UOMobileEntity
 
     /// Character appearance
     public GenderType Gender { get; set; }
+
 
     public Race Race { get; set; }
 
@@ -63,8 +70,19 @@ public class UOMobileEntity
     /// Character flags and status
     public bool IsAlive { get; set; } = true;
 
-    public bool IsHidden { get; set; } = false;
-    public bool IsFrozen { get; set; } = false;
+    public bool IsHidden { get; set; }
+    public bool IsFrozen { get; set; }
+
+    public bool IsWarMode { get; set; }
+    public bool  IsFlying { get; set; }
+
+    public bool IsBlessed { get; set; }
+
+    public bool IgnoreMobiles { get; set; }
+
+    public bool IsPoisoned { get; set; }
+
+    public bool IsParalyzed { get; set; }
     public bool IsInvulnerable { get; set; } = false;
 
     /// Timing and persistence
@@ -123,4 +141,57 @@ public class UOMobileEntity
     {
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
     }
+
+    public virtual int GetPacketFlags(bool stygianAbyss)
+    {
+        var flags = 0x0;
+
+        if (IsParalyzed || IsFrozen)
+        {
+            flags |= 0x01;
+        }
+
+        if (Gender == GenderType.Female)
+        {
+            flags |= 0x02;
+        }
+
+        if (stygianAbyss)
+        {
+            if (IsFlying)
+            {
+                flags |= 0x04;
+            }
+        }
+        else
+        {
+            if (IsPoisoned)
+            {
+                flags |= 0x04;
+            }
+        }
+
+        if (IsBlessed)
+        {
+            flags |= 0x08;
+        }
+
+        if (IgnoreMobiles)
+        {
+            flags |= 0x10;
+        }
+
+        if (IgnoreMobiles)
+        {
+            flags |= 0x40;
+        }
+
+        if (IsHidden)
+        {
+            flags |= 0x80;
+        }
+
+        return flags;
+    }
+
 }
