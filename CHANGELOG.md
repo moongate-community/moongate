@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.4.0"></a>
+## [0.4.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.4.0) (2025-06-22)
+
+### Features
+
+* **index.d.ts:** update Moongate Server version to v0.2.9.0 in TypeScript definitions ([22687a5](https://www.github.com/moongate-community/moongate/commit/22687a54bd39e3c3eed2596594005c8f1528b913))
+* **KeywordList.cs:** add a new class KeywordList to manage a list of keywords efficiently ([6e4f061](https://www.github.com/moongate-community/moongate/commit/6e4f06151536ef93161d4a56bcf48297de4bd2d9))
+* **mobiles.mga:** update Moongate Server mobiles save file ([2bbd767](https://www.github.com/moongate-community/moongate/commit/2bbd7674c6e36feb9b6ed2eb671da0bf61dd8e17))
+* **Packets:** add DrawGamePlayerPacket, WarModePacket, and MapChangePacket ([632e1ab](https://www.github.com/moongate-community/moongate/commit/632e1ab68b87ea897348bc4a33a0f30e99dc51ee))
+* **SetWeatherPacket.cs:** add SetWeatherPacket class to handle setting weather in the game ([c068e5a](https://www.github.com/moongate-community/moongate/commit/c068e5a4b3f9af274e96fcbc715153ef6260d84d))
+
 <a name="0.3.0"></a>
 ## [0.3.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.3.0) (2025-06-20)
 
