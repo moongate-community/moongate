@@ -41,8 +41,6 @@ public class UOMobileEntity
 
     /// Character appearance
     public GenderType Gender { get; set; }
-
-
     public Race Race { get; set; }
 
     public Body Body => Race.Body(this);
@@ -140,6 +138,16 @@ public class UOMobileEntity
     public void UpdatePlayTime(TimeSpan sessionTime)
     {
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
+    }
+
+    public virtual void ReceiveSpeech()
+    {
+
+    }
+
+    public virtual void Speech()
+    {
+
     }
 
     public virtual int GetPacketFlags(bool stygianAbyss)
