@@ -11,6 +11,7 @@ using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.Sessions;
+using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
@@ -99,6 +100,11 @@ public class LoginHandler : IGamePacketHandler
         if (packet is GameServerLoginPacket gameServerLoginPacket)
         {
             await GameServerLoginPacket(session, gameServerLoginPacket);
+            return;
+        }
+
+        if (packet is ClientVersionPacket clientVersionPacket)
+        {
             return;
         }
     }

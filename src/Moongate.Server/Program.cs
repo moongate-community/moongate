@@ -131,6 +131,7 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
             networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
+            networkService.RegisterGamePacketHandler<ClientVersionPacket, LoginHandler>();
 
             networkService.RegisterGamePacketHandler<CharacterCreationPacket, CharactersHandler>();
             networkService.RegisterGamePacketHandler<CharacterDeletePacket, CharactersHandler>();
@@ -138,6 +139,7 @@ await ConsoleApp.RunAsync(
 
 
             networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
+
         };
 
 

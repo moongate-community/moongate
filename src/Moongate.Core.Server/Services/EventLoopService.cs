@@ -39,6 +39,10 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
     // Actions scheduled for future execution
     private readonly ConcurrentDictionary<string, DelayedAction> _delayedActions = new();
 
+    private static readonly EventLoopPriority[] _allPriorities =
+        [EventLoopPriority.Normal, EventLoopPriority.High, EventLoopPriority.Low];
+
+
     private readonly object _tickLock = new();
     private CancellationTokenSource _cancellationTokenSource;
     private Task _loopTask;
@@ -72,7 +76,7 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         _config = config;
 
         // Initialize queues for each priority level
-        foreach (EventLoopPriority priority in Enum.GetValues(typeof(EventLoopPriority)))
+        foreach (EventLoopPriority priority in _allPriorities)
         {
             _priorityQueues[priority] = new ConcurrentQueue<QueuedAction>();
         }

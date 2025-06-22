@@ -1,6 +1,11 @@
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Events.Characters;
+using Moongate.UO.Data.Events.Features;
+using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Login;
+using Moongate.UO.Data.Packets.System;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 
@@ -25,7 +30,14 @@ public class AfterLoginHandler : IMoongateService
 
     private async Task OnCharacterLogged(CharacterLoggedEvent @event)
     {
-        var gameSession = _gameSessionService.GetSession(@event.SessionId);
+        var session = _gameSessionService.GetSession(@event.SessionId);
+
+        session.SendPackets(new ClientVersionPacket());
+        session.SendPackets(new CharacterLocaleAndBodyPacket(session.Mobile));
+        session.SendPackets(new SupportFeaturesPacket());
+
+
+        session.SendPackets(new LoginCompletePacket());
     }
 
 
