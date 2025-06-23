@@ -4,7 +4,6 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Skills;
 
-
 public class SkillInfo
 {
     [JsonConstructor]

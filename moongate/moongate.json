@@ -1,0 +1,14 @@
+{
+  "network": {
+    "port": 2593,
+    "logPacketsToFile": false,
+    "logPacketsToConsole": false
+  },
+  "webServer": {
+    "port": 23853,
+    "enabled": true
+  },
+  "name": "Moongate Shard",
+  "ultimaOnlineDirectory": "/home/squid/uo/",
+  "language": "enu"
+}

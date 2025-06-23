@@ -91,7 +91,7 @@ public class UOMobileEntity
     public Dictionary<ItemLayerType, ItemReference> Equipment { get; set; } = new();
     public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
 
-    public List<SkillEntry> Skills { get; set; }
+    public List<SkillEntry> Skills { get; set; } = new();
 
     /// Bank and currency
     public int Gold { get; set; } = 0;

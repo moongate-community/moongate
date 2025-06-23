@@ -150,6 +150,7 @@ public class CharactersHandler : IGamePacketHandler
 
         if (session.Account.Characters.Count == 1)
         {
+            session.Mobile = playerMobileEntity;
             await _eventBusService.PublishAsync(
                 new CharacterLoggedEvent(
                     session.SessionId,
