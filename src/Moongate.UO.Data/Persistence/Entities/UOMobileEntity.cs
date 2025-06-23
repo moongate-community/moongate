@@ -88,6 +88,8 @@ public class UOMobileEntity
     public DateTime LastSaved { get; set; } = DateTime.UtcNow;
     public TimeSpan TotalPlayTime { get; set; } = TimeSpan.Zero;
 
+    public Dictionary<ItemLayerType, ItemReference> Equipment { get; set; } = new();
+
     public List<SkillEntry> Skills { get; set; }
 
     /// Bank and currency

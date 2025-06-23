@@ -8,7 +8,6 @@ namespace Moongate.Server.Services;
 
 public class ItemService : IItemService
 {
-
     private readonly ILogger _logger = Log.ForContext<MobileService>();
 
     private const string itemsFilePath = "items.mga";
@@ -24,12 +23,15 @@ public class ItemService : IItemService
 
     public Task StartAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _logger.Information("Loading items from file...");
+
+        return LoadAsync(cancellationToken);
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        _logger.Information("Saving {Count} items to file...", _items.Count);
+        return SaveAsync(cancellationToken);
     }
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
@@ -42,7 +44,6 @@ public class ItemService : IItemService
         {
             _items[item.Id] = item;
         }
-
     }
 
     public async Task SaveAsync(CancellationToken cancellationToken = default)
@@ -54,5 +55,4 @@ public class ItemService : IItemService
     public void Dispose()
     {
     }
-
 }
