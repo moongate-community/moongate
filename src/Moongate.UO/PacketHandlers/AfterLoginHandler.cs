@@ -3,8 +3,12 @@ using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Features;
 using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Environment;
+using Moongate.UO.Data.Packets.Lights;
 using Moongate.UO.Data.Packets.Login;
+using Moongate.UO.Data.Packets.Maps;
 using Moongate.UO.Data.Packets.System;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
@@ -36,6 +40,12 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new CharacterLocaleAndBodyPacket(session.Mobile));
         session.SendPackets(new SupportFeaturesPacket());
 
+        session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
+
+        session.SendPackets(new MapChangePacket(session.Mobile.Map));
+
+        session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
+        session.SendPackets(new OverallLightLevelPacket(LightLevelType.Day));
 
         session.SendPackets(new LoginCompletePacket());
     }

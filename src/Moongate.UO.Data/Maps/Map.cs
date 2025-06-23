@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Tiles;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Maps;
 
@@ -27,14 +28,14 @@ public class Map : IComparable<Map>, IComparable
     public int FileIndex { get; }
     public int Width { get; }
     public int Height { get; }
-    public Season Season { get; }
+    public SeasonType Season { get; }
     public string Name { get; }
     public MapRules Rules { get; }
 
     private TileMatrix? _tiles;
 
 
-    private Map(int index, int mapId, int fileIndex, int width, int height, Season season, string name, MapRules rules)
+    private Map(int index, int mapId, int fileIndex, int width, int height, SeasonType season, string name, MapRules rules)
     {
         Index = index;
         MapID = mapId;
@@ -50,7 +51,7 @@ public class Map : IComparable<Map>, IComparable
     }
 
     public static Map RegisterMap(
-        int index, int mapID, int fileIndex, int width, int height, Season season, string name, MapRules rules
+        int index, int mapID, int fileIndex, int width, int height, SeasonType season, string name, MapRules rules
     )
     {
         Map m = new Map(index, mapID, fileIndex, width, height, season, name, rules);

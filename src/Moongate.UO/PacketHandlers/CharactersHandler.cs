@@ -131,7 +131,7 @@ public class CharactersHandler : IGamePacketHandler
 
         foreach (var skill in characterCreation.Skills)
         {
-            playerMobileEntity.Skills.Add(skill.Skill, skill.Value);
+            playerMobileEntity.SetSkillValue(skill.Skill, skill.Value);
         }
         playerMobileEntity.Profession = characterCreation.Profession;
 
