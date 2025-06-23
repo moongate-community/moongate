@@ -89,6 +89,7 @@ public class UOMobileEntity
     public TimeSpan TotalPlayTime { get; set; } = TimeSpan.Zero;
 
     public Dictionary<ItemLayerType, ItemReference> Equipment { get; set; } = new();
+    public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
 
     public List<SkillEntry> Skills { get; set; }
 

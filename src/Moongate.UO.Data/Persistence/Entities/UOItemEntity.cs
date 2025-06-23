@@ -10,9 +10,11 @@ public class UOItemEntity
 
     public string Name { get; set; }
 
+    public int Hue { get; set; }
+
     public ItemReference ToItemReference()
     {
-        return new ItemReference(Id);
+        return new ItemReference(Id, ItemId, Hue);
     }
 
     public static explicit operator ItemReference(UOItemEntity item)

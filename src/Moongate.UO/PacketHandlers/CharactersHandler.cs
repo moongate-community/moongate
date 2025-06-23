@@ -133,6 +133,7 @@ public class CharactersHandler : IGamePacketHandler
         {
             playerMobileEntity.SetSkillValue(skill.Skill, skill.Value);
         }
+
         playerMobileEntity.Profession = characterCreation.Profession;
 
         playerMobileEntity.RecalculateMaxStats();
@@ -146,5 +147,16 @@ public class CharactersHandler : IGamePacketHandler
                 playerMobileEntity
             )
         );
+
+        if (session.Account.Characters.Count == 1)
+        {
+            await _eventBusService.PublishAsync(
+                new CharacterLoggedEvent(
+                    session.SessionId,
+                    playerMobileEntity.Id,
+                    playerMobileEntity.Name
+                )
+            );
+        }
     }
 }

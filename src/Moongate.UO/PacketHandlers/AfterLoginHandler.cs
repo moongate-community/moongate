@@ -38,15 +38,16 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new ClientVersionPacket());
         session.SendPackets(new CharacterLocaleAndBodyPacket(session.Mobile));
-        session.SendPackets(new SupportFeaturesPacket());
 
-        session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
+        session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
 
+       // session.SendPackets(new SupportFeaturesPacket());
+
+        session.SendPackets(new WarModePacket(session.Mobile));
         session.SendPackets(new MapChangePacket(session.Mobile.Map));
-
-        session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new OverallLightLevelPacket(LightLevelType.Day));
-
+        session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
+        session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
         session.SendPackets(new LoginCompletePacket());
     }
 
