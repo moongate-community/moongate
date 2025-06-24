@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.5.0"></a>
+## [0.5.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.5.0) (2025-06-24)
+
+### Features
+
+* **CastTargetedSpellData.cs:** add CastTargetedSpellData class to handle subcommand data for casting targeted spells ([949b639](https://www.github.com/moongate-community/moongate/commit/949b6395564a8b57b208e59bdee06c24beace04f))
+* **EventLoopService.cs:** add cancellationToken parameter to PublishAsync method call for better control over asynchronous operations ([2e4dbaf](https://www.github.com/moongate-community/moongate/commit/2e4dbaf7f8271e353a771c58c4eb13f12a2c1607))
+* **GeneralInformationExtensions.cs:** add extension methods for parsing and getting specific data from General Information packets to improve code readability and maintainability ([56a86d1](https://www.github.com/moongate-community/moongate/commit/56a86d1e382a09e14db0f573425852ab4c68224f))
+* **GeneralInformationFactory.cs:** add GeneralInformationFactory class to create ([ae8a1dc](https://www.github.com/moongate-community/moongate/commit/ae8a1dc41441cedb1e6ce81e0185812341724537))
+* **GeneralInformationPacket.cs:** add GeneralInformationPacket class to handle ([b80d90c](https://www.github.com/moongate-community/moongate/commit/b80d90c9d1c54e82bc6fe105125b306024c6eeae))
+* **MobileDrawPacket.cs:** add new packet class MobileDrawPacket to handle drawing mobile entities ([51b7a90](https://www.github.com/moongate-community/moongate/commit/51b7a90767b85c56f629285b83c2099fb1445de1))
+* **moongate:** add moongate.json configuration file with network and web server settings ([17af1a8](https://www.github.com/moongate-community/moongate/commit/17af1a83954a62fb7a7d0b028642196831345a4c))
+* **ScreenSizeData.cs:** add ScreenSizeData class to handle screen size subcommand data ([41102be](https://www.github.com/moongate-community/moongate/commit/41102becf45f772fd84acbe343246cc36ee71c68))
+* **SubCommandClientFlagExtensions.cs:** add extension methods for SubCommandClientFlag enum to parse, check client flags, determine client type, get latest expansion, and provide detailed and summary descriptions of client capabilities ([fa5c133](https://www.github.com/moongate-community/moongate/commit/fa5c1338afe366cf31450d2e0d00c9c6f5053746))
+* **subCommands:** add new subcommand classes for CloseGenericGumpData, ClosedStatusGumpData, DamageData, and EnableMapDiffData to handle specific packet data structures. ([f673b89](https://www.github.com/moongate-community/moongate/commit/f673b89ffd7036d19b5ae8dd740c3a512cfe0b54))
+
 <a name="0.4.0"></a>
 ## [0.4.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.4.0) (2025-06-22)
 
