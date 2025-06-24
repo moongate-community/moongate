@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Moongate.Core.Extensions.Strings;
 using Moongate.UO.Data.Interfaces.Geometry;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Geometry;
 
@@ -262,4 +263,154 @@ public struct Point3D
         result = new Point3D(x, y, z);
         return true;
     }
+
+    /// <summary>
+    /// Implicit conversion from DirectionType to Point3D offset
+    /// Converts direction to movement offset coordinates
+    /// </summary>
+    /// <param name="direction">Direction to convert</param>
+    /// <returns>Point3D with offset coordinates</returns>
+    public static implicit operator Point3D(DirectionType direction)
+    {
+        // Remove running flag to get base direction
+        var baseDirection = (DirectionType)((byte)direction & (byte)DirectionType.Mask);
+
+        return baseDirection switch
+        {
+            DirectionType.North => new Point3D(0, -1, 0),  // North: Y decreases
+            DirectionType.Right => new Point3D(1, -1, 0),  // Northeast: X+, Y-
+            DirectionType.East  => new Point3D(1, 0, 0),   // East: X increases
+            DirectionType.Down  => new Point3D(1, 1, 0),   // Southeast: X+, Y+
+            DirectionType.South => new Point3D(0, 1, 0),   // South: Y increases
+            DirectionType.Left  => new Point3D(-1, 1, 0),  // Southwest: X-, Y+
+            DirectionType.West  => new Point3D(-1, 0, 0),  // West: X decreases
+            DirectionType.Up    => new Point3D(-1, -1, 0), // Northwest: X-, Y-
+            _                   => new Point3D(0, 0, 0)    // No movement
+        };
+    }
+
+    /// <summary>
+    /// Implicit conversion from Point3D to DirectionType
+    /// Converts movement offset to direction (ignores Z coordinate)
+    /// </summary>
+    /// <param name="point">Point3D offset to convert</param>
+    /// <returns>DirectionType representing the movement direction</returns>
+    public static implicit operator DirectionType(Point3D point)
+    {
+        // Normalize the coordinates to -1, 0, or 1
+        int deltaX = Math.Sign(point.X);
+        int deltaY = Math.Sign(point.Y);
+
+        return (deltaX, deltaY) switch
+        {
+            (0, -1)  => DirectionType.North, // North: Y-
+            (1, -1)  => DirectionType.Right, // Northeast: X+, Y-
+            (1, 0)   => DirectionType.East,  // East: X+
+            (1, 1)   => DirectionType.Down,  // Southeast: X+, Y+
+            (0, 1)   => DirectionType.South, // South: Y+
+            (-1, 1)  => DirectionType.Left,  // Southwest: X-, Y+
+            (-1, 0)  => DirectionType.West,  // West: X-
+            (-1, -1) => DirectionType.Up,    // Northwest: X-, Y-
+            _        => DirectionType.North  // Default to North for no movement
+        };
+    }
+
+    /// <summary>
+    /// Adds a direction offset to current position
+    /// </summary>
+    /// <param name="direction">Direction to move</param>
+    /// <returns>New Point3D with offset applied</returns>
+    public Point3D Move(DirectionType direction)
+    {
+        Point3D offset = direction; // Uses implicit c fonversion
+        return new Point3D(X + offset.X, Y + offset.Y, Z + offset.Z);
+    }
+
+    /// <summary>
+    /// Gets direction from current point to target point
+    /// </summary>
+    /// <param name="target">Target point</param>
+    /// <returns>Direction to target</returns>
+    public DirectionType GetDirectionTo(Point3D target)
+    {
+        Point3D delta = new Point3D(target.X - X, target.Y - Y, target.Z - Z);
+        return delta; // Uses implicit conversion
+    }
+
+    /// <summary>
+    /// Checks if a direction includes running flag
+    /// </summary>
+    /// <param name="direction">Direction to check</param>
+    /// <returns>True if running flag is set</returns>
+    public static bool IsRunning(DirectionType direction)
+    {
+        return ((byte)direction & (byte)DirectionType.Running) != 0;
+    }
+
+    /// <summary>
+    /// Adds running flag to direction
+    /// </summary>
+    /// <param name="direction">Base direction</param>
+    /// <returns>Direction with running flag</returns>
+    public static DirectionType SetRunning(DirectionType direction)
+    {
+        return (DirectionType)((byte)direction | (byte)DirectionType.Running);
+    }
+
+    /// <summary>
+    /// Removes running flag from direction
+    /// </summary>
+    /// <param name="direction">Direction with or without running flag</param>
+    /// <returns>Base direction without running flag</returns>
+    public static DirectionType GetBaseDirection(DirectionType direction)
+    {
+        return (DirectionType)((byte)direction & (byte)DirectionType.Mask);
+    }
+
+    /// <summary>
+    /// Addition operator for Point3D
+    /// </summary>
+    public static Point3D operator +(Point3D a, Point3D b)
+    {
+        return new Point3D(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
+    }
+
+    /// <summary>
+    /// Subtraction operator for Point3D
+    /// </summary>
+    public static Point3D operator -(Point3D a, Point3D b)
+    {
+        return new Point3D(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
+    }
+
+    /// <summary>
+    /// Addition operator for Point3D + DirectionType
+    /// Moves the point in the specified direction
+    /// </summary>
+    public static Point3D operator +(Point3D point, DirectionType direction)
+    {
+        Point3D offset = direction; // Uses implicit conversion
+        return point + offset;
+    }
+
+    /// <summary>
+    /// Addition operator for DirectionType + Point3D
+    /// Moves the point in the specified direction (commutative)
+    /// </summary>
+    public static Point3D operator +(DirectionType direction, Point3D point)
+    {
+        return point + direction; // Delegate to the other operator
+    }
+
+    /// <summary>
+    /// Subtraction operator for Point3D - DirectionType
+    /// Moves the point in the opposite direction
+    /// </summary>
+    public static Point3D operator -(Point3D point, DirectionType direction)
+    {
+        Point3D offset = direction; // Uses implicit conversion
+        return point - offset;      // Move in opposite direction
+    }
+
+
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Moongate.Core.Network.Servers.Tcp;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Middlewares;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -9,16 +10,20 @@ namespace Moongate.UO.Data.Session;
 
 public class GameSession : IDisposable, INotifyPropertyChanged
 {
-    public delegate void ObjectChanged<in TEntity>(object sender, TEntity entity) where TEntity : class;
+    public delegate void ObjectChanged<in TEntity>(object sender, TEntity entity) ;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     public event ObjectChanged<UOMobileEntity> MobileChanged;
+
+    public event ObjectChanged<Point3D> MobileLocationChanged;
 
     public string SessionId { get; set; }
     public UOAccountEntity Account { get; set; }
     public int Seed { get; set; }
     public UOMobileEntity Mobile { get; set; }
     public int PingSequence { get; set; }
+
+    public byte MoveSequence { get; set; } = 1;
 
     public NetworkSessionFeatureType Features { get; private set; } = NetworkSessionFeatureType.None;
     public NetworkSessionStateType State { get; private set; } = NetworkSessionStateType.None;
@@ -72,6 +77,17 @@ public class GameSession : IDisposable, INotifyPropertyChanged
         }
 
         Features = features;
+    }
+
+    public void Move(DirectionType direction)
+    {
+        var newLocation = Mobile.Location + direction;
+
+        if (Mobile.Location != newLocation)
+        {
+            Mobile.Location = newLocation;
+            MobileLocationChanged?.Invoke(this, newLocation);
+        }
     }
 
 

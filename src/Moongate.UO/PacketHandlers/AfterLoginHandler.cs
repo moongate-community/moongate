@@ -24,7 +24,9 @@ public class AfterLoginHandler : IMoongateService
 
     private readonly ILogger _logger = Log.ForContext<AfterLoginHandler>();
 
-    public AfterLoginHandler(IGameSessionService gameSessionService, IEventBusService eventBusService, IMobileService mobileService)
+    public AfterLoginHandler(
+        IGameSessionService gameSessionService, IEventBusService eventBusService, IMobileService mobileService
+    )
     {
         _gameSessionService = gameSessionService;
         _eventBusService = eventBusService;
@@ -36,13 +38,15 @@ public class AfterLoginHandler : IMoongateService
     {
         var session = _gameSessionService.GetSession(@event.SessionId);
 
-        //session.SendPackets(new SupportFeaturesPacket());
+
         session.SendPackets(new ClientVersionPacket());
         session.SendPackets(new LoginConfigPacket(session.Mobile));
+
+
+        session.SendPackets(new SupportFeaturesPacket());
         session.SendPackets(new DrawGamePlayerPacket(session.Mobile));
 
         session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
-
 
 
         session.SendPackets(new WarModePacket(session.Mobile));
@@ -57,5 +61,4 @@ public class AfterLoginHandler : IMoongateService
     public void Dispose()
     {
     }
-
 }

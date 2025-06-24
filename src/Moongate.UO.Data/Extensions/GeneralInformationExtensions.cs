@@ -4,7 +4,7 @@ using Moongate.UO.Data.Packets.GeneralInformation.SubCommands.Base.Interfaces;
 using Moongate.UO.Data.Packets.GeneralInformation.Types;
 using Moongate.Uo.Services.Network.Packets.GeneralInformation.SubCommands;
 
-namespace Moongate.UO.Data.Extensions.src.Moongate.Uo.Services.Extensions;
+namespace Moongate.UO.Data.Extensions;
 
 /// <summary>
 /// Extension methods for General Information packets
