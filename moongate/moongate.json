@@ -2,7 +2,7 @@
   "network": {
     "port": 2593,
     "logPacketsToFile": false,
-    "logPacketsToConsole": false
+    "logPacketsToConsole": true
   },
   "webServer": {
     "port": 23853,

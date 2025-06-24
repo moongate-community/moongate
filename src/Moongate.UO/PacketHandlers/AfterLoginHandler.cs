@@ -36,12 +36,14 @@ public class AfterLoginHandler : IMoongateService
     {
         var session = _gameSessionService.GetSession(@event.SessionId);
 
+        //session.SendPackets(new SupportFeaturesPacket());
         session.SendPackets(new ClientVersionPacket());
-        session.SendPackets(new CharacterLocaleAndBodyPacket(session.Mobile));
+        session.SendPackets(new LoginConfigPacket(session.Mobile));
+        session.SendPackets(new DrawGamePlayerPacket(session.Mobile));
 
         session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
 
-       // session.SendPackets(new SupportFeaturesPacket());
+
 
         session.SendPackets(new WarModePacket(session.Mobile));
         session.SendPackets(new MapChangePacket(session.Mobile.Map));
