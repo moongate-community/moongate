@@ -23,6 +23,10 @@ public class SkillLoader : IFileLoader
     {
         UOContext.SkillsInfo =
             JsonUtils.DeserializeFromFile<SkillInfo[]>(Path.Combine(_directoriesConfig[DirectoryType.Data], "skills.json"));
+
+        SkillInfo.Table = UOContext.SkillsInfo;
+
+
         _logger.Information("Loaded {Count} skills from skills.json", UOContext.SkillsInfo?.Length ?? 0);
     }
 }

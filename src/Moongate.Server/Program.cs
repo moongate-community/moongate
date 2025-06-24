@@ -98,6 +98,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(IAccountService), typeof(AccountService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
+                .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
 
                 //

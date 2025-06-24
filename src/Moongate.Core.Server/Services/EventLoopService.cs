@@ -95,7 +95,7 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         _isRunning = true;
         _cancellationTokenSource = new CancellationTokenSource();
         _loopTask = Task.Run(EventLoopAsync, _cancellationTokenSource.Token);
-        await _eventBusService.PublishAsync(new RegisterMetricEvent(this));
+        await _eventBusService.PublishAsync(new RegisterMetricEvent(this), cancellationToken);
 
         _logger.Information("EventLoopService started with tick interval of {TickIntervalMs}ms", TickIntervalMs);
     }

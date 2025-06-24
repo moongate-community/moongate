@@ -1,8 +1,6 @@
-using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Races.Base;
@@ -58,7 +56,7 @@ public class UOMobileEntity
 
     public DirectionType Direction { get; set; }
 
-    public Dictionary<SkillName, double> Skills { get; set; } = new();
+    //public Dictionary<SkillName, double> Skills { get; set; } = new();
 
     public int Level { get; set; } = 1;
     public long Experience { get; set; } = 0;
@@ -89,6 +87,11 @@ public class UOMobileEntity
     public DateTime LastLogin { get; set; } = DateTime.UtcNow;
     public DateTime LastSaved { get; set; } = DateTime.UtcNow;
     public TimeSpan TotalPlayTime { get; set; } = TimeSpan.Zero;
+
+    public Dictionary<ItemLayerType, ItemReference> Equipment { get; set; } = new();
+    public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
+
+    public List<SkillEntry> Skills { get; set; } = new();
 
     /// Bank and currency
     public int Gold { get; set; } = 0;
@@ -122,12 +125,27 @@ public class UOMobileEntity
 
     public double GetSkillValue(SkillName skill)
     {
-        return Skills.TryGetValue(skill, out var value) ? value : 0.0;
+        return Skills.FirstOrDefault(s => s.Skill.SkillID == (int)skill)?.Value ?? 0.0;
     }
 
     public void SetSkillValue(SkillName skill, double value)
     {
-        Skills[skill] = Math.Max(0.0, Math.Min(100.0, value));
+        var skillEntry = Skills.FirstOrDefault(s => s.Skill.SkillID == (int)skill);
+        if (skillEntry != null)
+        {
+            skillEntry.Value = value;
+        }
+        else
+        {
+            // If skill does not exist, create a new entry
+            Skills.Add(new SkillEntry
+            {
+                Skill = SkillInfo.Table[(int)skill],
+                Value = value,
+                Cap = 100, // Default cap, can be adjusted later
+                Lock = SkillLock.Locked // Default lock state
+            });
+        }
     }
 
     public void UpdateLastLogin()
