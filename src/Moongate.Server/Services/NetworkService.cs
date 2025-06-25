@@ -310,6 +310,13 @@ public class NetworkService : INetworkService
         );
     }
 
+    public string GetPacketDescription(byte opCode)
+    {
+        return _packetDefinitions.TryGetValue(opCode, out var definition)
+            ? definition.Description
+            : $"Unknown Packet";
+    }
+
     public void BindPacket<TPacket>() where TPacket : IUoNetworkPacket, new()
     {
         var packet = new TPacket();

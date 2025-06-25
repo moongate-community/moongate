@@ -1,6 +1,6 @@
 using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
-using Moongate.UO.Data.Extensions.src.Moongate.Uo.Services.Extensions;
+using Moongate.UO.Data.Extensions;
 using Moongate.UO.Data.Packets.GeneralInformation.SubCommands.Base;
 using Moongate.UO.Data.Packets.GeneralInformation.SubCommands.Base.Interfaces;
 using Moongate.UO.Data.Packets.GeneralInformation.Types;

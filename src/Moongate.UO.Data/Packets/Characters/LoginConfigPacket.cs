@@ -4,16 +4,16 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.UO.Data.Packets.Characters;
 
-public class CharacterLocaleAndBodyPacket : BaseUoPacket
+public class LoginConfigPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
 
-    public CharacterLocaleAndBodyPacket(UOMobileEntity mobile) : this()
+    public LoginConfigPacket(UOMobileEntity mobile) : this()
     {
         Mobile = mobile;
     }
 
-    public CharacterLocaleAndBodyPacket() : base(0x1B)
+    public LoginConfigPacket() : base(0x1B)
     {
     }
 
@@ -31,7 +31,7 @@ public class CharacterLocaleAndBodyPacket : BaseUoPacket
         writer.Write(0);
         writer.Write(0);
         writer.Write((byte)0);
-        writer.Write((short)Mobile.Map.Width - 8);
+        writer.Write((short)Mobile.Map.Width);
         writer.Write((short)Mobile.Map.Height);
         writer.Write((short)0);
         writer.Write(0);
