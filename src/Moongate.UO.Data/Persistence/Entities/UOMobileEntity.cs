@@ -15,7 +15,9 @@ public class UOMobileEntity : INotifyPropertyChanged
 {
     public delegate void MobileEventHandler(UOMobileEntity mobile);
 
-   public delegate void ChatMessageDelegate(UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text);
+    public delegate void ChatMessageDelegate(
+        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    );
 
     public event ChatMessageDelegate? ChatMessageReceived;
 
@@ -188,14 +190,16 @@ public class UOMobileEntity : INotifyPropertyChanged
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
     }
 
-    public virtual void ReceiveSpeech(UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text)
+    public virtual void ReceiveSpeech(
+        UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
     {
-        ChatMessageReceived?.Invoke(mobileEntity, messageType, hue, text);
+        ChatMessageReceived?.Invoke(mobileEntity, messageType, hue, text, graphic, font);
     }
 
-    public virtual void Speech(ChatMessageType messageType, short hue, string text)
+    public virtual void Speech(ChatMessageType messageType, short hue, string text, int graphic, int font)
     {
-        ChatMessageSent?.Invoke(this, messageType, hue, text);
+        ChatMessageSent?.Invoke(this, messageType, hue, text, graphic, font);
     }
 
     public virtual int GetPacketFlags(bool stygianAbyss)

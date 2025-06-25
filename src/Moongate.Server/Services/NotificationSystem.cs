@@ -11,7 +11,6 @@ namespace Moongate.Server.Services;
 
 public class NotificationSystem : INotificationSystem
 {
-
     private readonly ILogger _logger = Log.ForContext<NotificationSystem>();
 
     private readonly IGameSessionService _gameSessionService;
@@ -89,16 +88,34 @@ public class NotificationSystem : INotificationSystem
         _logger.Debug("Handling command '{Command}' for mobile {MobileId}", command, mobile.Id);
     }
 
-    public void SendChatMessage(UOMobileEntity mobile, ChatMessageType messageType, short hue, string text)
+    public void SendSystemMessageToAll(string message)
+    {
+
+        foreach (var other in _gameSessionService.QuerySessions(s => true).Select( s => s.Mobile))
+        {
+            // Log the system message
+            _logger.Information("Sending system message to mobile {MobileId}: {Message}", other.Id, message);
+
+            // Send the system message
+            SendSystemMessageToMobile(other, message);
+        }
+    }
+
+    public void SendSystemMessageToMobile(UOMobileEntity mobile, string message)
+    {
+        mobile.ReceiveSpeech(null, ChatMessageType.System, 0, message, 0, 3);
+    }
+
+    public void SendChatMessage(
+        UOMobileEntity mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
     {
         // check if command
         if (text.StartsWith("."))
         {
-
             HandleCommand(mobile, text[1..]);
             return;
         }
-
 
         var nonPlayersToNotify =
             _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
@@ -107,10 +124,10 @@ public class NotificationSystem : INotificationSystem
         {
             if (other.Id == mobile.Id)
             {
-                mobile.Speech(messageType, hue, text);
+                mobile.Speech(messageType, hue, text, graphic, font);
             }
 
-            other.ReceiveSpeech(mobile, messageType, hue, text);
+            other.ReceiveSpeech(mobile, messageType, hue, text, graphic, font);
         }
     }
 }

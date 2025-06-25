@@ -29,7 +29,9 @@ public class ChatHandler : IGamePacketHandler
             session.Mobile,
             speechRequest.MessageType,
             speechRequest.Hue,
-            speechRequest.Text
+            speechRequest.Text,
+            -1,
+            3 // Default font
         );
     }
 }

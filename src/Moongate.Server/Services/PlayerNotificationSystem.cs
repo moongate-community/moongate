@@ -23,7 +23,9 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
         mobile.ChatMessageReceived += MobileOnChatMessageReceived;
     }
 
-    private void MobileOnChatMessageReceived(UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text)
+    private void MobileOnChatMessageReceived(
+        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
     {
         _logger.Verbose(
             "Mobile {MobileId} received chat message: {MessageType} - {Text}",
@@ -41,14 +43,16 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
             MessageType = messageType,
             IsUnicode = true,
             Language = "ENU",
-            Font = 3,   // Default font
-            Graphic = 0 // Default graphic
+            Font = font,
+            Graphic = graphic
         };
 
         GetGameSessionFromMobile(mobile).SendPackets(chatMessage);
     }
 
-    private void MobileOnChatMessageSent(UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text)
+    private void MobileOnChatMessageSent(
+        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
     {
         _logger.Verbose(
             "Mobile {MobileId} sent chat message: {MessageType} - {Text}",
@@ -56,8 +60,6 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
             messageType,
             text
         );
-
-
     }
 
     public void UntrackMobile(UOMobileEntity mobile)

@@ -6,7 +6,8 @@ namespace Moongate.UO.Interfaces.Services.Systems;
 
 public interface INotificationSystem : IMoongateService
 {
-    void SendSystemMessage(string message);
-    void SendChatMessage(UOMobileEntity mobile,  ChatMessageType messageType, short hue, string text );
+    void SendSystemMessageToAll(string message);
+    void SendSystemMessageToMobile(UOMobileEntity mobile, string message);
+    void SendChatMessage(UOMobileEntity mobile,  ChatMessageType messageType, short hue, string text, int graphic, int font);
 
 }

@@ -125,9 +125,12 @@ await ConsoleApp.RunAsync(
         {
             scriptEngine.AddScriptModule(typeof(LoggerModule));
             scriptEngine.AddScriptModule(typeof(AccountModule));
+            scriptEngine.AddScriptModule(typeof(SystemModule));
 
             scriptEngine.AddScriptModule(typeof(CommandsModule));
             scriptEngine.AddScriptModule(typeof(LoadScriptModule));
+
+            scriptEngine.AddScriptModule(typeof(CommonEventModule));
         };
 
         bootstrap.ConfigureNetworkServices += networkService =>
