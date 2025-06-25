@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.6.0"></a>
+## [0.6.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.6.0) (2025-06-25)
+
+### Features
+
+* **index.d.ts:** update Moongate Server version to v0.3.20.0 and regenerate documentation ([7c8c704](https://www.github.com/moongate-community/moongate/commit/7c8c704e626625a195c0d9161b2f3b6448923e9a))
+* **index.d.ts:** update Moongate Server version to v0.3.21.0 in TypeScript definitions ([d74f899](https://www.github.com/moongate-community/moongate/commit/d74f8993a9c1556df73f8c3e37e8de0e94d59b89))
+* **moongate.json:** enable logging packets to console in the network section ([2248e97](https://www.github.com/moongate-community/moongate/commit/2248e9796384bb5605c5a5c910660378b18c8ad2))
+
+### Bug Fixes
+
+* **index.d.ts:** update Moongate Server version in TypeScript definitions to v0.3.22.0 ([5f9153f](https://www.github.com/moongate-community/moongate/commit/5f9153f5df4e1c3ec1cb0a04d69256778c313eb7))
+
 <a name="0.5.0"></a>
 ## [0.5.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.5.0) (2025-06-24)
 
