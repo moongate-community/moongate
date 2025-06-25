@@ -13,8 +13,14 @@ namespace Moongate.UO.Data.Persistence.Entities;
 
 public class UOMobileEntity : INotifyPropertyChanged
 {
-
     public delegate void MobileEventHandler(UOMobileEntity mobile);
+
+   public delegate void ChatMessageDelegate(UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text);
+
+    public event ChatMessageDelegate? ChatMessageReceived;
+
+    public event ChatMessageDelegate? ChatMessageSent;
+
 
     public event MobileEventHandler SelfMoved;
     public event MobileEventHandler OtherMobileMoved;
@@ -34,8 +40,7 @@ public class UOMobileEntity : INotifyPropertyChanged
     public string Title { get; set; }
 
 
-    [JsonIgnore]
-    public bool IsPlayer { get; set; }
+    [JsonIgnore] public bool IsPlayer { get; set; }
 
     public int X => Location.X;
 
@@ -183,12 +188,14 @@ public class UOMobileEntity : INotifyPropertyChanged
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
     }
 
-    public virtual void ReceiveSpeech()
+    public virtual void ReceiveSpeech(UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text)
     {
+        ChatMessageReceived?.Invoke(mobileEntity, messageType, hue, text);
     }
 
-    public virtual void Speech()
+    public virtual void Speech(ChatMessageType messageType, short hue, string text)
     {
+        ChatMessageSent?.Invoke(this, messageType, hue, text);
     }
 
     public virtual int GetPacketFlags(bool stygianAbyss)
@@ -242,8 +249,6 @@ public class UOMobileEntity : INotifyPropertyChanged
 
         return flags;
     }
-
-
 
 
     public event PropertyChangedEventHandler? PropertyChanged;

@@ -9,9 +9,9 @@ namespace Moongate.Server.Services;
 
 public class MobileService : IMobileService
 {
-
     public event IMobileService.MobileEventHandler? MobileCreated;
     public event IMobileService.MobileEventHandler? MobileRemoved;
+
 
 
     private readonly ILogger _logger = Log.ForContext<MobileService>();

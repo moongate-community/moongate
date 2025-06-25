@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Moongate.UO.Context;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Interfaces.Services.Systems;
 
@@ -29,12 +30,12 @@ public class NotificationSystem : INotificationSystem
     private void OnGameSessionBeforeDestroy(GameSession session)
     {
         session.MobileChanged -= OnGameSessionMobileChanged;
+        _playerNotificationSystem.UntrackMobile(session.Mobile);
     }
 
     private void OnGameSessionCreated(GameSession session)
     {
         session.MobileChanged += OnGameSessionMobileChanged;
-        _playerNotificationSystem.UntrackMobile(session.Mobile);
     }
 
     private void OnGameSessionMobileChanged(object sender, UOMobileEntity entity)
@@ -73,5 +74,26 @@ public class NotificationSystem : INotificationSystem
 
     public void Dispose()
     {
+    }
+
+    public void SendSystemMessage(string message)
+    {
+    }
+
+    public void SendChatMessage(UOMobileEntity mobile, ChatMessageType messageType, short hue, string text)
+    {
+        var nonPlayersToNotify =
+            _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
+
+        foreach (var other in nonPlayersToNotify)
+        {
+            if (other.Id == mobile.Id)
+            {
+                mobile.Speech(messageType, hue, text);
+                continue;
+            }
+
+            other.ReceiveSpeech(mobile, messageType, hue, text);
+        }
     }
 }

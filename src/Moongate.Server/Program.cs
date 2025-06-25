@@ -26,6 +26,7 @@ using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Persistence;
@@ -149,7 +150,10 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<MoveRequestPacket, CharacterMoveHandler>();
             networkService.RegisterGamePacketHandler<MoveAckPacket, CharacterMoveHandler>();
 
+            networkService.RegisterGamePacketHandler<UnicodeSpeechRequestPacket, ChatHandler>();
+
             networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
+
 
         };
 
