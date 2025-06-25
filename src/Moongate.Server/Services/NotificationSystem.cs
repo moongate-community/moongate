@@ -5,11 +5,15 @@ using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Interfaces.Services.Systems;
+using Serilog;
 
 namespace Moongate.Server.Services;
 
 public class NotificationSystem : INotificationSystem
 {
+
+    private readonly ILogger _logger = Log.ForContext<NotificationSystem>();
+
     private readonly IGameSessionService _gameSessionService;
     private readonly IMobileService _mobileService;
     private readonly IPlayerNotificationSystem _playerNotificationSystem;
@@ -80,8 +84,22 @@ public class NotificationSystem : INotificationSystem
     {
     }
 
+    private void HandleCommand(UOMobileEntity mobile, string command)
+    {
+        _logger.Debug("Handling command '{Command}' for mobile {MobileId}", command, mobile.Id);
+    }
+
     public void SendChatMessage(UOMobileEntity mobile, ChatMessageType messageType, short hue, string text)
     {
+        // check if command
+        if (text.StartsWith("."))
+        {
+
+            HandleCommand(mobile, text[1..]);
+            return;
+        }
+
+
         var nonPlayersToNotify =
             _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
 
@@ -90,7 +108,6 @@ public class NotificationSystem : INotificationSystem
             if (other.Id == mobile.Id)
             {
                 mobile.Speech(messageType, hue, text);
-                continue;
             }
 
             other.ReceiveSpeech(mobile, messageType, hue, text);
