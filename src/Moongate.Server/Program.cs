@@ -101,6 +101,9 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
 
+
+                .AddService(typeof(ITrackMobileService), typeof(TrackMobileService))
+
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))

@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -9,11 +12,15 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOMobileEntity
+public class UOMobileEntity : INotifyPropertyChanged
 {
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
+
+
+    [JsonIgnore]
+    public bool IsPlayer { get; set; }
 
     public int X => Location.X;
 
@@ -39,6 +46,7 @@ public class UOMobileEntity
 
     /// Character appearance
     public GenderType Gender { get; set; }
+
     public Race Race { get; set; }
 
     public Body Body => Race.Body(this);
@@ -70,7 +78,7 @@ public class UOMobileEntity
     public bool IsFrozen { get; set; }
 
     public bool IsWarMode { get; set; }
-    public bool  IsFlying { get; set; }
+    public bool IsFlying { get; set; }
 
     public bool IsBlessed { get; set; }
 
@@ -138,13 +146,15 @@ public class UOMobileEntity
         else
         {
             // If skill does not exist, create a new entry
-            Skills.Add(new SkillEntry
-            {
-                Skill = SkillInfo.Table[(int)skill],
-                Value = value,
-                Cap = 100, // Default cap, can be adjusted later
-                Lock = SkillLock.Locked // Default lock state
-            });
+            Skills.Add(
+                new SkillEntry
+                {
+                    Skill = SkillInfo.Table[(int)skill],
+                    Value = value,
+                    Cap = 100,              // Default cap, can be adjusted later
+                    Lock = SkillLock.Locked // Default lock state
+                }
+            );
         }
     }
 
@@ -160,12 +170,10 @@ public class UOMobileEntity
 
     public virtual void ReceiveSpeech()
     {
-
     }
 
     public virtual void Speech()
     {
-
     }
 
     public virtual int GetPacketFlags(bool stygianAbyss)
@@ -220,4 +228,5 @@ public class UOMobileEntity
         return flags;
     }
 
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

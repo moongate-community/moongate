@@ -54,6 +54,7 @@ public class CharactersHandler : IGamePacketHandler
         var mobile = _mobileService.GetMobile(character.MobileId);
 
         session.Mobile = mobile;
+        mobile.IsPlayer = true;
 
         await _eventBusService.PublishAsync(new CharacterLoggedEvent(session.SessionId, character.MobileId, character.Name));
     }
@@ -137,6 +138,8 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.Profession = characterCreation.Profession;
 
         playerMobileEntity.RecalculateMaxStats();
+
+        playerMobileEntity.IsPlayer = true;
 
 
         await _accountService.SaveAsync();
