@@ -3,7 +3,8 @@ namespace Moongate.Core.Server.Types;
 [Flags]
 public enum CommandSourceType : byte
 {
-    Console,
-    InGame,
-    All = Console | InGame,
+    None = 0x00,
+    Console = 1,
+    InGame = 2,
+    All = Console | InGame
 }

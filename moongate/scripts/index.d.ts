@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.22.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-24 21:13:19
+ * Moongate Server v0.3.25.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-06-25 15:15:48
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.22.0""
+ * ""0.3.25.0""
  */
 declare const VERSION: string;
 
@@ -62,4 +62,72 @@ declare const accounts: {
     changePassword(accountName: string, newPassword: string): boolean;
 };
 
+/**
+ * CommandsModule module
+ */
+declare const commands: {
+    /**
+     * Register new command
+     * @param commandName string
+     * @param handler (arg: ICommandSystemContext) => any
+     * @param description string
+     * @param accountLevel accountLevelType
+     * @param source commandSourceType
+     */
+    registerCommand(commandName: string, handler: (arg: ICommandSystemContext) => any, description?: string, accountLevel?: accountLevelType, source?: commandSourceType): void;
+};
 
+/**
+ * LoadScriptModule module
+ */
+declare const scripts: {
+    /**
+     * Include script
+     * @param scriptName string
+     */
+    includeScript(scriptName: string): void;
+    /**
+     * Include directory
+     * @param directoryName string
+     */
+    includeDirectory(directoryName: string): void;
+};
+
+
+/**
+ * Generated enum for Moongate.Core.Server.Types.AccountLevelType
+ */
+export enum accountLevelType {
+    USER = 0,
+    GM = 1,
+    ADMIN = 2,
+}
+
+/**
+ * Generated enum for Moongate.Core.Server.Types.CommandSourceType
+ */
+export enum commandSourceType {
+    NONE = 0,
+    CONSOLE = 1,
+    IN_GAME = 2,
+    ALL = 3,
+}
+
+
+/**
+ * Generated interface for Moongate.Core.Server.Data.Internal.Commands.CommandSystemContext
+ */
+interface ICommandSystemContext {
+    /**
+     * sourceType
+     */
+    sourceType: commandSourceType;
+    /**
+     * command
+     */
+    command: string;
+    /**
+     * arguments
+     */
+    arguments: string[];
+}
