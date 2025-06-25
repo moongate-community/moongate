@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
@@ -14,6 +13,22 @@ namespace Moongate.UO.Data.Persistence.Entities;
 
 public class UOMobileEntity : INotifyPropertyChanged
 {
+
+    public delegate void MobileEventHandler(UOMobileEntity mobile);
+
+    public event MobileEventHandler SelfMoved;
+    public event MobileEventHandler OtherMobileMoved;
+
+    public void OnSelfMoved()
+    {
+        SelfMoved?.Invoke(this);
+    }
+
+    public void OnOtherMobileMoved(UOMobileEntity other)
+    {
+        OtherMobileMoved?.Invoke(other);
+    }
+
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
@@ -101,7 +116,7 @@ public class UOMobileEntity : INotifyPropertyChanged
 
     public List<SkillEntry> Skills { get; set; } = new();
 
-    /// Bank and currency
+
     public int Gold { get; set; } = 0;
 
     public void RecalculateMaxStats()
@@ -227,6 +242,9 @@ public class UOMobileEntity : INotifyPropertyChanged
 
         return flags;
     }
+
+
+
 
     public event PropertyChangedEventHandler? PropertyChanged;
 }

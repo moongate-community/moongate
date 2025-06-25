@@ -34,6 +34,7 @@ using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.FileLoaders;
 using Moongate.UO.Interfaces.Services;
+using Moongate.UO.Interfaces.Services.Systems;
 using Moongate.UO.Modules;
 using Moongate.UO.PacketHandlers;
 using Serilog;
@@ -101,8 +102,9 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
 
+                .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
+                .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
 
-                .AddService(typeof(ITrackMobileService), typeof(TrackMobileService))
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))

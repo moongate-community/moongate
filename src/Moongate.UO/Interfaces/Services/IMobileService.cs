@@ -6,9 +6,14 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.UO.Interfaces.Services;
 
 public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSave
-
 {
-    UOMobileEntity CreateMobile();
 
+    delegate void MobileEventHandler(UOMobileEntity mobile);
+    event MobileEventHandler? MobileCreated;
+    event MobileEventHandler? MobileRemoved;
+
+    UOMobileEntity CreateMobile();
     UOMobileEntity? GetMobile(Serial id);
+
+    IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate);
 }
