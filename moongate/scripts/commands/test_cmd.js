@@ -1,4 +1,13 @@
 
 
 
-commands.registerCommand("test_cmd", (s)=> {}, "Test new command", accountLevelType.USER,commandSourceType.ALL  )
+
+const lilli = () =>  {
+    console.log("Lilli is running");
+}
+
+
+
+export {
+    lilli
+}
