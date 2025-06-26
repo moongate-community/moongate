@@ -21,6 +21,7 @@ using Moongate.Server.Persistence;
 using Moongate.Server.Services;
 using Moongate.UO.Commands;
 using Moongate.UO.Data;
+using Moongate.UO.Data.Factory.Json;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
@@ -42,6 +43,7 @@ using Serilog;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
+JsonUtils.RegisterJsonContext(TextJsonTemplateContext.Default);
 
 JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
 
@@ -98,13 +100,15 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IGameSessionService), typeof(GameSessionService))
                 .AddService(typeof(INetworkService), typeof(NetworkService))
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
+                .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
+
                 .AddService(typeof(IAccountService), typeof(AccountService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
-
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
+
 
 
                 //
@@ -157,8 +161,6 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<UnicodeSpeechRequestPacket, ChatHandler>();
 
             networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
-
-
         };
 
 
