@@ -19,7 +19,11 @@ public class UOMobileEntity : INotifyPropertyChanged
         UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
     );
 
-    public event ChatMessageDelegate? ChatMessageReceived;
+    public delegate void ChatMessageReceiveDelegate(
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic, int font
+    );
+
+    public event ChatMessageReceiveDelegate ? ChatMessageReceived;
 
     public event ChatMessageDelegate? ChatMessageSent;
 
@@ -194,7 +198,7 @@ public class UOMobileEntity : INotifyPropertyChanged
         UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font
     )
     {
-        ChatMessageReceived?.Invoke(mobileEntity, messageType, hue, text, graphic, font);
+        ChatMessageReceived?.Invoke(this, mobileEntity, messageType, hue, text, graphic, font);
     }
 
     public virtual void Speech(ChatMessageType messageType, short hue, string text, int graphic, int font)

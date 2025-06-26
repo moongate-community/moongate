@@ -8,6 +8,6 @@ public interface INotificationSystem : IMoongateService
 {
     void SendSystemMessageToAll(string message);
     void SendSystemMessageToMobile(UOMobileEntity mobile, string message);
-    void SendChatMessage(UOMobileEntity mobile,  ChatMessageType messageType, short hue, string text, int graphic, int font);
+    Task SendChatMessageAsync(UOMobileEntity mobile,  ChatMessageType messageType, short hue, string text, int graphic, int font);
 
 }

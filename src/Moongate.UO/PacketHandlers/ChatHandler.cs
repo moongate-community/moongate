@@ -25,7 +25,7 @@ public class ChatHandler : IGamePacketHandler
 
     private async Task HandleChatMessage(GameSession session, UnicodeSpeechRequestPacket speechRequest)
     {
-        _notificationSystem.SendChatMessage(
+        await _notificationSystem.SendChatMessageAsync(
             session.Mobile,
             speechRequest.MessageType,
             speechRequest.Hue,
