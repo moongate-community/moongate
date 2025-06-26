@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using Moongate.Core.Server.Interfaces.Services;
+using Moongate.Core.Server.Types;
 using Moongate.UO.Context;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
@@ -17,14 +19,17 @@ public class NotificationSystem : INotificationSystem
     private readonly IMobileService _mobileService;
     private readonly IPlayerNotificationSystem _playerNotificationSystem;
 
+    private readonly ICommandSystemService _commandSystemService;
+
     public NotificationSystem(
         IMobileService mobileService, IGameSessionService gameSessionService,
-        IPlayerNotificationSystem playerNotificationSystem
+        IPlayerNotificationSystem playerNotificationSystem, ICommandSystemService commandSystemService
     )
     {
         _mobileService = mobileService;
         _gameSessionService = gameSessionService;
         _playerNotificationSystem = playerNotificationSystem;
+        _commandSystemService = commandSystemService;
 
         _gameSessionService.GameSessionCreated += OnGameSessionCreated;
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
@@ -79,19 +84,23 @@ public class NotificationSystem : INotificationSystem
     {
     }
 
-    public void SendSystemMessage(string message)
-    {
-    }
-
-    private void HandleCommand(UOMobileEntity mobile, string command)
+    private async Task HandleCommandAsync(UOMobileEntity mobile, string command)
     {
         _logger.Debug("Handling command '{Command}' for mobile {MobileId}", command, mobile.Id);
+
+        var gameSession = _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == mobile.Id);
+        await _commandSystemService.ExecuteCommandAsync(
+            command,
+            gameSession.SessionId,
+            gameSession.Account.AccountLevel,
+            CommandSourceType.InGame
+        );
+
     }
 
     public void SendSystemMessageToAll(string message)
     {
-
-        foreach (var other in _gameSessionService.QuerySessions(s => true).Select( s => s.Mobile))
+        foreach (var other in _gameSessionService.QuerySessions(s => true).Select(s => s.Mobile))
         {
             // Log the system message
             _logger.Information("Sending system message to mobile {MobileId}: {Message}", other.Id, message);
@@ -106,14 +115,14 @@ public class NotificationSystem : INotificationSystem
         mobile.ReceiveSpeech(null, ChatMessageType.System, 0, message, 0, 3);
     }
 
-    public void SendChatMessage(
+    public async Task SendChatMessageAsync(
         UOMobileEntity mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
     )
     {
         // check if command
         if (text.StartsWith("."))
         {
-            HandleCommand(mobile, text[1..]);
+            await HandleCommandAsync(mobile, text[1..]);
             return;
         }
 

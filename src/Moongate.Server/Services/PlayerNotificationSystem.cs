@@ -24,21 +24,22 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
     }
 
     private void MobileOnChatMessageReceived(
-        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+        UOMobileEntity self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic, int font
     )
     {
         _logger.Verbose(
-            "Mobile {MobileId} received chat message: {MessageType} - {Text}",
-            mobile?.Id,
+            "Mobile {MobileId} received chat message from {Sender}: {MessageType} - {Text}",
+            self.Id,
+            sender?.Id ?? Serial.MinusOne,
             messageType,
             text
         );
 
         var chatMessage = new UnicodeSpeechResponsePacket()
         {
-            Hue = hue,
-            Serial = mobile?.Id ?? Serial.Zero,
-            Name = mobile?.Name ?? "System",
+            Hue = hue == 0 ? 13 : hue,
+            Serial = sender?.Id ?? Serial.MinusOne,
+            Name = sender?.Name ?? "System",
             Text = text,
             MessageType = messageType,
             IsUnicode = true,
@@ -47,7 +48,7 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
             Graphic = graphic
         };
 
-        GetGameSessionFromMobile(mobile).SendPackets(chatMessage);
+        GetGameSessionFromMobile(self).SendPackets(chatMessage);
     }
 
     private void MobileOnChatMessageSent(
@@ -84,8 +85,6 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
     {
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
 
-        var gameSession = gameSessionService.QuerySessions(s => s.Mobile.Id == mobile.Id);
-
-        return gameSession.FirstOrDefault();
+        return gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == mobile.Id);
     }
 }

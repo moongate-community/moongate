@@ -1,6 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using DryIoc;
 using Jint;
+using Jint.Native;
+using Jint.Native.Object;
 using Jint.Runtime.Interop;
 using Moongate.Core.Data.Configs.Services;
 using Moongate.Core.Directories;
@@ -98,6 +101,7 @@ public class JsScriptEngineService : IScriptEngineService
         }
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2111", Justification = "Required delegate is referenced explicitly.")]
     public Task StartAsync(CancellationToken cancellationToken = default)
     {
         foreach (var module in _scriptModules)
@@ -134,13 +138,47 @@ public class JsScriptEngineService : IScriptEngineService
             _nameResolver
         );
 
+
+        var enumsFound = TypeScriptDocumentationGenerator.FoundEnums;
+
+        foreach (var enumFound in enumsFound)
+        {
+            _jsEngine.SetValue(
+                _nameResolver.Invoke(enumFound.Name),
+                TypeReference.CreateTypeReference(_jsEngine, enumFound)
+            );
+        }
+
         File.WriteAllText(Path.Combine(_directoriesConfig[DirectoryType.Scripts], "index.d.ts"), documentation);
 
 
+        _jsEngine.SetValue("importSync", RequireModule);
+        _jsEngine.SetValue("require", RequireModule);
+
+        _jsEngine.SetValue(
+            "delay",
+            new Func<int, Task>(async milliseconds =>
+            {
+
+                await Task.Delay(milliseconds);
+            })
+        );
         ExecuteBootstrap();
 
 
         return Task.CompletedTask;
+    }
+
+    private JsValue RequireModule(string moduleName)
+    {
+        if (!moduleName.EndsWith(".js"))
+        {
+            moduleName += ".js";
+        }
+
+        var moduleNamespace = _jsEngine.Modules.Import(moduleName);
+
+        return moduleNamespace;
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
