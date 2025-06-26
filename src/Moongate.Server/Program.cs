@@ -26,6 +26,7 @@ using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Persistence;
@@ -34,6 +35,7 @@ using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.FileLoaders;
 using Moongate.UO.Interfaces.Services;
+using Moongate.UO.Interfaces.Services.Systems;
 using Moongate.UO.Modules;
 using Moongate.UO.PacketHandlers;
 using Serilog;
@@ -101,6 +103,10 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
 
+                .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
+                .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
+
+
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))
@@ -119,6 +125,13 @@ await ConsoleApp.RunAsync(
         {
             scriptEngine.AddScriptModule(typeof(LoggerModule));
             scriptEngine.AddScriptModule(typeof(AccountModule));
+            scriptEngine.AddScriptModule(typeof(SystemModule));
+
+            scriptEngine.AddScriptModule(typeof(CommandsModule));
+            scriptEngine.AddScriptModule(typeof(LoadScriptModule));
+            scriptEngine.AddScriptModule(typeof(ConsoleModule));
+
+            scriptEngine.AddScriptModule(typeof(CommonEventModule));
         };
 
         bootstrap.ConfigureNetworkServices += networkService =>
@@ -141,7 +154,10 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<MoveRequestPacket, CharacterMoveHandler>();
             networkService.RegisterGamePacketHandler<MoveAckPacket, CharacterMoveHandler>();
 
+            networkService.RegisterGamePacketHandler<UnicodeSpeechRequestPacket, ChatHandler>();
+
             networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
+
 
         };
 

@@ -19,4 +19,6 @@ public interface IGameSessionService : IMoongateService
     IEnumerable<GameSession> GetSessions();
 
     IEnumerable<GameSession> QuerySessions(Func<GameSession, bool> predicate);
+
+    GameSession? QuerySessionFirstOrDefault(Func<GameSession, bool> predicate);
 }

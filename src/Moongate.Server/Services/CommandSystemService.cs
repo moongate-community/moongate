@@ -5,6 +5,7 @@ using Moongate.Core.Server.Data.Internal.Commands;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 using Spectre.Console;
@@ -32,7 +33,6 @@ public class CommandSystemService : ICommandSystemService
     {
         _gameSessionService = gameSessionService;
 
-        // Register default commands
         RegisterDefaultCommands();
     }
 
@@ -71,7 +71,6 @@ public class CommandSystemService : ICommandSystemService
         {
             AnsiConsole.MarkupLine($"[green]{metric.Name}:[/] {metric.Value}");
         }
-
     }
 
     private async Task OnExitCommand(CommandSystemContext context)
@@ -153,8 +152,6 @@ public class CommandSystemService : ICommandSystemService
         }
 
         // TODO: Check if the session exists and if the account level is sufficient
-
-        var session = _gameSessionService.GetSession(sessionId);
 
         await commandDefinition.Handler(context);
     }
@@ -317,13 +314,25 @@ public class CommandSystemService : ICommandSystemService
         {
             context.OnPrint += OnPrintToConsole;
         }
+        else
+        {
+            context.OnPrint += OnPrintToMobile;
+            context.SessionId = sessionId;
+        }
 
         return context;
     }
 
-    private void OnPrintToConsole(string message, object[] args)
+    private void OnPrintToConsole(string sessionId, string message, object[] args)
     {
         Console.WriteLine(message, args);
+    }
+
+    private void OnPrintToMobile(string sessionId, string message, object[] args)
+    {
+        var gameSession = _gameSessionService.GetSession(sessionId);
+
+        gameSession.Mobile.ReceiveSpeech(null, ChatMessageType.System, 0, string.Format(message, args), 0, 3);
     }
 
     public void Dispose()

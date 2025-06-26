@@ -1,6 +1,7 @@
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Serilog;
@@ -46,6 +47,7 @@ public class CharacterMoveHandler : IGamePacketHandler
             session.MoveSequence,
             packet.Direction
         );
+
         var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
 
         session.SendPackets(moveAckPacket);

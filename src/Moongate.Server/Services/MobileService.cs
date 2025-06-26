@@ -3,11 +3,17 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
+using ZLinq;
 
 namespace Moongate.Server.Services;
 
 public class MobileService : IMobileService
 {
+    public event IMobileService.MobileEventHandler? MobileCreated;
+    public event IMobileService.MobileEventHandler? MobileRemoved;
+
+
+
     private readonly ILogger _logger = Log.ForContext<MobileService>();
 
     private const string mobilesFilePath = "mobiles.mga";
@@ -52,6 +58,7 @@ public class MobileService : IMobileService
         return SaveMobilesAsync();
     }
 
+
     public UOMobileEntity CreateMobile()
     {
 
@@ -69,6 +76,8 @@ public class MobileService : IMobileService
 
         _mobiles[mobile.Id] = mobile;
 
+        MobileCreated?.Invoke(mobile);
+
         return mobile;
 
     }
@@ -82,6 +91,11 @@ public class MobileService : IMobileService
 
         _logger.Warning("Mobile with ID {Id} not found.", id);
         return null;
+    }
+
+    public IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate)
+    {
+        return _mobiles.Values.AsValueEnumerable().Where(predicate).ToList();
     }
 
 

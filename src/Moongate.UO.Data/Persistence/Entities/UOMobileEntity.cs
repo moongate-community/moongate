@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -9,11 +11,42 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOMobileEntity
+public class UOMobileEntity : INotifyPropertyChanged
 {
+    public delegate void MobileEventHandler(UOMobileEntity mobile);
+
+    public delegate void ChatMessageDelegate(
+        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    );
+
+    public delegate void ChatMessageReceiveDelegate(
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic, int font
+    );
+
+    public event ChatMessageReceiveDelegate ? ChatMessageReceived;
+
+    public event ChatMessageDelegate? ChatMessageSent;
+
+
+    public event MobileEventHandler SelfMoved;
+    public event MobileEventHandler OtherMobileMoved;
+
+    public void OnSelfMoved()
+    {
+        SelfMoved?.Invoke(this);
+    }
+
+    public void OnOtherMobileMoved(UOMobileEntity other)
+    {
+        OtherMobileMoved?.Invoke(other);
+    }
+
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
+
+
+    [JsonIgnore] public bool IsPlayer { get; set; }
 
     public int X => Location.X;
 
@@ -39,6 +72,7 @@ public class UOMobileEntity
 
     /// Character appearance
     public GenderType Gender { get; set; }
+
     public Race Race { get; set; }
 
     public Body Body => Race.Body(this);
@@ -70,7 +104,7 @@ public class UOMobileEntity
     public bool IsFrozen { get; set; }
 
     public bool IsWarMode { get; set; }
-    public bool  IsFlying { get; set; }
+    public bool IsFlying { get; set; }
 
     public bool IsBlessed { get; set; }
 
@@ -93,7 +127,7 @@ public class UOMobileEntity
 
     public List<SkillEntry> Skills { get; set; } = new();
 
-    /// Bank and currency
+
     public int Gold { get; set; } = 0;
 
     public void RecalculateMaxStats()
@@ -138,13 +172,15 @@ public class UOMobileEntity
         else
         {
             // If skill does not exist, create a new entry
-            Skills.Add(new SkillEntry
-            {
-                Skill = SkillInfo.Table[(int)skill],
-                Value = value,
-                Cap = 100, // Default cap, can be adjusted later
-                Lock = SkillLock.Locked // Default lock state
-            });
+            Skills.Add(
+                new SkillEntry
+                {
+                    Skill = SkillInfo.Table[(int)skill],
+                    Value = value,
+                    Cap = 100,              // Default cap, can be adjusted later
+                    Lock = SkillLock.Locked // Default lock state
+                }
+            );
         }
     }
 
@@ -158,14 +194,16 @@ public class UOMobileEntity
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
     }
 
-    public virtual void ReceiveSpeech()
+    public virtual void ReceiveSpeech(
+        UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
     {
-
+        ChatMessageReceived?.Invoke(this, mobileEntity, messageType, hue, text, graphic, font);
     }
 
-    public virtual void Speech()
+    public virtual void Speech(ChatMessageType messageType, short hue, string text, int graphic, int font)
     {
-
+        ChatMessageSent?.Invoke(this, messageType, hue, text, graphic, font);
     }
 
     public virtual int GetPacketFlags(bool stygianAbyss)
@@ -220,4 +258,6 @@ public class UOMobileEntity
         return flags;
     }
 
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 }

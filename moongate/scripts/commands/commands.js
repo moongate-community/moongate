@@ -1,0 +1,1 @@
+scripts.includeDirectory("commands/tests");

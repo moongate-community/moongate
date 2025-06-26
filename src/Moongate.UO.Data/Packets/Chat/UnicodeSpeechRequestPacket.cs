@@ -22,7 +22,6 @@ public class UnicodeSpeechRequestPacket : BaseUoPacket
 
     protected override bool Read(SpanReader reader)
     {
-        reader.ReadByte();
         reader.ReadInt16(); // length
         MessageType = (ChatMessageType)reader.ReadByte();
         Hue = reader.ReadInt16();

@@ -87,6 +87,11 @@ public class GameSessionService : IGameSessionService
         return _sessions.Values.AsValueEnumerable().Where(predicate).ToList();
     }
 
+    public GameSession? QuerySessionFirstOrDefault(Func<GameSession, bool> predicate)
+    {
+        return _sessions.Values.AsValueEnumerable().FirstOrDefault(predicate);
+    }
+
     public void Dispose()
     {
     }

@@ -412,5 +412,139 @@ public struct Point3D
         return point - offset;      // Move in opposite direction
     }
 
+    /// <summary>
+    /// Checks if another point is within the specified range of this point
+    /// Uses 2D distance calculation (ignoring Z coordinate) like UO does
+    /// </summary>
+    /// <param name="target">Target point to check distance to</param>
+    /// <param name="range">Maximum range in tiles</param>
+    /// <returns>True if target is within range, false otherwise</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool InRange(Point3D target, int range)
+    {
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
 
+        /// Use 2D distance like UO (Z doesn't affect range)
+        return (deltaX * deltaX) + (deltaY * deltaY) <= (range * range);
+    }
+
+    /// <summary>
+    /// Checks if another point is within the specified range of this point
+    /// Uses 2D distance calculation (ignoring Z coordinate) like UO does
+    /// </summary>
+    /// <param name="target">Target point to check distance to</param>
+    /// <param name="range">Maximum range in tiles</param>
+    /// <returns>True if target is within range, false otherwise</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool InRange(IPoint3D target, int range)
+    {
+        if (target == null) return false;
+
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+
+        /// Use 2D distance like UO (Z doesn't affect range)
+        return (deltaX * deltaX) + (deltaY * deltaY) <= (range * range);
+    }
+
+    /// <summary>
+    /// Checks if another point is within the specified range of this point
+    /// Uses 3D distance calculation (including Z coordinate)
+    /// </summary>
+    /// <param name="target">Target point to check distance to</param>
+    /// <param name="range">Maximum range in tiles</param>
+    /// <returns>True if target is within 3D range, false otherwise</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool InRange3D(Point3D target, int range)
+    {
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+        var deltaZ = Z - target.Z;
+
+        /// Use 3D distance calculation
+        return (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ) <= (range * range);
+    }
+
+    /// <summary>
+    /// Checks if another point is within the specified range of this point
+    /// Uses 3D distance calculation (including Z coordinate)
+    /// </summary>
+    /// <param name="target">Target point to check distance to</param>
+    /// <param name="range">Maximum range in tiles</param>
+    /// <returns>True if target is within 3D range, false otherwise</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool InRange3D(IPoint3D target, int range)
+    {
+        if (target == null) return false;
+
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+        var deltaZ = Z - target.Z;
+
+        /// Use 3D distance calculation
+        return (deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ) <= (range * range);
+    }
+
+    /// <summary>
+    /// Gets the 2D distance to another point (ignoring Z coordinate)
+    /// </summary>
+    /// <param name="target">Target point</param>
+    /// <returns>Distance in tiles as double</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public double GetDistance(Point3D target)
+    {
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+
+        return Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
+    }
+
+    /// <summary>
+    /// Gets the 2D distance to another point (ignoring Z coordinate)
+    /// </summary>
+    /// <param name="target">Target point</param>
+    /// <returns>Distance in tiles as double</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public double GetDistance(IPoint3D target)
+    {
+        if (target == null) return double.MaxValue;
+
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+
+        return Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY));
+    }
+
+    /// <summary>
+    /// Gets the 3D distance to another point (including Z coordinate)
+    /// </summary>
+    /// <param name="target">Target point</param>
+    /// <returns>Distance in tiles as double</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public double GetDistance3D(Point3D target)
+    {
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+        var deltaZ = Z - target.Z;
+
+        return Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+    }
+
+    /// <summary>
+    /// Gets the 3D distance to another point (including Z coordinate)
+    /// </summary>
+    /// <param name="target">Target point</param>
+    /// <returns>Distance in tiles as double</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public double GetDistance3D(IPoint3D target)
+    {
+        if (target == null) return double.MaxValue;
+
+        var deltaX = X - target.X;
+        var deltaY = Y - target.Y;
+        var deltaZ = Z - target.Z;
+
+        return Math.Sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+    }
 }

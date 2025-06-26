@@ -40,6 +40,15 @@ public class GameSession : IDisposable, INotifyPropertyChanged
         if (e.PropertyName == nameof(Mobile))
         {
             MobileChanged?.Invoke(this, Mobile);
+            Mobile.PropertyChanged += MobileOnPropertyChanged;
+        }
+    }
+
+    private void MobileOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (sender is UOMobileEntity mobile && e.PropertyName == nameof(mobile.Location))
+        {
+            MobileLocationChanged?.Invoke(this, mobile.Location);
         }
     }
 
