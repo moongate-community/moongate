@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.7.0"></a>
+## [0.7.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.7.0) (2025-06-26)
+
+### Features
+
+* **bootstrap.js:** add new test command 'lilli' and echo command to bootstrap script ([452eafb](https://www.github.com/moongate-community/moongate/commit/452eafb625bfd710ccc0bab13f3914bb329cef69))
+* **index.d.ts:** update Moongate Server version to v0.3.26.0 and auto-generated documentation timestamp ([96ddf1e](https://www.github.com/moongate-community/moongate/commit/96ddf1ef872605f7f6219e0ad9ad74fd942e90ce))
+* **index.d.ts:** update Moongate Server version to v0.3.28.0 and regenerate API TypeScript Definitions ([c334303](https://www.github.com/moongate-community/moongate/commit/c334303d11ac9aed520d55fb720dc78ee3823bb7))
+* **LoadScriptModule.cs:** add LoadScriptModule to handle script loading and execution ([2e1dce0](https://www.github.com/moongate-community/moongate/commit/2e1dce0a8e10aa5ea0d15283c90b8441aa95c213))
+* **moongate:** add new files for saves and scripts, update Moongate Server ([af12bae](https://www.github.com/moongate-community/moongate/commit/af12bae683da9cb9922d8909bcb540b9c1ba9f46))
+* **Program.cs:** add ConsoleModule to script engine for additional functionality ([64a4f49](https://www.github.com/moongate-community/moongate/commit/64a4f49c3800de9c00a6e51d798e8bac1feadf94))
+* **Program.cs:** add NotificationSystem and PlayerNotificationSystem services ([2914c73](https://www.github.com/moongate-community/moongate/commit/2914c736ef27d7a5ee96442db21c94c14da68932))
+
+### Bug Fixes
+
+* **index.d.ts:** update Moongate Server version to 0.3.27.0 in TypeScript definitions ([7600642](https://www.github.com/moongate-community/moongate/commit/7600642c5dee85c141c2c8f518018c8f9972b86a))
+
 <a name="0.6.0"></a>
 ## [0.6.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.6.0) (2025-06-25)
 
