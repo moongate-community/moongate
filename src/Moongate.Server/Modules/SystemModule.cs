@@ -1,10 +1,19 @@
 using Moongate.Core.Server.Attributes.Scripts;
+using Moongate.Core.Server.Interfaces.Services;
 
 namespace Moongate.Server.Modules;
 
 [ScriptModule("system")]
 public class SystemModule
 {
+
+    private readonly IEventLoopService _eventLoopService;
+
+    public SystemModule(IEventLoopService eventLoopService)
+    {
+        _eventLoopService = eventLoopService;
+    }
+
     [ScriptFunction("Get server time")]
     public string GetServerTime()
     {
@@ -18,7 +27,7 @@ public class SystemModule
         return $"{uptime.Days} days, {uptime.Hours} hours, {uptime.Minutes} minutes, {uptime.Seconds} seconds";
     }
 
-    [ScriptFunction("Delay")]
+    [ScriptFunction("Delay via event loop")]
     public void Delay(int milliseconds)
     {
         if (milliseconds < 0)
@@ -26,6 +35,23 @@ public class SystemModule
             throw new ArgumentOutOfRangeException(nameof(milliseconds), "Delay time must be non-negative.");
         }
 
-        Task.Delay(milliseconds).Wait();
+
+        var exit = false;
+
+        while (exit == false)
+        {
+            Task.Delay(10).Wait();
+            milliseconds -= 10;
+
+            if (milliseconds <= 0)
+            {
+                exit = true;
+            }
+        }
+
+
+
     }
+
+
 }

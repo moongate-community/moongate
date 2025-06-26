@@ -523,7 +523,7 @@ public static class TypeScriptDocumentationGenerator
             }
 
 
-            _enumsBuilder.AppendLine($"    {value.ToSnakeCaseUpper()} = {numericValue},");
+            _enumsBuilder.AppendLine($"    {value} = {numericValue},");
         }
 
         _enumsBuilder.AppendLine("}");
