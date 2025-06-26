@@ -1,12 +1,18 @@
+using System.Text.Json.Serialization;
+using Moongate.Core.Server.Json.Converters;
+
 namespace Moongate.UO.Data.Factory;
 
 public class ItemTemplate : BaseTemplate
 {
-    public string ItemId { get; set; }
+    [JsonConverter(typeof(HexValueConverter<int>))]
+    public int ItemId { get; set; }
 
-    public string Hue { get; set; }
+    [JsonConverter(typeof(HexValueConverter<int>))]
+    public int Hue { get; set; }
 
-    public int GoldValue { get; set; } = 1;
+    [JsonConverter(typeof(RandomValueConverter<int>))]
+    public int GoldValue { get; set; }
 
     public double Weight { get; set; } = 1.0;
 
