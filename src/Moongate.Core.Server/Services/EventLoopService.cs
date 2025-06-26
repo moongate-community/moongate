@@ -554,6 +554,21 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         return _priorityQueues.Values.Sum(q => q.Count) + _delayedActions.Count;
     }
 
+    public Task Delay(int milliseconds)
+    {
+        var tcs = new TaskCompletionSource();
+
+        EnqueueDelayedAction(
+            $"Delay_{Guid.NewGuid()}",
+            () => tcs.TrySetResult(),
+            TimeSpan.FromMilliseconds(milliseconds),
+            EventLoopPriority.Normal
+        );
+
+        return tcs.Task;
+    }
+
+
     /// <summary>
     /// Disposes resources used by the event loop service.
     /// </summary>

@@ -71,6 +71,13 @@ public interface IEventLoopService : IMoongateAutostartService
     string EnqueueDelayedAction(string name, Action action, TimeSpan delay);
 
     /// <summary>
+    ///  Delays the execution of the current thread for the specified number of milliseconds.
+    /// </summary>
+    /// <param name="milliseconds"></param>
+    /// <returns></returns>
+    Task Delay(int milliseconds);
+
+    /// <summary>
     /// Enqueues an action to be executed after the specified delay with the specified priority.
     /// </summary>
     /// <param name="name">The name of the action for identification.</param>
