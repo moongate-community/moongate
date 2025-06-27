@@ -23,6 +23,7 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Factory.Json;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;

@@ -19,4 +19,13 @@ public class CommonEventModule
     {
         _eventBusService.Subscribe(handler);
     }
+
+
+    [ScriptFunction("Register handler for character created event")]
+    public void OnCharacterCreated(CharacterCreatedHandler handler)
+    {
+        _eventBusService.Subscribe<CharacterCreatedEvent>(handler.Invoke );
+    }
+
+    public delegate Task CharacterCreatedHandler(CharacterCreatedEvent e);
 }

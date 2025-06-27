@@ -1,6 +1,7 @@
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
+using Moongate.UO.Data.Events.Contexts;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
@@ -147,7 +148,8 @@ public class CharactersHandler : IGamePacketHandler
         await _eventBusService.PublishAsync(
             new CharacterCreatedEvent(
                 session.Account.Username,
-                playerMobileEntity
+                playerMobileEntity,
+                UoEventContext.CreateInstance()
             )
         );
 

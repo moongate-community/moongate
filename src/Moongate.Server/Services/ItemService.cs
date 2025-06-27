@@ -8,6 +8,7 @@ namespace Moongate.Server.Services;
 
 public class ItemService : IItemService
 {
+    public event IItemService.ItemEventHandler? ItemCreated;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
 
     private const string itemsFilePath = "items.mga";
@@ -50,6 +51,28 @@ public class ItemService : IItemService
     {
         _logger.Information("Saving {Count} items to file...", _items.Count);
         await _entityFileService.SaveEntitiesAsync(itemsFilePath, _items.Values);
+    }
+
+
+    public UOItemEntity CreateItem()
+    {
+        var lastSerial = new Serial(Serial.MaxItemSerial);
+
+        if (_items.Count > 0)
+        {
+            lastSerial = _items.Keys.Last() + 1;
+        }
+
+        var item = new UOItemEntity()
+        {
+            Id = lastSerial,
+        };
+
+        _items[item.Id] = item;
+
+        ItemCreated?.Invoke(item);
+
+        return item;
     }
 
     public void Dispose()

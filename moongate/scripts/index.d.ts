@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.39.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-26 15:24:30
+ * Moongate Server v0.3.40.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-06-27 11:52:41
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.39.0""
+ * ""0.3.40.0""
  */
 declare const VERSION: string;
 
@@ -135,6 +135,11 @@ declare const events: {
      * @param handler (arg: ICharacterInGameEvent) => any
      */
     onCharacterInGame(handler: (arg: ICharacterInGameEvent) => any): void;
+    /**
+     * Register handler for character created event
+     * @param handler ICharacterCreatedHandler
+     */
+    onCharacterCreated(handler: ICharacterCreatedHandler): void;
 };
 
 
@@ -346,6 +351,20 @@ interface ICharacterInGameEvent {
      * mobile
      */
     mobile: IUOMobileEntity;
+}
+
+/**
+ * Generated interface for Moongate.Server.Modules.CommonEventModule+CharacterCreatedHandler
+ */
+interface ICharacterCreatedHandler {
+    /**
+     * target
+     */
+    target: any;
+    /**
+     * method
+     */
+    method: any;
 }
 
 /**

@@ -4,6 +4,10 @@ using Moongate.Core.Json;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Factory;
+using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Tiles;
+using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -16,10 +20,12 @@ public class EntityFactoryService : IEntityFactoryService
     private readonly ConcurrentDictionary<string, ItemTemplate> _itemTemplates = new();
     private readonly ConcurrentDictionary<string, MobileTemplate> _mobileTemplates = new();
 
+    private readonly IItemService _itemService;
 
-    public EntityFactoryService(DirectoriesConfig directoriesConfig)
+    public EntityFactoryService(DirectoriesConfig directoriesConfig, IItemService itemService)
     {
         _directoriesConfig = directoriesConfig;
+        _itemService = itemService;
     }
 
     public T CreateEntity<T>(string templateId) where T : class
@@ -30,6 +36,40 @@ public class EntityFactoryService : IEntityFactoryService
     public T CreateEntity<T>(string templateId, Dictionary<string, object> overrides) where T : class
     {
         throw new NotImplementedException();
+    }
+
+    public UOItemEntity CreateItemEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null)
+    {
+        if (_itemTemplates.TryGetValue(templateOrCategoryOrTag, out var itemTemplate))
+        {
+            return CreateItemEntity(itemTemplate, overrides);
+        }
+
+        // If not found by template ID, try category or tag
+        foreach (var kvp in _itemTemplates)
+        {
+            if (kvp.Value.Category == templateOrCategoryOrTag || kvp.Value.Tags.Contains(templateOrCategoryOrTag))
+            {
+                return CreateItemEntity(kvp.Value, overrides);
+            }
+        }
+
+        _logger.Warning("Item template not found: {TemplateId}", templateOrCategoryOrTag);
+        return null;
+    }
+
+    private UOItemEntity CreateItemEntity(ItemTemplate itemTemplate, Dictionary<string, object> overrides = null)
+    {
+        var item = _itemService.CreateItem();
+
+        item.TemplateId = itemTemplate.Id;
+        item.Gold = itemTemplate.GoldValue;
+        item.Name =  itemTemplate.Name;
+        item.ItemId = itemTemplate.ItemId;
+        item.Weight = itemTemplate.Weight;
+        item.Hue = itemTemplate.Hue;
+
+        return item;
     }
 
     public async Task LoadTemplatesAsync(string filePath)
@@ -48,6 +88,10 @@ public class EntityFactoryService : IEntityFactoryService
             {
                 if (_itemTemplates.TryAdd(itemTemplate.Id, itemTemplate))
                 {
+                    if (itemTemplate.Name == null)
+                    {
+                        itemTemplate.Name = TileData.ItemTable[itemTemplate.ItemId].Name;
+                    }
                     _logger.Information("Loaded item template: {TemplateId}", itemTemplate.Id);
                 }
             }
@@ -74,7 +118,11 @@ public class EntityFactoryService : IEntityFactoryService
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        var templates = Directory.GetFiles(_directoriesConfig[DirectoryType.Templates], "*.json", SearchOption.AllDirectories);
+        var templates = Directory.GetFiles(
+            _directoriesConfig[DirectoryType.Templates],
+            "*.json",
+            SearchOption.AllDirectories
+        );
 
 
         var loadTasks = templates.Select(LoadTemplatesAsync);

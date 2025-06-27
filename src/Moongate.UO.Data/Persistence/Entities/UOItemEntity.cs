@@ -4,11 +4,12 @@ namespace Moongate.UO.Data.Persistence.Entities;
 
 public class UOItemEntity
 {
+    public string TemplateId { get; set; }
     public Serial Id { get; set; }
     public int ItemId { get; set; }
     public string Name { get; set; }
     public int Gold { get; set; }
-    public int Weight { get; set; }
+    public double Weight { get; set; }
     public int Hue { get; set; }
 
     public ItemReference ToItemReference()

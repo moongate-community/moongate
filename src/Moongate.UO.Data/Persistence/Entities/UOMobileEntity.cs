@@ -20,10 +20,11 @@ public class UOMobileEntity : INotifyPropertyChanged
     );
 
     public delegate void ChatMessageReceiveDelegate(
-        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic, int font
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        int font
     );
 
-    public event ChatMessageReceiveDelegate ? ChatMessageReceived;
+    public event ChatMessageReceiveDelegate? ChatMessageReceived;
 
     public event ChatMessageDelegate? ChatMessageSent;
 
@@ -192,6 +193,11 @@ public class UOMobileEntity : INotifyPropertyChanged
     public void UpdatePlayTime(TimeSpan sessionTime)
     {
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
+    }
+
+    public void AddItem(ItemLayerType layer, UOItemEntity item)
+    {
+        Equipment[layer] = item.ToItemReference();
     }
 
     public virtual void ReceiveSpeech(
