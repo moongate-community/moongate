@@ -70,6 +70,8 @@ public class PersistenceService : IPersistenceService
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
     {
+        _lastSaveTime = DateTime.MinValue;
+        await SaveRequestAsync();
     }
 
     public void RequestSave()
