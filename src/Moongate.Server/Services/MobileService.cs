@@ -12,7 +12,7 @@ public class MobileService : IMobileService
     public event IMobileService.MobileEventHandler? MobileCreated;
     public event IMobileService.MobileEventHandler? MobileRemoved;
 
-
+    private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
     private readonly ILogger _logger = Log.ForContext<MobileService>();
 
@@ -27,13 +27,17 @@ public class MobileService : IMobileService
         _entityFileService = entityFileService;
     }
 
-    private Task SaveMobilesAsync()
+    private async Task SaveMobilesAsync()
+
     {
-        return _entityFileService.SaveEntitiesAsync(mobilesFilePath, _mobiles.Values);
+        await _saveLock.WaitAsync();
+        await _entityFileService.SaveEntitiesAsync(mobilesFilePath, _mobiles.Values);
+        _saveLock.Release();
     }
 
     private async Task LoadMobilesAsync()
     {
+        await _saveLock.WaitAsync();
         _mobiles.Clear();
 
         var mobiles = await _entityFileService.LoadEntitiesAsync<UOMobileEntity>(mobilesFilePath);
@@ -42,6 +46,8 @@ public class MobileService : IMobileService
         {
             _mobiles[mobile.Id] = mobile;
         }
+
+        _saveLock.Release();
     }
 
 
@@ -62,6 +68,7 @@ public class MobileService : IMobileService
     public UOMobileEntity CreateMobile()
     {
 
+        _saveLock.Wait();
         var lastSerial = new Serial(Serial.MaxMobileSerial);
 
         if (_mobiles.Count > 0)
@@ -77,6 +84,8 @@ public class MobileService : IMobileService
         _mobiles[mobile.Id] = mobile;
 
         MobileCreated?.Invoke(mobile);
+
+        _saveLock.Release();
 
         return mobile;
 
@@ -113,4 +122,5 @@ public class MobileService : IMobileService
     {
         return SaveMobilesAsync();
     }
+
 }

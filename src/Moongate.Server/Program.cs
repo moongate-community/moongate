@@ -102,6 +102,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(INetworkService), typeof(NetworkService))
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
+                .AddService(typeof(IPersistenceService), typeof(PersistenceService), 100)
 
                 .AddService(typeof(IAccountService), typeof(AccountService))
                 .AddService(typeof(IMobileService), typeof(MobileService))

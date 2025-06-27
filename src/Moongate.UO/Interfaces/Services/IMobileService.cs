@@ -8,7 +8,6 @@ namespace Moongate.UO.Interfaces.Services;
 
 public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSave
 {
-
     delegate void MobileEventHandler(UOMobileEntity mobile);
     event MobileEventHandler? MobileCreated;
     event MobileEventHandler? MobileRemoved;
