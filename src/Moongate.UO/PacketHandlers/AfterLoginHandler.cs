@@ -5,6 +5,7 @@ using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Features;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Environment;
+using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Lights;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.Maps;
@@ -22,7 +23,6 @@ public class AfterLoginHandler : IMoongateService
     private readonly IEventBusService _eventBusService;
 
     private readonly IMobileService _mobileService;
-
 
 
     private readonly ILogger _logger = Log.ForContext<AfterLoginHandler>();
@@ -52,6 +52,8 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
 
 
+        session.SendPackets(new WornItemsPacket(session.Mobile));
+
         session.SendPackets(new WarModePacket(session.Mobile));
         session.SendPackets(new MapChangePacket(session.Mobile.Map));
         session.SendPackets(new OverallLightLevelPacket(LightLevelType.Day));
@@ -59,12 +61,14 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
         session.SendPackets(new LoginCompletePacket());
 
-        MoongateContext.EnqueueAction("AfterLoginHandler.OnCharacterLogged", async () =>
-        {
-            await Task.Delay(3000);
-            await _eventBusService.PublishAsync(new CharacterInGameEvent(session, session.Mobile));
-        });
-
+        MoongateContext.EnqueueAction(
+            "AfterLoginHandler.OnCharacterLogged",
+            async () =>
+            {
+                await Task.Delay(3000);
+                await _eventBusService.PublishAsync(new CharacterInGameEvent(session, session.Mobile));
+            }
+        );
     }
 
 

@@ -147,7 +147,7 @@ public ref struct SpanWriter : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    private void Grow(int additionalCapacity)
+    public void Grow(int additionalCapacity)
     {
         var newSize = Math.Max(BytesWritten + additionalCapacity, _buffer.Length * 2);
         byte[] poolArray = STArrayPool<byte>.Shared.Rent(newSize);

@@ -197,6 +197,7 @@ public class UOMobileEntity : INotifyPropertyChanged
 
     public void AddItem(ItemLayerType layer, UOItemEntity item)
     {
+
         Equipment[layer] = item.ToItemReference();
     }
 

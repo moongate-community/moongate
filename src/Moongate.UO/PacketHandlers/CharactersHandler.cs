@@ -19,12 +19,17 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IMobileService _mobileService;
     private readonly IAccountService _accountService;
     private readonly IEventBusService _eventBusService;
+    private readonly IScriptEngineService _scriptEngineService;
 
-    public CharactersHandler(IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService)
+    public CharactersHandler(
+        IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService,
+        IScriptEngineService scriptEngineService
+    )
     {
         _mobileService = mobileService;
         _accountService = accountService;
         _eventBusService = eventBusService;
+        _scriptEngineService = scriptEngineService;
     }
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
@@ -145,13 +150,20 @@ public class CharactersHandler : IGamePacketHandler
 
         await _accountService.SaveAsync();
         await _mobileService.SaveAsync();
-        await _eventBusService.PublishAsync(
+
+        var createContext =
             new CharacterCreatedEvent(
                 session.Account.Username,
                 playerMobileEntity,
                 UoEventContext.CreateInstance()
-            )
-        );
+            );
+
+
+        await _eventBusService.PublishAsync(createContext);
+
+
+        _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
+
 
         if (session.Account.Characters.Count == 1)
         {

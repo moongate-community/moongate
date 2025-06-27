@@ -1,4 +1,5 @@
 using Moongate.Core.Server.Interfaces.EventBus;
+using Serilog;
 
 namespace Moongate.Core.Server.Data.Internal.Events;
 
@@ -16,6 +17,7 @@ public class EventDispatchJob<TEvent> : EventDispatchJob
     private readonly IEventBusListener<TEvent> _listener;
     private readonly TEvent _event;
 
+    private readonly ILogger _logger = Log.ForContext<EventDispatchJob<TEvent>>();
 
     public EventDispatchJob(IEventBusListener<TEvent> listener, TEvent @event)
     {
@@ -25,6 +27,16 @@ public class EventDispatchJob<TEvent> : EventDispatchJob
 
     public override async Task ExecuteAsync()
     {
-        await _listener.HandleAsync(_event);
+        try
+        {
+
+            await _listener.HandleAsync(_event);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error executing event dispatch job for event type {EventType}", typeof(TEvent).Name);
+            throw;
+        }
+
     }
 }

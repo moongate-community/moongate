@@ -3,12 +3,15 @@ using Moongate.Core.Server.Instances;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Serilog;
 
 namespace Moongate.UO.Data.Events.Contexts;
 
 public class UoEventContext
 {
     private readonly IEntityFactoryService _entityFactoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+    private readonly ILogger _logger = Log.ForContext<UoEventContext>();
+
 
     public static UoEventContext CreateInstance()
     {
@@ -30,6 +33,7 @@ public class UoEventContext
             throw new InvalidOperationException($"Item template '{templateId}' not found.");
         }
 
+        _logger.Debug("Adding item {ItemId} to mobile {MobileId} on layer {Layer}", item.Id, mobile.Id, layer);
         mobile.AddItem(layer, item);
     }
 }
