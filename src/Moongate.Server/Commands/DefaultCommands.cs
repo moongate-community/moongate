@@ -18,6 +18,28 @@ public static class DefaultCommands
             AccountLevelType.Admin,
             CommandSourceType.Console
         );
+
+        commandSystemService.RegisterCommand(
+            "where",
+            OnWhereCommand,
+            "Returns the current location",
+            AccountLevelType.User,
+            CommandSourceType.InGame
+        );
+    }
+
+    private static async Task OnWhereCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+
+        var mobile = gameSessionService.GetSession(context.SessionId).Mobile;
+        context.Print(
+            "You are at Map {0} (X: {1}, Y: {2}, Z: {3})",
+            mobile.Map.MapID,
+            mobile.Location.X,
+            mobile.Location.Y,
+            mobile.Location.Z
+        );
     }
 
     private static async Task OnSaveCommand(CommandSystemContext context)
@@ -26,4 +48,5 @@ public static class DefaultCommands
 
         persistenceService.RequestSave();
     }
+
 }

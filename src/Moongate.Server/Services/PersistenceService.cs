@@ -12,6 +12,7 @@ public class PersistenceService : IPersistenceService
 {
     private readonly ILogger _logger = Log.ForContext<PersistenceService>();
 
+
     private DateTime _lastSaveTime = DateTime.MinValue;
 
     private readonly IEventBusService _eventBusService;
@@ -91,7 +92,6 @@ public class PersistenceService : IPersistenceService
             1000,
             async () => { await SaveRequestAsync(); }, 30
         );
-
 
     }
 

@@ -1,3 +1,4 @@
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.UO.Data.Persistence.Entities;
@@ -11,6 +12,29 @@ public class UOItemEntity
     public int Gold { get; set; }
     public double Weight { get; set; }
     public int Hue { get; set; }
+
+    public Serial? ParentId { get; set; }
+
+    public int? GumpId { get; set; }
+
+    public bool IsContainer => GumpId.HasValue;
+
+    public Dictionary<Point2D, ItemReference> ContainedItems { get; set; } = new();
+
+    public void AddItem(UOItemEntity item, Point2D position)
+    {
+        // Logic to add an item to this item, e.g., in a container
+        // This could involve updating the ParentId of the item being added
+        item.ParentId = Id;
+
+        ContainedItems[position] = item.ToItemReference();
+    }
+
+    public void RemoveItem(Point2D position)
+    {
+        // Logic to remove an item from this item, e.g., from a container
+        ContainedItems.Remove(position);
+    }
 
     public ItemReference ToItemReference()
     {
