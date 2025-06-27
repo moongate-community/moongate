@@ -2,6 +2,7 @@ using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Contexts;
+using Moongate.UO.Data.Events.System;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
@@ -164,6 +165,7 @@ public class CharactersHandler : IGamePacketHandler
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
 
+        await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 
         if (session.Account.Characters.Count == 1)
         {

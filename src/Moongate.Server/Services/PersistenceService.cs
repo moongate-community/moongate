@@ -25,6 +25,8 @@ public class PersistenceService : IPersistenceService
         _timerService = timerService;
         _container = container;
         _eventBusService = eventBusService;
+
+        _eventBusService.Subscribe<SavePersistenceRequestEvent>(async @event => RequestSave());
     }
 
     private async Task SaveRequestAsync()
@@ -64,7 +66,6 @@ public class PersistenceService : IPersistenceService
             (int)TimeSpan.FromMinutes(5).TotalMicroseconds,
             true
         );
-        await SaveRequestAsync();
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
@@ -85,7 +86,7 @@ public class PersistenceService : IPersistenceService
 
         _timerService.RegisterTimer(
             "request_save_persistence_files",
-            0,
+            1000,
             async () => { await SaveRequestAsync(); }, 30
         );
 

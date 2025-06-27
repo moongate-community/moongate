@@ -14,6 +14,7 @@ using Moongate.Core.Server.Extensions;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
+using Moongate.Server.Commands;
 using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
 using Moongate.Server.Packets;
@@ -103,15 +104,12 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
                 .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
                 .AddService(typeof(IPersistenceService), typeof(PersistenceService), 100)
-
                 .AddService(typeof(IAccountService), typeof(AccountService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
-
-
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
@@ -170,6 +168,7 @@ await ConsoleApp.RunAsync(
         {
             var fileLoaderService = container.Resolve<IFileLoaderService>();
             var directoriesConfig = container.Resolve<DirectoriesConfig>();
+            var commandService = container.Resolve<ICommandSystemService>();
             CopyAssetsFilesAsync(directoriesConfig);
 
             UoFiles.ScanForFiles(config.UltimaOnlineDirectory);
@@ -183,13 +182,18 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<RaceLoader>();
             fileLoaderService.AddFileLoader<TileDataLoader>();
             fileLoaderService.AddFileLoader<MapLoader>();
+
+
+            DefaultCommands.RegisterDefaultCommands(commandService);
         };
+
 
         bootstrap.Initialize();
 
         await bootstrap.StartAsync();
     }
 );
+
 
 static async Task CopyAssetsFilesAsync(DirectoriesConfig directoriesConfig)
 {
