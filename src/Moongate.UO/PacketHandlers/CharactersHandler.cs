@@ -3,9 +3,11 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Contexts;
 using Moongate.UO.Data.Events.System;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Moongate.UO.Interfaces.Services;
@@ -22,15 +24,18 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IEventBusService _eventBusService;
     private readonly IScriptEngineService _scriptEngineService;
 
+    private readonly IEntityFactoryService _entityFactoryService;
+
     public CharactersHandler(
         IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService,
-        IScriptEngineService scriptEngineService
+        IScriptEngineService scriptEngineService, IEntityFactoryService entityFactoryService
     )
     {
         _mobileService = mobileService;
         _accountService = accountService;
         _eventBusService = eventBusService;
         _scriptEngineService = scriptEngineService;
+        _entityFactoryService = entityFactoryService;
     }
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
@@ -145,6 +150,8 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.Profession = characterCreation.Profession;
 
         playerMobileEntity.RecalculateMaxStats();
+
+        playerMobileEntity.AddItem(ItemLayerType.Backpack, _entityFactoryService.GetBackpack());
 
         playerMobileEntity.IsPlayer = true;
 

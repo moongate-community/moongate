@@ -26,6 +26,23 @@ public class EntityFactoryService : IEntityFactoryService
     {
         _directoriesConfig = directoriesConfig;
         _itemService = itemService;
+
+        AddDefaultItems();
+    }
+
+    private void AddDefaultItems()
+    {
+        _itemTemplates["backpack"] = new ItemTemplate()
+        {
+            GumpId = 0x003C,
+            Id = "backpack",
+            Name = "Backpack",
+            Category = "Containers",
+            Tags = ["container", "bag"],
+            ItemId = 0x1F9E,
+            GoldValue = 1,
+            Weight = 1
+        };
     }
 
     public T CreateEntity<T>(string templateId) where T : class
@@ -110,6 +127,17 @@ public class EntityFactoryService : IEntityFactoryService
         }
 
         _logger.Information("Loaded {Count} templates from {FilePath}", templates.Length, filePath);
+    }
+
+    public UOItemEntity GetBackpack()
+    {
+        if (_itemTemplates.TryGetValue("backpack", out var backpackTemplate))
+        {
+            return CreateItemEntity(backpackTemplate);
+        }
+
+        _logger.Warning("Backpack template not found.");
+        return null;
     }
 
     public void Dispose()

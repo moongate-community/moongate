@@ -85,6 +85,19 @@ public class ItemService : IItemService
         return item;
     }
 
+    public UOItemEntity? GetItem(Serial id)
+    {
+        _saveLock.Wait();
+        if (_items.TryGetValue(id, out var item))
+        {
+            _saveLock.Release();
+            return item;
+        }
+
+        _saveLock.Release();
+        return null;
+    }
+
     public void Dispose()
     {
     }

@@ -201,6 +201,9 @@ public class UOMobileEntity : INotifyPropertyChanged
         Equipment[layer] = item.ToItemReference();
     }
 
+
+
+
     public virtual void ReceiveSpeech(
         UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font
     )
