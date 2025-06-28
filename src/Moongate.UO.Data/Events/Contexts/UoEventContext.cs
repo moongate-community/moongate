@@ -36,4 +36,16 @@ public class UoEventContext
         _logger.Debug("Adding item {ItemId} to mobile {MobileId} on layer {Layer}", item.Id, mobile.Id, layer);
         mobile.AddItem(layer, item);
     }
+
+    public UOItemEntity CreateItem(string templateId)
+    {
+        var item = _entityFactoryService.CreateItemEntity(templateId);
+        if (item == null)
+        {
+            throw new InvalidOperationException($"Item template '{templateId}' not found.");
+        }
+
+        _logger.Debug("Created item {ItemId} from template {TemplateId}", item.Id, templateId);
+        return item;
+    }
 }

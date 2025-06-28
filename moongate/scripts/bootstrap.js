@@ -22,4 +22,8 @@ events.onCharacterCreated(c => {
     c.context.addItem("middle_torso", itemLayerType.MiddleTorso, c.mobile);
     c.context.addItem("pants", itemLayerType.Pants, c.mobile);
     c.context.addItem("shoes", itemLayerType.Shoes, c.mobile);
+
+    const backpack = c.context.createItem("container");
+
+    c.context.addItem("backpack", itemLayerType.Backpack, c.mobile, backpack);
 });

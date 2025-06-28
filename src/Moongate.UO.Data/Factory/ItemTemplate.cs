@@ -14,8 +14,10 @@ public class ItemTemplate : BaseTemplate
     [JsonConverter(typeof(RandomValueConverter<int>))]
     public int GoldValue { get; set; }
     public double Weight { get; set; } = 1.0;
-
     public bool Dyeable { get; set; }
 
+    [JsonConverter(typeof(HexValueConverter<int>))]
     public int? GumpId { get; set; }
+
+    public Dictionary<string, string> Container { get; set; }
 }

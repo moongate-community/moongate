@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.45.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-27 20:55:39
+ * Moongate Server v0.3.47.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-06-28 16:18:49
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.45.0""
+ * ""0.3.47.0""
  */
 declare const VERSION: string;
 
@@ -361,10 +361,6 @@ interface ICharacterCreatedHandler {
      * target
      */
     target: any;
-    /**
-     * hasSingleTarget
-     */
-    hasSingleTarget: boolean;
     /**
      * method
      */
