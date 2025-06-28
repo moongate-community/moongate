@@ -1,5 +1,6 @@
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
@@ -12,8 +13,8 @@ public class UOItemEntity
     public int Gold { get; set; }
     public double Weight { get; set; }
     public int Hue { get; set; }
-
     public Serial? ParentId { get; set; }
+    public DecayType Decay { get; set; } = DecayType.ItemDecay;
 
     public int? GumpId { get; set; }
 
