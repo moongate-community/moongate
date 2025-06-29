@@ -20,6 +20,7 @@ public class UOItemEntity
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
     public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
+    public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
 
     public bool CanDecay => Decay != DecayType.None;
     public Dictionary<Point2D, ItemReference> ContainedItems { get; set; } = new();
@@ -45,7 +46,7 @@ public class UOItemEntity
         }
     }
 
-    public void RemoveItem(Point2D position)
+    public void RemoveItemFromBackpack(Point2D position)
     {
         // Logic to remove an item from this item, e.g., from a container
         ContainedItems.Remove(position);
