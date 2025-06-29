@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Core.Server.Instances;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -48,4 +49,19 @@ public class UoEventContext
         _logger.Debug("Created item {ItemId} from template {TemplateId}", item.Id, templateId);
         return item;
     }
+
+    public void AddItemToBackpack(string templateId, UOMobileEntity mobile)
+    {
+        var backpack = _entityFactoryService.GetBackpack();
+        if (backpack == null)
+        {
+            throw new InvalidOperationException("Backpack not found.");
+        }
+
+        var item = CreateItem(templateId);
+        _logger.Debug("Adding item {ItemId} to backpack {BackpackId} of mobile {MobileId}", item.Id, backpack.Id, mobile.Id);
+        backpack.AddItem(item, Point2D.Zero);
+    }
+
+
 }

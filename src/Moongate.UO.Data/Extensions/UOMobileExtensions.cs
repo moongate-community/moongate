@@ -15,4 +15,14 @@ public static class UOMobileExtensions
             backpackRef.ToEntity().ContainedItems.Add(new Point2D(0, 0), item.ToItemReference());
         }
     }
+
+    public static UOItemEntity GetBackpack(this UOMobileEntity mobile)
+    {
+        if (mobile.Equipment.TryGetValue(ItemLayerType.Backpack, out var backpackRef))
+        {
+            return backpackRef.ToEntity();
+        }
+
+        throw new InvalidOperationException("Mobile does not have a backpack.");
+    }
 }

@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Core.Server.Instances;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Interfaces.Services;
 
 namespace Moongate.UO.Extensions;
 

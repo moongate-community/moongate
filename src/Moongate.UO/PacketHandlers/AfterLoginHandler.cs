@@ -3,6 +3,7 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Features;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Environment;
 using Moongate.UO.Data.Packets.Items;
@@ -53,6 +54,9 @@ public class AfterLoginHandler : IMoongateService
 
 
         session.SendPackets(new WornItemsPacket(session.Mobile));
+
+        session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
+        session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));
 
         session.SendPackets(new WarModePacket(session.Mobile));
         session.SendPackets(new MapChangePacket(session.Mobile.Map));

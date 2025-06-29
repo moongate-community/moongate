@@ -1,5 +1,6 @@
 using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Interfaces.Services;
 using Serilog;

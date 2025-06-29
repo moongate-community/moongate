@@ -3,6 +3,7 @@ using DryIoc;
 using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.System;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 

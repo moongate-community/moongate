@@ -3,7 +3,7 @@ using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
-namespace Moongate.UO.Interfaces.Services;
+namespace Moongate.UO.Data.Interfaces.Services;
 
 public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
 {
