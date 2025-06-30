@@ -85,6 +85,7 @@ public class EntityFactoryService : IEntityFactoryService
         item.ItemId = itemTemplate.ItemId;
         item.Weight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
+        item.GumpId = itemTemplate.GumpId;
 
         return item;
     }

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Expansions;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json;
 using Moongate.UO.Data.Persistence.Entities;
@@ -17,6 +18,10 @@ namespace Moongate.UO.Data.Persistence;
 [JsonSerializable(typeof(UOMobileEntity))]
 [JsonSerializable(typeof(UOItemEntity))]
 [JsonSerializable(typeof(UOItemEntity[]))]
+[JsonSerializable(typeof(Point3D))]
+[JsonSerializable(typeof(Point2D))]
+[JsonSerializable(typeof(Point2D[]))]
+[JsonSerializable(typeof(Dictionary<Point2D, ItemReference>))]
 [JsonSerializable(typeof(ItemReference))]
 [JsonSerializable(typeof(ItemReference[]))]
 [JsonSerializable(typeof(Dictionary<ItemLayerType, ItemReference>))]
