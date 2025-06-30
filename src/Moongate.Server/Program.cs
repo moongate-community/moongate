@@ -48,7 +48,8 @@ JsonUtils.RegisterJsonContext(UOJsonContext.Default);
 JsonUtils.RegisterJsonContext(TextJsonTemplateContext.Default);
 
 JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
-
+JsonUtils.AddJsonConverter(new Point2DConverter());
+JsonUtils.AddJsonConverter(new Point3DConverter());
 JsonUtils.AddJsonConverter(new SerialConverter());
 JsonUtils.AddJsonConverter(new RaceConverter());
 JsonUtils.AddJsonConverter(new ProfessionInfoConverter());
