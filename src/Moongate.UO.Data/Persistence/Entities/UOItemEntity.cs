@@ -1,10 +1,11 @@
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOItemEntity
+public class UOItemEntity: IPositionEntity
 {
     public string TemplateId { get; set; }
     public Serial Id { get; set; }

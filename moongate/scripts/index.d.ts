@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.51.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-29 17:02:16
+ * Moongate Server v0.3.52.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-06-30 09:04:14
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.51.0""
+ * ""0.3.52.0""
  */
 declare const VERSION: string;
 
@@ -137,9 +137,9 @@ declare const events: {
     onCharacterInGame(handler: (arg: ICharacterInGameEvent) => any): void;
     /**
      * Register handler for character created event
-     * @param handler ICharacterCreatedHandler
+     * @param handler (arg: ICharacterCreatedEvent) => any
      */
-    onCharacterCreated(handler: ICharacterCreatedHandler): void;
+    onCharacterCreated(handler: (arg: ICharacterCreatedEvent) => any): void;
 };
 
 
@@ -340,7 +340,7 @@ interface ICommandSystemContext {
 }
 
 /**
- * Generated interface for Moongate.UO.Data.Events.Characters.CharacterInGameEvent
+ * Generated interface for record type Moongate.UO.Data.Events.Characters.CharacterInGameEvent
  */
 interface ICharacterInGameEvent {
     /**
@@ -354,17 +354,21 @@ interface ICharacterInGameEvent {
 }
 
 /**
- * Generated interface for Moongate.Server.Modules.CommonEventModule+CharacterCreatedHandler
+ * Generated interface for record type Moongate.UO.Data.Events.Characters.CharacterCreatedEvent
  */
-interface ICharacterCreatedHandler {
+interface ICharacterCreatedEvent {
     /**
-     * target
+     * account
      */
-    target: any;
+    account: string;
     /**
-     * method
+     * mobile
      */
-    method: any;
+    mobile: IUOMobileEntity;
+    /**
+     * context
+     */
+    context: IUoEventContext;
 }
 
 /**
@@ -613,6 +617,12 @@ interface IUOMobileEntity {
      * gold
      */
     gold: number;
+}
+
+/**
+ * Generated interface for Moongate.UO.Data.Events.Contexts.UoEventContext
+ */
+interface IUoEventContext {
 }
 
 /**
@@ -904,7 +914,7 @@ interface IMap {
 }
 
 /**
- * Generated interface for Moongate.UO.Data.Persistence.Entities.ItemReference
+ * Generated interface for record type Moongate.UO.Data.Persistence.Entities.ItemReference
  */
 interface IItemReference {
     /**

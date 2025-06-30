@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Races.Base;
@@ -11,7 +12,7 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOMobileEntity : INotifyPropertyChanged
+public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity
 {
     public delegate void MobileEventHandler(UOMobileEntity mobile);
 

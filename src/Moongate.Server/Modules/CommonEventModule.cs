@@ -24,7 +24,7 @@ public class CommonEventModule
 
 
     [ScriptFunction("Register handler for character created event")]
-    public void OnCharacterCreated(CharacterCreatedHandler handler)
+    public void OnCharacterCreated(Func<CharacterCreatedEvent, Task> handler)
     {
         _scriptEngineService.AddCallback(nameof(OnCharacterCreated), (args) =>
         {
@@ -36,5 +36,4 @@ public class CommonEventModule
 
     }
 
-    public delegate void CharacterCreatedHandler(CharacterCreatedEvent e);
 }
