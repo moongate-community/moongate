@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.8.0"></a>
+## [0.8.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.8.0) (2025-07-03)
+
+### Features
+
+* add support for Moongate Server v0.3.52.0 JavaScript API TypeScript Definitions ([11a6545](https://www.github.com/moongate-community/moongate/commit/11a65450453cce8ca6460cc736910605235b42fd))
+* **DiceNotation:** add Dice class with methods for parsing and rolling dice expressions ([58bc851](https://www.github.com/moongate-community/moongate/commit/58bc851ba7e4f461beb295e86821db6b82c2c75e))
+* **DrawContainer.cs:** add DrawContainer class to handle drawing container packets for UO items ([5d111ec](https://www.github.com/moongate-community/moongate/commit/5d111ec127fb7d1a86911fc06d889dc9ea0e3b6f))
+* **EntityFactoryService.cs:** add method to add default item templates, including a backpack template ([a31f628](https://www.github.com/moongate-community/moongate/commit/a31f6286a31ef6812b6b0db5df2cd57cd8373906))
+* **index.d.ts:** update Moongate Server version to v0.3.35.0 and update auto-generated documentation timestamp ([593b376](https://www.github.com/moongate-community/moongate/commit/593b376d1541a62ba2c2c4fb4e943351417525ea))
+* **index.d.ts:** update Moongate Server version to v0.3.58.0 in TypeScript definitions ([1020176](https://www.github.com/moongate-community/moongate/commit/10201769053fb6bc4652f2f5f1a76594ba9cba4a))
+* **Json:** add RandomValueConverter class to handle random value expressions ([6924e30](https://www.github.com/moongate-community/moongate/commit/6924e30bbcf79f3e01bb4093f502f038af999ff5))
+* **mobiles.mga:** update Moongate Server version to v0.3.39.0 ([902c3ba](https://www.github.com/moongate-community/moongate/commit/902c3baa1ae8c63d2df3600b163521bd068b103e))
+* **moongate:** add support for character created event handling and item ([b219302](https://www.github.com/moongate-community/moongate/commit/b219302e25ad5c29b298e2d3303294b4797ea60e))
+* **moongate:** add support for new items and mobiles saves in the game ([4b8da10](https://www.github.com/moongate-community/moongate/commit/4b8da10dbab30cc5dc90915a3ee4e5b747f9fe5f))
+* **moongate:** update Moongate Server version to v0.3.41.0 in JavaScript API ([4d1fb06](https://www.github.com/moongate-community/moongate/commit/4d1fb062f23ec995f3eb7ec5c062f1609f3db21b))
+* **moongate:** update Moongate Server version to v0.3.42.0 in TypeScript Definitions ([459e839](https://www.github.com/moongate-community/moongate/commit/459e8393791fcdca353004c68849a0ed14c67b29))
+* **moongate:** update Moongate Server version to v0.3.43.0 ([5c6fcb2](https://www.github.com/moongate-community/moongate/commit/5c6fcb20488f810450b9e3f59b622a4279a94178))
+* **moongate:** update Moongate Server version to v0.3.49.0 in JavaScript API ([5d0e84c](https://www.github.com/moongate-community/moongate/commit/5d0e84cf211d0430c852f67ca8f43d2061036dfd))
+* **moongate:** update Moongate Server version to v0.3.57.0 in TypeScript Definitions ([49e5982](https://www.github.com/moongate-community/moongate/commit/49e5982dc8a64b56322f0e120ae7a38a02fc0e0f))
+* **UOContext.cs:** change LocalizedMessages dictionary value type from CliLocEntry to StringEntry for better data representation ([bc13477](https://www.github.com/moongate-community/moongate/commit/bc134770f90d75de6036833c4a4b86768be892ba))
+* **UOItemEntity.cs:** add DecayType property to UOItemEntity for item decay handling ([0adf76a](https://www.github.com/moongate-community/moongate/commit/0adf76ac32d2084c6506a12a2d8e18adff9704b6))
+
+### Bug Fixes
+
+* **mobiles.mga:** resolve binary file differences in mobiles.mga ([2031f02](https://www.github.com/moongate-community/moongate/commit/2031f02df2c4d1c82664cd03c9b76583f92f24ec))
+
 <a name="0.7.0"></a>
 ## [0.7.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.7.0) (2025-06-26)
 
