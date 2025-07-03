@@ -6,14 +6,10 @@ namespace Moongate.UO.Context;
 
 public static class UOContext
 {
-
     public static int LineOfSight { get; set; } = 10;
     public static ClientVersion ServerClientVersion { get; set; }
     public static SkillInfo[] SkillsInfo { get; set; }
 
-    public static Dictionary<int, CliLocEntry> LocalizedMessages { get; set; } = new();
-
-
-
+    public static Dictionary<int, StringEntry> LocalizedMessages { get; set; } = new();
 
 }

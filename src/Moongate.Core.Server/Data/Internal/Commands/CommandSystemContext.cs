@@ -5,7 +5,6 @@ namespace Moongate.Core.Server.Data.Internal.Commands;
 public class CommandSystemContext
 {
     public delegate void PrintDelegate(string sessionId, string message, params object[] args);
-
     public event PrintDelegate? OnPrint;
     public CommandSourceType SourceType { get; set; }
 
@@ -17,4 +16,5 @@ public class CommandSystemContext
     {
         OnPrint?.Invoke(SessionId, message, args);
     }
+
 }

@@ -33,6 +33,8 @@ public readonly struct Serial
     public Serial(uint serial) => Value = serial;
 
 
+
+
     public uint Value { get; }
 
     public bool IsMobile

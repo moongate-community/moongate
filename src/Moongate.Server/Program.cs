@@ -14,6 +14,7 @@ using Moongate.Core.Server.Extensions;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
+using Moongate.Server.Commands;
 using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
 using Moongate.Server.Packets;
@@ -21,7 +22,9 @@ using Moongate.Server.Persistence;
 using Moongate.Server.Services;
 using Moongate.UO.Commands;
 using Moongate.UO.Data;
+using Moongate.UO.Data.Factory.Json;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
@@ -29,6 +32,7 @@ using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.System;
+using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Persistence;
 using Moongate.Uo.Data.Types;
 using Moongate.UO.Data.Types;
@@ -42,9 +46,11 @@ using Serilog;
 
 JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
+JsonUtils.RegisterJsonContext(TextJsonTemplateContext.Default);
 
 JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
-
+JsonUtils.AddJsonConverter(new Point2DConverter());
+JsonUtils.AddJsonConverter(new Point3DConverter());
 JsonUtils.AddJsonConverter(new SerialConverter());
 JsonUtils.AddJsonConverter(new RaceConverter());
 JsonUtils.AddJsonConverter(new ProfessionInfoConverter());
@@ -98,14 +104,14 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IGameSessionService), typeof(GameSessionService))
                 .AddService(typeof(INetworkService), typeof(NetworkService))
                 .AddService(typeof(ICommandSystemService), typeof(CommandSystemService))
+                .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
+                .AddService(typeof(IPersistenceService), typeof(PersistenceService), 100)
                 .AddService(typeof(IAccountService), typeof(AccountService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
-
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
-
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
@@ -158,7 +164,10 @@ await ConsoleApp.RunAsync(
 
             networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
 
+            networkService.RegisterGamePacketHandler<SingleClickPacket, ClickHandler>();
+            networkService.RegisterGamePacketHandler<DoubleClickPacket, ClickHandler>();
 
+            networkService.RegisterGamePacketHandler<MegaClilocRequestPacket, ToolTipHandler>();
         };
 
 
@@ -166,6 +175,7 @@ await ConsoleApp.RunAsync(
         {
             var fileLoaderService = container.Resolve<IFileLoaderService>();
             var directoriesConfig = container.Resolve<DirectoriesConfig>();
+            var commandService = container.Resolve<ICommandSystemService>();
             CopyAssetsFilesAsync(directoriesConfig);
 
             UoFiles.ScanForFiles(config.UltimaOnlineDirectory);
@@ -179,13 +189,19 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<RaceLoader>();
             fileLoaderService.AddFileLoader<TileDataLoader>();
             fileLoaderService.AddFileLoader<MapLoader>();
+            fileLoaderService.AddFileLoader<CliLocLoader>();
+
+
+            DefaultCommands.RegisterDefaultCommands(commandService);
         };
+
 
         bootstrap.Initialize();
 
         await bootstrap.StartAsync();
     }
 );
+
 
 static async Task CopyAssetsFilesAsync(DirectoriesConfig directoriesConfig)
 {

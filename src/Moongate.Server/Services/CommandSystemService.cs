@@ -53,24 +53,7 @@ public class CommandSystemService : ICommandSystemService
             AccountLevelType.Admin,
             CommandSourceType.Console
         );
-        RegisterCommand(
-            "diagnostics|diag",
-            OnDiagnosticsCommand,
-            "Displays diagnostic information.",
-            AccountLevelType.Admin,
-            CommandSourceType.Console
-        );
-    }
 
-    private async Task OnDiagnosticsCommand(CommandSystemContext context)
-    {
-        var diagnosticService = MoongateContext.Container.Resolve<IDiagnosticService>();
-        await diagnosticService.CollectMetricsAsync();
-        var metrics = await diagnosticService.GetCurrentMetricsAsync();
-        foreach (var metric in metrics)
-        {
-            AnsiConsole.MarkupLine($"[green]{metric.Name}:[/] {metric.Value}");
-        }
     }
 
     private async Task OnExitCommand(CommandSystemContext context)

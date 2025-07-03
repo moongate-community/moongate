@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.29.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-06-26 11:33:24
+ * Moongate Server v0.3.59.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-03 11:02:10
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.29.0""
+ * ""0.3.59.0""
  */
 declare const VERSION: string;
 
@@ -135,6 +135,11 @@ declare const events: {
      * @param handler (arg: ICharacterInGameEvent) => any
      */
     onCharacterInGame(handler: (arg: ICharacterInGameEvent) => any): void;
+    /**
+     * Register handler for character created event
+     * @param handler (arg: ICharacterCreatedEvent) => any
+     */
+    onCharacterCreated(handler: (arg: ICharacterCreatedEvent) => any): void;
 };
 
 
@@ -335,7 +340,7 @@ interface ICommandSystemContext {
 }
 
 /**
- * Generated interface for Moongate.UO.Data.Events.Characters.CharacterInGameEvent
+ * Generated interface for record type Moongate.UO.Data.Events.Characters.CharacterInGameEvent
  */
 interface ICharacterInGameEvent {
     /**
@@ -346,6 +351,24 @@ interface ICharacterInGameEvent {
      * mobile
      */
     mobile: IUOMobileEntity;
+}
+
+/**
+ * Generated interface for record type Moongate.UO.Data.Events.Characters.CharacterCreatedEvent
+ */
+interface ICharacterCreatedEvent {
+    /**
+     * account
+     */
+    account: string;
+    /**
+     * mobile
+     */
+    mobile: IUOMobileEntity;
+    /**
+     * context
+     */
+    context: IUoEventContext;
 }
 
 /**
@@ -594,6 +617,12 @@ interface IUOMobileEntity {
      * gold
      */
     gold: number;
+}
+
+/**
+ * Generated interface for Moongate.UO.Data.Events.Contexts.UoEventContext
+ */
+interface IUoEventContext {
 }
 
 /**
@@ -885,7 +914,7 @@ interface IMap {
 }
 
 /**
- * Generated interface for Moongate.UO.Data.Persistence.Entities.ItemReference
+ * Generated interface for record type Moongate.UO.Data.Persistence.Entities.ItemReference
  */
 interface IItemReference {
     /**

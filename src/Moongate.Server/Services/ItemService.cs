@@ -1,5 +1,6 @@
 using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
@@ -8,7 +9,9 @@ namespace Moongate.Server.Services;
 
 public class ItemService : IItemService
 {
+    public event IItemService.ItemEventHandler? ItemCreated;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
+    private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
     private const string itemsFilePath = "items.mga";
 
@@ -36,6 +39,7 @@ public class ItemService : IItemService
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {
+        await _saveLock.WaitAsync(cancellationToken);
         _items.Clear();
 
         var items = await _entityFileService.LoadEntitiesAsync<UOItemEntity>(itemsFilePath);
@@ -44,12 +48,55 @@ public class ItemService : IItemService
         {
             _items[item.Id] = item;
         }
+
+        _saveLock.Release();
     }
 
     public async Task SaveAsync(CancellationToken cancellationToken = default)
     {
+        await _saveLock.WaitAsync(cancellationToken);
         _logger.Information("Saving {Count} items to file...", _items.Count);
         await _entityFileService.SaveEntitiesAsync(itemsFilePath, _items.Values);
+
+        _saveLock.Release();
+    }
+
+
+    public UOItemEntity CreateItem()
+    {
+        _saveLock.Wait();
+        var lastSerial = new Serial(Serial.MaxItemSerial);
+
+        if (_items.Count > 0)
+        {
+            lastSerial = _items.Keys.Last() + 1;
+        }
+
+        var item = new UOItemEntity()
+        {
+            Id = lastSerial,
+        };
+
+        _items[item.Id] = item;
+
+        ItemCreated?.Invoke(item);
+
+        _saveLock.Release();
+
+        return item;
+    }
+
+    public UOItemEntity? GetItem(Serial id)
+    {
+        _saveLock.Wait();
+        if (_items.TryGetValue(id, out var item))
+        {
+            _saveLock.Release();
+            return item;
+        }
+
+        _saveLock.Release();
+        return null;
     }
 
     public void Dispose()

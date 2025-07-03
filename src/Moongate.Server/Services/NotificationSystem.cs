@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Context;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;

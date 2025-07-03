@@ -1,9 +1,13 @@
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
+using Moongate.UO.Data.Events.Contexts;
+using Moongate.UO.Data.Events.System;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Moongate.UO.Interfaces.Services;
@@ -18,12 +22,20 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IMobileService _mobileService;
     private readonly IAccountService _accountService;
     private readonly IEventBusService _eventBusService;
+    private readonly IScriptEngineService _scriptEngineService;
 
-    public CharactersHandler(IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService)
+    private readonly IEntityFactoryService _entityFactoryService;
+
+    public CharactersHandler(
+        IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService,
+        IScriptEngineService scriptEngineService, IEntityFactoryService entityFactoryService
+    )
     {
         _mobileService = mobileService;
         _accountService = accountService;
         _eventBusService = eventBusService;
+        _scriptEngineService = scriptEngineService;
+        _entityFactoryService = entityFactoryService;
     }
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
@@ -139,17 +151,28 @@ public class CharactersHandler : IGamePacketHandler
 
         playerMobileEntity.RecalculateMaxStats();
 
+        playerMobileEntity.AddItem(ItemLayerType.Backpack, _entityFactoryService.GetBackpack());
+
         playerMobileEntity.IsPlayer = true;
 
 
         await _accountService.SaveAsync();
         await _mobileService.SaveAsync();
-        await _eventBusService.PublishAsync(
+
+        var createContext =
             new CharacterCreatedEvent(
                 session.Account.Username,
-                playerMobileEntity
-            )
-        );
+                playerMobileEntity,
+                UoEventContext.CreateInstance()
+            );
+
+
+        await _eventBusService.PublishAsync(createContext);
+
+
+        _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
+
+        await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 
         if (session.Account.Characters.Count == 1)
         {

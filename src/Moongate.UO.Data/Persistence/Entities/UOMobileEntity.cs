@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Races.Base;
@@ -11,7 +12,7 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOMobileEntity : INotifyPropertyChanged
+public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity
 {
     public delegate void MobileEventHandler(UOMobileEntity mobile);
 
@@ -20,10 +21,11 @@ public class UOMobileEntity : INotifyPropertyChanged
     );
 
     public delegate void ChatMessageReceiveDelegate(
-        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic, int font
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        int font
     );
 
-    public event ChatMessageReceiveDelegate ? ChatMessageReceived;
+    public event ChatMessageReceiveDelegate? ChatMessageReceived;
 
     public event ChatMessageDelegate? ChatMessageSent;
 
@@ -193,6 +195,15 @@ public class UOMobileEntity : INotifyPropertyChanged
     {
         TotalPlayTime = TotalPlayTime.Add(sessionTime);
     }
+
+    public void AddItem(ItemLayerType layer, UOItemEntity item)
+    {
+        item.OwnerId = Id;
+        Equipment[layer] = item.ToItemReference();
+    }
+
+
+
 
     public virtual void ReceiveSpeech(
         UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font

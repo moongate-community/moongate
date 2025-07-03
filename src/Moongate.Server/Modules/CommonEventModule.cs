@@ -8,10 +8,12 @@ namespace Moongate.Server.Modules;
 public class CommonEventModule
 {
     private readonly IEventBusService _eventBusService;
+    private readonly IScriptEngineService _scriptEngineService;
 
-    public CommonEventModule(IEventBusService eventBusService)
+    public CommonEventModule(IEventBusService eventBusService, IScriptEngineService scriptEngineService)
     {
         _eventBusService = eventBusService;
+        _scriptEngineService = scriptEngineService;
     }
 
     [ScriptFunction("Register handler for CharacterInGameEvent")]
@@ -19,4 +21,19 @@ public class CommonEventModule
     {
         _eventBusService.Subscribe(handler);
     }
+
+
+    [ScriptFunction("Register handler for character created event")]
+    public void OnCharacterCreated(Func<CharacterCreatedEvent, Task> handler)
+    {
+        _scriptEngineService.AddCallback(nameof(OnCharacterCreated), (args) =>
+        {
+            if (args.Length == 1 && args[0] is CharacterCreatedEvent characterCreatedEvent)
+            {
+                handler(characterCreatedEvent);
+            }
+        });
+
+    }
+
 }

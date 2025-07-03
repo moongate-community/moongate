@@ -14,6 +14,7 @@ public class AccountService : IAccountService
 {
     private readonly ILogger _logger = Log.ForContext<AccountService>();
 
+    private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
     private readonly IEventBusService _eventBusService;
     private const string accountsFilePath = "accounts.mga";
     private readonly Dictionary<string, UOAccountEntity> _accounts = new();
@@ -36,13 +37,16 @@ public class AccountService : IAccountService
         }
     }
 
-    private Task SaveAccountsAsync()
+    private async Task SaveAccountsAsync()
     {
-        return _entityFileService.SaveEntitiesAsync(accountsFilePath, _accounts.Values);
+        await _saveLock.WaitAsync();
+        await _entityFileService.SaveEntitiesAsync(accountsFilePath, _accounts.Values);
+        _saveLock.Release();
     }
 
     private async Task LoadAccountAsync()
     {
+        await _saveLock.WaitAsync();
         _accounts.Clear();
 
         var accounts = await _entityFileService.LoadEntitiesAsync<UOAccountEntity>(accountsFilePath);
@@ -51,6 +55,8 @@ public class AccountService : IAccountService
         {
             _accounts[account.Id] = account;
         }
+
+        _saveLock.Release();
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
@@ -76,6 +82,7 @@ public class AccountService : IAccountService
         await _eventBusService.PublishAsync(new AccountCreatedEvent(account.Id, username, accountLevel));
         _logger.Information("Account created: {Username} with ID: {AccountId}", username, account.Id);
 
+        await SaveAccountsAsync();
 
         return account.Id;
     }
@@ -118,7 +125,6 @@ public class AccountService : IAccountService
 
     public Task<UOAccountEntity> GetAccountByIdAsync(string accountId)
     {
-
         if (_accounts.TryGetValue(accountId, out var account))
         {
             return Task.FromResult(account);
