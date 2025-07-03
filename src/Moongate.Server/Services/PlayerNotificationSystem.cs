@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Core.Server.Instances;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Packets.Chat;
+using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -21,10 +22,28 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
         mobile.OtherMobileMoved += MobileOnOtherMobileMoved;
         mobile.ChatMessageSent += MobileOnChatMessageSent;
         mobile.ChatMessageReceived += MobileOnChatMessageReceived;
+
+        mobile.GetBackpack().ContainerItemAdded += (container, item) => OnContainerItemAdded(mobile, container, item);
+        mobile.GetBackpack().ContainerItemRemoved += (container, item) => OnContainerItemRemoved(mobile, container, item);
+    }
+
+    private void OnContainerItemRemoved(UOMobileEntity mobile, UOItemEntity container, ItemReference item)
+    {
+        var session = GetGameSessionFromMobile(mobile);
+
+        session.SendPackets(new AddMultipleItemToContainerPacket(container));
+    }
+
+    private void OnContainerItemAdded(UOMobileEntity mobile, UOItemEntity container, ItemReference item)
+    {
+        var session = GetGameSessionFromMobile(mobile);
+
+        session.SendPackets(new AddMultipleItemToContainerPacket(container));
     }
 
     private void MobileOnChatMessageReceived(
-        UOMobileEntity self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic, int font
+        UOMobileEntity self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        int font
     )
     {
         _logger.Verbose(

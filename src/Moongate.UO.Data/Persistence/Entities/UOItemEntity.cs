@@ -7,6 +7,11 @@ namespace Moongate.UO.Data.Persistence.Entities;
 
 public class UOItemEntity: IPositionEntity
 {
+    public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item );
+
+    public event ContainerItemChangedEventHandler? ContainerItemAdded;
+    public event ContainerItemChangedEventHandler? ContainerItemRemoved;
+
     public string TemplateId { get; set; }
     public Serial Id { get; set; }
     public int ItemId { get; set; }
@@ -35,6 +40,8 @@ public class UOItemEntity: IPositionEntity
         item.Location = new Point3D(position.X, position.Y, -1); // Assuming Z is the same as the container's Z
 
         ContainedItems[position] = item.ToItemReference();
+
+        ContainerItemAdded?.Invoke(this, item.ToItemReference());
     }
 
     public void RemoveItem(UOItemEntity item)
@@ -43,6 +50,7 @@ public class UOItemEntity: IPositionEntity
         if (item.ParentId == Id)
         {
             ContainedItems.Remove(new Point2D(item.Location.X, item.Location.Y));
+            ContainerItemRemoved?.Invoke(this, item.ToItemReference());
             item.ParentId = null;
         }
     }
@@ -51,6 +59,7 @@ public class UOItemEntity: IPositionEntity
     {
         // Logic to remove an item from this item, e.g., from a container
         ContainedItems.Remove(position);
+        ContainerItemRemoved?.Invoke(this, new ItemReference(Id, ItemId, Hue));
     }
 
     public ItemReference ToItemReference()

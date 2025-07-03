@@ -27,6 +27,8 @@ public class ClickHandler : IGamePacketHandler
         {
             session.SendPackets(new PaperdollPacket(session.Mobile));
         }
+
+        // check if item
     }
 
     private async Task HandleSingleClickAsync(GameSession session, SingleClickPacket packet)
