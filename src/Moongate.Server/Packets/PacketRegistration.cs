@@ -174,7 +174,7 @@ public static class PacketRegistration
         networkService.RegisterPacket(0x07, 7, "Pick Up Item");
 
         /// Drop Item
-        networkService.RegisterPacket(0x08, 14, "Drop Item");
+        networkService.RegisterPacket(0x08, 15, "Drop Item");
 
         /// Drop->Wear Item
         networkService.RegisterPacket(0x13, 10, "Drop->Wear Item");

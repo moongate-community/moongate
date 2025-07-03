@@ -5,6 +5,8 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Packets.World;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 
@@ -37,6 +39,27 @@ public static class DefaultCommands
             AccountLevelType.User,
             CommandSourceType.InGame
         );
+
+        commandSystemService.RegisterCommand("set_weather",
+            OnSetWeatherCommand,
+            "Sets the weather in the current map",
+            AccountLevelType.Admin,
+            CommandSourceType.InGame
+        );
+    }
+
+    private static Task OnSetWeatherCommand(CommandSystemContext context)
+    {
+
+
+        var setWeatherPacket = new SetWeatherPacket(WeatherType.Snow, 2, 10);
+
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+        gameSession.SendPackets(setWeatherPacket);
+
+        return Task.CompletedTask;
+
     }
 
     private static Task OnAddItemCommand(CommandSystemContext context)

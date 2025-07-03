@@ -21,9 +21,25 @@ public class MegaClilocResponsePacket : BaseUoPacket
     }
 
 
-
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
+        /*
+         *
+         * BYTE[1] 0xD6
+           BYTE[2] Length
+           BYTE[2] 0x0001
+           BYTE[4] Serial of item/creature
+           BYTE[2] 0x0000
+           BYTE[4] Serial of item/creature in all tests. This could be the serial of the item the entry to appear over.
+
+           Loop of all the item/creature's properties to display in the order to display them. The name is always the first entry.
+                   BYTE[4] Cliloc ID
+                   BYTE[2] Length of (if any) Text to add into/with the cliloc
+                   BYTE[?] Unicode text to be added into the cliloc. Not sent if Length of text above is 0
+
+                   BYTE[4] 00000000 - Sent as end of packet/loop
+
+         */
         /// Calculate total packet size
         var totalSize = CalculatePacketSize();
         /// Write packet header
@@ -36,7 +52,9 @@ public class MegaClilocResponsePacket : BaseUoPacket
         /// Write each entry
         foreach (var entry in Entries)
         {
-            WriteEntry(writer, entry);
+            var entryBuffer = WriteEntry(entry);
+
+            writer.Write(entryBuffer.Span);
         }
 
         //
@@ -46,8 +64,16 @@ public class MegaClilocResponsePacket : BaseUoPacket
     }
 
 
-    private void WriteEntry(SpanWriter writer, MegaClilocEntry entry)
+    private ReadOnlyMemory<byte> WriteEntry(MegaClilocEntry entry)
     {
+        using var writer = new SpanWriter(1, true);
+
+        // Loop of all the item/creature's properties to display in the order to display them. The name is always the first entry.
+        // BYTE[4] Cliloc ID
+        // BYTE[2] Length of (if any) Text to add into/with the cliloc
+        // BYTE[?] Unicode text to be added into the cliloc. Not sent if Length of text above is 0
+        //
+        // BYTE[4] 00000000 - Sent as end of packet/loop
         /// Write object serial
         writer.Write(entry.Serial.Value);
 
@@ -73,9 +99,11 @@ public class MegaClilocResponsePacket : BaseUoPacket
                 /// Convert text to unicode bytes
                 var textBytes = Encoding.Unicode.GetBytes(property.Text);
                 writer.Write((short)textBytes.Length);
-                writer.Write(textBytes);
+                writer.WriteUTF8(property.Text);
             }
         }
+
+        return writer.ToArray();
     }
 
     private int CalculatePacketSize()
