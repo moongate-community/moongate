@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.56.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-07-01 15:24:43
+ * Moongate Server v0.3.57.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-03 10:06:09
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.56.0""
+ * ""0.3.57.0""
  */
 declare const VERSION: string;
 

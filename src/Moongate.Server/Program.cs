@@ -162,6 +162,9 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<UnicodeSpeechRequestPacket, ChatHandler>();
 
             networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
+
+            networkService.RegisterGamePacketHandler<SingleClickPacket, ClickHandler>();
+            networkService.RegisterGamePacketHandler<DoubleClickPacket, ClickHandler>();
         };
 
 
