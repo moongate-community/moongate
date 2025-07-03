@@ -183,6 +183,7 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<RaceLoader>();
             fileLoaderService.AddFileLoader<TileDataLoader>();
             fileLoaderService.AddFileLoader<MapLoader>();
+            fileLoaderService.AddFileLoader<CliLocLoader>();
 
 
             DefaultCommands.RegisterDefaultCommands(commandService);

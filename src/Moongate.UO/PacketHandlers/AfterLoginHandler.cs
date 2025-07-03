@@ -55,6 +55,8 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new WornItemsPacket(session.Mobile));
 
+
+
         session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
         session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));
 
