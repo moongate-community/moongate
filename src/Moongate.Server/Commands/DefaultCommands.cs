@@ -3,6 +3,9 @@ using Moongate.Core.Server.Data.Internal.Commands;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
+using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 
 namespace Moongate.Server.Commands;
@@ -26,6 +29,38 @@ public static class DefaultCommands
             AccountLevelType.User,
             CommandSourceType.InGame
         );
+
+        commandSystemService.RegisterCommand(
+            "add_item",
+            OnAddItemCommand,
+            "Adds an item to your backpack",
+            AccountLevelType.User,
+            CommandSourceType.InGame
+        );
+    }
+
+    private static Task OnAddItemCommand(CommandSystemContext context)
+    {
+        var itemTemplateName = context.Arguments[0];
+        var factoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+
+        var item = factoryService.CreateItemEntity(itemTemplateName);
+
+        if (item == null)
+        {
+            context.Print("Item template '{0}' not found.", itemTemplateName);
+            return Task.CompletedTask;
+        }
+
+        context.Print("Adding item '{0}'...", item);
+
+
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        gameSession.Mobile.GetBackpack().AddItem(item, Point2D.Zero);
+
+        return Task.CompletedTask;
     }
 
     private static async Task OnWhereCommand(CommandSystemContext context)
@@ -48,5 +83,4 @@ public static class DefaultCommands
 
         persistenceService.RequestSave();
     }
-
 }
