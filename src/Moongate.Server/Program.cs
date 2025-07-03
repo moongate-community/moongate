@@ -31,6 +31,7 @@ using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Login;
+using Moongate.UO.Data.Packets.MegaCliloc;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Persistence;
