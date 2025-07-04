@@ -11,6 +11,8 @@ public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSav
     event MobileEventHandler? MobileCreated;
     event MobileEventHandler? MobileRemoved;
 
+    event MobileEventHandler? MobileAdded;
+
     UOMobileEntity CreateMobile();
     UOMobileEntity? GetMobile(Serial id);
 

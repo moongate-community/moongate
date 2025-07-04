@@ -27,4 +27,9 @@ public class MegaClilocEntry
 
         Properties.Add(new MegaClilocProperty(Serial.Value, name));
     }
+
+    public void AddProperty(uint clilocId, string? text = null)
+    {
+        Properties.Add(new MegaClilocProperty(clilocId, text));
+    }
 }

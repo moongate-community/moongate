@@ -34,12 +34,6 @@ public class ToolTipHandler : IGamePacketHandler
             Text = session.Mobile.Name
         });
 
-        // response.Properties.Add(new MegaClilocProperty { ClilocId = 1060638, Text = "100\t100" });  // HP;
-        // response.Properties.Add(new MegaClilocProperty { ClilocId = 1060640, Text = "80\t100" }); // Mana;
-        //
-        // response.Properties.Add(new MegaClilocProperty { ClilocId = 1060641, Text = "95\t100" });  // Stamina
-
-
         session.SendPackets(response);
     }
 }
