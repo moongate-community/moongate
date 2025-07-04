@@ -59,7 +59,6 @@ public class ItemsHandler : IGamePacketHandler
             parentContainer.AddItem(droppingItem, new Point2D(packet.Location.X, packet.Location.Y));
         }
 
-
         session.SendPackets(new DropItemApprovedPacket());
         session.SendPackets(new AddMultipleItemToContainerPacket(parentContainer));
     }

@@ -16,6 +16,8 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public string TemplateId { get; set; }
+
+    public int Amount { get; set; } = 1;
     public Serial Id { get; set; }
     public int ItemId { get; set; }
     public string Name { get; set; }
