@@ -47,7 +47,6 @@ public class ClickHandler : IGamePacketHandler
 
             _logger.Information("Double-clicking item {ItemId} ({ItemName})", item.Id, item.Name);
 
-
         }
     }
 
