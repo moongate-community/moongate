@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.9.0"></a>
+## [0.9.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.9.0) (2025-07-04)
+
+### Features
+
+* **index.d.ts:** update Moongate Server version to v0.3.62.0 and regenerate documentation ([9cc74ec](https://www.github.com/moongate-community/moongate/commit/9cc74ec7357ae4534b336b5e13948ea984acd94a))
+* **moongate:** update Moongate Server version to v0.3.64.0 in TypeScript Definitions ([02d6f56](https://www.github.com/moongate-community/moongate/commit/02d6f561c993648bd4951ca782b91d17c25c3d76))
+* **Moongate.Server:** add MegaCliloc packet support for tooltip information ([f325d3a](https://www.github.com/moongate-community/moongate/commit/f325d3ab21f2f64d627f3d19be6d397a8c4eba91))
+
 <a name="0.8.0"></a>
 ## [0.8.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.8.0) (2025-07-03)
 
