@@ -2,7 +2,6 @@ using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -10,6 +9,7 @@ namespace Moongate.Server.Services;
 public class ItemService : IItemService
 {
     public event IItemService.ItemEventHandler? ItemCreated;
+    public event IItemService.ItemEventHandler? ItemAdded;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
@@ -46,7 +46,7 @@ public class ItemService : IItemService
 
         foreach (var item in items)
         {
-            _items[item.Id] = item;
+            AddItem(item);
         }
 
         _saveLock.Release();
@@ -65,7 +65,7 @@ public class ItemService : IItemService
     public UOItemEntity CreateItem()
     {
         _saveLock.Wait();
-        var lastSerial = new Serial(Serial.MaxItemSerial);
+        var lastSerial = new Serial(Serial.ItemOffset);
 
         if (_items.Count > 0)
         {
@@ -77,7 +77,6 @@ public class ItemService : IItemService
             Id = lastSerial,
         };
 
-        _items[item.Id] = item;
 
         ItemCreated?.Invoke(item);
 
@@ -86,17 +85,28 @@ public class ItemService : IItemService
         return item;
     }
 
-    public UOItemEntity? GetItem(Serial id)
+    public UOItemEntity CreateItemAndAdd()
     {
-        _saveLock.Wait();
-        if (_items.TryGetValue(id, out var item))
+        var item = CreateItem();
+        AddItem(item);
+        return item;
+    }
+
+
+    public void AddItem(UOItemEntity item)
+    {
+        if (!_items.TryAdd(item.Id, item))
         {
-            _saveLock.Release();
-            return item;
+            _logger.Warning("Item with ID {Id} already exists, not adding again.", item.Id);
+            return;
         }
 
-        _saveLock.Release();
-        return null;
+        ItemAdded?.Invoke(item);
+    }
+
+    public UOItemEntity? GetItem(Serial id)
+    {
+        return _items.GetValueOrDefault(id);
     }
 
     public void Dispose()

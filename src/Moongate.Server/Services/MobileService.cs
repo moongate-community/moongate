@@ -12,6 +12,7 @@ public class MobileService : IMobileService
 {
     public event IMobileService.MobileEventHandler? MobileCreated;
     public event IMobileService.MobileEventHandler? MobileRemoved;
+    public event IMobileService.MobileEventHandler? MobileAdded;
 
     private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
@@ -45,7 +46,7 @@ public class MobileService : IMobileService
 
         foreach (var mobile in mobiles)
         {
-            _mobiles[mobile.Id] = mobile;
+            AddMobile(mobile);
         }
 
         _saveLock.Release();
@@ -68,7 +69,6 @@ public class MobileService : IMobileService
 
     public UOMobileEntity CreateMobile()
     {
-
         _saveLock.Wait();
         var lastSerial = new Serial(Serial.MaxMobileSerial);
 
@@ -82,14 +82,13 @@ public class MobileService : IMobileService
             Id = lastSerial,
         };
 
-        _mobiles[mobile.Id] = mobile;
+        AddMobile(mobile);
 
         MobileCreated?.Invoke(mobile);
 
         _saveLock.Release();
 
         return mobile;
-
     }
 
     public UOMobileEntity? GetMobile(Serial id)
@@ -124,4 +123,14 @@ public class MobileService : IMobileService
         return SaveMobilesAsync();
     }
 
+    private void AddMobile(UOMobileEntity mobile)
+    {
+        if (!_mobiles.TryAdd(mobile.Id, mobile))
+        {
+            _logger.Warning("Mobile with ID {Id} already exists.", mobile.Id);
+            return;
+        }
+
+        MobileAdded?.Invoke(mobile);
+    }
 }

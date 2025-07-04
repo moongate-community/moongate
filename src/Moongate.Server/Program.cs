@@ -30,7 +30,9 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
+using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Login;
+using Moongate.UO.Data.Packets.MegaCliloc;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Persistence;
@@ -107,11 +109,15 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
                 .AddService(typeof(IPersistenceService), typeof(PersistenceService), 100)
                 .AddService(typeof(IAccountService), typeof(AccountService))
+
+                .AddService(typeof(IMegaClilocService), typeof(MegaClilocService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
+
+
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
@@ -168,6 +174,9 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<DoubleClickPacket, ClickHandler>();
 
             networkService.RegisterGamePacketHandler<MegaClilocRequestPacket, ToolTipHandler>();
+
+            networkService.RegisterGamePacketHandler<DropItemPacket, ItemsHandler>();
+            networkService.RegisterGamePacketHandler<PickUpItemPacket, ItemsHandler>();
         };
 
 

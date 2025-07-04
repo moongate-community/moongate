@@ -12,7 +12,7 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity
+public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEntity
 {
     public delegate void MobileEventHandler(UOMobileEntity mobile);
 

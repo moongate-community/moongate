@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
@@ -5,12 +6,14 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOItemEntity: IPositionEntity
+public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChanged
 {
-    public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item );
+    public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item);
 
     public event ContainerItemChangedEventHandler? ContainerItemAdded;
     public event ContainerItemChangedEventHandler? ContainerItemRemoved;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     public string TemplateId { get; set; }
     public Serial Id { get; set; }

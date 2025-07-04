@@ -2,7 +2,7 @@ using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Ids;
 
-namespace Moongate.UO.Data.Packets.World;
+namespace Moongate.UO.Data.Packets.MegaCliloc;
 
 public class MegaClilocRequestPacket : BaseUoPacket
 {

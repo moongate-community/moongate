@@ -4,6 +4,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Extensions;
 using Serilog;
 
 namespace Moongate.UO.Data.Events.Contexts;
@@ -52,7 +53,7 @@ public class UoEventContext
 
     public void AddItemToBackpack(string templateId, UOMobileEntity mobile)
     {
-        var backpack = _entityFactoryService.GetBackpack();
+        var backpack = mobile.GetBackpack();
         if (backpack == null)
         {
             throw new InvalidOperationException("Backpack not found.");

@@ -13,7 +13,6 @@ public class PersistenceService : IPersistenceService
 {
     private readonly ILogger _logger = Log.ForContext<PersistenceService>();
 
-
     private DateTime _lastSaveTime = DateTime.MinValue;
 
     private readonly IEventBusService _eventBusService;
@@ -78,9 +77,9 @@ public class PersistenceService : IPersistenceService
 
     public void RequestSave()
     {
-        if (DateTime.UtcNow - _lastSaveTime < TimeSpan.FromMinutes(5))
+        if (DateTime.UtcNow - _lastSaveTime < TimeSpan.FromMinutes(1))
         {
-            _logger.Debug("Save request ignored, last save was less than 5 minutes ago");
+            _logger.Debug("Save request ignored, last save was less than 1 minutes ago");
             return;
         }
 

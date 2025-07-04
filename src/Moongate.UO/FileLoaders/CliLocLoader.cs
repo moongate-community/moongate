@@ -17,11 +17,9 @@ public class CliLocLoader : IFileLoader
 
     public Task LoadAsync()
     {
-        var cliLocFile = UoFiles.FindDataFile("cliloc.chs");
+        var cliLocFile = UoFiles.FindDataFile("cliloc.enu");
 
         var entries = ReadCliLocFile(cliLocFile, true);
-
-
 
         UOContext.LocalizedMessages = entries.ToDictionary(
             entry => entry.Number,

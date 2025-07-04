@@ -9,8 +9,15 @@ public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
 {
     delegate void ItemEventHandler(UOItemEntity item);
 
+
     UOItemEntity? GetItem(Serial id);
 
     event ItemEventHandler? ItemCreated;
+
+    event ItemEventHandler? ItemAdded;
+
     UOItemEntity CreateItem();
+    UOItemEntity CreateItemAndAdd();
+
+    void AddItem(UOItemEntity item);
 }
