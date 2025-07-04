@@ -22,13 +22,15 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public int ItemId { get; set; }
     public string Name { get; set; }
     public int Gold { get; set; }
-    public double Weight { get; set; }
+    public double Weight => BaseWeight * Amount;
     public int Hue { get; set; }
     public Serial OwnerId { get; set; }
     public Serial? ParentId { get; set; }
     public DecayType Decay { get; set; } = DecayType.ItemDecay;
     public int? GumpId { get; set; }
     public string ScriptId { get; set; }
+    public bool IsStackable { get; set; }
+    public int BaseWeight { get; set; }
 
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
