@@ -81,11 +81,13 @@ public class EntityFactoryService : IEntityFactoryService
 
         item.TemplateId = itemTemplate.Id;
         item.Gold = itemTemplate.GoldValue;
-        item.Name =  itemTemplate.Name;
+        item.Name = itemTemplate.Name;
         item.ItemId = itemTemplate.ItemId;
         item.Weight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
         item.GumpId = itemTemplate.GumpId;
+
+        _itemService.AddItem(item);
 
         return item;
     }
@@ -110,6 +112,7 @@ public class EntityFactoryService : IEntityFactoryService
                     {
                         itemTemplate.Name = TileData.ItemTable[itemTemplate.ItemId].Name;
                     }
+
                     _logger.Information("Loaded item template: {TemplateId}", itemTemplate.Id);
                 }
             }

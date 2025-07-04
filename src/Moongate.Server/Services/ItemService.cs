@@ -2,7 +2,6 @@ using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -66,7 +65,7 @@ public class ItemService : IItemService
     public UOItemEntity CreateItem()
     {
         _saveLock.Wait();
-        var lastSerial = new Serial(Serial.MaxItemSerial);
+        var lastSerial = new Serial(Serial.ItemOffset);
 
         if (_items.Count > 0)
         {
@@ -79,8 +78,6 @@ public class ItemService : IItemService
         };
 
 
-        AddItem(item);
-
         ItemCreated?.Invoke(item);
 
         _saveLock.Release();
@@ -88,8 +85,15 @@ public class ItemService : IItemService
         return item;
     }
 
+    public UOItemEntity CreateItemAndAdd()
+    {
+        var item = CreateItem();
+        AddItem(item);
+        return item;
+    }
 
-    private void AddItem(UOItemEntity item)
+
+    public void AddItem(UOItemEntity item)
     {
         if (!_items.TryAdd(item.Id, item))
         {

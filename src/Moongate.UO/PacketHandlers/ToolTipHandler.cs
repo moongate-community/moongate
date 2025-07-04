@@ -1,15 +1,21 @@
 using Moongate.Core.Server.Interfaces.Packets;
-using Moongate.UO.Data.MegaCliloc;
 using Moongate.UO.Data.Packets.MegaCliloc;
-using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
+using Moongate.UO.Interfaces.Services;
 
 namespace Moongate.UO.PacketHandlers;
 
 public class ToolTipHandler : IGamePacketHandler
 {
+    private readonly IMegaClilocService _megaClilocService;
+
+    public ToolTipHandler(IMegaClilocService megaClilocService)
+    {
+        _megaClilocService = megaClilocService;
+    }
+
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {
         if (packet is MegaClilocRequestPacket megaClilocRequestPacket)
@@ -20,20 +26,10 @@ public class ToolTipHandler : IGamePacketHandler
 
     private async Task HandleMegaClilocRequestAsync(GameSession session, MegaClilocRequestPacket request)
     {
-        var response = new MegaClilocResponsePacket();
 
-        var entry = new MegaClilocEntry
+        foreach (var serial in request.Query)
         {
-            Serial = session.Mobile.Id
-        };
-
-        response.Serial = session.Mobile.Id;
-        response.Properties.Add(new MegaClilocProperty()
-        {
-            ClilocId = 0x1005BD,
-            Text = session.Mobile.Name
-        });
-
-        session.SendPackets(response);
+            session.SendPackets(await _megaClilocService.ToPacket(serial));
+        }
     }
 }

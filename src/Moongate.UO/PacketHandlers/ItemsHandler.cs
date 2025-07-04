@@ -1,7 +1,9 @@
 using Moongate.Core.Server.Interfaces.Packets;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
 using Serilog;
 
@@ -34,6 +36,24 @@ public class ItemsHandler : IGamePacketHandler
         var droppingItem = _itemService.GetItem(packet.ItemId);
 
         _logger.Information("Dropping item {DroppingItemId} on ground: {Ground}", droppingItem.Name, packet.IsGround);
+
+        if (session.Mobile.Location.GetDistance(packet.Location) <= 2 && packet.IsGround)
+        {
+            droppingItem.ParentId = Serial.Zero;
+            droppingItem.Location = packet.Location;
+
+            session.SendPackets(new DropItemApprovedPacket());
+
+            return;
+        }
+
+        droppingItem.ParentId = packet.ContainerId;
+        droppingItem.Location = packet.Location;
+
+        var parentContainer = _itemService.GetItem(packet.ContainerId);
+
+        session.SendPackets(new DropItemApprovedPacket());
+        session.SendPackets(new AddMultipleItemToContainerPacket(parentContainer));
     }
 
     private async Task HandlePickUpItemAsync(GameSession session, PickUpItemPacket packet)

@@ -46,19 +46,20 @@ public class MegaClilocService : IMegaClilocService
     {
         item.PropertyChanged += ItemOnPropertyChanged;
 
-        RebuildPropertiesItemAsync(item);
+        RebuildPropertiesItemAsync(item.Id);
     }
 
     private void ItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        RebuildPropertiesItemAsync(sender as UOItemEntity);
+        var entity = sender as UOItemEntity;
+        RebuildPropertiesItemAsync(entity.Id);
     }
 
     private void MobileServiceOnMobileAdded(UOMobileEntity mobile)
     {
         mobile.PropertyChanged += MobileOnPropertyChanged;
 
-        RebuildPropertiesMobileAsync(mobile);
+        RebuildPropertiesMobileAsync(mobile.Id);
     }
 
     private void MobileOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -67,77 +68,82 @@ public class MegaClilocService : IMegaClilocService
 
     public async Task<MegaClilocEntry> GetMegaClilocEntryAsync(ISerialEntity entity)
     {
-        if (_entries.TryGetValue(entity.Id, out var entry))
+        return await GetMegaClilocEntryAsync(entity.Id);
+    }
+
+    public async Task<MegaClilocEntry> GetMegaClilocEntryAsync(Serial serial)
+    {
+        if (_entries.TryGetValue(serial, out var entry))
         {
             return entry;
         }
 
-        await RebuildProperties(entity);
+        await RebuildProperties(serial);
 
-        return _entries[entry.Serial];
+        return _entries[serial];
     }
 
-    private async Task RebuildProperties(ISerialEntity entity)
+    private async Task RebuildProperties(Serial entity)
     {
         _logger.Debug(
             "Starting to rebuild properties for MegaCliloc: {EntityId} {ObjectType}",
-            entity.Id,
-            entity.Id.IsItem ? "Item" : "Mobile"
+            entity,
+            entity.IsItem ? "Item" : "Mobile"
         );
 
-        if (entity.Id.IsItem)
+        if (entity.IsItem)
         {
             await RebuildPropertiesItemAsync(entity);
         }
-        else if (entity.Id.IsMobile)
+        else if (entity.IsMobile)
         {
             await RebuildPropertiesMobileAsync(entity);
         }
         else
         {
-            _logger.Warning("Unknown entity type for MegaCliloc: {EntityId}", entity.Id);
+            _logger.Warning("Unknown entity type for MegaCliloc: {EntityId}", entity);
         }
     }
 
-    private async Task RebuildPropertiesMobileAsync(ISerialEntity entity)
+    private async Task RebuildPropertiesMobileAsync(Serial serial)
     {
-        var mobile = _mobileService.GetMobile(entity.Id);
+        var mobile = _mobileService.GetMobile(serial);
 
         if (mobile == null)
         {
-            throw new InvalidOperationException($"Mobile with ID {entity.Id} not found.");
+            throw new InvalidOperationException($"Mobile with ID {serial} not found.");
         }
 
         _logger.Debug("Rebuilding properties for mobile: {MobileId} {MobileName}", mobile.Id, mobile.Name);
 
         var entry = new MegaClilocEntry()
         {
-            Serial = entity.Id,
+            Serial = serial
         };
 
         entry.AddProperty(0x1005BD, mobile.Name + " " + mobile.Title);
 
-        _entries.TryAdd(entity.Id, entry);
+        _entries.TryAdd(serial, entry);
     }
 
-    private async Task RebuildPropertiesItemAsync(ISerialEntity entity)
+    private async Task RebuildPropertiesItemAsync(Serial serial)
     {
-        var item = _itemService.GetItem(entity.Id);
+        var item = _itemService.GetItem(serial);
 
         if (item == null)
         {
-            throw new InvalidOperationException($"Item with ID {entity.Id} not found.");
+            throw new InvalidOperationException($"Item with ID {serial} not found.");
         }
 
         _logger.Debug("Rebuilding properties for item: {ItemId} {ItemName}", item.Id, item.Name);
 
         var entry = new MegaClilocEntry()
         {
-            Serial = entity.Id,
+            Serial = serial
         };
 
-        entry.AddProperty(CommonClilocIds.ObjectName, item.Name);
+        entry.AddProperty(CommonClilocIds.ItemName, item.Name);
 
-        _entries.TryAdd(entity.Id, entry);
+        _entries.TryAdd(serial, entry);
     }
 }

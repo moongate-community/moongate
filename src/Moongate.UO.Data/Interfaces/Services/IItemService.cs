@@ -17,4 +17,7 @@ public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
     event ItemEventHandler? ItemAdded;
 
     UOItemEntity CreateItem();
+    UOItemEntity CreateItemAndAdd();
+
+    void AddItem(UOItemEntity item);
 }

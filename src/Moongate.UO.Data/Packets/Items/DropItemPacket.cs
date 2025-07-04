@@ -15,7 +15,7 @@ public class DropItemPacket : BaseUoPacket
 
     public Serial ContainerId { get; set; }
 
-    public bool IsGround => !ContainerId.IsValid || ContainerId == Serial.Zero;
+    public bool IsGround => ContainerId == new Serial(0xFFFFFFFF);
 
     public DropItemPacket() : base(0x08)
     {
