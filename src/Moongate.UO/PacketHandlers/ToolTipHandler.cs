@@ -27,17 +27,18 @@ public class ToolTipHandler : IGamePacketHandler
             Serial = session.Mobile.Id
         };
 
-        /// Creature name (always first)
-        entry.Properties.Add(
-            new MegaClilocProperty
-            {
-                ClilocId = CommonClilocIds.ObjectName,
-                Text = session.Mobile.Name
-            }
-        );
+        response.Serial = session.Mobile.Id;
+        response.Properties.Add(new MegaClilocProperty()
+        {
+            ClilocId = 0x1005BD,
+            Text = session.Mobile.Name
+        });
 
+        // response.Properties.Add(new MegaClilocProperty { ClilocId = 1060638, Text = "100\t100" });  // HP;
+        // response.Properties.Add(new MegaClilocProperty { ClilocId = 1060640, Text = "80\t100" }); // Mana;
+        //
+        // response.Properties.Add(new MegaClilocProperty { ClilocId = 1060641, Text = "95\t100" });  // Stamina
 
-        response.Entries.Add(entry);
 
         session.SendPackets(response);
     }

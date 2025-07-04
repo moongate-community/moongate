@@ -14,4 +14,16 @@ public class MegaClilocProperty
     /// Optional text to be inserted into the cliloc
     /// </summary>
     public string? Text { get; set; }
+
+    public MegaClilocProperty(uint clilocId, string? text = null)
+    {
+        ClilocId = clilocId;
+        Text = text;
+    }
+
+    public MegaClilocProperty()
+    {
+        ClilocId = 0;
+        Text = null;
+    }
 }

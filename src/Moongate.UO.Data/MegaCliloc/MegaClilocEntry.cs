@@ -16,4 +16,15 @@ public class MegaClilocEntry
     /// List of properties/clilocs for this object
     /// </summary>
     public List<MegaClilocProperty> Properties { get; set; } = new();
+
+    public MegaClilocEntry()
+    {
+    }
+
+    public MegaClilocEntry(Serial serial, string name)
+    {
+        Serial = serial;
+
+        Properties.Add(new MegaClilocProperty(Serial.Value, name));
+    }
 }
