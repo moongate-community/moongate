@@ -104,6 +104,16 @@ public class ItemService : IItemService
         ItemAdded?.Invoke(item);
     }
 
+    public void UseItem(UOItemEntity item, UOMobileEntity? user)
+    {
+        if (string.IsNullOrEmpty(item.ScriptId))
+        {
+            _logger.Warning("Item {Id} does not have a script ID, cannot use.", item.Id);
+            return;
+        }
+
+    }
+
     public UOItemEntity? GetItem(Serial id)
     {
         return _items.GetValueOrDefault(id);

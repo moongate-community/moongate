@@ -1,4 +1,5 @@
 using Moongate.Core.Server.Interfaces.Packets;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Items;
@@ -51,6 +52,13 @@ public class ItemsHandler : IGamePacketHandler
         droppingItem.Location = packet.Location;
 
         var parentContainer = _itemService.GetItem(packet.ContainerId);
+
+        if (!parentContainer.ContainsItem(droppingItem))
+        {
+            _logger.Information("Adding item {ItemId} to container {ContainerId}", droppingItem.Id, parentContainer.Id);
+            parentContainer.AddItem(droppingItem, new Point2D(packet.Location.X, packet.Location.Y));
+        }
+
 
         session.SendPackets(new DropItemApprovedPacket());
         session.SendPackets(new AddMultipleItemToContainerPacket(parentContainer));

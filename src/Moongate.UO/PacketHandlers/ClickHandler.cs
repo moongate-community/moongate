@@ -10,7 +10,6 @@ namespace Moongate.UO.PacketHandlers;
 
 public class ClickHandler : IGamePacketHandler
 {
-
     private readonly ILogger _logger = Log.ForContext<ClickHandler>();
 
     private readonly IItemService _itemService;
@@ -36,7 +35,7 @@ public class ClickHandler : IGamePacketHandler
 
     private async Task HandleDoubleClickAsync(GameSession session, DoubleClickPacket packet)
     {
-        if ( packet.TargetSerial == session.Mobile.Id)
+        if (packet.TargetSerial == session.Mobile.Id)
         {
             session.SendPackets(new PaperdollPacket(session.Mobile));
         }
@@ -47,6 +46,7 @@ public class ClickHandler : IGamePacketHandler
 
             _logger.Information("Double-clicking item {ItemId} ({ItemName})", item.Id, item.Name);
 
+            _itemService.UseItem(item, session.Mobile);
         }
     }
 

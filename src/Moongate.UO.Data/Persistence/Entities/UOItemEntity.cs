@@ -26,6 +26,8 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public Serial? ParentId { get; set; }
     public DecayType Decay { get; set; } = DecayType.ItemDecay;
     public int? GumpId { get; set; }
+    public string ScriptId { get; set; }
+
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
     public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
@@ -36,8 +38,6 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public void AddItem(UOItemEntity item, Point2D position)
     {
-        // Logic to add an item to this item, e.g., in a container
-        // This could involve updating the ParentId of the item being added
         item.ParentId = Id;
 
         item.Location = new Point3D(position.X, position.Y, -1); // Assuming Z is the same as the container's Z
@@ -45,6 +45,11 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
         ContainedItems[position] = item.ToItemReference();
 
         ContainerItemAdded?.Invoke(this, item.ToItemReference());
+    }
+
+    public bool ContainsItem(UOItemEntity item)
+    {
+        return ContainedItems.Values.ToList().FirstOrDefault(s => s.Id == item.Id) != null;
     }
 
     public void RemoveItem(UOItemEntity item)

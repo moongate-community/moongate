@@ -4,6 +4,7 @@ using Moongate.Core.Json;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Factory;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Tiles;
@@ -85,7 +86,18 @@ public class EntityFactoryService : IEntityFactoryService
         item.ItemId = itemTemplate.ItemId;
         item.Weight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
+        item.ScriptId = itemTemplate.ScriptId;
         item.GumpId = itemTemplate.GumpId;
+
+        if (itemTemplate.Container.Count > 0)
+        {
+            var startingPosition = new Point2D(0, 0);
+
+            foreach (var containerName in itemTemplate.Container)
+            {
+                item.AddItem(CreateItemEntity(containerName, overrides), startingPosition);
+            }
+        }
 
         _itemService.AddItem(item);
 
