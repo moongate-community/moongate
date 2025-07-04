@@ -15,6 +15,22 @@
 	},
 	{
 		"type": "item",
+		"id" : "container_1",
+		"name": "Container of Bricks",
+		"category": "Test Category",
+		"tags": [
+			"test",
+			"test2"
+		],
+		"itemId": "0x0E75",
+		"hue": "4375",
+		"goldValue": "dice(1d4+1)",
+		"weight": 1,
+		"gumpId": "0x003D",
+		"container": ["brick","brick"]
+	},
+	{
+		"type": "item",
 		"id": "container",
 		"name": "Bag of Bricks",
 		"category": "Test Category",

@@ -19,5 +19,10 @@ public class ItemTemplate : BaseTemplate
     [JsonConverter(typeof(HexValueConverter<int>))]
     public int? GumpId { get; set; }
 
-    public Dictionary<string, string> Container { get; set; }
+    public string ScriptId { get; set; }
+
+    /// <summary>
+    /// List of container names this item can be placed in.
+    /// </summary>
+    public List<string> Container { get; set; }
 }
