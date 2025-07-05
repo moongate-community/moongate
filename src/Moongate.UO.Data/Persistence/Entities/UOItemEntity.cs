@@ -10,13 +10,17 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 {
     public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item);
 
+    public delegate void ItemMovedEventHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
+
+
+
+    public event ItemMovedEventHandler? ItemMoved;
+
     public event ContainerItemChangedEventHandler? ContainerItemAdded;
     public event ContainerItemChangedEventHandler? ContainerItemRemoved;
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public string TemplateId { get; set; }
-
     public int Amount { get; set; } = 1;
     public Serial Id { get; set; }
     public int ItemId { get; set; }
@@ -34,7 +38,14 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
-    public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
+    public Point3D Location { get; private set; } = new Point3D(-1, -1, -1);
+    public void MoveTo(Point3D newLocation)
+    {
+        var oldLocation = Location;
+        Location = newLocation;
+        ItemMoved?.Invoke(this, oldLocation, newLocation);
+    }
+
     public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
 
     public bool CanDecay => Decay != DecayType.None;

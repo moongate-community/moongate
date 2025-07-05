@@ -25,13 +25,13 @@ public class MapSectorSystem
     public MapSectorSystem()
     {
         /// Initialize sectors for all known maps
-        InitializeMapsectors();
+        InitializeMapSectors();
     }
 
-    private void InitializeMapsectors()
+    private void InitializeMapSectors()
     {
         /// Initialize sectors for standard UO maps
-        for (int mapIndex = 0; mapIndex < 6; mapIndex++)
+        for (int mapIndex = 0; mapIndex < Map.MapCount; mapIndex++)
         {
             _mapSectors[mapIndex] = new ConcurrentDictionary<(int x, int y), MapSector>();
         }

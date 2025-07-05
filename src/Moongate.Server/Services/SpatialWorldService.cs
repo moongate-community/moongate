@@ -41,9 +41,8 @@ public class SpatialWorldService : ISpatialWorldService
         _mobileService.MobileCreated += OnMobileCreated;
         _mobileService.MobileAdded += OnMobileAdded;
 
-        /// TODO: Subscribe to move events when you implement them
-        /// _mobileService.MobileMoved += OnMobileMoved;
-        /// _itemService.ItemMoved += OnItemMoved;
+        _mobileService.MobileMoved += OnMobileMoved;
+        _itemService.ItemMoved += OnItemMoved;
     }
 
     #region Entity Event Handlers
@@ -88,8 +87,12 @@ public class SpatialWorldService : ISpatialWorldService
         var mapIndex = GetMapIndex(mobile);
         _sectorSystem.MoveEntity(mobile, mapIndex, oldLocation, newLocation);
 
-        _logger.Verbose("Moved mobile {Serial} from {OldLocation} to {NewLocation}",
-            mobile.Id, oldLocation, newLocation);
+        _logger.Verbose(
+            "Moved mobile {Serial} from {OldLocation} to {NewLocation}",
+            mobile.Id,
+            oldLocation,
+            newLocation
+        );
     }
 
     /// <summary>
@@ -100,8 +103,12 @@ public class SpatialWorldService : ISpatialWorldService
         var mapIndex = GetMapIndex(item);
         _sectorSystem.MoveEntity(item, mapIndex, oldLocation, newLocation);
 
-        _logger.Verbose("Moved item {Serial} from {OldLocation} to {NewLocation}",
-            item.Id, oldLocation, newLocation);
+        _logger.Verbose(
+            "Moved item {Serial} from {OldLocation} to {NewLocation}",
+            item.Id,
+            oldLocation,
+            newLocation
+        );
     }
 
     #endregion
@@ -206,7 +213,7 @@ public class SpatialWorldService : ISpatialWorldService
         /// TODO: Implement based on your entity structure
         /// For now, default to Felucca (0)
         ///
-
+        //entity.
         return 0;
     }
 

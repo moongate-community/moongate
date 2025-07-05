@@ -1,5 +1,6 @@
 using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
@@ -9,9 +10,15 @@ public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
 {
     delegate void ItemEventHandler(UOItemEntity item);
 
+    delegate void ItemMovedEventHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation
+    );
+
     UOItemEntity? GetItem(Serial id);
     event ItemEventHandler? ItemCreated;
     event ItemEventHandler? ItemAdded;
+
+    event ItemMovedEventHandler? ItemMoved;
 
     UOItemEntity CreateItem();
     UOItemEntity CreateItemAndAdd();

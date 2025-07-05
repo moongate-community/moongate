@@ -1,4 +1,5 @@
 using Moongate.Core.Persistence.Interfaces.Services;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
@@ -10,6 +11,7 @@ public class ItemService : IItemService
 {
     public event IItemService.ItemEventHandler? ItemCreated;
     public event IItemService.ItemEventHandler? ItemAdded;
+    public event IItemService.ItemMovedEventHandler? ItemMoved;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
@@ -101,7 +103,13 @@ public class ItemService : IItemService
             return;
         }
 
+        item.ItemMoved += ItemOnItemMoved;
         ItemAdded?.Invoke(item);
+    }
+
+    private void ItemOnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation)
+    {
+        ItemMoved?.Invoke(item, oldLocation, newLocation);
     }
 
     public void UseItem(UOItemEntity item, UOMobileEntity? user)

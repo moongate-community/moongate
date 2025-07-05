@@ -41,7 +41,7 @@ public class ItemsHandler : IGamePacketHandler
         if (session.Mobile.Location.GetDistance(packet.Location) <= 2 && packet.IsGround)
         {
             droppingItem.ParentId = Serial.Zero;
-            droppingItem.Location = packet.Location;
+            droppingItem.MoveTo(packet.Location);
 
             session.SendPackets(new DropItemApprovedPacket());
 
@@ -49,7 +49,8 @@ public class ItemsHandler : IGamePacketHandler
         }
 
         droppingItem.ParentId = packet.ContainerId;
-        droppingItem.Location = packet.Location;
+
+        droppingItem.MoveTo(packet.Location);
 
         var parentContainer = _itemService.GetItem(packet.ContainerId);
 
