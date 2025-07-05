@@ -4,7 +4,7 @@ namespace Moongate.UO.Data.Interfaces.Entities;
 
 public interface IPositionEntity
 {
-    Point3D Location { get; }
+    Point3D Location { get; set; }
 
     void MoveTo(Point3D newLocation);
 }

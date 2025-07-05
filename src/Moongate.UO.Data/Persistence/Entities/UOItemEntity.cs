@@ -38,7 +38,7 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
-    public Point3D Location { get; private set; } = new Point3D(-1, -1, -1);
+    public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
     public void MoveTo(Point3D newLocation)
     {
         var oldLocation = Location;

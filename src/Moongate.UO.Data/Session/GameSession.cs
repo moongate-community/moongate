@@ -94,7 +94,7 @@ public class GameSession : IDisposable, INotifyPropertyChanged
 
         if (Mobile.Location != newLocation)
         {
-            Mobile.Location = newLocation;
+            Mobile.MoveTo(newLocation);
             MobileLocationChanged?.Invoke(this, newLocation);
         }
     }

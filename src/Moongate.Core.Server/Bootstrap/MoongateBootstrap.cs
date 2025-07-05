@@ -229,6 +229,12 @@ public class MoongateBootstrap
                 Log.Logger.Debug("Ctor for service: {ServiceName}", service.GetType().Name);
             }
 
+        }
+
+        foreach (var serviceDefinition in servicesToLoad.OrderBy(s => s.Priority))
+        {
+            var service = _container.Resolve(serviceDefinition.ServiceType);
+
             if (service is IMoongateAutostartService startableService)
             {
                 if (isStart)
@@ -250,6 +256,7 @@ public class MoongateBootstrap
                     await startableService.StopAsync(CancellationToken.None);
                 }
             }
+
         }
 
         if (isStart)
