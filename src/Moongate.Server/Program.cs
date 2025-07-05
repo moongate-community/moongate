@@ -114,6 +114,8 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
+
+                .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
 
