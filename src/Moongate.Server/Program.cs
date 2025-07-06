@@ -50,6 +50,7 @@ JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
 JsonUtils.RegisterJsonContext(TextJsonTemplateContext.Default);
 
+JsonUtils.AddJsonConverter(new JsonStringEnumConverter<LootType>());
 JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
 JsonUtils.AddJsonConverter(new Point2DConverter());
 JsonUtils.AddJsonConverter(new Point3DConverter());
@@ -109,17 +110,13 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
                 .AddService(typeof(IPersistenceService), typeof(PersistenceService), 100)
                 .AddService(typeof(IAccountService), typeof(AccountService))
-
                 .AddService(typeof(IMegaClilocService), typeof(MegaClilocService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
-
                 .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
-
-
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))

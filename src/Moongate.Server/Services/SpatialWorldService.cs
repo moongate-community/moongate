@@ -1,3 +1,4 @@
+using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -20,11 +21,13 @@ public class SpatialWorldService : ISpatialWorldService
     private readonly MapSectorSystem _sectorSystem;
     private readonly IItemService _itemService;
     private readonly IMobileService _mobileService;
+    private readonly IDiagnosticService _diagnosticService;
 
-    public SpatialWorldService(IItemService itemService, IMobileService mobileService)
+    public SpatialWorldService(IItemService itemService, IMobileService mobileService, IDiagnosticService diagnosticService)
     {
         _itemService = itemService;
         _mobileService = mobileService;
+        _diagnosticService = diagnosticService;
         _sectorSystem = new MapSectorSystem();
 
         /// Subscribe to entity events to keep spatial index updated
@@ -210,11 +213,7 @@ public class SpatialWorldService : ISpatialWorldService
     /// </summary>
     private int GetMapIndex(IPositionEntity entity)
     {
-        /// TODO: Implement based on your entity structure
-        /// For now, default to Felucca (0)
-        ///
-        //entity.
-        return 0;
+        return entity.Map.Index;
     }
 
     /// <summary>
@@ -246,11 +245,19 @@ public class SpatialWorldService : ISpatialWorldService
 
     public Task StartAsync(CancellationToken cancellationToken = default)
     {
+        _diagnosticService.RegisterMetricsProvider(this);
         return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken = default)
     {
         return Task.CompletedTask;
+    }
+
+    public string ProviderName => "SpatialWorldService";
+
+    public object GetMetrics()
+    {
+        return _sectorSystem.GetStats();
     }
 }

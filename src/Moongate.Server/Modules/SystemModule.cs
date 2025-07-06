@@ -48,8 +48,11 @@ public class SystemModule
                 exit = true;
             }
         }
+    }
 
-
+    [ScriptFunction("Test class add")]
+    public void TestClassAdd(object classz)
+    {
 
     }
 

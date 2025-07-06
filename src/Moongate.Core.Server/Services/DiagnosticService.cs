@@ -124,6 +124,10 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
             );
             _metricsSubject.OnNext(metrics);
             await _eventBusService.PublishAsync(new DiagnosticMetricEvent(metrics));
+
+            _logger.Debug("[METRICS] {ProviderName}: {Metrics}",
+                provider.Key, metric
+            );;
         }
     }
 

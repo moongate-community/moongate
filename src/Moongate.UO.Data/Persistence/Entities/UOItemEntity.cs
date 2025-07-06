@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
@@ -11,7 +12,6 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item);
 
     public delegate void ItemMovedEventHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
-
 
 
     public event ItemMovedEventHandler? ItemMoved;
@@ -38,7 +38,13 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
+
+    public DateTime LastModified { get; set; }
+
+    public Map Map { get; set; } = Map.Felucca;
+
     public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
+
     public void MoveTo(Point3D newLocation)
     {
         var oldLocation = Location;
@@ -46,7 +52,18 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
         ItemMoved?.Invoke(this, oldLocation, newLocation);
     }
 
-    public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
+    public UOItemEntity()
+    {
+        //PropertyChanged += OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        LastAccessed = DateTime.Now;
+        LastModified = DateTime.UtcNow;
+    }
+
+    public DateTime LastAccessed { get; set; }
 
     public bool CanDecay => Decay != DecayType.None;
     public Dictionary<Point2D, ItemReference> ContainedItems { get; set; } = new();

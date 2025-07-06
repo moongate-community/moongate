@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.72.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-07-05 16:22:33
+ * Moongate Server v0.3.73.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-06 11:40:05
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.72.0""
+ * ""0.3.73.0""
  */
 declare const VERSION: string;
 
@@ -81,6 +81,11 @@ declare const system: {
      * @param milliseconds number
      */
     delay(milliseconds: number): void;
+    /**
+     * Test class add
+     * @param classz any
+     */
+    testClassAdd(classz: any): void;
 };
 
 /**

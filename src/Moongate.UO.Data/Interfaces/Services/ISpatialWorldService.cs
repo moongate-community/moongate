@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces.Metrics;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -12,7 +13,7 @@ namespace Moongate.UO.Data.Interfaces.Services;
 /// <summary>
 /// Interface for spatial world service that provides spatial indexing and querying capabilities
 /// </summary>
-public interface ISpatialWorldService : IMoongateAutostartService
+public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvider
 {
     #region Entity Movement Events
 

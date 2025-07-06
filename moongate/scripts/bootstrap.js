@@ -26,3 +26,15 @@ events.onCharacterCreated((c) => {
 	c.context.addItem("shoes", itemLayerType.Shoes, c.mobile);
 	c.context.addItemToBackpack("brick", c.mobile);
 });
+
+const nc = class TestClass {
+	constructor() {
+		this.test = "test";
+	}
+
+	testMethod() {
+		return "testMethod";
+	}
+}
+
+system.testClassAdd(new nc());

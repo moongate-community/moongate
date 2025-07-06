@@ -3,7 +3,7 @@ namespace Moongate.Core.Server.Data.Metrics.EventLoop;
 /// <summary>
 /// Contains metrics about the event loop performance.
 /// </summary>
-public class EventLoopMetrics
+public record EventLoopMetrics
 {
 
     /// <summary>
@@ -65,4 +65,5 @@ public class EventLoopMetrics
     /// Gets or sets the current number of low priority actions in the queue.
     /// </summary>
     public int LowPriorityCount { get; set; }
+
 }
