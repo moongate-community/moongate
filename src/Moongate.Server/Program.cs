@@ -205,6 +205,7 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<TileDataLoader>();
             fileLoaderService.AddFileLoader<MapLoader>();
             fileLoaderService.AddFileLoader<CliLocLoader>();
+            fileLoaderService.AddFileLoader<ContainersDataLoader>();
 
 
             DefaultCommands.RegisterDefaultCommands(commandService);

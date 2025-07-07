@@ -3,6 +3,7 @@ using Moongate.Core.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Factory;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
@@ -92,12 +93,19 @@ public class EntityFactoryService : IEntityFactoryService
 
         if (itemTemplate.Container.Count > 0)
         {
-            var startingPosition = new Point2D(0, 0);
+            //var startingPosition = new Point2D(0, 0);
 
-            foreach (var containerName in itemTemplate.Container)
-            {
-                item.AddItem(CreateItemEntity(containerName, overrides), startingPosition);
-            }
+            //foreach (var containerName in itemTemplate.Container)
+            //{
+            //    item.AddItem(CreateItemEntity(containerName, overrides), startingPosition);
+            //}
+
+            var itemsToAdd = itemTemplate.Container
+                .Select(containerName => CreateItemEntity(containerName, overrides))
+                .Where(createdItem => createdItem != null)
+                .ToList();
+
+            ContainerLayoutSystem.ArrangeItemsInGrid(item, itemsToAdd);
         }
 
         _itemService.AddItem(item);
