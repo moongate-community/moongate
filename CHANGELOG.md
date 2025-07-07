@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.10.0"></a>
+## [0.10.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.10.0) (2025-07-07)
+
+### Features
+
+* add new Moongate Server files and update version to v0.3.67.0 ([0c19020](https://www.github.com/moongate-community/moongate/commit/0c190209370734fa207b8b1ec0bfecac77a7346a))
+* **bootstrap.js:** refactor code for better readability and consistency ([20cb3c5](https://www.github.com/moongate-community/moongate/commit/20cb3c538741430cdcb191f18a9c9077dd2d4982))
+* **containers:** add default container data in JSON format for various items ([c00362d](https://www.github.com/moongate-community/moongate/commit/c00362d908d765aa95552dec9c3706a4f1b1cd40))
+* **moongate:** add support for process.env.PORT environment variable to server.ts ([538b178](https://www.github.com/moongate-community/moongate/commit/538b178b344e99c52898b602ea5c05f937d4ccf7))
+* **moongate:** update Moongate Server JavaScript API version to v0.3.76.0 ([ab8c84e](https://www.github.com/moongate-community/moongate/commit/ab8c84eb1e89af8644affca75d18ffd96ef106c0))
+* **server:** update Moongate Server version to v0.3.70.0 in TypeScript Definitions ([14b8f7a](https://www.github.com/moongate-community/moongate/commit/14b8f7a3dec80541122a2e0bed6e1dbbf8c61d75))
+
 <a name="0.9.1"></a>
 ## [0.9.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.9.1) (2025-07-04)
 
