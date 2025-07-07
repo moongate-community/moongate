@@ -88,6 +88,7 @@ public class EntityFactoryService : IEntityFactoryService
         item.Hue = itemTemplate.Hue;
         item.ScriptId = itemTemplate.ScriptId;
         item.GumpId = itemTemplate.GumpId;
+        item.LootType = itemTemplate.LootType;
 
         if (itemTemplate.Container.Count > 0)
         {
