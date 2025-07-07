@@ -1,5 +1,8 @@
 using Moongate.Core.Persistence.Interfaces.Services;
+using Moongate.Core.Server.Interfaces.Services;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
@@ -10,18 +13,23 @@ public class ItemService : IItemService
 {
     public event IItemService.ItemEventHandler? ItemCreated;
     public event IItemService.ItemEventHandler? ItemAdded;
+    public event IItemService.ItemMovedEventHandler? ItemMoved;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
-    private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _saveLock = new(1, 1);
+
+    private readonly Dictionary<string, IItemAction> _itemActions = new();
 
     private const string itemsFilePath = "items.mga";
 
     private readonly Dictionary<Serial, UOItemEntity> _items = new();
 
     private readonly IEntityFileService _entityFileService;
+    private readonly IEventLoopService _eventLoopService;
 
-    public ItemService(IEntityFileService entityFileService)
+    public ItemService(IEntityFileService entityFileService, IEventLoopService eventLoopService)
     {
         _entityFileService = entityFileService;
+        _eventLoopService = eventLoopService;
     }
 
     public Task StartAsync(CancellationToken cancellationToken = default)
@@ -101,7 +109,13 @@ public class ItemService : IItemService
             return;
         }
 
+        item.ItemMoved += ItemOnItemMoved;
         ItemAdded?.Invoke(item);
+    }
+
+    private void ItemOnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation)
+    {
+        ItemMoved?.Invoke(item, oldLocation, newLocation);
     }
 
     public void UseItem(UOItemEntity item, UOMobileEntity? user)
@@ -112,6 +126,27 @@ public class ItemService : IItemService
             return;
         }
 
+        if (!_itemActions.TryGetValue(item.ScriptId, out var itemAction))
+        {
+            _logger.Warning("No item action found for {ItemId}, cannot use item.", item.ScriptId);
+            return;
+        }
+
+        _eventLoopService.EnqueueAction(
+            $"use_item_{item.Id.ToString()}",
+            () => { itemAction.OnUseItem(item, user); }
+        );
+    }
+
+    public void AddItemActionScript(string itemId, IItemAction itemAction)
+    {
+        if (_itemActions.ContainsKey(itemId))
+        {
+            _logger.Warning("Item action for {ItemId} already exists, replacing.", itemId);
+        }
+
+        _itemActions[itemId] = itemAction;
+        _logger.Information("Added item action for {ItemId}.", itemId);
     }
 
     public UOItemEntity? GetItem(Serial id)

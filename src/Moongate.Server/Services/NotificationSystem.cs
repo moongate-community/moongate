@@ -19,7 +19,6 @@ public class NotificationSystem : INotificationSystem
     private readonly IGameSessionService _gameSessionService;
     private readonly IMobileService _mobileService;
     private readonly IPlayerNotificationSystem _playerNotificationSystem;
-
     private readonly ICommandSystemService _commandSystemService;
 
     public NotificationSystem(

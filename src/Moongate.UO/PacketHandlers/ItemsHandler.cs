@@ -41,7 +41,7 @@ public class ItemsHandler : IGamePacketHandler
         if (session.Mobile.Location.GetDistance(packet.Location) <= 2 && packet.IsGround)
         {
             droppingItem.ParentId = Serial.Zero;
-            droppingItem.Location = packet.Location;
+            droppingItem.MoveTo(packet.Location);
 
             session.SendPackets(new DropItemApprovedPacket());
 
@@ -49,7 +49,8 @@ public class ItemsHandler : IGamePacketHandler
         }
 
         droppingItem.ParentId = packet.ContainerId;
-        droppingItem.Location = packet.Location;
+
+        droppingItem.MoveTo(packet.Location);
 
         var parentContainer = _itemService.GetItem(packet.ContainerId);
 
@@ -58,7 +59,6 @@ public class ItemsHandler : IGamePacketHandler
             _logger.Information("Adding item {ItemId} to container {ContainerId}", droppingItem.Id, parentContainer.Id);
             parentContainer.AddItem(droppingItem, new Point2D(packet.Location.X, packet.Location.Y));
         }
-
 
         session.SendPackets(new DropItemApprovedPacket());
         session.SendPackets(new AddMultipleItemToContainerPacket(parentContainer));

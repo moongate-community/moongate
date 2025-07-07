@@ -15,6 +15,7 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
 using Moongate.Server.Commands;
+using Moongate.Server.Generator;
 using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
 using Moongate.Server.Packets;
@@ -24,6 +25,7 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Factory.Json;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
@@ -50,6 +52,7 @@ JsonUtils.RegisterJsonContext(MoongateCoreServerContext.Default);
 JsonUtils.RegisterJsonContext(UOJsonContext.Default);
 JsonUtils.RegisterJsonContext(TextJsonTemplateContext.Default);
 
+JsonUtils.AddJsonConverter(new JsonStringEnumConverter<LootType>());
 JsonUtils.AddJsonConverter(new JsonStringEnumConverter<Stat>());
 JsonUtils.AddJsonConverter(new Point2DConverter());
 JsonUtils.AddJsonConverter(new Point3DConverter());
@@ -62,6 +65,9 @@ JsonUtils.AddJsonConverter(new FlagsConverter<CharacterListFlags>());
 JsonUtils.AddJsonConverter(new FlagsConverter<FeatureFlags>());
 JsonUtils.AddJsonConverter(new FlagsConverter<HousingFlags>());
 JsonUtils.AddJsonConverter(new FlagsConverter<MapSelectionFlags>());
+
+TypeScriptDocumentationGenerator.AddInterfaceToGenerate(typeof(IItemAction));
+
 var cancellationTokenSource = new CancellationTokenSource();
 
 await ConsoleApp.RunAsync(
@@ -109,15 +115,13 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IEntityFactoryService), typeof(EntityFactoryService))
                 .AddService(typeof(IPersistenceService), typeof(PersistenceService), 100)
                 .AddService(typeof(IAccountService), typeof(AccountService))
-
                 .AddService(typeof(IMegaClilocService), typeof(MegaClilocService))
                 .AddService(typeof(IMobileService), typeof(MobileService))
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
+                .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
-
-
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
@@ -144,6 +148,8 @@ await ConsoleApp.RunAsync(
             scriptEngine.AddScriptModule(typeof(ConsoleModule));
 
             scriptEngine.AddScriptModule(typeof(CommonEventModule));
+
+            scriptEngine.AddScriptModule(typeof(ItemsModule));
         };
 
         bootstrap.ConfigureNetworkServices += networkService =>
@@ -199,6 +205,7 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<TileDataLoader>();
             fileLoaderService.AddFileLoader<MapLoader>();
             fileLoaderService.AddFileLoader<CliLocLoader>();
+            fileLoaderService.AddFileLoader<ContainersDataLoader>();
 
 
             DefaultCommands.RegisterDefaultCommands(commandService);

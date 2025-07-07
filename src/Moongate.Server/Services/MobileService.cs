@@ -1,4 +1,5 @@
 using Moongate.Core.Persistence.Interfaces.Services;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
@@ -13,6 +14,7 @@ public class MobileService : IMobileService
     public event IMobileService.MobileEventHandler? MobileCreated;
     public event IMobileService.MobileEventHandler? MobileRemoved;
     public event IMobileService.MobileEventHandler? MobileAdded;
+    public event IMobileService.MobileMovedEventHandler? MobileMoved;
 
     private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
 
@@ -132,5 +134,12 @@ public class MobileService : IMobileService
         }
 
         MobileAdded?.Invoke(mobile);
+        mobile.MobileMoved += MobileOnMobileMoved;
+    }
+
+    private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
+    {
+        _logger.Verbose("Mobile {Id} moved from {OldLocation} to {NewLocation}", mobile.Id, oldLocation, newLocation);
+        MobileMoved?.Invoke(mobile, oldLocation, newLocation);
     }
 }

@@ -81,7 +81,7 @@ public class TileDataLoader : IFileLoader
             var terminator = buffer.IndexOfTerminator(1);
             var name = Encoding.ASCII.GetString(buffer[..(terminator < 0 ? buffer.Length : terminator)]);
             TileData.ItemTable[i] = new ItemData(
-           string.Intern(name),
+                string.Intern(name),
                 flags,
                 weight,
                 quality,
@@ -95,8 +95,10 @@ public class TileDataLoader : IFileLoader
         TileData.MaxLandValue = TileData.LandTable.Length - 1;
         TileData.MaxItemValue = TileData.ItemTable.Length - 1;
 
-        _logger.Information("TileData loaded: {LandCount} land entries, {ItemCount} item entries",
-            TileData.LandTable.Length, TileData.ItemTable.Length);
-
+        _logger.Information(
+            "TileData loaded: {LandCount} land entries, {ItemCount} item entries",
+            TileData.LandTable.Length,
+            TileData.ItemTable.Length
+        );
     }
 }

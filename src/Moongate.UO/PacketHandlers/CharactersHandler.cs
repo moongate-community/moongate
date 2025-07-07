@@ -134,7 +134,8 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.FacialHairStyle = characterCreation.FacialHair.Style;
         playerMobileEntity.HairHue = characterCreation.Hair.Hue;
         playerMobileEntity.HairStyle = characterCreation.Hair.Style;
-        playerMobileEntity.Location = characterCreation.StartingCity.Location;
+        //playerMobileEntity.Location = characterCreation.StartingCity.Location;
+        playerMobileEntity.MoveTo(characterCreation.StartingCity.Location);
         playerMobileEntity.SkinHue = characterCreation.Skin.Hue;
 
         playerMobileEntity.Gender = characterCreation.Gender;

@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Moongate.Core.Server.Json.Converters;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Factory;
 
@@ -13,8 +14,13 @@ public class ItemTemplate : BaseTemplate
 
     [JsonConverter(typeof(RandomValueConverter<int>))]
     public int GoldValue { get; set; }
-    public double Weight { get; set; } = 1.0;
-    public bool Dyeable { get; set; }
+
+    public int Weight { get; set; } = 1;
+    public bool Dyeable { get; set; } = true;
+
+    public LootType LootType { get; set; } = LootType.Regular;
+
+    public bool Stackable { get; set; } = true;
 
     [JsonConverter(typeof(HexValueConverter<int>))]
     public int? GumpId { get; set; }

@@ -11,4 +11,6 @@ public interface IScriptEngineService: IMoongateAutostartService
     void AddConstant(string name, object value);
     void ExecuteCallback(string name, params object[] args);
     void AddScriptModule(Type type);
+
+    string ToScriptEngineFunctionName(string name);
 }

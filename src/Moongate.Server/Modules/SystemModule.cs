@@ -1,3 +1,5 @@
+using Jint;
+using Jint.Native;
 using Moongate.Core.Server.Attributes.Scripts;
 using Moongate.Core.Server.Interfaces.Services;
 
@@ -6,7 +8,6 @@ namespace Moongate.Server.Modules;
 [ScriptModule("system")]
 public class SystemModule
 {
-
     private readonly IEventLoopService _eventLoopService;
 
     public SystemModule(IEventLoopService eventLoopService)
@@ -48,9 +49,6 @@ public class SystemModule
                 exit = true;
             }
         }
-
-
-
     }
 
 

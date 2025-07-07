@@ -244,6 +244,11 @@ public class JsScriptEngineService : IScriptEngineService
         _scriptModules.Add(new ScriptModuleData(type));
     }
 
+    public string ToScriptEngineFunctionName(string name)
+    {
+        return _nameResolver.Invoke(name);
+    }
+
     public void Dispose()
     {
         _jsEngine.Dispose();

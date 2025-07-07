@@ -16,6 +16,10 @@ public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEn
 {
     public delegate void MobileEventHandler(UOMobileEntity mobile);
 
+    public delegate void MobileMovedEventHandler(
+        UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation
+    );
+
     public delegate void ChatMessageDelegate(
         UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
     );
@@ -33,9 +37,19 @@ public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEn
     public event MobileEventHandler SelfMoved;
     public event MobileEventHandler OtherMobileMoved;
 
+    public event MobileMovedEventHandler MobileMoved;
+
     public void OnSelfMoved()
     {
         SelfMoved?.Invoke(this);
+    }
+
+    public void MoveTo(Point3D newLocation)
+    {
+        var oldLocation = Location;
+        Location = newLocation;
+        OnSelfMoved();
+        MobileMoved?.Invoke(this, oldLocation, newLocation);
     }
 
     public void OnOtherMobileMoved(UOMobileEntity other)
@@ -46,6 +60,7 @@ public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEn
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
+
 
 
     [JsonIgnore] public bool IsPlayer { get; set; }

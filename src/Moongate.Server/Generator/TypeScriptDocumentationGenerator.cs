@@ -17,6 +17,11 @@ public static class TypeScriptDocumentationGenerator
 
     public static List<Type> FoundEnums { get; } = [];
 
+    public static void AddInterfaceToGenerate(Type type)
+    {
+        _interfaceTypesToGenerate.Add(type);
+    }
+
     private static Func<string, string> _nameResolver = name => name.ToSnakeCase();
 
     public static string GenerateDocumentation(
@@ -41,7 +46,7 @@ public static class TypeScriptDocumentationGenerator
         _interfacesBuilder.Clear();
         _constantsBuilder.Clear();
         _enumsBuilder.Clear();
-        _interfaceTypesToGenerate.Clear();
+        //_interfaceTypesToGenerate.Clear();
 
         var distinctConstants = constants
             .GroupBy(kvp => kvp.Key)

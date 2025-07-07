@@ -2,6 +2,7 @@ using System.ComponentModel;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
@@ -10,28 +11,61 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 {
     public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item);
 
+    public delegate void ItemMovedEventHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
+
+
+    public event ItemMovedEventHandler? ItemMoved;
+
     public event ContainerItemChangedEventHandler? ContainerItemAdded;
     public event ContainerItemChangedEventHandler? ContainerItemRemoved;
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     public string TemplateId { get; set; }
+    public int Amount { get; set; } = 1;
     public Serial Id { get; set; }
     public int ItemId { get; set; }
     public string Name { get; set; }
     public int Gold { get; set; }
-    public double Weight { get; set; }
+    public double Weight => BaseWeight * Amount;
     public int Hue { get; set; }
     public Serial OwnerId { get; set; }
     public Serial? ParentId { get; set; }
     public DecayType Decay { get; set; } = DecayType.ItemDecay;
     public int? GumpId { get; set; }
     public string ScriptId { get; set; }
+    public bool IsStackable { get; set; }
+    public int BaseWeight { get; set; }
+
+    public LootType LootType { get; set; }
 
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
+
+    public DateTime LastModified { get; set; }
+
+    public Map Map { get; set; } = Map.Felucca;
+
     public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
-    public DateTime LastAccessed { get; set; } = DateTime.UtcNow;
+
+    public void MoveTo(Point3D newLocation)
+    {
+        var oldLocation = Location;
+        Location = newLocation;
+        ItemMoved?.Invoke(this, oldLocation, newLocation);
+    }
+
+    public UOItemEntity()
+    {
+        //PropertyChanged += OnPropertyChanged;
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        LastAccessed = DateTime.Now;
+        LastModified = DateTime.UtcNow;
+    }
+
+    public DateTime LastAccessed { get; set; }
 
     public bool CanDecay => Decay != DecayType.None;
     public Dictionary<Point2D, ItemReference> ContainedItems { get; set; } = new();
