@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.3.73.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-07-06 11:40:05
+ * Moongate Server v0.3.74.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-07 11:40:16
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.3.73.0""
+ * ""0.3.74.0""
  */
 declare const VERSION: string;
 
@@ -81,11 +81,6 @@ declare const system: {
      * @param milliseconds number
      */
     delay(milliseconds: number): void;
-    /**
-     * Test class add
-     * @param classz any
-     */
-    testClassAdd(classz: any): void;
 };
 
 /**
@@ -147,6 +142,18 @@ declare const events: {
     onCharacterCreated(handler: (arg: ICharacterCreatedEvent) => any): void;
 };
 
+/**
+ * ItemsModule module
+ */
+declare const items: {
+    /**
+     * Add script to item
+     * @param itemId string
+     * @param classz IJsValue
+     */
+    addScriptToItem(itemId: string, classz: IJsValue): void;
+};
+
 
 /**
  * Generated enum for Moongate.Core.Server.Types.AccountLevelType
@@ -165,6 +172,21 @@ export enum commandSourceType {
     Console = 1,
     InGame = 2,
     All = 3,
+}
+
+/**
+ * Generated enum for Jint.Runtime.Types
+ */
+export enum types {
+    Empty = 0,
+    Undefined = 1,
+    Null = 2,
+    Boolean = 4,
+    String = 8,
+    Number = 16,
+    Symbol = 64,
+    BigInt = 128,
+    Object = 256,
 }
 
 /**
@@ -323,6 +345,12 @@ export enum stat {
 
 
 /**
+ * Generated interface for Moongate.UO.Data.Interfaces.Entities.IItemAction
+ */
+interface IIItemAction {
+}
+
+/**
  * Generated interface for Moongate.Core.Server.Data.Internal.Commands.CommandSystemContext
  */
 interface ICommandSystemContext {
@@ -374,6 +402,16 @@ interface ICharacterCreatedEvent {
      * context
      */
     context: IUoEventContext;
+}
+
+/**
+ * Generated interface for Jint.Native.JsValue
+ */
+interface IJsValue {
+    /**
+     * type
+     */
+    type: types;
 }
 
 /**

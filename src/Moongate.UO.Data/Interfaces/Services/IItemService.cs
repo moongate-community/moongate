@@ -2,6 +2,7 @@ using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.UO.Data.Interfaces.Services;
@@ -26,4 +27,6 @@ public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
     void AddItem(UOItemEntity item);
 
     void UseItem(UOItemEntity item, UOMobileEntity? user);
+
+    void AddItemActionScript(string itemId, IItemAction itemAction);
 }

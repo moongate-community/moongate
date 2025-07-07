@@ -15,6 +15,7 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
 using Moongate.Server.Commands;
+using Moongate.Server.Generator;
 using Moongate.Server.Loggers;
 using Moongate.Server.Modules;
 using Moongate.Server.Packets;
@@ -24,6 +25,7 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Factory.Json;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
@@ -63,6 +65,9 @@ JsonUtils.AddJsonConverter(new FlagsConverter<CharacterListFlags>());
 JsonUtils.AddJsonConverter(new FlagsConverter<FeatureFlags>());
 JsonUtils.AddJsonConverter(new FlagsConverter<HousingFlags>());
 JsonUtils.AddJsonConverter(new FlagsConverter<MapSelectionFlags>());
+
+TypeScriptDocumentationGenerator.AddInterfaceToGenerate(typeof(IItemAction));
+
 var cancellationTokenSource = new CancellationTokenSource();
 
 await ConsoleApp.RunAsync(
@@ -143,6 +148,8 @@ await ConsoleApp.RunAsync(
             scriptEngine.AddScriptModule(typeof(ConsoleModule));
 
             scriptEngine.AddScriptModule(typeof(CommonEventModule));
+
+            scriptEngine.AddScriptModule(typeof(ItemsModule));
         };
 
         bootstrap.ConfigureNetworkServices += networkService =>

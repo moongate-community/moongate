@@ -1,13 +1,5 @@
+const lilli = () => {
+  console.log("Lilli is running");
+};
 
-
-
-
-const lilli = () =>  {
-    console.log("Lilli is running");
-}
-
-
-
-export {
-    lilli
-}
+export { lilli };
