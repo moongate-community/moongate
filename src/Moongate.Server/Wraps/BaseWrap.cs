@@ -27,4 +27,9 @@ public class BaseWrap
                 args.Select(arg => JsValue.FromObject(Value.AsObject().Engine, arg)).ToArray()
             );
     }
+
+    public TOut Call<TOut>(string methodName, params object[] args)
+    {
+        return Call(methodName, args).ToObject() is TOut result ? result : default!;
+    }
 }
