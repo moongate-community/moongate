@@ -7,4 +7,5 @@ public interface IPlayerNotificationSystem
     void TrackMobile(UOMobileEntity mobile);
 
     void UntrackMobile(UOMobileEntity mobile);
+
 }
