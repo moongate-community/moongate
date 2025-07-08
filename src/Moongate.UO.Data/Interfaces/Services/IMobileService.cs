@@ -20,7 +20,7 @@ public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSav
 
     event MobileMovedEventHandler? MobileMoved;
 
-    void AddMobile(UOMobileEntity mobile);
+    void AddInWorld(UOMobileEntity mobile);
     UOMobileEntity CreateMobile();
     UOMobileEntity? GetMobile(Serial id);
 

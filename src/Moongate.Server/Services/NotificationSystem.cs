@@ -7,6 +7,8 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Interfaces.Services.Systems;
 using Serilog;
@@ -37,7 +39,6 @@ public class NotificationSystem : INotificationSystem
         _commandSystemService = commandSystemService;
         _spatialWorldService = spatialWorldService;
 
-
         _gameSessionService.GameSessionCreated += OnGameSessionCreated;
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
 
@@ -46,12 +47,10 @@ public class NotificationSystem : INotificationSystem
 
     private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)
     {
-        _logger.Information(
-            "On un c'e coso, {Name} che ha cambiato settore da {OldSector} a {NewSector}",
-            mobile.Name,
-            oldSector,
-            newSector
-        );
+        if (mobile.IsPlayer)
+        {
+            var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
+        }
     }
 
     private void OnGameSessionBeforeDestroy(GameSession session)

@@ -3,7 +3,6 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Interfaces.Services;
 using Serilog;
 using ZLinq;
 
@@ -16,11 +15,13 @@ public class MobileService : IMobileService
     public event IMobileService.MobileEventHandler? MobileAdded;
     public event IMobileService.MobileMovedEventHandler? MobileMoved;
 
-    private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _saveLock = new(1, 1);
 
     private readonly ILogger _logger = Log.ForContext<MobileService>();
 
     private const string mobilesFilePath = "mobiles.mga";
+
+    private readonly Dictionary<Serial, UOMobileEntity> _availableMobiles = new();
 
     private readonly Dictionary<Serial, UOMobileEntity> _mobiles = new();
 
@@ -35,20 +36,20 @@ public class MobileService : IMobileService
 
     {
         await _saveLock.WaitAsync();
-        await _entityFileService.SaveEntitiesAsync(mobilesFilePath, _mobiles.Values);
+        await _entityFileService.SaveEntitiesAsync(mobilesFilePath, _availableMobiles.Values);
         _saveLock.Release();
     }
 
     private async Task LoadMobilesAsync()
     {
         await _saveLock.WaitAsync();
-        _mobiles.Clear();
+        _availableMobiles.Clear();
 
         var mobiles = await _entityFileService.LoadEntitiesAsync<UOMobileEntity>(mobilesFilePath);
 
         foreach (var mobile in mobiles)
         {
-            AddMobile(mobile);
+            AddInWorld(mobile);
         }
 
         _saveLock.Release();
@@ -64,7 +65,7 @@ public class MobileService : IMobileService
 
     public Task StopAsync(CancellationToken cancellationToken = default)
     {
-        _logger.Information("Saving {Count} mobiles to file...", _mobiles.Count);
+        _logger.Information("Saving {Count} mobiles to file...", _availableMobiles.Count);
         return SaveMobilesAsync();
     }
 
@@ -74,9 +75,9 @@ public class MobileService : IMobileService
         _saveLock.Wait();
         var lastSerial = new Serial(Serial.MaxMobileSerial);
 
-        if (_mobiles.Count > 0)
+        if (_availableMobiles.Count > 0)
         {
-            lastSerial = _mobiles.Keys.Last() + 1;
+            lastSerial = _availableMobiles.Keys.Last() + 1;
         }
 
         var mobile = new UOMobileEntity
@@ -84,9 +85,8 @@ public class MobileService : IMobileService
             Id = lastSerial,
         };
 
-        //AddMobile(mobile);
 
-        //MobileCreated?.Invoke(mobile);
+        _availableMobiles[lastSerial] = mobile;
 
         _saveLock.Release();
 
@@ -95,7 +95,7 @@ public class MobileService : IMobileService
 
     public UOMobileEntity? GetMobile(Serial id)
     {
-        if (_mobiles.TryGetValue(id, out var mobile))
+        if (_availableMobiles.TryGetValue(id, out var mobile))
         {
             return mobile;
         }
@@ -106,7 +106,7 @@ public class MobileService : IMobileService
 
     public IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate)
     {
-        return _mobiles.Values.AsValueEnumerable().Where(predicate).ToList();
+        return _availableMobiles.Values.AsValueEnumerable().Where(predicate).ToList();
     }
 
 
@@ -125,7 +125,7 @@ public class MobileService : IMobileService
         return SaveMobilesAsync();
     }
 
-    public void AddMobile(UOMobileEntity mobile)
+    public void AddInWorld(UOMobileEntity mobile)
     {
         if (!_mobiles.TryAdd(mobile.Id, mobile))
         {
