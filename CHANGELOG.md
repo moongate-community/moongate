@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.11.0"></a>
+## [0.11.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.11.0) (2025-07-08)
+
+### Features
+
+* added regions and weather data, thank you UOX3 team! ([5040d71](https://www.github.com/moongate-community/moongate/commit/5040d7176899fe39d18f0859b82e116e7e1f0027))
+* Added regions and weather file from conversion ([2ca3164](https://www.github.com/moongate-community/moongate/commit/2ca31644525563aa2b3c4575067f118f2b1bf3a8))
+* added script for converter dnf file from UOX to Moongate ([cb6195f](https://www.github.com/moongate-community/moongate/commit/cb6195f7c7bec79d31706bddc55f6cfd9c770265))
+* **mobiles.mga:** update Moongate Server version to v0.3.86.0 in JavaScript API ([8318ced](https://www.github.com/moongate-community/moongate/commit/8318ced93cf9c26e9130d04a50e40338e97bc3b5))
+* **moongate:** update Moongate Server version to v0.3.78.0 in JavaScript API TypeScript Definitions ([1fefb75](https://www.github.com/moongate-community/moongate/commit/1fefb75bbfb001a86c345fcad3addb9104a34c39))
+* **Program.cs:** add RegionDataLoader and WeatherDataLoader to load new region and weather data ([6aa20da](https://www.github.com/moongate-community/moongate/commit/6aa20da70ae85b95a5e36f7db6af1cef8df6199f))
+
 <a name="0.10.0"></a>
 ## [0.10.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.10.0) (2025-07-07)
 
