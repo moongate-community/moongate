@@ -3,6 +3,8 @@ using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json;
+using Moongate.UO.Data.Json.Regions;
+using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Skills;
@@ -38,13 +40,22 @@ namespace Moongate.UO.Data.Persistence;
 [JsonSerializable(typeof(JsonContainerSize[]))]
 [JsonSerializable(typeof(JsonContainerSize))]
 [JsonSerializable(typeof(JsonRegion))]
+[JsonSerializable(typeof(JsonRegionWrap))]
 [JsonSerializable(typeof(JsonRegion[]))]
+[JsonSerializable(typeof(JsonMusic))]
+[JsonSerializable(typeof(JsonMusic[]))]
+[JsonSerializable(typeof(JsonIntensityRange))]
+[JsonSerializable(typeof(JsonIntensityRange[]))]
+[JsonSerializable(typeof(JsonWeather))]
+[JsonSerializable(typeof(JsonWeather[]))]
+[JsonSerializable(typeof(JsonWeatherWrap))]
 [JsonSerializable(typeof(ProfessionInfo))]
 [JsonSerializable(typeof(JsonProfession[]))]
 [JsonSerializable(typeof(Dictionary<SkillName, double>))]
 [JsonSerializable(typeof(JsonSkill))]
 [JsonSerializable(typeof(JsonProfessionsRoot))]
 [JsonSerializable(typeof(JsonStat))]
+[JsonSerializable(typeof(JsonDfnHeader))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
