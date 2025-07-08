@@ -1,4 +1,5 @@
 using Moongate.Core.Server.Interfaces.Packets;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -32,7 +33,15 @@ public class CharacterMoveHandler : IGamePacketHandler
 
     private async Task ProcessMoveRequestAsync(GameSession session, MoveRequestPacket packet)
     {
-        session.Move(packet.Direction);
+        //session.Move(packet.Direction);
+
+        var newLocation = session.Mobile.Location + packet.Direction;
+
+        var landTile = session.Mobile.Map.GetLandTile(newLocation.X, newLocation.Y);
+
+        newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
+
+        session.Move(newLocation);
 
         if (session.MoveSequence == 255)
         {

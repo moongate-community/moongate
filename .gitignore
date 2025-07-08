@@ -569,3 +569,5 @@ crashlytics-build.properties
 *.world
 docs/_site
 docs/api
+
+moongate/saves/**/*

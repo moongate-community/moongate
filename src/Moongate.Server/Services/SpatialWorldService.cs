@@ -23,12 +23,26 @@ public class SpatialWorldService : ISpatialWorldService
     private readonly IMobileService _mobileService;
     private readonly IDiagnosticService _diagnosticService;
 
+
+    public event ISpatialWorldService.EntityMovedSectorHandler? EntityMovedSector;
+    public event ISpatialWorldService.MobileMovedHandler? MobileSectorMoved;
+
     public SpatialWorldService(IItemService itemService, IMobileService mobileService, IDiagnosticService diagnosticService)
     {
         _itemService = itemService;
         _mobileService = mobileService;
         _diagnosticService = diagnosticService;
         _sectorSystem = new MapSectorSystem();
+
+        _sectorSystem.EntityMovedSector += (entity, sector, newSector) =>
+        {
+            if (entity is UOMobileEntity mobile)
+            {
+                MobileSectorMoved?.Invoke(mobile, sector, newSector);
+            }
+
+            EntityMovedSector?.Invoke(entity, sector, newSector);
+        };
 
         /// Subscribe to entity events to keep spatial index updated
         SubscribeToEntityEvents();
@@ -81,6 +95,7 @@ public class SpatialWorldService : ISpatialWorldService
     {
         OnMobileCreated(mobile); /// Same logic
     }
+
 
     /// <summary>
     /// Call this when a mobile moves

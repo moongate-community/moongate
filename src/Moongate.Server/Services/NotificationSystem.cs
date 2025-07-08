@@ -3,9 +3,12 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Context;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Moongate.UO.Interfaces.Services.Systems;
 using Serilog;
@@ -21,18 +24,33 @@ public class NotificationSystem : INotificationSystem
     private readonly IPlayerNotificationSystem _playerNotificationSystem;
     private readonly ICommandSystemService _commandSystemService;
 
+    private readonly ISpatialWorldService _spatialWorldService;
+
+
     public NotificationSystem(
         IMobileService mobileService, IGameSessionService gameSessionService,
-        IPlayerNotificationSystem playerNotificationSystem, ICommandSystemService commandSystemService
+        IPlayerNotificationSystem playerNotificationSystem, ICommandSystemService commandSystemService,
+        ISpatialWorldService spatialWorldService
     )
     {
         _mobileService = mobileService;
         _gameSessionService = gameSessionService;
         _playerNotificationSystem = playerNotificationSystem;
         _commandSystemService = commandSystemService;
+        _spatialWorldService = spatialWorldService;
 
         _gameSessionService.GameSessionCreated += OnGameSessionCreated;
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
+
+        _spatialWorldService.MobileSectorMoved += OnMobileSectorMoved;
+    }
+
+    private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)
+    {
+        if (mobile.IsPlayer)
+        {
+            var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
+        }
     }
 
     private void OnGameSessionBeforeDestroy(GameSession session)
@@ -95,7 +113,6 @@ public class NotificationSystem : INotificationSystem
             gameSession.Account.AccountLevel,
             CommandSourceType.InGame
         );
-
     }
 
     public void SendSystemMessageToAll(string message)

@@ -154,7 +154,7 @@ public class EntityFactoryService : IEntityFactoryService
         _logger.Information("Loaded {Count} templates from {FilePath}", templates.Length, filePath);
     }
 
-    public UOItemEntity GetBackpack()
+    public UOItemEntity GetNewBackpack()
     {
         if (_itemTemplates.TryGetValue("backpack", out var backpackTemplate))
         {

@@ -206,6 +206,8 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<MapLoader>();
             fileLoaderService.AddFileLoader<CliLocLoader>();
             fileLoaderService.AddFileLoader<ContainersDataLoader>();
+            fileLoaderService.AddFileLoader<RegionDataLoader>();
+            fileLoaderService.AddFileLoader<WeatherDataLoader>();
 
 
             DefaultCommands.RegisterDefaultCommands(commandService);

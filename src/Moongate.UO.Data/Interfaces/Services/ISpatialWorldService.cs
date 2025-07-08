@@ -9,13 +9,18 @@ using Moongate.UO.Data.Session;
 
 namespace Moongate.UO.Data.Interfaces.Services;
 
-
 /// <summary>
 /// Interface for spatial world service that provides spatial indexing and querying capabilities
 /// </summary>
 public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvider
 {
-    #region Entity Movement Events
+
+    delegate void EntityMovedSectorHandler(IPositionEntity entity, MapSector oldSector, MapSector newSector);
+
+    delegate void MobileMovedHandler(UOMobileEntity mobile, MapSector oldSector, MapSector newSector);
+
+    event EntityMovedSectorHandler EntityMovedSector;
+    event MobileMovedHandler MobileSectorMoved;
 
     /// <summary>
     /// Call this when a mobile moves to update spatial index
@@ -33,9 +38,6 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <param name="newLocation">New location</param>
     void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
 
-    #endregion
-
-    #region Spatial Queries
 
     /// <summary>
     /// Gets all players within view range of a location (for packet broadcasting)
@@ -81,9 +83,7 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <returns>WorldView containing all visible entities</returns>
     WorldView GetPlayerWorldView(UOMobileEntity player, int viewRange = 24);
 
-    #endregion
 
-    #region Entity Management
 
     /// <summary>
     /// Removes an entity from spatial index (call when entity is deleted)
@@ -92,15 +92,10 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <param name="mapIndex">Map index</param>
     void RemoveEntity(IPositionEntity entity, int mapIndex);
 
-    #endregion
-
-    #region Statistics and Monitoring
 
     /// <summary>
     /// Gets statistics about the spatial system performance
     /// </summary>
     /// <returns>Statistics about sectors and entities</returns>
     SectorSystemStats GetStats();
-
-    #endregion
 }

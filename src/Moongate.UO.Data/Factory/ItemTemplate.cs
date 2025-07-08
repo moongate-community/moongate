@@ -30,5 +30,5 @@ public class ItemTemplate : BaseTemplate
     /// <summary>
     /// List of container names this item can be placed in.
     /// </summary>
-    public List<string> Container { get; set; }
+    public List<string> Container { get; set; } = new();
 }

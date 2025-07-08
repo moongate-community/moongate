@@ -11,6 +11,10 @@ namespace Moongate.Server.Services;
 public class MapSectorSystem
 {
 
+    public delegate void EntityMovedSectorHandler(IPositionEntity entity, MapSector oldSector, MapSector newSector);
+
+    public event EntityMovedSectorHandler? EntityMovedSector;
+
     /// <summary>
     /// All sectors indexed by map and coordinates
     /// </summary>
@@ -100,6 +104,9 @@ public class MapSectorSystem
         {
             _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
         }
+
+        /// Notify listeners about the move
+        EntityMovedSector?.Invoke(entity, oldSectorObj, newSectorObj);
     }
 
     /// <summary>
@@ -266,17 +273,4 @@ public class MapSectorSystem
     }
 
 
-    public void Dispose()
-    {
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
 }

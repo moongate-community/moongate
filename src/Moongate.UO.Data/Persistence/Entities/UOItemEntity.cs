@@ -41,7 +41,7 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public bool IsContainer => GumpId.HasValue;
     public bool IsOnGround => ParentId == null || Location == new Point3D(-1, -1, -1);
 
-    public DateTime LastModified { get; set; }
+    //public DateTime LastModified { get; set; }
 
     public Map Map { get; set; } = Map.Felucca;
 
@@ -61,11 +61,9 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        LastAccessed = DateTime.Now;
-        LastModified = DateTime.UtcNow;
     }
 
-    public DateTime LastAccessed { get; set; }
+    //public DateTime LastAccessed { get; set; }
 
     public bool CanDecay => Decay != DecayType.None;
     public Dictionary<Point2D, ItemReference> ContainedItems { get; set; } = new();

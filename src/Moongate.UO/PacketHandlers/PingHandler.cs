@@ -10,7 +10,6 @@ namespace Moongate.UO.PacketHandlers;
 
 public class PingHandler : IGamePacketHandler
 {
-
     private readonly ILogger _logger = Log.ForContext<PingHandler>();
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
@@ -24,7 +23,11 @@ public class PingHandler : IGamePacketHandler
                 session.PingSequence = 0;
             }
 
-            _logger.Debug("Session {SessionId} received ping with sequence {Sequence}.", session.SessionId, pingPacket.Sequence.ToPacketString());
+            _logger.Verbose(
+                "Session {SessionId} received ping with sequence {Sequence}.",
+                session.SessionId,
+                pingPacket.Sequence.ToPacketString()
+            );
 
             var responsePacket = new PingPacket
             {
@@ -33,6 +36,5 @@ public class PingHandler : IGamePacketHandler
 
             session.SendPackets(responsePacket);
         }
-
     }
 }
