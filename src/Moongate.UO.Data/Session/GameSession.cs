@@ -99,6 +99,15 @@ public class GameSession : IDisposable, INotifyPropertyChanged
         }
     }
 
+    public void Move(Point3D newLocation)
+    {
+        if (Mobile.Location != newLocation)
+        {
+            Mobile.MoveTo(newLocation);
+            MobileLocationChanged?.Invoke(this, newLocation);
+        }
+    }
+
 
     public void Dispose()
     {

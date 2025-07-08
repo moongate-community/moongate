@@ -49,7 +49,7 @@ public class MobileService : IMobileService
 
         foreach (var mobile in mobiles)
         {
-            AddInWorld(mobile);
+            _availableMobiles[mobile.Id] = mobile;
         }
 
         _saveLock.Release();

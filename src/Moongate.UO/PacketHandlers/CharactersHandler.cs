@@ -68,6 +68,8 @@ public class CharactersHandler : IGamePacketHandler
         session.Mobile = mobile;
         mobile.IsPlayer = true;
 
+        _mobileService.AddInWorld(mobile);
+
         await _eventBusService.PublishAsync(new CharacterLoggedEvent(session.SessionId, character.MobileId, character.Name));
     }
 
@@ -94,7 +96,7 @@ public class CharactersHandler : IGamePacketHandler
 
         session.Account.RemoveCharacter(character);
 
-        // TODO: Send Save request
+        await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 
         var charactersAfterDelete = new CharacterAfterDeletePacket();
         charactersAfterDelete.FillCharacters(
@@ -152,15 +154,11 @@ public class CharactersHandler : IGamePacketHandler
 
         playerMobileEntity.RecalculateMaxStats();
 
-        playerMobileEntity.AddItem(ItemLayerType.Backpack, _entityFactoryService.GetBackpack());
+        playerMobileEntity.AddItem(ItemLayerType.Backpack, _entityFactoryService.GetNewBackpack());
 
         playerMobileEntity.IsPlayer = true;
 
-
         _mobileService.AddInWorld(playerMobileEntity);
-
-        await _accountService.SaveAsync();
-        await _mobileService.SaveAsync();
 
         var createContext =
             new CharacterCreatedEvent(
@@ -169,9 +167,7 @@ public class CharactersHandler : IGamePacketHandler
                 UoEventContext.CreateInstance()
             );
 
-
         await _eventBusService.PublishAsync(createContext);
-
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
 

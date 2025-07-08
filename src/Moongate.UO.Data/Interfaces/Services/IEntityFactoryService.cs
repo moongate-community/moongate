@@ -11,5 +11,5 @@ public interface IEntityFactoryService : IMoongateAutostartService
 
     Task LoadTemplatesAsync(string filePath);
 
-    UOItemEntity GetBackpack();
+    UOItemEntity GetNewBackpack();
 }
