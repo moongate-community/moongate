@@ -65,6 +65,11 @@ public class MapSector
         Bounds = new Rectangle2D(worldX, worldY, MapSectorConsts.SectorSize, MapSectorConsts.SectorSize);
     }
 
+    public override string ToString()
+    {
+        return $"Sector({MapIndex}, {SectorX}, {SectorY}) [{Bounds}]";
+    }
+
     /// <summary>
     /// Total number of entities in this sector
     /// </summary>
@@ -107,6 +112,7 @@ public class MapSector
                 {
                     _players[serial] = mobile;
                 }
+
                 break;
 
             case UOItemEntity item:
@@ -237,8 +243,8 @@ public class MapSector
         return entity switch
         {
             UOMobileEntity mobile => mobile.Id,
-            UOItemEntity item => item.Id,
-            _ => Serial.MinusOne
+            UOItemEntity item     => item.Id,
+            _                     => Serial.MinusOne
         };
     }
 

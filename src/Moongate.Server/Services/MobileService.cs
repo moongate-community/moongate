@@ -84,9 +84,9 @@ public class MobileService : IMobileService
             Id = lastSerial,
         };
 
-        AddMobile(mobile);
+        //AddMobile(mobile);
 
-        MobileCreated?.Invoke(mobile);
+        //MobileCreated?.Invoke(mobile);
 
         _saveLock.Release();
 
@@ -125,7 +125,7 @@ public class MobileService : IMobileService
         return SaveMobilesAsync();
     }
 
-    private void AddMobile(UOMobileEntity mobile)
+    public void AddMobile(UOMobileEntity mobile)
     {
         if (!_mobiles.TryAdd(mobile.Id, mobile))
         {

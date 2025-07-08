@@ -35,12 +35,22 @@ public static class GamePacketHandlerExtension
 
         networkService.RegisterPacketHandler<TPacket>((id, packet) =>
             {
-                var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
-                var gamePacketHandler = MoongateContext.Container.Resolve<TGamePacketHandler>();
+                try
+                {
+                    var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+                    var gamePacketHandler = MoongateContext.Container.Resolve<TGamePacketHandler>();
 
-                var gameSession = gameSessionService.GetSession(id);
+                    var gameSession = gameSessionService.GetSession(id);
 
-                return gamePacketHandler.HandlePacketAsync(gameSession, packet);
+                    return gamePacketHandler.HandlePacketAsync(gameSession, packet);
+                }
+                catch (Exception e)
+                {
+                    _logger.Error(e, "Error handling packet {PacketType} with handler {HandlerType}",
+                        typeof(TPacket).Name, typeof(TGamePacketHandler).Name);
+                    throw; // Re-throw to ensure the error is logged and handled properly
+                }
+
             }
         );
     }

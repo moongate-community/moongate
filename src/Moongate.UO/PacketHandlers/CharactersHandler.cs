@@ -157,6 +157,8 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.IsPlayer = true;
 
 
+        _mobileService.AddMobile(playerMobileEntity);
+
         await _accountService.SaveAsync();
         await _mobileService.SaveAsync();
 
