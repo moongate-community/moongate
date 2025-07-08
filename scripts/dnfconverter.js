@@ -104,12 +104,15 @@ function parseDFNToJSON(content) {
                 /// Special case: convert WORLD to mapId
                 const finalKey = camelKey === 'world' ? 'mapId' : camelKey;
 
+                /// Properties that should remain as numbers even if they are 0 or 1
+                const numericProperties = ['musicList', 'musiclist', 'abweath', 'abWeather', 'instanceId', 'instanceid', 'mapId', 'world'];
+
                 /// Convert values based on type
-                if (value === '0' || value === '1') {
-                    /// Convert 0/1 to boolean
+                if ((value === '0' || value === '1') && !numericProperties.includes(finalKey)) {
+                    /// Convert 0/1 to boolean only for boolean properties
                     currentData[finalKey] = value === '1';
                 } else if (/^\d+$/.test(value)) {
-                    /// Convert other numeric values to int
+                    /// Convert numeric values to int
                     currentData[finalKey] = parseInt(value);
                 } else {
                     /// Keep as string
@@ -173,10 +176,22 @@ function saveSection(result, sectionHeader, data, coordinates, comment) {
         }
     } else if (sectionHeader.startsWith('[MUSICLIST')) {
         const listName = sectionHeader.replace(/[\[\]]/g, '');
-        result.musicLists.push({
+
+        /// Extract ID from MUSICLIST name (e.g., "MUSICLIST 1" -> 1)
+        const idMatch = listName.match(/MUSICLIST\s+(\d+)/);
+        const musicListId = idMatch ? parseInt(idMatch[1]) : null;
+
+        const musicListData = {
             name: listName,
             ...data
-        });
+        };
+
+        /// Add ID if found
+        if (musicListId !== null) {
+            musicListData.id = musicListId;
+        }
+
+        result.musicLists.push(musicListData);
     } else if (sectionHeader === '[INSTALOG]') {
         if (coordinates.length > 0) {
             result.instalog.areas = coordinates.map(coord => ({
@@ -293,7 +308,7 @@ function main() {
     /// Create output directory if it doesn't exist
     const outputDir = path.dirname(outputFile);
     if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, {recursive: true});
+        fs.mkdirSync(outputDir, { recursive: true });
     }
 
     /// Perform conversion

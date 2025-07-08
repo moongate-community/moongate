@@ -97,15 +97,22 @@ function parseWeatherABToJSON(content) {
             if (['RAININTENSITY', 'SNOWINTENSITY', 'STORMINTENSITY'].includes(key)) {
                 currentData[camelKey] = parseIntensity(value);
             } else {
-                /// Convert values based on type
-                if (value === '0' || value === '1') {
-                    /// Convert 0/1 to boolean
-                    currentData[camelKey] = value === '1';
-                } else if (/^\d+$/.test(value)) {
-                    /// Convert other numeric values to int
+                /// In weather system, ALL properties are numeric (percentages, temperatures, etc.)
+                /// There are NO true boolean properties in weatherab.dfn
+                /// All values represent:
+                /// - Chances: 0-100 (percentages)
+                /// - Temperatures: can be negative/positive numbers
+                /// - Intensity values: damage percentages or ranges
+                /// - Drops: temperature change amounts
+                /// - Thresholds: temperature limits
+                /// - Light levels: 0-10 range
+                /// So we NEVER convert 0/1 to boolean in weather data
+
+                if (/^\d+$/.test(value)) {
+                    /// All numeric values stay as integers
                     currentData[camelKey] = parseInt(value);
                 } else {
-                    /// Keep as string
+                    /// Keep as string (shouldn't happen in weather data)
                     currentData[camelKey] = value;
                 }
             }
