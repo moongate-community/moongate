@@ -4,12 +4,16 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Interfaces.FileLoaders;
+using Serilog;
 
 namespace Moongate.UO.FileLoaders;
 
 public class WeatherDataLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;
+
+    private readonly ILogger _logger = Log.ForContext<WeatherDataLoader>();
+
 
     public WeatherDataLoader(DirectoriesConfig directoriesConfig)
     {
@@ -25,6 +29,11 @@ public class WeatherDataLoader : IFileLoader
         foreach (var weatherFile in weatherTypes)
         {
             var weatherData = JsonUtils.DeserializeFromFile<JsonWeatherWrap>(weatherFile);
+            _logger.Information(
+                "Loaded {WeatherType} weather from file: {FilePath}",
+                weatherData.WeatherTypes.Count,
+                weatherFile
+            );
         }
     }
 }
