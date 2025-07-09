@@ -102,7 +102,6 @@ public static class DefaultCommands
 
         context.Print("Adding item '{0}'...", item);
 
-
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
         var gameSession = gameSessionService.GetSession(context.SessionId);
 
