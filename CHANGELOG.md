@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.12.0"></a>
+## [0.12.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.12.0) (2025-07-11)
+
+### Features
+
+* **DropWearItemPacket:** add DropWearItemPacket class to handle dropping worn items ([d93eeda](https://www.github.com/moongate-community/moongate/commit/d93eedaa47fcf6ef6c3a7f7a765784ed0aac7ea9))
+
 <a name="0.11.0"></a>
 ## [0.11.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.11.0) (2025-07-08)
 
