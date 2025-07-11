@@ -47,9 +47,6 @@ BYTE[1] zLoc
 
         writer.Write((byte)Mobile.Z);
 
-
-
-
         return writer.ToArray();
     }
 }
