@@ -20,7 +20,7 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     delegate void MobileSectorMovedHandler(UOMobileEntity mobile, MapSector oldSector, MapSector newSector);
 
 
-    delegate void MobileMovedHandler(UOMobileEntity mobile, Point3D location);
+    delegate void MobileMovedHandler(UOMobileEntity mobile, Point3D location, WorldView worldView);
 
 
     event EntityMovedSectorHandler EntityMovedSector;

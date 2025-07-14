@@ -103,9 +103,14 @@ public class NotificationSystem : INotificationSystem
         self?.SendPackets(messagePacket);
     }
 
-    private void OnMobileMoved(UOMobileEntity mobile, Point3D location)
+    private void OnMobileMoved(UOMobileEntity mobile, Point3D location, WorldView worldView)
     {
         _logger.Debug("Mobile {MobileId} moved to {Location}", mobile.Id, location);
+
+        foreach (var otMobile in worldView.NearbyMobiles)
+        {
+            otMobile.OtherMobileMoved(mobile, location);
+        }
     }
 
     private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)

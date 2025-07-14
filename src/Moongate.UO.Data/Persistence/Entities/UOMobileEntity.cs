@@ -15,7 +15,6 @@ namespace Moongate.UO.Data.Persistence.Entities;
 
 public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyChanged
 {
-
     public event PropertyChangedEventHandler? PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
@@ -33,7 +32,7 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
 
 
     public delegate void MobileMovedEventHandler(
-        UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation
+        UOMobileEntity mobile, Point3D location
     );
 
     public delegate void ChatMessageDelegate(
@@ -46,16 +45,24 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     );
 
     public event ChatMessageReceiveDelegate? ChatMessageReceived;
-
     public event ChatMessageDelegate? ChatMessageSent;
 
+    /// <summary>
+    /// Called when a mobile != of self moves to a new location.
+    /// </summary>
+    public event MobileMovedEventHandler? MobileMoved;
+
+
+    public void OtherMobileMoved(UOMobileEntity mobile, Point3D location)
+    {
+        MobileMoved?.Invoke(mobile, location);
+    }
 
 
     public void MoveTo(Point3D newLocation)
     {
         var oldLocation = Location;
         Location = newLocation;
-
     }
 
     public Serial Id { get; set; }

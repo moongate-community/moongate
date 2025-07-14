@@ -106,8 +106,9 @@ public class SpatialWorldService : ISpatialWorldService
         var mapIndex = GetMapIndex(mobile);
         _sectorSystem.MoveEntity(mobile, mapIndex, oldLocation, newLocation);
 
+        var worldView = GetPlayerWorldView(mobile);
 
-        MobileMoved?.Invoke(mobile, newLocation);
+        MobileMoved?.Invoke(mobile, newLocation, worldView);
 
 
         _logger.Verbose(
