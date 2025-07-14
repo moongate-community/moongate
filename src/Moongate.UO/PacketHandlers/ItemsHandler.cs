@@ -25,11 +25,43 @@ public class ItemsHandler : IGamePacketHandler
         if (packet is DropItemPacket dropItemPacket)
         {
             await HandleDropItemAsync(session, dropItemPacket);
+            return;
         }
-        else if (packet is PickUpItemPacket pickUpItemPacket)
+
+        if (packet is PickUpItemPacket pickUpItemPacket)
         {
             await HandlePickUpItemAsync(session, pickUpItemPacket);
+            return;
         }
+
+        if (packet is DropWearItemPacket dropWearItemPacket)
+        {
+            await HandleDropWearItemAsync(session, dropWearItemPacket);
+            return;
+        }
+    }
+
+    private async Task HandleDropWearItemAsync(GameSession session, DropWearItemPacket packet)
+    {
+        var mobile = session.Mobile;
+
+        if (mobile.Id != packet.MobileId)
+        {
+            _logger.Warning("Player {PlayerId} attempted to drop item on another player", session.Mobile.Id);
+            return;
+        }
+
+        var droppingItem = _itemService.GetItem(packet.ItemId);
+
+        mobile.AddItem(packet.Layer, droppingItem);
+        droppingItem.ParentId = mobile.Id;
+
+        _logger.Information(
+            "Wear groud item {DroppingItemId} on layer {Layer} for mobile {MobileId}",
+            droppingItem.Name,
+            packet.Layer,
+            packet.MobileId
+        );
     }
 
     private async Task HandleDropItemAsync(GameSession session, DropItemPacket packet)

@@ -1,4 +1,5 @@
 /**
+
  * Moongate Server v0.3.89.0 JavaScript API TypeScript Definitions
  * Auto-generated documentation on 2025-07-08 16:13:20
  **/

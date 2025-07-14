@@ -183,6 +183,7 @@ await ConsoleApp.RunAsync(
 
             networkService.RegisterGamePacketHandler<DropItemPacket, ItemsHandler>();
             networkService.RegisterGamePacketHandler<PickUpItemPacket, ItemsHandler>();
+            networkService.RegisterGamePacketHandler<DropWearItemPacket, ItemsHandler>();
         };
 
 
