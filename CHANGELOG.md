@@ -2,6 +2,133 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.12.0"></a>
+## [0.12.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.12.0) (2025-07-11)
+
+### Features
+
+* **DropWearItemPacket:** add DropWearItemPacket class to handle dropping worn items ([d93eeda](https://www.github.com/moongate-community/moongate/commit/d93eedaa47fcf6ef6c3a7f7a765784ed0aac7ea9))
+
+<a name="0.11.0"></a>
+## [0.11.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.11.0) (2025-07-08)
+
+### Features
+
+* added regions and weather data, thank you UOX3 team! ([5040d71](https://www.github.com/moongate-community/moongate/commit/5040d7176899fe39d18f0859b82e116e7e1f0027))
+* Added regions and weather file from conversion ([2ca3164](https://www.github.com/moongate-community/moongate/commit/2ca31644525563aa2b3c4575067f118f2b1bf3a8))
+* added script for converter dnf file from UOX to Moongate ([cb6195f](https://www.github.com/moongate-community/moongate/commit/cb6195f7c7bec79d31706bddc55f6cfd9c770265))
+* **mobiles.mga:** update Moongate Server version to v0.3.86.0 in JavaScript API ([8318ced](https://www.github.com/moongate-community/moongate/commit/8318ced93cf9c26e9130d04a50e40338e97bc3b5))
+* **moongate:** update Moongate Server version to v0.3.78.0 in JavaScript API TypeScript Definitions ([1fefb75](https://www.github.com/moongate-community/moongate/commit/1fefb75bbfb001a86c345fcad3addb9104a34c39))
+* **Program.cs:** add RegionDataLoader and WeatherDataLoader to load new region and weather data ([6aa20da](https://www.github.com/moongate-community/moongate/commit/6aa20da70ae85b95a5e36f7db6af1cef8df6199f))
+
+<a name="0.10.0"></a>
+## [0.10.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.10.0) (2025-07-07)
+
+### Features
+
+* add new Moongate Server files and update version to v0.3.67.0 ([0c19020](https://www.github.com/moongate-community/moongate/commit/0c190209370734fa207b8b1ec0bfecac77a7346a))
+* **bootstrap.js:** refactor code for better readability and consistency ([20cb3c5](https://www.github.com/moongate-community/moongate/commit/20cb3c538741430cdcb191f18a9c9077dd2d4982))
+* **containers:** add default container data in JSON format for various items ([c00362d](https://www.github.com/moongate-community/moongate/commit/c00362d908d765aa95552dec9c3706a4f1b1cd40))
+* **moongate:** add support for process.env.PORT environment variable to server.ts ([538b178](https://www.github.com/moongate-community/moongate/commit/538b178b344e99c52898b602ea5c05f937d4ccf7))
+* **moongate:** update Moongate Server JavaScript API version to v0.3.76.0 ([ab8c84e](https://www.github.com/moongate-community/moongate/commit/ab8c84eb1e89af8644affca75d18ffd96ef106c0))
+* **server:** update Moongate Server version to v0.3.70.0 in TypeScript Definitions ([14b8f7a](https://www.github.com/moongate-community/moongate/commit/14b8f7a3dec80541122a2e0bed6e1dbbf8c61d75))
+
+<a name="0.9.1"></a>
+## [0.9.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.9.1) (2025-07-04)
+
+<a name="0.9.0"></a>
+## [0.9.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.9.0) (2025-07-04)
+
+### Features
+
+* **index.d.ts:** update Moongate Server version to v0.3.62.0 and regenerate documentation ([9cc74ec](https://www.github.com/moongate-community/moongate/commit/9cc74ec7357ae4534b336b5e13948ea984acd94a))
+* **moongate:** update Moongate Server version to v0.3.64.0 in TypeScript Definitions ([02d6f56](https://www.github.com/moongate-community/moongate/commit/02d6f561c993648bd4951ca782b91d17c25c3d76))
+* **Moongate.Server:** add MegaCliloc packet support for tooltip information ([f325d3a](https://www.github.com/moongate-community/moongate/commit/f325d3ab21f2f64d627f3d19be6d397a8c4eba91))
+
+<a name="0.8.0"></a>
+## [0.8.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.8.0) (2025-07-03)
+
+### Features
+
+* add support for Moongate Server v0.3.52.0 JavaScript API TypeScript Definitions ([11a6545](https://www.github.com/moongate-community/moongate/commit/11a65450453cce8ca6460cc736910605235b42fd))
+* **DiceNotation:** add Dice class with methods for parsing and rolling dice expressions ([58bc851](https://www.github.com/moongate-community/moongate/commit/58bc851ba7e4f461beb295e86821db6b82c2c75e))
+* **DrawContainer.cs:** add DrawContainer class to handle drawing container packets for UO items ([5d111ec](https://www.github.com/moongate-community/moongate/commit/5d111ec127fb7d1a86911fc06d889dc9ea0e3b6f))
+* **EntityFactoryService.cs:** add method to add default item templates, including a backpack template ([a31f628](https://www.github.com/moongate-community/moongate/commit/a31f6286a31ef6812b6b0db5df2cd57cd8373906))
+* **index.d.ts:** update Moongate Server version to v0.3.35.0 and update auto-generated documentation timestamp ([593b376](https://www.github.com/moongate-community/moongate/commit/593b376d1541a62ba2c2c4fb4e943351417525ea))
+* **index.d.ts:** update Moongate Server version to v0.3.58.0 in TypeScript definitions ([1020176](https://www.github.com/moongate-community/moongate/commit/10201769053fb6bc4652f2f5f1a76594ba9cba4a))
+* **Json:** add RandomValueConverter class to handle random value expressions ([6924e30](https://www.github.com/moongate-community/moongate/commit/6924e30bbcf79f3e01bb4093f502f038af999ff5))
+* **mobiles.mga:** update Moongate Server version to v0.3.39.0 ([902c3ba](https://www.github.com/moongate-community/moongate/commit/902c3baa1ae8c63d2df3600b163521bd068b103e))
+* **moongate:** add support for character created event handling and item ([b219302](https://www.github.com/moongate-community/moongate/commit/b219302e25ad5c29b298e2d3303294b4797ea60e))
+* **moongate:** add support for new items and mobiles saves in the game ([4b8da10](https://www.github.com/moongate-community/moongate/commit/4b8da10dbab30cc5dc90915a3ee4e5b747f9fe5f))
+* **moongate:** update Moongate Server version to v0.3.41.0 in JavaScript API ([4d1fb06](https://www.github.com/moongate-community/moongate/commit/4d1fb062f23ec995f3eb7ec5c062f1609f3db21b))
+* **moongate:** update Moongate Server version to v0.3.42.0 in TypeScript Definitions ([459e839](https://www.github.com/moongate-community/moongate/commit/459e8393791fcdca353004c68849a0ed14c67b29))
+* **moongate:** update Moongate Server version to v0.3.43.0 ([5c6fcb2](https://www.github.com/moongate-community/moongate/commit/5c6fcb20488f810450b9e3f59b622a4279a94178))
+* **moongate:** update Moongate Server version to v0.3.49.0 in JavaScript API ([5d0e84c](https://www.github.com/moongate-community/moongate/commit/5d0e84cf211d0430c852f67ca8f43d2061036dfd))
+* **moongate:** update Moongate Server version to v0.3.57.0 in TypeScript Definitions ([49e5982](https://www.github.com/moongate-community/moongate/commit/49e5982dc8a64b56322f0e120ae7a38a02fc0e0f))
+* **UOContext.cs:** change LocalizedMessages dictionary value type from CliLocEntry to StringEntry for better data representation ([bc13477](https://www.github.com/moongate-community/moongate/commit/bc134770f90d75de6036833c4a4b86768be892ba))
+* **UOItemEntity.cs:** add DecayType property to UOItemEntity for item decay handling ([0adf76a](https://www.github.com/moongate-community/moongate/commit/0adf76ac32d2084c6506a12a2d8e18adff9704b6))
+
+### Bug Fixes
+
+* **mobiles.mga:** resolve binary file differences in mobiles.mga ([2031f02](https://www.github.com/moongate-community/moongate/commit/2031f02df2c4d1c82664cd03c9b76583f92f24ec))
+
+<a name="0.7.0"></a>
+## [0.7.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.7.0) (2025-06-26)
+
+### Features
+
+* **bootstrap.js:** add new test command 'lilli' and echo command to bootstrap script ([452eafb](https://www.github.com/moongate-community/moongate/commit/452eafb625bfd710ccc0bab13f3914bb329cef69))
+* **index.d.ts:** update Moongate Server version to v0.3.26.0 and auto-generated documentation timestamp ([96ddf1e](https://www.github.com/moongate-community/moongate/commit/96ddf1ef872605f7f6219e0ad9ad74fd942e90ce))
+* **index.d.ts:** update Moongate Server version to v0.3.28.0 and regenerate API TypeScript Definitions ([c334303](https://www.github.com/moongate-community/moongate/commit/c334303d11ac9aed520d55fb720dc78ee3823bb7))
+* **LoadScriptModule.cs:** add LoadScriptModule to handle script loading and execution ([2e1dce0](https://www.github.com/moongate-community/moongate/commit/2e1dce0a8e10aa5ea0d15283c90b8441aa95c213))
+* **moongate:** add new files for saves and scripts, update Moongate Server ([af12bae](https://www.github.com/moongate-community/moongate/commit/af12bae683da9cb9922d8909bcb540b9c1ba9f46))
+* **Program.cs:** add ConsoleModule to script engine for additional functionality ([64a4f49](https://www.github.com/moongate-community/moongate/commit/64a4f49c3800de9c00a6e51d798e8bac1feadf94))
+* **Program.cs:** add NotificationSystem and PlayerNotificationSystem services ([2914c73](https://www.github.com/moongate-community/moongate/commit/2914c736ef27d7a5ee96442db21c94c14da68932))
+
+### Bug Fixes
+
+* **index.d.ts:** update Moongate Server version to 0.3.27.0 in TypeScript definitions ([7600642](https://www.github.com/moongate-community/moongate/commit/7600642c5dee85c141c2c8f518018c8f9972b86a))
+
+<a name="0.6.0"></a>
+## [0.6.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.6.0) (2025-06-25)
+
+### Features
+
+* **index.d.ts:** update Moongate Server version to v0.3.20.0 and regenerate documentation ([7c8c704](https://www.github.com/moongate-community/moongate/commit/7c8c704e626625a195c0d9161b2f3b6448923e9a))
+* **index.d.ts:** update Moongate Server version to v0.3.21.0 in TypeScript definitions ([d74f899](https://www.github.com/moongate-community/moongate/commit/d74f8993a9c1556df73f8c3e37e8de0e94d59b89))
+* **moongate.json:** enable logging packets to console in the network section ([2248e97](https://www.github.com/moongate-community/moongate/commit/2248e9796384bb5605c5a5c910660378b18c8ad2))
+
+### Bug Fixes
+
+* **index.d.ts:** update Moongate Server version in TypeScript definitions to v0.3.22.0 ([5f9153f](https://www.github.com/moongate-community/moongate/commit/5f9153f5df4e1c3ec1cb0a04d69256778c313eb7))
+
+<a name="0.5.0"></a>
+## [0.5.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.5.0) (2025-06-24)
+
+### Features
+
+* **CastTargetedSpellData.cs:** add CastTargetedSpellData class to handle subcommand data for casting targeted spells ([949b639](https://www.github.com/moongate-community/moongate/commit/949b6395564a8b57b208e59bdee06c24beace04f))
+* **EventLoopService.cs:** add cancellationToken parameter to PublishAsync method call for better control over asynchronous operations ([2e4dbaf](https://www.github.com/moongate-community/moongate/commit/2e4dbaf7f8271e353a771c58c4eb13f12a2c1607))
+* **GeneralInformationExtensions.cs:** add extension methods for parsing and getting specific data from General Information packets to improve code readability and maintainability ([56a86d1](https://www.github.com/moongate-community/moongate/commit/56a86d1e382a09e14db0f573425852ab4c68224f))
+* **GeneralInformationFactory.cs:** add GeneralInformationFactory class to create ([ae8a1dc](https://www.github.com/moongate-community/moongate/commit/ae8a1dc41441cedb1e6ce81e0185812341724537))
+* **GeneralInformationPacket.cs:** add GeneralInformationPacket class to handle ([b80d90c](https://www.github.com/moongate-community/moongate/commit/b80d90c9d1c54e82bc6fe105125b306024c6eeae))
+* **MobileDrawPacket.cs:** add new packet class MobileDrawPacket to handle drawing mobile entities ([51b7a90](https://www.github.com/moongate-community/moongate/commit/51b7a90767b85c56f629285b83c2099fb1445de1))
+* **moongate:** add moongate.json configuration file with network and web server settings ([17af1a8](https://www.github.com/moongate-community/moongate/commit/17af1a83954a62fb7a7d0b028642196831345a4c))
+* **ScreenSizeData.cs:** add ScreenSizeData class to handle screen size subcommand data ([41102be](https://www.github.com/moongate-community/moongate/commit/41102becf45f772fd84acbe343246cc36ee71c68))
+* **SubCommandClientFlagExtensions.cs:** add extension methods for SubCommandClientFlag enum to parse, check client flags, determine client type, get latest expansion, and provide detailed and summary descriptions of client capabilities ([fa5c133](https://www.github.com/moongate-community/moongate/commit/fa5c1338afe366cf31450d2e0d00c9c6f5053746))
+* **subCommands:** add new subcommand classes for CloseGenericGumpData, ClosedStatusGumpData, DamageData, and EnableMapDiffData to handle specific packet data structures. ([f673b89](https://www.github.com/moongate-community/moongate/commit/f673b89ffd7036d19b5ae8dd740c3a512cfe0b54))
+
+<a name="0.4.0"></a>
+## [0.4.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.4.0) (2025-06-22)
+
+### Features
+
+* **index.d.ts:** update Moongate Server version to v0.2.9.0 in TypeScript definitions ([22687a5](https://www.github.com/moongate-community/moongate/commit/22687a54bd39e3c3eed2596594005c8f1528b913))
+* **KeywordList.cs:** add a new class KeywordList to manage a list of keywords efficiently ([6e4f061](https://www.github.com/moongate-community/moongate/commit/6e4f06151536ef93161d4a56bcf48297de4bd2d9))
+* **mobiles.mga:** update Moongate Server mobiles save file ([2bbd767](https://www.github.com/moongate-community/moongate/commit/2bbd7674c6e36feb9b6ed2eb671da0bf61dd8e17))
+* **Packets:** add DrawGamePlayerPacket, WarModePacket, and MapChangePacket ([632e1ab](https://www.github.com/moongate-community/moongate/commit/632e1ab68b87ea897348bc4a33a0f30e99dc51ee))
+* **SetWeatherPacket.cs:** add SetWeatherPacket class to handle setting weather in the game ([c068e5a](https://www.github.com/moongate-community/moongate/commit/c068e5a4b3f9af274e96fcbc715153ef6260d84d))
+
 <a name="0.3.0"></a>
 ## [0.3.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.3.0) (2025-06-20)
 
