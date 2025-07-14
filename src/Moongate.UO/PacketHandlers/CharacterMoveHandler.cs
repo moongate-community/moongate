@@ -49,9 +49,7 @@ public class CharacterMoveHandler : IGamePacketHandler
 
         newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
 
-
-        // TODO: Move logic in SpatialWorldService
-        // session.Move(newLocation);
+        _mobileService.MoveMobile(session.Mobile, newLocation);
 
         if (session.MoveSequence == 255)
         {

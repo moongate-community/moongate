@@ -22,4 +22,5 @@ public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSav
     UOMobileEntity CreateMobile();
     UOMobileEntity? GetMobile(Serial id);
     IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate);
+    void MoveMobile(UOMobileEntity mobile, Point3D newLocation);
 }

@@ -25,7 +25,8 @@ public class SpatialWorldService : ISpatialWorldService
 
 
     public event ISpatialWorldService.EntityMovedSectorHandler? EntityMovedSector;
-    public event ISpatialWorldService.MobileMovedHandler? MobileSectorMoved;
+    public event ISpatialWorldService.MobileSectorMovedHandler? MobileSectorMoved;
+    public event ISpatialWorldService.MobileMovedHandler? MobileMoved;
 
     public SpatialWorldService(IItemService itemService, IMobileService mobileService, IDiagnosticService diagnosticService)
     {
@@ -104,6 +105,10 @@ public class SpatialWorldService : ISpatialWorldService
     {
         var mapIndex = GetMapIndex(mobile);
         _sectorSystem.MoveEntity(mobile, mapIndex, oldLocation, newLocation);
+
+
+        MobileMoved?.Invoke(mobile, newLocation);
+
 
         _logger.Verbose(
             "Moved mobile {Serial} from {OldLocation} to {NewLocation}",
