@@ -109,6 +109,21 @@ public class MobileService : IMobileService
         return _availableMobiles.Values.AsValueEnumerable().Where(predicate).ToList();
     }
 
+    public void MoveMobile(UOMobileEntity mobile, Point3D newLocation)
+    {
+        if (mobile.Location == newLocation)
+        {
+            return;
+        }
+
+        var oldLocation = mobile.Location;
+        mobile.Location = newLocation;
+
+        _logger.Verbose("Mobile {Id} moved from {OldLocation} to {NewLocation}", mobile.Id, oldLocation, newLocation);
+
+        MobileMoved?.Invoke(mobile, oldLocation, newLocation);
+    }
+
 
     public void Dispose()
     {
@@ -134,12 +149,5 @@ public class MobileService : IMobileService
         }
 
         MobileAdded?.Invoke(mobile);
-        mobile.MobileMoved += MobileOnMobileMoved;
-    }
-
-    private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
-    {
-        _logger.Verbose("Mobile {Id} moved from {OldLocation} to {NewLocation}", mobile.Id, oldLocation, newLocation);
-        MobileMoved?.Invoke(mobile, oldLocation, newLocation);
     }
 }

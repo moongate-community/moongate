@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
@@ -12,12 +13,26 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEntity
+public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyChanged
 {
-    public delegate void MobileEventHandler(UOMobileEntity mobile);
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
+    }
+
 
     public delegate void MobileMovedEventHandler(
-        UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation
+        UOMobileEntity mobile, Point3D location
     );
 
     public delegate void ChatMessageDelegate(
@@ -30,37 +45,29 @@ public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEn
     );
 
     public event ChatMessageReceiveDelegate? ChatMessageReceived;
-
     public event ChatMessageDelegate? ChatMessageSent;
 
+    /// <summary>
+    /// Called when a mobile != of self moves to a new location.
+    /// </summary>
+    public event MobileMovedEventHandler? MobileMoved;
 
-    public event MobileEventHandler SelfMoved;
-    public event MobileEventHandler OtherMobileMoved;
 
-    public event MobileMovedEventHandler MobileMoved;
-
-    public void OnSelfMoved()
+    public void OtherMobileMoved(UOMobileEntity mobile, Point3D location)
     {
-        SelfMoved?.Invoke(this);
+        MobileMoved?.Invoke(mobile, location);
     }
+
 
     public void MoveTo(Point3D newLocation)
     {
         var oldLocation = Location;
         Location = newLocation;
-        OnSelfMoved();
-        MobileMoved?.Invoke(this, oldLocation, newLocation);
-    }
-
-    public void OnOtherMobileMoved(UOMobileEntity other)
-    {
-        OtherMobileMoved?.Invoke(other);
     }
 
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
-
 
 
     [JsonIgnore] public bool IsPlayer { get; set; }
@@ -218,8 +225,6 @@ public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEn
     }
 
 
-
-
     public virtual void ReceiveSpeech(
         UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font
     )
@@ -283,7 +288,4 @@ public class UOMobileEntity : INotifyPropertyChanged, IPositionEntity, ISerialEn
 
         return flags;
     }
-
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 }

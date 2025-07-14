@@ -1,5 +1,6 @@
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -12,6 +13,13 @@ namespace Moongate.UO.PacketHandlers;
 public class CharacterMoveHandler : IGamePacketHandler
 {
     private readonly ILogger _logger = Log.ForContext<CharacterMoveHandler>();
+
+    private readonly IMobileService _mobileService;
+
+    public CharacterMoveHandler(IMobileService mobileService)
+    {
+        _mobileService = mobileService;
+    }
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {
@@ -41,9 +49,7 @@ public class CharacterMoveHandler : IGamePacketHandler
 
         newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
 
-
-        // TODO: Move logic in SpatialWorldService
-        session.Move(newLocation);
+        _mobileService.MoveMobile(session.Mobile, newLocation);
 
         if (session.MoveSequence == 255)
         {

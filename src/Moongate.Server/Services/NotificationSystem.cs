@@ -2,8 +2,11 @@ using System.ComponentModel;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Context;
+using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -21,21 +24,16 @@ public class NotificationSystem : INotificationSystem
 
     private readonly IGameSessionService _gameSessionService;
     private readonly IMobileService _mobileService;
-    private readonly IPlayerNotificationSystem _playerNotificationSystem;
     private readonly ICommandSystemService _commandSystemService;
-
     private readonly ISpatialWorldService _spatialWorldService;
 
-
     public NotificationSystem(
-        IMobileService mobileService, IGameSessionService gameSessionService,
-        IPlayerNotificationSystem playerNotificationSystem, ICommandSystemService commandSystemService,
+        IMobileService mobileService, IGameSessionService gameSessionService, ICommandSystemService commandSystemService,
         ISpatialWorldService spatialWorldService
     )
     {
         _mobileService = mobileService;
         _gameSessionService = gameSessionService;
-        _playerNotificationSystem = playerNotificationSystem;
         _commandSystemService = commandSystemService;
         _spatialWorldService = spatialWorldService;
 
@@ -43,6 +41,76 @@ public class NotificationSystem : INotificationSystem
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
 
         _spatialWorldService.MobileSectorMoved += OnMobileSectorMoved;
+        _spatialWorldService.MobileMoved += OnMobileMoved;
+
+        _mobileService.MobileAdded += OnMobileAdded;
+    }
+
+    private void OnMobileAdded(UOMobileEntity mobile)
+    {
+        if (mobile.IsPlayer)
+        {
+            mobile.ChatMessageReceived += PlayerOnChatMessageReceived;
+            mobile.ChatMessageSent += PlayerOnChatMessageSent;
+        }
+    }
+
+    private void PlayerOnChatMessageSent(
+        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
+    {
+        _logger.Debug("Player {MobileId} sent chat message: {Message}", mobile?.Id, text);
+
+        var messagePacket = new UnicodeSpeechResponsePacket()
+        {
+            Font = font,
+            Graphic = graphic,
+            Hue = hue,
+            IsUnicode = true,
+            Serial = mobile.Id,
+            MessageType = messageType,
+            Name = mobile?.Name ?? string.Empty,
+            Text = text,
+        };
+
+        mobile.SendPackets(messagePacket);
+    }
+
+    private void PlayerOnChatMessageReceived(
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        int font
+    )
+    {
+        _logger.Debug(
+            "Player {MobileId} received chat message from {SenderId}: {Message}",
+            self?.Id,
+            sender == null ? "System" : sender.Id,
+            text
+        );
+
+        var messagePacket = new UnicodeSpeechResponsePacket()
+        {
+            Font = font,
+            Graphic = graphic,
+            Hue = hue == 0 ? (short)1310 : hue,
+            IsUnicode = true,
+            Serial = sender?.Id ?? Serial.Zero,
+            MessageType = messageType,
+            Name = sender?.Name ?? "System",
+            Text = text,
+        };
+
+        self?.SendPackets(messagePacket);
+    }
+
+    private void OnMobileMoved(UOMobileEntity mobile, Point3D location, WorldView worldView)
+    {
+        _logger.Debug("Mobile {MobileId} moved to {Location}", mobile.Id, location);
+
+        foreach (var otMobile in worldView.NearbyMobiles)
+        {
+            otMobile.OtherMobileMoved(mobile, location);
+        }
     }
 
     private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)
@@ -55,46 +123,10 @@ public class NotificationSystem : INotificationSystem
 
     private void OnGameSessionBeforeDestroy(GameSession session)
     {
-        session.MobileChanged -= OnGameSessionMobileChanged;
-        _playerNotificationSystem.UntrackMobile(session.Mobile);
     }
 
     private void OnGameSessionCreated(GameSession session)
     {
-        session.MobileChanged += OnGameSessionMobileChanged;
-    }
-
-    private void OnGameSessionMobileChanged(object sender, UOMobileEntity entity)
-    {
-        entity.PropertyChanged += OnMobilePropertyChanged;
-        _playerNotificationSystem.TrackMobile(entity);
-    }
-
-    private void OnMobilePropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(UOMobileEntity.Location))
-        {
-            if (sender is UOMobileEntity mobile)
-            {
-                HandleMobileMovement(mobile);
-            }
-        }
-    }
-
-    private void HandleMobileMovement(UOMobileEntity mobile)
-    {
-        var nonPlayersToNotify =
-            _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
-
-        foreach (var other in nonPlayersToNotify)
-        {
-            if (other.Id == mobile.Id)
-            {
-                continue;
-            }
-
-            other.OnOtherMobileMoved(mobile);
-        }
     }
 
 
@@ -151,6 +183,7 @@ public class NotificationSystem : INotificationSystem
             if (other.Id == mobile.Id)
             {
                 mobile.Speech(messageType, hue, text, graphic, font);
+                continue;
             }
 
             other.ReceiveSpeech(mobile, messageType, hue, text, graphic, font);

@@ -121,7 +121,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
                 .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
-                .AddService(typeof(IPlayerNotificationSystem), typeof(PlayerNotificationSystem))
+
 
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
