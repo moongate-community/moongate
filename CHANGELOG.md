@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.13.0"></a>
+## [0.13.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.13.0) (2025-07-14)
+
+### Features
+
+* **DropWearItemPacket:** add DropWearItemPacket class to handle dropping worn items ([0c69421](https://www.github.com/moongate-community/moongate/commit/0c69421ff82cc1eb6f37bde176a6724a134190cc))
+* **notification:** notify nearby mobiles when a mobile moves ([f443702](https://www.github.com/moongate-community/moongate/commit/f443702254db46c29dbe02904ac71b870da29d7b))
+
 <a name="0.12.1"></a>
 ## [0.12.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.12.1) (2025-07-14)
 
