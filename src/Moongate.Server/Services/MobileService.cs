@@ -134,7 +134,6 @@ public class MobileService : IMobileService
         }
 
         MobileAdded?.Invoke(mobile);
-        mobile.MobileMoved += MobileOnMobileMoved;
     }
 
     private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)

@@ -55,13 +55,11 @@ public class NotificationSystem : INotificationSystem
 
     private void OnGameSessionBeforeDestroy(GameSession session)
     {
-        session.MobileChanged -= OnGameSessionMobileChanged;
         _playerNotificationSystem.UntrackMobile(session.Mobile);
     }
 
     private void OnGameSessionCreated(GameSession session)
     {
-        session.MobileChanged += OnGameSessionMobileChanged;
     }
 
     private void OnGameSessionMobileChanged(object sender, UOMobileEntity entity)
@@ -83,18 +81,9 @@ public class NotificationSystem : INotificationSystem
 
     private void HandleMobileMovement(UOMobileEntity mobile)
     {
-        var nonPlayersToNotify =
-            _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
 
-        foreach (var other in nonPlayersToNotify)
-        {
-            if (other.Id == mobile.Id)
-            {
-                continue;
-            }
 
-            other.OnOtherMobileMoved(mobile);
-        }
+
     }
 
 

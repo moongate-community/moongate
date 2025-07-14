@@ -8,15 +8,8 @@ using Serilog;
 
 namespace Moongate.UO.Data.Session;
 
-public class GameSession : IDisposable, INotifyPropertyChanged
+public class GameSession : IDisposable
 {
-    public delegate void ObjectChanged<in TEntity>(object sender, TEntity entity) ;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public event ObjectChanged<UOMobileEntity> MobileChanged;
-
-    public event ObjectChanged<Point3D> MobileLocationChanged;
-
     public string SessionId { get; set; }
     public UOAccountEntity Account { get; set; }
     public int Seed { get; set; }
@@ -28,29 +21,6 @@ public class GameSession : IDisposable, INotifyPropertyChanged
     public NetworkSessionFeatureType Features { get; private set; } = NetworkSessionFeatureType.None;
     public NetworkSessionStateType State { get; private set; } = NetworkSessionStateType.None;
     public MoongateTcpClient NetworkClient { get; set; }
-
-
-    public GameSession()
-    {
-        PropertyChanged += OnInternalPropertyChanged;
-    }
-
-    private void OnInternalPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(Mobile))
-        {
-            MobileChanged?.Invoke(this, Mobile);
-            Mobile.PropertyChanged += MobileOnPropertyChanged;
-        }
-    }
-
-    private void MobileOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (sender is UOMobileEntity mobile && e.PropertyName == nameof(mobile.Location))
-        {
-            MobileLocationChanged?.Invoke(this, mobile.Location);
-        }
-    }
 
     public void SetState(NetworkSessionStateType state)
     {
@@ -88,25 +58,6 @@ public class GameSession : IDisposable, INotifyPropertyChanged
         Features = features;
     }
 
-    public void Move(DirectionType direction)
-    {
-        var newLocation = Mobile.Location + direction;
-
-        if (Mobile.Location != newLocation)
-        {
-            Mobile.MoveTo(newLocation);
-            MobileLocationChanged?.Invoke(this, newLocation);
-        }
-    }
-
-    public void Move(Point3D newLocation)
-    {
-        if (Mobile.Location != newLocation)
-        {
-            Mobile.MoveTo(newLocation);
-            MobileLocationChanged?.Invoke(this, newLocation);
-        }
-    }
 
 
     public void Dispose()
@@ -117,6 +68,5 @@ public class GameSession : IDisposable, INotifyPropertyChanged
         NetworkClient = null;
         Mobile = null;
         Account = null;
-        PropertyChanged -= OnInternalPropertyChanged;
     }
 }

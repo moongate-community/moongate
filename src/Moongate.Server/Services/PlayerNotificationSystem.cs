@@ -19,7 +19,6 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
 
     public void TrackMobile(UOMobileEntity mobile)
     {
-        mobile.OtherMobileMoved += MobileOnOtherMobileMoved;
         mobile.ChatMessageSent += MobileOnChatMessageSent;
         mobile.ChatMessageReceived += MobileOnChatMessageReceived;
 
@@ -84,7 +83,6 @@ public class PlayerNotificationSystem : IPlayerNotificationSystem
 
     public void UntrackMobile(UOMobileEntity mobile)
     {
-        mobile.OtherMobileMoved -= MobileOnOtherMobileMoved;
         mobile.ChatMessageSent -= MobileOnChatMessageSent;
         mobile.ChatMessageReceived -= MobileOnChatMessageReceived;
     }

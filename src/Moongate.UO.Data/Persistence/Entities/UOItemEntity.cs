@@ -13,7 +13,6 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public delegate void ItemMovedEventHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
 
-
     public event ItemMovedEventHandler? ItemMoved;
 
     public event ContainerItemChangedEventHandler? ContainerItemAdded;
