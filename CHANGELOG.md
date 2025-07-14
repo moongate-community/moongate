@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.12.1"></a>
+## [0.12.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.12.1) (2025-07-14)
+
+### Bug Fixes
+
+* **index.d.ts:** update Moongate Server version in TypeScript definitions to v0.3.89.0 ([caf89b5](https://www.github.com/moongate-community/moongate/commit/caf89b50192d19c7a1ad7b99958fd344537efda0))
+
 <a name="0.12.0"></a>
 ## [0.12.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.12.0) (2025-07-11)
 
