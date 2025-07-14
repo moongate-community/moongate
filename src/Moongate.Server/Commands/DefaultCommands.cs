@@ -9,6 +9,7 @@ using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
+using Moongate.UO.Interfaces.Services.Systems;
 
 namespace Moongate.Server.Commands;
 
@@ -40,18 +41,43 @@ public static class DefaultCommands
             CommandSourceType.InGame
         );
 
-        commandSystemService.RegisterCommand("set_weather",
+        commandSystemService.RegisterCommand(
+            "set_weather",
             OnSetWeatherCommand,
             "Sets the weather in the current map",
             AccountLevelType.Admin,
             CommandSourceType.InGame
         );
+
+        commandSystemService.RegisterCommand(
+            "broadcast",
+            OnBroadcastCommand,
+            "Broadcasts a message to all players",
+            AccountLevelType.Admin
+        );
+    }
+
+    private static async Task OnBroadcastCommand(CommandSystemContext context)
+    {
+        if (context.Arguments.Length == 0)
+        {
+            context.Print("Usage: broadcast <message>");
+            return;
+        }
+
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+
+
+        var text = string.Join(" ", context.Arguments);
+
+        foreach (var session in gameSessionService.GetSessions())
+        {
+            session.Mobile.ReceiveSpeech(null, ChatMessageType.System, 0, $"[SYSTEM] {text}", 0, 3);
+        }
     }
 
     private static Task OnSetWeatherCommand(CommandSystemContext context)
     {
-
-
         var setWeatherPacket = new SetWeatherPacket(WeatherType.Snow, 2, 10);
 
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
@@ -59,7 +85,6 @@ public static class DefaultCommands
         gameSession.SendPackets(setWeatherPacket);
 
         return Task.CompletedTask;
-
     }
 
     private static Task OnAddItemCommand(CommandSystemContext context)
@@ -76,7 +101,6 @@ public static class DefaultCommands
         }
 
         context.Print("Adding item '{0}'...", item);
-
 
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
         var gameSession = gameSessionService.GetSession(context.SessionId);
