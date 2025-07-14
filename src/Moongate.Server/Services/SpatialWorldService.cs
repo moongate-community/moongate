@@ -7,6 +7,7 @@ using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -22,27 +23,40 @@ public class SpatialWorldService : ISpatialWorldService
     private readonly IItemService _itemService;
     private readonly IMobileService _mobileService;
     private readonly IDiagnosticService _diagnosticService;
-
+    private readonly IGameSessionService _gameSessionService;
 
     public event ISpatialWorldService.EntityMovedSectorHandler? EntityMovedSector;
     public event ISpatialWorldService.MobileSectorMovedHandler? MobileSectorMoved;
+    public event ISpatialWorldService.MobileInSectorHandler? OnMobileAddedInSector;
+    public event ISpatialWorldService.MobileExitSectorHandler? OnMobileExitSector;
     public event ISpatialWorldService.MobileMovedHandler? MobileMoved;
 
-    public SpatialWorldService(IItemService itemService, IMobileService mobileService, IDiagnosticService diagnosticService)
+    public SpatialWorldService(
+        IItemService itemService, IMobileService mobileService, IDiagnosticService diagnosticService,
+        IGameSessionService gameSessionService
+    )
     {
         _itemService = itemService;
         _mobileService = mobileService;
         _diagnosticService = diagnosticService;
+        _gameSessionService = gameSessionService;
         _sectorSystem = new MapSectorSystem();
 
-        _sectorSystem.EntityMovedSector += (entity, sector, newSector) =>
+        _sectorSystem.EntityMovedSector += (entity, oldSector, newSector) =>
         {
             if (entity is UOMobileEntity mobile)
             {
-                MobileSectorMoved?.Invoke(mobile, sector, newSector);
+                MobileSectorMoved?.Invoke(mobile, oldSector, newSector);
+                var worldView = GetPlayerWorldView(mobile);
+                OnMobileAddedInSector?.Invoke(mobile, newSector, worldView);
+                
+                if (oldSector != newSector)
+                {
+                    OnMobileExitSector?.Invoke(mobile, oldSector, worldView);
+                }
             }
 
-            EntityMovedSector?.Invoke(entity, sector, newSector);
+            EntityMovedSector?.Invoke(entity, oldSector, newSector);
         };
 
         /// Subscribe to entity events to keep spatial index updated
@@ -90,11 +104,16 @@ public class SpatialWorldService : ISpatialWorldService
         _sectorSystem.AddEntity(mobile, mapIndex);
 
         _logger.Verbose("Added mobile {Serial} to spatial index at {Location}", mobile.Id, mobile.Location);
+
+        var sector = _sectorSystem.GetSectorByWorldCoordinates(mobile.Map.MapID, mobile.Location.X, mobile.Location.Y);
+        var worldView = GetPlayerWorldView(mobile);
+
+        OnMobileAddedInSector?.Invoke(mobile, sector, worldView);
     }
 
     private void OnMobileAdded(UOMobileEntity mobile)
     {
-        OnMobileCreated(mobile); /// Same logic
+        OnMobileCreated(mobile);
     }
 
 
@@ -145,19 +164,11 @@ public class SpatialWorldService : ISpatialWorldService
     public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapIndex, GameSession? excludeSession = null)
     {
         var players = _sectorSystem.GetPlayersInRange(location, mapIndex, range);
-        var sessions = new List<GameSession>();
 
-        foreach (var player in players)
-        {
-            /// TODO: Get session for player - you'll need to implement this based on your session management
-            /// var session = GetSessionForPlayer(player);
-            /// if (session != null && session != excludeSession)
-            /// {
-            ///     sessions.Add(session);
-            /// }
-        }
-
-        return sessions;
+        return players.Select(player => _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == player.Id))
+            .OfType<GameSession>()
+            .Where(session => session != excludeSession)
+            .ToList();
     }
 
     /// <summary>
@@ -232,7 +243,7 @@ public class SpatialWorldService : ISpatialWorldService
     /// <summary>
     /// Gets map index for an entity
     /// </summary>
-    private int GetMapIndex(IPositionEntity entity)
+    private static int GetMapIndex(IPositionEntity entity)
     {
         return entity.Map.Index;
     }

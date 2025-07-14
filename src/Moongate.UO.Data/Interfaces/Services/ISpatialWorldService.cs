@@ -14,17 +14,23 @@ namespace Moongate.UO.Data.Interfaces.Services;
 /// </summary>
 public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvider
 {
-
     delegate void EntityMovedSectorHandler(IPositionEntity entity, MapSector oldSector, MapSector newSector);
 
     delegate void MobileSectorMovedHandler(UOMobileEntity mobile, MapSector oldSector, MapSector newSector);
 
-
     delegate void MobileMovedHandler(UOMobileEntity mobile, Point3D location, WorldView worldView);
 
+    delegate void MobileInSectorHandler(UOMobileEntity mobile, MapSector sector, WorldView worldView);
+
+    delegate void MobileExitSectorHandler(UOMobileEntity mobile, MapSector sector, WorldView worldView);
 
     event EntityMovedSectorHandler EntityMovedSector;
     event MobileSectorMovedHandler MobileSectorMoved;
+    event MobileInSectorHandler OnMobileAddedInSector;
+
+    event MobileExitSectorHandler OnMobileExitSector;
+
+
 
     event MobileMovedHandler MobileMoved;
 
@@ -89,7 +95,6 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <param name="viewRange">View range in tiles (default 24)</param>
     /// <returns>WorldView containing all visible entities</returns>
     WorldView GetPlayerWorldView(UOMobileEntity player, int viewRange = 24);
-
 
 
     /// <summary>

@@ -10,7 +10,6 @@ namespace Moongate.Server.Services;
 
 public class MapSectorSystem
 {
-
     public delegate void EntityMovedSectorHandler(IPositionEntity entity, MapSector oldSector, MapSector newSector);
 
     public event EntityMovedSectorHandler? EntityMovedSector;
@@ -41,6 +40,19 @@ public class MapSectorSystem
         }
     }
 
+
+    /// <summary>
+    /// Gets the sector for a specific world coordinate
+    /// </summary>
+    /// <param name="mapIndex">Map index</param>
+    /// <param name="worldX">World X coordinate</param>
+    /// <param name="worldY">World Y coordinate</param>
+    /// <returns>MapSector if exists, null otherwise</returns>
+    public MapSector? GetSectorByWorldCoordinates(int mapIndex, int worldX, int worldY)
+    {
+        var (sectorX, sectorY) = GetSectorCoordinates(new Point3D(worldX, worldY, 0));
+        return GetSector(mapIndex, sectorX, sectorY);
+    }
 
     /// <summary>
     /// Adds an entity to the spatial index
@@ -183,7 +195,7 @@ public class MapSectorSystem
     /// <summary>
     /// Gets all sector coordinates that intersect with a range
     /// </summary>
-    private List<(int x, int y)> GetSectorsInRange(Point3D center, int range)
+    public List<(int x, int y)> GetSectorsInRange(Point3D center, int range)
     {
         var sectors = new List<(int x, int y)>();
 
@@ -208,7 +220,7 @@ public class MapSectorSystem
     /// <summary>
     /// Gets an existing sector
     /// </summary>
-    private MapSector? GetSector(int mapIndex, int sectorX, int sectorY)
+    public MapSector? GetSector(int mapIndex, int sectorX, int sectorY)
     {
         if (_mapSectors.TryGetValue(mapIndex, out var mapSectors))
         {
@@ -271,6 +283,4 @@ public class MapSectorSystem
             AverageEntitiesPerSector = totalSectors > 0 ? (double)totalEntities / totalSectors : 0
         };
     }
-
-
 }
