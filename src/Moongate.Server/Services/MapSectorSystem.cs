@@ -99,8 +99,21 @@ public class MapSectorSystem
         var oldSector = GetSectorCoordinates(oldLocation);
         var newSector = GetSectorCoordinates(newLocation);
 
+        /// Update entity location ALWAYS
+        entity.Location = newLocation;
+
         /// If same sector, no need to move between sectors
-        if (oldSector == newSector) return;
+        if (oldSector == newSector)
+        {
+            /// Update lookup with new location still
+            var serial = GetEntitySerial(entity);
+            if (serial != Serial.MinusOne)
+            {
+                _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
+            }
+
+            return;
+        }
 
         /// Remove from old sector
         var oldSectorObj = GetSector(mapIndex, oldSector.x, oldSector.y);
@@ -111,15 +124,16 @@ public class MapSectorSystem
         newSectorObj.AddEntity(entity);
 
         /// Update lookup
-        var serial = GetEntitySerial(entity);
-        if (serial != Serial.MinusOne)
+        var serial2 = GetEntitySerial(entity);
+        if (serial2 != Serial.MinusOne)
         {
-            _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
+            _entityLocations[serial2] = (mapIndex, newSector.x, newSector.y);
         }
 
         /// Notify listeners about the move
         EntityMovedSector?.Invoke(entity, oldSectorObj, newSectorObj);
     }
+
 
     /// <summary>
     /// Gets all entities within range of a point
@@ -217,6 +231,7 @@ public class MapSectorSystem
         return sectors;
     }
 
+
     /// <summary>
     /// Gets an existing sector
     /// </summary>
@@ -253,6 +268,7 @@ public class MapSectorSystem
             _                     => Serial.MinusOne
         };
     }
+
 
     /// <summary>
     /// Gets statistics about the sector system
