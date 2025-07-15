@@ -30,9 +30,12 @@ public class PaperdollPacket : BaseUoPacket
             baseFlags |= 0x40;
         }
 
+
+
+
         baseFlags |= 0x02;
 
-        writer.Write(baseFlags);
+        writer.Write((byte)baseFlags);
 
 
         return writer.ToArray();
