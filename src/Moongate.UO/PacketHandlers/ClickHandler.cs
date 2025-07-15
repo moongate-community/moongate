@@ -1,6 +1,7 @@
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
@@ -35,16 +36,28 @@ public class ClickHandler : IGamePacketHandler
 
     private async Task HandleDoubleClickAsync(GameSession session, DoubleClickPacket packet)
     {
-        if (packet.TargetSerial == session.Mobile.Id)
+        if (packet.IsPaperdoll)
         {
             session.SendPackets(new PaperdollPacket(session.Mobile));
+            return;
         }
 
         if (packet.TargetSerial.IsItem)
         {
             var item = _itemService.GetItem(packet.TargetSerial);
 
+
+            if (packet.TargetSerial == session.Mobile.GetBackpack().Id)
+            {
+                session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));
+                session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
+
+
+                return;
+            }
+
             _logger.Information("Double-clicking item {ItemId} ({ItemName})", item.Id, item.Name);
+
 
             _itemService.UseItem(item, session.Mobile);
         }

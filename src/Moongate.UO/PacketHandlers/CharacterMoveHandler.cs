@@ -54,7 +54,7 @@ public class CharacterMoveHandler : IGamePacketHandler
 
     private async Task ProcessMoveRequestAsync(GameSession session, MoveRequestPacket packet)
     {
-        if (packet.Sequence == 0 && packet.Sequence != 0)
+        if (session.MoveSequence == 0 && packet.Sequence != 0)
         {
             session.SendPackets(new MoveRejectionPacket(packet.Sequence, session.Mobile.Location, packet.Direction));
             session.MoveSequence = 0;
@@ -91,7 +91,7 @@ public class CharacterMoveHandler : IGamePacketHandler
         );
 
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
-        var moveAckPacket = new MoveAckPacket(session.Mobile, session.MoveSequence);
+        var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)1);
 
         session.SendPackets(moveAckPacket);
     }

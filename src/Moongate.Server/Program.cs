@@ -122,7 +122,6 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
 
-
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))

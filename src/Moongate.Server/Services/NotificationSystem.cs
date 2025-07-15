@@ -44,7 +44,7 @@ public class NotificationSystem : INotificationSystem
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
 
         _spatialWorldService.MobileSectorMoved += OnMobileSectorMoved;
-        _spatialWorldService.MobileMoved += OnMobileMoved;
+        //_spatialWorldService.MobileMoved += OnMobileMoved;
 
         _spatialWorldService.ItemMovedOnGround += OnItemOnGround;
         _spatialWorldService.ItemRemoved += OnItemRemoved;
