@@ -52,9 +52,7 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
 
-
         session.SendPackets(new WornItemsPacket(session.Mobile));
-
 
         session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
         session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));

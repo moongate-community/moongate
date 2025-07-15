@@ -6,6 +6,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Objects;
 using Moongate.UO.Data.Packets.Sounds;
@@ -70,9 +71,18 @@ public class NotificationSystem : INotificationSystem
             mobile.ChatMessageReceived += PlayerOnChatMessageReceived;
             mobile.ChatMessageSent += PlayerOnChatMessageSent;
             mobile.ItemOnGround += ((item, location) => PlayerItemOnGround(mobile, item, location));
-
+            mobile.MobileMoved += ((otherMobile, location) => OnOtherMobileMoved(mobile, otherMobile, location));
             mobile.ItemRemoved += ((item, location) => PlayerItemRemoved(mobile, item, location));
         }
+    }
+
+    private void OnOtherMobileMoved(UOMobileEntity self, UOMobileEntity otherMobile, Point3D location)
+    {
+        var updatePlayerPacket = new UpdatePlayerPacket(otherMobile);
+
+        var gameSession = _gameSessionService.GetGameSessionByMobile(self);
+
+        gameSession.SendPackets(updatePlayerPacket);
     }
 
     private void PlayerItemOnGround(UOMobileEntity mobile, UOItemEntity item, Point3D location)
