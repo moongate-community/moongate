@@ -91,7 +91,7 @@ public class CharacterMoveHandler : IGamePacketHandler
         );
 
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
-        var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
+        var moveAckPacket = new MoveAckPacket(session.Mobile, session.MoveSequence);
 
         session.SendPackets(moveAckPacket);
     }
