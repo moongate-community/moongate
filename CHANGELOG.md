@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.14.0"></a>
+## [0.14.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.14.0) (2025-07-15)
+
+### Features
+
+* update Moongate Server API to version 0.12.11.0 ([128d2ff](https://www.github.com/moongate-community/moongate/commit/128d2ff29e4a88918f4bebfe7b94080a96b74602))
+* **moongate:** update TypeScript definitions to v0.12.13.0 ([68082d0](https://www.github.com/moongate-community/moongate/commit/68082d09287c6af46a524318b3e81d25278ee81b))
+* **moongate:** update TypeScript definitions to v0.12.14.0 ([95a8909](https://www.github.com/moongate-community/moongate/commit/95a89091a1bb79fd802d55db5c3f1b3028ba1ef6))
+* **moongate:** update TypeScript definitions to v0.12.15.0 ([8857cd4](https://www.github.com/moongate-community/moongate/commit/8857cd4d8e84edcc46ba907a9e16807737ef4089))
+* **notification:** add mobile movement notification ([9c5fa20](https://www.github.com/moongate-community/moongate/commit/9c5fa20b9f4fced898156e6ae94d22621a67a3ab))
+* **packets:** add GetPlayerStatusPacket for handling player status requests ([175e06c](https://www.github.com/moongate-community/moongate/commit/175e06cba728bf24912886d1d04a3a49b73d5628))
+* **spatial-world:** add new event handlers for mobile sector entry and exit ([cad474f](https://www.github.com/moongate-community/moongate/commit/cad474f762ec429d8849234e27b3b27227b65740))
+
+### Bug Fixes
+
+* **MapSectorSystem:** update entity location even if sector remains unchanged ([6eae17d](https://www.github.com/moongate-community/moongate/commit/6eae17dd734fb84f9295fd320940729b57a581d8))
+
 <a name="0.13.0"></a>
 ## [0.13.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.13.0) (2025-07-14)
 
