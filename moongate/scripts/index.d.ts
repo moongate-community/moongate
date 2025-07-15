@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.12.13.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-07-15 14:05:46
+ * Moongate Server v0.12.14.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-15 15:15:49
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.12.13.0""
+ * ""0.12.14.0""
  */
 declare const VERSION: string;
 
@@ -656,6 +656,10 @@ interface IUOMobileEntity {
      * isInvulnerable
      */
     isInvulnerable: boolean;
+    /**
+     * isMounted
+     */
+    isMounted: boolean;
     /**
      * created
      */

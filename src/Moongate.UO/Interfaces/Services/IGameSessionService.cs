@@ -1,4 +1,5 @@
 using Moongate.Core.Server.Interfaces.Services.Base;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 
 namespace Moongate.UO.Interfaces.Services;
@@ -15,6 +16,8 @@ public interface IGameSessionService : IMoongateService
     event GameSessionBeforeDestroyHandler GameSessionBeforeDestroy;
 
     GameSession? GetSession(string sessionId, bool throwIfNotFound = true);
+
+    GameSession? GetGameSessionByMobile(UOMobileEntity mobile, bool throwIfNotFound = true);
 
     IEnumerable<GameSession> GetSessions();
 

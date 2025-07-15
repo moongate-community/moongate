@@ -32,12 +32,23 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
         UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
     );
 
+    delegate void ItemPickedUpHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
+    );
+
+    delegate void ItemRemovedHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles
+    );
+
     event EntityMovedSectorHandler EntityMovedSector;
     event MobileSectorMovedHandler MobileSectorMoved;
     event MobileInSectorHandler OnMobileAddedInSector;
     event MobileExitSectorHandler OnMobileExitSector;
     event ItemMovedOnGroundHandler ItemMovedOnGround;
     event ItemMovedOnContainerHandler ItemMovedOnContainer;
+    event ItemPickedUpHandler ItemPickedUp;
+
+    event ItemRemovedHandler ItemRemoved;
 
 
 

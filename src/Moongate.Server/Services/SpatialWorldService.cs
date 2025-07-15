@@ -32,6 +32,8 @@ public class SpatialWorldService : ISpatialWorldService
     public event ISpatialWorldService.MobileExitSectorHandler? OnMobileExitSector;
     public event ISpatialWorldService.ItemMovedOnGroundHandler? ItemMovedOnGround;
     public event ISpatialWorldService.ItemMovedOnContainerHandler? ItemMovedOnContainer;
+    public event ISpatialWorldService.ItemPickedUpHandler? ItemPickedUp;
+    public event ISpatialWorldService.ItemRemovedHandler? ItemRemoved;
     public event ISpatialWorldService.MobileMovedHandler? MobileMoved;
 
     public SpatialWorldService(
@@ -125,7 +127,6 @@ public class SpatialWorldService : ISpatialWorldService
     /// </summary>
     public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
     {
-
         var mapIndex = GetMapIndex(mobile);
         _sectorSystem.MoveEntity(mobile, mapIndex, oldLocation, newLocation);
 
@@ -147,6 +148,28 @@ public class SpatialWorldService : ISpatialWorldService
     /// </summary>
     public void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround)
     {
+        // check if was on ground
+
+        if (item.IsOnGround && !isOnGround)
+        {
+            /// Item was picked up from ground, remove from spatial index
+
+            _sectorSystem.RemoveEntity(item, GetMapIndex(item));
+
+            _logger.Verbose(
+                "Removed item {Serial} from spatial index at {Location}",
+                item.Id,
+                oldLocation
+            );
+
+            ItemRemoved?.Invoke(
+                item,
+                oldLocation,
+                newLocation,
+                GetNearbyMobiles(newLocation, MapSectorConsts.MaxViewRange, item.Map.MapID)
+            );
+        }
+
         // Not not ground
         if (!isOnGround)
         {
@@ -160,7 +183,6 @@ public class SpatialWorldService : ISpatialWorldService
             ItemMovedOnContainer?.Invoke(item, oldLocation, newLocation, GetPlayerWorldView(mobile));
 
             return;
-
         }
 
         var mapIndex = GetMapIndex(item);
@@ -174,7 +196,12 @@ public class SpatialWorldService : ISpatialWorldService
             newLocation
         );
 
-        ItemMovedOnGround?.Invoke(item, oldLocation, newLocation, GetNearbyMobiles(newLocation, MapSectorConsts.MaxViewRange, mapIndex));
+        ItemMovedOnGround?.Invoke(
+            item,
+            oldLocation,
+            newLocation,
+            GetNearbyMobiles(newLocation, MapSectorConsts.MaxViewRange, mapIndex)
+        );
     }
 
     #endregion

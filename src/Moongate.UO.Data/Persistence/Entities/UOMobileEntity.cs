@@ -44,6 +44,12 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         int font
     );
 
+    public delegate void ItemOnGroundDelegate(UOItemEntity item, Point3D location);
+
+    public event ItemOnGroundDelegate? ItemOnGround;
+
+    public event ItemOnGroundDelegate? ItemRemoved;
+
     public event ChatMessageReceiveDelegate? ChatMessageReceived;
     public event ChatMessageDelegate? ChatMessageSent;
 
@@ -65,10 +71,19 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         Location = newLocation;
     }
 
+    public void ViewItemOnGround(UOItemEntity item, Point3D location)
+    {
+        ItemOnGround?.Invoke(item, location);
+    }
+
+    public void OnItemRemoved(UOItemEntity item, Point3D location)
+    {
+        ItemRemoved?.Invoke(item, location);
+    }
+
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
-
 
     [JsonIgnore] public bool IsPlayer { get; set; }
 
@@ -90,6 +105,7 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
 
     /// Max health/mana/stamina (calculated from stats but can be modified)
     public int MaxHits { get; set; }
+
     public int MaxMana { get; set; }
     public int MaxStamina { get; set; }
 

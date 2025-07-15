@@ -2,6 +2,7 @@ using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
@@ -55,6 +56,7 @@ public class ItemsHandler : IGamePacketHandler
 
         mobile.AddItem(packet.Layer, droppingItem);
         droppingItem.ParentId = mobile.Id;
+        droppingItem.Map = Map.Felucca;
 
         _logger.Information(
             "Wear groud item {DroppingItemId} on layer {Layer} for mobile {MobileId}",
@@ -69,6 +71,9 @@ public class ItemsHandler : IGamePacketHandler
         var droppingItem = _itemService.GetItem(packet.ItemId);
 
         _logger.Information("Dropping item {DroppingItemId} on ground: {Ground}", droppingItem.Name, packet.IsGround);
+
+
+        droppingItem.Map = session.Mobile.Map;
 
         if (session.Mobile.Location.GetDistance(packet.Location) <= 2 && packet.IsGround)
         {
