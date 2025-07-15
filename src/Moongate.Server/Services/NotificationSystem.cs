@@ -119,6 +119,13 @@ public class NotificationSystem : INotificationSystem
         {
             var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
         }
+
+        _logger.Debug(
+            "Mobile {MobileId} moved from sector {OldSector} to {NewSector}",
+            mobile.Id,
+            oldSector,
+            newSector
+        );
     }
 
     private void OnGameSessionBeforeDestroy(GameSession session)

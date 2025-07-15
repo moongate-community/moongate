@@ -24,11 +24,20 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
 
     delegate void MobileExitSectorHandler(UOMobileEntity mobile, MapSector sector, WorldView worldView);
 
+    delegate void ItemMovedOnGroundHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles
+    );
+
+    delegate void ItemMovedOnContainerHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
+    );
+
     event EntityMovedSectorHandler EntityMovedSector;
     event MobileSectorMovedHandler MobileSectorMoved;
     event MobileInSectorHandler OnMobileAddedInSector;
-
     event MobileExitSectorHandler OnMobileExitSector;
+    event ItemMovedOnGroundHandler ItemMovedOnGround;
+    event ItemMovedOnContainerHandler ItemMovedOnContainer;
 
 
 
@@ -49,7 +58,7 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <param name="item">Item that moved</param>
     /// <param name="oldLocation">Previous location</param>
     /// <param name="newLocation">New location</param>
-    void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
+    void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround);
 
 
     /// <summary>

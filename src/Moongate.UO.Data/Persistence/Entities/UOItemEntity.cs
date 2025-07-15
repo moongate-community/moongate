@@ -11,7 +11,7 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 {
     public delegate void ContainerItemChangedEventHandler(UOItemEntity container, ItemReference item);
 
-    public delegate void ItemMovedEventHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
+    public delegate void ItemMovedEventHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround);
 
     public event ItemMovedEventHandler? ItemMoved;
 
@@ -46,11 +46,11 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
 
-    public void MoveTo(Point3D newLocation)
+    public void MoveTo(Point3D newLocation, bool isOnGround)
     {
         var oldLocation = Location;
         Location = newLocation;
-        ItemMoved?.Invoke(this, oldLocation, newLocation);
+        ItemMoved?.Invoke(this, oldLocation, newLocation, isOnGround);
     }
 
     public UOItemEntity()

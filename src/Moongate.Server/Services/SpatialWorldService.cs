@@ -7,6 +7,7 @@ using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
+using Moongate.UO.Data.Utils;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 
@@ -29,6 +30,8 @@ public class SpatialWorldService : ISpatialWorldService
     public event ISpatialWorldService.MobileSectorMovedHandler? MobileSectorMoved;
     public event ISpatialWorldService.MobileInSectorHandler? OnMobileAddedInSector;
     public event ISpatialWorldService.MobileExitSectorHandler? OnMobileExitSector;
+    public event ISpatialWorldService.ItemMovedOnGroundHandler? ItemMovedOnGround;
+    public event ISpatialWorldService.ItemMovedOnContainerHandler? ItemMovedOnContainer;
     public event ISpatialWorldService.MobileMovedHandler? MobileMoved;
 
     public SpatialWorldService(
@@ -49,7 +52,7 @@ public class SpatialWorldService : ISpatialWorldService
                 MobileSectorMoved?.Invoke(mobile, oldSector, newSector);
                 var worldView = GetPlayerWorldView(mobile);
                 OnMobileAddedInSector?.Invoke(mobile, newSector, worldView);
-                
+
                 if (oldSector != newSector)
                 {
                     OnMobileExitSector?.Invoke(mobile, oldSector, worldView);
@@ -122,6 +125,7 @@ public class SpatialWorldService : ISpatialWorldService
     /// </summary>
     public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
     {
+
         var mapIndex = GetMapIndex(mobile);
         _sectorSystem.MoveEntity(mobile, mapIndex, oldLocation, newLocation);
 
@@ -130,7 +134,7 @@ public class SpatialWorldService : ISpatialWorldService
         MobileMoved?.Invoke(mobile, newLocation, worldView);
 
 
-        _logger.Verbose(
+        _logger.Debug(
             "Moved mobile {Serial} from {OldLocation} to {NewLocation}",
             mobile.Id,
             oldLocation,
@@ -141,9 +145,26 @@ public class SpatialWorldService : ISpatialWorldService
     /// <summary>
     /// Call this when an item moves (dropped, picked up, etc.)
     /// </summary>
-    public void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation)
+    public void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround)
     {
+        // Not not ground
+        if (!isOnGround)
+        {
+            UOMobileEntity mobile = null;
+
+            if (item.OwnerId != Serial.Zero)
+            {
+                mobile = _mobileService.GetMobile(item.OwnerId);
+            }
+
+            ItemMovedOnContainer?.Invoke(item, oldLocation, newLocation, GetPlayerWorldView(mobile));
+
+            return;
+
+        }
+
         var mapIndex = GetMapIndex(item);
+
         _sectorSystem.MoveEntity(item, mapIndex, oldLocation, newLocation);
 
         _logger.Verbose(
@@ -152,6 +173,8 @@ public class SpatialWorldService : ISpatialWorldService
             oldLocation,
             newLocation
         );
+
+        ItemMovedOnGround?.Invoke(item, oldLocation, newLocation, GetNearbyMobiles(newLocation, MapSectorConsts.MaxViewRange, mapIndex));
     }
 
     #endregion

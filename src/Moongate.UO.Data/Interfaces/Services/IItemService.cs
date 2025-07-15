@@ -12,7 +12,7 @@ public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
     delegate void ItemEventHandler(UOItemEntity item);
 
     delegate void ItemMovedEventHandler(
-        UOItemEntity item, Point3D oldLocation, Point3D newLocation
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround
     );
 
     UOItemEntity? GetItem(Serial id);
