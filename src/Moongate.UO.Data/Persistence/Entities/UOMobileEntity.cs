@@ -90,7 +90,6 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
 
     /// Max health/mana/stamina (calculated from stats but can be modified)
     public int MaxHits { get; set; }
-
     public int MaxMana { get; set; }
     public int MaxStamina { get; set; }
 
@@ -121,6 +120,14 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public int SkillPoints { get; set; } = 0;
     public int StatPoints { get; set; } = 0;
 
+
+    public int FireResistance { get; set; } = 0;
+    public int ColdResistance { get; set; } = 0;
+    public int PoisonResistance { get; set; } = 0;
+    public int EnergyResistance { get; set; } = 0;
+
+    public int Luck { get; set; } = 0;
+
     /// Character flags and status
     public bool IsAlive { get; set; } = true;
 
@@ -131,13 +138,12 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public bool IsFlying { get; set; }
 
     public bool IsBlessed { get; set; }
-
     public bool IgnoreMobiles { get; set; }
-
     public bool IsPoisoned { get; set; }
-
     public bool IsParalyzed { get; set; }
-    public bool IsInvulnerable { get; set; } = false;
+    public bool IsInvulnerable { get; set; }
+
+    public bool IsMounted { get; set; }
 
     /// Timing and persistence
     public DateTime Created { get; set; } = DateTime.UtcNow;

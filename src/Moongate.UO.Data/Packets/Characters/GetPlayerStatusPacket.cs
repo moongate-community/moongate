@@ -8,7 +8,6 @@ namespace Moongate.UO.Data.Packets.Characters;
 public class GetPlayerStatusPacket : BaseUoPacket
 {
 
-
     public GetPlayerStatusType StatusType { get; set; }
     public Serial MobileId { get; set; }
 

@@ -7,9 +7,10 @@ namespace Moongate.UO.Data.Packets.Characters;
 public class MoveRequestPacket : BaseUoPacket
 {
     public DirectionType Direction { get; set; }
-
     public int Sequence { get; set; }
-    public int FastKey { get; set; }
+    public uint FastKey { get; set; }
+
+    public bool IsRunning => (Direction & DirectionType.Running) != 0;
 
     public MoveRequestPacket() : base(0x02)
     {
@@ -19,7 +20,7 @@ public class MoveRequestPacket : BaseUoPacket
     {
         Direction = (DirectionType)reader.ReadByte();
         Sequence = reader.ReadByte();
-        FastKey = reader.ReadInt32();
+        FastKey = reader.ReadUInt32();
 
         return true;
     }
