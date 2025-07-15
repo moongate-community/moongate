@@ -11,7 +11,6 @@ public class GetPlayerStatusPacket : BaseUoPacket
     public GetPlayerStatusType StatusType { get; set; }
     public Serial MobileId { get; set; }
 
-
     public GetPlayerStatusPacket() : base(0x34)
     {
     }

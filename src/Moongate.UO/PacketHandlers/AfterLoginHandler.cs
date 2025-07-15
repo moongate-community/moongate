@@ -65,6 +65,7 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
         session.SendPackets(new LoginCompletePacket());
+        session.SendPackets(new PaperdollPacket(session.Mobile));
 
         MoongateContext.EnqueueAction(
             "AfterLoginHandler.OnCharacterLogged",

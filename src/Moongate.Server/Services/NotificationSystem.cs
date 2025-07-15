@@ -8,6 +8,7 @@ using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Objects;
+using Moongate.UO.Data.Packets.Sounds;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -77,10 +78,11 @@ public class NotificationSystem : INotificationSystem
     private void PlayerItemOnGround(UOMobileEntity mobile, UOItemEntity item, Point3D location)
     {
         var objectInfo = new ObjectInfoPacket(item);
+        var dropSound = new PlaySoundPacket(item, 0x2E1);
 
         var session = _gameSessionService.GetGameSessionByMobile(mobile);
 
-        session.SendPackets(objectInfo);
+        session.SendPackets(objectInfo, dropSound);
     }
 
     private void PlayerItemRemoved(UOMobileEntity mobile, UOItemEntity item, Point3D location)
