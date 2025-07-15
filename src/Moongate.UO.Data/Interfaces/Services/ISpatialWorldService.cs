@@ -14,17 +14,43 @@ namespace Moongate.UO.Data.Interfaces.Services;
 /// </summary>
 public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvider
 {
-
     delegate void EntityMovedSectorHandler(IPositionEntity entity, MapSector oldSector, MapSector newSector);
 
     delegate void MobileSectorMovedHandler(UOMobileEntity mobile, MapSector oldSector, MapSector newSector);
 
-
     delegate void MobileMovedHandler(UOMobileEntity mobile, Point3D location, WorldView worldView);
 
+    delegate void MobileInSectorHandler(UOMobileEntity mobile, MapSector sector, WorldView worldView);
+
+    delegate void MobileExitSectorHandler(UOMobileEntity mobile, MapSector sector, WorldView worldView);
+
+    delegate void ItemMovedOnGroundHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles
+    );
+
+    delegate void ItemMovedOnContainerHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
+    );
+
+    delegate void ItemPickedUpHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
+    );
+
+    delegate void ItemRemovedHandler(
+        UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles
+    );
 
     event EntityMovedSectorHandler EntityMovedSector;
     event MobileSectorMovedHandler MobileSectorMoved;
+    event MobileInSectorHandler OnMobileAddedInSector;
+    event MobileExitSectorHandler OnMobileExitSector;
+    event ItemMovedOnGroundHandler ItemMovedOnGround;
+    event ItemMovedOnContainerHandler ItemMovedOnContainer;
+    event ItemPickedUpHandler ItemPickedUp;
+
+    event ItemRemovedHandler ItemRemoved;
+
+
 
     event MobileMovedHandler MobileMoved;
 
@@ -43,7 +69,7 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <param name="item">Item that moved</param>
     /// <param name="oldLocation">Previous location</param>
     /// <param name="newLocation">New location</param>
-    void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation);
+    void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround);
 
 
     /// <summary>
@@ -89,7 +115,6 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <param name="viewRange">View range in tiles (default 24)</param>
     /// <returns>WorldView containing all visible entities</returns>
     WorldView GetPlayerWorldView(UOMobileEntity player, int viewRange = 24);
-
 
 
     /// <summary>

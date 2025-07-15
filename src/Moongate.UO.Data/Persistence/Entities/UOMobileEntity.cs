@@ -44,6 +44,12 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         int font
     );
 
+    public delegate void ItemOnGroundDelegate(UOItemEntity item, Point3D location);
+
+    public event ItemOnGroundDelegate? ItemOnGround;
+
+    public event ItemOnGroundDelegate? ItemRemoved;
+
     public event ChatMessageReceiveDelegate? ChatMessageReceived;
     public event ChatMessageDelegate? ChatMessageSent;
 
@@ -65,10 +71,19 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         Location = newLocation;
     }
 
+    public void ViewItemOnGround(UOItemEntity item, Point3D location)
+    {
+        ItemOnGround?.Invoke(item, location);
+    }
+
+    public void OnItemRemoved(UOItemEntity item, Point3D location)
+    {
+        ItemRemoved?.Invoke(item, location);
+    }
+
     public Serial Id { get; set; }
     public string Name { get; set; }
     public string Title { get; set; }
-
 
     [JsonIgnore] public bool IsPlayer { get; set; }
 
@@ -121,6 +136,14 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public int SkillPoints { get; set; } = 0;
     public int StatPoints { get; set; } = 0;
 
+
+    public int FireResistance { get; set; } = 0;
+    public int ColdResistance { get; set; } = 0;
+    public int PoisonResistance { get; set; } = 0;
+    public int EnergyResistance { get; set; } = 0;
+
+    public int Luck { get; set; } = 0;
+
     /// Character flags and status
     public bool IsAlive { get; set; } = true;
 
@@ -131,13 +154,12 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public bool IsFlying { get; set; }
 
     public bool IsBlessed { get; set; }
-
     public bool IgnoreMobiles { get; set; }
-
     public bool IsPoisoned { get; set; }
-
     public bool IsParalyzed { get; set; }
-    public bool IsInvulnerable { get; set; } = false;
+    public bool IsInvulnerable { get; set; }
+
+    public bool IsMounted { get; set; }
 
     /// Timing and persistence
     public DateTime Created { get; set; } = DateTime.UtcNow;

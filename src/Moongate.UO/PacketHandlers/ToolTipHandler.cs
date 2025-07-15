@@ -26,7 +26,6 @@ public class ToolTipHandler : IGamePacketHandler
 
     private async Task HandleMegaClilocRequestAsync(GameSession session, MegaClilocRequestPacket request)
     {
-
         foreach (var serial in request.Query)
         {
             session.SendPackets(await _megaClilocService.ToPacket(serial));

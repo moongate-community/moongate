@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.12.7.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-07-14 13:56:28
+ * Moongate Server v0.12.18.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-15 20:05:54
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.12.7.0""
+ * ""0.12.18.0""
  */
 declare const VERSION: string;
 
@@ -439,6 +439,14 @@ interface IGameSession {
      */
     pingSequence: number;
     /**
+     * moveCredit
+     */
+    moveCredit: number;
+    /**
+     * moveTime
+     */
+    moveTime: number;
+    /**
      * moveSequence
      */
     moveSequence: any;
@@ -589,6 +597,26 @@ interface IUOMobileEntity {
      */
     statPoints: number;
     /**
+     * fireResistance
+     */
+    fireResistance: number;
+    /**
+     * coldResistance
+     */
+    coldResistance: number;
+    /**
+     * poisonResistance
+     */
+    poisonResistance: number;
+    /**
+     * energyResistance
+     */
+    energyResistance: number;
+    /**
+     * luck
+     */
+    luck: number;
+    /**
      * isAlive
      */
     isAlive: boolean;
@@ -628,6 +656,10 @@ interface IUOMobileEntity {
      * isInvulnerable
      */
     isInvulnerable: boolean;
+    /**
+     * isMounted
+     */
+    isMounted: boolean;
     /**
      * created
      */

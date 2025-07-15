@@ -3,6 +3,7 @@ using Microsoft.Extensions.ObjectPool;
 using Moongate.Core.Network.Servers.Tcp;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.GameSessions;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
@@ -72,6 +73,24 @@ public class GameSessionService : IGameSessionService
         if (throwIfNotFound)
         {
             throw new KeyNotFoundException($"Session with ID {sessionId} not found.");
+        }
+
+        return null;
+    }
+
+    public GameSession? GetGameSessionByMobile(UOMobileEntity mobile, bool throwIfNotFound = true)
+    {
+        var session = _sessions.Values.AsValueEnumerable()
+            .FirstOrDefault(s => s.Mobile.Id == mobile.Id);
+
+        if (session != null)
+        {
+            return session;
+        }
+
+        if (throwIfNotFound)
+        {
+            throw new KeyNotFoundException($"Session for mobile {mobile.Id} not found.");
         }
 
         return null;

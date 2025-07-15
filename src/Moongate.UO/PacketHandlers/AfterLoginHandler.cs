@@ -52,9 +52,7 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
 
-
         session.SendPackets(new WornItemsPacket(session.Mobile));
-
 
         session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
         session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));
@@ -65,6 +63,7 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
         session.SendPackets(new LoginCompletePacket());
+        session.SendPackets(new PaperdollPacket(session.Mobile));
 
         MoongateContext.EnqueueAction(
             "AfterLoginHandler.OnCharacterLogged",

@@ -122,7 +122,6 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
 
-
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))
@@ -184,6 +183,8 @@ await ConsoleApp.RunAsync(
             networkService.RegisterGamePacketHandler<DropItemPacket, ItemsHandler>();
             networkService.RegisterGamePacketHandler<PickUpItemPacket, ItemsHandler>();
             networkService.RegisterGamePacketHandler<DropWearItemPacket, ItemsHandler>();
+
+            networkService.RegisterGamePacketHandler<GetPlayerStatusPacket, PlayerStatusHandler>();
         };
 
 

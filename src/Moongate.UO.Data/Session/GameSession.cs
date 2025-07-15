@@ -16,6 +16,10 @@ public class GameSession : IDisposable
     public UOMobileEntity Mobile { get; set; }
     public int PingSequence { get; set; }
 
+    public long MoveCredit { get; set; } = 0;
+
+    public long MoveTime { get; set; }
+
     public byte MoveSequence { get; set; } = 1;
 
     public NetworkSessionFeatureType Features { get; private set; } = NetworkSessionFeatureType.None;

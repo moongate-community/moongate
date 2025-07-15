@@ -20,19 +20,17 @@ public class CharactersHandler : IGamePacketHandler
     private readonly ILogger _logger = Log.ForContext<CharactersHandler>();
 
     private readonly IMobileService _mobileService;
-    private readonly IAccountService _accountService;
     private readonly IEventBusService _eventBusService;
     private readonly IScriptEngineService _scriptEngineService;
 
     private readonly IEntityFactoryService _entityFactoryService;
 
     public CharactersHandler(
-        IMobileService mobileService, IAccountService accountService, IEventBusService eventBusService,
+        IMobileService mobileService,  IEventBusService eventBusService,
         IScriptEngineService scriptEngineService, IEntityFactoryService entityFactoryService
     )
     {
         _mobileService = mobileService;
-        _accountService = accountService;
         _eventBusService = eventBusService;
         _scriptEngineService = scriptEngineService;
         _entityFactoryService = entityFactoryService;

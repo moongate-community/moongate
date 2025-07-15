@@ -11,7 +11,7 @@ public class MapSectorConsts
     /// Bit shift for fast division/multiplication by SectorSize
     /// 64 = 2^6, so shift by 6 bits
     /// </summary>
-    public const int SectorShift = 6;
+    public const int SectorShift = 4;
 
     /// <summary>
     /// Maximum view range for players (used for nearby queries)

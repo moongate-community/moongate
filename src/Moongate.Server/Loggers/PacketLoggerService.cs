@@ -21,6 +21,11 @@ public class PacketLoggerService : IMoongateService
 
     private readonly MoongateServerConfig _moongateServerConfig;
 
+    public static byte[] IgnoredPacketTypes =
+    [
+        0x73
+    ];
+
     public PacketLoggerService(
         IGameSessionService gameSessionService, INetworkService networkService, MoongateServerConfig moongateServerConfig
     )
@@ -54,6 +59,11 @@ public class PacketLoggerService : IMoongateService
             return;
         }
 
+        if (IgnoredPacketTypes.Contains(buffer.Span[0]))
+        {
+            return; // Ignore specific packet types
+        }
+
         var direction = isReceived ? "<-" : "->";
         var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
 
@@ -77,6 +87,11 @@ public class PacketLoggerService : IMoongateService
         if (!_moongateServerConfig.Network.LogPacketsToFile)
         {
             return;
+        }
+
+        if (IgnoredPacketTypes.Contains(buffer.Span[0]))
+        {
+            return; // Ignore specific packet types
         }
 
         var logger = Log.ForContext("NetworkPacket", true);

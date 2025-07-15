@@ -113,9 +113,9 @@ public class ItemService : IItemService
         ItemAdded?.Invoke(item);
     }
 
-    private void ItemOnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation)
+    private void ItemOnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround)
     {
-        ItemMoved?.Invoke(item, oldLocation, newLocation);
+        ItemMoved?.Invoke(item, oldLocation, newLocation, isOnGround);
     }
 
     public void UseItem(UOItemEntity item, UOMobileEntity? user)

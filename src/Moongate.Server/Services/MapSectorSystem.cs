@@ -10,7 +10,6 @@ namespace Moongate.Server.Services;
 
 public class MapSectorSystem
 {
-
     public delegate void EntityMovedSectorHandler(IPositionEntity entity, MapSector oldSector, MapSector newSector);
 
     public event EntityMovedSectorHandler? EntityMovedSector;
@@ -41,6 +40,19 @@ public class MapSectorSystem
         }
     }
 
+
+    /// <summary>
+    /// Gets the sector for a specific world coordinate
+    /// </summary>
+    /// <param name="mapIndex">Map index</param>
+    /// <param name="worldX">World X coordinate</param>
+    /// <param name="worldY">World Y coordinate</param>
+    /// <returns>MapSector if exists, null otherwise</returns>
+    public MapSector? GetSectorByWorldCoordinates(int mapIndex, int worldX, int worldY)
+    {
+        var (sectorX, sectorY) = GetSectorCoordinates(new Point3D(worldX, worldY, 0));
+        return GetSector(mapIndex, sectorX, sectorY);
+    }
 
     /// <summary>
     /// Adds an entity to the spatial index
@@ -87,8 +99,21 @@ public class MapSectorSystem
         var oldSector = GetSectorCoordinates(oldLocation);
         var newSector = GetSectorCoordinates(newLocation);
 
+        /// Update entity location ALWAYS
+        entity.Location = newLocation;
+
         /// If same sector, no need to move between sectors
-        if (oldSector == newSector) return;
+        if (oldSector == newSector)
+        {
+            /// Update lookup with new location still
+            var serial = GetEntitySerial(entity);
+            if (serial != Serial.MinusOne)
+            {
+                _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
+            }
+
+            return;
+        }
 
         /// Remove from old sector
         var oldSectorObj = GetSector(mapIndex, oldSector.x, oldSector.y);
@@ -99,15 +124,16 @@ public class MapSectorSystem
         newSectorObj.AddEntity(entity);
 
         /// Update lookup
-        var serial = GetEntitySerial(entity);
-        if (serial != Serial.MinusOne)
+        var serial2 = GetEntitySerial(entity);
+        if (serial2 != Serial.MinusOne)
         {
-            _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
+            _entityLocations[serial2] = (mapIndex, newSector.x, newSector.y);
         }
 
         /// Notify listeners about the move
         EntityMovedSector?.Invoke(entity, oldSectorObj, newSectorObj);
     }
+
 
     /// <summary>
     /// Gets all entities within range of a point
@@ -183,7 +209,7 @@ public class MapSectorSystem
     /// <summary>
     /// Gets all sector coordinates that intersect with a range
     /// </summary>
-    private List<(int x, int y)> GetSectorsInRange(Point3D center, int range)
+    public List<(int x, int y)> GetSectorsInRange(Point3D center, int range)
     {
         var sectors = new List<(int x, int y)>();
 
@@ -205,10 +231,11 @@ public class MapSectorSystem
         return sectors;
     }
 
+
     /// <summary>
     /// Gets an existing sector
     /// </summary>
-    private MapSector? GetSector(int mapIndex, int sectorX, int sectorY)
+    public MapSector? GetSector(int mapIndex, int sectorX, int sectorY)
     {
         if (_mapSectors.TryGetValue(mapIndex, out var mapSectors))
         {
@@ -242,6 +269,7 @@ public class MapSectorSystem
         };
     }
 
+
     /// <summary>
     /// Gets statistics about the sector system
     /// </summary>
@@ -271,6 +299,4 @@ public class MapSectorSystem
             AverageEntitiesPerSector = totalSectors > 0 ? (double)totalEntities / totalSectors : 0
         };
     }
-
-
 }

@@ -6,7 +6,10 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
+using Moongate.UO.Data.Packets.Objects;
+using Moongate.UO.Data.Packets.Sounds;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -41,9 +44,24 @@ public class NotificationSystem : INotificationSystem
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
 
         _spatialWorldService.MobileSectorMoved += OnMobileSectorMoved;
-        _spatialWorldService.MobileMoved += OnMobileMoved;
+        //_spatialWorldService.MobileMoved += OnMobileMoved;
+
+        _spatialWorldService.ItemMovedOnGround += OnItemOnGround;
+        _spatialWorldService.ItemRemoved += OnItemRemoved;
 
         _mobileService.MobileAdded += OnMobileAdded;
+    }
+
+    private void OnItemRemoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
+    {
+    }
+
+    private void OnItemOnGround(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
+    {
+        foreach (var mobile in mobiles)
+        {
+            mobile.ViewItemOnGround(item, newLocation);
+        }
     }
 
     private void OnMobileAdded(UOMobileEntity mobile)
@@ -52,7 +70,38 @@ public class NotificationSystem : INotificationSystem
         {
             mobile.ChatMessageReceived += PlayerOnChatMessageReceived;
             mobile.ChatMessageSent += PlayerOnChatMessageSent;
+            mobile.ItemOnGround += ((item, location) => PlayerItemOnGround(mobile, item, location));
+            mobile.MobileMoved += ((otherMobile, location) => OnOtherMobileMoved(mobile, otherMobile, location));
+            mobile.ItemRemoved += ((item, location) => PlayerItemRemoved(mobile, item, location));
         }
+    }
+
+    private void OnOtherMobileMoved(UOMobileEntity self, UOMobileEntity otherMobile, Point3D location)
+    {
+        var updatePlayerPacket = new UpdatePlayerPacket(otherMobile);
+
+        var gameSession = _gameSessionService.GetGameSessionByMobile(self);
+
+        gameSession.SendPackets(updatePlayerPacket);
+    }
+
+    private void PlayerItemOnGround(UOMobileEntity mobile, UOItemEntity item, Point3D location)
+    {
+        var objectInfo = new ObjectInfoPacket(item);
+        var dropSound = new PlaySoundPacket(item, 0x2E1);
+
+        var session = _gameSessionService.GetGameSessionByMobile(mobile);
+
+        session.SendPackets(objectInfo, dropSound);
+    }
+
+    private void PlayerItemRemoved(UOMobileEntity mobile, UOItemEntity item, Point3D location)
+    {
+        var deleteObjectPacket = new DeleteObjectPacket(item.Id);
+
+        var session = _gameSessionService.GetGameSessionByMobile(mobile);
+
+        session.SendPackets(deleteObjectPacket);
     }
 
     private void PlayerOnChatMessageSent(
@@ -119,6 +168,13 @@ public class NotificationSystem : INotificationSystem
         {
             var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
         }
+
+        _logger.Debug(
+            "Mobile {MobileId} moved from sector {OldSector} to {NewSector}",
+            mobile.Id,
+            oldSector,
+            newSector
+        );
     }
 
     private void OnGameSessionBeforeDestroy(GameSession session)

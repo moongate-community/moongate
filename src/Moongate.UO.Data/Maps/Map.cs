@@ -5,9 +5,6 @@ namespace Moongate.UO.Data.Maps;
 
 public class Map : IComparable<Map>, IComparable
 {
-    public const int SectorSize = 16;
-    public const int SectorShift = 4;
-    public static int SectorActiveRange = 2;
 
     private static readonly Map[] _maps = new Map[0x100];
     private static readonly List<Map> _allMaps = new List<Map>();
