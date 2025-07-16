@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.15.0"></a>
+## [0.15.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.15.0) (2025-07-16)
+
+### Features
+
+* **ItemService:** add RemoveItemFromWorld method to handle item removal ([78a89aa](https://www.github.com/moongate-community/moongate/commit/78a89aa6d67b250e710da683b260225e20cc594e))
+
 <a name="0.14.1"></a>
 ## [0.14.1](https://www.github.com/moongate-community/moongate/releases/tag/v0.14.1) (2025-07-15)
 
