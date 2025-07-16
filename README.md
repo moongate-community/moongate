@@ -24,6 +24,54 @@
          Source code: https://github.com/moongate-community/moongate
 ```
 
+## 📑 Table of Contents
+
+- [Overview](#overview)
+- [State of the Art](#-state-of-the-art)
+- [Vision & Philosophy](#vision--philosophy)
+- [Key Features](#key-features)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [JavaScript Scripting](#javascript-scripting)
+- [Networking & Protocol](#networking--protocol)
+- [Performance Benchmarks](#performance-benchmarks)
+- [Development](#development)
+- [Monitoring & Diagnostics](#monitoring--diagnostics)
+- [Roadmap](#roadmap)
+- [Community & Support](#community--support)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+
+## Overview
+
+Moongate is a cutting-edge, ultra-high-performance Ultima Online server emulator built with .NET 9 and AOT (Ahead-of-Time) compilation. Designed specifically for the passionate UO community that still cherishes this legendary MMORPG, Moongate delivers exceptional performance and unprecedented customization capabilities through modern architecture and a powerful JavaScript scripting engine.
+
+Our mission is simple: create the **most performant and customizable UO server** ever built, giving dedicated players and server administrators the tools they deserve.
+
+## 🧭 State of the Art
+
+**Codename**: *"It's not ModernUO with JS"*
+
+> Moongate is not a clone of ModernUO, RunUO, ServUO or any other emulator — and it doesn't aim to be. In fact, we owe a great deal of inspiration to these projects. Their legacy and technical achievements are invaluable, and this project wouldn’t exist without them. Thank you.
+
+Moongate is a personal journey — a way to study the internals of MMOs, experiment with high-performance .NET architecture, and explore advanced networking and scripting systems. It is **not** meant to replace existing servers or communities, but to learn, contribute, and share.
+
+### ✅ Milestone: *"It's not ModernUO with JS"*
+
+The following features have been implemented in this phase:
+
+- ⚡ **Ultra-fast binary persistence** for game entities
+- 👤 **Character creation and deletion**
+- 🌍 **World segmentation into sectors** for spatial optimization
+- 🔐 **Command system with account-level permissions**
+- 🎒 **Item pickup and equipment handling**
+- 🧱 **Initial implementation of Megaloc (location manager)**
+- 🧳 **Backpack management**
+- 🧍 **Paperdoll system**
+
+
 ## Overview
 
 Moongate is a cutting-edge, ultra-high-performance Ultima Online server emulator built with .NET 9 and AOT (Ahead-of-Time)
