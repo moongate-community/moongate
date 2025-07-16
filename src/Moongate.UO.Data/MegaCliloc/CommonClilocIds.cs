@@ -14,6 +14,8 @@ public static class CommonClilocIds
 
     public const uint ItemName = 1050039;
 
+    public const uint Amount = 1062217;
+
     /// <summary>
     /// Weight: ~1_WEIGHT~
     /// </summary>

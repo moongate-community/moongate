@@ -215,7 +215,8 @@ public class SpatialWorldService : ISpatialWorldService
     {
         var players = _sectorSystem.GetPlayersInRange(location, range, mapIndex);
 
-        return players.Select(player => _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == player.Id))
+        return players
+            .Select(player => _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile != null && s.Mobile.Id == player.Id))
             .OfType<GameSession>()
             .Where(session => session != excludeSession)
             .ToList();

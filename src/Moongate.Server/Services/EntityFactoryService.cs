@@ -45,6 +45,17 @@ public class EntityFactoryService : IEntityFactoryService
             GoldValue = 1,
             Weight = 1
         };
+
+        _itemTemplates["gold"] = new ItemTemplate()
+        {
+            GumpId = 0x003C,
+            Id = "gold",
+            Category = "Currency",
+            Tags = ["currency", "money"],
+            ItemId = 0x0EEF,
+            GoldValue = 1,
+            Weight = 25
+        };
     }
 
     public T CreateEntity<T>(string templateId) where T : class
@@ -83,13 +94,17 @@ public class EntityFactoryService : IEntityFactoryService
 
         item.TemplateId = itemTemplate.Id;
         item.Gold = itemTemplate.GoldValue;
+
         item.Name = itemTemplate.Name;
+
         item.ItemId = itemTemplate.ItemId;
         item.BaseWeight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
         item.ScriptId = itemTemplate.ScriptId;
         item.GumpId = itemTemplate.GumpId;
         item.LootType = itemTemplate.LootType;
+
+        item.Name ??= TileData.ItemTable[item.ItemId].Name;
 
         if (itemTemplate.Container.Count > 0)
         {

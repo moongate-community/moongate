@@ -31,7 +31,6 @@ public class CharacterCreationPacket : BaseUoPacket
     public Race Race { get; set; }
 
     public HueStyle Shirt { get; set; }
-
     public HueStyle Skin { get; set; }
     public HueStyle Pants { get; set; }
 

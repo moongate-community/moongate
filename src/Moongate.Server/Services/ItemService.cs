@@ -5,6 +5,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -124,12 +125,14 @@ public class ItemService : IItemService
         if (string.IsNullOrEmpty(item.ScriptId))
         {
             _logger.Warning("Item {Id} does not have a script ID, cannot use.", item.Id);
+
             return;
         }
 
         if (!_itemActions.TryGetValue(item.ScriptId, out var itemAction))
         {
             _logger.Warning("No item action found for {ItemId}, cannot use item.", item.ScriptId);
+
             return;
         }
 

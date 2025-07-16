@@ -230,6 +230,7 @@ public class JsScriptEngineService : IScriptEngineService
     {
         if (_callbacks.TryGetValue(name, out var callback))
         {
+
             _logger.Debug("Executing callback {Name}", name);
             callback(args);
         }

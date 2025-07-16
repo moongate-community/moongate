@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.UO.Data.MegaCliloc;
@@ -28,8 +29,23 @@ public class MegaClilocEntry
         Properties.Add(new MegaClilocProperty(Serial.Value, name));
     }
 
+    public void AddProperty(uint clilocId, params object[] text)
+    {
+        Properties.Add(new MegaClilocProperty(clilocId, string.Join(" ", text)));
+    }
+
     public void AddProperty(uint clilocId, string? text = null)
     {
         Properties.Add(new MegaClilocProperty(clilocId, text));
+    }
+
+    public void AddProperty(uint clilocId, double value)
+    {
+        Properties.Add(new MegaClilocProperty(clilocId, value.ToString(CultureInfo.InvariantCulture)));
+    }
+
+    public void AddProperty(uint clilocId, int value)
+    {
+        Properties.Add(new MegaClilocProperty(clilocId, value.ToString(CultureInfo.InvariantCulture)));
     }
 }

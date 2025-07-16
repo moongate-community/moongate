@@ -3,6 +3,7 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Contexts;
 using Moongate.UO.Data.Events.System;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
@@ -10,7 +11,6 @@ using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
-using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.UO.PacketHandlers;
@@ -26,7 +26,7 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IEntityFactoryService _entityFactoryService;
 
     public CharactersHandler(
-        IMobileService mobileService,  IEventBusService eventBusService,
+        IMobileService mobileService, IEventBusService eventBusService,
         IScriptEngineService scriptEngineService, IEntityFactoryService entityFactoryService
     )
     {
@@ -134,7 +134,6 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.FacialHairStyle = characterCreation.FacialHair.Style;
         playerMobileEntity.HairHue = characterCreation.Hair.Hue;
         playerMobileEntity.HairStyle = characterCreation.Hair.Style;
-        //playerMobileEntity.Location = characterCreation.StartingCity.Location;
         playerMobileEntity.Location = characterCreation.StartingCity.Location;
         playerMobileEntity.SkinHue = characterCreation.Skin.Hue;
 
@@ -154,9 +153,14 @@ public class CharactersHandler : IGamePacketHandler
 
         playerMobileEntity.AddItem(ItemLayerType.Backpack, _entityFactoryService.GetNewBackpack());
 
+        var goldItem = _entityFactoryService.CreateItemEntity("gold");
+
+        goldItem.Amount = 1000;
+
+        playerMobileEntity.GetBackpack().AddItem(goldItem, new Point2D(1, 1));
+
         playerMobileEntity.IsPlayer = true;
 
-        _mobileService.AddInWorld(playerMobileEntity);
 
         var createContext =
             new CharacterCreatedEvent(
@@ -168,6 +172,25 @@ public class CharactersHandler : IGamePacketHandler
         await _eventBusService.PublishAsync(createContext);
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
+
+        // TODO: Move logic for default items and colors
+
+        if (playerMobileEntity.HasItem(ItemLayerType.Pants))
+        {
+            var pantsItem = playerMobileEntity.GetItem(ItemLayerType.Pants);
+
+            pantsItem.Hue = characterCreation.Pants.Hue;
+        }
+
+        if (playerMobileEntity.HasItem(ItemLayerType.Shirt))
+        {
+            var shirtItem = playerMobileEntity.GetItem(ItemLayerType.Shirt);
+
+            shirtItem.Hue = characterCreation.Shirt.Hue;
+        }
+
+
+        _mobileService.AddInWorld(playerMobileEntity);
 
         await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 

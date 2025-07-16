@@ -8,6 +8,7 @@ using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
+using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Objects;
 using Moongate.UO.Data.Packets.Sounds;
 using Moongate.UO.Data.Persistence.Entities;
@@ -74,9 +75,27 @@ public class NotificationSystem : INotificationSystem
             mobile.ItemOnGround += ((item, location) => PlayerItemOnGround(mobile, item, location));
             mobile.MobileMoved += ((otherMobile, location) => OnOtherMobileMoved(mobile, otherMobile, location));
             mobile.ItemRemoved += ((item, location) => PlayerItemRemoved(mobile, item, location));
+            mobile.GetBackpack().ContainerItemAdded +=
+                (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
+            mobile.GetBackpack().ContainerItemRemoved +=
+                (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
             mobile.EquipmentAdded += MobileOnEquipmentAdded;
             mobile.EquipmentRemoved += MobileOnEquipmentRemoved;
         }
+    }
+
+    private void OnContainerItemChanged(UOMobileEntity mobile, UOItemEntity container, ItemReference item)
+    {
+        if (mobile.IsPlayer)
+        {
+            var session = _gameSessionService.GetGameSessionByMobile(mobile);
+            if (session != null)
+            {
+                var containerItems = new AddMultipleItemToContainerPacket(container);
+                session.SendPackets(containerItems);
+            }
+        }
+
     }
 
     private void MobileOnEquipmentRemoved(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)

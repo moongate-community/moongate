@@ -11,6 +11,7 @@ using Moongate.Core.Resources;
 using Moongate.Core.Server.Bootstrap;
 using Moongate.Core.Server.Data.Options;
 using Moongate.Core.Server.Extensions;
+using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Json;
 using Moongate.Core.Server.Types;
@@ -121,6 +122,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IItemService), typeof(ItemService))
                 .AddService(typeof(IFileLoaderService), typeof(FileLoaderService), -1)
                 .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
+                .AddService(typeof(IGamePacketHandlerService), typeof(GamePacketHandlerService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
 
                 //
@@ -155,38 +157,39 @@ await ConsoleApp.RunAsync(
         bootstrap.ConfigureNetworkServices += networkService =>
         {
             PacketRegistration.RegisterPackets(networkService);
+            var gamePacketHandlerService = MoongateContext.Container.Resolve<IGamePacketHandlerService>();
 
 
             // Registering all packet handlers
 
-            networkService.RegisterGamePacketHandler<LoginRequestPacket, LoginHandler>();
-            networkService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
-            networkService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
-            networkService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
-            networkService.RegisterGamePacketHandler<ClientVersionPacket, LoginHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<LoginRequestPacket, LoginHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<LoginSeedPacket, LoginHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<SelectServerPacket, LoginHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<GameServerLoginPacket, LoginHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<ClientVersionPacket, LoginHandler>();
 
-            networkService.RegisterGamePacketHandler<CharacterCreationPacket, CharactersHandler>();
-            networkService.RegisterGamePacketHandler<CharacterDeletePacket, CharactersHandler>();
-            networkService.RegisterGamePacketHandler<CharacterLoginPacket, CharactersHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<CharacterCreationPacket, CharactersHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<CharacterDeletePacket, CharactersHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<CharacterLoginPacket, CharactersHandler>();
 
-            networkService.RegisterGamePacketHandler<MoveRequestPacket, CharacterMoveHandler>();
-            networkService.RegisterGamePacketHandler<MoveAckPacket, CharacterMoveHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<MoveRequestPacket, CharacterMoveHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<MoveAckPacket, CharacterMoveHandler>();
 
-            networkService.RegisterGamePacketHandler<UnicodeSpeechRequestPacket, ChatHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<UnicodeSpeechRequestPacket, ChatHandler>();
 
-            networkService.RegisterGamePacketHandler<PingPacket, PingHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<PingPacket, PingHandler>();
 
-            networkService.RegisterGamePacketHandler<SingleClickPacket, ClickHandler>();
-            networkService.RegisterGamePacketHandler<DoubleClickPacket, ClickHandler>();
-            networkService.RegisterGamePacketHandler<TargetCursorPacket, ClickHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<SingleClickPacket, ClickHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<DoubleClickPacket, ClickHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<TargetCursorPacket, ClickHandler>();
 
-            networkService.RegisterGamePacketHandler<MegaClilocRequestPacket, ToolTipHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<MegaClilocRequestPacket, ToolTipHandler>();
 
-            networkService.RegisterGamePacketHandler<DropItemPacket, ItemsHandler>();
-            networkService.RegisterGamePacketHandler<PickUpItemPacket, ItemsHandler>();
-            networkService.RegisterGamePacketHandler<DropWearItemPacket, ItemsHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<DropItemPacket, ItemsHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<PickUpItemPacket, ItemsHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<DropWearItemPacket, ItemsHandler>();
 
-            networkService.RegisterGamePacketHandler<GetPlayerStatusPacket, PlayerStatusHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<GetPlayerStatusPacket, PlayerStatusHandler>();
         };
 
 
