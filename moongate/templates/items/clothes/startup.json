@@ -1,56 +1,56 @@
 [
-	{
-		"type": "item",
-		"id": "inner_torso",
-		"category": "Start Clothes",
-		"itemId": "0x1F7B",
-		"hue": "4375",
-		"goldValue": "dice(1d4+1)",
-		"weight": 1
-	},
-   {
-		"type": "item",
-		"id": "outer_torso",
-		"category": "Start Clothes",
-		"itemId": "0x1F03",
-		"hue": "4375",
-		"goldValue": "dice(1d4+1)",
-		"weight": 1
-	},
-    {
-		"type": "item",
-		"id": "one_hand",
-		"category": "Start Clothes",
-		"itemId": "0x13FF",
-		"hue": "4375",
-		"goldValue": "dice(1d4+1)",
-		"weight": 1
-	},
-{
-		"type": "item",
-		"id": "middle_torso",
-		"category": "Start Clothes",
-		"itemId": "0x13BF",
-		"hue": "4375",
-		"goldValue": "dice(1d4+1)",
-		"weight": 1
-	},
-{
-		"type": "item",
-		"id": "pants",
-		"category": "Start Clothes",
-		"itemId": "0x13BF",
-		"hue": "4375",
-		"goldValue": "dice(1d4+1)",
-		"weight": 1
-	},
-    {
-		"type": "item",
-		"id": "shoes",
-		"category": "Start Clothes",
-		"itemId": "0x26AF",
-		"hue": "4375",
-		"goldValue": "dice(1d4+1)",
-		"weight": 1
-	}
+  {
+    "type": "item",
+    "id": "inner_torso",
+    "category": "Start Clothes",
+    "itemId": "0x1F7B",
+    "hue": "4375",
+    "goldValue": "dice(1d4+1)",
+    "weight": 1
+  },
+  {
+    "type": "item",
+    "id": "outer_torso",
+    "category": "Start Clothes",
+    "itemId": "0x1F03",
+    "hue": "4375",
+    "goldValue": "dice(1d4+1)",
+    "weight": 1
+  },
+  {
+    "type": "item",
+    "id": "one_hand",
+    "category": "Start Clothes",
+    "itemId": "0x13FF",
+    "hue": "4375",
+    "goldValue": "dice(1d4+1)",
+    "weight": 1
+  },
+  {
+    "type": "item",
+    "id": "middle_torso",
+    "category": "Start Clothes",
+    "itemId": "0x13BF",
+    "hue": "4375",
+    "goldValue": "dice(1d4+1)",
+    "weight": 1
+  },
+  {
+    "type": "item",
+    "id": "pants",
+    "category": "Start Clothes",
+    "itemId": "0x13BF",
+    "hue": "4375",
+    "goldValue": "dice(1d4+1)",
+    "weight": 1
+  },
+  {
+    "type": "item",
+    "id": "shoes",
+    "category": "Start Clothes",
+    "itemId": "0x26AF",
+    "hue": "4375",
+    "goldValue": "dice(1d4+1)",
+    "weight": 1
+  }
 ]

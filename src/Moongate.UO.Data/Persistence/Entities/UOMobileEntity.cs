@@ -10,6 +10,7 @@ using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Extensions;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
@@ -182,7 +183,25 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public List<SkillEntry> Skills { get; set; } = new();
 
 
-    public int Gold { get; set; } = 0;
+    public int Gold { get; set; }
+
+
+    public int GetGold()
+    {
+        var backpack = Equipment[ItemLayerType.Backpack].ToEntity();
+        return backpack.ContainsItem(0x0EEF, out var item) ? item.Amount : 0;
+    }
+
+    public void SetGold(int gold)
+    {
+        Gold = gold;
+    }
+
+    public void AddGold(int amount)
+    {
+        var currentGold = GetGold();
+        SetGold(currentGold + amount);
+    }
 
     public void RecalculateMaxStats()
     {

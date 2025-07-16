@@ -4,6 +4,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Extensions;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
@@ -82,6 +83,18 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     {
         return ContainedItems.Values.ToList().FirstOrDefault(s => s.Id == item.Id) != null;
     }
+
+    public bool ContainsItem(int itemId, out UOItemEntity item)
+    {
+        item = ContainedItems.Values
+            .Where(reference => reference.ItemId == itemId)
+            .Select(k => k.ToEntity())
+            .FirstOrDefault();
+
+        return item != null;
+    }
+
+
 
     public void RemoveItem(UOItemEntity item)
     {

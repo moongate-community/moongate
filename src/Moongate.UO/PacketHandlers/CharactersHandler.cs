@@ -3,6 +3,7 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Contexts;
 using Moongate.UO.Data.Events.System;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
@@ -153,6 +154,12 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.RecalculateMaxStats();
 
         playerMobileEntity.AddItem(ItemLayerType.Backpack, _entityFactoryService.GetNewBackpack());
+
+        var goldItem = _entityFactoryService.CreateItemEntity("gold");
+
+        goldItem.Amount = 1000;
+
+        playerMobileEntity.GetBackpack().AddItem(goldItem, new Point2D(0, 0));
 
         playerMobileEntity.IsPlayer = true;
 

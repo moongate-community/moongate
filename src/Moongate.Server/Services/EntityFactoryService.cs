@@ -45,6 +45,17 @@ public class EntityFactoryService : IEntityFactoryService
             GoldValue = 1,
             Weight = 1
         };
+
+        _itemTemplates["gold"] = new ItemTemplate()
+        {
+            GumpId = 0x003C,
+            Id = "gold",
+            Category = "Currency",
+            Tags = ["currency", "money"],
+            ItemId = 0x0EEF,
+            GoldValue = 1,
+            Weight = 25
+        };
     }
 
     public T CreateEntity<T>(string templateId) where T : class
