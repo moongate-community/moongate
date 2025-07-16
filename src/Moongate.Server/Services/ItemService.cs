@@ -15,6 +15,7 @@ public class ItemService : IItemService
     public event IItemService.ItemEventHandler? ItemAdded;
     public event IItemService.ItemMovedEventHandler? ItemMoved;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
+
     private readonly SemaphoreSlim _saveLock = new(1, 1);
 
     private readonly Dictionary<string, IItemAction> _itemActions = new();
@@ -147,6 +148,19 @@ public class ItemService : IItemService
 
         _itemActions[itemId] = itemAction;
         _logger.Information("Added item action for {ItemId}.", itemId);
+    }
+
+    public void RemoveItemFromWorld(UOItemEntity item)
+    {
+        if (!_items.Remove(item.Id))
+        {
+            _logger.Warning("Item with ID {Id} not found, cannot remove.", item.Id);
+            return;
+        }
+
+        item.ItemMoved -= ItemOnItemMoved;
+
+        _logger.Information("Removed item with ID {Id} from world.", item.Id);
     }
 
     public UOItemEntity? GetItem(Serial id)

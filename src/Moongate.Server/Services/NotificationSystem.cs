@@ -49,6 +49,7 @@ public class NotificationSystem : INotificationSystem
         _spatialWorldService.ItemMovedOnGround += OnItemOnGround;
         _spatialWorldService.ItemRemoved += OnItemRemoved;
 
+
         _mobileService.MobileAdded += OnMobileAdded;
     }
 
@@ -73,6 +74,37 @@ public class NotificationSystem : INotificationSystem
             mobile.ItemOnGround += ((item, location) => PlayerItemOnGround(mobile, item, location));
             mobile.MobileMoved += ((otherMobile, location) => OnOtherMobileMoved(mobile, otherMobile, location));
             mobile.ItemRemoved += ((item, location) => PlayerItemRemoved(mobile, item, location));
+            mobile.EquipmentAdded += MobileOnEquipmentAdded;
+            mobile.EquipmentRemoved += MobileOnEquipmentRemoved;
+        }
+    }
+
+    private void MobileOnEquipmentRemoved(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)
+    {
+        var mobileInSector = _spatialWorldService.GetPlayersInRange(
+            mobile.Location,
+            MapSectorConsts.MaxViewRange,
+            mobile.Map.MapID
+        );
+
+        foreach (var session in mobileInSector)
+        {
+            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true);
+            session.SendPackets(mobileDrawPacket);
+        }
+    }
+
+    private void MobileOnEquipmentAdded(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)
+    {
+        var mobileInSector = _spatialWorldService.GetPlayersInRange(
+            mobile.Location,
+            MapSectorConsts.MaxViewRange,
+            mobile.Map.MapID
+        );
+        foreach (var session in mobileInSector)
+        {
+            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true);
+            session.SendPackets(mobileDrawPacket);
         }
     }
 

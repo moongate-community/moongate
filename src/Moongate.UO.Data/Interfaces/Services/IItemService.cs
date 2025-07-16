@@ -29,4 +29,6 @@ public interface IItemService : IMoongateAutostartService, IPersistenceLoadSave
     void UseItem(UOItemEntity item, UOMobileEntity? user);
 
     void AddItemActionScript(string itemId, IItemAction itemAction);
+
+    void RemoveItemFromWorld(UOItemEntity item);
 }

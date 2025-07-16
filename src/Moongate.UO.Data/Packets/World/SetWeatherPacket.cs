@@ -16,6 +16,10 @@ public class SetWeatherPacket : BaseUoPacket
 
     public SetWeatherPacket(WeatherType weatherType, int numOfEffects, int temperature) : this()
     {
+        if (numOfEffects > 70)
+        {
+            numOfEffects = 70;
+        }
         WeatherType = weatherType;
         NumOfEffects = numOfEffects;
         Temperature = temperature;

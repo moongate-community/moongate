@@ -52,6 +52,13 @@ public class ClickHandler : IGamePacketHandler
                 session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));
                 session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
 
+                return;
+            }
+
+            if (item.IsContainer)
+            {
+                session.SendPackets(new AddMultipleItemToContainerPacket(item));
+                session.SendPackets(new DrawContainer(item));
 
                 return;
             }
