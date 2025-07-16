@@ -58,6 +58,9 @@ public class ItemsHandler : IGamePacketHandler
         droppingItem.ParentId = mobile.Id;
         droppingItem.Map = Map.Felucca;
 
+        _itemService.RemoveItemFromWorld(droppingItem);
+
+
         _logger.Information(
             "Wear groud item {DroppingItemId} on layer {Layer} for mobile {MobileId}",
             droppingItem.Name,

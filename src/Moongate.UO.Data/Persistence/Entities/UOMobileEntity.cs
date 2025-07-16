@@ -17,6 +17,14 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    public delegate void EquipmentChangedEventHandler(
+        UOMobileEntity mobile, ItemLayerType layer, ItemReference item
+    );
+
+    public event EquipmentChangedEventHandler? EquipmentAdded;
+    public event EquipmentChangedEventHandler? EquipmentRemoved;
+
+
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -243,7 +251,23 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public void AddItem(ItemLayerType layer, UOItemEntity item)
     {
         item.OwnerId = Id;
+
+        if (Equipment.ContainsKey(layer))
+        {
+            RemoveItem(layer);
+        }
+
         Equipment[layer] = item.ToItemReference();
+
+        EquipmentAdded?.Invoke(this, layer, item.ToItemReference());
+    }
+
+    public void RemoveItem(ItemLayerType layer)
+    {
+        if (Equipment.Remove(layer, out var itemRef))
+        {
+            EquipmentRemoved?.Invoke(this, layer, itemRef);
+        }
     }
 
 
