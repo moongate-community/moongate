@@ -89,7 +89,7 @@ public class NotificationSystem : INotificationSystem
 
         foreach (var session in mobileInSector)
         {
-            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true);
+            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
             session.SendPackets(mobileDrawPacket);
         }
     }
@@ -103,7 +103,7 @@ public class NotificationSystem : INotificationSystem
         );
         foreach (var session in mobileInSector)
         {
-            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true);
+            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
             session.SendPackets(mobileDrawPacket);
         }
     }

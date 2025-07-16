@@ -213,7 +213,7 @@ public class SpatialWorldService : ISpatialWorldService
     /// </summary>
     public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapIndex, GameSession? excludeSession = null)
     {
-        var players = _sectorSystem.GetPlayersInRange(location, mapIndex, range);
+        var players = _sectorSystem.GetPlayersInRange(location, range, mapIndex);
 
         return players.Select(player => _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == player.Id))
             .OfType<GameSession>()
