@@ -26,7 +26,7 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IEntityFactoryService _entityFactoryService;
 
     public CharactersHandler(
-        IMobileService mobileService,  IEventBusService eventBusService,
+        IMobileService mobileService, IEventBusService eventBusService,
         IScriptEngineService scriptEngineService, IEntityFactoryService entityFactoryService
     )
     {
@@ -134,7 +134,6 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.FacialHairStyle = characterCreation.FacialHair.Style;
         playerMobileEntity.HairHue = characterCreation.Hair.Hue;
         playerMobileEntity.HairStyle = characterCreation.Hair.Style;
-        //playerMobileEntity.Location = characterCreation.StartingCity.Location;
         playerMobileEntity.Location = characterCreation.StartingCity.Location;
         playerMobileEntity.SkinHue = characterCreation.Skin.Hue;
 
@@ -163,7 +162,6 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.IsPlayer = true;
 
 
-
         var createContext =
             new CharacterCreatedEvent(
                 session.Account.Username,
@@ -174,6 +172,23 @@ public class CharactersHandler : IGamePacketHandler
         await _eventBusService.PublishAsync(createContext);
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
+
+        // TODO: Move logic for default items and colors
+
+        if (playerMobileEntity.HasItem(ItemLayerType.Pants))
+        {
+            var pantsItem = playerMobileEntity.GetItem(ItemLayerType.Pants);
+
+            pantsItem.Hue = characterCreation.Pants.Hue;
+        }
+
+        if (playerMobileEntity.HasItem(ItemLayerType.Shirt))
+        {
+            var shirtItem = playerMobileEntity.GetItem(ItemLayerType.Shirt);
+
+            shirtItem.Hue = characterCreation.Shirt.Hue;
+        }
+
 
         _mobileService.AddInWorld(playerMobileEntity);
 

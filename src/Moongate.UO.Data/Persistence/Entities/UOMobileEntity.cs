@@ -289,6 +289,16 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         }
     }
 
+    public bool HasItem(ItemLayerType layer)
+    {
+        return Equipment.ContainsKey(layer);
+    }
+
+    public UOItemEntity? GetItem(ItemLayerType layer)
+    {
+        return Equipment.TryGetValue(layer, out var itemRef) ? itemRef.ToEntity() : null;
+    }
+
 
     public virtual void ReceiveSpeech(
         UOMobileEntity? mobileEntity, ChatMessageType messageType, short hue, string text, int graphic, int font
