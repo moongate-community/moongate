@@ -94,13 +94,17 @@ public class EntityFactoryService : IEntityFactoryService
 
         item.TemplateId = itemTemplate.Id;
         item.Gold = itemTemplate.GoldValue;
+
         item.Name = itemTemplate.Name;
+
         item.ItemId = itemTemplate.ItemId;
         item.BaseWeight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
         item.ScriptId = itemTemplate.ScriptId;
         item.GumpId = itemTemplate.GumpId;
         item.LootType = itemTemplate.LootType;
+
+        item.Name ??= TileData.ItemTable[item.ItemId].Name;
 
         if (itemTemplate.Container.Count > 0)
         {

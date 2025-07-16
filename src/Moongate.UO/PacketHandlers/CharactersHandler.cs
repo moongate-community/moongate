@@ -11,7 +11,6 @@ using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
-using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.UO.PacketHandlers;
@@ -159,11 +158,11 @@ public class CharactersHandler : IGamePacketHandler
 
         goldItem.Amount = 1000;
 
-        playerMobileEntity.GetBackpack().AddItem(goldItem, new Point2D(0, 0));
+        playerMobileEntity.GetBackpack().AddItem(goldItem, new Point2D(1, 1));
 
         playerMobileEntity.IsPlayer = true;
 
-        _mobileService.AddInWorld(playerMobileEntity);
+
 
         var createContext =
             new CharacterCreatedEvent(
@@ -175,6 +174,8 @@ public class CharactersHandler : IGamePacketHandler
         await _eventBusService.PublishAsync(createContext);
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
+
+        _mobileService.AddInWorld(playerMobileEntity);
 
         await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 

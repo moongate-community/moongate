@@ -5,6 +5,7 @@ using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.MegaCliloc;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 
@@ -58,8 +59,15 @@ public class MegaClilocService : IMegaClilocService
     private void MobileServiceOnMobileAdded(UOMobileEntity mobile)
     {
         mobile.PropertyChanged += MobileOnPropertyChanged;
+        mobile.GetBackpack().ContainerItemAdded += OnContainerItemChanged;
+        mobile.GetBackpack().ContainerItemRemoved += OnContainerItemChanged;
 
         RebuildPropertiesMobileAsync(mobile.Id);
+    }
+
+    private void OnContainerItemChanged(UOItemEntity container, ItemReference item)
+    {
+        RebuildPropertiesItemAsync(item.Id);
     }
 
     private void MobileOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -143,6 +151,17 @@ public class MegaClilocService : IMegaClilocService
         };
 
         entry.AddProperty(CommonClilocIds.ItemName, item.Name);
+        entry.AddProperty(CommonClilocIds.Weight, item.Weight);
+
+        if (item.Amount > 1)
+        {
+            entry.AddProperty(CommonClilocIds.Amount, item.Amount);
+        }
+
+        if (item.IsContainer)
+        {
+            entry.AddProperty( CommonClilocIds.ContainerContents, item.ContainedItems.Count, "24");
+        }
 
         _entries.TryAdd(serial, entry);
     }
