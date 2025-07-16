@@ -35,6 +35,7 @@ using Moongate.UO.Data.Packets.Chat;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.MegaCliloc;
+using Moongate.UO.Data.Packets.Mouse;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Persistence;
@@ -177,6 +178,7 @@ await ConsoleApp.RunAsync(
 
             networkService.RegisterGamePacketHandler<SingleClickPacket, ClickHandler>();
             networkService.RegisterGamePacketHandler<DoubleClickPacket, ClickHandler>();
+            networkService.RegisterGamePacketHandler<TargetCursorPacket, ClickHandler>();
 
             networkService.RegisterGamePacketHandler<MegaClilocRequestPacket, ToolTipHandler>();
 
