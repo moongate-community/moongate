@@ -267,7 +267,6 @@ public class NetworkService : INetworkService
     {
         _logger.Information("Stopping NetworkService...");
 
-        _clientsLock.Wait(cancellationToken);
         try
         {
             foreach (var client in _clients)
@@ -279,7 +278,6 @@ public class NetworkService : INetworkService
         }
         finally
         {
-            _clientsLock.Release();
         }
 
         foreach (var server in _tcpServers)
