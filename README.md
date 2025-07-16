@@ -67,7 +67,7 @@ The following features have been implemented in this phase:
 - 🌍 **World segmentation into sectors** for spatial optimization
 - 🔐 **Command system with account-level permissions**
 - 🎒 **Item pickup and equipment handling**
-- 🧱 **Initial implementation of Megaloc (location manager)**
+- 🧱 **Initial implementation of Megacliloc (tooltips)**
 - 🧳 **Backpack management**
 - 🧍 **Paperdoll system**
 
