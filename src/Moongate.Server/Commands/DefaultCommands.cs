@@ -4,7 +4,10 @@ using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Packets.Items;
+using Moongate.UO.Data.Packets.Mouse;
 using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
@@ -55,6 +58,27 @@ public static class DefaultCommands
             "Broadcasts a message to all players",
             AccountLevelType.Admin
         );
+
+        commandSystemService.RegisterCommand("color", OnColorCommand, "Changes the color of an item", AccountLevelType.User);
+        commandSystemService.RegisterCommand("select", OnSelect, "Selects an item", AccountLevelType.User);
+
+    }
+
+    private static async Task OnSelect(CommandSystemContext context)
+    {
+        var cursorPacket = new TargetCursorPacket(CursorSelectionType.Object, CursorType.Helpful, Serial.Parse("1234"));
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        gameSession.SendPackets(cursorPacket);
+    }
+
+    private static async Task OnColorCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        gameSession.SendPackets(new DyeWindowRequestPacket(Serial.Zero));
     }
 
     private static async Task OnBroadcastCommand(CommandSystemContext context)

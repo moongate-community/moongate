@@ -2,6 +2,7 @@ using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Items;
+using Moongate.UO.Data.Packets.Mouse;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
@@ -26,13 +27,26 @@ public class ClickHandler : IGamePacketHandler
         if (packet is SingleClickPacket singleClickPacket)
         {
             await HandleSingleClickAsync(session, singleClickPacket);
+            return;
         }
-        else if (packet is DoubleClickPacket doubleClickPacket)
+
+        if (packet is DoubleClickPacket doubleClickPacket)
         {
             await HandleDoubleClickAsync(session, doubleClickPacket);
+            return;
+        }
+
+        if (packet is TargetCursorPacket targetCursorPacket)
+        {
+            await HandleSelectTarget(session, targetCursorPacket);
+            return;
         }
     }
 
+
+    private async Task HandleSelectTarget(GameSession session, TargetCursorPacket targetCursor)
+    {
+    }
 
     private async Task HandleDoubleClickAsync(GameSession session, DoubleClickPacket packet)
     {
