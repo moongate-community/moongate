@@ -570,4 +570,5 @@ crashlytics-build.properties
 docs/_site
 docs/api
 
+moongate/scripts/index.d.ts
 moongate/saves/**/*
