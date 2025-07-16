@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.16.0"></a>
+## [0.16.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.16.0) (2025-07-16)
+
+### Features
+
+* **commands:** add 'color' and 'select' commands for user interaction ([0e25c3d](https://www.github.com/moongate-community/moongate/commit/0e25c3d554d3e6ba39d1054b8f75b217cbe1b3ce))
+
 <a name="0.15.2"></a>
 ## [0.15.2](https://www.github.com/moongate-community/moongate/releases/tag/v0.15.2) (2025-07-16)
 
