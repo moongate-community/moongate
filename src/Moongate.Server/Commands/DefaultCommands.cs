@@ -78,7 +78,7 @@ public static class DefaultCommands
 
     private static Task OnSetWeatherCommand(CommandSystemContext context)
     {
-        var setWeatherPacket = new SetWeatherPacket(WeatherType.Snow, 2, 10);
+        var setWeatherPacket = new SetWeatherPacket(WeatherType.Snow, 70, 10);
 
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
         var gameSession = gameSessionService.GetSession(context.SessionId);
