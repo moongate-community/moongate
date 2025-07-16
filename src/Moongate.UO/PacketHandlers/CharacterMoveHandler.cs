@@ -74,6 +74,10 @@ public class CharacterMoveHandler : IGamePacketHandler
         newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
 
         _mobileService.MoveMobile(session.Mobile, newLocation);
+        session.Mobile.Direction = packet.Direction;
+
+
+
 
         if (session.MoveSequence == 255)
         {
@@ -90,7 +94,10 @@ public class CharacterMoveHandler : IGamePacketHandler
             packet.Direction
         );
 
+
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
+        
+
         var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
         session.SendPackets(moveAckPacket);
     }

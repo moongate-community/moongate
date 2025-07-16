@@ -10,7 +10,7 @@ public class MoveRequestPacket : BaseUoPacket
     public int Sequence { get; set; }
     public uint FastKey { get; set; }
 
-    public bool IsRunning => (Direction & DirectionType.Running) != 0;
+    public bool IsRunning => Direction.HasFlag(DirectionType.Running);
 
     public MoveRequestPacket() : base(0x02)
     {
