@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.17.0"></a>
+## [0.17.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.17.0) (2025-07-16)
+
+### Features
+
+* removed index.d.ts ([45e7df0](https://www.github.com/moongate-community/moongate/commit/45e7df0e82b736b20875765f4d783604858c9da8))
+* **Moongate.Server:** update TypeScript definitions to v0.12.27.0 ([e631b13](https://www.github.com/moongate-community/moongate/commit/e631b1334fdbee0e2c93fd0fccd0912388b13844))
+* **templates:** reformat startup.json for consistent indentation ([d7db011](https://www.github.com/moongate-community/moongate/commit/d7db0115a951ceb3d243a6ccfc82a60e85b5e666))
+
 <a name="0.16.0"></a>
 ## [0.16.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.16.0) (2025-07-16)
 
