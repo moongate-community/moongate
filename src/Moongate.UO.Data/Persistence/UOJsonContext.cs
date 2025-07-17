@@ -3,6 +3,7 @@ using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json;
+using Moongate.UO.Data.Json.Names;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Persistence.Entities;
@@ -56,6 +57,8 @@ namespace Moongate.UO.Data.Persistence;
 [JsonSerializable(typeof(JsonProfessionsRoot))]
 [JsonSerializable(typeof(JsonStat))]
 [JsonSerializable(typeof(JsonDfnHeader))]
+[JsonSerializable(typeof(JsonNameDef))]
+[JsonSerializable(typeof(JsonNameDef[]))]
 [JsonSourceGenerationOptions(
     WriteIndented = false,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
