@@ -1,8 +1,8 @@
-using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Contexts;
 
 namespace Moongate.UO.Data.Interfaces.Entities;
 
 public interface IItemAction
 {
-    void OnUseItem(UOItemEntity item, UOMobileEntity user);
+    void OnUseItem(ItemUseContext context);
 }

@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Context;
@@ -122,8 +121,9 @@ public class NotificationSystem : INotificationSystem
         );
         foreach (var session in mobileInSector)
         {
+            var itemWornPacket = new WornItemPacket(mobile, item, layer);
             var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
-            session.SendPackets(mobileDrawPacket);
+            session.SendPackets(itemWornPacket,mobileDrawPacket);
         }
     }
 
