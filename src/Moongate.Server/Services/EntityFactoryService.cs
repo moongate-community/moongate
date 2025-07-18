@@ -28,7 +28,9 @@ public class EntityFactoryService : IEntityFactoryService
     private readonly INameService _nameService;
     private readonly IMobileService _mobileService;
 
-    public EntityFactoryService(DirectoriesConfig directoriesConfig, IItemService itemService, IMobileService mobileService, INameService nameService)
+    public EntityFactoryService(
+        DirectoriesConfig directoriesConfig, IItemService itemService, IMobileService mobileService, INameService nameService
+    )
     {
         _directoriesConfig = directoriesConfig;
         _itemService = itemService;
@@ -112,12 +114,10 @@ public class EntityFactoryService : IEntityFactoryService
 
         _logger.Warning("Mobile template not found: {TemplateId}", templateOrCategoryOrTag);
         return null;
-
     }
 
     private UOMobileEntity CreateMobileEntity(MobileTemplate mobileTemplate, Dictionary<string, object> overrides = null)
     {
-
         var mobile = _mobileService.CreateMobile();
         mobile.TemplateId = mobileTemplate.Id;
 
@@ -135,7 +135,6 @@ public class EntityFactoryService : IEntityFactoryService
         mobile.Equipment[ItemLayerType.Backpack] = CreateItemEntity("backpack").ToItemReference();
 
         return mobile;
-
     }
 
     private UOItemEntity CreateItemEntity(ItemTemplate itemTemplate, Dictionary<string, object> overrides = null)

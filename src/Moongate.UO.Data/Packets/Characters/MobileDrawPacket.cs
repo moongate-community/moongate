@@ -40,9 +40,6 @@ public class MobileDrawPacket : BaseUoPacket
 
         var items = Beheld.Equipment;
 
-        // Calculate maximum packet length
-        var maxLength = 23 + (items.Count + 2) * 9;
-
         // Item ID mask based on packet type
         var itemIdMask = NewMobileIncoming ? 0xFFFF : 0x7FFF;
 
@@ -55,12 +52,12 @@ public class MobileDrawPacket : BaseUoPacket
 
         // Mobile data
         writer.Write(Beheld.Id.Value);
-        writer.Write((ushort)Beheld.Body);
-        writer.Write((ushort)Beheld.X);
-        writer.Write((ushort)Beheld.Y);
+        writer.Write((short)Beheld.Body);
+        writer.Write((short)Beheld.X);
+        writer.Write((short)Beheld.Y);
         writer.Write((sbyte)Beheld.Z);
         writer.Write((byte)Beheld.Direction);
-        writer.Write((ushort)Beheld.SkinHue);
+        writer.Write((short)Beheld.SkinHue);
         writer.Write((byte)Beheld.GetPacketFlags(StygianAbyss));
 
         // Calculate notoriety between beholder and beheld
@@ -73,10 +70,18 @@ public class MobileDrawPacket : BaseUoPacket
 
         writer.Write(notoriety);
 
+
         // Process equipped items
         foreach (var (layer, item) in items)
         {
             var layerByte = (byte)layer;
+
+
+            if (Beheld != Beholder && !IsVisibleLayer(layer))
+            {
+                continue;
+            }
+
 
             // Check if item is valid and visible
             if (item.Id.Value == 0 || layers[layerByte])
@@ -89,6 +94,7 @@ public class MobileDrawPacket : BaseUoPacket
             {
                 continue;
             }
+
 
             layers[layerByte] = true;
             //var itemHue = Beheld.SolidHueOverride >= 0 ? Beheld.SolidHueOverride : item.Hue;
@@ -139,7 +145,7 @@ public class MobileDrawPacket : BaseUoPacket
         if (HasFacialHair() && !layers[(int)ItemLayerType.FacialHair])
         {
             layers[(int)ItemLayerType.FacialHair] = true;
-            var facialHairHue =  GetFacialHairHue();
+            var facialHairHue = GetFacialHairHue();
 
             var facialHairItemID = GetFacialHairItemID() & itemIdMask;
             var writeHue = NewMobileIncoming || facialHairHue != 0;
@@ -160,13 +166,14 @@ public class MobileDrawPacket : BaseUoPacket
         }
 
         // Terminator
-        writer.Write((uint)0x00000000);
+        writer.Write(0);
 
-        // Write packet length
-        var currentPosition = writer.Position;
-        writer.Seek(1, SeekOrigin.Begin);
-        writer.Write((ushort)currentPosition);
-        writer.Seek(currentPosition, SeekOrigin.Begin);
+
+        writer.WritePacketLength();
+
+        //writer.Seek(1, SeekOrigin.Begin);
+        //writer.Write((ushort)currentPosition);
+        //writer.Seek(currentPosition, SeekOrigin.Begin);
 
         return writer.ToArray();
     }
@@ -186,7 +193,7 @@ public class MobileDrawPacket : BaseUoPacket
     /// </summary>
     private bool HasHair()
     {
-        return true;
+        return Beheld.HairStyle > 0 && Beheld.HairHue > 0;
     }
 
     /// <summary>
@@ -218,7 +225,7 @@ public class MobileDrawPacket : BaseUoPacket
     /// </summary>
     private bool HasFacialHair()
     {
-        return true;
+        return Beheld.FacialHairHue > 0;
     }
 
     /// <summary>
@@ -243,5 +250,15 @@ public class MobileDrawPacket : BaseUoPacket
     private uint GetFacialHairSerial()
     {
         return Beheld.Id.Value + 0x50000000;
+    }
+
+    private bool IsVisibleLayer(ItemLayerType layer)
+    {
+        return true;
+        return layer != ItemLayerType.Backpack &&
+               layer != ItemLayerType.Bank &&
+               layer != ItemLayerType.ShopBuy &&
+               layer != ItemLayerType.ShopSell &&
+               layer != ItemLayerType.ShopResale;
     }
 }
