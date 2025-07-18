@@ -27,6 +27,8 @@ public class ItemTemplate : BaseTemplate
 
     public string ScriptId { get; set; }
 
+    public bool IsMovable { get; set; } = true;
+
     /// <summary>
     /// List of container names this item can be placed in.
     /// </summary>

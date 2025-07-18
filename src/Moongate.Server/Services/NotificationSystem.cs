@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Context;
@@ -8,9 +7,9 @@ using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
+using Moongate.UO.Data.Packets.Effects;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Objects;
-using Moongate.UO.Data.Packets.Sounds;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -50,8 +49,35 @@ public class NotificationSystem : INotificationSystem
         _spatialWorldService.ItemMovedOnGround += OnItemOnGround;
         _spatialWorldService.ItemRemoved += OnItemRemoved;
 
+        _spatialWorldService.OnMobileAddedInSector += OnOnMobileAddedInSector;
+
 
         _mobileService.MobileAdded += OnMobileAdded;
+    }
+
+    private void OnOnMobileAddedInSector(UOMobileEntity mobile, MapSector sector, WorldView worldView)
+    {
+        _logger.Debug("Mobile {MobileId} {Name} added to sector {Sector}", mobile.Id, mobile.Name, sector);
+
+        foreach (var mobileInView in worldView.NearbyMobiles)
+        {
+            if (mobileInView.IsPlayer)
+            {
+                var gameSession = _gameSessionService.GetGameSessionByMobile(mobileInView);
+
+                if (gameSession != null)
+                {
+                    //var mobileDrawPacket = new MobileDrawPacket(null, mobile, true, true);
+                    // var objectInfoPacket = new MobileStatusPacket(mobile, 6, false);
+                    //gameSession.SendPackets(mobileDrawPacket);
+
+                    var mobileDrawPacket = new MobileDrawPacket(null, mobile, true, true);
+                    var drawGamePlayerPacket = new DrawGamePlayerPacket(mobile);
+
+                    gameSession.SendPackets(mobileDrawPacket, drawGamePlayerPacket);
+                }
+            }
+        }
     }
 
     private void OnItemRemoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
@@ -95,7 +121,6 @@ public class NotificationSystem : INotificationSystem
                 session.SendPackets(containerItems);
             }
         }
-
     }
 
     private void MobileOnEquipmentRemoved(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)
@@ -122,8 +147,9 @@ public class NotificationSystem : INotificationSystem
         );
         foreach (var session in mobileInSector)
         {
+            var itemWornPacket = new WornItemPacket(mobile, item, layer);
             var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
-            session.SendPackets(mobileDrawPacket);
+            session.SendPackets(itemWornPacket, mobileDrawPacket);
         }
     }
 

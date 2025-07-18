@@ -91,6 +91,9 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     }
 
     public Serial Id { get; set; }
+
+    public string? TemplateId { get; set; }
+
     public string Name { get; set; }
     public string Title { get; set; }
 
@@ -123,12 +126,48 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
 
     public Race Race { get; set; }
 
-    public Body Body => Race.Body(this);
+    public Body Body
+    {
+        get => GetBody();
+        set => SetBody(value);
+    }
+
+    public Body? BaseBody { get; set; }
+
+
+    public virtual Body GetBody()
+    {
+        if (BaseBody == 0x00)
+        {
+            return Race.Body(this);
+        }
+
+        if (BaseBody == null)
+        {
+            return Race.Human.Body(this);
+        }
+
+        return BaseBody ?? Race.Body(this);
+    }
+
+    public void SetBody(Body body)
+    {
+        BaseBody = body;
+        OnPropertyChanged(nameof(Body));
+    }
+
+    public void OverrideBody(Body body)
+    {
+        BaseBody = body;
+        OnPropertyChanged(nameof(Body));
+    }
+
     public int HairStyle { get; set; }
     public int HairHue { get; set; }
     public int FacialHairStyle { get; set; }
     public int FacialHairHue { get; set; }
     public int SkinHue { get; set; }
+
 
     public ProfessionInfo Profession { get; set; }
 

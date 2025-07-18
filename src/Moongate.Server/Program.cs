@@ -124,7 +124,7 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(ISpatialWorldService), typeof(SpatialWorldService))
                 .AddService(typeof(IGamePacketHandlerService), typeof(GamePacketHandlerService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
-
+                .AddService(typeof(INameService), typeof(NameService))
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
                 .AddService(typeof(PacketLoggerService))
@@ -215,7 +215,7 @@ await ConsoleApp.RunAsync(
             fileLoaderService.AddFileLoader<ContainersDataLoader>();
             fileLoaderService.AddFileLoader<RegionDataLoader>();
             fileLoaderService.AddFileLoader<WeatherDataLoader>();
-
+            fileLoaderService.AddFileLoader<NamesLoader>();
 
             DefaultCommands.RegisterDefaultCommands(commandService);
         };

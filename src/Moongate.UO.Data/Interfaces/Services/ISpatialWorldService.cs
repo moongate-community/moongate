@@ -3,6 +3,7 @@ using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
+using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
@@ -130,4 +131,12 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// </summary>
     /// <returns>Statistics about sectors and entities</returns>
     SectorSystemStats GetStats();
+
+    void AddRegion(JsonRegion region);
+
+    void AddMusics(List<JsonMusic> musics);
+
+    int GetMusicFromLocation(Point3D location, int mapIndex);
+
+    JsonRegion GetRegionFromLocation(Point3D location, int mapIndex);
 }

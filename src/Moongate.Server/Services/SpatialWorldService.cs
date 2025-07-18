@@ -4,6 +4,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
@@ -25,6 +26,11 @@ public class SpatialWorldService : ISpatialWorldService
     private readonly IMobileService _mobileService;
     private readonly IDiagnosticService _diagnosticService;
     private readonly IGameSessionService _gameSessionService;
+
+    private readonly Dictionary<Rectangle2D, JsonRegion> _regionsDefinition = new();
+
+    private readonly Dictionary<int, JsonMusic> _musicDefinition = new();
+
 
     public event ISpatialWorldService.EntityMovedSectorHandler? EntityMovedSector;
     public event ISpatialWorldService.MobileSectorMovedHandler? MobileSectorMoved;
@@ -114,6 +120,7 @@ public class SpatialWorldService : ISpatialWorldService
         var worldView = GetPlayerWorldView(mobile);
 
         OnMobileAddedInSector?.Invoke(mobile, sector, worldView);
+
     }
 
     private void OnMobileAdded(UOMobileEntity mobile)
@@ -216,7 +223,9 @@ public class SpatialWorldService : ISpatialWorldService
         var players = _sectorSystem.GetPlayersInRange(location, range, mapIndex);
 
         return players
-            .Select(player => _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile != null && s.Mobile.Id == player.Id))
+            .Select(player =>
+                _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile != null && s.Mobile.Id == player.Id)
+            )
             .OfType<GameSession>()
             .Where(session => session != excludeSession)
             .ToList();
@@ -313,6 +322,65 @@ public class SpatialWorldService : ISpatialWorldService
     public SectorSystemStats GetStats()
     {
         return _sectorSystem.GetStats();
+    }
+
+    public void AddRegion(JsonRegion region)
+    {
+        foreach (var regionCoordinate in region.Coordinates)
+        {
+            var rectangle = new Rectangle2D(
+                regionCoordinate.X1,
+                regionCoordinate.Y1,
+                regionCoordinate.Width,
+                regionCoordinate.Height
+            );
+
+            if (!_regionsDefinition.TryAdd(rectangle, region))
+            {
+                _logger.Warning("Region {RegionId} already exists in the spatial index", region.Id);
+                continue;
+            }
+
+            _logger.Information("Added region {RegionId} {RegionName} to spatial index", region.Id, region.Name);
+        }
+    }
+
+    public void AddMusics(List<JsonMusic> musics)
+    {
+        foreach (var music in musics)
+        {
+            if (!_musicDefinition.TryAdd(music.Id, music))
+            {
+                continue;
+            }
+        }
+    }
+
+    public int GetMusicFromLocation(Point3D location, int mapIndex)
+    {
+        /// Find the region that contains this location
+        foreach (var region in _regionsDefinition)
+        {
+            if (region.Key.Contains(location.X, location.Y))
+            {
+                return _musicDefinition[region.Value.MusicList].Music;
+            }
+        }
+
+        return 0;
+    }
+
+    public JsonRegion? GetRegionFromLocation(Point3D location, int mapIndex)
+    {
+        foreach (var region in _regionsDefinition)
+        {
+            if (region.Key.Contains(location.X, location.Y))
+            {
+                return region.Value;
+            }
+        }
+
+        return null; /// No region found
     }
 
     #endregion

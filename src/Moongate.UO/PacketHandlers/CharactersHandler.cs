@@ -140,6 +140,7 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.Gender = characterCreation.Gender;
         playerMobileEntity.Race = characterCreation.Race;
 
+
         playerMobileEntity.Map = characterCreation.StartingCity.Map;
 
         foreach (var skill in characterCreation.Skills)

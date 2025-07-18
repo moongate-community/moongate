@@ -1,14 +1,16 @@
 using System.Collections.Concurrent;
 using Moongate.Core.Directories;
 using Moongate.Core.Json;
-using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
+using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Factory;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Tiles;
+using Moongate.UO.Data.Types;
+using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 
@@ -23,11 +25,17 @@ public class EntityFactoryService : IEntityFactoryService
     private readonly ConcurrentDictionary<string, MobileTemplate> _mobileTemplates = new();
 
     private readonly IItemService _itemService;
+    private readonly INameService _nameService;
+    private readonly IMobileService _mobileService;
 
-    public EntityFactoryService(DirectoriesConfig directoriesConfig, IItemService itemService)
+    public EntityFactoryService(
+        DirectoriesConfig directoriesConfig, IItemService itemService, IMobileService mobileService, INameService nameService
+    )
     {
         _directoriesConfig = directoriesConfig;
         _itemService = itemService;
+        _mobileService = mobileService;
+        _nameService = nameService;
 
         AddDefaultItems();
     }
@@ -88,6 +96,47 @@ public class EntityFactoryService : IEntityFactoryService
         return null;
     }
 
+    public UOMobileEntity CreateMobileEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null)
+    {
+        if (_mobileTemplates.TryGetValue(templateOrCategoryOrTag, out var mobileTemplate))
+        {
+            return CreateMobileEntity(mobileTemplate, overrides);
+        }
+
+        // If not found by template ID, try category or tag
+        foreach (var kvp in _mobileTemplates)
+        {
+            if (kvp.Value.Category == templateOrCategoryOrTag || kvp.Value.Tags.Contains(templateOrCategoryOrTag))
+            {
+                return CreateMobileEntity(kvp.Value, overrides);
+            }
+        }
+
+        _logger.Warning("Mobile template not found: {TemplateId}", templateOrCategoryOrTag);
+        return null;
+    }
+
+    private UOMobileEntity CreateMobileEntity(MobileTemplate mobileTemplate, Dictionary<string, object> overrides = null)
+    {
+        var mobile = _mobileService.CreateMobile();
+        mobile.TemplateId = mobileTemplate.Id;
+
+        mobile.Name = mobileTemplate.Name ?? _nameService.GenerateName(mobileTemplate);
+
+        mobile.Body = mobileTemplate.Body;
+
+        mobile.HairStyle = mobileTemplate.HairStyle;
+        mobile.HairHue = mobileTemplate.HairHue;
+
+        mobile.FacialHairStyle = 0;
+
+        mobile.FacialHairStyle = 0;
+
+        mobile.Equipment[ItemLayerType.Backpack] = CreateItemEntity("backpack").ToItemReference();
+
+        return mobile;
+    }
+
     private UOItemEntity CreateItemEntity(ItemTemplate itemTemplate, Dictionary<string, object> overrides = null)
     {
         var item = _itemService.CreateItem();
@@ -103,6 +152,7 @@ public class EntityFactoryService : IEntityFactoryService
         item.ScriptId = itemTemplate.ScriptId;
         item.GumpId = itemTemplate.GumpId;
         item.LootType = itemTemplate.LootType;
+        item.IsMovable = itemTemplate.IsMovable;
 
         item.Name ??= TileData.ItemTable[item.ItemId].Name;
 

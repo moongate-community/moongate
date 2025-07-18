@@ -1,11 +1,13 @@
 using Moongate.Core.Persistence.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services;
+using Moongate.UO.Data.Contexts;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Interfaces.Services;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -28,10 +30,15 @@ public class ItemService : IItemService
     private readonly IEntityFileService _entityFileService;
     private readonly IEventLoopService _eventLoopService;
 
-    public ItemService(IEntityFileService entityFileService, IEventLoopService eventLoopService)
+    private readonly IGameSessionService _gameSessionService;
+
+    public ItemService(
+        IEntityFileService entityFileService, IEventLoopService eventLoopService, IGameSessionService gameSessionService
+    )
     {
         _entityFileService = entityFileService;
         _eventLoopService = eventLoopService;
+        _gameSessionService = gameSessionService;
     }
 
     public Task StartAsync(CancellationToken cancellationToken = default)
@@ -136,9 +143,11 @@ public class ItemService : IItemService
             return;
         }
 
+        var gameSession = _gameSessionService.GetGameSessionByMobile(user);
+
         _eventLoopService.EnqueueAction(
             $"use_item_{item.Id.ToString()}",
-            () => { itemAction.OnUseItem(item, user); }
+            () => { itemAction.OnUseItem(ItemUseContext.Create(gameSession, item, user)); }
         );
     }
 

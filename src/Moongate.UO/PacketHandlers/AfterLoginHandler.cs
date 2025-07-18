@@ -5,12 +5,14 @@ using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Features;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.Effects;
 using Moongate.UO.Data.Packets.Environment;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Lights;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.Maps;
 using Moongate.UO.Data.Packets.System;
+using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
@@ -23,18 +25,19 @@ public class AfterLoginHandler : IMoongateService
     private readonly IGameSessionService _gameSessionService;
     private readonly IEventBusService _eventBusService;
 
-    private readonly IMobileService _mobileService;
+    private readonly ISpatialWorldService _spatialWorldService;
 
 
     private readonly ILogger _logger = Log.ForContext<AfterLoginHandler>();
 
     public AfterLoginHandler(
-        IGameSessionService gameSessionService, IEventBusService eventBusService, IMobileService mobileService
+        IGameSessionService gameSessionService, IEventBusService eventBusService, IMobileService mobileService,
+        ISpatialWorldService spatialWorldService
     )
     {
         _gameSessionService = gameSessionService;
         _eventBusService = eventBusService;
-        _mobileService = mobileService;
+        _spatialWorldService = spatialWorldService;
         _eventBusService.Subscribe<CharacterLoggedEvent>(OnCharacterLogged);
     }
 
@@ -46,7 +49,6 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new ClientVersionPacket());
         session.SendPackets(new LoginConfigPacket(session.Mobile));
 
-
         session.SendPackets(new SupportFeaturesPacket());
         session.SendPackets(new DrawGamePlayerPacket(session.Mobile));
 
@@ -54,12 +56,7 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new WornItemsPacket(session.Mobile));
 
-        //session.SendPackets(new DrawContainer(session.Mobile.GetBackpack()));
-        //session.SendPackets(new AddMultipleItemToContainerPacket(session.Mobile.GetBackpack()));
-
-
         session.SendPackets(new DrawContainerAndAddItemCombinedPacket(session.Mobile.GetBackpack()));
-
 
         session.SendPackets(new WarModePacket(session.Mobile));
         session.SendPackets(new MapChangePacket(session.Mobile.Map));
@@ -67,6 +64,15 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
         session.SendPackets(new LoginCompletePacket());
+
+        session.SendPackets(new SetTimePacket());
+        session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
+        session.SendPackets(new MapChangePacket(session.Mobile.Map));
+
+        var music = _spatialWorldService.GetMusicFromLocation(session.Mobile.Location, session.Mobile.Map.MapID);
+
+        session.SendPackets(new PlayMusicPacket(music));
+
         session.SendPackets(new PaperdollPacket(session.Mobile));
 
         MoongateContext.EnqueueAction(

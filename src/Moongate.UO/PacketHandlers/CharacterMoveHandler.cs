@@ -74,6 +74,12 @@ public class CharacterMoveHandler : IGamePacketHandler
         newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
 
         _mobileService.MoveMobile(session.Mobile, newLocation);
+        bool isRunning = (packet.Direction & DirectionType.Running) != 0;
+
+        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Mask);
+
+        session.Mobile.Direction = baseDirection;
+
 
         if (session.MoveSequence == 255)
         {
@@ -84,13 +90,17 @@ public class CharacterMoveHandler : IGamePacketHandler
 
 
         _logger.Debug(
-            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction}",
+            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning}",
             session.SessionId,
             session.MoveSequence,
-            packet.Direction
+            packet.Direction,
+            isRunning
         );
 
+
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
+
+
         var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
         session.SendPackets(moveAckPacket);
     }
