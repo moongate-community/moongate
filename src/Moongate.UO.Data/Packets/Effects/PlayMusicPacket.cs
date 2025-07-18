@@ -1,7 +1,7 @@
 using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
 
-namespace Moongate.UO.Data.Packets.Sounds;
+namespace Moongate.UO.Data.Packets.Effects;
 
 public class PlayMusicPacket  : BaseUoPacket
 {

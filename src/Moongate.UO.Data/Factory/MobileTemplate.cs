@@ -2,6 +2,9 @@ namespace Moongate.UO.Data.Factory;
 
 public class MobileTemplate : BaseTemplate
 {
+
+    public string? Name { get; set; }
+
     public int Body { get; set; }
 
     public int SkinHue { get; set; }

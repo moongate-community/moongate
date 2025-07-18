@@ -103,6 +103,7 @@ public class EntityFactoryService : IEntityFactoryService
         item.ScriptId = itemTemplate.ScriptId;
         item.GumpId = itemTemplate.GumpId;
         item.LootType = itemTemplate.LootType;
+        item.IsMovable = itemTemplate.IsMovable;
 
         item.Name ??= TileData.ItemTable[item.ItemId].Name;
 

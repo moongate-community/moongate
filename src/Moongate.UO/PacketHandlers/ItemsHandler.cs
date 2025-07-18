@@ -108,6 +108,10 @@ public class ItemsHandler : IGamePacketHandler
     {
         var item = _itemService.GetItem(packet.ItemSerial);
 
+        if (!item.IsMovable)
+        {
+             // Log warning if item is not movable
+        }
 
         _logger.Information("Picking up {Count} of {ItemName}", packet.StackAmount, item.Name);
 

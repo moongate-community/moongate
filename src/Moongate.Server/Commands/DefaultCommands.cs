@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Extensions.Collections;
 using Moongate.Core.Server.Data.Internal.Commands;
 using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
@@ -6,6 +7,7 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Packets.Effects;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Mouse;
 using Moongate.UO.Data.Packets.World;
@@ -60,7 +62,49 @@ public static class DefaultCommands
         );
 
         commandSystemService.RegisterCommand("color", OnColorCommand, "Changes the color of an item", AccountLevelType.User);
+
         commandSystemService.RegisterCommand("select", OnSelect, "Selects an item", AccountLevelType.User);
+
+        commandSystemService.RegisterCommand("blood", OnBloodCommand, "Spawns a blood effect at your location", AccountLevelType.User);
+
+        commandSystemService.RegisterCommand("music", OnMusicCommand, "Plays a music track", AccountLevelType.User);
+    }
+
+    private static Task OnMusicCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        if (gameSession?.Mobile == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var randomEnumValue = Enum.GetValues<MusicName>().ToList().RandomElement();
+        var musicPacket = new PlayMusicPacket((int)randomEnumValue);
+        gameSession.SendPackets(musicPacket);
+        context.Print("Playing music: {0}", randomEnumValue);
+
+        return Task.CompletedTask;
+
+    }
+
+    private static Task OnBloodCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        var mobile = gameSession.Mobile;
+
+        if (mobile == null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var bloodPacket = new BloodPacket(mobile);
+        gameSession.SendPackets(bloodPacket);
+
+        return Task.CompletedTask;
 
     }
 

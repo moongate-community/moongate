@@ -36,6 +36,7 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public bool IsStackable { get; set; }
     public int BaseWeight { get; set; }
 
+    public bool IsMovable { get; set; } = true;
     public LootType LootType { get; set; }
 
     public bool IsContainer => GumpId.HasValue;
