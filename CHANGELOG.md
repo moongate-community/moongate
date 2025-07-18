@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.18.0"></a>
+## [0.18.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.18.0) (2025-07-18)
+
+### Features
+
+* **CharacterMoveHandler:** add running state detection for character movement ([bab9928](https://www.github.com/moongate-community/moongate/commit/bab9928786090c9eb6a8ff87b26ef3ba1f04d45e))
+* **commands:** add 'blood' and 'music' commands for enhanced gameplay ([5bdacca](https://www.github.com/moongate-community/moongate/commit/5bdaccabab63de1e661e5bddd84e5ebc619e86a8))
+* **data:** add modernuo_names.json with diverse character names ([95e6509](https://www.github.com/moongate-community/moongate/commit/95e65092462e68b2c9954dee033cf7e3d7494379))
+* **ItemService:** integrate GameSessionService for item use context ([0211147](https://www.github.com/moongate-community/moongate/commit/021114733925e37f10e8092ebad13701115328a4))
+* **mobiles:** add test_mob.json template for mobile entities ([9434097](https://www.github.com/moongate-community/moongate/commit/9434097eac16cfcbe6def9c542edf36b1530c639))
+* **NotificationSystem:** add event handler for mobile added in sector ([34857d2](https://www.github.com/moongate-community/moongate/commit/34857d2fe4e8c67b59733d526c25ee10f3c14656))
+* **NotificationSystem:** enhance logging with mobile name when added to sector ([25e0f21](https://www.github.com/moongate-community/moongate/commit/25e0f21f7be77a1ecec33db4d5a4e2e06865eb55))
+* **SpatialWorldService:** add region and music management ([6c6b31c](https://www.github.com/moongate-community/moongate/commit/6c6b31c630c69ea195533068e6662e565c600482))
+
 <a name="0.17.0"></a>
 ## [0.17.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.17.0) (2025-07-16)
 
