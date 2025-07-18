@@ -125,13 +125,43 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public GenderType Gender { get; set; }
 
     public Race Race { get; set; }
-    public Body Body { get; set; }
+
+    public Body Body
+    {
+        get => GetBody();
+        set => SetBody(value);
+    }
+
+    public Body? BaseBody { get; set; }
+
+
+    public virtual Body GetBody()
+    {
+        if (BaseBody == 0x00)
+        {
+            return Race.Body(this);
+        }
+        return BaseBody ?? Race.Body(this);
+    }
+
+    public void SetBody(Body body)
+    {
+        BaseBody = body;
+        OnPropertyChanged(nameof(Body));
+    }
+
+    public void OverrideBody(Body body)
+    {
+        BaseBody = body;
+        OnPropertyChanged(nameof(Body));
+    }
 
     public int HairStyle { get; set; }
     public int HairHue { get; set; }
     public int FacialHairStyle { get; set; }
     public int FacialHairHue { get; set; }
     public int SkinHue { get; set; }
+
 
     public ProfessionInfo Profession { get; set; }
 

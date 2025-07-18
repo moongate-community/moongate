@@ -49,8 +49,16 @@ public class NotificationSystem : INotificationSystem
         _spatialWorldService.ItemMovedOnGround += OnItemOnGround;
         _spatialWorldService.ItemRemoved += OnItemRemoved;
 
+        _spatialWorldService.OnMobileAddedInSector += OnOnMobileAddedInSector;
+
 
         _mobileService.MobileAdded += OnMobileAdded;
+    }
+
+    private void OnOnMobileAddedInSector(UOMobileEntity mobile, MapSector sector, WorldView worldView)
+    {
+        _logger.Debug("Mobile {MobileId} added to sector {Sector}", mobile.Id, sector);
+
     }
 
     private void OnItemRemoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)

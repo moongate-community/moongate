@@ -7,7 +7,6 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
@@ -140,7 +139,7 @@ public class CharactersHandler : IGamePacketHandler
 
         playerMobileEntity.Gender = characterCreation.Gender;
         playerMobileEntity.Race = characterCreation.Race;
-        playerMobileEntity.Body = playerMobileEntity.Race.Body(playerMobileEntity);
+
 
         playerMobileEntity.Map = characterCreation.StartingCity.Map;
 

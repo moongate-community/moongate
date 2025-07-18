@@ -119,7 +119,8 @@ public class SpatialWorldService : ISpatialWorldService
         var sector = _sectorSystem.GetSectorByWorldCoordinates(mobile.Map.MapID, mobile.Location.X, mobile.Location.Y);
         var worldView = GetPlayerWorldView(mobile);
 
-        OnMobileAddedInSector?.Invoke(mobile, sector, worldView);
+        //OnMobileAddedInSector?.Invoke(mobile, sector, worldView);
+
     }
 
     private void OnMobileAdded(UOMobileEntity mobile)
