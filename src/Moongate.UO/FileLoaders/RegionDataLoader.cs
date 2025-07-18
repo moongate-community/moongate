@@ -1,6 +1,7 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Server.Types;
+using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
@@ -13,9 +14,13 @@ public class RegionDataLoader : IFileLoader
 
     private readonly ILogger _logger = Log.ForContext<RegionDataLoader>();
 
-    public RegionDataLoader(DirectoriesConfig directoriesConfig)
+
+    private readonly ISpatialWorldService _spatialWorldService;
+
+    public RegionDataLoader(DirectoriesConfig directoriesConfig, ISpatialWorldService spatialWorldService)
     {
         _directoriesConfig = directoriesConfig;
+        _spatialWorldService = spatialWorldService;
     }
 
     public async Task LoadAsync()
@@ -27,6 +32,14 @@ public class RegionDataLoader : IFileLoader
         foreach (var regionFile in regionFiles)
         {
             var regionData = JsonUtils.DeserializeFromFile<JsonRegionWrap>(regionFile);
+
+
+            foreach (var dataRegion in regionData.Regions)
+            {
+                _spatialWorldService.AddRegion(dataRegion);
+            }
+
+            _spatialWorldService.AddMusics(regionData.MusicLists);
 
             _logger.Information(
                 "Loaded {RegionCount} regions from file: {FilePath}",
