@@ -8,6 +8,7 @@ public interface IEntityFactoryService : IMoongateAutostartService
     T CreateEntity<T>(string templateId) where T : class;
     T CreateEntity<T>(string templateId, Dictionary<string, object> overrides) where T : class;
     UOItemEntity CreateItemEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null);
+    UOMobileEntity CreateMobileEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null);
 
     Task LoadTemplatesAsync(string filePath);
 

@@ -91,6 +91,9 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     }
 
     public Serial Id { get; set; }
+
+    public string? TemplateId { get; set; }
+
     public string Name { get; set; }
     public string Title { get; set; }
 
@@ -122,8 +125,8 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public GenderType Gender { get; set; }
 
     public Race Race { get; set; }
+    public Body Body { get; set; }
 
-    public Body Body => Race.Body(this);
     public int HairStyle { get; set; }
     public int HairHue { get; set; }
     public int FacialHairStyle { get; set; }

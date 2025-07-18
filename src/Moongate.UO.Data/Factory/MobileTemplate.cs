@@ -1,10 +1,12 @@
+using System.Text.Json.Serialization;
+using Moongate.Core.Server.Json.Converters;
+
 namespace Moongate.UO.Data.Factory;
 
 public class MobileTemplate : BaseTemplate
 {
 
-    public string? Name { get; set; }
-
+    [JsonConverter(typeof(HexValueConverter<int>))]
     public int Body { get; set; }
 
     public int SkinHue { get; set; }

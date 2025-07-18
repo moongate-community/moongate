@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mobile",
+    "id": "orione",
+    "name": "Orione",
+    "category": "animals",
+    "body": "0xC9",
+    "skinHue": 0,
+    "hairStyle": 0
+  },
+  {
+    "type": "mobile",
+    "id": "vega",
+    "name": "Vega",
+    "category": "animals",
+    "body": "0xC9",
+    "skinHue": 0,
+    "hairStyle": 0
+  }
+]

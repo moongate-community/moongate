@@ -65,9 +65,33 @@ public static class DefaultCommands
 
         commandSystemService.RegisterCommand("select", OnSelect, "Selects an item", AccountLevelType.User);
 
-        commandSystemService.RegisterCommand("blood", OnBloodCommand, "Spawns a blood effect at your location", AccountLevelType.User);
+        commandSystemService.RegisterCommand(
+            "blood",
+            OnBloodCommand,
+            "Spawns a blood effect at your location",
+            AccountLevelType.User
+        );
 
         commandSystemService.RegisterCommand("music", OnMusicCommand, "Plays a music track", AccountLevelType.User);
+
+        commandSystemService.RegisterCommand("orion", OnOrionCommand, "Add my cat in world", AccountLevelType.User);
+    }
+
+    private static async Task OnOrionCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+        var entityFactoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+
+        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
+
+        var mobile = entityFactoryService.CreateMobileEntity("orione");
+
+        mobile.Map = gameSession.Mobile.Map;
+
+        mobile.Location = gameSession.Mobile.Location + new Point3D(1, 1, 0);
+
+        mobileService.AddInWorld(mobile);
     }
 
     private static Task OnMusicCommand(CommandSystemContext context)
@@ -86,7 +110,6 @@ public static class DefaultCommands
         context.Print("Playing music: {0}", randomEnumValue);
 
         return Task.CompletedTask;
-
     }
 
     private static Task OnBloodCommand(CommandSystemContext context)
@@ -105,7 +128,6 @@ public static class DefaultCommands
         gameSession.SendPackets(bloodPacket);
 
         return Task.CompletedTask;
-
     }
 
     private static async Task OnSelect(CommandSystemContext context)
