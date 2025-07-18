@@ -141,6 +141,12 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         {
             return Race.Body(this);
         }
+
+        if (BaseBody == null)
+        {
+            return Race.Human.Body(this);
+        }
+
         return BaseBody ?? Race.Body(this);
     }
 

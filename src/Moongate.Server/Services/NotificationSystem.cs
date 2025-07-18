@@ -57,8 +57,22 @@ public class NotificationSystem : INotificationSystem
 
     private void OnOnMobileAddedInSector(UOMobileEntity mobile, MapSector sector, WorldView worldView)
     {
-        _logger.Debug("Mobile {MobileId} added to sector {Sector}", mobile.Id, sector);
+        _logger.Debug("Mobile {MobileId} {Name} added to sector {Sector}", mobile.Id, mobile.Name, sector);
 
+        foreach (var mobileInView in worldView.NearbyMobiles)
+        {
+            if (mobileInView.IsPlayer)
+            {
+                var gameSession = _gameSessionService.GetGameSessionByMobile(mobileInView);
+
+                if (gameSession != null)
+                {
+                    var mobileDrawPacket = new MobileDrawPacket(gameSession.Mobile, mobile, true, false);
+                   // var objectInfoPacket = new MobileStatusPacket(mobile, 6, false);
+                    gameSession.SendPackets(mobileDrawPacket);
+                }
+            }
+        }
     }
 
     private void OnItemRemoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
@@ -102,7 +116,6 @@ public class NotificationSystem : INotificationSystem
                 session.SendPackets(containerItems);
             }
         }
-
     }
 
     private void MobileOnEquipmentRemoved(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)
@@ -131,7 +144,7 @@ public class NotificationSystem : INotificationSystem
         {
             var itemWornPacket = new WornItemPacket(mobile, item, layer);
             var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
-            session.SendPackets(itemWornPacket,mobileDrawPacket);
+            session.SendPackets(itemWornPacket, mobileDrawPacket);
         }
     }
 
