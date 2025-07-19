@@ -2,13 +2,12 @@
   "network": {
     "port": 2593,
     "logPacketsToFile": false,
-    "logPacketsToConsole": true
+    "logPacketsToConsole": false
   },
   "webServer": {
     "port": 23853,
     "enabled": true
   },
-  "name": "Moongate Shardi",
-  "ultimaOnlineDirectory": "$HOME/uo/",
+  "name": "Moongate Shard",
   "language": "enu"
 }

@@ -1,3 +1,5 @@
+using Moongate.Core.Extensions.Evn;
+
 namespace Moongate.Core.Extensions.Directories;
 
 public static class DirectoriesExtension
@@ -11,7 +13,8 @@ public static class DirectoriesExtension
 
         path = path.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
 
-        path = Environment.ExpandEnvironmentVariables(path);
+
+        path = Environment.ExpandEnvironmentVariables(path).ExpandEnvironmentVariables();
 
         return path;
     }
