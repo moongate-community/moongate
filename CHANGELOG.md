@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.19.0"></a>
+## [0.19.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.19.0) (2025-07-19)
+
+### Features
+
+* **config:** add new moongate.json configuration file for network and web server settings ([ee49109](https://www.github.com/moongate-community/moongate/commit/ee49109e89cb04e6f97f8bcbef2c6aa226a2720f))
+
 <a name="0.18.0"></a>
 ## [0.18.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.18.0) (2025-07-18)
 
