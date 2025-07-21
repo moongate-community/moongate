@@ -23,7 +23,6 @@ public class MobileDrawPacket : BaseUoPacket
     {
         Beholder = beholder;
         Beheld = beheld;
-        StygianAbyss = stygianAbyss;
         NewMobileIncoming = newMobileIncoming;
     }
 
@@ -49,6 +48,8 @@ public class MobileDrawPacket : BaseUoPacket
         // Packet header
         writer.Write(OpCode);
         writer.Seek(2, SeekOrigin.Current); // Space for length
+
+
 
         // Mobile data
         writer.Write(Beheld.Id.Value);
@@ -171,9 +172,6 @@ public class MobileDrawPacket : BaseUoPacket
 
         writer.WritePacketLength();
 
-        //writer.Seek(1, SeekOrigin.Begin);
-        //writer.Write((ushort)currentPosition);
-        //writer.Seek(currentPosition, SeekOrigin.Begin);
 
         return writer.ToArray();
     }

@@ -73,7 +73,7 @@ public class MobileService : IMobileService
     public UOMobileEntity CreateMobile()
     {
         _saveLock.Wait();
-        var lastSerial = new Serial(Serial.MaxMobileSerial);
+        var lastSerial = new Serial(Serial.MobileStart);
 
         if (_availableMobiles.Count > 0)
         {

@@ -67,14 +67,14 @@ public class NotificationSystem : INotificationSystem
 
                 if (gameSession != null)
                 {
-                    //var mobileDrawPacket = new MobileDrawPacket(null, mobile, true, true);
-                    // var objectInfoPacket = new MobileStatusPacket(mobile, 6, false);
-                    //gameSession.SendPackets(mobileDrawPacket);
+                    gameSession.SendPackets(new DrawGamePlayerPacket(mobile));
 
-                    var mobileDrawPacket = new MobileDrawPacket(null, mobile, true, true);
-                    var drawGamePlayerPacket = new DrawGamePlayerPacket(mobile);
+                    gameSession.SendPackets(new MobileDrawPacket(mobile,mobile, true, true));
 
-                    gameSession.SendPackets(mobileDrawPacket, drawGamePlayerPacket);
+                    gameSession.SendPackets(new WornItemsPacket(mobile));
+
+
+
                 }
             }
         }

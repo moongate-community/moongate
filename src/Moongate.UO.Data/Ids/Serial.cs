@@ -27,6 +27,8 @@ public readonly struct Serial
     public const uint MaxItemSerial = 0x7EEEEEEE;
     public const uint MaxMobileSerial = ItemOffset - 1;
 
+    public const int MobileStart = 0x00000001;
+
     public static readonly Serial MinusOne = new(0xFFFFFFFF);
     public static readonly Serial Zero = new(0);
 
