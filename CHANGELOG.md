@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.20.0"></a>
+## [0.20.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.20.0) (2025-07-21)
+
+### Features
+
+* **ai:** introduce AI module and service for brain management ([8e493d7](https://www.github.com/moongate-community/moongate/commit/8e493d7b5f6725e1b997553950297195bb8c758a))
+
+### Bug Fixes
+
+* **MobileService:** change serial initialization to use MobileStart for consistency ([0999816](https://www.github.com/moongate-community/moongate/commit/099981683494ec893764ce6df72a56d504f9fb56))
+
 <a name="0.19.0"></a>
 ## [0.19.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.19.0) (2025-07-19)
 
