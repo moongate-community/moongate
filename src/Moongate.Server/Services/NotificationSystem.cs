@@ -110,6 +110,12 @@ public class NotificationSystem : INotificationSystem
 
         mobile.ChatMessageReceived += BotReceivedMessage;
         mobile.ChatMessageSent += BotSentMessage;
+        mobile.MobileMoved += MobileOnMobileMoved;
+    }
+
+    private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D location)
+    {
+
     }
 
     private void BotSentMessage(

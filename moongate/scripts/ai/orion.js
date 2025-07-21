@@ -5,6 +5,7 @@ const registerAi = () => {
     const randomIndex = Math.floor(Math.random() * list.length);
 
     wrap.Say(list[randomIndex]);
+    wrap.Move(wrap.RandomDirection());
   });
 };
 
