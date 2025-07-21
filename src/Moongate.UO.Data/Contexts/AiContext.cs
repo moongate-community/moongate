@@ -12,9 +12,9 @@ public class AiContext : IDisposable
         MobileEntity = mobile;
     }
 
-    protected void Say(string message)
+    public void Say(string message)
     {
-        MobileEntity.Speech(ChatMessageType.Regular, 1, message, 0, 3);
+        MobileEntity.Speech(ChatMessageType.Regular, 1168, message, 0, 3);
     }
 
     public void Dispose()

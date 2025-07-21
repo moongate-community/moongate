@@ -128,6 +128,8 @@ public class EntityFactoryService : IEntityFactoryService
         mobile.HairStyle = mobileTemplate.HairStyle;
         mobile.HairHue = mobileTemplate.HairHue;
 
+        mobile.BrainId = mobileTemplate.Brain;
+
         mobile.FacialHairStyle = 0;
 
         mobile.FacialHairStyle = 0;

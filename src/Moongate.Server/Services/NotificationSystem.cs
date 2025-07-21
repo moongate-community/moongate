@@ -69,12 +69,9 @@ public class NotificationSystem : INotificationSystem
                 {
                     gameSession.SendPackets(new DrawGamePlayerPacket(mobile));
 
-                    gameSession.SendPackets(new MobileDrawPacket(mobile,mobile, true, true));
+                    gameSession.SendPackets(new MobileDrawPacket(mobile, mobile, true, true));
 
-                    gameSession.SendPackets(new WornItemsPacket(mobile));
-
-
-
+                    // gameSession.SendPackets(new WornItemsPacket(mobile));
                 }
             }
         }
@@ -107,7 +104,35 @@ public class NotificationSystem : INotificationSystem
                 (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
             mobile.EquipmentAdded += MobileOnEquipmentAdded;
             mobile.EquipmentRemoved += MobileOnEquipmentRemoved;
+
+            return;
         }
+
+        mobile.ChatMessageReceived += BotReceivedMessage;
+        mobile.ChatMessageSent += BotSentMessage;
+    }
+
+    private void BotSentMessage(
+        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    )
+    {
+        var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
+
+
+        foreach (var other in worldView.NearbyMobiles)
+        {
+            if (other.IsPlayer)
+            {
+                other.ReceiveSpeech(mobile, messageType, hue, text, graphic, font);
+            }
+        }
+    }
+
+    private void BotReceivedMessage(
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        int font
+    )
+    {
     }
 
     private void OnContainerItemChanged(UOMobileEntity mobile, UOItemEntity container, ItemReference item)
