@@ -26,4 +26,6 @@ public class MobileTemplate : BaseTemplate
     public int Mana { get; set; } = 100;
 
     public int Stamina { get; set; } = 100;
+
+    public string Brain { get; set; } = "None";
 }

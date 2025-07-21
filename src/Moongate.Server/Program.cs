@@ -26,6 +26,7 @@ using Moongate.UO.Commands;
 using Moongate.UO.Data;
 using Moongate.UO.Data.Factory.Json;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Interfaces.Actions;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Json.Converters;
@@ -127,6 +128,8 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(INameService), typeof(NameService))
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
+
+                .AddService(typeof(IAiService), typeof(AiService), 99)
                 .AddService(typeof(PacketLoggerService))
                 ;
 
@@ -152,6 +155,8 @@ await ConsoleApp.RunAsync(
             scriptEngine.AddScriptModule(typeof(CommonEventModule));
 
             scriptEngine.AddScriptModule(typeof(ItemsModule));
+
+            scriptEngine.AddScriptModule(typeof(AiModule));
         };
 
         bootstrap.ConfigureNetworkServices += networkService =>

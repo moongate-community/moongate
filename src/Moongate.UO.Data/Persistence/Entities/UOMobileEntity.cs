@@ -33,7 +33,11 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
 
     protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
-        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        if (EqualityComparer<T>.Default.Equals(field, value))
+        {
+            return false;
+        }
+
         field = value;
         OnPropertyChanged(propertyName);
         return true;
@@ -91,8 +95,9 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     }
 
     public Serial Id { get; set; }
-
     public string? TemplateId { get; set; }
+
+    public string BrainId { get; set; }
 
     public string Name { get; set; }
     public string Title { get; set; }

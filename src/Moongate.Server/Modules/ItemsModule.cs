@@ -4,6 +4,7 @@ using Moongate.Core.Server.Attributes.Scripts;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Server.Utils;
 using Moongate.Server.Wraps;
+using Moongate.UO.Data.Interfaces.Actions;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Serilog;

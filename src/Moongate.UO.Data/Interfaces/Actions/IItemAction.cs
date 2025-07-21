@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Contexts;
 
-namespace Moongate.UO.Data.Interfaces.Entities;
+namespace Moongate.UO.Data.Interfaces.Actions;
 
 public interface IItemAction
 {
