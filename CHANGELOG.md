@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.21.0"></a>
+## [0.21.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.21.0) (2025-07-22)
+
+### Features
+
+* **ai:** introduce Orion AI brain with basic speech actions ([b0609a8](https://www.github.com/moongate-community/moongate/commit/b0609a8e52ffe7f297aef1def5fabeb9030f4648))
+* **ai/orion.js:** add random movement to AI behavior to enhance realism ([c503d75](https://www.github.com/moongate-community/moongate/commit/c503d75726f841b1740627a32784400d4d61a04f))
+
+### Bug Fixes
+
+* **EventLoopConfig:** adjust default tick interval to 50ms for better performance ([3dac033](https://www.github.com/moongate-community/moongate/commit/3dac03327e3805ece56740e7ced5b00f5d54f171))
+* **orion.js:** correct method call to wrap.Say and randomize message selection ([8851d2a](https://www.github.com/moongate-community/moongate/commit/8851d2a8372d2a53f7f95f8dee135acf2beb9b6d))
+
 <a name="0.20.0"></a>
 ## [0.20.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.20.0) (2025-07-21)
 
