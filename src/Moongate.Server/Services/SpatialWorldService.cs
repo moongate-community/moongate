@@ -31,7 +31,6 @@ public class SpatialWorldService : ISpatialWorldService
 
     private readonly Dictionary<int, JsonMusic> _musicDefinition = new();
 
-
     public event ISpatialWorldService.EntityMovedSectorHandler? EntityMovedSector;
     public event ISpatialWorldService.MobileSectorMovedHandler? MobileSectorMoved;
     public event ISpatialWorldService.MobileInSectorHandler? OnMobileAddedInSector;
@@ -140,7 +139,6 @@ public class SpatialWorldService : ISpatialWorldService
         var worldView = GetPlayerWorldView(mobile);
 
         MobileMoved?.Invoke(mobile, newLocation, worldView);
-
 
         _logger.Debug(
             "Moved mobile {Serial} from {OldLocation} to {NewLocation}",

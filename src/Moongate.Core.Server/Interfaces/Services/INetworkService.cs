@@ -26,6 +26,8 @@ public interface INetworkService : IMoongateAutostartService
 
     string GetPacketDescription(byte opCode);
 
+    int GetPacketLength(byte opCode);
+
     void BindPacket<TPacket>()
         where TPacket : IUoNetworkPacket, new();
 

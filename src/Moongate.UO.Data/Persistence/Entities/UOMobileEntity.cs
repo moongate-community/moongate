@@ -356,9 +356,9 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
         ChatMessageSent?.Invoke(this, messageType, hue, text, graphic, font);
     }
 
-    public virtual int GetPacketFlags(bool stygianAbyss)
+    public virtual byte GetPacketFlags(bool stygianAbyss)
     {
-        var flags = 0x0;
+        byte flags = 0x0;
 
         if (IsParalyzed || IsFrozen)
         {

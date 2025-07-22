@@ -6,7 +6,8 @@
     "category": "animals",
     "body": "0xC9",
     "skinHue": 779,
-    "hairStyle": 0
+    "hairStyle": 0,
+    "brain": "orion"
   },
   {
     "type": "mobile",
@@ -15,6 +16,7 @@
     "category": "animals",
     "body": "0xC9",
     "skinHue": 779,
-    "hairStyle": 0
+    "hairStyle": 0,
+    "brain": "vega"
   }
 ]
