@@ -10,7 +10,7 @@ namespace Moongate.UO.Data.Contexts;
 
 public class AiContext : IDisposable
 {
-    protected UOMobileEntity MobileEntity;
+    public UOMobileEntity Self { get; set; }
 
     private AiStateMachine _stateMachine;
     private bool _stateMachineInitialized = false;
@@ -24,7 +24,7 @@ public class AiContext : IDisposable
 
     public void InitializeContext(UOMobileEntity mobile)
     {
-        MobileEntity = mobile;
+        Self = mobile;
         InitializeStateMachine();
     }
 
@@ -38,7 +38,7 @@ public class AiContext : IDisposable
             return;
         }
 
-        var stateMachineId = $"ai_sm_{MobileEntity.Id}_{MobileEntity.BrainId}";
+        var stateMachineId = $"ai_sm_{Self.Id}_{Self.BrainId}";
         _stateMachine = new AiStateMachine(stateMachineId, "idle");
         _stateMachineInitialized = true;
 
@@ -48,7 +48,7 @@ public class AiContext : IDisposable
                 Log.ForContext<AiContext>()
                     .Debug(
                         "AI {Mobile}: {From} -> {To} ({Event})",
-                        MobileEntity.Name,
+                        Self.Name,
                         from,
                         to,
                         eventName
@@ -59,23 +59,23 @@ public class AiContext : IDisposable
 
     public void Say(string message)
     {
-        MobileEntity.Speech(ChatMessageType.Regular, 1168, message, 0, 3);
+        Self.Speech(ChatMessageType.Regular, 1168, message, 0, 3);
     }
 
     public void Move(DirectionType direction)
     {
-        if (MobileEntity == null)
+        if (Self == null)
         {
             throw new InvalidOperationException("MobileEntity is not initialized.");
         }
 
-        var newLocation = MobileEntity.Location + direction;
+        var newLocation = Self.Location + direction;
 
-        var landTile = MobileEntity.Map.GetLandTile(newLocation.X, newLocation.Y);
+        var landTile = Self.Map.GetLandTile(newLocation.X, newLocation.Y);
 
         newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
 
-        MoongateContext.Container.Resolve<IMobileService>().MoveMobile(MobileEntity, newLocation);
+        MoongateContext.Container.Resolve<IMobileService>().MoveMobile(Self, newLocation);
     }
 
     public DirectionType RandomDirection()
@@ -220,7 +220,7 @@ public class AiContext : IDisposable
         AddTransition("fleeing", "cornered", "combat");
         AddTransition("fleeing", "healed", "idle");
 
-        Log.ForContext<AiContext>().Debug("Common AI state machine setup for {Mobile}", MobileEntity.Name);
+        Log.ForContext<AiContext>().Debug("Common AI state machine setup for {Mobile}", Self.Name);
     }
 
     /// <summary>
@@ -244,10 +244,10 @@ public class AiContext : IDisposable
         /// Setup default patrol points around current location
         var patrolPoints = new List<Point3D>
         {
-            MobileEntity.Location,
-            MobileEntity.Location + new Point3D(5, 0, 0),
-            MobileEntity.Location + new Point3D(5, 5, 0),
-            MobileEntity.Location + new Point3D(0, 5, 0)
+            Self.Location,
+            Self.Location + new Point3D(5, 0, 0),
+            Self.Location + new Point3D(5, 5, 0),
+            Self.Location + new Point3D(0, 5, 0)
         };
         SetData("patrol_points", patrolPoints);
         SetData("patrol_index", 0);
@@ -264,7 +264,7 @@ public class AiContext : IDisposable
             }
         );
 
-        Log.ForContext<AiContext>().Debug("Guard AI state machine setup for {Mobile}", MobileEntity.Name);
+        Log.ForContext<AiContext>().Debug("Guard AI state machine setup for {Mobile}", Self.Name);
     }
 
     /// <summary>
@@ -310,7 +310,7 @@ public class AiContext : IDisposable
             }
         );
 
-        Log.ForContext<AiContext>().Debug("Merchant AI state machine setup for {Mobile}", MobileEntity.Name);
+        Log.ForContext<AiContext>().Debug("Merchant AI state machine setup for {Mobile}", Self.Name);
     }
 
     /// <summary>
@@ -340,7 +340,7 @@ public class AiContext : IDisposable
         AddTransition("searching_owner", "owner_found", "following");
         AddTransition("searching_owner", "timeout", "idle");
 
-        Log.ForContext<AiContext>().Debug("Pack animal AI setup for {Mobile}", MobileEntity.Name);
+        Log.ForContext<AiContext>().Debug("Pack animal AI setup for {Mobile}", Self.Name);
     }
 
     #endregion
@@ -371,8 +371,8 @@ public class AiContext : IDisposable
     /// </summary>
     public double GetDistance(Point3D target)
     {
-        var dx = MobileEntity.Location.X - target.X;
-        var dy = MobileEntity.Location.Y - target.Y;
+        var dx = Self.Location.X - target.X;
+        var dy = Self.Location.Y - target.Y;
         return Math.Sqrt(dx * dx + dy * dy);
     }
 
@@ -552,7 +552,7 @@ public class AiContext : IDisposable
     /// </summary>
     private void SearchMove()
     {
-        var lastKnownPosition = GetData("last_target_position", MobileEntity.Location);
+        var lastKnownPosition = GetData("last_target_position", Self.Location);
         var searchRadius = GetData("search_radius", 5);
 
         var targetPoint = GetRandomPointNear(lastKnownPosition, searchRadius);
@@ -571,8 +571,8 @@ public class AiContext : IDisposable
 
     private DirectionType GetDirectionTowards(Point3D target)
     {
-        var dx = target.X - MobileEntity.Location.X;
-        var dy = target.Y - MobileEntity.Location.Y;
+        var dx = target.X - Self.Location.X;
+        var dy = target.Y - Self.Location.Y;
 
         if (Math.Abs(dx) > Math.Abs(dy))
         {
@@ -586,8 +586,8 @@ public class AiContext : IDisposable
 
     private DirectionType GetDirectionAwayFrom(Point3D threat)
     {
-        var dx = MobileEntity.Location.X - threat.X;
-        var dy = MobileEntity.Location.Y - threat.Y;
+        var dx = Self.Location.X - threat.X;
+        var dy = Self.Location.Y - threat.Y;
 
         if (Math.Abs(dx) > Math.Abs(dy))
         {

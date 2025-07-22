@@ -78,7 +78,14 @@ public class AiService : IAiService
 
         aiContext.InitializeContext(self);
 
-        brainAction.ReceiveSpeech(aiContext, text, sender);
+        try
+        {
+            brainAction.ReceiveSpeech(aiContext, text, sender);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error processing speech for mobile {Mobile} with brain {Brain}", self.Id, sender.BrainId);
+        }
     }
 
 

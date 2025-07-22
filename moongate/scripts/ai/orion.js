@@ -10,7 +10,7 @@ const registerAi = () => {
       wrap.Move(wrap.RandomDirection());
     },
     (context, text, mobile) => {
-      context.Say("Ciao {0}!", mobile.Name);
+      context.Self.Say("Ciao {0}!", mobile.Name);
     },
   );
 };
