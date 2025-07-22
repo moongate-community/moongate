@@ -542,6 +542,7 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     #endregion
 
 
+
     public virtual byte GetPacketFlags(bool stygianAbyss)
     {
         byte flags = 0x0;
