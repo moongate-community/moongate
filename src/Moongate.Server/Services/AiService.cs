@@ -4,6 +4,7 @@ using Moongate.UO.Data.Contexts;
 using Moongate.UO.Data.Interfaces.Ai;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Serilog;
 
 namespace Moongate.Server.Services;
@@ -47,6 +48,7 @@ public class AiService : IAiService
             return;
         }
 
+        mobile.ChatMessageReceived += MobileOnChatMessageReceived;
 
         _timerService.RegisterTimer(
             $"ai_brain_{mobile.BrainId}-{mobile.Name}",
@@ -55,6 +57,35 @@ public class AiService : IAiService
             1000,
             true
         );
+    }
+
+    private void MobileOnChatMessageReceived(
+        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        int font
+    )
+    {
+        _logger.Debug("Processing text message for mobile {Mobile} with brain {Brain}", self.Id, sender.BrainId);
+
+        var brainAction = _brains.GetValueOrDefault(self.BrainId);
+
+        if (brainAction == null)
+        {
+            _logger.Warning("No brain action found for mobile {Mobile} with brain {Brain}", self.Id, sender.BrainId);
+            return;
+        }
+
+        using var aiContext = _aiContextPool.Get();
+
+        aiContext.InitializeContext(self);
+
+        try
+        {
+            brainAction.ReceiveSpeech(aiContext, text, sender);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error processing speech for mobile {Mobile} with brain {Brain}", self.Id, sender.BrainId);
+        }
     }
 
 

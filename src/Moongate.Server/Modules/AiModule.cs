@@ -6,6 +6,7 @@ using Moongate.Server.Wraps;
 using Moongate.UO.Data.Contexts;
 using Moongate.UO.Data.Interfaces.Ai;
 using Moongate.UO.Data.Interfaces.Services;
+using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Modules;
 
@@ -26,7 +27,6 @@ public class AiModule
     [ScriptFunction("Add brain")]
     public void AddBrain(string brainId, JsValue classz)
     {
-
         JsInteropUtils.ImplementsInterface<IAiBrainAction>(classz, _scriptEngineService);
 
         var aiBrainWrap = new AiBrainWrap(_scriptEngineService, classz);
@@ -38,9 +38,11 @@ public class AiModule
     }
 
     [ScriptFunction("Add brain action")]
-    public void AddBrainAction(string brainId, Action<AiContext> action)
+    public void AddBrainAction(
+        string brainId, Action<AiContext> action, Action<AiContext, string, UOMobileEntity> receiveSpeech
+    )
     {
-        var aiBrainWrap = new AiBrainFuncWrap(action);
+        var aiBrainWrap = new AiBrainFuncWrap(action, receiveSpeech);
 
         _aiService.AddBrain(
             brainId,

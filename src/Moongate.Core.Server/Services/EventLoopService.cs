@@ -240,7 +240,9 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
     public string EnqueueDelayedAction(string name, Action action, TimeSpan delay, EventLoopPriority priority)
     {
         if (action == null)
+        {
             throw new ArgumentNullException(nameof(action));
+        }
 
         var queuedAction = new QueuedAction(name, action, priority);
         var executeAt = DateTime.UtcNow.Add(delay);
@@ -383,6 +385,8 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
             }
 
             _lastTickTimestamp = Stopwatch.GetTimestamp();
+
+
         }
         catch (Exception ex)
         {

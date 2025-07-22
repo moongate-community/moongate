@@ -10,6 +10,7 @@ using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 using Moongate.UO.Extensions;
 
 namespace Moongate.UO.Data.Persistence.Entities;
@@ -355,6 +356,194 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     {
         ChatMessageSent?.Invoke(this, messageType, hue, text, graphic, font);
     }
+
+    /// <summary>
+    /// Say something with default settings (most common usage)
+    /// Uses default hue, font, and regular message type
+    /// </summary>
+    public virtual void Say(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        Speech(ChatMessageType.Regular, SpeechHues.Default, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+
+    /// <summary>
+    /// Say something with custom hue
+    /// </summary>
+    public virtual void Say(string text, short hue)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        Speech(ChatMessageType.Regular, hue, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Say something with formatting parameters
+    /// </summary>
+    public virtual void Say(string format, params object[] args)
+    {
+        if (string.IsNullOrEmpty(format) || args == null)
+        {
+            return;
+        }
+
+        var text = string.Format(format, args);
+        Say(text);
+    }
+
+    /// <summary>
+    /// Say something with custom hue and formatting
+    /// </summary>
+    public virtual void Say(short hue, string format, params object[] args)
+    {
+        if (string.IsNullOrEmpty(format) || args == null)
+            return;
+
+        var text = string.Format(format, args);
+        Say(text, hue);
+    }
+
+
+    #region Emotes and Actions
+
+    /// <summary>
+    /// Perform an emote action (appears as *text*)
+    /// </summary>
+    public virtual void Emote(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        /// Auto-format with asterisks if not already present
+        var emoteText = text.StartsWith("*") && text.EndsWith("*") ? text : $"*{text}*";
+        Speech(ChatMessageType.Emote, SpeechHues.Default, emoteText, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Perform an emote with custom hue
+    /// </summary>
+    public virtual void Emote(string text, short hue)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return;
+        }
+
+        var emoteText = text.StartsWith("*") && text.EndsWith("*") ? text : $"*{text}*";
+        Speech(ChatMessageType.Emote, hue, emoteText, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Perform an emote with formatting
+    /// </summary>
+    public virtual void Emote(string format, params object[] args)
+    {
+        if (string.IsNullOrEmpty(format) || args == null)
+            return;
+
+        var text = string.Format(format, args);
+        Emote(text);
+    }
+
+    #endregion
+
+    #region Whispers and Yells
+
+    /// <summary>
+    /// Whisper (short range speech)
+    /// </summary>
+    public virtual void Whisper(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Speech(ChatMessageType.Whisper, SpeechHues.Default, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Whisper with custom hue
+    /// </summary>
+    public virtual void Whisper(string text, short hue)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Speech(ChatMessageType.Whisper, hue, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Yell (extended range speech)
+    /// </summary>
+    public virtual void Yell(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Speech(ChatMessageType.Yell, SpeechHues.Default, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Yell with custom hue
+    /// </summary>
+    public virtual void Yell(string text, short hue)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Speech(ChatMessageType.Yell, hue, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    #endregion
+
+
+    #region Combat and Spell Messages
+
+    /// <summary>
+    /// Combat message (for battle text)
+    /// </summary>
+    public virtual void CombatMessage(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Speech(ChatMessageType.Regular, SpeechHues.Red, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Spell casting message
+    /// </summary>
+    public virtual void SpellMessage(string spellWords)
+    {
+        if (string.IsNullOrEmpty(spellWords))
+            return;
+
+        Speech(ChatMessageType.Spell, SpeechHues.Default, spellWords, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    /// <summary>
+    /// Magic effect message (for magical actions)
+    /// </summary>
+    public virtual void MagicMessage(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        Speech(ChatMessageType.Regular, SpeechHues.BrightBlue, text, SpeechHues.DefaultGraphic, SpeechHues.DefaultFont);
+    }
+
+    #endregion
+
+
 
     public virtual byte GetPacketFlags(bool stygianAbyss)
     {
