@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.22.0"></a>
+## [0.22.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.22.0) (2025-07-22)
+
+### Features
+
+* **ai:** add speech recognition to AI brain actions ([b3fd287](https://www.github.com/moongate-community/moongate/commit/b3fd28724dc83f140d363768c092ad644ed015ef))
+* **EventLoopService:** add null check for action parameter in EnqueueDelayedAction to prevent null reference exceptions ([95910ba](https://www.github.com/moongate-community/moongate/commit/95910ba0adcfd840ac03f887d12fcb5f5b510c52))
+* **GraphicEffectPacket:** add properties for effect details and serialization ([20aeeb7](https://www.github.com/moongate-community/moongate/commit/20aeeb7cbb01d02ce943b1efdd5cf6cf8d0cc481))
+* **UOMobileEntity:** add speech and emote methods for enhanced interaction ([91ea804](https://www.github.com/moongate-community/moongate/commit/91ea8049145ca86c846e4d153e2fa61d07d5df3b))
+
 <a name="0.21.0"></a>
 ## [0.21.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.21.0) (2025-07-22)
 
