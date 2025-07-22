@@ -315,6 +315,11 @@ public class NetworkService : INetworkService
             : $"Unknown Packet";
     }
 
+    public int GetPacketLength(byte opCode)
+    {
+        return _packetDefinitions.TryGetValue(opCode, out var definition) ? definition.Length : -1;
+    }
+
     public void BindPacket<TPacket>() where TPacket : IUoNetworkPacket, new()
     {
         var packet = new TPacket();

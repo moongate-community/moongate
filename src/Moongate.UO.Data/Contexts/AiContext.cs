@@ -10,6 +10,11 @@ namespace Moongate.UO.Data.Contexts;
 public class AiContext : IDisposable
 {
     protected UOMobileEntity MobileEntity;
+    private static readonly DirectionType[] directions =
+    {
+        DirectionType.North, DirectionType.Left, DirectionType.East, DirectionType.Right,
+        DirectionType.South, DirectionType.West
+    };
 
     public void InitializeContext(UOMobileEntity mobile)
     {
@@ -39,11 +44,6 @@ public class AiContext : IDisposable
 
     public DirectionType RandomDirection()
     {
-        var directions = Enum.GetValues<DirectionType>()
-            .Cast<DirectionType>()
-            .Where(d => d != DirectionType.Mask && d != DirectionType.Running && d != DirectionType.ValueMask)
-            .ToArray();
-
         return directions[Random.Shared.Next(directions.Length)];
     }
 

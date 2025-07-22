@@ -44,7 +44,7 @@ public class NotificationSystem : INotificationSystem
         _gameSessionService.GameSessionBeforeDestroy += OnGameSessionBeforeDestroy;
 
         _spatialWorldService.MobileSectorMoved += OnMobileSectorMoved;
-        //_spatialWorldService.MobileMoved += OnMobileMoved;
+        _spatialWorldService.MobileMoved += OnMobileMoved;
 
         _spatialWorldService.ItemMovedOnGround += OnItemOnGround;
         _spatialWorldService.ItemRemoved += OnItemRemoved;
@@ -115,7 +115,6 @@ public class NotificationSystem : INotificationSystem
 
     private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D location)
     {
-
     }
 
     private void BotSentMessage(
@@ -272,10 +271,8 @@ public class NotificationSystem : INotificationSystem
 
     private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)
     {
-        if (mobile.IsPlayer)
-        {
-            var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
-        }
+        var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
+
 
         _logger.Debug(
             "Mobile {MobileId} moved from sector {OldSector} to {NewSector}",

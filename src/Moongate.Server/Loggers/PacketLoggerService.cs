@@ -67,17 +67,25 @@ public class PacketLoggerService : IMoongateService
         var direction = isReceived ? "<-" : "->";
         var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
 
+
+
         var opCodeDescription = _networkService.GetPacketDescription(buffer.Span[0]);
+
+
+        var originalSize = _networkService.GetPacketLength(buffer.Span[0]);
+
+
 
         var logger = Log.ForContext("NetworkPacketConsole", true);
 
         logger.Debug(
-            "{OpCode} {OpCodeDescription} | {Direction} | Id: {SessionId} | Size: {Size} bytes | Compression: {Compression}",
+            "{OpCode} {OpCodeDescription} | {Direction} | Id: {SessionId} | Size: {Size} (Original is: {Original}) bytes | Compression: {Compression}",
             opCode,
             opCodeDescription,
             direction,
             session.SessionId,
             buffer.Length,
+            originalSize,
             session.Features.HasFlag(NetworkSessionFeatureType.Compression)
         );
     }

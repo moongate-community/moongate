@@ -20,14 +20,15 @@ public class UpdatePlayerPacket : BaseUoPacket
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
+
         writer.Write(OpCode);
         writer.Write(Mobile.Id.Value);
-        writer.Write((ushort)Mobile.Body);
+        writer.Write((short)Mobile.Body);
         writer.Write((short)Mobile.Location.X);
         writer.Write((short)Mobile.Location.Y);
-        writer.Write((byte)Mobile.Location.Z);
+        writer.Write((sbyte)Mobile.Location.Z);
         writer.Write((byte)Mobile.Direction);
-        writer.Write((ushort)Mobile.SkinHue);
+        writer.Write((short)Mobile.SkinHue);
         writer.Write(Mobile.GetPacketFlags(true));
         writer.Write((byte)Mobile.Notoriety);
 
