@@ -391,7 +391,9 @@ public class UOMobileEntity : IPositionEntity, ISerialEntity, INotifyPropertyCha
     public virtual void Say(string format, params object[] args)
     {
         if (string.IsNullOrEmpty(format) || args == null)
+        {
             return;
+        }
 
         var text = string.Format(format, args);
         Say(text);
