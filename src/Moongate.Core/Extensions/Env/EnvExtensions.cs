@@ -1,6 +1,6 @@
 using System.Collections;
 
-namespace Moongate.Core.Extensions.Evn;
+namespace Moongate.Core.Extensions.Env;
 
 public static class EnvExtensions
 {

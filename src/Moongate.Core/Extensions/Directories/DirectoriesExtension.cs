@@ -1,4 +1,4 @@
-using Moongate.Core.Extensions.Evn;
+using Moongate.Core.Extensions.Env;
 
 namespace Moongate.Core.Extensions.Directories;
 

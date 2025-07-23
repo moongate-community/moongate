@@ -166,6 +166,7 @@ public class JsScriptEngineService : IScriptEngineService
             "delay",
             new Func<int, Task>(async milliseconds => { await Task.Delay(milliseconds); })
         );
+
         ExecuteBootstrap();
 
 
