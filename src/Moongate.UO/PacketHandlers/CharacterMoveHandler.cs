@@ -121,10 +121,10 @@ public class CharacterMoveHandler : IGamePacketHandler
 
     public static bool Throttle(GameSession session)
     {
-        if (session.Account.AccountLevel > AccountLevelType.User)
-        {
-            return false; // Admins | GM  are not throttled
-        }
+        // if (session.Account.AccountLevel > AccountLevelType.User)
+        // {
+        //     return false; // Admins | GM  are not throttled
+        // }
 
         var now = DateTime.UtcNow.Ticks;
         var credit = session.MoveCredit;

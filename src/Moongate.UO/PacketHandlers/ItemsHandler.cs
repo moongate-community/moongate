@@ -78,8 +78,9 @@ public class ItemsHandler : IGamePacketHandler
 
         droppingItem.Map = session.Mobile.Map;
 
-        if (session.Mobile.Location.GetDistance(packet.Location) <= 2 && packet.IsGround)
+        if (packet.IsGround)
         {
+            _logger.Debug("Dropping item {ItemId} on ground at location {Location}", droppingItem.Id, packet.Location);
             droppingItem.ParentId = Serial.Zero;
             droppingItem.MoveTo(packet.Location, true);
 
