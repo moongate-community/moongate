@@ -9,6 +9,7 @@ using Moongate.Core.Data.Configs.Services;
 using Moongate.Core.Directories;
 using Moongate.Core.Extensions.Strings;
 using Moongate.Core.Server.Attributes.Scripts;
+using Moongate.Core.Server.Data.Configs.Server;
 using Moongate.Core.Server.Data.Internal.ScriptEngine;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
@@ -33,6 +34,7 @@ public class JsScriptEngineService : IScriptEngineService
 
     private readonly ScriptEngineConfig _scriptEngineConfig;
 
+    private readonly MoongateServerConfig _moongateServerConfig;
     private readonly IVersionService _versionService;
 
 
@@ -41,7 +43,7 @@ public class JsScriptEngineService : IScriptEngineService
     public JsScriptEngineService(
         DirectoriesConfig directoriesConfig,
         ScriptEngineConfig scriptEngineConfig,
-        IVersionService versionService, IContainer serviceProvider
+        IVersionService versionService, IContainer serviceProvider, MoongateServerConfig moongateServerConfig
     )
     {
         _directoriesConfig = directoriesConfig;
@@ -51,6 +53,7 @@ public class JsScriptEngineService : IScriptEngineService
 
         _versionService = versionService;
         _serviceProvider = serviceProvider;
+        _moongateServerConfig = moongateServerConfig;
 
         _initScripts = _scriptEngineConfig.InitScriptsFileNames;
 
@@ -149,7 +152,11 @@ public class JsScriptEngineService : IScriptEngineService
             );
         }
 
-        File.WriteAllText(Path.Combine(_directoriesConfig[DirectoryType.Scripts], "index.d.ts"), documentation);
+        var definitionPath = Path.Combine(
+            _directoriesConfig.Root,
+            _moongateServerConfig.Scripts.IndexDefinitionDirectory
+        );
+        File.WriteAllText(definitionPath, documentation);
 
 
         _jsEngine.SetValue("importSync", RequireModule);
@@ -157,11 +164,7 @@ public class JsScriptEngineService : IScriptEngineService
 
         _jsEngine.SetValue(
             "delay",
-            new Func<int, Task>(async milliseconds =>
-            {
-
-                await Task.Delay(milliseconds);
-            })
+            new Func<int, Task>(async milliseconds => { await Task.Delay(milliseconds); })
         );
         ExecuteBootstrap();
 
@@ -230,7 +233,6 @@ public class JsScriptEngineService : IScriptEngineService
     {
         if (_callbacks.TryGetValue(name, out var callback))
         {
-
             _logger.Debug("Executing callback {Name}", name);
             callback(args);
         }
