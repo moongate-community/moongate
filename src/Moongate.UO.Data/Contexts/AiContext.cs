@@ -63,7 +63,7 @@ public class AiContext : IDisposable
 
     private static readonly DirectionType[] directions =
     [
-        DirectionType.North, DirectionType.Left, DirectionType.East, DirectionType.Right,
+        DirectionType.North, DirectionType.SouthWest, DirectionType.East, DirectionType.NorthEast,
         DirectionType.South, DirectionType.West
     ];
 

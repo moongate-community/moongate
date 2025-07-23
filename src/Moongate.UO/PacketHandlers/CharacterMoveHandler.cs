@@ -77,7 +77,7 @@ public class CharacterMoveHandler : IGamePacketHandler
         _mobileService.MoveMobile(session.Mobile, newLocation);
         bool isRunning = (packet.Direction & DirectionType.Running) != 0;
 
-        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Mask);
+        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Running);
 
         session.Mobile.Direction = baseDirection;
 
