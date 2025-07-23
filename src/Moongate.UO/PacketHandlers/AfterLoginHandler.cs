@@ -3,10 +3,12 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Features;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Effects;
 using Moongate.UO.Data.Packets.Environment;
+using Moongate.UO.Data.Packets.GeneralInformation.Factory;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Lights;
 using Moongate.UO.Data.Packets.Login;
@@ -63,6 +65,19 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new OverallLightLevelPacket(LightLevelType.Day));
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
+
+
+        var keys = new List<uint>();
+
+        for (uint i = 0; i < 6; i++)
+        {
+            keys.Add(i + 2);
+        }
+
+        var fastWalk = GeneralInformationFactory.CreateInitializeFastWalkPrevention(keys.ToArray());
+
+        session.SendPackets(fastWalk);
+
         session.SendPackets(new LoginCompletePacket());
 
         session.SendPackets(new SetTimePacket());
@@ -70,6 +85,8 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new MapChangePacket(session.Mobile.Map));
 
         var music = _spatialWorldService.GetMusicFromLocation(session.Mobile.Location, session.Mobile.Map.MapID);
+
+
 
         session.SendPackets(new PlayMusicPacket(music));
 

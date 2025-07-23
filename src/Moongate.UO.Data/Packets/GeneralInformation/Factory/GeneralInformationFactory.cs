@@ -31,7 +31,18 @@ public static class GeneralInformationFactory
         }
 
         return new GeneralInformationPacket(
-            SubcommandType.UseTargetedItem,
+            SubcommandType.InitializeFastWalkPrevention,
+            writer.Span.ToArray()
+        );
+    }
+
+    public static GeneralInformationPacket CreateAddKeyToFastWalkStack(uint key)
+    {
+        using var writer = new SpanWriter(4);
+        writer.Write(key);
+
+        return new GeneralInformationPacket(
+            SubcommandType.AddKeyToFastWalkStack,
             writer.Span.ToArray()
         );
     }
