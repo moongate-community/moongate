@@ -1,0 +1,420 @@
+[
+  {
+    "type": "item",
+    "id": "leather_backpack",
+    "name": "Leather Backpack",
+    "category": "Container",
+    "description": "Durable leather backpack with reinforced straps",
+    "tags": [
+      "container",
+      "backpack",
+      "leather",
+      "durable"
+    ],
+    "itemId": "0x0E76",
+    "hue": "hue(10:80)",
+    "goldValue": "dice(2d8+12)",
+    "weight": 4,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "clothing",
+      "jewelry",
+      "armor",
+      "tools",
+      "weapons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "studded_backpack",
+    "name": "Studded Backpack",
+    "category": "Container",
+    "description": "Heavy-duty backpack with metal studs for extra protection",
+    "tags": [
+      "container",
+      "backpack",
+      "studded",
+      "heavy-duty"
+    ],
+    "itemId": "0x0E77",
+    "hue": "hue(15:95)",
+    "goldValue": "dice(3d6+18)",
+    "weight": 6,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "armor",
+      "weapons",
+      "tools",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_box",
+    "name": "Small Box",
+    "category": "Container",
+    "description": "Compact wooden box for storing small valuables",
+    "tags": [
+      "container",
+      "box",
+      "small",
+      "wooden"
+    ],
+    "itemId": "0x0E42",
+    "hue": "hue(3:40)",
+    "goldValue": "dice(1d6+4)",
+    "weight": 2,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "jewelry",
+      "gems",
+      "coins",
+      "reagents"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_box",
+    "name": "Wooden Box",
+    "category": "Container",
+    "description": "Medium-sized wooden storage box with hinged lid",
+    "tags": [
+      "container",
+      "box",
+      "wooden",
+      "medium"
+    ],
+    "itemId": "0x0E43",
+    "hue": "hue(8:70)",
+    "goldValue": "dice(1d8+6)",
+    "weight": 4,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "clothing",
+      "jewelry",
+      "tools",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_crate",
+    "name": "Small Crate",
+    "category": "Container",
+    "description": "Sturdy wooden crate for general storage",
+    "tags": [
+      "container",
+      "crate",
+      "small",
+      "wooden"
+    ],
+    "itemId": "0x0E40",
+    "hue": "hue(2:35)",
+    "goldValue": "dice(1d6+3)",
+    "weight": 5,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "tools",
+      "weapons",
+      "armor",
+      "supplies"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_crate",
+    "name": "Wooden Crate",
+    "category": "Container",
+    "description": "Large wooden crate for bulk storage",
+    "tags": [
+      "container",
+      "crate",
+      "wooden",
+      "large"
+    ],
+    "itemId": "0x0E3C",
+    "hue": "hue(12:85)",
+    "goldValue": "dice(2d6+10)",
+    "weight": 8,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "armor",
+      "weapons",
+      "clothing",
+      "tools",
+      "supplies"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "medium_crate",
+    "name": "Medium Crate",
+    "category": "Container",
+    "description": "Versatile medium-sized crate for various items",
+    "tags": [
+      "container",
+      "crate",
+      "medium",
+      "versatile"
+    ],
+    "itemId": "0x0E3D",
+    "hue": "hue(7:65)",
+    "goldValue": "dice(1d10+8)",
+    "weight": 6,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "clothing",
+      "armor",
+      "weapons",
+      "jewelry"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "metal_chest",
+    "name": "Metal Chest",
+    "category": "Container",
+    "description": "Reinforced metal chest with secure lock",
+    "tags": [
+      "container",
+      "chest",
+      "metal",
+      "secure"
+    ],
+    "itemId": "0x0E80",
+    "hue": "hue(20:110)",
+    "goldValue": "dice(3d8+25)",
+    "weight": 12,
+    "dyeable": false,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "jewelry",
+      "gems",
+      "coins",
+      "magic_items",
+      "weapons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_crate",
+    "name": "Large Crate",
+    "category": "Container",
+    "description": "Massive wooden crate for storing large quantities",
+    "tags": [
+      "container",
+      "crate",
+      "large",
+      "massive"
+    ],
+    "itemId": "0x0E41",
+    "hue": "hue(18:100)",
+    "goldValue": "dice(3d6+20)",
+    "weight": 15,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "armor",
+      "weapons",
+      "clothing",
+      "tools",
+      "supplies",
+      "furniture"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_metal_chest",
+    "name": "Large Metal Chest",
+    "category": "Container",
+    "description": "Heavy-duty metal chest for valuable storage",
+    "tags": [
+      "container",
+      "chest",
+      "metal",
+      "large",
+      "valuable"
+    ],
+    "itemId": "0x0E81",
+    "hue": "hue(25:130)",
+    "goldValue": "dice(4d8+35)",
+    "weight": 20,
+    "dyeable": false,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "jewelry",
+      "gems",
+      "coins",
+      "magic_items",
+      "weapons",
+      "armor"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bag",
+    "name": "Bag",
+    "category": "Container",
+    "description": "Simple cloth bag for carrying lightweight items",
+    "tags": [
+      "container",
+      "bag",
+      "cloth",
+      "lightweight"
+    ],
+    "itemId": "0x0E7C",
+    "hue": "hue(8:75)",
+    "goldValue": "dice(1d4+2)",
+    "weight": 1,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "clothing",
+      "jewelry",
+      "reagents",
+      "coins"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pouch",
+    "name": "Pouch",
+    "category": "Container",
+    "description": "Small leather pouch for coins and small items",
+    "tags": [
+      "container",
+      "pouch",
+      "leather",
+      "small"
+    ],
+    "itemId": "0x0E7D",
+    "hue": "hue(6:55)",
+    "goldValue": "dice(1d6+3)",
+    "weight": 1,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "jewelry",
+      "coins",
+      "reagents",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "reagent_bag",
+    "name": "Reagent Bag",
+    "category": "Container",
+    "description": "Specialized bag designed for storing magical reagents",
+    "tags": [
+      "container",
+      "bag",
+      "reagents",
+      "magical"
+    ],
+    "itemId": "0x0FA5",
+    "hue": "hue(30:150)",
+    "goldValue": "dice(2d6+12)",
+    "weight": 2,
+    "dyeable": true,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": true,
+    "container": [
+      "reagents",
+      "magic_items",
+      "gems",
+      "scrolls"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ship_hold",
+    "name": "Ship Hold",
+    "category": "Container",
+    "description": "Massive cargo hold of a ship for storing large quantities",
+    "tags": [
+      "container",
+      "ship",
+      "hold",
+      "massive",
+      "cargo"
+    ],
+    "itemId": "0x1541",
+    "hue": "hue(15:90)",
+    "goldValue": "0",
+    "weight": 0,
+    "dyeable": false,
+    "lootType": "Regular",
+    "stackable": false,
+    "gumpId": null,
+    "scriptId": "",
+    "isMovable": false,
+    "container": [
+      "armor",
+      "weapons",
+      "clothing",
+      "tools",
+      "supplies",
+      "furniture",
+      "cargo"
+    ]
+  }
+]

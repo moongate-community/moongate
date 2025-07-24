@@ -1,13 +1,13 @@
 /**
- * Moongate Server v0.19.15.0 JavaScript API TypeScript Definitions
- * Auto-generated documentation on 2025-07-23 20:58:32
+ * Moongate Server v0.19.17.0 JavaScript API TypeScript Definitions
+ * Auto-generated documentation on 2025-07-24 19:10:54
  **/
 
 // Constants
 
 /**
  * VERSION constant 
- * ""0.19.15.0""
+ * ""0.19.17.0""
  */
 declare const VERSION: string;
 
@@ -221,16 +221,14 @@ export enum genderType {
  */
 export enum directionType {
     North = 0,
-    Right = 1,
+    NorthEast = 1,
     East = 2,
-    Down = 3,
+    SouthEast = 3,
     South = 4,
-    Left = 5,
+    SouthWest = 5,
     West = 6,
-    Up = 7,
-    Mask = 7,
+    NorthWest = 7,
     Running = 128,
-    ValueMask = 135,
 }
 
 /**

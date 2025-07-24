@@ -102,9 +102,10 @@ public class CharacterMoveHandler : IGamePacketHandler
 
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
 
-
         var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
         var addFastKey = GeneralInformationFactory.CreateAddKeyToFastWalkStack((uint)packet.Sequence + 1);
+        // var mountSpeed = GeneralInformationFactory.CreateMountSpeed(3);
+
         session.SendPackets(moveAckPacket, addFastKey);
     }
 
@@ -121,10 +122,10 @@ public class CharacterMoveHandler : IGamePacketHandler
 
     public static bool Throttle(GameSession session)
     {
-        // if (session.Account.AccountLevel > AccountLevelType.User)
-        // {
-        //     return false; // Admins | GM  are not throttled
-        // }
+        if (session.Account.AccountLevel > AccountLevelType.User)
+        {
+            return false; // Admins | GM  are not throttled
+        }
 
         var now = DateTime.UtcNow.Ticks;
         var credit = session.MoveCredit;

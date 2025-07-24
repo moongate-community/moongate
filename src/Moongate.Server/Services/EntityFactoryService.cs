@@ -181,6 +181,7 @@ public class EntityFactoryService : IEntityFactoryService
     }
 
     public async Task LoadTemplatesAsync(string filePath)
+
     {
         if (!File.Exists(filePath))
         {
@@ -188,37 +189,47 @@ public class EntityFactoryService : IEntityFactoryService
             return;
         }
 
-        var templates = JsonUtils.DeserializeFromFile<BaseTemplate[]>(filePath);
 
-        foreach (var template in templates)
+        try
         {
-            if (template is ItemTemplate itemTemplate)
+            var templates = JsonUtils.DeserializeFromFile<BaseTemplate[]>(filePath);
+
+            foreach (var template in templates)
             {
-                if (_itemTemplates.TryAdd(itemTemplate.Id, itemTemplate))
+                if (template is ItemTemplate itemTemplate)
                 {
-                    if (itemTemplate.Name == null)
+                    if (_itemTemplates.TryAdd(itemTemplate.Id, itemTemplate))
                     {
-                        itemTemplate.Name = TileData.ItemTable[itemTemplate.ItemId].Name;
+                        if (itemTemplate.Name == null)
+                        {
+                            itemTemplate.Name = TileData.ItemTable[itemTemplate.ItemId].Name;
+                        }
+
+                        _logger.Information("Loaded item template: {TemplateId}", itemTemplate.Id);
                     }
+                }
 
-                    _logger.Information("Loaded item template: {TemplateId}", itemTemplate.Id);
+                if (template is MobileTemplate mobileTemplate)
+                {
+                    if (_mobileTemplates.TryAdd(mobileTemplate.Id, mobileTemplate))
+                    {
+                        _logger.Information("Loaded mobile template: {TemplateId}", mobileTemplate.Id);
+                    }
+                    else
+                    {
+                        _logger.Warning("Duplicate mobile template found: {TemplateId}", mobileTemplate.Id);
+                    }
                 }
             }
 
-            if (template is MobileTemplate mobileTemplate)
-            {
-                if (_mobileTemplates.TryAdd(mobileTemplate.Id, mobileTemplate))
-                {
-                    _logger.Information("Loaded mobile template: {TemplateId}", mobileTemplate.Id);
-                }
-                else
-                {
-                    _logger.Warning("Duplicate mobile template found: {TemplateId}", mobileTemplate.Id);
-                }
-            }
+            _logger.Information("Loaded {Count} templates from {FilePath}", templates.Length, filePath);
         }
 
-        _logger.Information("Loaded {Count} templates from {FilePath}", templates.Length, filePath);
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error loading templates from file: {FilePath}", filePath);
+            throw;
+        }
     }
 
     public UOItemEntity GetNewBackpack()
@@ -250,7 +261,11 @@ public class EntityFactoryService : IEntityFactoryService
         try
         {
             await Task.WhenAll(loadTasks);
-            _logger.Information("All templates loaded successfully.");
+            _logger.Information(
+                "All templates loaded successfully. Loaded {Items} and {Mobiles}",
+                _itemTemplates.Count,
+                _mobileTemplates.Count
+            );
         }
         catch (Exception ex)
         {

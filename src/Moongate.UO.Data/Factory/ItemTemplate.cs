@@ -9,7 +9,7 @@ public class ItemTemplate : BaseTemplate
     [JsonConverter(typeof(HexValueConverter<int>))]
     public int ItemId { get; set; }
 
-    [JsonConverter(typeof(HexValueConverter<int>))]
+    [JsonConverter(typeof(HueValueConverter<int>))]
     public int Hue { get; set; }
 
     [JsonConverter(typeof(RandomValueConverter<int>))]
