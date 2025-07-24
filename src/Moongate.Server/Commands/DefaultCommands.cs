@@ -39,9 +39,17 @@ public static class DefaultCommands
         );
 
         commandSystemService.RegisterCommand(
-            "add_item",
-            OnAddItemCommand,
+            "add_backpack_item",
+            OnAddBackpackItemCommand,
             "Adds an item to your backpack",
+            AccountLevelType.User,
+            CommandSourceType.InGame
+        );
+
+        commandSystemService.RegisterCommand(
+            "add_item",
+            OnAddItem,
+            "Add item in the world",
             AccountLevelType.User,
             CommandSourceType.InGame
         );
@@ -72,9 +80,51 @@ public static class DefaultCommands
             AccountLevelType.User
         );
 
+
         commandSystemService.RegisterCommand("music", OnMusicCommand, "Plays a music track", AccountLevelType.User);
 
         commandSystemService.RegisterCommand("orion", OnOrionCommand, "Add my cat in world", AccountLevelType.User);
+    }
+
+    private static async Task OnAddItem(CommandSystemContext context)
+    {
+        var itemTemplateName = context.Arguments[0];
+
+        var factoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+
+        var item = factoryService.CreateItemEntity(itemTemplateName);
+
+        if (item == null)
+        {
+            context.Print("Item template '{0}' not found.", itemTemplateName);
+            return;
+        }
+
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var callbackService = MoongateContext.Container.Resolve<ICallbackService>();
+        var itemService = MoongateContext.Container.Resolve<IItemService>();
+
+
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        var targetCursorId = callbackService.AddTargetCallBack((serial, type, position, clickedSerial) =>
+            {
+                //item.Location = position.Value;
+                item.Map = gameSession.Mobile.Map;
+                item.ParentId = Serial.Zero;
+                item.MoveTo(position.Value, true);
+
+                //itemService.AddItem(item);
+            }
+        );
+
+        var cursorPacket = new TargetCursorPacket(
+            CursorSelectionType.Location,
+            CursorType.Helpful,
+            targetCursorId
+        );
+
+        gameSession.SendPackets(cursorPacket);
     }
 
     private static async Task OnOrionCommand(CommandSystemContext context)
@@ -177,9 +227,10 @@ public static class DefaultCommands
         return Task.CompletedTask;
     }
 
-    private static Task OnAddItemCommand(CommandSystemContext context)
+    private static Task OnAddBackpackItemCommand(CommandSystemContext context)
     {
         var itemTemplateName = context.Arguments[0];
+
         var factoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
 
         var item = factoryService.CreateItemEntity(itemTemplateName);
@@ -191,6 +242,7 @@ public static class DefaultCommands
         }
 
         context.Print("Adding item '{0}'...", item);
+
 
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
         var gameSession = gameSessionService.GetSession(context.SessionId);

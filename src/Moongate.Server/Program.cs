@@ -126,6 +126,8 @@ await ConsoleApp.RunAsync(
                 .AddService(typeof(IGamePacketHandlerService), typeof(GamePacketHandlerService))
                 .AddService(typeof(INotificationSystem), typeof(NotificationSystem))
                 .AddService(typeof(INameService), typeof(NameService))
+                .AddService(typeof(ICallbackService), typeof(CallbackService))
+
                 //
                 .AddService(typeof(IEntityFileService), typeof(MoongateEntityFileService))
 
@@ -193,6 +195,8 @@ await ConsoleApp.RunAsync(
             gamePacketHandlerService.RegisterGamePacketHandler<DropItemPacket, ItemsHandler>();
             gamePacketHandlerService.RegisterGamePacketHandler<PickUpItemPacket, ItemsHandler>();
             gamePacketHandlerService.RegisterGamePacketHandler<DropWearItemPacket, ItemsHandler>();
+            gamePacketHandlerService.RegisterGamePacketHandler<TargetCursorPacket, TargetCursorHandler>();
+
 
             gamePacketHandlerService.RegisterGamePacketHandler<GetPlayerStatusPacket, PlayerStatusHandler>();
         };

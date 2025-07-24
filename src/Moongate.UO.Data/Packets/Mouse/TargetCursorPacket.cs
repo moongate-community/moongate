@@ -13,7 +13,6 @@ public class TargetCursorPacket : BaseUoPacket
     public CursorSelectionType SelectionType { get; set; }
     public CursorType CursorType { get; set; }
 
-
     public Serial ClickedSerial { get; set; }
     public Point3D ClickedPoint { get; set; }
     public int TileId { get; set; }
