@@ -147,7 +147,7 @@ public class EntityFactoryService : IEntityFactoryService
         item.Gold = itemTemplate.GoldValue;
 
         item.Name = itemTemplate.Name;
-
+        item.Amount = 1;
         item.ItemId = itemTemplate.ItemId;
         item.BaseWeight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
