@@ -111,6 +111,8 @@ public class ItemsHandler : IGamePacketHandler
 
         if (!item.IsMovable)
         {
+            _logger.Debug("Item {ItemId} is not movable", item.Id);
+
              // Log warning if item is not movable
         }
 

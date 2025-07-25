@@ -162,17 +162,25 @@ public class EntityFactoryService : IEntityFactoryService
         {
             //var startingPosition = new Point2D(0, 0);
 
-            //foreach (var containerName in itemTemplate.Container)
-            //{
-            //    item.AddItem(CreateItemEntity(containerName, overrides), startingPosition);
-            //}
+            var createdItems = new List<UOItemEntity>();
 
-            var itemsToAdd = itemTemplate.Container
-                .Select(containerName => CreateItemEntity(containerName, overrides))
-                .Where(createdItem => createdItem != null)
-                .ToList();
+            foreach (var containerName in itemTemplate.Container)
+            {
+                var createdItem = CreateItemEntity(containerName, overrides);
 
-            ContainerLayoutSystem.ArrangeItemsInGrid(item, itemsToAdd);
+                createdItems.Add(createdItem);
+            }
+
+
+            ContainerLayoutSystem.ArrangeItemsInGrid(item, createdItems);
+
+
+            // var itemsToAdd = itemTemplate.Container
+            //     .Select(containerName => CreateItemEntity(containerName, overrides))
+            //     .Where(createdItem => createdItem != null)
+            //     .ToList();
+
+            // ContainerLayoutSystem.ArrangeItemsInGrid(item, itemsToAdd);
         }
 
         _itemService.AddItem(item);

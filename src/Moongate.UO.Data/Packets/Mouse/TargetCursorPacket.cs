@@ -37,6 +37,13 @@ public class TargetCursorPacket : BaseUoPacket
         writer.Write((byte)SelectionType);
         writer.Write(CursorId.Value);
         writer.Write((byte)CursorType);
+        //The following are always sent but are only valid if sent by client
+        writer.Write(0);
+        writer.Write((short)0);
+        writer.Write((short)0);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.Write((short)0);
 
         return writer.ToArray();
     }

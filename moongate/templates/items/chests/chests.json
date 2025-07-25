@@ -299,7 +299,7 @@
   },
   {
     "type": "item",
-    "id": "bag",
+    "id": "simple_bag",
     "name": "Bag",
     "category": "Container",
     "description": "Simple cloth bag for carrying lightweight items",
@@ -309,22 +309,17 @@
       "cloth",
       "lightweight"
     ],
-    "itemId": "0x0E7C",
+    "itemId": "0x09A8",
     "hue": "hue(8:75)",
     "goldValue": "dice(1d4+2)",
     "weight": 1,
     "dyeable": true,
     "lootType": "Regular",
     "stackable": false,
-    "gumpId": null,
+    "gumpId": "0x4A",
     "scriptId": "",
     "isMovable": true,
-    "container": [
-      "clothing",
-      "jewelry",
-      "reagents",
-      "coins"
-    ]
+    "container": []
   },
   {
     "type": "item",

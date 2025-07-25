@@ -32,6 +32,7 @@ public class CallbackService : ICallbackService
 
     public void AddTargetCallBack(Serial serial, ICallbackService.ClickCallbackDelegate callback)
     {
+        _logger.Debug("Adding callback for serial {Serial}", serial);
         _callbacks[serial] = callback;
     }
 
@@ -55,6 +56,8 @@ public class CallbackService : ICallbackService
                 "CallbackService.ExecuteCallback",
                 () => { callback(serial, selectionType, point, clickedSerial); }
             );
+
+            _callbacks.Remove(serial);
             return true;
         }
 
