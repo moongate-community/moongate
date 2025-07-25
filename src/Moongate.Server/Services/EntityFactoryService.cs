@@ -5,6 +5,7 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Factory;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Races.Base;
@@ -160,7 +161,6 @@ public class EntityFactoryService : IEntityFactoryService
 
         if (itemTemplate.Container.Count > 0)
         {
-            //var startingPosition = new Point2D(0, 0);
 
             var createdItems = new List<UOItemEntity>();
 
@@ -171,16 +171,7 @@ public class EntityFactoryService : IEntityFactoryService
                 createdItems.Add(createdItem);
             }
 
-
             ContainerLayoutSystem.ArrangeItemsInGrid(item, createdItems);
-
-
-            // var itemsToAdd = itemTemplate.Container
-            //     .Select(containerName => CreateItemEntity(containerName, overrides))
-            //     .Where(createdItem => createdItem != null)
-            //     .ToList();
-
-            // ContainerLayoutSystem.ArrangeItemsInGrid(item, itemsToAdd);
         }
 
         _itemService.AddItem(item);

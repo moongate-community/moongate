@@ -84,6 +84,32 @@ public static class DefaultCommands
         commandSystemService.RegisterCommand("music", OnMusicCommand, "Plays a music track", AccountLevelType.User);
 
         commandSystemService.RegisterCommand("orion", OnOrionCommand, "Add my cat in world", AccountLevelType.User);
+
+        commandSystemService.RegisterCommand("teleport", OnTeleportCommand, "Teleports to target cursor");
+    }
+
+    private static async Task OnTeleportCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var callbackService = MoongateContext.Container.Resolve<ICallbackService>();
+        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
+
+
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        var targetCursorId = callbackService.AddTargetCallBack((serial, type, position, clickedSerial) =>
+            {
+                mobileService.MoveMobile(gameSession.Mobile, position.Value);
+            }
+        );
+
+        var cursorPacket = new TargetCursorPacket(
+            CursorSelectionType.Location,
+            CursorType.Helpful,
+            targetCursorId
+        );
+
+        gameSession.SendPackets(cursorPacket);
     }
 
     private static async Task OnAddItem(CommandSystemContext context)
@@ -102,7 +128,6 @@ public static class DefaultCommands
 
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
         var callbackService = MoongateContext.Container.Resolve<ICallbackService>();
-        var itemService = MoongateContext.Container.Resolve<IItemService>();
 
 
         var gameSession = gameSessionService.GetSession(context.SessionId);

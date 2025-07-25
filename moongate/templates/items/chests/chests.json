@@ -310,16 +310,17 @@
       "lightweight"
     ],
     "itemId": "0x09A8",
-    "hue": "hue(8:75)",
     "goldValue": "dice(1d4+2)",
     "weight": 1,
     "dyeable": true,
     "lootType": "Regular",
     "stackable": false,
-    "gumpId": "0x4A",
+    "gumpId": "0x003C",
     "scriptId": "",
     "isMovable": true,
-    "container": []
+    "container": [
+      "brick"
+    ]
   },
   {
     "type": "item",

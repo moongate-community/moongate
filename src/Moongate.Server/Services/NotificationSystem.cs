@@ -186,10 +186,13 @@ public class NotificationSystem : INotificationSystem
     private void OnOtherMobileMoved(UOMobileEntity self, UOMobileEntity otherMobile, Point3D location)
     {
         var updatePlayerPacket = new UpdatePlayerPacket(otherMobile);
+        // var drawPlayer = new DrawGamePlayerPacket(otherMobile);
+
+        var mobileDraw = new MobileDrawPacket(otherMobile, self, true, true);
 
         var gameSession = _gameSessionService.GetGameSessionByMobile(self);
 
-        gameSession.SendPackets(updatePlayerPacket);
+        gameSession.SendPackets(updatePlayerPacket, mobileDraw);
     }
 
     private void PlayerItemOnGround(UOMobileEntity mobile, UOItemEntity item, Point3D location)
@@ -262,6 +265,8 @@ public class NotificationSystem : INotificationSystem
     private void OnMobileMoved(UOMobileEntity mobile, Point3D location, WorldView worldView)
     {
         _logger.Debug("Mobile {MobileId} moved to {Location}", mobile.Id, location);
+
+        mobile.OtherMobileMoved(mobile, location);
 
         foreach (var otMobile in worldView.NearbyMobiles)
         {

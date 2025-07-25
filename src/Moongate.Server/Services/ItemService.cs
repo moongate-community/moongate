@@ -4,10 +4,8 @@ using Moongate.UO.Data.Contexts;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Actions;
-using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Types;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 
@@ -32,6 +30,9 @@ public class ItemService : IItemService
     private readonly IEventLoopService _eventLoopService;
 
     private readonly IGameSessionService _gameSessionService;
+
+    private Serial _lastSerial = new Serial(Serial.ItemOffset);
+
 
     public ItemService(
         IEntityFileService entityFileService, IEventLoopService eventLoopService, IGameSessionService gameSessionService
@@ -67,6 +68,10 @@ public class ItemService : IItemService
             AddItem(item);
         }
 
+        _lastSerial = items.Count > 0
+            ? items.Max(i => i.Id)
+            : new Serial(Serial.ItemOffset);
+
         _saveLock.Release();
     }
 
@@ -83,16 +88,13 @@ public class ItemService : IItemService
     public UOItemEntity CreateItem()
     {
         _saveLock.Wait();
-        var lastSerial = new Serial(Serial.ItemOffset);
 
-        if (_items.Count > 0)
-        {
-            lastSerial = _items.Keys.Last() + 1;
-        }
+
+        _lastSerial += 1;
 
         var item = new UOItemEntity()
         {
-            Id = lastSerial,
+            Id = _lastSerial,
         };
 
 
