@@ -5,6 +5,7 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Factory;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Races.Base;
@@ -147,7 +148,7 @@ public class EntityFactoryService : IEntityFactoryService
         item.Gold = itemTemplate.GoldValue;
 
         item.Name = itemTemplate.Name;
-
+        item.Amount = 1;
         item.ItemId = itemTemplate.ItemId;
         item.BaseWeight = itemTemplate.Weight;
         item.Hue = itemTemplate.Hue;
@@ -160,19 +161,17 @@ public class EntityFactoryService : IEntityFactoryService
 
         if (itemTemplate.Container.Count > 0)
         {
-            //var startingPosition = new Point2D(0, 0);
 
-            //foreach (var containerName in itemTemplate.Container)
-            //{
-            //    item.AddItem(CreateItemEntity(containerName, overrides), startingPosition);
-            //}
+            var createdItems = new List<UOItemEntity>();
 
-            var itemsToAdd = itemTemplate.Container
-                .Select(containerName => CreateItemEntity(containerName, overrides))
-                .Where(createdItem => createdItem != null)
-                .ToList();
+            foreach (var containerName in itemTemplate.Container)
+            {
+                var createdItem = CreateItemEntity(containerName, overrides);
 
-            ContainerLayoutSystem.ArrangeItemsInGrid(item, itemsToAdd);
+                createdItems.Add(createdItem);
+            }
+
+            ContainerLayoutSystem.ArrangeItemsInGrid(item, createdItems);
         }
 
         _itemService.AddItem(item);
@@ -181,6 +180,7 @@ public class EntityFactoryService : IEntityFactoryService
     }
 
     public async Task LoadTemplatesAsync(string filePath)
+
     {
         if (!File.Exists(filePath))
         {
@@ -188,37 +188,47 @@ public class EntityFactoryService : IEntityFactoryService
             return;
         }
 
-        var templates = JsonUtils.DeserializeFromFile<BaseTemplate[]>(filePath);
 
-        foreach (var template in templates)
+        try
         {
-            if (template is ItemTemplate itemTemplate)
+            var templates = JsonUtils.DeserializeFromFile<BaseTemplate[]>(filePath);
+
+            foreach (var template in templates)
             {
-                if (_itemTemplates.TryAdd(itemTemplate.Id, itemTemplate))
+                if (template is ItemTemplate itemTemplate)
                 {
-                    if (itemTemplate.Name == null)
+                    if (_itemTemplates.TryAdd(itemTemplate.Id, itemTemplate))
                     {
-                        itemTemplate.Name = TileData.ItemTable[itemTemplate.ItemId].Name;
+                        if (itemTemplate.Name == null)
+                        {
+                            itemTemplate.Name = TileData.ItemTable[itemTemplate.ItemId].Name;
+                        }
+
+                        _logger.Information("Loaded item template: {TemplateId}", itemTemplate.Id);
                     }
+                }
 
-                    _logger.Information("Loaded item template: {TemplateId}", itemTemplate.Id);
+                if (template is MobileTemplate mobileTemplate)
+                {
+                    if (_mobileTemplates.TryAdd(mobileTemplate.Id, mobileTemplate))
+                    {
+                        _logger.Information("Loaded mobile template: {TemplateId}", mobileTemplate.Id);
+                    }
+                    else
+                    {
+                        _logger.Warning("Duplicate mobile template found: {TemplateId}", mobileTemplate.Id);
+                    }
                 }
             }
 
-            if (template is MobileTemplate mobileTemplate)
-            {
-                if (_mobileTemplates.TryAdd(mobileTemplate.Id, mobileTemplate))
-                {
-                    _logger.Information("Loaded mobile template: {TemplateId}", mobileTemplate.Id);
-                }
-                else
-                {
-                    _logger.Warning("Duplicate mobile template found: {TemplateId}", mobileTemplate.Id);
-                }
-            }
+            _logger.Information("Loaded {Count} templates from {FilePath}", templates.Length, filePath);
         }
 
-        _logger.Information("Loaded {Count} templates from {FilePath}", templates.Length, filePath);
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Error loading templates from file: {FilePath}", filePath);
+            throw;
+        }
     }
 
     public UOItemEntity GetNewBackpack()
@@ -250,7 +260,11 @@ public class EntityFactoryService : IEntityFactoryService
         try
         {
             await Task.WhenAll(loadTasks);
-            _logger.Information("All templates loaded successfully.");
+            _logger.Information(
+                "All templates loaded successfully. Loaded {Items} and {Mobiles}",
+                _itemTemplates.Count,
+                _mobileTemplates.Count
+            );
         }
         catch (Exception ex)
         {

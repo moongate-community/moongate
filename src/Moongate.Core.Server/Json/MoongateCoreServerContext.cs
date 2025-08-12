@@ -10,6 +10,7 @@ namespace Moongate.Core.Server.Json;
 [JsonSerializable(typeof(MoongateServerConfig))]
 [JsonSerializable(typeof(NetworkConfig))]
 [JsonSerializable(typeof(WebServerConfig))]
+[JsonSerializable(typeof(ScriptConfig))]
 public partial class MoongateCoreServerContext : JsonSerializerContext
 {
 

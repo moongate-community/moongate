@@ -10,5 +10,8 @@
   },
   "name": "Moongate Shardi",
   "ultimaOnlineDirectory": "$HOME/uo/",
-  "language": "enu"
+  "language": "enu",
+  "scripts": {
+    "indexDefinitionDirectory": "scripts-ts/index.d.ts"
+  }
 }

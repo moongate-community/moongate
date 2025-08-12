@@ -4,15 +4,25 @@ namespace Moongate.UO.Data.Types;
 public enum DirectionType : byte
 {
     North = 0x0,
-    Right = 0x1,
+    NorthEast = 0x1,
     East = 0x2,
-    Down = 0x3,
+    SouthEast = 0x3,
     South = 0x4,
-    Left = 0x5,
+    SouthWest = 0x5,
     West = 0x6,
-    Up = 0x7,
+    NorthWest = 0x7,
 
-    Mask = 0x7,
     Running = 0x80,
-    ValueMask = 0x87
+
+    /***
+     *
+     * 0x00 - North
+       0x01 - Northeast
+       0x02 - East
+       0x03 - Southeast
+       0x04 - South
+       0x05 - Southwest
+       0x06 - West
+       0x07 - Northwest
+     */
 }

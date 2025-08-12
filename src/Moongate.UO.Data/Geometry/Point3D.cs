@@ -273,18 +273,18 @@ public struct Point3D
     public static implicit operator Point3D(DirectionType direction)
     {
         // Remove running flag to get base direction
-        var baseDirection = (DirectionType)((byte)direction & (byte)DirectionType.Mask);
+        var baseDirection = (DirectionType)((byte)direction & (byte)DirectionType.Running);
 
         return baseDirection switch
         {
             DirectionType.North => new Point3D(0, -1, 0),  // North: Y decreases
-            DirectionType.Right => new Point3D(1, -1, 0),  // Northeast: X+, Y-
+            DirectionType.NorthEast => new Point3D(1, -1, 0),  // Northeast: X+, Y-
             DirectionType.East  => new Point3D(1, 0, 0),   // East: X increases
-            DirectionType.Down  => new Point3D(1, 1, 0),   // Southeast: X+, Y+
+            DirectionType.SouthEast  => new Point3D(1, 1, 0),   // Southeast: X+, Y+
             DirectionType.South => new Point3D(0, 1, 0),   // South: Y increases
-            DirectionType.Left  => new Point3D(-1, 1, 0),  // Southwest: X-, Y+
+            DirectionType.SouthWest  => new Point3D(-1, 1, 0),  // Southwest: X-, Y+
             DirectionType.West  => new Point3D(-1, 0, 0),  // West: X decreases
-            DirectionType.Up    => new Point3D(-1, -1, 0), // Northwest: X-, Y-
+            DirectionType.NorthWest    => new Point3D(-1, -1, 0), // Northwest: X-, Y-
             _                   => new Point3D(0, 0, 0)    // No movement
         };
     }
@@ -304,13 +304,13 @@ public struct Point3D
         return (deltaX, deltaY) switch
         {
             (0, -1)  => DirectionType.North, // North: Y-
-            (1, -1)  => DirectionType.Right, // Northeast: X+, Y-
+            (1, -1)  => DirectionType.NorthEast, // Northeast: X+, Y-
             (1, 0)   => DirectionType.East,  // East: X+
-            (1, 1)   => DirectionType.Down,  // Southeast: X+, Y+
+            (1, 1)   => DirectionType.SouthEast,  // Southeast: X+, Y+
             (0, 1)   => DirectionType.South, // South: Y+
-            (-1, 1)  => DirectionType.Left,  // Southwest: X-, Y+
+            (-1, 1)  => DirectionType.SouthWest,  // Southwest: X-, Y+
             (-1, 0)  => DirectionType.West,  // West: X-
-            (-1, -1) => DirectionType.Up,    // Northwest: X-, Y-
+            (-1, -1) => DirectionType.NorthWest,    // Northwest: X-, Y-
             _        => DirectionType.North  // Default to North for no movement
         };
     }
@@ -364,7 +364,7 @@ public struct Point3D
     /// <returns>Base direction without running flag</returns>
     public static DirectionType GetBaseDirection(DirectionType direction)
     {
-        return (DirectionType)((byte)direction & (byte)DirectionType.Mask);
+        return (DirectionType)((byte)direction & (byte)DirectionType.Running);
     }
 
     /// <summary>

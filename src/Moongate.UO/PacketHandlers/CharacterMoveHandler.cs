@@ -4,6 +4,7 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
+using Moongate.UO.Data.Packets.GeneralInformation.Factory;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -76,7 +77,7 @@ public class CharacterMoveHandler : IGamePacketHandler
         _mobileService.MoveMobile(session.Mobile, newLocation);
         bool isRunning = (packet.Direction & DirectionType.Running) != 0;
 
-        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Mask);
+        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Running);
 
         session.Mobile.Direction = baseDirection;
 
@@ -90,19 +91,22 @@ public class CharacterMoveHandler : IGamePacketHandler
 
 
         _logger.Debug(
-            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning}",
+            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning} fastWalk {FastWalk}",
             session.SessionId,
             session.MoveSequence,
             packet.Direction,
-            isRunning
+            isRunning,
+            packet.FastKey
         );
 
 
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
 
-
         var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
-        session.SendPackets(moveAckPacket);
+        var addFastKey = GeneralInformationFactory.CreateAddKeyToFastWalkStack((uint)packet.Sequence + 1);
+        // var mountSpeed = GeneralInformationFactory.CreateMountSpeed(3);
+
+        session.SendPackets(moveAckPacket, addFastKey);
     }
 
 

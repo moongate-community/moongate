@@ -5,7 +5,6 @@ namespace Moongate.UO.Data.Factory;
 
 public class MobileTemplate : BaseTemplate
 {
-
     [JsonConverter(typeof(HexValueConverter<int>))]
     public int Body { get; set; }
 
@@ -28,4 +27,15 @@ public class MobileTemplate : BaseTemplate
     public int Stamina { get; set; } = 100;
 
     public string Brain { get; set; } = "None";
+
+
+    /// <summary>
+    /// Fixed equipment that always spawns on this mobile
+    /// </summary>
+    public List<EquipmentItemTemplate> FixedEquipment { get; set; } = new();
+
+    /// <summary>
+    /// Random equipment pools with probability
+    /// </summary>
+    public List<RandomEquipmentPoolTemplate> RandomEquipment { get; set; } = new();
 }

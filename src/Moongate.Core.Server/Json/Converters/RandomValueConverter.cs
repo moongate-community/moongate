@@ -6,33 +6,49 @@ using Zanaptak.PcgRandom;
 
 namespace Moongate.Core.Server.Json.Converters;
 
-
 /// <summary>
 /// JSON converter that handles random value expressions
 /// </summary>
 public class RandomValueConverter<T> : JsonConverter<T>
 {
-
-    private static readonly Pcg  _random = new() ;
+    private static readonly Pcg _random = new();
 
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.String)
         {
             var str = reader.GetString();
+
+            /// Handle random expressions
             if (str.StartsWith("random(") && str.EndsWith(")"))
             {
                 return (T)ParseRandomExpression(str, typeof(T));
             }
+
+            /// Handle dice expressions
             if (str.StartsWith("dice(") && str.EndsWith(")"))
             {
                 var diceExpr = str.Substring(5, str.Length - 6); // Remove "dice(" and ")"
                 var result = new DiceParser().Parse(diceExpr).Roll().Value;
                 return (T)Convert.ChangeType(result, typeof(T));
             }
+
+            /// Handle numeric strings like "0", "123", etc.
+            if (TryParseNumericString(str, typeof(T), out var numericValue))
+            {
+                return (T)numericValue;
+            }
+
+            /// Handle regular string values for string type
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(object)str;
+            }
+
+            throw new JsonException($"Cannot convert string '{str}' to type {typeof(T)}");
         }
 
-        /// Normal value parsing
+        /// Normal value parsing for non-string tokens
         return typeof(T) switch
         {
             var t when t == typeof(int) => (T)(object)reader.GetInt32(),
@@ -45,6 +61,67 @@ public class RandomValueConverter<T> : JsonConverter<T>
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         JsonSerializer.Serialize(writer, value, options);
+    }
+
+    /// <summary>
+    /// Tries to parse a string as a numeric value
+    /// </summary>
+    private static bool TryParseNumericString(string str, Type targetType, out object result)
+    {
+        result = null;
+
+        if (string.IsNullOrEmpty(str))
+            return false;
+
+        try
+        {
+            if (targetType == typeof(int))
+            {
+                if (int.TryParse(str, out var intValue))
+                {
+                    result = intValue;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(double))
+            {
+                if (double.TryParse(str, out var doubleValue))
+                {
+                    result = doubleValue;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(float))
+            {
+                if (float.TryParse(str, out var floatValue))
+                {
+                    result = floatValue;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(decimal))
+            {
+                if (decimal.TryParse(str, out var decimalValue))
+                {
+                    result = decimalValue;
+                    return true;
+                }
+            }
+            else if (targetType == typeof(long))
+            {
+                if (long.TryParse(str, out var longValue))
+                {
+                    result = longValue;
+                    return true;
+                }
+            }
+        }
+        catch
+        {
+            // Ignore parsing errors
+        }
+
+        return false;
     }
 
     private static object ParseRandomExpression(string expression, Type targetType)

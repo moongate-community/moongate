@@ -96,7 +96,6 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     }
 
 
-
     public void RemoveItem(UOItemEntity item)
     {
         // Logic to remove an item from this item, e.g., from a container
@@ -123,5 +122,10 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public static explicit operator ItemReference(UOItemEntity item)
     {
         return item.ToItemReference();
+    }
+
+    public override string ToString()
+    {
+        return $"Item: {Name} (ID: {Id}, ItemId: {ItemId}, Hue: {Hue}, Amount: {Amount}, Location: {Location})";
     }
 }

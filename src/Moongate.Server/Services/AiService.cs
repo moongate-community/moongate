@@ -1,6 +1,7 @@
 using Microsoft.Extensions.ObjectPool;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Contexts;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Ai;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
@@ -16,6 +17,7 @@ public class AiService : IAiService
 
     private readonly Dictionary<string, IAiBrainAction> _brains = new();
 
+    private const double _aiTickInterval = 500;
 
     private readonly IMobileService _mobileService;
 
@@ -24,6 +26,8 @@ public class AiService : IAiService
 
 
     private readonly ITimerService _timerService;
+
+    private readonly Dictionary<Serial, AiContext> _contexts = new();
 
     public AiService(IMobileService mobileService, ITimerService timerService)
     {
@@ -50,11 +54,17 @@ public class AiService : IAiService
 
         mobile.ChatMessageReceived += MobileOnChatMessageReceived;
 
+        var aiContext = _aiContextPool.Get();
+
+        aiContext.InitializeContext(mobile);
+
+        _contexts[mobile.Id] = aiContext;
+
         _timerService.RegisterTimer(
             $"ai_brain_{mobile.BrainId}-{mobile.Name}",
-            1000,
-            () => { ProcessAiLogic(mobile, brainAction); },
-            1000,
+            _aiTickInterval,
+            () => { ProcessAiLogic(mobile, brainAction, _aiTickInterval); },
+            _aiTickInterval,
             true
         );
     }
@@ -89,11 +99,16 @@ public class AiService : IAiService
     }
 
 
-    private void ProcessAiLogic(UOMobileEntity mobile, IAiBrainAction brainAction)
+    private void ProcessAiLogic(UOMobileEntity mobile, IAiBrainAction brainAction, double elapsedTime = 0)
     {
         _logger.Debug("Processing AI for mobile {Mobile} with brain {Brain}", mobile.Id, mobile.BrainId);
-        using var aiContext = _aiContextPool.Get();
+
+        var aiContext = _contexts.GetValueOrDefault(mobile.Id) ?? _aiContextPool.Get();
+
+
         aiContext.InitializeContext(mobile);
+
+        aiContext.IncrementElapsedTime(elapsedTime);
 
         brainAction.Execute(aiContext);
     }

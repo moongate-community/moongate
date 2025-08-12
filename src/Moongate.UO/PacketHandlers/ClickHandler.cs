@@ -1,4 +1,5 @@
 using Moongate.Core.Server.Interfaces.Packets;
+using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Items;
@@ -35,18 +36,8 @@ public class ClickHandler : IGamePacketHandler
             await HandleDoubleClickAsync(session, doubleClickPacket);
             return;
         }
-
-        if (packet is TargetCursorPacket targetCursorPacket)
-        {
-            await HandleSelectTarget(session, targetCursorPacket);
-            return;
-        }
     }
 
-
-    private async Task HandleSelectTarget(GameSession session, TargetCursorPacket targetCursor)
-    {
-    }
 
     private async Task HandleDoubleClickAsync(GameSession session, DoubleClickPacket packet)
     {
@@ -70,6 +61,21 @@ public class ClickHandler : IGamePacketHandler
 
             if (item.IsContainer)
             {
+                if (item.IsOnGround && session.Account.AccountLevel == AccountLevelType.User)
+                {
+                    if (session.Mobile.Location.GetDistance(item.Location) > 2)
+                    {
+                        _logger.Warning(
+                            "Player {PlayerName} tried to double-click an item {ItemId} ({ItemName}) that is too far away.",
+                            session.Mobile.Name,
+                            item.Id,
+                            item.Name
+                        );
+
+                        return;
+                    }
+                }
+
                 session.SendPackets(new DrawContainerAndAddItemCombinedPacket(item));
 
                 return;
