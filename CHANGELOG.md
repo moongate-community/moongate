@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.23.0"></a>
+## [0.23.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.23.0) (2025-08-12)
+
+### Features
+
+* update Moongate Server to v0.19.17.0 and add new item templates ([32eac71](https://www.github.com/moongate-community/moongate/commit/32eac716861d19c77d495bd42c13e3ab41afdb14))
+* **AiContext:** enhance AI context with action scheduling and state management ([028435d](https://www.github.com/moongate-community/moongate/commit/028435d8d0cf13be14acb422f1aa70fd8d5d1faf))
+* **commands:** add new "add_item" command for world item placement ([6700017](https://www.github.com/moongate-community/moongate/commit/6700017fdc20a6591f2b174e044541dab916a04c))
+* **commands:** add teleport command for user to teleport to target cursor ([4780214](https://www.github.com/moongate-community/moongate/commit/4780214f320d1f15d9962fb1502de50f0548e027))
+* **data:** add equipment item templates and random equipment pool ([46c6bfc](https://www.github.com/moongate-community/moongate/commit/46c6bfc9187ee10a98b8d10a9757adf7d16642a7))
+* **moongate:** add TypeScript support and configuration for scripts ([db0e905](https://www.github.com/moongate-community/moongate/commit/db0e90591ae5d44a39368b06f61f10abcbbba1e7))
+* **moongate:** update TypeScript definitions to v0.19.14.0 ([bcad3b6](https://www.github.com/moongate-community/moongate/commit/bcad3b657532ff62c5b6f73c685b69195a8c54a3))
+
 <a name="0.22.0"></a>
 ## [0.22.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.22.0) (2025-07-22)
 
