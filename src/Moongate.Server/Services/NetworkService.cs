@@ -338,8 +338,10 @@ public class NetworkService : INetworkService
 
                 if (span.Length < packetSize)
                 {
-                    _logger.Warning("Variable-length packet 0x{Opcode:X2} size {DeclaredSize} exceeds available {Available}", opcode, packetSize, span.Length);
-                    break;
+                    _logger.Warning("Variable-length packet 0x{Opcode:X2} size {DeclaredSize} exceeds available {Available}, skipping", opcode, packetSize, span.Length);
+                    // Skip this malformed packet and try next byte
+                    remainingBuffer = remainingBuffer[1..];
+                    continue;
                 }
             }
             else
@@ -348,6 +350,7 @@ public class NetworkService : INetworkService
 
                 if (span.Length < packetSize)
                 {
+                    _logger.Verbose("Fixed-length packet 0x{Opcode:X2} size {DeclaredSize} exceeds available {Available}, breaking", opcode, packetSize, span.Length);
                     break;
                 }
             }
