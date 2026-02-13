@@ -26,7 +26,8 @@ public class SpatialWorldService : ISpatialWorldService
     private readonly IDiagnosticService _diagnosticService;
     private readonly IGameSessionService _gameSessionService;
 
-    private readonly Dictionary<Rectangle2D, JsonRegion> _regionsDefinition = new();
+    private readonly Dictionary<int, JsonRegion> _regionsDefinition = new();
+    private readonly Dictionary<Rectangle2D, int> _regionCoordinates = new();
 
     private readonly Dictionary<int, JsonMusic> _musicDefinition = new();
 
@@ -345,6 +346,14 @@ public class SpatialWorldService : ISpatialWorldService
 
     public void AddRegion(JsonRegion region)
     {
+        // Add region if not already exists
+        if (!_regionsDefinition.TryAdd(region.Id, region))
+        {
+            _logger.Warning("Region {RegionId} already exists in the spatial index", region.Id);
+            return;
+        }
+
+        // Add all coordinates for this region
         foreach (var regionCoordinate in region.Coordinates)
         {
             var rectangle = new Rectangle2D(
@@ -354,15 +363,14 @@ public class SpatialWorldService : ISpatialWorldService
                 regionCoordinate.Height
             );
 
-            if (!_regionsDefinition.TryAdd(rectangle, region))
+            if (!_regionCoordinates.TryAdd(rectangle, region.Id))
             {
-                _logger.Warning("Region {RegionId} already exists in the spatial index", region.Id);
-
+                _logger.Warning("Region coordinate already mapped for region {RegionId}", region.Id);
                 continue;
             }
-
-            _logger.Information("Added region {RegionId} {RegionName} to spatial index", region.Id, region.Name);
         }
+
+        _logger.Information("Added region {RegionId} {RegionName} to spatial index", region.Id, region.Name);
     }
 
     public void AddMusics(List<JsonMusic> musics)
@@ -376,11 +384,15 @@ public class SpatialWorldService : ISpatialWorldService
     public int GetMusicFromLocation(Point3D location, int mapIndex)
     {
         /// Find the region that contains this location
-        foreach (var region in _regionsDefinition)
+        foreach (var coordinate in _regionCoordinates)
         {
-            if (region.Key.Contains(location.X, location.Y))
+            if (coordinate.Key.Contains(location.X, location.Y))
             {
-                return _musicDefinition[region.Value.MusicList].Music;
+                var regionId = coordinate.Value;
+                if (_regionsDefinition.TryGetValue(regionId, out var region))
+                {
+                    return _musicDefinition[region.MusicList].Music;
+                }
             }
         }
 
@@ -389,11 +401,15 @@ public class SpatialWorldService : ISpatialWorldService
 
     public JsonRegion? GetRegionFromLocation(Point3D location, int mapIndex)
     {
-        foreach (var region in _regionsDefinition)
+        foreach (var coordinate in _regionCoordinates)
         {
-            if (region.Key.Contains(location.X, location.Y))
+            if (coordinate.Key.Contains(location.X, location.Y))
             {
-                return region.Value;
+                var regionId = coordinate.Value;
+                if (_regionsDefinition.TryGetValue(regionId, out var region))
+                {
+                    return region;
+                }
             }
         }
 
