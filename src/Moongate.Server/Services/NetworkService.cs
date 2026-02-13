@@ -43,6 +43,7 @@ public class NetworkService : INetworkService
     {
         var packet = new TPacket();
         _packetBuilders[packet.OpCode] = () => new TPacket();
+        _logger.Debug("Bound packet: OpCode={OpCode}, Type={PacketType}", packet.OpCode.ToPacketString(), typeof(TPacket).Name);
     }
 
     public void BroadcastPacket(IUoNetworkPacket packet)
