@@ -306,6 +306,7 @@ public class NetworkService : INetworkService
             }
 
             var opcode = span[0];
+            _logger.Verbose("Processing opcode: 0x{Opcode:X2}, remaining: {Length} bytes", opcode, span.Length);
 
             if (!_packetDefinitions.TryGetValue(opcode, out var packetDefinition))
             {
@@ -384,6 +385,8 @@ public class NetworkService : INetworkService
             }
 
             remainingBuffer = remainingBuffer[packetSize..];
+            _logger.Verbose("Successfully processed opcode: 0x{Opcode:X2}, advanced {PacketSize} bytes, {Remaining} bytes left",
+                opcode, packetSize, remainingBuffer.Length);
         }
 
         if (remainingBuffer.Length > 0)
