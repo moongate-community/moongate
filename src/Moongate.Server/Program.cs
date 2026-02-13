@@ -159,6 +159,9 @@ await ConsoleApp.RunAsync(
                                                   var gamePacketHandlerService =
                                                       MoongateContext.Container.Resolve<IGamePacketHandlerService>();
 
+                                                  // Bind send-only packets that don't have handlers
+                                                  networkService.BindPacket<LoginCompletePacket>();
+
                                                   // Registering all packet handlers
 
                                                   gamePacketHandlerService
