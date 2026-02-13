@@ -19,4 +19,26 @@ public class LoginSeedPacket : BaseUoPacket
 
         return true;
     }
+
+    public override ReadOnlyMemory<byte> Write(SpanWriter writer)
+    {
+        writer.Write(OpCode);
+        writer.Write(Seed);
+        if (ClientVersion != null)
+        {
+            writer.Write(ClientVersion.Major);
+            writer.Write(ClientVersion.Minor);
+            writer.Write(ClientVersion.Revision);
+            writer.Write(ClientVersion.Patch);
+        }
+        else
+        {
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+        }
+
+        return writer.ToArray();
+    }
 }

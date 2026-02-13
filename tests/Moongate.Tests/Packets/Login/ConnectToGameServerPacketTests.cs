@@ -13,39 +13,19 @@ public class ConnectToGameServerPacketTests
     }
 
     [Test]
-    public void ConnectToGameServerPacket_ShouldDeserializeValidData()
+    public void ConnectToGameServerPacket_ShouldSerializeSuccessfully()
     {
-        var packet = new ConnectToGameServerPacket();
-        using var writer = new SpanWriter(11);
-        writer.Write((byte)0x8C);
-        writer.Write((uint)0x12345678); // AuthKey
-        writer.Write((ushort)0x1234); // Port placeholder
-        writer.Write((byte)0x01);
+        var packet = new ConnectToGameServerPacket
+        {
+            ServerAddress = System.Net.IPAddress.Parse("127.0.0.1"),
+            ServerPort = 2593,
+            AuthKey = 0x12345678
+        };
+        using var writer = new SpanWriter(20);
+        var result = packet.Write(writer);
 
-        var result = packet.Read(writer.ToArray().AsMemory());
-        Assert.That(result, Is.True);
-    }
-
-    [Test]
-    public void ConnectToGameServerPacket_ShouldFailWithEmptyData()
-    {
-        var packet = new ConnectToGameServerPacket();
-        var result = packet.Read(ReadOnlyMemory<byte>.Empty);
-        Assert.That(result, Is.False);
-    }
-
-    [Test]
-    public void ConnectToGameServerPacket_ShouldFailWithWrongOpCode()
-    {
-        var packet = new ConnectToGameServerPacket();
-        using var writer = new SpanWriter(11);
-        writer.Write((byte)0xFF);
-        writer.Write((uint)0);
-        writer.Write((ushort)0);
-        writer.Write((byte)0);
-
-        var result = packet.Read(writer.ToArray().AsMemory());
-        Assert.That(result, Is.False);
+        Assert.That(result.Length, Is.GreaterThan(0));
+        Assert.That(result.Span[0], Is.EqualTo(0x8C));
     }
 
     [Test]

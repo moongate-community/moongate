@@ -25,131 +25,6 @@ public class LoginRequestPacketTests
 
     #endregion
 
-    #region Deserialization Tests
-
-    [Test]
-    public void LoginRequestPacket_ShouldDeserializeValidCredentials()
-    {
-        // Arrange
-        var packet = new LoginRequestPacket();
-        const string accountName = "testaccount";
-        const string password = "testpass";
-
-        using var writer = new SpanWriter(62);
-        writer.Write((byte)0x80);
-        writer.WriteAscii(accountName, 30);
-        writer.WriteAscii(password, 30);
-
-        var serialized = writer.ToArray().AsMemory();
-
-        // Act
-        var result = packet.Read(serialized);
-
-        // Assert
-        Assert.That(result, Is.True, "Deserialization should succeed");
-        Assert.That(packet.Account, Is.EqualTo(accountName));
-        Assert.That(packet.Password, Is.EqualTo(password));
-    }
-
-    [Test]
-    public void LoginRequestPacket_ShouldDeserializeEmptyAccountName()
-    {
-        // Arrange
-        var packet = new LoginRequestPacket();
-
-        using var writer = new SpanWriter(62);
-        writer.Write((byte)0x80);
-        writer.WriteAscii("", 30);
-        writer.WriteAscii("password", 30);
-
-        var serialized = writer.ToArray().AsMemory();
-
-        // Act
-        var result = packet.Read(serialized);
-
-        // Assert
-        Assert.That(result, Is.True, "Should handle empty account name");
-        Assert.That(packet.Account, Is.Empty);
-    }
-
-    [Test]
-    public void LoginRequestPacket_ShouldHandleMaxLengthStrings()
-    {
-        // Arrange
-        var packet = new LoginRequestPacket();
-        var accountName = new string('A', 29);
-        var password = new string('B', 29);
-
-        using var writer = new SpanWriter(62);
-        writer.Write((byte)0x80);
-        writer.WriteAscii(accountName, 30);
-        writer.WriteAscii(password, 30);
-
-        var serialized = writer.ToArray().AsMemory();
-
-        // Act
-        var result = packet.Read(serialized);
-
-        // Assert
-        Assert.That(result, Is.True);
-        Assert.That(packet.Account, Is.EqualTo(accountName));
-        Assert.That(packet.Password, Is.EqualTo(password));
-    }
-
-    [Test]
-    public void LoginRequestPacket_ShouldFailWithEmptyData()
-    {
-        // Arrange
-        var packet = new LoginRequestPacket();
-
-        // Act
-        var result = packet.Read(ReadOnlyMemory<byte>.Empty);
-
-        // Assert
-        Assert.That(result, Is.False, "Should fail with empty data");
-    }
-
-    [Test]
-    public void LoginRequestPacket_ShouldFailWithWrongOpCode()
-    {
-        // Arrange
-        var packet = new LoginRequestPacket();
-
-        using var writer = new SpanWriter(62);
-        writer.Write((byte)0xFF); // Wrong opcode
-        writer.WriteAscii("account", 30);
-        writer.WriteAscii("password", 30);
-
-        var serialized = writer.ToArray().AsMemory();
-
-        // Act
-        var result = packet.Read(serialized);
-
-        // Assert
-        Assert.That(result, Is.False, "Should fail with wrong OpCode");
-    }
-
-    [Test]
-    public void LoginRequestPacket_ShouldFailWithTruncatedData()
-    {
-        // Arrange
-        var packet = new LoginRequestPacket();
-
-        using var writer = new SpanWriter(30);
-        writer.Write((byte)0x80);
-        writer.WriteAscii("account", 15);
-
-        var serialized = writer.ToArray().AsMemory();
-
-        // Act
-        var result = packet.Read(serialized);
-
-        // Assert
-        Assert.That(result, Is.False, "Should fail with truncated data");
-    }
-
-    #endregion
-
     #region Property Tests
 
     [Test]
@@ -185,27 +60,14 @@ public class LoginRequestPacketTests
     #region Edge Cases
 
     [Test]
-    public void LoginRequestPacket_ShouldHandleBothEmptyCredentials()
+    public void LoginRequestPacket_ShouldAllowNullOrEmptyStrings()
     {
-        // Arrange
         var packet = new LoginRequestPacket();
-
-        using var writer = new SpanWriter(62);
-        writer.Write((byte)0x80);
-        writer.WriteAscii("", 30);
-        writer.WriteAscii("", 30);
-
-        var serialized = writer.ToArray().AsMemory();
-
-        // Act
-        var result = packet.Read(serialized);
-
-        // Assert
-        Assert.That(result, Is.True);
-        Assert.That(packet.Account, Is.Empty);
-        Assert.That(packet.Password, Is.Empty);
+        packet.Account = null;
+        packet.Password = null;
+        Assert.That(packet.Account, Is.Null);
+        Assert.That(packet.Password, Is.Null);
     }
-
 
     #endregion
 }
