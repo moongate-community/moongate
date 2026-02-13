@@ -8,7 +8,7 @@
         <PublishAot>true</PublishAot>
         <InvariantGlobalization>true</InvariantGlobalization>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <Version>0.23.0</Version>
+        <Version>0.24.0</Version>
         <NoWarn>$(NoWarn);IL3050</NoWarn>
         <NoWarn>$(NoWarn);IL2026</NoWarn>
         <NoWarn>$(NoWarn);IL2062</NoWarn>
@@ -28,14 +28,14 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj"/>
-        <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj"/>
-        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
-        <ProjectReference Include="..\Moongate.UO\Moongate.UO.csproj"/>
+        <ProjectReference Include="..\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj" />
+        <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
+        <ProjectReference Include="..\Moongate.UO\Moongate.UO.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <TrimmerRootDescriptor Include="ILLink.Descriptors.xml"/>
+        <TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -43,19 +43,19 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Jint" Version="4.5.0"/>
+        <PackageReference Include="Jint" Version="4.5.0" />
 
         <PackageReference Include="GitInfo" Version="3.6.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
 
-        <PackageReference Include="Spectre.Console" Version="0.54.0"/>
+        <PackageReference Include="Spectre.Console" Version="0.54.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Assets\**\*"/>
-        <EmbeddedResource Include="Assets\**\*"/>
+        <None Remove="Assets\**\*" />
+        <EmbeddedResource Include="Assets\**\*" />
     </ItemGroup>
 
 </Project>

@@ -5,22 +5,22 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsAotCompatible>true</IsAotCompatible>
-        <Version>0.23.0</Version>
+        <Version>0.24.0</Version>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <NoWarn>$(NoWarn);IL3050</NoWarn>
         <NoWarn>$(NoWarn);IL2026</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Moongate.Core.Network\Moongate.Core.Network.csproj"/>
-        <ProjectReference Include="..\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj"/>
-        <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj"/>
-        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
-        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
+        <ProjectReference Include="..\Moongate.Core.Network\Moongate.Core.Network.csproj" />
+        <ProjectReference Include="..\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj" />
+        <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
+        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="LibDeflate.Bindings" Version="1.0.3"/>
+        <PackageReference Include="LibDeflate.Bindings" Version="1.0.3" />
     </ItemGroup>
 
 </Project>

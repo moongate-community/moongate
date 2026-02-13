@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.24.0"></a>
+## [0.24.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.24.0) (2026-02-13)
+
+### Features
+
+* **fase-2:** implement GREEN phase - all Login packet tests passing (107/107) ([2847380](https://www.github.com/moongate-community/moongate/commit/2847380a07ac01dac67db38dc8bafca01a2b3c95))
+* **packets:** implement ServerListingPacket (0x5E) ([0b1778e](https://www.github.com/moongate-community/moongate/commit/0b1778e16eaf2b6ceed948fad7857e03169fe998))
+
+### Bug Fixes
+
+* correct ExpansionInfo property name for JSON deserialization ([589131b](https://www.github.com/moongate-community/moongate/commit/589131bcc2d76f237e7eb51464f5e23e32a63723))
+* prevent duplicate region warnings in spatial world service ([8f8dc62](https://www.github.com/moongate-community/moongate/commit/8f8dc6203dd6ef6968024e73c129ed7300ab28ec))
+* silently handle duplicate region coordinates ([f3ac2b9](https://www.github.com/moongate-community/moongate/commit/f3ac2b971dc8850a296840902cb453526d3fd9e9))
+* **commit:** correct commit message from corrupted cat alias ([ffa5c39](https://www.github.com/moongate-community/moongate/commit/ffa5c39e4159bd6730a7dd3bef1478c4fb6535d6))
+* **commit:** correct commit message from corrupted cat alias ([359fc1b](https://www.github.com/moongate-community/moongate/commit/359fc1b8cea91ba2915cb33a264af6dcdb24ba7f))
+* **commit:** correct commit message from corrupted cat alias ([091dd95](https://www.github.com/moongate-community/moongate/commit/091dd95f59a235683b46cdc4929eaf4be4641b2e))
+* **commit:** correct commit message from corrupted cat alias ([b5f4db1](https://www.github.com/moongate-community/moongate/commit/b5f4db1d736058e8ca00a93547c1662a89d81901))
+* **commit:** correct commit message from corrupted cat alias ([e968fc8](https://www.github.com/moongate-community/moongate/commit/e968fc836ce109a2b6f92d68ab005b100a789368))
+
 <a name="0.23.0"></a>
 ## [0.23.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.23.0) (2025-08-12)
 
