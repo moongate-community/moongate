@@ -1,4 +1,3 @@
-using DryIoc.ImTools;
 using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Persistence.Entities;
@@ -10,18 +9,15 @@ public class WornItemsPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
 
-    public WornItemsPacket() : base(0x2E)
-    {
-    }
+    public WornItemsPacket() : base(0x2E) { }
 
     public WornItemsPacket(UOMobileEntity mobile) : this()
-    {
-        Mobile = mobile;
-    }
+        => Mobile = mobile;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Grow(Mobile.Equipment.Count * 15);
+
         foreach (var item in Mobile.Equipment)
         {
             if (item.Key == ItemLayerType.Backpack || item.Key == ItemLayerType.Bank)
@@ -33,7 +29,6 @@ public class WornItemsPacket : BaseUoPacket
             writer.Write(new WornItemPacket(Mobile, item.Value, item.Key).Write(itemSpanWriter).Span);
             itemSpanWriter.Dispose();
         }
-
 
         return writer.ToArray();
     }

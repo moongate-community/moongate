@@ -6,12 +6,9 @@ namespace Moongate.UO.Data.Packets.MegaCliloc;
 
 public class MegaClilocRequestPacket : BaseUoPacket
 {
-
     public List<Serial> Query { get; set; } = new();
 
-    public MegaClilocRequestPacket() : base(0xD6)
-    {
-    }
+    public MegaClilocRequestPacket() : base(0xD6) { }
 
     protected override bool Read(SpanReader reader)
     {

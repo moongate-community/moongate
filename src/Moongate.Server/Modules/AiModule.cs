@@ -23,7 +23,6 @@ public class AiModule
         _scriptEngineService = scriptEngineService;
     }
 
-
     [ScriptFunction("Add brain")]
     public void AddBrain(string brainId, JsValue classz)
     {
@@ -39,7 +38,9 @@ public class AiModule
 
     [ScriptFunction("Add brain action")]
     public void AddBrainAction(
-        string brainId, Action<AiContext> action, Action<AiContext, string, UOMobileEntity> receiveSpeech
+        string brainId,
+        Action<AiContext> action,
+        Action<AiContext, string, UOMobileEntity> receiveSpeech
     )
     {
         var aiBrainWrap = new AiBrainFuncWrap(action, receiveSpeech);

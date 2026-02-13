@@ -26,9 +26,7 @@ public class GraphicEffectPacket : BaseUoPacket
 
     public int Speed { get; set; } = 1;
 
-    public GraphicEffectPacket() : base(0x70)
-    {
-    }
+    public GraphicEffectPacket() : base(0x70) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -49,7 +47,6 @@ public class GraphicEffectPacket : BaseUoPacket
         writer.Write((short)SourceLocation.X);
         writer.Write((short)SourceLocation.Y);
         writer.Write((sbyte)SourceLocation.Z);
-
 
         writer.Write((short)TargetLocation.X);
         writer.Write((short)TargetLocation.Y);

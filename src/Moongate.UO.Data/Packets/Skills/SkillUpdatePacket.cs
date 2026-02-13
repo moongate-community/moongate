@@ -10,13 +10,9 @@ public class SkillUpdatePacket : BaseUoPacket
     public List<SkillEntry> Skills { get; set; } = new();
 
     public SkillUpdatePacket(UOMobileEntity mobile) : this()
-    {
-        Skills = mobile.Skills;
-    }
+        => Skills = mobile.Skills;
 
-    public SkillUpdatePacket() : base(0x3A)
-    {
-    }
+    public SkillUpdatePacket() : base(0x3A) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -24,7 +20,7 @@ public class SkillUpdatePacket : BaseUoPacket
         writer.Write(6 + 9 + Skills.Count);
         writer.Write((byte)0x02);
 
-        for(var i=0;i< Skills.Count; i++)
+        for (var i = 0; i < Skills.Count; i++)
         {
             var skill = Skills[i];
             var v = skill.Value;

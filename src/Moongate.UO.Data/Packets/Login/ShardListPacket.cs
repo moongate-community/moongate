@@ -9,8 +9,11 @@ public class ShardListPacket : BaseUoPacket
     public List<GameServerEntry> Shards { get; set; }
 
     public ShardListPacket(params GameServerEntry[] entries) : base(0xA8)
+        => Shards = new(entries);
+
+    public void AddShard(GameServerEntry entry)
     {
-        Shards = new List<GameServerEntry>(entries);
+        Shards.Add(entry);
     }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
@@ -21,16 +24,12 @@ public class ShardListPacket : BaseUoPacket
         writer.Write((ushort)length);
         writer.Write((byte)0x5D);
         writer.Write((ushort)Shards.Count);
+
         foreach (var shared in Shards)
         {
             writer.Write(shared.Write().Span);
         }
 
         return writer.ToArray();
-    }
-
-    public void AddShard(GameServerEntry entry)
-    {
-        Shards.Add(entry);
     }
 }

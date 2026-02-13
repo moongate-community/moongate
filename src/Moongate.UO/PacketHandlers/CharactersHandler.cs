@@ -3,10 +3,8 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Contexts;
 using Moongate.UO.Data.Events.System;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
-using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
@@ -26,8 +24,10 @@ public class CharactersHandler : IGamePacketHandler
     private readonly IEntityFactoryService _entityFactoryService;
 
     public CharactersHandler(
-        IMobileService mobileService, IEventBusService eventBusService,
-        IScriptEngineService scriptEngineService, IEntityFactoryService entityFactoryService
+        IMobileService mobileService,
+        IEventBusService eventBusService,
+        IScriptEngineService scriptEngineService,
+        IEntityFactoryService entityFactoryService
     )
     {
         _mobileService = mobileService;
@@ -41,72 +41,24 @@ public class CharactersHandler : IGamePacketHandler
         if (packet is CharacterCreationPacket characterCreation)
         {
             await CreateCharacterAsync(session, characterCreation);
+
             return;
         }
 
         if (packet is CharacterDeletePacket characterDeletion)
         {
             await DeleteCharacterAsync(session, characterDeletion);
+
             return;
         }
 
         if (packet is CharacterLoginPacket characterLogin)
         {
             await SelectCharacterAsync(session, characterLogin);
-            return;
         }
     }
 
-    private async Task SelectCharacterAsync(GameSession session, CharacterLoginPacket packet)
-    {
-        var character = session.Account.GetCharacter(packet.CharacterName);
-
-        var mobile = _mobileService.GetMobile(character.MobileId);
-
-        session.Mobile = mobile;
-        mobile.IsPlayer = true;
-
-        _mobileService.AddInWorld(mobile);
-
-        await _eventBusService.PublishAsync(new CharacterLoggedEvent(session.SessionId, character.MobileId, character.Name));
-    }
-
-    private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)
-    {
-        var character = session.Account.GetCharacter(characterDeletion.Index);
-        var mobileEntity = _mobileService.GetMobile(character.MobileId);
-
-        if (mobileEntity == null)
-        {
-            _logger.Warning(
-                "Character deletion failed for account {AccountName} character: {Character} - Mobile entity not found.",
-                session.Account.Username,
-                character.Name
-            );
-            return;
-        }
-
-        _logger.Information(
-            "Deleting character for account {AccountName} character: {Character}",
-            session.Account.Username,
-            character.Name
-        );
-
-        session.Account.RemoveCharacter(character);
-
-        await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
-
-        var charactersAfterDelete = new CharacterAfterDeletePacket();
-        charactersAfterDelete.FillCharacters(
-            session.GetCharactersEntries().Count == 0
-                ? null
-                : session.GetCharactersEntries()
-        );
-    }
-
-    private async Task CreateCharacterAsync(
-        GameSession session, CharacterCreationPacket characterCreation
-    )
+    private async Task CreateCharacterAsync(GameSession session, CharacterCreationPacket characterCreation)
     {
         _logger.Information(
             "Creating character for account {AccountName} character: {Character}",
@@ -117,11 +69,11 @@ public class CharactersHandler : IGamePacketHandler
         var playerMobileEntity = _mobileService.CreateMobile();
 
         session.Account.Characters.Add(
-            new UOAccountCharacterEntity()
+            new()
             {
                 MobileId = playerMobileEntity.Id,
                 Name = characterCreation.CharacterName,
-                Slot = session.Account.Characters.Count + 1,
+                Slot = session.Account.Characters.Count + 1
             }
         );
 
@@ -140,7 +92,6 @@ public class CharactersHandler : IGamePacketHandler
         playerMobileEntity.Gender = characterCreation.Gender;
         playerMobileEntity.Race = characterCreation.Race;
 
-
         playerMobileEntity.Map = characterCreation.StartingCity.Map;
 
         foreach (var skill in characterCreation.Skills)
@@ -158,10 +109,9 @@ public class CharactersHandler : IGamePacketHandler
 
         goldItem.Amount = 1000;
 
-        playerMobileEntity.GetBackpack().AddItem(goldItem, new Point2D(1, 1));
+        playerMobileEntity.GetBackpack().AddItem(goldItem, new(1, 1));
 
         playerMobileEntity.IsPlayer = true;
-
 
         var createContext =
             new CharacterCreatedEvent(
@@ -190,7 +140,6 @@ public class CharactersHandler : IGamePacketHandler
             shirtItem.Hue = characterCreation.Shirt.Hue;
         }
 
-
         _mobileService.AddInWorld(playerMobileEntity);
 
         await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
@@ -206,5 +155,53 @@ public class CharactersHandler : IGamePacketHandler
                 )
             );
         }
+    }
+
+    private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)
+    {
+        var character = session.Account.GetCharacter(characterDeletion.Index);
+        var mobileEntity = _mobileService.GetMobile(character.MobileId);
+
+        if (mobileEntity == null)
+        {
+            _logger.Warning(
+                "Character deletion failed for account {AccountName} character: {Character} - Mobile entity not found.",
+                session.Account.Username,
+                character.Name
+            );
+
+            return;
+        }
+
+        _logger.Information(
+            "Deleting character for account {AccountName} character: {Character}",
+            session.Account.Username,
+            character.Name
+        );
+
+        session.Account.RemoveCharacter(character);
+
+        await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
+
+        var charactersAfterDelete = new CharacterAfterDeletePacket();
+        charactersAfterDelete.FillCharacters(
+            session.GetCharactersEntries().Count == 0
+                ? null
+                : session.GetCharactersEntries()
+        );
+    }
+
+    private async Task SelectCharacterAsync(GameSession session, CharacterLoginPacket packet)
+    {
+        var character = session.Account.GetCharacter(packet.CharacterName);
+
+        var mobile = _mobileService.GetMobile(character.MobileId);
+
+        session.Mobile = mobile;
+        mobile.IsPlayer = true;
+
+        _mobileService.AddInWorld(mobile);
+
+        await _eventBusService.PublishAsync(new CharacterLoggedEvent(session.SessionId, character.MobileId, character.Name));
     }
 }

@@ -15,6 +15,31 @@ public class ContainerLayoutSystem
     public static readonly Dictionary<int, ContainerSize> ContainerSizes = new();
 
     /// <summary>
+    /// Enhanced version of your original function with intelligent positioning
+    /// </summary>
+    public static void AddContainerItems(
+        UOItemEntity container,
+        List<string> containerItems,
+        Func<string, Dictionary<string, object>?, UOItemEntity> createItemFunc,
+        Dictionary<string, object>? overrides = null
+    )
+    {
+        if (containerItems.Count == 0)
+        {
+            return;
+        }
+
+        /// Create all items first
+        var itemsToAdd = containerItems
+                         .Select(containerName => createItemFunc(containerName, overrides))
+                         .Where(item => item != null)
+                         .ToList();
+
+        /// Use intelligent arrangement
+        ArrangeItemsInContainer(container, itemsToAdd);
+    }
+
+    /// <summary>
     /// Automatically places items in a container using intelligent positioning
     /// </summary>
     public static void ArrangeItemsInContainer(UOItemEntity container, List<UOItemEntity> itemsToAdd)
@@ -24,12 +49,13 @@ public class ContainerLayoutSystem
 
         /// Sort items by size (largest first for better packing)
         var sortedItems = itemsToAdd
-            .OrderByDescending(item => GetItemSize(item).Width * GetItemSize(item).Height)
-            .ToList();
+                          .OrderByDescending(item => GetItemSize(item).Width * GetItemSize(item).Height)
+                          .ToList();
 
         foreach (var item in sortedItems)
         {
             var position = layout.FindNextAvailablePosition(item);
+
             if (position.HasValue)
             {
                 container.AddItem(item, position.Value);
@@ -38,8 +64,44 @@ public class ContainerLayoutSystem
             else
             {
                 /// Container is full, place at (0,0) and let it overlap
-                container.AddItem(item, new Point2D(0, 0));
+                container.AddItem(item, new(0, 0));
             }
+        }
+    }
+
+    /// <summary>
+    /// Simple grid-based arrangement (alternative approach)
+    /// </summary>
+    public static void ArrangeItemsInGrid(UOItemEntity container, List<UOItemEntity> itemsToAdd)
+    {
+        var containerSize = GetContainerSize(container);
+        var currentX = 0;
+        var currentY = 0;
+
+        foreach (var item in itemsToAdd)
+        {
+            var itemSize = GetItemSize(item);
+
+            /// Check if item fits in current row
+            if (currentX + itemSize.Width > containerSize.Width)
+            {
+                /// Move to next row
+                currentX = 0;
+                currentY++;
+            }
+
+            /// Check if we have vertical space
+            if (currentY + itemSize.Height > containerSize.Height)
+            {
+                /// Container is full, start overlapping at (0,0)
+                currentX = 0;
+                currentY = 0;
+            }
+
+            container.AddItem(item, new(currentX, currentY));
+
+            /// Move to next position
+            currentX += itemSize.Width;
         }
     }
 
@@ -54,7 +116,7 @@ public class ContainerLayoutSystem
         }
 
         /// Default to standard backpack size if unknown
-        return new ContainerSize(7, 4, "Unknown Container");
+        return new(7, 4, "Unknown Container");
     }
 
     /// <summary>
@@ -63,12 +125,9 @@ public class ContainerLayoutSystem
     /// </summary>
     public static Rectangle2D GetItemSize(UOItemEntity item)
     {
-
         var itemData = TileData.ItemTable[item.ItemId];
 
-
-        return new Rectangle2D(0, 0, itemData.CalcHeight, itemData.Height);
-
+        return new(0, 0, itemData.CalcHeight, itemData.Height);
 
         // return item.ItemId switch
         // {
@@ -102,60 +161,4 @@ public class ContainerLayoutSystem
         //     _ => new Rectangle2D(0, 0, 1, 1)
         // };
     }
-
-    /// <summary>
-    /// Enhanced version of your original function with intelligent positioning
-    /// </summary>
-    public static void AddContainerItems(UOItemEntity container, List<string> containerItems,
-        Func<string, Dictionary<string, object>?, UOItemEntity> createItemFunc,
-        Dictionary<string, object>? overrides = null)
-    {
-        if (containerItems.Count == 0) return;
-
-        /// Create all items first
-        var itemsToAdd = containerItems
-            .Select(containerName => createItemFunc(containerName, overrides))
-            .Where(item => item != null)
-            .ToList();
-
-        /// Use intelligent arrangement
-        ArrangeItemsInContainer(container, itemsToAdd);
-    }
-
-    /// <summary>
-    /// Simple grid-based arrangement (alternative approach)
-    /// </summary>
-    public static void ArrangeItemsInGrid(UOItemEntity container, List<UOItemEntity> itemsToAdd)
-    {
-        var containerSize = GetContainerSize(container);
-        var currentX = 0;
-        var currentY = 0;
-
-        foreach (var item in itemsToAdd)
-        {
-            var itemSize = GetItemSize(item);
-
-            /// Check if item fits in current row
-            if (currentX + itemSize.Width > containerSize.Width)
-            {
-                /// Move to next row
-                currentX = 0;
-                currentY++;
-            }
-
-            /// Check if we have vertical space
-            if (currentY + itemSize.Height > containerSize.Height)
-            {
-                /// Container is full, start overlapping at (0,0)
-                currentX = 0;
-                currentY = 0;
-            }
-
-            container.AddItem(item, new Point2D(currentX, currentY));
-
-            /// Move to next position
-            currentX += itemSize.Width;
-        }
-    }
-
 }

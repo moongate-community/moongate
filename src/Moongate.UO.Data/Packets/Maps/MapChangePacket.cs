@@ -9,9 +9,7 @@ public class MapChangePacket : BaseUoPacket
     public Map Map { get; set; }
 
     public MapChangePacket(Map map) : base(0xBF)
-    {
-        Map = map;
-    }
+        => Map = map;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -21,7 +19,6 @@ public class MapChangePacket : BaseUoPacket
         writer.Write((byte)0);
         writer.Write((byte)0x08);
         writer.Write((byte)Map.MapID);
-
 
         return writer.ToArray();
     }

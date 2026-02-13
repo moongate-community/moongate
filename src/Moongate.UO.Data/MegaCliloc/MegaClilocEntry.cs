@@ -18,34 +18,32 @@ public class MegaClilocEntry
     /// </summary>
     public List<MegaClilocProperty> Properties { get; set; } = new();
 
-    public MegaClilocEntry()
-    {
-    }
+    public MegaClilocEntry() { }
 
     public MegaClilocEntry(Serial serial, string name)
     {
         Serial = serial;
 
-        Properties.Add(new MegaClilocProperty(Serial.Value, name));
+        Properties.Add(new(Serial.Value, name));
     }
 
     public void AddProperty(uint clilocId, params object[] text)
     {
-        Properties.Add(new MegaClilocProperty(clilocId, string.Join(" ", text)));
+        Properties.Add(new(clilocId, string.Join(" ", text)));
     }
 
     public void AddProperty(uint clilocId, string? text = null)
     {
-        Properties.Add(new MegaClilocProperty(clilocId, text));
+        Properties.Add(new(clilocId, text));
     }
 
     public void AddProperty(uint clilocId, double value)
     {
-        Properties.Add(new MegaClilocProperty(clilocId, value.ToString(CultureInfo.InvariantCulture)));
+        Properties.Add(new(clilocId, value.ToString(CultureInfo.InvariantCulture)));
     }
 
     public void AddProperty(uint clilocId, int value)
     {
-        Properties.Add(new MegaClilocProperty(clilocId, value.ToString(CultureInfo.InvariantCulture)));
+        Properties.Add(new(clilocId, value.ToString(CultureInfo.InvariantCulture)));
     }
 }

@@ -1,5 +1,4 @@
 using Moongate.Core.Server.Interfaces.Packets;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Maps;
@@ -17,56 +16,28 @@ public class ItemsHandler : IGamePacketHandler
     private readonly ILogger _logger = Log.ForContext<ItemsHandler>();
 
     public ItemsHandler(IItemService itemService)
-    {
-        _itemService = itemService;
-    }
+        => _itemService = itemService;
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {
         if (packet is DropItemPacket dropItemPacket)
         {
             await HandleDropItemAsync(session, dropItemPacket);
+
             return;
         }
 
         if (packet is PickUpItemPacket pickUpItemPacket)
         {
             await HandlePickUpItemAsync(session, pickUpItemPacket);
+
             return;
         }
 
         if (packet is DropWearItemPacket dropWearItemPacket)
         {
             await HandleDropWearItemAsync(session, dropWearItemPacket);
-            return;
         }
-    }
-
-    private async Task HandleDropWearItemAsync(GameSession session, DropWearItemPacket packet)
-    {
-        var mobile = session.Mobile;
-
-        if (mobile.Id != packet.MobileId)
-        {
-            _logger.Warning("Player {PlayerId} attempted to drop item on another player", session.Mobile.Id);
-            return;
-        }
-
-        var droppingItem = _itemService.GetItem(packet.ItemId);
-
-        mobile.AddItem(packet.Layer, droppingItem);
-        droppingItem.ParentId = mobile.Id;
-        droppingItem.Map = Map.Felucca;
-
-        _itemService.RemoveItemFromWorld(droppingItem);
-
-
-        _logger.Information(
-            "Wear groud item {DroppingItemId} on layer {Layer} for mobile {MobileId}",
-            droppingItem.Name,
-            packet.Layer,
-            packet.MobileId
-        );
     }
 
     private async Task HandleDropItemAsync(GameSession session, DropItemPacket packet)
@@ -74,7 +45,6 @@ public class ItemsHandler : IGamePacketHandler
         var droppingItem = _itemService.GetItem(packet.ItemId);
 
         _logger.Information("Dropping item {DroppingItemId} on ground: {Ground}", droppingItem.Name, packet.IsGround);
-
 
         droppingItem.Map = session.Mobile.Map;
 
@@ -98,11 +68,38 @@ public class ItemsHandler : IGamePacketHandler
         if (!parentContainer.ContainsItem(droppingItem))
         {
             _logger.Information("Adding item {ItemId} to container {ContainerId}", droppingItem.Id, parentContainer.Id);
-            parentContainer.AddItem(droppingItem, new Point2D(packet.Location.X, packet.Location.Y));
+            parentContainer.AddItem(droppingItem, new(packet.Location.X, packet.Location.Y));
         }
 
         session.SendPackets(new DropItemApprovedPacket());
         session.SendPackets(new AddMultipleItemToContainerPacket(parentContainer));
+    }
+
+    private async Task HandleDropWearItemAsync(GameSession session, DropWearItemPacket packet)
+    {
+        var mobile = session.Mobile;
+
+        if (mobile.Id != packet.MobileId)
+        {
+            _logger.Warning("Player {PlayerId} attempted to drop item on another player", session.Mobile.Id);
+
+            return;
+        }
+
+        var droppingItem = _itemService.GetItem(packet.ItemId);
+
+        mobile.AddItem(packet.Layer, droppingItem);
+        droppingItem.ParentId = mobile.Id;
+        droppingItem.Map = Map.Felucca;
+
+        _itemService.RemoveItemFromWorld(droppingItem);
+
+        _logger.Information(
+            "Wear groud item {DroppingItemId} on layer {Layer} for mobile {MobileId}",
+            droppingItem.Name,
+            packet.Layer,
+            packet.MobileId
+        );
     }
 
     private async Task HandlePickUpItemAsync(GameSession session, PickUpItemPacket packet)
@@ -113,7 +110,7 @@ public class ItemsHandler : IGamePacketHandler
         {
             _logger.Debug("Item {ItemId} is not movable", item.Id);
 
-             // Log warning if item is not movable
+            // Log warning if item is not movable
         }
 
         _logger.Information("Picking up {Count} of {ItemName}", packet.StackAmount, item.Name);

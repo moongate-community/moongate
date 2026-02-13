@@ -1,3 +1,3 @@
 namespace Moongate.Core.Server.Events.Events.Server;
 
-public record ServerStoppedEvent();
+public record ServerStoppedEvent;

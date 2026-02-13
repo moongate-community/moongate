@@ -10,7 +10,7 @@ namespace Moongate.UO.Data.Packets.GeneralInformation.Factory;
 /// </summary>
 public static class GeneralInformationFactory
 {
-    #region Fast Walk Prevention
+#region Fast Walk Prevention
 
     /// <summary>
     /// Creates Initialize Fast Walk Prevention packet (0x01)
@@ -25,12 +25,13 @@ public static class GeneralInformationFactory
         }
 
         using var writer = new SpanWriter(24); // 6 * 4 bytes
+
         foreach (var key in keys)
         {
             writer.Write(key);
         }
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.InitializeFastWalkPrevention,
             writer.Span.ToArray()
         );
@@ -41,7 +42,7 @@ public static class GeneralInformationFactory
         using var writer = new SpanWriter(4);
         writer.Write(key);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.AddKeyToFastWalkStack,
             writer.Span.ToArray()
         );
@@ -64,7 +65,7 @@ public static class GeneralInformationFactory
         using var writer = new SpanWriter(data.Length);
         data.Write(writer);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.CastTargetedSpell,
             writer.Span.ToArray()
         );
@@ -87,15 +88,15 @@ public static class GeneralInformationFactory
         using var writer = new SpanWriter(data.Length);
         data.Write(writer);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.UseTargetedSkill,
             writer.Span.ToArray()
         );
     }
 
-    #endregion
+#endregion
 
-    #region UI Management
+#region UI Management
 
     /// <summary>
     /// Creates Close User Interface Windows packet (0x16)
@@ -109,31 +110,31 @@ public static class GeneralInformationFactory
         writer.Write(windowId);
         writer.Write(serial);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.CloseUserInterfaceWindows,
             writer.Span.ToArray()
         );
     }
 
     /// <summary>Creates packet to close paperdoll window</summary>
-    public static GeneralInformationPacket CreateClosePaperdoll(uint characterSerial) =>
-        CreateCloseUserInterfaceWindows(0x01, characterSerial);
+    public static GeneralInformationPacket CreateClosePaperdoll(uint characterSerial)
+        => CreateCloseUserInterfaceWindows(0x01, characterSerial);
 
     /// <summary>Creates packet to close status window</summary>
-    public static GeneralInformationPacket CreateCloseStatus(uint characterSerial) =>
-        CreateCloseUserInterfaceWindows(0x02, characterSerial);
+    public static GeneralInformationPacket CreateCloseStatus(uint characterSerial)
+        => CreateCloseUserInterfaceWindows(0x02, characterSerial);
 
     /// <summary>Creates packet to close character profile window</summary>
-    public static GeneralInformationPacket CreateCloseCharacterProfile(uint characterSerial) =>
-        CreateCloseUserInterfaceWindows(0x08, characterSerial);
+    public static GeneralInformationPacket CreateCloseCharacterProfile(uint characterSerial)
+        => CreateCloseUserInterfaceWindows(0x08, characterSerial);
 
     /// <summary>Creates packet to close container window</summary>
-    public static GeneralInformationPacket CreateCloseContainer(uint containerSerial) =>
-        CreateCloseUserInterfaceWindows(0x0C, containerSerial);
+    public static GeneralInformationPacket CreateCloseContainer(uint containerSerial)
+        => CreateCloseUserInterfaceWindows(0x0C, containerSerial);
 
-    #endregion
+#endregion
 
-    #region Popup Menus
+#region Popup Menus
 
     /// <summary>
     /// Creates Request Popup Menu packet (0x13)
@@ -145,7 +146,7 @@ public static class GeneralInformationFactory
         using var writer = new SpanWriter(4);
         writer.Write(characterId);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.RequestPopupMenu,
             writer.Span.ToArray()
         );
@@ -163,15 +164,15 @@ public static class GeneralInformationFactory
         writer.Write(characterId);
         writer.Write(entryTag);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.PopupEntrySelection,
             writer.Span.ToArray()
         );
     }
 
-    #endregion
+#endregion
 
-    #region Extended Features
+#region Extended Features
 
     /// <summary>
     /// Creates SE Ability Change packet (0x25)
@@ -185,7 +186,7 @@ public static class GeneralInformationFactory
         writer.Write(abilityId);
         writer.Write((byte)(enabled ? 1 : 0));
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.SEAbilityChange,
             writer.Span.ToArray()
         );
@@ -201,7 +202,7 @@ public static class GeneralInformationFactory
         using var writer = new SpanWriter(1);
         writer.Write(speed);
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.MountSpeed,
             writer.Span.ToArray()
         );
@@ -217,15 +218,15 @@ public static class GeneralInformationFactory
         writer.Write((uint)0x0100);   // unknown1
         writer.Write((ushort)0x0000); // unknown2
 
-        return new GeneralInformationPacket(
+        return new(
             SubcommandType.ToggleGargoyleFlying,
             writer.Span.ToArray()
         );
     }
 
-    #endregion
+#endregion
 
-    #region Utility Methods
+#region Utility Methods
 
     /// <summary>
     /// Creates a raw General Information packet with custom data
@@ -234,9 +235,7 @@ public static class GeneralInformationFactory
     /// <param name="data">Raw subcommand data</param>
     /// <returns>GeneralInformationPacket instance</returns>
     public static GeneralInformationPacket CreateRaw(SubcommandType subcommand, ReadOnlyMemory<byte> data)
-    {
-        return new GeneralInformationPacket(subcommand, data);
-    }
+        => new(subcommand, data);
 
     /// <summary>
     /// Creates a General Information packet from typed subcommand data
@@ -251,8 +250,8 @@ public static class GeneralInformationFactory
         using var writer = new SpanWriter(data.Length);
         data.Write(writer);
 
-        return new GeneralInformationPacket(subcommand, writer.Span.ToArray());
+        return new(subcommand, writer.Span.ToArray());
     }
 
-    #endregion
+#endregion
 }

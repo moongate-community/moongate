@@ -21,6 +21,27 @@ public class UOAccountEntity
 
     public List<UOAccountCharacterEntity> Characters { get; set; } = new();
 
+    public UOAccountEntity()
+    {
+        Id = Nanoid.Generate();
+        Created = DateTime.Now;
+    }
+
+    public void AddCharacter(UOMobileEntity mobileEntity)
+    {
+        AddCharacter(
+            new UOAccountCharacterEntity
+            {
+                Slot = Characters.Count,
+                MobileId = mobileEntity.Id
+            }
+        );
+    }
+
+    public void AddCharacter(UOAccountCharacterEntity character)
+    {
+        Characters.Add(character);
+    }
 
     public UOAccountCharacterEntity GetCharacter(int slot)
     {
@@ -35,32 +56,11 @@ public class UOAccountEntity
     public void RemoveCharacter(UOAccountCharacterEntity character)
     {
         Characters.Remove(character);
+
         // Reassign slots after removal
-        for (int i = 0; i < Characters.Count; i++)
+        for (var i = 0; i < Characters.Count; i++)
         {
             Characters[i].Slot = i;
         }
-    }
-
-    public void AddCharacter(UOMobileEntity mobileEntity)
-    {
-        AddCharacter(
-            new UOAccountCharacterEntity()
-            {
-                Slot = Characters.Count,
-                MobileId = mobileEntity.Id,
-            }
-        );
-    }
-
-    public void AddCharacter(UOAccountCharacterEntity character)
-    {
-        Characters.Add(character);
-    }
-
-    public UOAccountEntity()
-    {
-        Id = Nanoid.Generate();
-        Created = DateTime.Now;
     }
 }

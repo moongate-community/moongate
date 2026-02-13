@@ -5,15 +5,13 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Packets.Characters;
 
-public class MoveAckPacket  :BaseUoPacket
+public class MoveAckPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
     public Notoriety Notoriety { get; set; }
     public byte Sequence { get; set; }
 
-    public MoveAckPacket() : base(0x22)
-    {
-    }
+    public MoveAckPacket() : base(0x22) { }
 
     public MoveAckPacket(UOMobileEntity mobile, byte sequence) : this()
     {
@@ -26,6 +24,7 @@ public class MoveAckPacket  :BaseUoPacket
         writer.Write(OpCode);
         writer.Write(Sequence);
         writer.Write((byte)Mobile.Notoriety);
+
         return writer.ToArray();
     }
 

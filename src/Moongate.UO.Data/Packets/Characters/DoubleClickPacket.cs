@@ -10,15 +10,13 @@ public class DoubleClickPacket : BaseUoPacket
 
     public bool IsPaperdoll { get; set; }
 
-    public DoubleClickPacket() : base(0x06)
-    {
-    }
-
+    public DoubleClickPacket() : base(0x06) { }
 
     protected override bool Read(SpanReader reader)
     {
         TargetSerial = (Serial)reader.ReadUInt32();
         IsPaperdoll = (TargetSerial.Value & 0x80000000) != 0;
+
         return true;
     }
 }

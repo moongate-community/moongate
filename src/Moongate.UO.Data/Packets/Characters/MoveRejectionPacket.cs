@@ -7,15 +7,11 @@ namespace Moongate.UO.Data.Packets.Characters;
 
 public class MoveRejectionPacket : BaseUoPacket
 {
-
     public int Sequence { get; set; }
     public Point3D Location { get; set; }
     public DirectionType Direction { get; set; }
 
-
-    public MoveRejectionPacket() : base(0x21)
-    {
-    }
+    public MoveRejectionPacket() : base(0x21) { }
 
     public MoveRejectionPacket(int sequence, Point3D location, DirectionType direction) : this()
     {
@@ -26,7 +22,6 @@ public class MoveRejectionPacket : BaseUoPacket
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
-
         writer.Write(OpCode);
         writer.Write((byte)Sequence);
         writer.Write((short)Location.X);

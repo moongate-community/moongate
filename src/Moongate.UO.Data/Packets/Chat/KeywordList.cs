@@ -13,18 +13,6 @@ public class KeywordList
 
     public int Count { get; private set; }
 
-    public bool Contains(int keyword)
-    {
-        var contains = false;
-
-        for (var i = 0; !contains && i < Count; ++i)
-        {
-            contains = keyword == m_Keywords[i];
-        }
-
-        return contains;
-    }
-
     public void Add(int keyword)
     {
         if (Count + 1 > m_Keywords.Length)
@@ -39,6 +27,18 @@ public class KeywordList
         }
 
         m_Keywords[Count++] = keyword;
+    }
+
+    public bool Contains(int keyword)
+    {
+        var contains = false;
+
+        for (var i = 0; !contains && i < Count; ++i)
+        {
+            contains = keyword == m_Keywords[i];
+        }
+
+        return contains;
     }
 
     public int[] ToArray()

@@ -13,12 +13,11 @@ public static class EnvExtensions
 
         foreach (DictionaryEntry env in Environment.GetEnvironmentVariables())
         {
-            string key = $"${env.Key}";
-            string value = env.Value?.ToString() ?? "";
+            var key = $"${env.Key}";
+            var value = env.Value?.ToString() ?? "";
             input = input.Replace(key, value);
         }
 
         return input;
     }
-
 }

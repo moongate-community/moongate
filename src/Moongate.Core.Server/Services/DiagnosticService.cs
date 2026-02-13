@@ -26,12 +26,73 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
     private long _uptimeStopwatch;
     private readonly Process _currentProcess;
 
-
     private readonly Dictionary<string, IMetricsProvider> _metricsProviders = new();
 
     private int _lastGcGen0;
     private int _lastGcGen1;
     private int _lastGcGen2;
+
+    public IObservable<MetricProviderData> Metrics => _metricsSubject.AsObservable();
+
+    public DiagnosticService(
+        ISchedulerSystemService schedulerService,
+        DirectoriesConfig directoriesConfig,
+        IEventBusService eventBusService,
+        DiagnosticServiceConfig diagnosticServiceConfig
+    )
+    {
+        _schedulerService = schedulerService;
+        _eventBusService = eventBusService;
+        _diagnosticServiceConfig = diagnosticServiceConfig;
+
+        _eventBusService.Subscribe<RegisterMetricEvent>(OnRegisterMetricEvent);
+        PidFilePath = Path.Combine(directoriesConfig.Root, _diagnosticServiceConfig.PidFileName);
+        _currentProcess = Process.GetCurrentProcess();
+
+        // Initialize GC collection counts
+        _lastGcGen0 = GC.CollectionCount(0);
+        _lastGcGen1 = GC.CollectionCount(1);
+        _lastGcGen2 = GC.CollectionCount(2);
+
+        RegisterMetricsProvider(this);
+    }
+
+    public async Task CollectMetricsAsync()
+    {
+        foreach (var provider in _metricsProviders)
+        {
+            var metric = provider.Value.GetMetrics();
+
+            var metrics = new MetricProviderData(
+                provider.Key,
+                metric
+            );
+            _metricsSubject.OnNext(metrics);
+            await _eventBusService.PublishAsync(new DiagnosticMetricEvent(metrics));
+
+            _logger.Debug(
+                "[METRICS] {ProviderName}: {Metrics}",
+                provider.Key,
+                metric
+            );
+            ;
+        }
+    }
+
+    public void Dispose()
+    {
+        _metricsSubject.Dispose();
+        _currentProcess.Dispose();
+    }
+
+    public Dictionary<string, object> GetAllProvidersMetrics()
+    {
+        return _metricsProviders
+            .ToDictionary(
+                kvp => kvp.Key,
+                kvp => kvp.Value.GetMetrics()
+            );
+    }
 
     public Task<List<MetricProviderData>> GetCurrentMetricsAsync()
     {
@@ -49,48 +110,25 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         return Task.FromResult(metricList);
     }
 
-    public IObservable<MetricProviderData> Metrics => _metricsSubject.AsObservable();
-
-
-    public DiagnosticService(
-        ISchedulerSystemService schedulerService, DirectoriesConfig directoriesConfig,
-        IEventBusService eventBusService,
-        DiagnosticServiceConfig diagnosticServiceConfig
-    )
-    {
-        _schedulerService = schedulerService;
-        _eventBusService = eventBusService;
-        _diagnosticServiceConfig = diagnosticServiceConfig;
-
-
-        _eventBusService.Subscribe<RegisterMetricEvent>(OnRegisterMetricEvent);
-        PidFilePath = Path.Combine(directoriesConfig.Root, _diagnosticServiceConfig.PidFileName);
-        _currentProcess = Process.GetCurrentProcess();
-
-        // Initialize GC collection counts
-        _lastGcGen0 = GC.CollectionCount(0);
-        _lastGcGen1 = GC.CollectionCount(1);
-        _lastGcGen2 = GC.CollectionCount(2);
-
-        RegisterMetricsProvider(this);
-    }
-
-    private async Task OnRegisterMetricEvent(RegisterMetricEvent @event)
-    {
-        RegisterMetricsProvider(@event.provider);
-    }
-
     public object GetMetrics()
-    {
-        return CollectMetricsInternalAsync();
-    }
+        => CollectMetricsInternalAsync();
 
+    public void RegisterMetricsProvider(IMetricsProvider provider)
+    {
+        ArgumentNullException.ThrowIfNull(provider);
+
+        if (!_metricsProviders.TryAdd(provider.ProviderName, provider))
+        {
+            throw new InvalidOperationException(
+                $"Metrics provider with name {provider.ProviderName} is already registered."
+            );
+        }
+    }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         _uptimeStopwatch = Stopwatch.GetTimestamp();
         WritePidFile();
-
 
         // Schedule regular metrics collection
         await _schedulerService.RegisterJob(
@@ -111,38 +149,6 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         _logger.Information("Diagnostic service stopped");
     }
 
-
-    public async Task CollectMetricsAsync()
-    {
-        foreach (var provider in _metricsProviders)
-        {
-            var metric = provider.Value.GetMetrics();
-
-            var metrics = new MetricProviderData(
-                provider.Key,
-                metric
-            );
-            _metricsSubject.OnNext(metrics);
-            await _eventBusService.PublishAsync(new DiagnosticMetricEvent(metrics));
-
-            _logger.Debug("[METRICS] {ProviderName}: {Metrics}",
-                provider.Key, metric
-            );;
-        }
-    }
-
-    public void RegisterMetricsProvider(IMetricsProvider provider)
-    {
-        ArgumentNullException.ThrowIfNull(provider);
-
-        if (!_metricsProviders.TryAdd(provider.ProviderName, provider))
-        {
-            throw new InvalidOperationException(
-                $"Metrics provider with name {provider.ProviderName} is already registered."
-            );
-        }
-    }
-
     public void UnregisterMetricsProvider(string providerName)
     {
         if (!_metricsProviders.Remove(providerName))
@@ -153,15 +159,6 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         _logger.Debug("Unregistered metrics provider: {ProviderName}", providerName);
     }
 
-    public Dictionary<string, object> GetAllProvidersMetrics()
-    {
-        return _metricsProviders
-            .ToDictionary(
-                kvp => kvp.Key,
-                kvp => kvp.Value.GetMetrics()
-            );
-    }
-
     private DiagnosticMetrics CollectMetricsInternalAsync()
     {
         var currentGen0 = GC.CollectionCount(0);
@@ -169,8 +166,8 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         var currentGen2 = GC.CollectionCount(2);
 
         var metrics = new DiagnosticMetrics(
-            privateMemoryBytes: _currentProcess.WorkingSet64,
-            pagedMemoryBytes: GC.GetTotalMemory(false),
+            _currentProcess.WorkingSet64,
+            GC.GetTotalMemory(false),
             threadCount: _currentProcess.Threads.Count,
             processId: _currentProcess.Id,
             uptime: Stopwatch.GetElapsedTime(_uptimeStopwatch),
@@ -188,20 +185,6 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         return metrics;
     }
 
-    private void WritePidFile()
-    {
-        try
-        {
-            DeletePidFile();
-
-            File.WriteAllText(PidFilePath, _currentProcess.Id.ToString());
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Failed to write PID file");
-        }
-    }
-
     private void DeletePidFile()
     {
         try
@@ -217,9 +200,20 @@ public class DiagnosticService : IDiagnosticService, IMetricsProvider
         }
     }
 
-    public void Dispose()
+    private async Task OnRegisterMetricEvent(RegisterMetricEvent @event)
+        => RegisterMetricsProvider(@event.provider);
+
+    private void WritePidFile()
     {
-        _metricsSubject.Dispose();
-        _currentProcess.Dispose();
+        try
+        {
+            DeletePidFile();
+
+            File.WriteAllText(PidFilePath, _currentProcess.Id.ToString());
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Failed to write PID file");
+        }
     }
 }

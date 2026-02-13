@@ -14,7 +14,6 @@ public class AiService : IAiService
 {
     private readonly ILogger _logger = Log.ForContext<AiService>();
 
-
     private readonly Dictionary<string, IAiBrainAction> _brains = new();
 
     private const double _aiTickInterval = 500;
@@ -23,7 +22,6 @@ public class AiService : IAiService
 
     private readonly ObjectPool<AiContext> _aiContextPool =
         new DefaultObjectPool<AiContext>(new DefaultPooledObjectPolicy<AiContext>());
-
 
     private readonly ITimerService _timerService;
 
@@ -37,6 +35,25 @@ public class AiService : IAiService
         _mobileService.MobileAdded += MobileAdded;
     }
 
+    public void AddBrain(string brainId, IAiBrainAction brainAction)
+    {
+        if (_brains.ContainsKey(brainId))
+        {
+            _logger.Warning("Brain with ID {BrainId} already exists. Overwriting.", brainId);
+        }
+
+        _brains[brainId] = brainAction;
+        _logger.Information("Added brain with ID {BrainId}.", brainId);
+    }
+
+    public void Dispose() { }
+
+    public Task StartAsync(CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+
     private void MobileAdded(UOMobileEntity mobile)
     {
         if (mobile.IsPlayer)
@@ -49,6 +66,7 @@ public class AiService : IAiService
         if (string.IsNullOrEmpty(mobile.BrainId) || !_brains.TryGetValue(mobile.BrainId, out var brainAction))
         {
             _logger.Warning("No brain found for mobile {Mobile}.", mobile.Id);
+
             return;
         }
 
@@ -70,7 +88,12 @@ public class AiService : IAiService
     }
 
     private void MobileOnChatMessageReceived(
-        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        UOMobileEntity? self,
+        UOMobileEntity? sender,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
         int font
     )
     {
@@ -81,6 +104,7 @@ public class AiService : IAiService
         if (brainAction == null)
         {
             _logger.Warning("No brain action found for mobile {Mobile} with brain {Brain}", self.Id, sender.BrainId);
+
             return;
         }
 
@@ -98,44 +122,16 @@ public class AiService : IAiService
         }
     }
 
-
     private void ProcessAiLogic(UOMobileEntity mobile, IAiBrainAction brainAction, double elapsedTime = 0)
     {
         _logger.Debug("Processing AI for mobile {Mobile} with brain {Brain}", mobile.Id, mobile.BrainId);
 
         var aiContext = _contexts.GetValueOrDefault(mobile.Id) ?? _aiContextPool.Get();
 
-
         aiContext.InitializeContext(mobile);
 
         aiContext.IncrementElapsedTime(elapsedTime);
 
         brainAction.Execute(aiContext);
-    }
-
-
-    public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public void AddBrain(string brainId, IAiBrainAction brainAction)
-    {
-        if (_brains.ContainsKey(brainId))
-        {
-            _logger.Warning("Brain with ID {BrainId} already exists. Overwriting.", brainId);
-        }
-
-        _brains[brainId] = brainAction;
-        _logger.Information("Added brain with ID {BrainId}.", brainId);
-    }
-
-    public void Dispose()
-    {
     }
 }

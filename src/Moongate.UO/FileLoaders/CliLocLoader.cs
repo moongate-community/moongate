@@ -14,7 +14,6 @@ public class CliLocLoader : IFileLoader
 
     private readonly ILogger _logger = Log.ForContext<CliLocLoader>();
 
-
     public Task LoadAsync()
     {
         var cliLocFile = UoFiles.FindDataFile("cliloc.enu");
@@ -31,7 +30,6 @@ public class CliLocLoader : IFileLoader
         return Task.CompletedTask;
     }
 
-
     /// <summary>
     /// Reads and parses a cliloc.enu file returning a list of CliLocEntry objects
     /// </summary>
@@ -41,16 +39,14 @@ public class CliLocLoader : IFileLoader
     {
         var entries = new List<StringEntry>();
 
-
-
         using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            byte[] buffer = new byte[fileStream.Length];
+            var buffer = new byte[fileStream.Length];
             _ = fileStream.Read(buffer, 0, buffer.Length);
 
-            byte[] clilocData = decompress
-                ? MythicDecompress.Decompress(buffer)
-                : buffer;
+            var clilocData = decompress
+                                 ? MythicDecompress.Decompress(buffer)
+                                 : buffer;
 
             using (var reader = new BinaryReader(new MemoryStream(clilocData)))
             {
@@ -59,8 +55,8 @@ public class CliLocLoader : IFileLoader
 
                 while (reader.BaseStream.Length != reader.BaseStream.Position)
                 {
-                    int number = reader.ReadInt32();
-                    byte flag = reader.ReadByte();
+                    var number = reader.ReadInt32();
+                    var flag = reader.ReadByte();
                     int length = reader.ReadInt16();
 
                     if (length > _buffer.Length)
@@ -69,11 +65,10 @@ public class CliLocLoader : IFileLoader
                     }
 
                     reader.Read(_buffer, 0, length);
-                    string text = Encoding.UTF8.GetString(_buffer, 0, length);
+                    var text = Encoding.UTF8.GetString(_buffer, 0, length);
 
                     var se = new StringEntry(number, text, flag);
                     entries.Add(se);
-
                 }
             }
         }

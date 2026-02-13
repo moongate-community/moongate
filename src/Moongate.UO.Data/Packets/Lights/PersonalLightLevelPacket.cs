@@ -17,15 +17,14 @@ public class PersonalLightLevelPacket : BaseUoPacket
         Mobile = mobile;
     }
 
-    public PersonalLightLevelPacket() : base(0x4E)
-    {
-    }
+    public PersonalLightLevelPacket() : base(0x4E) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Write(OpCode);
         writer.Write(Mobile.Id.Value);
         writer.Write((byte)LightLevel);
+
         return writer.ToArray();
     }
 }

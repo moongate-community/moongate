@@ -7,18 +7,13 @@ namespace Moongate.UO.Data.Packets.Characters;
 
 public class GetPlayerStatusPacket : BaseUoPacket
 {
-
     public GetPlayerStatusType StatusType { get; set; }
     public Serial MobileId { get; set; }
 
-    public GetPlayerStatusPacket() : base(0x34)
-    {
-    }
-
+    public GetPlayerStatusPacket() : base(0x34) { }
 
     protected override bool Read(SpanReader reader)
     {
-
         reader.ReadInt32();
         StatusType = (GetPlayerStatusType)reader.ReadByte();
         MobileId = (Serial)reader.ReadUInt32();

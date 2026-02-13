@@ -14,7 +14,6 @@ public class PlayerStatusHandler : IGamePacketHandler
         if (packet is GetPlayerStatusPacket getPlayerStatusPacket)
         {
             await HandleGetPlayerStatusAsync(session, getPlayerStatusPacket);
-            return;
         }
     }
 

@@ -7,28 +7,64 @@ using Moongate.UO.Data.Multi;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.FileLoaders;
 
 public class MultiDataLoader : IFileLoader
 {
-
     private readonly ILogger _logger = Log.ForContext<MultiDataLoader>();
+
     public async Task LoadAsync()
     {
-
         var multiUOPPath = UoFiles.GetFilePath("MultiCollection.uop");
 
         if (File.Exists(multiUOPPath))
         {
             LoadUOP(multiUOPPath);
-            return ;
+
+            return;
         }
 
         var postHSMulFormat = true;
 
         LoadMul(postHSMulFormat);
+    }
 
+    private void LoadMul(bool postHSMulFormat)
+    {
+        var idxPath = UoFiles.GetFilePath("multi.idx");
+        var mulPath = UoFiles.GetFilePath("multi.mul");
+
+        using var idx = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var idxReader = new BinaryReader(idx);
+
+        using var stream = new FileStream(mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        var bin = new BinaryReader(stream);
+
+        var count = (int)(idx.Length / 12);
+
+        for (var i = 0; i < count; i++)
+        {
+            var lookup = idxReader.ReadInt32();
+            var length = idxReader.ReadInt32();
+            idx.Seek(4, SeekOrigin.Current); // Extra
+
+            if (lookup < 0 || length <= 0)
+            {
+                continue;
+            }
+
+            bin.BaseStream.Seek(lookup, SeekOrigin.Begin);
+            MultiData.Components[i] = new(bin, length, postHSMulFormat);
+        }
+
+        _logger.Information(
+            "Loaded {Count} multi components from {IdxPath} and {MulPath}",
+            MultiData.Components.Count,
+            idxPath,
+            mulPath
+        );
     }
 
     private void LoadUOP(string path)
@@ -38,7 +74,7 @@ public class MultiDataLoader : IFileLoader
         // TODO: Find out if housing.bin is needed and read that.
         var uopEntries = UOPFiles.ReadUOPIndexes(stream, ".bin", 0x10000, 4, 6);
 
-        byte[] compressionBuffer = STArrayPool<byte>.Shared.Rent(0x10000);
+        var compressionBuffer = STArrayPool<byte>.Shared.Rent(0x10000);
         var buffer = STArrayPool<byte>.Shared.Rent(0x10000);
 
         foreach (var (i, entry) in uopEntries)
@@ -55,8 +91,10 @@ public class MultiDataLoader : IFileLoader
                 }
 
                 var decompressedSize = entry.Size;
-                if (Deflate.Standard.Unpack(compressionBuffer, buffer, out var bytesDecompressed) != LibDeflateResult.Success
-                    || decompressedSize != bytesDecompressed)
+
+                if (Deflate.Standard.Unpack(compressionBuffer, buffer, out var bytesDecompressed) !=
+                    LibDeflateResult.Success ||
+                    decompressedSize != bytesDecompressed)
                 {
                     throw new FileLoadException($"Error loading file {stream.Name}. Failed to unpack entry {i}.");
                 }
@@ -85,55 +123,24 @@ public class MultiDataLoader : IFileLoader
 
                 var tileFlag = flagValue switch
                 {
-                    1   => TileFlag.None,
-                    257 => TileFlag.Generic,
-                    _   => TileFlag.Background // 0
+                    1   => UOTileFlag.None,
+                    257 => UOTileFlag.Generic,
+                    _   => UOTileFlag.Background // 0
                 };
 
                 var clilocsCount = reader.ReadUInt32LE();
                 var skip = (int)Math.Min(clilocsCount, int.MaxValue) * 4; // bypass binary block
                 reader.Seek(skip, SeekOrigin.Current);
 
-                tileList.Add(new MultiTileEntry(itemId, x, y, z, tileFlag));
+                tileList.Add(new(itemId, x, y, z, tileFlag));
             }
 
-            MultiData.Components[i] = new MultiComponentList(tileList);
+            MultiData.Components[i] = new(tileList);
         }
 
         STArrayPool<byte>.Shared.Return(buffer);
         STArrayPool<byte>.Shared.Return(compressionBuffer);
 
         _logger.Information("Loaded {Count} multi components from {Path}", MultiData.Components.Count, path);
-    }
-
-    private  void LoadMul(bool postHSMulFormat)
-    {
-        var idxPath = UoFiles.GetFilePath("multi.idx");
-        var mulPath = UoFiles.GetFilePath("multi.mul");
-
-        using var idx = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var idxReader = new BinaryReader(idx);
-
-        using var stream = new FileStream(mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        var bin = new BinaryReader(stream);
-
-        var count = (int)(idx.Length / 12);
-        for (var i = 0; i < count; i++)
-        {
-            var lookup = idxReader.ReadInt32();
-            var length = idxReader.ReadInt32();
-            idx.Seek(4, SeekOrigin.Current); // Extra
-
-            if (lookup < 0 || length <= 0)
-            {
-                continue;
-            }
-
-            bin.BaseStream.Seek(lookup, SeekOrigin.Begin);
-            MultiData.Components[i] = new MultiComponentList(bin, length, postHSMulFormat);
-        }
-
-        _logger.Information( "Loaded {Count} multi components from {IdxPath} and {MulPath}",
-            MultiData.Components.Count, idxPath, mulPath);
     }
 }

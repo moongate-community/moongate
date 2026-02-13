@@ -9,7 +9,7 @@ public class DropItemPacket : BaseUoPacket
 {
     public Serial ItemId { get; set; }
 
-    public Point3D Location { get; set; } = new Point3D(0, 0, 0);
+    public Point3D Location { get; set; } = new(0, 0, 0);
 
     public int GridIndex { get; set; }
 
@@ -17,9 +17,7 @@ public class DropItemPacket : BaseUoPacket
 
     public bool IsGround => ContainerId == new Serial(0xFFFFFFFF);
 
-    public DropItemPacket() : base(0x08)
-    {
-    }
+    public DropItemPacket() : base(0x08) { }
 
     protected override bool Read(SpanReader reader)
     {
@@ -35,7 +33,7 @@ public class DropItemPacket : BaseUoPacket
          */
 
         ItemId = (Serial)reader.ReadUInt32();
-        Location = new Point3D(reader.ReadInt16(), reader.ReadInt16(), reader.ReadByte());
+        Location = new(reader.ReadInt16(), reader.ReadInt16(), reader.ReadByte());
         GridIndex = reader.ReadByte();
         ContainerId = (Serial)reader.ReadUInt32();
 

@@ -7,9 +7,7 @@ namespace Moongate.Server.Wraps;
 
 public class ItemScriptWrap : BaseWrap, IItemAction
 {
-    public ItemScriptWrap(IScriptEngineService scriptEngineService, JsValue jsValue) : base(scriptEngineService, jsValue)
-    {
-    }
+    public ItemScriptWrap(IScriptEngineService scriptEngineService, JsValue jsValue) : base(scriptEngineService, jsValue) { }
 
     public void OnUseItem(ItemUseContext context)
     {

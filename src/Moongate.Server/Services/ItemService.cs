@@ -31,11 +31,12 @@ public class ItemService : IItemService
 
     private readonly IGameSessionService _gameSessionService;
 
-    private Serial _lastSerial = new Serial(Serial.ItemOffset);
-
+    private Serial _lastSerial = new(Serial.ItemOffset);
 
     public ItemService(
-        IEntityFileService entityFileService, IEventLoopService eventLoopService, IGameSessionService gameSessionService
+        IEntityFileService entityFileService,
+        IEventLoopService eventLoopService,
+        IGameSessionService gameSessionService
     )
     {
         _entityFileService = entityFileService;
@@ -43,18 +44,60 @@ public class ItemService : IItemService
         _gameSessionService = gameSessionService;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken = default)
+    public void AddItem(UOItemEntity item)
     {
-        _logger.Information("Loading items from file...");
+        if (!_items.TryAdd(item.Id, item))
+        {
+            _logger.Warning("Item with ID {Id} already exists, not adding again.", item.Id);
 
-        return LoadAsync(cancellationToken);
+            return;
+        }
+
+        item.ItemMoved += ItemOnItemMoved;
+        ItemAdded?.Invoke(item);
     }
 
-    public Task StopAsync(CancellationToken cancellationToken = default)
+    public void AddItemActionScript(string itemId, IItemAction itemAction)
     {
-        _logger.Information("Saving {Count} items to file...", _items.Count);
-        return SaveAsync(cancellationToken);
+        if (_itemActions.ContainsKey(itemId))
+        {
+            _logger.Warning("Item action for {ItemId} already exists, replacing.", itemId);
+        }
+
+        _itemActions[itemId] = itemAction;
+        _logger.Information("Added item action for {ItemId}.", itemId);
     }
+
+    public UOItemEntity CreateItem()
+    {
+        _saveLock.Wait();
+
+        _lastSerial += 1;
+
+        var item = new UOItemEntity
+        {
+            Id = _lastSerial
+        };
+
+        ItemCreated?.Invoke(item);
+
+        _saveLock.Release();
+
+        return item;
+    }
+
+    public UOItemEntity CreateItemAndAdd()
+    {
+        var item = CreateItem();
+        AddItem(item);
+
+        return item;
+    }
+
+    public void Dispose() { }
+
+    public UOItemEntity? GetItem(Serial id)
+        => _items.GetValueOrDefault(id);
 
     public async Task LoadAsync(CancellationToken cancellationToken = default)
     {
@@ -69,10 +112,24 @@ public class ItemService : IItemService
         }
 
         _lastSerial = items.Count > 0
-            ? items.Max(i => i.Id)
-            : new Serial(Serial.ItemOffset);
+                          ? items.Max(i => i.Id)
+                          : new(Serial.ItemOffset);
 
         _saveLock.Release();
+    }
+
+    public void RemoveItemFromWorld(UOItemEntity item)
+    {
+        if (!_items.Remove(item.Id))
+        {
+            _logger.Warning("Item with ID {Id} not found, cannot remove.", item.Id);
+
+            return;
+        }
+
+        item.ItemMoved -= ItemOnItemMoved;
+
+        _logger.Information("Removed item with ID {Id} from world.", item.Id);
     }
 
     public async Task SaveAsync(CancellationToken cancellationToken = default)
@@ -84,50 +141,18 @@ public class ItemService : IItemService
         _saveLock.Release();
     }
 
-
-    public UOItemEntity CreateItem()
+    public Task StartAsync(CancellationToken cancellationToken = default)
     {
-        _saveLock.Wait();
+        _logger.Information("Loading items from file...");
 
-
-        _lastSerial += 1;
-
-        var item = new UOItemEntity()
-        {
-            Id = _lastSerial,
-        };
-
-
-        ItemCreated?.Invoke(item);
-
-        _saveLock.Release();
-
-        return item;
+        return LoadAsync(cancellationToken);
     }
 
-    public UOItemEntity CreateItemAndAdd()
+    public Task StopAsync(CancellationToken cancellationToken = default)
     {
-        var item = CreateItem();
-        AddItem(item);
-        return item;
-    }
+        _logger.Information("Saving {Count} items to file...", _items.Count);
 
-
-    public void AddItem(UOItemEntity item)
-    {
-        if (!_items.TryAdd(item.Id, item))
-        {
-            _logger.Warning("Item with ID {Id} already exists, not adding again.", item.Id);
-            return;
-        }
-
-        item.ItemMoved += ItemOnItemMoved;
-        ItemAdded?.Invoke(item);
-    }
-
-    private void ItemOnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround)
-    {
-        ItemMoved?.Invoke(item, oldLocation, newLocation, isOnGround);
+        return SaveAsync(cancellationToken);
     }
 
     public void UseItem(UOItemEntity item, UOMobileEntity? user)
@@ -154,36 +179,8 @@ public class ItemService : IItemService
         );
     }
 
-    public void AddItemActionScript(string itemId, IItemAction itemAction)
+    private void ItemOnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround)
     {
-        if (_itemActions.ContainsKey(itemId))
-        {
-            _logger.Warning("Item action for {ItemId} already exists, replacing.", itemId);
-        }
-
-        _itemActions[itemId] = itemAction;
-        _logger.Information("Added item action for {ItemId}.", itemId);
-    }
-
-    public void RemoveItemFromWorld(UOItemEntity item)
-    {
-        if (!_items.Remove(item.Id))
-        {
-            _logger.Warning("Item with ID {Id} not found, cannot remove.", item.Id);
-            return;
-        }
-
-        item.ItemMoved -= ItemOnItemMoved;
-
-        _logger.Information("Removed item with ID {Id} from world.", item.Id);
-    }
-
-    public UOItemEntity? GetItem(Serial id)
-    {
-        return _items.GetValueOrDefault(id);
-    }
-
-    public void Dispose()
-    {
+        ItemMoved?.Invoke(item, oldLocation, newLocation, isOnGround);
     }
 }

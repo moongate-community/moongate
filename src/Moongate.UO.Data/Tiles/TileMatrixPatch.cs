@@ -61,9 +61,10 @@ public class TileMatrixPatch
             fsData.Seek(4, SeekOrigin.Current);
 
             var tiles = new LandTile[64];
+
             fixed (LandTile* pTiles = tiles)
             {
-                _ = fsData.Read(new Span<byte>(pTiles, 192));
+                _ = fsData.Read(new(pTiles, 192));
             }
 
             matrix.SetLandBlock(x, y, tiles);
@@ -90,7 +91,7 @@ public class TileMatrixPatch
 
             for (var y = 0; y < 8; ++y)
             {
-                lists[x][y] = new TileList();
+                lists[x][y] = new();
             }
         }
 
@@ -107,6 +108,7 @@ public class TileMatrixPatch
             if (offset < 0 || length <= 0)
             {
                 matrix.SetStaticBlock(blockX, blockY, matrix.EmptyStaticBlock);
+
                 continue;
             }
 
@@ -123,9 +125,10 @@ public class TileMatrixPatch
 
             fixed (StaticTile* pTiles = staTiles)
             {
-                _ = fsData.Read(new Span<byte>(pTiles, length));
+                _ = fsData.Read(new(pTiles, length));
 
-                StaticTile* pCur = pTiles, pEnd = pTiles + tileCount;
+                StaticTile* pCur = pTiles,
+                            pEnd = pTiles + tileCount;
 
                 while (pCur < pEnd)
                 {

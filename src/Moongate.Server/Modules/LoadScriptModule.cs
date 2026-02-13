@@ -18,27 +18,6 @@ public class LoadScriptModule
         _directoriesConfig = directoriesConfig;
     }
 
-
-    [ScriptFunction("Include script")]
-    public void IncludeScript(string scriptName)
-    {
-        var fullPath = Path.Combine(_directoriesConfig[DirectoryType.Scripts], scriptName);
-
-        if (!File.Exists(fullPath))
-        {
-            throw new FileNotFoundException($"Script file '{scriptName}' not found in scripts directory.");
-        }
-
-        try
-        {
-            _scriptEngineService.ExecuteScriptFile(fullPath);
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Failed to load script '{scriptName}': {ex.Message}", ex);
-        }
-    }
-
     [ScriptFunction("Include directory")]
     public void IncludeDirectory(string directoryName)
     {
@@ -57,8 +36,28 @@ public class LoadScriptModule
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failed to load script '{file}': {ex.Message}", ex);
+                throw new($"Failed to load script '{file}': {ex.Message}", ex);
             }
+        }
+    }
+
+    [ScriptFunction("Include script")]
+    public void IncludeScript(string scriptName)
+    {
+        var fullPath = Path.Combine(_directoriesConfig[DirectoryType.Scripts], scriptName);
+
+        if (!File.Exists(fullPath))
+        {
+            throw new FileNotFoundException($"Script file '{scriptName}' not found in scripts directory.");
+        }
+
+        try
+        {
+            _scriptEngineService.ExecuteScriptFile(fullPath);
+        }
+        catch (Exception ex)
+        {
+            throw new($"Failed to load script '{scriptName}': {ex.Message}", ex);
         }
     }
 }

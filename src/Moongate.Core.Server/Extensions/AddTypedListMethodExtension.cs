@@ -3,21 +3,19 @@ using DryIoc;
 namespace Moongate.Core.Server.Extensions;
 
 /// <summary>
-///     Extension methods for registering typed lists in the dependency injection container.
+/// Extension methods for registering typed lists in the dependency injection container.
 /// </summary>
 public static class AddTypedListMethodExtension
 {
     /// <summary>
-    ///     Adds an entity to a typed list in the DryIoc container.
-    ///     If the list doesn't exist, it creates and registers a new one.
+    /// Adds an entity to a typed list in the DryIoc container.
+    /// If the list doesn't exist, it creates and registers a new one.
     /// </summary>
     /// <typeparam name="TListEntity">The type of entities in the list.</typeparam>
     /// <param name="container">The DryIoc container.</param>
     /// <param name="entity">The entity to add to the list.</param>
     /// <returns>The same container for chaining.</returns>
-    public static IContainer AddToRegisterTypedList<TListEntity>(
-        this IContainer container, TListEntity entity
-    )
+    public static IContainer AddToRegisterTypedList<TListEntity>(this IContainer container, TListEntity entity)
     {
         ArgumentNullException.ThrowIfNull(container);
         ArgumentNullException.ThrowIfNull(entity);

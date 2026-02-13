@@ -11,9 +11,7 @@ public class DropWearItemPacket : BaseUoPacket
     public ItemLayerType Layer { get; set; }
     public Serial MobileId { get; set; }
 
-    public DropWearItemPacket() : base(0x13)
-    {
-    }
+    public DropWearItemPacket() : base(0x13) { }
 
     protected override bool Read(SpanReader reader)
     {

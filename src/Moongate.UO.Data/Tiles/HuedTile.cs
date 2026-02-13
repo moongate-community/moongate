@@ -9,13 +9,21 @@ public struct HuedTile
     internal ushort m_ID;
     internal int m_Hue;
 
-    public ushort ID { get => m_ID;
+    public ushort ID
+    {
+        get => m_ID;
         set => m_ID = value;
     }
-    public int Hue { get => m_Hue;
+
+    public int Hue
+    {
+        get => m_Hue;
         set => m_Hue = value;
     }
-    public int Z { get => m_Z;
+
+    public int Z
+    {
+        get => m_Z;
         set => m_Z = (sbyte)value;
     }
 

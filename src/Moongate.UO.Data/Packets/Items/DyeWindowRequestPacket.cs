@@ -7,22 +7,15 @@ namespace Moongate.UO.Data.Packets.Items;
 
 public class DyeWindowRequestPacket : BaseUoPacket
 {
-
     public Serial Serial { get; set; }
 
-    public DyeWindowRequestPacket() : base(0x95)
-    {
-    }
+    public DyeWindowRequestPacket() : base(0x95) { }
 
     public DyeWindowRequestPacket(ISerialEntity serialEntity) : this()
-    {
-        Serial = serialEntity.Id;
-    }
+        => Serial = serialEntity.Id;
 
     public DyeWindowRequestPacket(Serial serial) : this()
-    {
-        Serial = serial;
-    }
+        => Serial = serial;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -37,6 +30,7 @@ public class DyeWindowRequestPacket : BaseUoPacket
         writer.Write(Serial.Value);
         writer.Write((ushort)0);
         writer.Write((ushort)0x0FAB);
+
         return writer.ToArray();
     }
 }

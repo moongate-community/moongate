@@ -10,9 +10,9 @@ public interface ISubcommandParser
     /// <summary>Gets the subcommand type</summary>
     SubcommandType Type { get; }
 
-    /// <summary>Parses the subcommand data as the specified type</summary>
-    T Parse<T>() where T : class, new();
-
     /// <summary>Gets raw subcommand data</summary>
     ReadOnlySpan<byte> GetRawData();
+
+    /// <summary>Parses the subcommand data as the specified type</summary>
+    T Parse<T>() where T : class, new();
 }

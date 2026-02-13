@@ -29,14 +29,13 @@ public class EventDispatchJob<TEvent> : EventDispatchJob
     {
         try
         {
-
             await _listener.HandleAsync(_event);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Error executing event dispatch job for event type {EventType}", typeof(TEvent).Name);
+
             throw;
         }
-
     }
 }

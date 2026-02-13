@@ -8,13 +8,12 @@ public class SingleClickPacket : BaseUoPacket
 {
     public Serial TargetSerial { get; set; }
 
-    public SingleClickPacket() : base(0x05)
-    {
-    }
+    public SingleClickPacket() : base(0x05) { }
 
     protected override bool Read(SpanReader reader)
     {
         TargetSerial = (Serial)reader.ReadUInt32();
+
         return true;
     }
 }

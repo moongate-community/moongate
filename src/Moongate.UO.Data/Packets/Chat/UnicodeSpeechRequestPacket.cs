@@ -6,9 +6,7 @@ namespace Moongate.UO.Data.Packets.Chat;
 
 public class UnicodeSpeechRequestPacket : BaseUoPacket
 {
-    public UnicodeSpeechRequestPacket() : base(0xAD)
-    {
-    }
+    public UnicodeSpeechRequestPacket() : base(0xAD) { }
 
     public ChatMessageType MessageType { get; set; }
 
@@ -30,7 +28,6 @@ public class UnicodeSpeechRequestPacket : BaseUoPacket
         string text;
 
         var isEncoded = (MessageType & ChatMessageType.Encoded) != 0;
-
 
         if (isEncoded)
         {

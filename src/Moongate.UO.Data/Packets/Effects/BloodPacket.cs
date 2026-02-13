@@ -10,18 +10,12 @@ public class BloodPacket : BaseUoPacket
     public Serial Serial { get; set; }
 
     public BloodPacket(Serial serial) : this()
-    {
-        Serial = serial;
-    }
+        => Serial = serial;
 
     public BloodPacket(ISerialEntity entity) : this()
-    {
-        Serial = entity.Id;
-    }
+        => Serial = entity.Id;
 
-    public BloodPacket() : base(0x2A)
-    {
-    }
+    public BloodPacket() : base(0x2A) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {

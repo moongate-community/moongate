@@ -13,7 +13,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  *************************************************************************/
 
-#nullable enable
 namespace Moongate.Core.Buffers;
 
 /// <summary>
@@ -25,7 +24,7 @@ namespace Moongate.Core.Buffers;
 public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 {
     private char[] _arrayToReturnToPool;
-    private int _pos;
+    private readonly int _pos;
     private string _value;
 
     public PooledArraySpanFormattable(char[] arrayToReturnToPool, int length)
@@ -37,11 +36,19 @@ public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 
     public ReadOnlySpan<char> Chars => _arrayToReturnToPool.AsSpan(.._pos);
 
-    public static implicit operator string(PooledArraySpanFormattable f) => f.ToString();
+    public void Dispose()
+    {
+        STArrayPool<char>.Shared.Return(_arrayToReturnToPool);
+        _arrayToReturnToPool = null;
+        this = default; // Defensive clear
+    }
+
+    public static implicit operator string(PooledArraySpanFormattable f)
+        => f.ToString();
 
     public string ToString(string? format = null, IFormatProvider formatProvider = null)
     {
-        _value ??= new string(_arrayToReturnToPool.AsSpan(0, _pos));
+        _value ??= new(_arrayToReturnToPool.AsSpan(0, _pos));
 
         STArrayPool<char>.Shared.Return(_arrayToReturnToPool);
         _arrayToReturnToPool = null;
@@ -51,13 +58,16 @@ public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
     }
 
     public bool TryFormat(
-        Span<char> destination, out int charsWritten, ReadOnlySpan<char> format = default,
+        Span<char> destination,
+        out int charsWritten,
+        ReadOnlySpan<char> format = default,
         IFormatProvider provider = null
     )
     {
         if (destination.Length < _pos)
         {
             charsWritten = 0;
+
             return false;
         }
 
@@ -66,13 +76,7 @@ public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 
         // Interpolated string handlers do not dispose, but we need to return the chars to the array.
         Dispose();
-        return true;
-    }
 
-    public void Dispose()
-    {
-        STArrayPool<char>.Shared.Return(_arrayToReturnToPool);
-        _arrayToReturnToPool = null;
-        this = default; // Defensive clear
+        return true;
     }
 }

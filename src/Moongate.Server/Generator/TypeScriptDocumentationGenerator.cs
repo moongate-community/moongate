@@ -17,15 +17,18 @@ public static class TypeScriptDocumentationGenerator
 
     public static List<Type> FoundEnums { get; } = [];
 
+    private static Func<string, string> _nameResolver = name => name.ToSnakeCase();
+
     public static void AddInterfaceToGenerate(Type type)
     {
         _interfaceTypesToGenerate.Add(type);
     }
 
-    private static Func<string, string> _nameResolver = name => name.ToSnakeCase();
-
     public static string GenerateDocumentation(
-        string appName, string appVersion, List<ScriptModuleData> scriptModules, Dictionary<string, object> constants,
+        string appName,
+        string appVersion,
+        List<ScriptModuleData> scriptModules,
+        Dictionary<string, object> constants,
         Func<string, string> nameResolver = null
     )
     {
@@ -46,11 +49,12 @@ public static class TypeScriptDocumentationGenerator
         _interfacesBuilder.Clear();
         _constantsBuilder.Clear();
         _enumsBuilder.Clear();
+
         //_interfaceTypesToGenerate.Clear();
 
         var distinctConstants = constants
-            .GroupBy(kvp => kvp.Key)
-            .ToDictionary(g => g.Key, g => g.First().Value);
+                                .GroupBy(kvp => kvp.Key)
+                                .ToDictionary(g => g.Key, g => g.First().Value);
 
         ProcessConstants(distinctConstants);
 
@@ -67,15 +71,16 @@ public static class TypeScriptDocumentationGenerator
 
             var moduleName = scriptModuleAttribute.Name;
 
-            sb.AppendLine($"/**");
+            sb.AppendLine("/**");
             sb.AppendLine($" * {module.ModuleType.Name} module");
-            sb.AppendLine($" */");
+            sb.AppendLine(" */");
             sb.AppendLine($"declare const {moduleName}: {{");
 
             /// Get all methods with ScriptFunction attribute
-            var methods = module.ModuleType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                .Where(m => m.GetCustomAttribute<ScriptFunctionAttribute>() != null)
-                .ToList();
+            var methods = module.ModuleType
+                                .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+                                .Where(m => m.GetCustomAttribute<ScriptFunctionAttribute>() != null)
+                                .ToList();
 
             foreach (var method in methods)
             {
@@ -90,11 +95,12 @@ public static class TypeScriptDocumentationGenerator
                 var description = scriptFunctionAttr.HelpText;
 
                 /// Generate function documentation
-                sb.AppendLine($"    /**");
+                sb.AppendLine("    /**");
                 sb.AppendLine($"     * {description}");
 
                 /// Add parameter documentation
                 var parameters = method.GetParameters();
+
                 foreach (var param in parameters)
                 {
                     var paramType = ConvertToTypeScriptType(param.ParameterType);
@@ -108,7 +114,7 @@ public static class TypeScriptDocumentationGenerator
                     sb.AppendLine($"     * @returns {returnType}");
                 }
 
-                sb.AppendLine($"     */");
+                sb.AppendLine("     */");
 
                 /// Generate function signature
                 sb.Append($"    {functionName}(");
@@ -118,8 +124,10 @@ public static class TypeScriptDocumentationGenerator
                 {
                     var param = parameters[i];
                     var paramType = ConvertToTypeScriptType(param.ParameterType);
-                    var isOptional = param.IsOptional || param.ParameterType.IsByRef ||
-                                     param.ParameterType.IsGenericType && param.ParameterType.GetGenericTypeDefinition() ==
+                    var isOptional = param.IsOptional ||
+                                     param.ParameterType.IsByRef ||
+                                     param.ParameterType.IsGenericType &&
+                                     param.ParameterType.GetGenericTypeDefinition() ==
                                      typeof(Nullable<>) ||
                                      paramType.EndsWith("[]?");
 
@@ -151,157 +159,8 @@ public static class TypeScriptDocumentationGenerator
         return sb.ToString();
     }
 
-    /// <summary>
-    /// Method to generate all interfaces after collecting them
-    /// </summary>
-    private static void GenerateAllInterfaces()
-    {
-        /// Use a more thorough approach to handle dependencies between types
-        bool processedSomething;
-
-        do
-        {
-            /// Create a copy of the list to avoid "Collection was modified" exception
-            var typesToGenerate = new List<Type>(_interfaceTypesToGenerate);
-
-            /// Keep track of whether we processed any types in this iteration
-            processedSomething = false;
-
-            /// Process types not yet processed
-            foreach (var type in typesToGenerate)
-            {
-                /// Skip if already processed
-                if (!_processedTypes.Contains(type))
-                {
-                    GenerateInterface(type);
-                    processedSomething = true;
-                }
-            }
-
-            /// Continue until no new types are processed
-        } while (processedSomething);
-    }
-
-    /// <summary>
-    /// Check if a type is a C# record type
-    /// </summary>
-    private static bool IsRecordType(Type type)
-    {
-        /// C# records have specific characteristics:
-        /// 1. They are classes
-        /// 2. They have a compiler-generated EqualityContract property
-        /// 3. They have specific compiler-generated methods
-
-        if (!type.IsClass)
-            return false;
-
-        /// Check for the EqualityContract property which is generated for all record types
-        var equalityContract = type.GetProperty(
-            "EqualityContract",
-            BindingFlags.NonPublic | BindingFlags.Instance
-        );
-
-        if (equalityContract != null && equalityContract.PropertyType == typeof(Type))
-        {
-            return true;
-        }
-
-        /// Alternative check: look for compiler-generated attributes or methods
-        /// Records have compiler-generated ToString, GetHashCode, Equals methods
-        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-        var hasCompilerGeneratedToString = methods.Any(m =>
-            m.Name == "ToString" &&
-            m.GetParameters().Length == 0 &&
-            m.GetCustomAttributes().Any(attr => attr.GetType().Name.Contains("CompilerGenerated"))
-        );
-
-        return hasCompilerGeneratedToString;
-    }
-
-    /// <summary>
-    /// Method to generate a single interface
-    /// </summary>
-    private static void GenerateInterface(Type type)
-    {
-        if (!_processedTypes.Add(type))
-        {
-            return; /// Already processed
-        }
-
-        var interfaceName = $"I{type.Name}";
-
-        /// Start building the interface
-        _interfacesBuilder.AppendLine();
-        _interfacesBuilder.AppendLine($"/**");
-
-        if (IsRecordType(type))
-        {
-            _interfacesBuilder.AppendLine($" * Generated interface for record type {type.FullName}");
-        }
-        else
-        {
-            _interfacesBuilder.AppendLine($" * Generated interface for {type.FullName}");
-        }
-
-        _interfacesBuilder.AppendLine($" */");
-        _interfacesBuilder.AppendLine($"interface {interfaceName} {{");
-
-        /// Get properties - for records, we want to include both public properties and constructor parameters
-        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-            .Where(p => p.CanRead)
-            .ToList();
-
-        /// For record types, also check constructor parameters to ensure we get all record properties
-        if (IsRecordType(type))
-        {
-            /// Get the primary constructor (the one with the most parameters, typically the record constructor)
-            var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-            var primaryConstructor = constructors.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-
-            if (primaryConstructor != null)
-            {
-                var constructorParams = primaryConstructor.GetParameters();
-                foreach (var param in constructorParams)
-                {
-                    /// Check if we already have a property with this name
-                    var existingProperty = properties.FirstOrDefault(p =>
-                        string.Equals(p.Name, param.Name, StringComparison.OrdinalIgnoreCase)
-                    );
-
-                    if (existingProperty == null)
-                    {
-                        /// Add this parameter as a property in our interface
-                        var paramType = ConvertToTypeScriptType(param.ParameterType);
-
-                        _interfacesBuilder.AppendLine($"    /**");
-                        _interfacesBuilder.AppendLine($"     * {_nameResolver(param.Name)} (from record constructor)");
-                        _interfacesBuilder.AppendLine($"     */");
-                        _interfacesBuilder.AppendLine($"    {_nameResolver(param.Name)}: {paramType};");
-                    }
-                }
-            }
-        }
-
-        foreach (var property in properties)
-        {
-            var propertyType = ConvertToTypeScriptType(property.PropertyType);
-
-            /// Add property documentation
-            _interfacesBuilder.AppendLine($"    /**");
-            _interfacesBuilder.AppendLine($"     * {_nameResolver(property.Name)}");
-            _interfacesBuilder.AppendLine($"     */");
-
-            /// Add property
-            _interfacesBuilder.AppendLine($"    {_nameResolver(property.Name)}: {propertyType};");
-        }
-
-        /// End interface - make sure it's properly closed
-        _interfacesBuilder.AppendLine("}");
-    }
-
     private static string ConvertToTypeScriptType(
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
-        Type type
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] Type type
     )
     {
         if (type == typeof(void))
@@ -314,8 +173,11 @@ public static class TypeScriptDocumentationGenerator
             return "string";
         }
 
-        if (type == typeof(int) || type == typeof(long) || type == typeof(float) ||
-            type == typeof(double) || type == typeof(decimal))
+        if (type == typeof(int) ||
+            type == typeof(long) ||
+            type == typeof(float) ||
+            type == typeof(double) ||
+            type == typeof(decimal))
         {
             return "number";
         }
@@ -338,12 +200,14 @@ public static class TypeScriptDocumentationGenerator
         if (type.IsArray)
         {
             var elementType = type.GetElementType();
+
             return $"{ConvertToTypeScriptType(elementType!)}[]";
         }
 
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
         {
             var underlyingType = Nullable.GetUnderlyingType(type);
+
             return $"{ConvertToTypeScriptType(underlyingType!)} | null";
         }
 
@@ -395,6 +259,7 @@ public static class TypeScriptDocumentationGenerator
             if (genericTypeDefinition == typeof(Action<>))
             {
                 var typeArg = genericArgs[0];
+
                 return $"(arg: {ConvertToTypeScriptType(typeArg)}) => void";
             }
 
@@ -420,6 +285,7 @@ public static class TypeScriptDocumentationGenerator
             if (genericTypeDefinition == typeof(Func<>))
             {
                 var returnType = genericArgs[0];
+
                 return $"() => {ConvertToTypeScriptType(returnType)}";
             }
 
@@ -438,6 +304,7 @@ public static class TypeScriptDocumentationGenerator
             if (genericTypeDefinition == typeof(List<>))
             {
                 var elementType = genericArgs[0];
+
                 return $"{ConvertToTypeScriptType(elementType)}[]";
             }
         }
@@ -470,7 +337,10 @@ public static class TypeScriptDocumentationGenerator
         }
 
         /// For complex types (classes and structs), generate interfaces
-        if ((type.IsClass || type.IsValueType) && !type.IsPrimitive && !type.IsEnum && type.Namespace != null &&
+        if ((type.IsClass || type.IsValueType) &&
+            !type.IsPrimitive &&
+            !type.IsEnum &&
+            type.Namespace != null &&
             !type.Namespace.StartsWith("System"))
         {
             /// Generate interface name
@@ -495,6 +365,7 @@ public static class TypeScriptDocumentationGenerator
         if (type.IsEnum)
         {
             GenerateEnumInterface(type);
+
             return _nameResolver(type.Name);
         }
 
@@ -502,11 +373,13 @@ public static class TypeScriptDocumentationGenerator
         if (typeof(Delegate).IsAssignableFrom(type))
         {
             var method = type.GetMethod("Invoke");
+
             if (method != null)
             {
                 var parameters = method.GetParameters();
                 var paramStrings = parameters.Select((p, i) => $"arg{i}: {ConvertToTypeScriptType(p.ParameterType)}");
                 var returnType = ConvertToTypeScriptType(method.ReturnType);
+
                 return $"({string.Join(", ", paramStrings)}) => {returnType}";
             }
 
@@ -543,6 +416,197 @@ public static class TypeScriptDocumentationGenerator
         return value.ToString();
     }
 
+    /// <summary>
+    /// Method to generate all interfaces after collecting them
+    /// </summary>
+    private static void GenerateAllInterfaces()
+    {
+        /// Use a more thorough approach to handle dependencies between types
+        bool processedSomething;
+
+        do
+        {
+            /// Create a copy of the list to avoid "Collection was modified" exception
+            var typesToGenerate = new List<Type>(_interfaceTypesToGenerate);
+
+            /// Keep track of whether we processed any types in this iteration
+            processedSomething = false;
+
+            /// Process types not yet processed
+            foreach (var type in typesToGenerate)
+            {
+                /// Skip if already processed
+                if (!_processedTypes.Contains(type))
+                {
+                    GenerateInterface(type);
+                    processedSomething = true;
+                }
+            }
+
+            /// Continue until no new types are processed
+        } while (processedSomething);
+    }
+
+    private static void GenerateEnumInterface(Type enumType)
+    {
+        if (!_processedTypes.Add(enumType))
+        {
+            return;
+        }
+
+        FoundEnums.Add(enumType);
+
+        _enumsBuilder.AppendLine();
+        _enumsBuilder.AppendLine("/**");
+        _enumsBuilder.AppendLine($" * Generated enum for {enumType.FullName}");
+        _enumsBuilder.AppendLine(" */");
+        _enumsBuilder.AppendLine($"export enum {_nameResolver(enumType.Name)} {{");
+
+        var enumValues = Enum.GetNames(enumType);
+
+        foreach (var value in enumValues)
+        {
+            var numericValue = -1;
+
+            try
+            {
+                numericValue = Convert.ToInt32(Enum.Parse(enumType, value));
+            }
+            catch (InvalidCastException)
+            {
+                /// Handle the case where the enum value is not an integer
+                /// This can happen if the enum is defined with a different underlying type
+                numericValue = (int)Enum.Parse(enumType, value);
+            }
+
+            _enumsBuilder.AppendLine($"    {value} = {numericValue},");
+        }
+
+        _enumsBuilder.AppendLine("}");
+    }
+
+    /// <summary>
+    /// Method to generate a single interface
+    /// </summary>
+    private static void GenerateInterface(Type type)
+    {
+        if (!_processedTypes.Add(type))
+        {
+            return; /// Already processed
+        }
+
+        var interfaceName = $"I{type.Name}";
+
+        /// Start building the interface
+        _interfacesBuilder.AppendLine();
+        _interfacesBuilder.AppendLine("/**");
+
+        if (IsRecordType(type))
+        {
+            _interfacesBuilder.AppendLine($" * Generated interface for record type {type.FullName}");
+        }
+        else
+        {
+            _interfacesBuilder.AppendLine($" * Generated interface for {type.FullName}");
+        }
+
+        _interfacesBuilder.AppendLine(" */");
+        _interfacesBuilder.AppendLine($"interface {interfaceName} {{");
+
+        /// Get properties - for records, we want to include both public properties and constructor parameters
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                             .Where(p => p.CanRead)
+                             .ToList();
+
+        /// For record types, also check constructor parameters to ensure we get all record properties
+        if (IsRecordType(type))
+        {
+            /// Get the primary constructor (the one with the most parameters, typically the record constructor)
+            var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+            var primaryConstructor = constructors.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
+
+            if (primaryConstructor != null)
+            {
+                var constructorParams = primaryConstructor.GetParameters();
+
+                foreach (var param in constructorParams)
+                {
+                    /// Check if we already have a property with this name
+                    var existingProperty = properties.FirstOrDefault(
+                        p =>
+                            string.Equals(p.Name, param.Name, StringComparison.OrdinalIgnoreCase)
+                    );
+
+                    if (existingProperty == null)
+                    {
+                        /// Add this parameter as a property in our interface
+                        var paramType = ConvertToTypeScriptType(param.ParameterType);
+
+                        _interfacesBuilder.AppendLine("    /**");
+                        _interfacesBuilder.AppendLine($"     * {_nameResolver(param.Name)} (from record constructor)");
+                        _interfacesBuilder.AppendLine("     */");
+                        _interfacesBuilder.AppendLine($"    {_nameResolver(param.Name)}: {paramType};");
+                    }
+                }
+            }
+        }
+
+        foreach (var property in properties)
+        {
+            var propertyType = ConvertToTypeScriptType(property.PropertyType);
+
+            /// Add property documentation
+            _interfacesBuilder.AppendLine("    /**");
+            _interfacesBuilder.AppendLine($"     * {_nameResolver(property.Name)}");
+            _interfacesBuilder.AppendLine("     */");
+
+            /// Add property
+            _interfacesBuilder.AppendLine($"    {_nameResolver(property.Name)}: {propertyType};");
+        }
+
+        /// End interface - make sure it's properly closed
+        _interfacesBuilder.AppendLine("}");
+    }
+
+    /// <summary>
+    /// Check if a type is a C# record type
+    /// </summary>
+    private static bool IsRecordType(Type type)
+    {
+        /// C# records have specific characteristics:
+        /// 1. They are classes
+        /// 2. They have a compiler-generated EqualityContract property
+        /// 3. They have specific compiler-generated methods
+
+        if (!type.IsClass)
+        {
+            return false;
+        }
+
+        /// Check for the EqualityContract property which is generated for all record types
+        var equalityContract = type.GetProperty(
+            "EqualityContract",
+            BindingFlags.NonPublic | BindingFlags.Instance
+        );
+
+        if (equalityContract != null && equalityContract.PropertyType == typeof(Type))
+        {
+            return true;
+        }
+
+        /// Alternative check: look for compiler-generated attributes or methods
+        /// Records have compiler-generated ToString, GetHashCode, Equals methods
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+        var hasCompilerGeneratedToString = methods.Any(
+            m =>
+                m.Name == "ToString" &&
+                m.GetParameters().Length == 0 &&
+                m.GetCustomAttributes().Any(attr => attr.GetType().Name.Contains("CompilerGenerated"))
+        );
+
+        return hasCompilerGeneratedToString;
+    }
+
     private static void ProcessConstants(Dictionary<string, object> constants)
     {
         if (constants.Count == 0)
@@ -563,51 +627,14 @@ public static class TypeScriptDocumentationGenerator
             var formattedValue = FormatConstantValue(constantValue, constantType);
 
             /// Generate constant documentation
-            _constantsBuilder.AppendLine($"/**");
+            _constantsBuilder.AppendLine("/**");
             _constantsBuilder.AppendLine($" * {constantName} constant ");
             _constantsBuilder.AppendLine($" * \"{formattedValue}\"");
-            _constantsBuilder.AppendLine($" */");
+            _constantsBuilder.AppendLine(" */");
             _constantsBuilder.AppendLine($"declare const {constantName}: {typeScriptType};");
             _constantsBuilder.AppendLine();
         }
 
         _constantsBuilder.AppendLine();
-    }
-
-    private static void GenerateEnumInterface(Type enumType)
-    {
-        if (!_processedTypes.Add(enumType))
-        {
-            return;
-        }
-
-        FoundEnums.Add(enumType);
-
-        _enumsBuilder.AppendLine();
-        _enumsBuilder.AppendLine($"/**");
-        _enumsBuilder.AppendLine($" * Generated enum for {enumType.FullName}");
-        _enumsBuilder.AppendLine($" */");
-        _enumsBuilder.AppendLine($"export enum {_nameResolver(enumType.Name)} {{");
-
-        var enumValues = Enum.GetNames(enumType);
-
-        foreach (var value in enumValues)
-        {
-            var numericValue = -1;
-            try
-            {
-                numericValue = Convert.ToInt32(Enum.Parse(enumType, value));
-            }
-            catch (InvalidCastException)
-            {
-                /// Handle the case where the enum value is not an integer
-                /// This can happen if the enum is defined with a different underlying type
-                numericValue = (int)Enum.Parse(enumType, value);
-            }
-
-            _enumsBuilder.AppendLine($"    {value} = {numericValue},");
-        }
-
-        _enumsBuilder.AppendLine("}");
     }
 }

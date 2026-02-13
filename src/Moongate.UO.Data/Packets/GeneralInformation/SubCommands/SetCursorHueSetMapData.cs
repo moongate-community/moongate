@@ -17,17 +17,14 @@ public sealed class SetCursorHueSetMapData : ISubcommandData
     /// <inheritdoc />
     public int Length => 1;
 
-    public SetCursorHueSetMapData()
-    {
+    public SetCursorHueSetMapData() { }
 
-    }
     public SetCursorHueSetMapData(Map? map = null)
     {
         if (map != null)
         {
             MapId = (byte)map.MapID;
         }
-
     }
 
     /// <inheritdoc />
@@ -40,6 +37,7 @@ public sealed class SetCursorHueSetMapData : ISubcommandData
     public ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Write(MapId);
+
         return writer.ToArray();
     }
 }

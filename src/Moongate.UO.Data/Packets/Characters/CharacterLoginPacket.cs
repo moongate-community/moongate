@@ -6,15 +6,11 @@ namespace Moongate.UO.Data.Packets.Characters;
 
 public class CharacterLoginPacket : BaseUoPacket
 {
-
     public string CharacterName { get; set; }
     public ClientFlags ClientFlags { get; set; } = ClientFlags.None;
     public int Index { get; set; }
 
-    public CharacterLoginPacket() : base(0x5D)
-    {
-    }
-
+    public CharacterLoginPacket() : base(0x5D) { }
 
     protected override bool Read(SpanReader reader)
     {
@@ -26,6 +22,7 @@ public class CharacterLoginPacket : BaseUoPacket
         reader.ReadBytes(16);
         Index = reader.ReadInt32();
         reader.ReadBytes(4); // Ip, but who cares?
+
         return true;
     }
 }

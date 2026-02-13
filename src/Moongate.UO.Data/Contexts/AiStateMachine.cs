@@ -20,19 +20,47 @@ public class AiStateMachine : IDisposable
     {
         MachineId = machineId;
         CurrentState = initialState;
-        _transitions = new Dictionary<string, Dictionary<string, string>>();
-        _conditionalTransitions = new Dictionary<string, Dictionary<string, Func<bool>>>();
-        _callbacks = new List<Action<string, string, string>>();
+        _transitions = new();
+        _conditionalTransitions = new();
+        _callbacks = new();
+    }
+
+    public void AddConditionalTransition(string from, string onEvent, string to, Func<bool> condition)
+    {
+        AddTransition(from, onEvent, to);
+
+        if (!_conditionalTransitions.ContainsKey(from))
+        {
+            _conditionalTransitions[from] = new();
+        }
+
+        _conditionalTransitions[from][onEvent] = condition;
+    }
+
+    public void AddStateChangeListener(Action<string, string, string> callback)
+    {
+        _callbacks.Add(callback);
     }
 
     public void AddTransition(string from, string onEvent, string to)
     {
         if (!_transitions.ContainsKey(from))
         {
-            _transitions[from] = new Dictionary<string, string>();
+            _transitions[from] = new();
         }
 
         _transitions[from][onEvent] = to;
+    }
+
+    public bool CanTransition(string eventTrigger)
+        => _transitions.TryGetValue(CurrentState, out var stateTransitions) &&
+           stateTransitions.ContainsKey(eventTrigger);
+
+    public void Dispose()
+    {
+        _callbacks.Clear();
+        _conditionalTransitions.Clear();
+        _transitions.Clear();
     }
 
     public void Reset(string newState)
@@ -43,18 +71,6 @@ public class AiStateMachine : IDisposable
     public void Reset()
     {
         Reset("idle");
-    }
-
-    public void AddConditionalTransition(string from, string onEvent, string to, Func<bool> condition)
-    {
-        AddTransition(from, onEvent, to);
-
-        if (!_conditionalTransitions.ContainsKey(from))
-        {
-            _conditionalTransitions[from] = new Dictionary<string, Func<bool>>();
-        }
-
-        _conditionalTransitions[from][onEvent] = condition;
     }
 
     public bool Transition(string eventTrigger)
@@ -79,6 +95,7 @@ public class AiStateMachine : IDisposable
             catch (Exception ex)
             {
                 Log.ForContext<AiStateMachine>().Warning(ex, "Conditional transition error");
+
                 return false;
             }
         }
@@ -87,7 +104,7 @@ public class AiStateMachine : IDisposable
         CurrentState = nextState;
 
         /// Notify callbacks
-        for (int i = 0; i < _callbacks.Count; i++)
+        for (var i = 0; i < _callbacks.Count; i++)
         {
             try
             {
@@ -100,23 +117,5 @@ public class AiStateMachine : IDisposable
         }
 
         return true;
-    }
-
-    public bool CanTransition(string eventTrigger)
-    {
-        return _transitions.TryGetValue(CurrentState, out var stateTransitions) &&
-               stateTransitions.ContainsKey(eventTrigger);
-    }
-
-    public void AddStateChangeListener(Action<string, string, string> callback)
-    {
-        _callbacks.Add(callback);
-    }
-
-    public void Dispose()
-    {
-        _callbacks.Clear();
-        _conditionalTransitions.Clear();
-        _transitions.Clear();
     }
 }

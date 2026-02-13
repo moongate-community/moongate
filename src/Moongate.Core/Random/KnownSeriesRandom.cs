@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces;
 ﻿namespace Moongate.Core.Random;
 
 /// <summary>
@@ -20,17 +21,18 @@ public class KnownSeriesRandom : IRandom
     /// </summary>
     /// <param name="series">A known series of integers that will be returned in order from this generator</param>
     /// <exception cref="ArgumentNullException">Thrown on null series</exception>
-    public KnownSeriesRandom( params int[] series )
+    public KnownSeriesRandom(params int[] series)
     {
-        if ( series == null )
+        if (series == null)
         {
-            throw new ArgumentNullException( nameof( series ), "Series cannot be null" );
+            throw new ArgumentNullException(nameof(series), "Series cannot be null");
         }
 
-        _series = new Queue<int>();
-        foreach ( int number in series )
+        _series = new();
+
+        foreach (var number in series)
         {
-            _series.Enqueue( number );
+            _series.Enqueue(number);
         }
     }
 
@@ -44,10 +46,8 @@ public class KnownSeriesRandom : IRandom
     /// Thrown when the Next integer in the series for this generator is not between 0 and the specified maxValue inclusive
     /// </exception>
     /// <returns>The next integer in the series specified upon construction of this class</returns>
-    public int Next( int maxValue )
-    {
-        return Next( 0, maxValue );
-    }
+    public int Next(int maxValue)
+        => Next(0, maxValue);
 
     /// <summary>
     /// Return the first integer in the series that was specified when this generator was constructed,
@@ -61,40 +61,29 @@ public class KnownSeriesRandom : IRandom
     /// the specified minValue and maxValue inclusive
     /// </exception>
     /// <returns>The next integer in the series specified upon construction of this class</returns>
-    public int Next( int minValue, int maxValue )
+    public int Next(int minValue, int maxValue)
     {
-        int value = _series.Dequeue();
-        if ( value < minValue )
-        {
-            throw new ArgumentOutOfRangeException( nameof( minValue ), "Next value in series is smaller than the minValue parameter" );
-        }
-        if ( value > maxValue )
-        {
-            throw new ArgumentOutOfRangeException( nameof( maxValue ), "Next value in series is larger than the maxValue parameter" );
-        }
-        _series.Enqueue( value );
-        _numberGenerated++;
-        return value;
-    }
+        var value = _series.Dequeue();
 
-    /// <summary>
-    /// Saves the current state of the number generator
-    /// </summary>
-    /// <example>
-    /// If you generated three random numbers and then called Save to store the state and
-    /// followed that up by generating 10 more numbers before calling Restore with the previously saved RandomState
-    /// the Restore method should return the generator back to the state when Save was first called.
-    /// This means that if you went on to generate 10 more numbers they would be the same 10 numbers that were
-    /// generated the first time after Save was called.
-    /// </example>
-    /// <returns>A RandomState class representing the current state of this number generator</returns>
-    public RandomState Save()
-    {
-        return new RandomState
+        if (value < minValue)
         {
-            NumberGenerated = _numberGenerated,
-            Seed = _series.ToArray()
-        };
+            throw new ArgumentOutOfRangeException(
+                nameof(minValue),
+                "Next value in series is smaller than the minValue parameter"
+            );
+        }
+
+        if (value > maxValue)
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(maxValue),
+                "Next value in series is larger than the maxValue parameter"
+            );
+        }
+        _series.Enqueue(value);
+        _numberGenerated++;
+
+        return value;
     }
 
     /// <summary>
@@ -109,18 +98,37 @@ public class KnownSeriesRandom : IRandom
     /// </example>
     /// <param name="state">The state to restore to, usually obtained from calling the Save method</param>
     /// <exception cref="ArgumentNullException">Thrown on null RandomState</exception>
-    public void Restore( RandomState state )
+    public void Restore(RandomState state)
     {
-        if ( state == null )
+        if (state == null)
         {
-            throw new ArgumentNullException( nameof( state ), "RandomState cannot be null" );
+            throw new ArgumentNullException(nameof(state), "RandomState cannot be null");
         }
 
-        _series = new Queue<int>();
-        foreach ( int i in state.Seed )
+        _series = new();
+
+        foreach (var i in state.Seed)
         {
-            _series.Enqueue( i );
+            _series.Enqueue(i);
         }
         _numberGenerated = state.NumberGenerated;
     }
+
+    /// <summary>
+    /// Saves the current state of the number generator
+    /// </summary>
+    /// <example>
+    /// If you generated three random numbers and then called Save to store the state and
+    /// followed that up by generating 10 more numbers before calling Restore with the previously saved RandomState
+    /// the Restore method should return the generator back to the state when Save was first called.
+    /// This means that if you went on to generate 10 more numbers they would be the same 10 numbers that were
+    /// generated the first time after Save was called.
+    /// </example>
+    /// <returns>A RandomState class representing the current state of this number generator</returns>
+    public RandomState Save()
+        => new()
+        {
+            NumberGenerated = _numberGenerated,
+            Seed = _series.ToArray()
+        };
 }

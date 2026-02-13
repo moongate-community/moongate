@@ -15,5 +15,5 @@ public enum WeatherType : byte
     Rain = 0x00,
     Storm = 0x01,
     Snow = 0x02,
-    NoEffect = 0xFE,
+    NoEffect = 0xFE
 }

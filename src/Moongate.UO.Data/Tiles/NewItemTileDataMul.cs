@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 
 namespace Moongate.UO.Data.Tiles;
 
-
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public unsafe struct NewItemTileDataMul
 {
@@ -19,5 +18,5 @@ public unsafe struct NewItemTileDataMul
     public byte stackingoffset;
     public byte value;
     public byte height;
-    public fixed byte name [20];
+    public fixed byte name[20];
 }

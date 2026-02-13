@@ -3,15 +3,9 @@ using Moongate.Core.Server.Data.Configs.Server;
 
 namespace Moongate.Core.Server.Json;
 
-
 [JsonSourceGenerationOptions(
-    WriteIndented = true,
-    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull)]
-[JsonSerializable(typeof(MoongateServerConfig))]
-[JsonSerializable(typeof(NetworkConfig))]
-[JsonSerializable(typeof(WebServerConfig))]
-[JsonSerializable(typeof(ScriptConfig))]
-public partial class MoongateCoreServerContext : JsonSerializerContext
-{
-
-}
+     WriteIndented = true,
+     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+ ), JsonSerializable(typeof(MoongateServerConfig)), JsonSerializable(typeof(NetworkConfig)),
+ JsonSerializable(typeof(WebServerConfig)), JsonSerializable(typeof(ScriptConfig))]
+public partial class MoongateCoreServerContext : JsonSerializerContext { }

@@ -1,8 +1,6 @@
 using System.Buffers.Binary;
 using Moongate.UO.Context;
-using Moongate.UO.Data;
 using Moongate.UO.Data.Files;
-using Moongate.UO.Data.Version;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
 
@@ -16,9 +14,10 @@ public class ClientVersionLoader : IFileLoader
     {
         var path = UoFiles.FindDataFile("client.exe");
 
-        using FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         var buffer = GC.AllocateUninitializedArray<byte>((int)fs.Length, true);
         _ = fs.Read(buffer);
+
         // VS_VERSION_INFO (unicode)
         Span<byte> vsVersionInfo =
         [
@@ -29,6 +28,7 @@ public class ClientVersionLoader : IFileLoader
         ];
 
         var versionIndex = buffer.AsSpan().IndexOf(vsVersionInfo);
+
         if (versionIndex > -1)
         {
             var offset = versionIndex + 42; // 30 + 12
@@ -38,7 +38,7 @@ public class ClientVersionLoader : IFileLoader
             var privatePart = BinaryPrimitives.ReadUInt16LittleEndian(buffer.AsSpan(offset + 4));
             var buildPart = BinaryPrimitives.ReadUInt16LittleEndian(buffer.AsSpan(offset + 6));
 
-            UOContext.ServerClientVersion = new ClientVersion(majorPart, minorPart, buildPart, privatePart);
+            UOContext.ServerClientVersion = new(majorPart, minorPart, buildPart, privatePart);
 
             _logger.Information("Client version loaded: {Version}", UOContext.ServerClientVersion);
         }

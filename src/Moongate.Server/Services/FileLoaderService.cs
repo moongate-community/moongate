@@ -15,14 +15,7 @@ public class FileLoaderService : IFileLoaderService
     private readonly IContainer _container;
 
     public FileLoaderService(IContainer container)
-    {
-        _container = container;
-    }
-
-    public void Dispose()
-    {
-        _fileLoaders.Clear();
-    }
+        => _container = container;
 
     public void AddFileLoader<T>() where T : IFileLoader
     {
@@ -32,15 +25,22 @@ public class FileLoaderService : IFileLoaderService
         }
 
         var fileLoader = _container.Resolve<T>();
+
         if (!_fileLoaders.Contains(fileLoader))
         {
             _fileLoaders.Add(fileLoader);
         }
     }
 
+    public void Dispose()
+    {
+        _fileLoaders.Clear();
+    }
+
     public async Task ExecuteLoadersAsync()
     {
         var startTime = Stopwatch.GetTimestamp();
+
         foreach (var loader in _fileLoaders)
         {
             try
@@ -51,6 +51,7 @@ public class FileLoaderService : IFileLoaderService
             catch (Exception ex)
             {
                 _logger.Error(ex, "Error executing file loader {LoaderType}", loader.GetType().Name);
+
                 throw;
             }
         }
@@ -59,12 +60,8 @@ public class FileLoaderService : IFileLoaderService
     }
 
     public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        return ExecuteLoadersAsync();
-    }
+        => ExecuteLoadersAsync();
 
     public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 }

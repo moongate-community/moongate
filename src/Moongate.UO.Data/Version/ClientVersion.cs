@@ -63,7 +63,6 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
         SourceString = string.Intern(ToStringImpl());
     }
 
-
     public ClientVersion(string fmt)
     {
         fmt = fmt.ToLower();
@@ -75,6 +74,7 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
             var br2 = fmt.IndexOf('.', br1 + 1);
 
             var br3 = br2 + 1;
+
             while (br3 < fmt.Length && char.IsDigit(fmt, br3))
             {
                 br3++;
@@ -83,7 +83,6 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
             Major = int.Parse(fmt.AsSpan()[..br1]);
             Minor = int.Parse(fmt.AsSpan(br1 + 1, br2 - br1 - 1));
             Revision = int.Parse(fmt.AsSpan(br2 + 1, br3 - br2 - 1));
-
 
             if (br3 < fmt.Length)
             {
@@ -139,6 +138,51 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
     public ClientType Type { get; }
 
     public string SourceString { get; }
+
+    public ProtocolChanges ProtocolChanges
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+            => this switch
+            {
+                var v when v.Type is ClientType.KR && v >= Version60142KR => ProtocolChanges.Version60142,
+                var v when v.Type is ClientType.KR => ProtocolChanges.Version6000,
+                var v when v >= Version70610 => ProtocolChanges.Version70610,
+                var v when v >= Version70500 => ProtocolChanges.Version70500,
+                var v when v >= Version704565 => ProtocolChanges.Version704565,
+                var v when v >= Version70331 => ProtocolChanges.Version70331,
+                var v when v >= Version70300 => ProtocolChanges.Version70300,
+                var v when v >= Version70160 => ProtocolChanges.Version70160,
+                var v when v >= Version70130 => ProtocolChanges.Version70130,
+                var v when v >= Version7090 => ProtocolChanges.Version7090,
+                var v when v >= Version7000 => ProtocolChanges.Version7000,
+                var v when v >= Version60142 => ProtocolChanges.Version60142,
+                var v when v >= Version6017 => ProtocolChanges.Version6017,
+                var v when v >= Version6000 => ProtocolChanges.Version6000,
+                var v when v >= Version502b => ProtocolChanges.Version502b,
+                _ => ProtocolChanges.Version500a // We do not support versions lower than 5.0.0a
+            };
+    }
+
+    public static int Compare(ClientVersion a, ClientVersion b)
+    {
+        if (IsNull(a) && IsNull(b))
+        {
+            return 0;
+        }
+
+        if (IsNull(a))
+        {
+            return -1;
+        }
+
+        if (IsNull(b))
+        {
+            return 1;
+        }
+
+        return a.CompareTo(b);
+    }
 
     public int CompareTo(ClientVersion o)
     {
@@ -196,19 +240,48 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
         return 0;
     }
 
-    int IComparer<ClientVersion>.Compare(ClientVersion x, ClientVersion y) => Compare(x, y);
+    public bool Equals(ClientVersion other)
+        => !ReferenceEquals(null, other) &&
+           (ReferenceEquals(this, other) ||
+            Major == other.Major &&
+            Minor == other.Minor &&
+            Revision == other.Revision &&
+            Patch == other.Patch &&
+            Type == other.Type);
 
-    public static bool operator >=(ClientVersion l, ClientVersion r) => Compare(l, r) >= 0;
+    public override bool Equals(object obj)
+        => !ReferenceEquals(null, obj) &&
+           (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((ClientVersion)obj));
 
-    public static bool operator >(ClientVersion l, ClientVersion r) => Compare(l, r) > 0;
+    public override int GetHashCode()
+        => HashCode.Combine(Major, Minor, Revision, Patch);
 
-    public static bool operator <=(ClientVersion l, ClientVersion r) => Compare(l, r) <= 0;
+    public static bool IsNull(object x)
+        => ReferenceEquals(x, null);
 
-    public static bool operator <(ClientVersion l, ClientVersion r) => Compare(l, r) < 0;
+    public static bool operator ==(ClientVersion l, ClientVersion r)
+        => Equals(l, r);
 
-    public static bool operator ==(ClientVersion l, ClientVersion r) => Equals(l, r);
+    public static bool operator >(ClientVersion l, ClientVersion r)
+        => Compare(l, r) > 0;
 
-    public static bool operator !=(ClientVersion l, ClientVersion r) => !Equals(l, r);
+    public static bool operator >=(ClientVersion l, ClientVersion r)
+        => Compare(l, r) >= 0;
+
+    public static bool operator !=(ClientVersion l, ClientVersion r)
+        => !Equals(l, r);
+
+    public static bool operator <(ClientVersion l, ClientVersion r)
+        => Compare(l, r) < 0;
+
+    public static bool operator <=(ClientVersion l, ClientVersion r)
+        => Compare(l, r) <= 0;
+
+    public override string ToString()
+        => SourceString;
+
+    int IComparer<ClientVersion>.Compare(ClientVersion x, ClientVersion y)
+        => Compare(x, y);
 
     private string ToStringImpl()
     {
@@ -238,62 +311,4 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
 
         return builder.ToString();
     }
-
-    public override string ToString() => SourceString;
-
-    public static bool IsNull(object x) => ReferenceEquals(x, null);
-
-    public static int Compare(ClientVersion a, ClientVersion b)
-    {
-        if (IsNull(a) && IsNull(b))
-        {
-            return 0;
-        }
-
-        if (IsNull(a))
-        {
-            return -1;
-        }
-
-        if (IsNull(b))
-        {
-            return 1;
-        }
-
-        return a.CompareTo(b);
-    }
-
-    public ProtocolChanges ProtocolChanges
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get => this switch
-        {
-            var v when v.Type is ClientType.KR && v >= Version60142KR => ProtocolChanges.Version60142,
-            var v when v.Type is ClientType.KR => ProtocolChanges.Version6000,
-            var v when v >= Version70610 => ProtocolChanges.Version70610,
-            var v when v >= Version70500 => ProtocolChanges.Version70500,
-            var v when v >= Version704565 => ProtocolChanges.Version704565,
-            var v when v >= Version70331 => ProtocolChanges.Version70331,
-            var v when v >= Version70300 => ProtocolChanges.Version70300,
-            var v when v >= Version70160 => ProtocolChanges.Version70160,
-            var v when v >= Version70130 => ProtocolChanges.Version70130,
-            var v when v >= Version7090 => ProtocolChanges.Version7090,
-            var v when v >= Version7000 => ProtocolChanges.Version7000,
-            var v when v >= Version60142 => ProtocolChanges.Version60142,
-            var v when v >= Version6017 => ProtocolChanges.Version6017,
-            var v when v >= Version6000 => ProtocolChanges.Version6000,
-            var v when v >= Version502b => ProtocolChanges.Version502b,
-            _ => ProtocolChanges.Version500a, // We do not support versions lower than 5.0.0a
-        };
-    }
-
-    public bool Equals(ClientVersion other) =>
-        !ReferenceEquals(null, other) && (ReferenceEquals(this, other) || Major == other.Major &&
-            Minor == other.Minor && Revision == other.Revision && Patch == other.Patch && Type == other.Type);
-
-    public override bool Equals(object obj) =>
-        !ReferenceEquals(null, obj) &&
-        (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals((ClientVersion)obj));
-
-    public override int GetHashCode() => HashCode.Combine(Major, Minor, Revision, Patch);
 }

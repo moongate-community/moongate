@@ -4,7 +4,7 @@ namespace Moongate.UO.Data.Tiles;
 
 public class Art
 {
-    private static readonly FileIndex m_FileIndex = new FileIndex(
+    private static readonly FileIndex m_FileIndex = new(
         "Artidx.mul",
         "Art.mul",
         "artLegacyMUL.uop",
@@ -15,10 +15,27 @@ public class Art
         false
     );
 
+    public static int GetIdxLength()
+        => (int)(m_FileIndex.IdxLength / 12);
 
-    public static bool IsUOAHS()
+    public static ushort GetLegalItemID(int itemID, bool checkmaxid = true)
     {
-        return (GetIdxLength() >= 0x13FDC);
+        if (itemID < 0)
+        {
+            return 0;
+        }
+
+        if (checkmaxid)
+        {
+            var max = GetMaxItemID();
+
+            if (itemID > max)
+            {
+                return 0;
+            }
+        }
+
+        return (ushort)itemID;
     }
 
     public static int GetMaxItemID()
@@ -36,27 +53,6 @@ public class Art
         return 0x3FFF;
     }
 
-    public static ushort GetLegalItemID(int itemID, bool checkmaxid = true)
-    {
-        if (itemID < 0)
-        {
-            return 0;
-        }
-
-        if (checkmaxid)
-        {
-            int max = GetMaxItemID();
-            if (itemID > max)
-            {
-                return 0;
-            }
-        }
-
-        return (ushort)itemID;
-    }
-
-    public static int GetIdxLength()
-    {
-        return (int)(m_FileIndex.IdxLength / 12);
-    }
+    public static bool IsUOAHS()
+        => GetIdxLength() >= 0x13FDC;
 }

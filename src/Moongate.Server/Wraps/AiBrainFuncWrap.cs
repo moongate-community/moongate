@@ -1,5 +1,3 @@
-using Jint;
-using Jint.Native;
 using Moongate.UO.Data.Contexts;
 using Moongate.UO.Data.Interfaces.Ai;
 using Moongate.UO.Data.Persistence.Entities;
@@ -34,7 +32,6 @@ public class AiBrainFuncWrap : IAiBrainAction
         {
             throw new ArgumentNullException(nameof(context), "AI context cannot be null.");
         }
-
 
         Callback(context);
     }

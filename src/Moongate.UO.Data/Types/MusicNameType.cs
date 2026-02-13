@@ -107,5 +107,4 @@ public enum MusicName
     StarlightInBritain,
     TheVesperMist,
     NoMusic = 0x1FFF
-
 }

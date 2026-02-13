@@ -30,12 +30,51 @@ public class PersistenceService : IPersistenceService
         _eventBusService.Subscribe<SavePersistenceRequestEvent>(async @event => RequestSave());
     }
 
+    public void Dispose() { }
+
+    public void RequestSave()
+    {
+        if (DateTime.UtcNow - _lastSaveTime < TimeSpan.FromMinutes(1))
+        {
+            _logger.Debug("Save request ignored, last save was less than 1 minutes ago");
+
+            return;
+        }
+
+        _lastSaveTime = DateTime.UtcNow;
+
+        _logger.Information("Save request received, starting save process...");
+
+        _timerService.RegisterTimer(
+            "request_save_persistence_files",
+            1000,
+            async () => { await SaveRequestAsync(); },
+            30
+        );
+    }
+
+    public async Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        _timerService.RegisterTimer(
+            "save_persistence_files",
+            (int)TimeSpan.FromMinutes(5).TotalMicroseconds,
+            async () => { await SaveRequestAsync(); },
+            (int)TimeSpan.FromMinutes(5).TotalMicroseconds,
+            true
+        );
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        _lastSaveTime = DateTime.MinValue;
+        await SaveRequestAsync();
+    }
+
     private async Task SaveRequestAsync()
     {
         _eventBusService.PublishAsync(new SavePersistenceStartingEvent());
 
         await Task.Delay(3000);
-
 
         var startSw = Stopwatch.GetTimestamp();
 
@@ -56,46 +95,5 @@ public class PersistenceService : IPersistenceService
         _logger.Information("Persistence files saved in {ElapsedMilliseconds} ms", elapsed.TotalMilliseconds);
 
         _eventBusService.PublishAsync(new SavePersistenceDoneEvent(elapsed.TotalMicroseconds));
-    }
-
-    public async Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        _timerService.RegisterTimer(
-            "save_persistence_files",
-            (int)TimeSpan.FromMinutes(5).TotalMicroseconds,
-            async () => { await SaveRequestAsync(); },
-            (int)TimeSpan.FromMinutes(5).TotalMicroseconds,
-            true
-        );
-    }
-
-    public async Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        _lastSaveTime = DateTime.MinValue;
-        await SaveRequestAsync();
-    }
-
-    public void RequestSave()
-    {
-        if (DateTime.UtcNow - _lastSaveTime < TimeSpan.FromMinutes(1))
-        {
-            _logger.Debug("Save request ignored, last save was less than 1 minutes ago");
-            return;
-        }
-
-        _lastSaveTime = DateTime.UtcNow;
-
-        _logger.Information("Save request received, starting save process...");
-
-        _timerService.RegisterTimer(
-            "request_save_persistence_files",
-            1000,
-            async () => { await SaveRequestAsync(); }, 30
-        );
-
-    }
-
-    public void Dispose()
-    {
     }
 }

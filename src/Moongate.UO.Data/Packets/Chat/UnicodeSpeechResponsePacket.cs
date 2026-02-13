@@ -11,10 +11,7 @@ namespace Moongate.UO.Data.Packets.Chat;
 /// </summary>
 public class UnicodeSpeechResponsePacket : BaseUoPacket
 {
-    public UnicodeSpeechResponsePacket() : base(0xAE)
-    {
-    }
-
+    public UnicodeSpeechResponsePacket() : base(0xAE) { }
 
     public byte AsciiOpCode => 0x1C;
 
@@ -34,12 +31,7 @@ public class UnicodeSpeechResponsePacket : BaseUoPacket
 
     public int Graphic { get; set; }
 
-    public int Hue { get; set; } = 0;
-
-    protected override bool Read(SpanReader reader)
-    {
-        return true;
-    }
+    public int Hue { get; set; }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -50,7 +42,6 @@ public class UnicodeSpeechResponsePacket : BaseUoPacket
         writer.Write((byte)MessageType);
         writer.Write((short)Hue);
         writer.Write((short)Font);
-
 
         if (Hue == 0)
         {
@@ -73,4 +64,7 @@ public class UnicodeSpeechResponsePacket : BaseUoPacket
 
         return writer.ToArray();
     }
+
+    protected override bool Read(SpanReader reader)
+        => true;
 }

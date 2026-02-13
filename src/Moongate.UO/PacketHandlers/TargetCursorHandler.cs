@@ -14,16 +14,13 @@ public class TargetCursorHandler : IGamePacketHandler
     private readonly ICallbackService _callbackService;
 
     public TargetCursorHandler(ICallbackService callbackService)
-    {
-        _callbackService = callbackService;
-    }
+        => _callbackService = callbackService;
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {
         if (packet is TargetCursorPacket targetCursorPacket)
         {
             await ProcessTargetCursorAsync(session, targetCursorPacket);
-            return;
         }
     }
 

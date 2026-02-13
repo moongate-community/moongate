@@ -5,34 +5,17 @@ namespace Moongate.Core.Utils.Random;
 
 public static class RandomUtils
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Random(int from, int count) => BuiltInRng.Next(from, count);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Random(int count) => count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long Random(long from, long count) => BuiltInRng.Next(from, count);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static long Random(long count) => count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void RandomBytes(Span<byte> buffer) => BuiltInRng.NextBytes(buffer);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double RandomDouble() => BuiltInRng.NextDouble();
-
     // Optimized method for handling 50% random chances in succession up to a maximum
     public static int CoinFlips(int amount, int maximum)
     {
         var heads = 0;
+
         while (amount > 0)
         {
             // Range is 2^amount exclusively, maximum of 62 bits can be used
-            ulong num = amount >= 62
-                ? (ulong)BuiltInRng.NextLong()
-                : (ulong)BuiltInRng.Next(1L << amount);
+            var num = amount >= 62
+                          ? (ulong)BuiltInRng.NextLong()
+                          : (ulong)BuiltInRng.Next(1L << amount);
 
             heads += BitOperations.PopCount(num);
 
@@ -51,12 +34,13 @@ public static class RandomUtils
     public static int CoinFlips(int amount)
     {
         var heads = 0;
+
         while (amount > 0)
         {
             // Range is 2^amount exclusively, maximum of 62 bits can be used
-            ulong num = amount >= 62
-                ? (ulong)BuiltInRng.NextLong()
-                : (ulong)BuiltInRng.Next(1L << amount);
+            var num = amount >= 62
+                          ? (ulong)BuiltInRng.NextLong()
+                          : (ulong)BuiltInRng.Next(1L << amount);
 
             heads += BitOperations.PopCount(num);
 
@@ -65,17 +49,6 @@ public static class RandomUtils
         }
 
         return heads;
-    }
-
-    public static TEntity RandomList<TEntity>(params TEntity[] entities)
-    {
-        if (entities == null || entities.Length == 0)
-        {
-            return default;
-        }
-
-        var index = BuiltInRng.Next(entities.Length);
-        return entities[index];
     }
 
     public static int Dice(int amount, int sides, int bonus)
@@ -94,6 +67,7 @@ public static class RandomUtils
         else
         {
             total = 0;
+
             for (var i = 0; i < amount; ++i)
             {
                 total += BuiltInRng.Next(1, sides);
@@ -101,5 +75,41 @@ public static class RandomUtils
         }
 
         return total + bonus;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Random(int from, int count)
+        => BuiltInRng.Next(from, count);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Random(int count)
+        => count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long Random(long from, long count)
+        => BuiltInRng.Next(from, count);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long Random(long count)
+        => count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void RandomBytes(Span<byte> buffer)
+        => BuiltInRng.NextBytes(buffer);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double RandomDouble()
+        => BuiltInRng.NextDouble();
+
+    public static TEntity RandomList<TEntity>(params TEntity[] entities)
+    {
+        if (entities == null || entities.Length == 0)
+        {
+            return default;
+        }
+
+        var index = BuiltInRng.Next(entities.Length);
+
+        return entities[index];
     }
 }

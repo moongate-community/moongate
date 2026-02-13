@@ -17,5 +17,4 @@ public class MapSectorConsts
     /// Maximum view range for players (used for nearby queries)
     /// </summary>
     public const int MaxViewRange = 24;
-
 }

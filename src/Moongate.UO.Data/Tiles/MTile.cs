@@ -1,10 +1,11 @@
+using Moongate.UO.Data.Types;
 namespace Moongate.UO.Data.Tiles;
 
 public struct MTile : IComparable
 {
     internal ushort m_ID;
     internal sbyte m_Z;
-    internal TileFlag m_Flag;
+    internal UOTileFlag m_Flag;
     internal int m_Solver;
 
     public ushort ID => m_ID;
@@ -15,7 +16,7 @@ public struct MTile : IComparable
         set => m_Z = (sbyte)value;
     }
 
-    public TileFlag Flag
+    public UOTileFlag Flag
     {
         get => m_Flag;
         set => m_Flag = value;
@@ -31,29 +32,16 @@ public struct MTile : IComparable
     {
         m_ID = Art.GetLegalItemID(id);
         m_Z = z;
-        m_Flag = TileFlag.Background;
+        m_Flag = UOTileFlag.Background;
         m_Solver = 0;
     }
 
-    public MTile(ushort id, sbyte z, TileFlag flag)
+    public MTile(ushort id, sbyte z, UOTileFlag flag)
     {
         m_ID = Art.GetLegalItemID(id);
         m_Z = z;
         m_Flag = flag;
         m_Solver = 0;
-    }
-
-    public void Set(ushort id, sbyte z)
-    {
-        m_ID = Art.GetLegalItemID(id);
-        m_Z = z;
-    }
-
-    public void Set(ushort id, sbyte z, TileFlag flag)
-    {
-        m_ID = Art.GetLegalItemID(id);
-        m_Z = z;
-        m_Flag = flag;
     }
 
     public int CompareTo(object x)
@@ -70,10 +58,11 @@ public struct MTile : IComparable
 
         var a = (MTile)x;
 
-        ItemData ourData = TileData.ItemTable[m_ID];
-        ItemData theirData = TileData.ItemTable[a.ID];
+        var ourData = TileData.ItemTable[m_ID];
+        var theirData = TileData.ItemTable[a.ID];
 
-        int ourTreshold = 0;
+        var ourTreshold = 0;
+
         if (ourData.Height > 0)
         {
             ++ourTreshold;
@@ -84,8 +73,9 @@ public struct MTile : IComparable
             ++ourTreshold;
         }
 
-        int ourZ = Z;
-        int theirTreshold = 0;
+        var ourZ = Z;
+        var theirTreshold = 0;
+
         if (theirData.Height > 0)
         {
             ++theirTreshold;
@@ -96,11 +86,12 @@ public struct MTile : IComparable
             ++theirTreshold;
         }
 
-        int theirZ = a.Z;
+        var theirZ = a.Z;
 
         ourZ += ourTreshold;
         theirZ += theirTreshold;
-        int res = ourZ - theirZ;
+        var res = ourZ - theirZ;
+
         if (res == 0)
         {
             res = ourTreshold - theirTreshold;
@@ -112,5 +103,18 @@ public struct MTile : IComparable
         }
 
         return res;
+    }
+
+    public void Set(ushort id, sbyte z)
+    {
+        m_ID = Art.GetLegalItemID(id);
+        m_Z = z;
+    }
+
+    public void Set(ushort id, sbyte z, UOTileFlag flag)
+    {
+        m_ID = Art.GetLegalItemID(id);
+        m_Z = z;
+        m_Flag = flag;
     }
 }

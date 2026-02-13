@@ -34,9 +34,7 @@ public class CharacterCreationPacket : BaseUoPacket
     public HueStyle Skin { get; set; }
     public HueStyle Pants { get; set; }
 
-    public CharacterCreationPacket() : base(0xF8)
-    {
-    }
+    public CharacterCreationPacket() : base(0xF8) { }
 
     protected override bool Read(SpanReader reader)
     {
@@ -66,17 +64,17 @@ public class CharacterCreationPacket : BaseUoPacket
         Dexterity = reader.ReadByte();
         Intelligence = reader.ReadByte();
 
-        var skill1 = new SkillKeyValue((SkillName)reader.ReadByte(), reader.ReadByte());
-        var skill2 = new SkillKeyValue((SkillName)reader.ReadByte(), reader.ReadByte());
-        var skill3 = new SkillKeyValue((SkillName)reader.ReadByte(), reader.ReadByte());
-        var skill4 = new SkillKeyValue((SkillName)reader.ReadByte(), reader.ReadByte());
+        var skill1 = new SkillKeyValue((UOSkillName)reader.ReadByte(), reader.ReadByte());
+        var skill2 = new SkillKeyValue((UOSkillName)reader.ReadByte(), reader.ReadByte());
+        var skill3 = new SkillKeyValue((UOSkillName)reader.ReadByte(), reader.ReadByte());
+        var skill4 = new SkillKeyValue((UOSkillName)reader.ReadByte(), reader.ReadByte());
 
         Skills = [skill1, skill2, skill3, skill4];
 
-        Skin = new HueStyle(0x00, reader.ReadInt16());
+        Skin = new(0x00, reader.ReadInt16());
 
-        Hair = new HueStyle(reader.ReadInt16(), reader.ReadInt16());
-        FacialHair = new HueStyle(reader.ReadInt16(), reader.ReadInt16());
+        Hair = new(reader.ReadInt16(), reader.ReadInt16());
+        FacialHair = new(reader.ReadInt16(), reader.ReadInt16());
 
         StartingCity = StartingCities.AvailableStartingCities[reader.ReadInt16()];
         reader.ReadBytes(2);
@@ -84,8 +82,8 @@ public class CharacterCreationPacket : BaseUoPacket
 
         reader.ReadInt32();
 
-        Shirt = new HueStyle(0x00, reader.ReadInt16());
-        Pants = new HueStyle(0x00, reader.ReadInt16());
+        Shirt = new(0x00, reader.ReadInt16());
+        Pants = new(0x00, reader.ReadInt16());
 
         return true;
     }
@@ -105,6 +103,6 @@ public class CharacterCreationPacket : BaseUoPacket
     }
 }
 
-public record SkillKeyValue(SkillName Skill, int Value);
+public record SkillKeyValue(UOSkillName Skill, int Value);
 
 public record HueStyle(short Style, short Hue);

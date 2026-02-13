@@ -1,7 +1,7 @@
-namespace Moongate.UO.Data.Maps;
+namespace Moongate.UO.Data.Types;
 
 [Flags]
-public enum MapSelectionFlags
+public enum UOMapSelectionFlags
 {
     Felucca = 0x00000001,
     Trammel = 0x00000002,

@@ -1,6 +1,6 @@
-namespace Moongate.UO.Data.Expansions;
+namespace Moongate.UO.Data.Types;
 
-public enum Expansion
+public enum UOExpansion
 {
     None,
     T2A,

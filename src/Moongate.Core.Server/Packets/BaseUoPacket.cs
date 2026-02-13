@@ -8,9 +8,7 @@ public abstract class BaseUoPacket : IUoNetworkPacket
     public byte OpCode { get; }
 
     protected BaseUoPacket(byte opCode)
-    {
-        OpCode = opCode;
-    }
+        => OpCode = opCode;
 
     public bool Read(ReadOnlyMemory<byte> data)
     {
@@ -20,18 +18,13 @@ public abstract class BaseUoPacket : IUoNetworkPacket
         }
 
         var reader = new SpanReader(data.Span);
+
         return reader.ReadByte() == OpCode && Read(reader);
     }
 
     public virtual ReadOnlyMemory<byte> Write(SpanWriter writer)
-    {
-        throw new NotImplementedException();
-    }
+        => throw new NotImplementedException();
 
     protected virtual bool Read(SpanReader reader)
-    {
-        return false;
-    }
-
-
+        => false;
 }

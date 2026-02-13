@@ -2,16 +2,12 @@ using System.Collections.Concurrent;
 using Moongate.Core.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Server.Types;
-using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Factory;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
-using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 
@@ -30,7 +26,10 @@ public class EntityFactoryService : IEntityFactoryService
     private readonly IMobileService _mobileService;
 
     public EntityFactoryService(
-        DirectoriesConfig directoriesConfig, IItemService itemService, IMobileService mobileService, INameService nameService
+        DirectoriesConfig directoriesConfig,
+        IItemService itemService,
+        IMobileService mobileService,
+        INameService nameService
     )
     {
         _directoriesConfig = directoriesConfig;
@@ -41,41 +40,11 @@ public class EntityFactoryService : IEntityFactoryService
         AddDefaultItems();
     }
 
-    private void AddDefaultItems()
-    {
-        _itemTemplates["backpack"] = new ItemTemplate()
-        {
-            GumpId = 0x003C,
-            Id = "backpack",
-            Name = "Backpack",
-            Category = "Containers",
-            Tags = ["container", "bag"],
-            ItemId = 0x1F9E,
-            GoldValue = 1,
-            Weight = 1
-        };
-
-        _itemTemplates["gold"] = new ItemTemplate()
-        {
-            GumpId = 0x003C,
-            Id = "gold",
-            Category = "Currency",
-            Tags = ["currency", "money"],
-            ItemId = 0x0EEF,
-            GoldValue = 1,
-            Weight = 25
-        };
-    }
-
     public T CreateEntity<T>(string templateId) where T : class
-    {
-        throw new NotImplementedException();
-    }
+        => throw new NotImplementedException();
 
     public T CreateEntity<T>(string templateId, Dictionary<string, object> overrides) where T : class
-    {
-        throw new NotImplementedException();
-    }
+        => throw new NotImplementedException();
 
     public UOItemEntity CreateItemEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null)
     {
@@ -94,6 +63,7 @@ public class EntityFactoryService : IEntityFactoryService
         }
 
         _logger.Warning("Item template not found: {TemplateId}", templateOrCategoryOrTag);
+
         return null;
     }
 
@@ -114,69 +84,22 @@ public class EntityFactoryService : IEntityFactoryService
         }
 
         _logger.Warning("Mobile template not found: {TemplateId}", templateOrCategoryOrTag);
+
         return null;
     }
 
-    private UOMobileEntity CreateMobileEntity(MobileTemplate mobileTemplate, Dictionary<string, object> overrides = null)
+    public void Dispose() { }
+
+    public UOItemEntity GetNewBackpack()
     {
-        var mobile = _mobileService.CreateMobile();
-        mobile.TemplateId = mobileTemplate.Id;
-
-        mobile.Name = mobileTemplate.Name ?? _nameService.GenerateName(mobileTemplate);
-
-        mobile.Body = mobileTemplate.Body;
-
-        mobile.HairStyle = mobileTemplate.HairStyle;
-        mobile.HairHue = mobileTemplate.HairHue;
-
-        mobile.BrainId = mobileTemplate.Brain;
-
-        mobile.FacialHairStyle = 0;
-
-        mobile.FacialHairStyle = 0;
-
-        mobile.Equipment[ItemLayerType.Backpack] = CreateItemEntity("backpack").ToItemReference();
-
-        return mobile;
-    }
-
-    private UOItemEntity CreateItemEntity(ItemTemplate itemTemplate, Dictionary<string, object> overrides = null)
-    {
-        var item = _itemService.CreateItem();
-
-        item.TemplateId = itemTemplate.Id;
-        item.Gold = itemTemplate.GoldValue;
-
-        item.Name = itemTemplate.Name;
-        item.Amount = 1;
-        item.ItemId = itemTemplate.ItemId;
-        item.BaseWeight = itemTemplate.Weight;
-        item.Hue = itemTemplate.Hue;
-        item.ScriptId = itemTemplate.ScriptId;
-        item.GumpId = itemTemplate.GumpId;
-        item.LootType = itemTemplate.LootType;
-        item.IsMovable = itemTemplate.IsMovable;
-
-        item.Name ??= TileData.ItemTable[item.ItemId].Name;
-
-        if (itemTemplate.Container.Count > 0)
+        if (_itemTemplates.TryGetValue("backpack", out var backpackTemplate))
         {
-
-            var createdItems = new List<UOItemEntity>();
-
-            foreach (var containerName in itemTemplate.Container)
-            {
-                var createdItem = CreateItemEntity(containerName, overrides);
-
-                createdItems.Add(createdItem);
-            }
-
-            ContainerLayoutSystem.ArrangeItemsInGrid(item, createdItems);
+            return CreateItemEntity(backpackTemplate);
         }
 
-        _itemService.AddItem(item);
+        _logger.Warning("Backpack template not found.");
 
-        return item;
+        return null;
     }
 
     public async Task LoadTemplatesAsync(string filePath)
@@ -185,9 +108,9 @@ public class EntityFactoryService : IEntityFactoryService
         if (!File.Exists(filePath))
         {
             _logger.Warning("Templates file not found: {FilePath}", filePath);
+
             return;
         }
-
 
         try
         {
@@ -227,23 +150,9 @@ public class EntityFactoryService : IEntityFactoryService
         catch (Exception ex)
         {
             _logger.Error(ex, "Error loading templates from file: {FilePath}", filePath);
+
             throw;
         }
-    }
-
-    public UOItemEntity GetNewBackpack()
-    {
-        if (_itemTemplates.TryGetValue("backpack", out var backpackTemplate))
-        {
-            return CreateItemEntity(backpackTemplate);
-        }
-
-        _logger.Warning("Backpack template not found.");
-        return null;
-    }
-
-    public void Dispose()
-    {
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -253,7 +162,6 @@ public class EntityFactoryService : IEntityFactoryService
             "*.json",
             SearchOption.AllDirectories
         );
-
 
         var loadTasks = templates.Select(LoadTemplatesAsync);
 
@@ -269,11 +177,97 @@ public class EntityFactoryService : IEntityFactoryService
         catch (Exception ex)
         {
             _logger.Error(ex, "Error loading templates.");
+
             throw;
         }
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken = default)
+    public async Task StopAsync(CancellationToken cancellationToken = default) { }
+
+    private void AddDefaultItems()
     {
+        _itemTemplates["backpack"] = new()
+        {
+            GumpId = 0x003C,
+            Id = "backpack",
+            Name = "Backpack",
+            Category = "Containers",
+            Tags = ["container", "bag"],
+            ItemId = 0x1F9E,
+            GoldValue = 1,
+            Weight = 1
+        };
+
+        _itemTemplates["gold"] = new()
+        {
+            GumpId = 0x003C,
+            Id = "gold",
+            Category = "Currency",
+            Tags = ["currency", "money"],
+            ItemId = 0x0EEF,
+            GoldValue = 1,
+            Weight = 25
+        };
+    }
+
+    private UOItemEntity CreateItemEntity(ItemTemplate itemTemplate, Dictionary<string, object> overrides = null)
+    {
+        var item = _itemService.CreateItem();
+
+        item.TemplateId = itemTemplate.Id;
+        item.Gold = itemTemplate.GoldValue;
+
+        item.Name = itemTemplate.Name;
+        item.Amount = 1;
+        item.ItemId = itemTemplate.ItemId;
+        item.BaseWeight = itemTemplate.Weight;
+        item.Hue = itemTemplate.Hue;
+        item.ScriptId = itemTemplate.ScriptId;
+        item.GumpId = itemTemplate.GumpId;
+        item.LootType = itemTemplate.LootType;
+        item.IsMovable = itemTemplate.IsMovable;
+
+        item.Name ??= TileData.ItemTable[item.ItemId].Name;
+
+        if (itemTemplate.Container.Count > 0)
+        {
+            var createdItems = new List<UOItemEntity>();
+
+            foreach (var containerName in itemTemplate.Container)
+            {
+                var createdItem = CreateItemEntity(containerName, overrides);
+
+                createdItems.Add(createdItem);
+            }
+
+            ContainerLayoutSystem.ArrangeItemsInGrid(item, createdItems);
+        }
+
+        _itemService.AddItem(item);
+
+        return item;
+    }
+
+    private UOMobileEntity CreateMobileEntity(MobileTemplate mobileTemplate, Dictionary<string, object> overrides = null)
+    {
+        var mobile = _mobileService.CreateMobile();
+        mobile.TemplateId = mobileTemplate.Id;
+
+        mobile.Name = mobileTemplate.Name ?? _nameService.GenerateName(mobileTemplate);
+
+        mobile.Body = mobileTemplate.Body;
+
+        mobile.HairStyle = mobileTemplate.HairStyle;
+        mobile.HairHue = mobileTemplate.HairHue;
+
+        mobile.BrainId = mobileTemplate.Brain;
+
+        mobile.FacialHairStyle = 0;
+
+        mobile.FacialHairStyle = 0;
+
+        mobile.Equipment[ItemLayerType.Backpack] = CreateItemEntity("backpack").ToItemReference();
+
+        return mobile;
     }
 }

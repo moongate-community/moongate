@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces;
 ﻿using Moongate.Core.Random.DiceNotation.Terms;
 
 namespace Moongate.Core.Random.DiceNotation;
@@ -8,37 +9,26 @@ namespace Moongate.Core.Random.DiceNotation;
 public class DiceExpression
 {
     private readonly IList<IDiceExpressionTerm> _terms;
+
     /// <summary>
     /// Construct a new DiceExpression class with an empty list of terms
     /// </summary>
     public DiceExpression()
-        : this( new IDiceExpressionTerm[] { } )
-    { }
+        : this(new IDiceExpressionTerm[] { }) { }
 
-    private DiceExpression( IEnumerable<IDiceExpressionTerm> diceTerms )
-    {
-        _terms = diceTerms.ToList();
-    }
+    private DiceExpression(IEnumerable<IDiceExpressionTerm> diceTerms)
+        => _terms = diceTerms.ToList();
 
     /// <summary>
-    /// Add a single Die to this DiceExpression with the specified number of sides and scalar
+    /// Add a constant to this DiceExpression with the specified integer value
     /// </summary>
-    /// <param name="sides">The number of sides on the Die to add to this DiceExpression</param>
-    /// <param name="scalar">The value to multiply the result of the Roll of this Die by</param>
-    /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus this newly added Die</returns>
-    public DiceExpression Die( int sides, int scalar )
+    /// <param name="value">An integer constant to add to this DiceExpression</param>
+    /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus this newly added Constant</returns>
+    public DiceExpression Constant(int value)
     {
-        return Dice( 1, sides, scalar );
-    }
+        _terms.Add(new ConstantTerm(value));
 
-    /// <summary>
-    /// Add a single Die to this DiceExpression with the specified number of sides
-    /// </summary>
-    /// <param name="sides">The number of sides on the Die to add to this DiceExpression</param>
-    /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus this newly added Die</returns>
-    public DiceExpression Die( int sides )
-    {
-        return Dice( 1, sides );
+        return this;
     }
 
     /// <summary>
@@ -47,10 +37,8 @@ public class DiceExpression
     /// <param name="multiplicity">The number of Dice</param>
     /// <param name="sides">The number of sides per Die</param>
     /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus these newly added Dice</returns>
-    public DiceExpression Dice( int multiplicity, int sides )
-    {
-        return Dice( multiplicity, sides, 1, null );
-    }
+    public DiceExpression Dice(int multiplicity, int sides)
+        => Dice(multiplicity, sides, 1, null);
 
     /// <summary>
     /// Add multiple Dice to this DiceExpression with the specified parameters
@@ -59,10 +47,8 @@ public class DiceExpression
     /// <param name="sides">The number of sides per Die</param>
     /// <param name="scalar">The value to multiply the result of the Roll of these Dice by</param>
     /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus these newly added Dice</returns>
-    public DiceExpression Dice( int multiplicity, int sides, int scalar )
-    {
-        return Dice( multiplicity, sides, scalar, null );
-    }
+    public DiceExpression Dice(int multiplicity, int sides, int scalar)
+        => Dice(multiplicity, sides, scalar, null);
 
     /// <summary>
     /// Add multiple Dice to this DiceExpression with the specified parameters
@@ -72,32 +58,54 @@ public class DiceExpression
     /// <param name="scalar">The value to multiply the result of the Roll of these Dice by</param>
     /// <param name="choose">Optional number of dice to choose out of the total rolled. The highest rolled Dice will be chosen.</param>
     /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus these newly added Dice</returns>
-    public DiceExpression Dice( int multiplicity, int sides, int scalar, int? choose )
+    public DiceExpression Dice(int multiplicity, int sides, int scalar, int? choose)
     {
-        _terms.Add( new DiceTerm( multiplicity, sides, choose ?? multiplicity, scalar ) );
+        _terms.Add(new DiceTerm(multiplicity, sides, choose ?? multiplicity, scalar));
+
         return this;
     }
 
     /// <summary>
-    /// Add a constant to this DiceExpression with the specified integer value
+    /// Add a single Die to this DiceExpression with the specified number of sides and scalar
     /// </summary>
-    /// <param name="value">An integer constant to add to this DiceExpression</param>
-    /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus this newly added Constant</returns>
-    public DiceExpression Constant( int value )
-    {
-        _terms.Add( new ConstantTerm( value ) );
-        return this;
-    }
+    /// <param name="sides">The number of sides on the Die to add to this DiceExpression</param>
+    /// <param name="scalar">The value to multiply the result of the Roll of this Die by</param>
+    /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus this newly added Die</returns>
+    public DiceExpression Die(int sides, int scalar)
+        => Dice(1, sides, scalar);
+
+    /// <summary>
+    /// Add a single Die to this DiceExpression with the specified number of sides
+    /// </summary>
+    /// <param name="sides">The number of sides on the Die to add to this DiceExpression</param>
+    /// <returns>A DiceExpression representing the previous terms in this DiceExpression plus this newly added Die</returns>
+    public DiceExpression Die(int sides)
+        => Dice(1, sides);
+
+    /// <summary>
+    /// Roll all of the Dice that are part of this DiceExpression, but force all of the rolls to be the highest possible result
+    /// </summary>
+    /// <returns>A DiceResult representing the results of this Roll. All dice should have rolled their maximum values</returns>
+    public DiceResult MaxRoll()
+        => Roll(new MaxRandom());
+
+    /// <summary>
+    /// Roll all of the Dice that are part of this DiceExpression, but force all of the rolls to be the lowest possible result
+    /// </summary>
+    /// <returns>A DiceResult representing the results of this Roll. All dice should have rolled their minimum values</returns>
+    public DiceResult MinRoll()
+        => Roll(new MinRandom());
 
     /// <summary>
     /// Roll all of the Dice that are part of this DiceExpression
     /// </summary>
     /// <param name="random">IRandom RNG used to perform the Roll.</param>
     /// <returns>A DiceResult representing the results of this Roll</returns>
-    public DiceResult Roll( IRandom random )
+    public DiceResult Roll(IRandom random)
     {
-        IEnumerable<TermResult> termResults = _terms.SelectMany( t => t.GetResults( random ) ).ToList();
-        return new DiceResult( termResults, random );
+        IEnumerable<TermResult> termResults = _terms.SelectMany(t => t.GetResults(random)).ToList();
+
+        return new(termResults, random);
     }
 
     /// <summary>
@@ -106,34 +114,12 @@ public class DiceExpression
     /// <returns>A DiceResult representing the results of this Roll</returns>
     /// <remarks>Uses DotNetRandom as its RNG</remarks>
     public DiceResult Roll()
-    {
-        return Roll( Singleton.DefaultRandom );
-    }
-
-    /// <summary>
-    /// Roll all of the Dice that are part of this DiceExpression, but force all of the rolls to be the lowest possible result
-    /// </summary>
-    /// <returns>A DiceResult representing the results of this Roll. All dice should have rolled their minimum values</returns>
-    public DiceResult MinRoll()
-    {
-        return Roll( new MinRandom() );
-    }
-
-    /// <summary>
-    /// Roll all of the Dice that are part of this DiceExpression, but force all of the rolls to be the highest possible result
-    /// </summary>
-    /// <returns>A DiceResult representing the results of this Roll. All dice should have rolled their maximum values</returns>
-    public DiceResult MaxRoll()
-    {
-        return Roll( new MaxRandom() );
-    }
+        => Roll(Singleton.DefaultRandom);
 
     /// <summary>
     /// Returns a string that represents this DiceExpression
     /// </summary>
     /// <returns>A string representing this DiceExpression</returns>
     public override string ToString()
-    {
-        return string.Join( " + ", _terms );
-    }
+        => string.Join(" + ", _terms);
 }

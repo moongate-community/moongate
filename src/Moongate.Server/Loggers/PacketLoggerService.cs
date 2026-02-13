@@ -1,10 +1,7 @@
 using Moongate.Core.Extensions.Buffers;
 using Moongate.Core.Network.Compression;
 using Moongate.Core.Network.Extensions;
-using Moongate.Core.Network.Servers.Tcp;
 using Moongate.Core.Server.Data.Configs.Server;
-using Moongate.Core.Server.Instances;
-using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Session;
@@ -27,7 +24,9 @@ public class PacketLoggerService : IMoongateService
     ];
 
     public PacketLoggerService(
-        IGameSessionService gameSessionService, INetworkService networkService, MoongateServerConfig moongateServerConfig
+        IGameSessionService gameSessionService,
+        INetworkService networkService,
+        MoongateServerConfig moongateServerConfig
     )
     {
         _gameSessionService = gameSessionService;
@@ -38,19 +37,7 @@ public class PacketLoggerService : IMoongateService
         _networkService.OnClientDataSent += OnPacketSent;
     }
 
-    private void OnPacketSent(string sessionId, ReadOnlyMemory<byte> packet)
-    {
-        var gameClientSession = _gameSessionService.GetSession(sessionId);
-        LogPacketToFile(gameClientSession, packet, false);
-        LogPacketToConsole(gameClientSession, packet, false);
-    }
-
-    private void OnPacketReceived(string sessionId, ReadOnlyMemory<byte> packet)
-    {
-        var gameClientSession = _gameSessionService.GetSession(sessionId);
-        LogPacketToFile(gameClientSession, packet, false);
-        LogPacketToConsole(gameClientSession, packet, true);
-    }
+    public void Dispose() { }
 
     private void LogPacketToConsole(GameSession session, ReadOnlyMemory<byte> buffer, bool isReceived)
     {
@@ -67,14 +54,9 @@ public class PacketLoggerService : IMoongateService
         var direction = isReceived ? "<-" : "->";
         var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
 
-
-
         var opCodeDescription = _networkService.GetPacketDescription(buffer.Span[0]);
 
-
         var originalSize = _networkService.GetPacketLength(buffer.Span[0]);
-
-
 
         var logger = Log.ForContext("NetworkPacketConsole", true);
 
@@ -108,7 +90,8 @@ public class PacketLoggerService : IMoongateService
         var direction = isReceived ? "<-" : "->";
         var opCode = "OPCODE: " + buffer.Span[0].ToPacketString();
 
-        int compressionSize = 0;
+        var compressionSize = 0;
+
         if (client.Features.HasFlag(NetworkSessionFeatureType.Compression))
         {
             var tmpInBuffer = buffer.Span.ToArray();
@@ -125,8 +108,17 @@ public class PacketLoggerService : IMoongateService
         logger.Information(sw.ToString());
     }
 
-
-    public void Dispose()
+    private void OnPacketReceived(string sessionId, ReadOnlyMemory<byte> packet)
     {
+        var gameClientSession = _gameSessionService.GetSession(sessionId);
+        LogPacketToFile(gameClientSession, packet, false);
+        LogPacketToConsole(gameClientSession, packet, true);
+    }
+
+    private void OnPacketSent(string sessionId, ReadOnlyMemory<byte> packet)
+    {
+        var gameClientSession = _gameSessionService.GetSession(sessionId);
+        LogPacketToFile(gameClientSession, packet, false);
+        LogPacketToConsole(gameClientSession, packet, false);
     }
 }

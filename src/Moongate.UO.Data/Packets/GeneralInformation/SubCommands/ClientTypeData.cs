@@ -1,9 +1,9 @@
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Extensions;
 using Moongate.UO.Data.Packets.GeneralInformation.SubCommands.Base.Interfaces;
-using Moongate.Uo.Data.Types;
+using Moongate.UO.Data.Types;
 
-namespace Moongate.Uo.Services.Network.Packets.GeneralInformation.SubCommands;
+namespace Moongate.UO.Data.Packets.GeneralInformation.SubCommands;
 
 /// <summary>
 /// Client Type subcommand data (0x0F)

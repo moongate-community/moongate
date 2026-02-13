@@ -39,6 +39,65 @@ public ref struct SpanReader : IDisposable
         Length = span.Length;
     }
 
+    public void Dispose()
+    {
+        _buffer = default;
+        Position = 0;
+        Length = 0;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public int Read(Span<byte> bytes)
+    {
+        if (bytes.Length == 0)
+        {
+            return 0;
+        }
+
+        var bytesWritten = Math.Min(bytes.Length, Remaining);
+        _buffer.Slice(Position, bytesWritten).CopyTo(bytes);
+
+        Position += bytesWritten;
+
+        return bytesWritten;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadAscii(int fixedLength)
+        => ReadString(Encoding.ASCII, false, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadAscii()
+        => ReadString(Encoding.ASCII);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadAsciiSafe(int fixedLength)
+        => ReadString(Encoding.ASCII, true, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadAsciiSafe()
+        => ReadString(Encoding.ASCII, true);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadBigUni(int fixedLength)
+        => ReadString(TextEncoding.Unicode, false, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadBigUni()
+        => ReadString(TextEncoding.Unicode);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadBigUniSafe(int fixedLength)
+        => ReadString(TextEncoding.Unicode, true, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadBigUniSafe()
+        => ReadString(TextEncoding.Unicode, true);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool ReadBoolean()
+        => ReadByte() > 0;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte ReadByte()
     {
@@ -51,10 +110,18 @@ public ref struct SpanReader : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool ReadBoolean() => ReadByte() > 0;
+    public byte[] ReadBytes(int length)
+    {
+        if (length > Remaining)
+        {
+            throw new OutOfMemoryException();
+        }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public sbyte ReadSByte() => (sbyte)ReadByte();
+        var bytes = _buffer.Slice(Position, length).ToArray();
+        Position += length;
+
+        return bytes;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public short ReadInt16()
@@ -65,6 +132,7 @@ public ref struct SpanReader : IDisposable
         }
 
         Position += 2;
+
         return value;
     }
 
@@ -77,30 +145,7 @@ public ref struct SpanReader : IDisposable
         }
 
         Position += 2;
-        return value;
-    }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ushort ReadUInt16()
-    {
-        if (!BinaryPrimitives.TryReadUInt16BigEndian(_buffer[Position..], out var value))
-        {
-            throw new OutOfMemoryException();
-        }
-
-        Position += 2;
-        return value;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ushort ReadUInt16LE()
-    {
-        if (!BinaryPrimitives.TryReadUInt16LittleEndian(_buffer[Position..], out var value))
-        {
-            throw new OutOfMemoryException();
-        }
-
-        Position += 2;
         return value;
     }
 
@@ -113,44 +158,7 @@ public ref struct SpanReader : IDisposable
         }
 
         Position += 4;
-        return value;
-    }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public uint ReadUInt32()
-    {
-        if (!BinaryPrimitives.TryReadUInt32BigEndian(_buffer[Position..], out var value))
-        {
-            throw new OutOfMemoryException();
-        }
-
-        Position += 4;
-        return value;
-    }
-
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public byte[] ReadBytes(int length)
-    {
-        if (length > Remaining)
-        {
-            throw new OutOfMemoryException();
-        }
-
-        var bytes = _buffer.Slice(Position, length).ToArray();
-        Position += length;
-        return bytes;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public uint ReadUInt32LE()
-    {
-        if (!BinaryPrimitives.TryReadUInt32LittleEndian(_buffer[Position..], out var value))
-        {
-            throw new OutOfMemoryException();
-        }
-
-        Position += 4;
         return value;
     }
 
@@ -163,20 +171,29 @@ public ref struct SpanReader : IDisposable
         }
 
         Position += 8;
+
         return value;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ulong ReadUInt64()
-    {
-        if (!BinaryPrimitives.TryReadUInt64BigEndian(_buffer[Position..], out var value))
-        {
-            throw new OutOfMemoryException();
-        }
+    public string ReadLittleUni(int fixedLength)
+        => ReadString(TextEncoding.UnicodeLE, false, fixedLength);
 
-        Position += 8;
-        return value;
-    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadLittleUni()
+        => ReadString(TextEncoding.UnicodeLE);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadLittleUniSafe(int fixedLength)
+        => ReadString(TextEncoding.UnicodeLE, true, fixedLength);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public string ReadLittleUniSafe()
+        => ReadString(TextEncoding.UnicodeLE, true);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public sbyte ReadSByte()
+        => (sbyte)ReadByte();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadString(Encoding encoding, bool safeString = false, int fixedLength = -1)
@@ -186,15 +203,17 @@ public ref struct SpanReader : IDisposable
             return "";
         }
 
-        int byteLength = encoding.GetByteLengthForEncoding();
+        var byteLength = encoding.GetByteLengthForEncoding();
 
-        bool isFixedLength = fixedLength > -1;
+        var isFixedLength = fixedLength > -1;
 
         var remaining = Remaining;
         int size;
+
         if (isFixedLength)
         {
             size = fixedLength * byteLength;
+
             if (size > Remaining)
             {
                 throw new OutOfMemoryException();
@@ -221,49 +240,81 @@ public ref struct SpanReader : IDisposable
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadLittleUniSafe(int fixedLength) => ReadString(TextEncoding.UnicodeLE, true, fixedLength);
+    public ushort ReadUInt16()
+    {
+        if (!BinaryPrimitives.TryReadUInt16BigEndian(_buffer[Position..], out var value))
+        {
+            throw new OutOfMemoryException();
+        }
+
+        Position += 2;
+
+        return value;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadLittleUniSafe() => ReadString(TextEncoding.UnicodeLE, true);
+    public ushort ReadUInt16LE()
+    {
+        if (!BinaryPrimitives.TryReadUInt16LittleEndian(_buffer[Position..], out var value))
+        {
+            throw new OutOfMemoryException();
+        }
+
+        Position += 2;
+
+        return value;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadLittleUni(int fixedLength) => ReadString(TextEncoding.UnicodeLE, false, fixedLength);
+    public uint ReadUInt32()
+    {
+        if (!BinaryPrimitives.TryReadUInt32BigEndian(_buffer[Position..], out var value))
+        {
+            throw new OutOfMemoryException();
+        }
+
+        Position += 4;
+
+        return value;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadLittleUni() => ReadString(TextEncoding.UnicodeLE);
+    public uint ReadUInt32LE()
+    {
+        if (!BinaryPrimitives.TryReadUInt32LittleEndian(_buffer[Position..], out var value))
+        {
+            throw new OutOfMemoryException();
+        }
+
+        Position += 4;
+
+        return value;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadBigUniSafe(int fixedLength) => ReadString(TextEncoding.Unicode, true, fixedLength);
+    public ulong ReadUInt64()
+    {
+        if (!BinaryPrimitives.TryReadUInt64BigEndian(_buffer[Position..], out var value))
+        {
+            throw new OutOfMemoryException();
+        }
+
+        Position += 8;
+
+        return value;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadBigUniSafe() => ReadString(TextEncoding.Unicode, true);
+    public string ReadUTF8()
+        => ReadString(TextEncoding.UTF8);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadBigUni(int fixedLength) => ReadString(TextEncoding.Unicode, false, fixedLength);
+    public string ReadUTF8Safe(int fixedLength)
+        => ReadString(TextEncoding.UTF8, true, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadBigUni() => ReadString(TextEncoding.Unicode);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadUTF8Safe(int fixedLength) => ReadString(TextEncoding.UTF8, true, fixedLength);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadUTF8Safe() => ReadString(TextEncoding.UTF8, true);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadUTF8() => ReadString(TextEncoding.UTF8);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadAsciiSafe(int fixedLength) => ReadString(Encoding.ASCII, true, fixedLength);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadAsciiSafe() => ReadString(Encoding.ASCII, true);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadAscii(int fixedLength) => ReadString(Encoding.ASCII, false, fixedLength);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public string ReadAscii() => ReadString(Encoding.ASCII);
+    public string ReadUTF8Safe()
+        => ReadString(TextEncoding.UTF8, true);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Seek(int offset, SeekOrigin origin)
@@ -299,35 +350,13 @@ public ref struct SpanReader : IDisposable
         );
 
         return Position = Math.Max(
-            0,
-            origin switch
-            {
-                SeekOrigin.Current => Position + offset,
-                SeekOrigin.End     => _buffer.Length + offset,
-                _                  => offset // Begin
-            }
-        );
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public int Read(Span<byte> bytes)
-    {
-        if (bytes.Length == 0)
-        {
-            return 0;
-        }
-
-        var bytesWritten = Math.Min(bytes.Length, Remaining);
-        _buffer.Slice(Position, bytesWritten).CopyTo(bytes);
-
-        Position += bytesWritten;
-        return bytesWritten;
-    }
-
-    public void Dispose()
-    {
-        _buffer = default;
-        Position = 0;
-        Length = 0;
+                   0,
+                   origin switch
+                   {
+                       SeekOrigin.Current => Position + offset,
+                       SeekOrigin.End     => _buffer.Length + offset,
+                       _                  => offset // Begin
+                   }
+               );
     }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Moongate.UO.Data.Version;
 
 namespace Moongate.UO.Data.Json.Converters;
@@ -16,9 +18,6 @@ namespace Moongate.UO.Data.Json.Converters;
  * You should have received a copy of the GNU General Public License     *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  *************************************************************************/
-using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 public class ClientVersionConverter : JsonConverter<ClientVersion>
 {
@@ -26,12 +25,12 @@ public class ClientVersionConverter : JsonConverter<ClientVersion>
     {
         if (reader.TokenType == JsonTokenType.String)
         {
-            return new ClientVersion(reader.GetString());
+            return new(reader.GetString());
         }
 
         throw new JsonException("Value must be a string");
     }
 
-    public override void Write(Utf8JsonWriter writer, ClientVersion value, JsonSerializerOptions options) =>
-        writer.WriteStringValue(value.ToString());
+    public override void Write(Utf8JsonWriter writer, ClientVersion value, JsonSerializerOptions options)
+        => writer.WriteStringValue(value.ToString());
 }

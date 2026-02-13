@@ -6,8 +6,6 @@ namespace Moongate.UO.Data.Json.Converters;
 
 public class FlagsConverter<T> : JsonConverter<T> where T : struct, Enum
 {
-
-
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var flags = 0ul;
@@ -16,6 +14,7 @@ public class FlagsConverter<T> : JsonConverter<T> where T : struct, Enum
         while (true)
         {
             reader.Read();
+
             if (reader.TokenType == JsonTokenType.EndObject)
             {
                 break;
@@ -43,31 +42,37 @@ public class FlagsConverter<T> : JsonConverter<T> where T : struct, Enum
             case TypeCode.SByte:
                 {
                     var num = (sbyte)flags;
+
                     return Unsafe.As<sbyte, T>(ref num);
                 }
             case TypeCode.Byte:
                 {
                     var num = (byte)flags;
+
                     return Unsafe.As<byte, T>(ref num);
                 }
             case TypeCode.Int16:
                 {
                     var num = (short)flags;
+
                     return Unsafe.As<short, T>(ref num);
                 }
             case TypeCode.UInt16:
                 {
                     var num = (ushort)flags;
+
                     return Unsafe.As<ushort, T>(ref num);
                 }
             case TypeCode.UInt32:
                 {
                     var num = (uint)flags;
+
                     return Unsafe.As<uint, T>(ref num);
                 }
             case TypeCode.Int64:
                 {
                     var num = (long)flags;
+
                     return Unsafe.As<long, T>(ref num);
                 }
             case TypeCode.UInt64:
@@ -77,6 +82,7 @@ public class FlagsConverter<T> : JsonConverter<T> where T : struct, Enum
             default:
                 {
                     var num = (int)flags;
+
                     return Unsafe.As<int, T>(ref num);
                 }
         }
@@ -103,8 +109,8 @@ public class FlagsConverter<T> : JsonConverter<T> where T : struct, Enum
         writer.WriteEndObject();
     }
 
-    private static ulong ConvertToUInt64(Type underlyingType, object value) =>
-        Type.GetTypeCode(underlyingType) switch
+    private static ulong ConvertToUInt64(Type underlyingType, object value)
+        => Type.GetTypeCode(underlyingType) switch
         {
             TypeCode.SByte  => (ulong)(sbyte)value,
             TypeCode.Byte   => (byte)value,

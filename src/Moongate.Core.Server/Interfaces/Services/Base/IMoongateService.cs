@@ -1,5 +1,3 @@
 namespace Moongate.Core.Server.Interfaces.Services.Base;
 
-public interface IMoongateService : IDisposable
-{
-}
+public interface IMoongateService : IDisposable { }

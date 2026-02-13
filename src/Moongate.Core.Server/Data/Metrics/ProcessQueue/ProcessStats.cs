@@ -18,21 +18,26 @@ public class ProcessStats
     {
         get
         {
-            return _processingTimes.IsEmpty ? TimeSpan.Zero : TimeSpan.FromTicks((long)_processingTimes.Average(t => t.Ticks));
+            return _processingTimes.IsEmpty
+                       ? TimeSpan.Zero
+                       : TimeSpan.FromTicks((long)_processingTimes.Average(t => t.Ticks));
         }
     }
 
-    public void IncrementQueued() => Interlocked.Increment(ref _queuedItems);
+    public void IncrementFailed()
+        => Interlocked.Increment(ref _failedItems);
 
     public void IncrementProcessed(TimeSpan processingTime)
     {
         Interlocked.Increment(ref _processedItems);
         _processingTimes.Enqueue(processingTime);
+
         while (_processingTimes.Count > MaxProcessingTimesSamples)
         {
             _processingTimes.TryDequeue(out _);
         }
     }
 
-    public void IncrementFailed() => Interlocked.Increment(ref _failedItems);
+    public void IncrementQueued()
+        => Interlocked.Increment(ref _queuedItems);
 }

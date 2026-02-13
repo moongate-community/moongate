@@ -2,7 +2,7 @@ namespace Moongate.Core.Server.Timers;
 
 public class TimerDataObject : IDisposable
 {
-    private readonly object _lock = new object();
+    private readonly object _lock = new();
     public string Name { get; set; }
 
     public string Id { get; set; }
@@ -12,11 +12,10 @@ public class TimerDataObject : IDisposable
     public Action Callback { get; set; }
     public bool Repeat { get; set; }
 
-    public double RemainingTimeInMs = 0;
+    public double RemainingTimeInMs;
     public double DelayInMs { get; set; }
 
     public bool DieOnException { get; set; } = true;
-
 
     public void DecrementRemainingTime(double deltaTime)
     {
@@ -27,6 +26,7 @@ public class TimerDataObject : IDisposable
                 if (DelayInMs > 0)
                 {
                     DelayInMs -= deltaTime;
+
                     if (DelayInMs > 0)
                     {
                         return;
@@ -40,6 +40,19 @@ public class TimerDataObject : IDisposable
                 Monitor.Exit(_lock);
             }
         }
+    }
+
+    public void Dispose()
+    {
+        Callback = null;
+        Name = null;
+        Id = null;
+        IntervalInMs = 0;
+        RemainingTimeInMs = 0;
+        Repeat = false;
+        DelayInMs = 0;
+
+        GC.SuppressFinalize(this);
     }
 
     public void ResetRemainingTime()
@@ -57,22 +70,6 @@ public class TimerDataObject : IDisposable
         }
     }
 
-
     public override string ToString()
-    {
-        return $"Timer: {Name}, Id: {Id}, Interval: {IntervalInMs}, RemainingTime: {RemainingTimeInMs}, Repeat: {Repeat}";
-    }
-
-    public void Dispose()
-    {
-        Callback = null;
-        Name = null;
-        Id = null;
-        IntervalInMs = 0;
-        RemainingTimeInMs = 0;
-        Repeat = false;
-        DelayInMs = 0;
-
-        GC.SuppressFinalize(this);
-    }
+        => $"Timer: {Name}, Id: {Id}, Interval: {IntervalInMs}, RemainingTime: {RemainingTimeInMs}, Repeat: {Repeat}";
 }

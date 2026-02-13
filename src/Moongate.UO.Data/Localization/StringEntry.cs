@@ -31,13 +31,8 @@ public sealed class StringEntry
         Flag = flag;
     }
 
-    public override string ToString()
-    {
-        return $"{Number} - {Text} ({Flag})";
-    }
-
     // Razor
-    private static readonly Regex _regEx = new Regex(
+    private static readonly Regex _regEx = new(
         @"~(\d+)[_\w]+~",
         RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant
     );
@@ -52,7 +47,7 @@ public sealed class StringEntry
             _fmtTxt = _regEx.Replace(_text, "{$1}");
         }
 
-        for (int i = 0; i < args.Length && i < 10; i++)
+        for (var i = 0; i < args.Length && i < 10; i++)
         {
             _args[i + 1] = args[i];
         }
@@ -67,13 +62,16 @@ public sealed class StringEntry
             _fmtTxt = _regEx.Replace(_text, "{$1}");
         }
 
-        string[] args = argString.Split('\t'); // adds an extra on to the args array
+        var args = argString.Split('\t'); // adds an extra on to the args array
 
-        for (int i = 0; i < args.Length && i < 10; i++)
+        for (var i = 0; i < args.Length && i < 10; i++)
         {
             _args[i + 1] = args[i];
         }
 
         return string.Format(_fmtTxt, _args);
     }
+
+    public override string ToString()
+        => $"{Number} - {Text} ({Flag})";
 }

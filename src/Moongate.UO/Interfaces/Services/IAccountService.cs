@@ -8,11 +8,10 @@ namespace Moongate.UO.Interfaces.Services;
 
 public interface IAccountService : IMoongateAutostartService, IPersistenceLoadSave
 {
-    Task<string> CreateAccount(string username, string password, AccountLevelType accountLevel = AccountLevelType.User);
+    Task<bool> ChangeLevel(string accountName, AccountLevelType levelType);
 
     Task<bool> ChangePassword(string accountName, string newPassword);
-
-    Task<bool> ChangeLevel(string accountName, AccountLevelType levelType);
+    Task<string> CreateAccount(string username, string password, AccountLevelType accountLevel = AccountLevelType.User);
 
     Task<UOAccountEntity> GetAccountByIdAsync(string accountId);
     Task<Result<UOAccountEntity>> LoginAsync(string username, string password);

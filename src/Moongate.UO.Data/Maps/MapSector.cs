@@ -62,12 +62,7 @@ public class MapSector
         /// Calculate world bounds of this sector
         var worldX = sectorX * MapSectorConsts.SectorSize;
         var worldY = sectorY * MapSectorConsts.SectorSize;
-        Bounds = new Rectangle2D(worldX, worldY, MapSectorConsts.SectorSize, MapSectorConsts.SectorSize);
-    }
-
-    public override string ToString()
-    {
-        return $"Sector({MapIndex}, {SectorX}, {SectorY}) [{Bounds}]";
+        Bounds = new(worldX, worldY, MapSectorConsts.SectorSize, MapSectorConsts.SectorSize);
     }
 
     /// <summary>
@@ -95,10 +90,17 @@ public class MapSector
     /// </summary>
     public void AddEntity(IPositionEntity entity)
     {
-        if (entity == null) return;
+        if (entity == null)
+        {
+            return;
+        }
 
         var serial = GetEntitySerial(entity);
-        if (serial == Serial.MinusOne) return;
+
+        if (serial == Serial.MinusOne)
+        {
+            return;
+        }
 
         /// Add to main collection
         _allEntities[serial] = entity;
@@ -108,6 +110,7 @@ public class MapSector
         {
             case UOMobileEntity mobile:
                 _mobiles[serial] = mobile;
+
                 if (mobile.IsPlayer)
                 {
                     _players[serial] = mobile;
@@ -117,39 +120,22 @@ public class MapSector
 
             case UOItemEntity item:
                 _items[serial] = item;
+
                 break;
         }
     }
 
     /// <summary>
-    /// Removes an entity from this sector
+    /// Checks if a point is within this sector's bounds
     /// </summary>
-    public void RemoveEntity(IPositionEntity entity)
-    {
-        if (entity == null) return;
-
-        var serial = GetEntitySerial(entity);
-        if (serial == Serial.MinusOne) return;
-
-        /// Remove from all collections
-        _allEntities.TryRemove(serial, out _);
-        _mobiles.TryRemove(serial, out _);
-        _items.TryRemove(serial, out _);
-        _players.TryRemove(serial, out _);
-    }
+    public bool ContainsPoint(Point3D point)
+        => Bounds.Contains(point.X, point.Y);
 
     /// <summary>
-    /// Gets a specific entity by serial
+    /// Gets all entities in this sector (for debugging/admin tools)
     /// </summary>
-    public T? GetEntity<T>(Serial serial) where T : class, IPositionEntity
-    {
-        if (_allEntities.TryGetValue(serial, out var entity))
-        {
-            return entity as T;
-        }
-
-        return null;
-    }
+    public IReadOnlyCollection<IPositionEntity> GetAllEntities()
+        => _allEntities.Values.ToList();
 
     /// <summary>
     /// Gets all entities of a specific type within range of a point
@@ -178,28 +164,35 @@ public class MapSector
     }
 
     /// <summary>
-    /// Gets all mobiles in this sector
+    /// Gets a specific entity by serial
     /// </summary>
-    public IReadOnlyCollection<UOMobileEntity> GetMobiles()
+    public T? GetEntity<T>(Serial serial) where T : class, IPositionEntity
     {
-        return _mobiles.Values.ToList();
+        if (_allEntities.TryGetValue(serial, out var entity))
+        {
+            return entity as T;
+        }
+
+        return null;
     }
 
     /// <summary>
     /// Gets all items in this sector
     /// </summary>
     public IReadOnlyCollection<UOItemEntity> GetItems()
-    {
-        return _items.Values.ToList();
-    }
+        => _items.Values.ToList();
+
+    /// <summary>
+    /// Gets all mobiles in this sector
+    /// </summary>
+    public IReadOnlyCollection<UOMobileEntity> GetMobiles()
+        => _mobiles.Values.ToList();
 
     /// <summary>
     /// Gets all players in this sector
     /// </summary>
     public IReadOnlyCollection<UOMobileEntity> GetPlayers()
-    {
-        return _players.Values.ToList();
-    }
+        => _players.Values.ToList();
 
     /// <summary>
     /// Gets all players in this sector within range of a point
@@ -220,20 +213,47 @@ public class MapSector
     }
 
     /// <summary>
-    /// Gets all entities in this sector (for debugging/admin tools)
+    /// Gets sector statistics for monitoring
     /// </summary>
-    public IReadOnlyCollection<IPositionEntity> GetAllEntities()
-    {
-        return _allEntities.Values.ToList();
-    }
+    public SectorStats GetStats()
+        => new()
+        {
+            MapIndex = MapIndex,
+            SectorX = SectorX,
+            SectorY = SectorY,
+            TotalEntities = EntityCount,
+            MobileCount = MobileCount,
+            ItemCount = ItemCount,
+            PlayerCount = PlayerCount,
+            Bounds = Bounds
+        };
 
     /// <summary>
-    /// Checks if a point is within this sector's bounds
+    /// Removes an entity from this sector
     /// </summary>
-    public bool ContainsPoint(Point3D point)
+    public void RemoveEntity(IPositionEntity entity)
     {
-        return Bounds.Contains(point.X, point.Y);
+        if (entity == null)
+        {
+            return;
+        }
+
+        var serial = GetEntitySerial(entity);
+
+        if (serial == Serial.MinusOne)
+        {
+            return;
+        }
+
+        /// Remove from all collections
+        _allEntities.TryRemove(serial, out _);
+        _mobiles.TryRemove(serial, out _);
+        _items.TryRemove(serial, out _);
+        _players.TryRemove(serial, out _);
     }
+
+    public override string ToString()
+        => $"Sector({MapIndex}, {SectorX}, {SectorY}) [{Bounds}]";
 
     /// <summary>
     /// Extracts serial from an entity
@@ -245,24 +265,6 @@ public class MapSector
             UOMobileEntity mobile => mobile.Id,
             UOItemEntity item     => item.Id,
             _                     => Serial.MinusOne
-        };
-    }
-
-    /// <summary>
-    /// Gets sector statistics for monitoring
-    /// </summary>
-    public SectorStats GetStats()
-    {
-        return new SectorStats
-        {
-            MapIndex = MapIndex,
-            SectorX = SectorX,
-            SectorY = SectorY,
-            TotalEntities = EntityCount,
-            MobileCount = MobileCount,
-            ItemCount = ItemCount,
-            PlayerCount = PlayerCount,
-            Bounds = Bounds
         };
     }
 }

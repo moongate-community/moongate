@@ -8,14 +8,10 @@ public class DrawGamePlayerPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
 
-    public DrawGamePlayerPacket() : base(0x20)
-    {
-    }
+    public DrawGamePlayerPacket() : base(0x20) { }
 
     public DrawGamePlayerPacket(UOMobileEntity mobile) : this()
-    {
-        Mobile = mobile;
-    }
+        => Mobile = mobile;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -38,7 +34,7 @@ BYTE[1] zLoc
         writer.Write((short)Mobile.Body);
         writer.Write((byte)0); // unknown1
         writer.Write((ushort)Mobile.SkinHue);
-        writer.Write((byte)Mobile.GetPacketFlags(true)); // flag byte
+        writer.Write(Mobile.GetPacketFlags(true)); // flag byte
 
         writer.Write((ushort)Mobile.X);       // 2 bytes (xLoc)
         writer.Write((ushort)Mobile.Y);       // 2 bytes (yLoc)

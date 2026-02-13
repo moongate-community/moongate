@@ -5,7 +5,6 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.UO.Data.Events.GameSessions;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
-using Moongate.UO.Interfaces;
 using Moongate.UO.Interfaces.Services;
 using Serilog;
 using ZLinq;
@@ -37,31 +36,26 @@ public class GameSessionService : IGameSessionService
         _networkService.OnClientDisconnected += OnClientDisconnected;
     }
 
-    private void OnClientDisconnected(string clientId, MoongateTcpClient client)
+    public void Dispose() { }
+
+    public GameSession? GetGameSessionByMobile(UOMobileEntity mobile, bool throwIfNotFound = true)
     {
-        if (_sessions.TryRemove(clientId, out var session))
+        var session = _sessions.Values
+                               .AsValueEnumerable()
+                               .FirstOrDefault(s => s.Mobile.Id == mobile.Id);
+
+        if (session != null)
         {
-            GameSessionBeforeDestroy?.Invoke(session);
-            _logger.Debug("Client {ClientId} disconnected, removing session.", clientId);
-            _eventBusService.PublishAsync(new GameSessionDisconnectedEvent(clientId));
-            session.Dispose();
-            _sessionPool.Return(session);
-            GameSessionDestroyed?.Invoke(session);
+            return session;
         }
+
+        if (throwIfNotFound)
+        {
+            throw new KeyNotFoundException($"Session for mobile {mobile.Id} not found.");
+        }
+
+        return null;
     }
-
-    private void OnClientConnected(string clientId, MoongateTcpClient client)
-    {
-        _logger.Debug("Client {ClientId} connected, adding session.", clientId);
-        var newSession = _sessionPool.Get();
-        newSession.SessionId = clientId;
-        newSession.NetworkClient = client;
-        _sessions[clientId] = newSession;
-
-        _eventBusService.PublishAsync(new GameSessionCreatedEvent(clientId, newSession));
-        GameSessionCreated?.Invoke(newSession);
-    }
-
 
     public GameSession? GetSession(string sessionId, bool throwIfNotFound = true)
     {
@@ -78,40 +72,37 @@ public class GameSessionService : IGameSessionService
         return null;
     }
 
-    public GameSession? GetGameSessionByMobile(UOMobileEntity mobile, bool throwIfNotFound = true)
-    {
-        var session = _sessions.Values.AsValueEnumerable()
-            .FirstOrDefault(s => s.Mobile.Id == mobile.Id);
-
-        if (session != null)
-        {
-            return session;
-        }
-
-        if (throwIfNotFound)
-        {
-            throw new KeyNotFoundException($"Session for mobile {mobile.Id} not found.");
-        }
-
-        return null;
-    }
-
     public IEnumerable<GameSession> GetSessions()
-    {
-        return _sessions.Values;
-    }
-
-    public IEnumerable<GameSession> QuerySessions(Func<GameSession, bool> predicate)
-    {
-        return _sessions.Values.AsValueEnumerable().Where(predicate).ToList();
-    }
+        => _sessions.Values;
 
     public GameSession? QuerySessionFirstOrDefault(Func<GameSession, bool> predicate)
+        => _sessions.Values.AsValueEnumerable().FirstOrDefault(predicate);
+
+    public IEnumerable<GameSession> QuerySessions(Func<GameSession, bool> predicate)
+        => _sessions.Values.AsValueEnumerable().Where(predicate).ToList();
+
+    private void OnClientConnected(string clientId, MoongateTcpClient client)
     {
-        return _sessions.Values.AsValueEnumerable().FirstOrDefault(predicate);
+        _logger.Debug("Client {ClientId} connected, adding session.", clientId);
+        var newSession = _sessionPool.Get();
+        newSession.SessionId = clientId;
+        newSession.NetworkClient = client;
+        _sessions[clientId] = newSession;
+
+        _eventBusService.PublishAsync(new GameSessionCreatedEvent(clientId, newSession));
+        GameSessionCreated?.Invoke(newSession);
     }
 
-    public void Dispose()
+    private void OnClientDisconnected(string clientId, MoongateTcpClient client)
     {
+        if (_sessions.TryRemove(clientId, out var session))
+        {
+            GameSessionBeforeDestroy?.Invoke(session);
+            _logger.Debug("Client {ClientId} disconnected, removing session.", clientId);
+            _eventBusService.PublishAsync(new GameSessionDisconnectedEvent(clientId));
+            session.Dispose();
+            _sessionPool.Return(session);
+            GameSessionDestroyed?.Invoke(session);
+        }
     }
 }

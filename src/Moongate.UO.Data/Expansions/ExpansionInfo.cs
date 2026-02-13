@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
-using Moongate.Uo.Data.Types;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
 
@@ -11,14 +10,6 @@ public class ExpansionInfo
 {
     public static bool ForceOldAnimations { get; private set; }
 
-
-    public static void StoreMapSelection(MapSelectionFlags mapSelectionFlags, Expansion expansion)
-    {
-        int expansionIndex = (int)expansion;
-        Table[expansionIndex].MapSelectionFlags = mapSelectionFlags;
-    }
-
-
     public ExpansionInfo(
         int id,
         string name,
@@ -27,9 +18,9 @@ public class ExpansionInfo
         CharacterListFlags charListFlags,
         HousingFlags customHousingFlag,
         int mobileStatusVersion,
-        MapSelectionFlags mapSelectionFlags
-    ) : this(id, name, supportedFeatures, charListFlags, customHousingFlag, mobileStatusVersion, mapSelectionFlags) =>
-        ClientFlags = clientFlags;
+        UOMapSelectionFlags mapSelectionFlags
+    ) : this(id, name, supportedFeatures, charListFlags, customHousingFlag, mobileStatusVersion, mapSelectionFlags)
+        => ClientFlags = clientFlags;
 
     public ExpansionInfo(
         int id,
@@ -39,9 +30,9 @@ public class ExpansionInfo
         CharacterListFlags charListFlags,
         HousingFlags customHousingFlag,
         int mobileStatusVersion,
-        MapSelectionFlags mapSelectionFlags
-    ) : this(id, name, supportedFeatures, charListFlags, customHousingFlag, mobileStatusVersion, mapSelectionFlags) =>
-        RequiredClient = requiredClient;
+        UOMapSelectionFlags mapSelectionFlags
+    ) : this(id, name, supportedFeatures, charListFlags, customHousingFlag, mobileStatusVersion, mapSelectionFlags)
+        => RequiredClient = requiredClient;
 
     [JsonConstructor]
     public ExpansionInfo(
@@ -51,7 +42,7 @@ public class ExpansionInfo
         CharacterListFlags characterListFlags,
         HousingFlags housingFlags,
         int mobileStatusVersion,
-        MapSelectionFlags mapSelectionFlags
+        UOMapSelectionFlags mapSelectionFlags
     )
     {
         Id = id;
@@ -61,10 +52,10 @@ public class ExpansionInfo
         CharacterListFlags = characterListFlags;
         HousingFlags = housingFlags;
         MobileStatusVersion = mobileStatusVersion;
-        MapSelectionFlags = mapSelectionFlags;
+        UOMapSelectionFlags = mapSelectionFlags;
     }
 
-    public static ExpansionInfo CoreExpansion => GetInfo(Expansion.EJ);
+    public static ExpansionInfo CoreExpansion => GetInfo(UOExpansion.EJ);
 
     public static ExpansionInfo[] Table { get; set; }
 
@@ -86,10 +77,11 @@ public class ExpansionInfo
 
     public int MobileStatusVersion { get; set; }
 
-    [JsonConverter(typeof(FlagsConverter<MapSelectionFlags>))]
-    public MapSelectionFlags MapSelectionFlags { get; set; }
+    [JsonConverter(typeof(FlagsConverter<UOMapSelectionFlags>))]
+    public UOMapSelectionFlags UOMapSelectionFlags { get; set; }
 
-    public static ExpansionInfo GetInfo(Expansion ex) => GetInfo((int)ex);
+    public static ExpansionInfo GetInfo(UOExpansion ex)
+        => GetInfo((int)ex);
 
     public static ExpansionInfo GetInfo(int ex)
     {
@@ -103,5 +95,12 @@ public class ExpansionInfo
         return Table[v];
     }
 
-    public override string ToString() => Name;
+    public static void StoreMapSelection(UOMapSelectionFlags mapSelectionFlags, UOExpansion expansion)
+    {
+        var expansionIndex = (int)expansion;
+        Table[expansionIndex].UOMapSelectionFlags = mapSelectionFlags;
+    }
+
+    public override string ToString()
+        => Name;
 }

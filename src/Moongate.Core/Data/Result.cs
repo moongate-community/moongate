@@ -15,27 +15,20 @@ public class Result<TData>
         ErrorMessage = errorMessage;
     }
 
-    public static Result<TData> Success(TData value)
-    {
-        return new Result<TData>(value, true);
-    }
-
-    public static Result<TData> Failure(string errorMessage)
-    {
-        return new Result<TData>(default, false, errorMessage);
-    }
-
-    public static Builder CreateBuilder() => new Builder();
-
     public class Builder
     {
         private TData? _value;
         private bool _isSuccess;
         private string? _errorMessage;
 
-        public Builder WithValue(TData? value)
+        public Result<TData> Build()
+            => new(_value, _isSuccess, _errorMessage);
+
+        public Builder Failure(string errorMessage)
         {
-            _value = value;
+            _isSuccess = false;
+            _errorMessage = errorMessage;
+
             return this;
         }
 
@@ -43,19 +36,24 @@ public class Result<TData>
         {
             _isSuccess = true;
             _errorMessage = null;
+
             return this;
         }
 
-        public Builder Failure(string errorMessage)
+        public Builder WithValue(TData? value)
         {
-            _isSuccess = false;
-            _errorMessage = errorMessage;
-            return this;
-        }
+            _value = value;
 
-        public Result<TData> Build()
-        {
-            return new Result<TData>(_value, _isSuccess, _errorMessage);
+            return this;
         }
     }
+
+    public static Builder CreateBuilder()
+        => new();
+
+    public static Result<TData> Failure(string errorMessage)
+        => new(default, false, errorMessage);
+
+    public static Result<TData> Success(TData value)
+        => new(value, true);
 }

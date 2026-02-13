@@ -1,6 +1,5 @@
 using DryIoc;
 using Moongate.Core.Server.Data.Configs.Runtime;
-using Moongate.Core.Server.Extensions;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 
@@ -18,7 +17,7 @@ public static class MoongateContext
     public static INetworkService NetworkService => Container.Resolve<INetworkService>();
 
     /// <summary>
-    ///  Enqueues an action to be executed in the event loop with a specified priority.
+    /// Enqueues an action to be executed in the event loop with a specified priority.
     /// </summary>
     /// <param name="source"></param>
     /// <param name="action"></param>

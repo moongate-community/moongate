@@ -23,16 +23,16 @@ public static class SpeechHues
     public const short Yellow = 0x36;
 
     /// Yellow for notifications
-    public const short System = 0x482; /// System message hue
+    public const short System = 0x482;
 
+    /// System message hue
     /// <summary>
     /// Default font for all speech (standard UO font)
     /// </summary>
     public const int DefaultFont = 3;
 
     /// <summary>
-    ///  Default graphic for speech (standard UO speech graphic)
+    /// Default graphic for speech (standard UO speech graphic)
     /// </summary>
     public const int DefaultGraphic = 0;
-
 }

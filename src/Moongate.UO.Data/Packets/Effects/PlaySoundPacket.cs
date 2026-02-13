@@ -10,9 +10,7 @@ public class PlaySoundPacket : BaseUoPacket
     public ushort SoundId { get; set; }
     public bool IsLoop { get; set; }
 
-    public PlaySoundPacket() : base(0x54)
-    {
-    }
+    public PlaySoundPacket() : base(0x54) { }
 
     public PlaySoundPacket(IPositionEntity entity, ushort soundId, bool isLoop = false) : this()
     {
@@ -30,6 +28,7 @@ public class PlaySoundPacket : BaseUoPacket
         writer.Write((short)Entity.Location.X);
         writer.Write((short)Entity.Location.Y);
         writer.Write((short)Entity.Location.Z);
+
         return writer.ToArray();
     }
 }

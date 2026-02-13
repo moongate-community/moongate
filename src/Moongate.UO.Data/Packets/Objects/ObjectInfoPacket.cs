@@ -58,9 +58,7 @@ public class ObjectInfoPacket : BaseUoPacket
     /// Default constructor
     /// </summary>
     public ObjectInfoPacket() : base(0x1A)
-    {
-        Location = new Point3D();
-    }
+        => Location = new();
 
     /// <summary>
     /// Constructor with basic object information
@@ -110,6 +108,7 @@ public class ObjectInfoPacket : BaseUoPacket
                 break;
             case LootType.Regular:
                 flags |= ObjectInfoFlags.Movable;
+
                 break;
         }
 
@@ -131,9 +130,14 @@ public class ObjectInfoPacket : BaseUoPacket
     /// <param name="dye">Dye/Hue color (optional)</param>
     /// <param name="flags">Object flags (optional)</param>
     public ObjectInfoPacket(
-        Serial objectId, ushort graphic, Point3D location,
-        ushort? itemCount = null, byte? incrementCounter = null,
-        byte? facing = null, ushort? dye = null, ObjectInfoFlags? flags = null
+        Serial objectId,
+        ushort graphic,
+        Point3D location,
+        ushort? itemCount = null,
+        byte? incrementCounter = null,
+        byte? facing = null,
+        ushort? dye = null,
+        ObjectInfoFlags? flags = null
     ) : this()
     {
         ObjectId = objectId;
@@ -145,6 +149,14 @@ public class ObjectInfoPacket : BaseUoPacket
         Dye = dye;
         Flags = flags;
     }
+
+    /// <summary>
+    /// Get a string representation of the packet
+    /// </summary>
+    /// <returns>String description</returns>
+    public override string ToString()
+        => $"ObjectInfoPacket [0x{OpCode:X2}]: ObjectId={ObjectId}, Graphic=0x{Graphic:X4}, " +
+           $"Location={Location}, ItemCount={ItemCount}, Facing={Facing}, Dye=0x{Dye:X4}, Flags={Flags}";
 
     /// <summary>
     /// Write packet data to buffer
@@ -161,7 +173,8 @@ public class ObjectInfoPacket : BaseUoPacket
         writer.Write((ushort)packetSize);
 
         /// Write object ID with flags if needed
-        uint objectIdToWrite = ObjectId.Value;
+        var objectIdToWrite = ObjectId.Value;
+
         if (ItemCount.HasValue)
         {
             objectIdToWrite |= 0x80000000; /// Set flag for item count
@@ -170,7 +183,8 @@ public class ObjectInfoPacket : BaseUoPacket
         writer.Write(objectIdToWrite);
 
         /// Write graphic with flags if needed
-        ushort graphicToWrite = Graphic;
+        var graphicToWrite = Graphic;
+
         if (IncrementCounter.HasValue)
         {
             graphicToWrite |= 0x8000; /// Set flag for increment counter
@@ -191,7 +205,8 @@ public class ObjectInfoPacket : BaseUoPacket
         }
 
         /// Write X location with flags if needed (only use lowest 15 bits)
-        ushort xLocToWrite = (ushort)(Location.X & 0x7FFF);
+        var xLocToWrite = (ushort)(Location.X & 0x7FFF);
+
         if (Facing.HasValue)
         {
             xLocToWrite |= 0x8000; /// Set flag for facing
@@ -200,7 +215,8 @@ public class ObjectInfoPacket : BaseUoPacket
         writer.Write(xLocToWrite);
 
         /// Write Y location with flags if needed
-        ushort yLocToWrite = (ushort)Location.Y;
+        var yLocToWrite = (ushort)Location.Y;
+
         if (Dye.HasValue)
         {
             yLocToWrite |= 0x8000; /// Set flag for dye
@@ -274,15 +290,5 @@ public class ObjectInfoPacket : BaseUoPacket
         }
 
         return size;
-    }
-
-    /// <summary>
-    /// Get a string representation of the packet
-    /// </summary>
-    /// <returns>String description</returns>
-    public override string ToString()
-    {
-        return $"ObjectInfoPacket [0x{OpCode:X2}]: ObjectId={ObjectId}, Graphic=0x{Graphic:X4}, " +
-               $"Location={Location}, ItemCount={ItemCount}, Facing={Facing}, Dye=0x{Dye:X4}, Flags={Flags}";
     }
 }

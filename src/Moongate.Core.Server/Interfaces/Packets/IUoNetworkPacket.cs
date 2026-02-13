@@ -9,5 +9,4 @@ public interface IUoNetworkPacket
     bool Read(ReadOnlyMemory<byte> data);
 
     ReadOnlyMemory<byte> Write(SpanWriter writer);
-
 }

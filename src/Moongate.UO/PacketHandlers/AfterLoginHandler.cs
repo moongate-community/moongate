@@ -3,7 +3,6 @@ using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Events.Characters;
 using Moongate.UO.Data.Events.Features;
-using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Effects;
@@ -29,11 +28,12 @@ public class AfterLoginHandler : IMoongateService
 
     private readonly ISpatialWorldService _spatialWorldService;
 
-
     private readonly ILogger _logger = Log.ForContext<AfterLoginHandler>();
 
     public AfterLoginHandler(
-        IGameSessionService gameSessionService, IEventBusService eventBusService, IMobileService mobileService,
+        IGameSessionService gameSessionService,
+        IEventBusService eventBusService,
+        IMobileService mobileService,
         ISpatialWorldService spatialWorldService
     )
     {
@@ -43,10 +43,11 @@ public class AfterLoginHandler : IMoongateService
         _eventBusService.Subscribe<CharacterLoggedEvent>(OnCharacterLogged);
     }
 
+    public void Dispose() { }
+
     private async Task OnCharacterLogged(CharacterLoggedEvent @event)
     {
         var session = _gameSessionService.GetSession(@event.SessionId);
-
 
         session.SendPackets(new ClientVersionPacket());
         session.SendPackets(new LoginConfigPacket(session.Mobile));
@@ -65,7 +66,6 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new OverallLightLevelPacket(LightLevelType.Day));
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
-
 
         var keys = new List<uint>();
 
@@ -86,8 +86,6 @@ public class AfterLoginHandler : IMoongateService
 
         var music = _spatialWorldService.GetMusicFromLocation(session.Mobile.Location, session.Mobile.Map.MapID);
 
-
-
         session.SendPackets(new PlayMusicPacket(music));
 
         session.SendPackets(new PaperdollPacket(session.Mobile));
@@ -100,10 +98,5 @@ public class AfterLoginHandler : IMoongateService
                 await _eventBusService.PublishAsync(new CharacterInGameEvent(session, session.Mobile));
             }
         );
-    }
-
-
-    public void Dispose()
-    {
     }
 }

@@ -10,7 +10,7 @@ public interface IEntityFactoryService : IMoongateAutostartService
     UOItemEntity CreateItemEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null);
     UOMobileEntity CreateMobileEntity(string templateOrCategoryOrTag, Dictionary<string, object> overrides = null);
 
-    Task LoadTemplatesAsync(string filePath);
-
     UOItemEntity GetNewBackpack();
+
+    Task LoadTemplatesAsync(string filePath);
 }

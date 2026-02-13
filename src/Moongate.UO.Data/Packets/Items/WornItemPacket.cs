@@ -1,4 +1,3 @@
-using DryIoc.ImTools;
 using Moongate.Core.Server.Packets;
 using Moongate.Core.Spans;
 using Moongate.UO.Data.Persistence.Entities;
@@ -12,9 +11,7 @@ public class WornItemPacket : BaseUoPacket
     public ItemLayerType Layer { get; set; }
     public UOMobileEntity Mobile { get; set; }
 
-    public WornItemPacket() : base(0x2E)
-    {
-    }
+    public WornItemPacket() : base(0x2E) { }
 
     public WornItemPacket(UOMobileEntity mobile, ItemReference item, ItemLayerType layer) : this()
     {
@@ -40,6 +37,7 @@ public class WornItemPacket : BaseUoPacket
         writer.Write((byte)Layer);
         writer.Write(Mobile.Id.Value);
         writer.Write((ushort)Item.Hue);
+
         return writer.ToArray();
     }
 }

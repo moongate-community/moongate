@@ -15,9 +15,7 @@ public class SkillLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<SkillLoader>();
 
     public SkillLoader(DirectoriesConfig directoriesConfig)
-    {
-        _directoriesConfig = directoriesConfig;
-    }
+        => _directoriesConfig = directoriesConfig;
 
     public async Task LoadAsync()
     {
@@ -25,7 +23,6 @@ public class SkillLoader : IFileLoader
             JsonUtils.DeserializeFromFile<SkillInfo[]>(Path.Combine(_directoriesConfig[DirectoryType.Data], "skills.json"));
 
         SkillInfo.Table = UOContext.SkillsInfo;
-
 
         _logger.Information("Loaded {Count} skills from skills.json", UOContext.SkillsInfo?.Length ?? 0);
     }

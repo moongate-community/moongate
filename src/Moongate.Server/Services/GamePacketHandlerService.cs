@@ -17,9 +17,10 @@ public class GamePacketHandlerService : IGamePacketHandlerService
 
     private readonly Dictionary<Type, List<IGamePacketHandler>> _packetHandlers = new();
 
-
     public GamePacketHandlerService(
-        INetworkService networkService, IContainer container, IGameSessionService gameSessionService
+        INetworkService networkService,
+        IContainer container,
+        IGameSessionService gameSessionService
     )
     {
         _networkService = networkService;
@@ -27,7 +28,10 @@ public class GamePacketHandlerService : IGamePacketHandlerService
         _gameSessionService = gameSessionService;
     }
 
-    public void RegisterGamePacketHandler<TPacket, TGamePacketHandler>() where TPacket : IUoNetworkPacket, new()
+    public void Dispose() { }
+
+    public void RegisterGamePacketHandler<TPacket, TGamePacketHandler>()
+        where TPacket : IUoNetworkPacket, new()
         where TGamePacketHandler : IGamePacketHandler
     {
         if (!_container.IsRegistered<TGamePacketHandler>())
@@ -49,14 +53,12 @@ public class GamePacketHandlerService : IGamePacketHandlerService
             _networkService.BindPacket<TPacket>();
         }
 
-
         if (!_packetHandlers.TryGetValue(typeof(TPacket), out var handlers))
         {
             _packetHandlers[typeof(TPacket)] = [];
         }
 
         _packetHandlers[typeof(TPacket)].Add(_container.Resolve<TGamePacketHandler>());
-
 
         _networkService.RegisterPacketHandler<TPacket>(OnPacketReceived);
     }
@@ -83,9 +85,5 @@ public class GamePacketHandlerService : IGamePacketHandlerService
                 throw;
             }
         }
-    }
-
-    public void Dispose()
-    {
     }
 }

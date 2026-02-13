@@ -8,12 +8,10 @@ namespace Moongate.Server.Wraps;
 
 public class AiBrainWrap : BaseWrap, IAiBrainAction
 {
-
-    public AiBrainWrap(
-        IScriptEngineService scriptEngineService, JsValue executeCallback
-    ) : base(scriptEngineService, executeCallback)
-    {
-    }
+    public AiBrainWrap(IScriptEngineService scriptEngineService, JsValue executeCallback) : base(
+        scriptEngineService,
+        executeCallback
+    ) { }
 
     public void Execute(AiContext context)
     {

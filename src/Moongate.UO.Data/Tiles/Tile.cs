@@ -28,18 +28,6 @@ public struct Tile : IComparable
         m_Z = z;
     }
 
-    public void Set(ushort id, sbyte z)
-    {
-        m_ID = id;
-        m_Z = z;
-    }
-
-    public void Set(ushort id, sbyte z, sbyte flag)
-    {
-        m_ID = id;
-        m_Z = z;
-    }
-
     public int CompareTo(object x)
     {
         if (x == null)
@@ -58,19 +46,21 @@ public struct Tile : IComparable
         {
             return 1;
         }
-        else if (a.m_Z > m_Z)
+
+        if (a.m_Z > m_Z)
         {
             return -1;
         }
 
-        ItemData ourData = TileData.ItemTable[m_ID];
-        ItemData theirData = TileData.ItemTable[a.m_ID];
+        var ourData = TileData.ItemTable[m_ID];
+        var theirData = TileData.ItemTable[a.m_ID];
 
         if (ourData.Height > theirData.Height)
         {
             return 1;
         }
-        else if (theirData.Height > ourData.Height)
+
+        if (theirData.Height > ourData.Height)
         {
             return -1;
         }
@@ -79,11 +69,24 @@ public struct Tile : IComparable
         {
             return -1;
         }
-        else if (theirData.Background && !ourData.Background)
+
+        if (theirData.Background && !ourData.Background)
         {
             return 1;
         }
 
         return 0;
+    }
+
+    public void Set(ushort id, sbyte z)
+    {
+        m_ID = id;
+        m_Z = z;
+    }
+
+    public void Set(ushort id, sbyte z, sbyte flag)
+    {
+        m_ID = id;
+        m_Z = z;
     }
 }

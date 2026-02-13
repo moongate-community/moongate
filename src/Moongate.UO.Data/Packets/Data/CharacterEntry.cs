@@ -8,13 +8,13 @@ public sealed class CharacterEntry
 
     public string Password { get; set; }
 
-
     public CharacterEntry(string name = "", string password = "")
     {
         Name = name;
         Password = password;
     }
 
+    public static int Lenght => 60;
 
     public byte[] ToArray()
     {
@@ -25,6 +25,4 @@ public sealed class CharacterEntry
 
         return pr.Span.ToArray();
     }
-
-    public static int Lenght => 60;
 }

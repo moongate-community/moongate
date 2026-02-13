@@ -6,7 +6,7 @@ public interface ITimerService : IMoongateAutostartService
 {
     string RegisterTimer(string name, double intervalInMs, Action callback, double delayInMs = 0, bool repeat = false);
 
-    void UnregisterTimer(string timerId);
-
     void UnregisterAllTimers();
+
+    void UnregisterTimer(string timerId);
 }

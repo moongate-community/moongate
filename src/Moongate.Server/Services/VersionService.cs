@@ -6,22 +6,23 @@ namespace Moongate.Server.Services;
 
 public class VersionService : IVersionService
 {
-
     public VersionService()
     {
         var versionInfo = GetVersionInfo();
     }
+
+    public void Dispose() { }
 
     public VersionInfoData GetVersionInfo()
     {
         var version = typeof(VersionService).Assembly.GetName().Version;
 
         var codename = Assembly.GetExecutingAssembly()
-            .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .FirstOrDefault(attr => attr.Key == "Codename")
-            ?.Value;
+                               .GetCustomAttributes<AssemblyMetadataAttribute>()
+                               .FirstOrDefault(attr => attr.Key == "Codename")
+                               ?.Value;
 
-        return new VersionInfoData(
+        return new(
             "Moongate",
             codename,
             version.ToString(),
@@ -31,18 +32,9 @@ public class VersionService : IVersionService
         );
     }
 
-    public void Dispose()
-    {
-
-    }
-
     public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 
     public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 }

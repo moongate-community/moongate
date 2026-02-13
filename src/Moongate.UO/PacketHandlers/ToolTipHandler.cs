@@ -12,9 +12,7 @@ public class ToolTipHandler : IGamePacketHandler
     private readonly IMegaClilocService _megaClilocService;
 
     public ToolTipHandler(IMegaClilocService megaClilocService)
-    {
-        _megaClilocService = megaClilocService;
-    }
+        => _megaClilocService = megaClilocService;
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {

@@ -14,9 +14,7 @@ public class ContainersDataLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<ContainersDataLoader>();
 
     public ContainersDataLoader(DirectoriesConfig directoriesConfig)
-    {
-        _directoriesConfig = directoriesConfig;
-    }
+        => _directoriesConfig = directoriesConfig;
 
     public async Task LoadAsync()
     {
@@ -33,7 +31,7 @@ public class ContainersDataLoader : IFileLoader
                 _logger.Debug("Adding {JsonContainerSize}", containerSize);
                 ContainerLayoutSystem.ContainerSizes.Add(
                     containerSize.ItemId,
-                    new ContainerSize(containerSize.Width, containerSize.Height, containerSize.Name)
+                    new(containerSize.Width, containerSize.Height, containerSize.Name)
                 );
             }
         }

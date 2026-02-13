@@ -19,24 +19,30 @@ public class DefaultAiStateMachine
     public DefaultAiStateMachine(string initialState, int maxHistory = 50)
     {
         CurrentState = initialState;
-        _transitions = new Dictionary<string, Dictionary<string, string>>();
-        _conditionalTransitions = new Dictionary<string, Dictionary<string, Func<bool>>>();
-        _callbacks = new List<Action<string, string, string>>();
-        _history = new Queue<StateTransition>(maxHistory);
+        _transitions = new();
+        _conditionalTransitions = new();
+        _callbacks = new();
+        _history = new(maxHistory);
         _maxHistory = maxHistory;
     }
 
     /// <summary>
-    /// Add transition rule - O(1) performance
+    /// State transition record for history tracking
     /// </summary>
-    public void AddTransition(string from, string onEvent, string to)
+    public readonly struct StateTransition
     {
-        if (!_transitions.ContainsKey(from))
-        {
-            _transitions[from] = new Dictionary<string, string>();
-        }
+        public readonly string FromState;
+        public readonly string ToState;
+        public readonly string Event;
+        public readonly DateTime Timestamp;
 
-        _transitions[from][onEvent] = to;
+        public StateTransition(string from, string to, string eventTrigger, DateTime timestamp)
+        {
+            FromState = from;
+            ToState = to;
+            Event = eventTrigger;
+            Timestamp = timestamp;
+        }
     }
 
     /// <summary>
@@ -50,10 +56,79 @@ public class DefaultAiStateMachine
         /// Store condition
         if (!_conditionalTransitions.ContainsKey(from))
         {
-            _conditionalTransitions[from] = new Dictionary<string, Func<bool>>();
+            _conditionalTransitions[from] = new();
         }
 
         _conditionalTransitions[from][onEvent] = condition;
+    }
+
+    /// <summary>
+    /// Add callback for state changes - ultra fast Action delegate
+    /// </summary>
+    public void AddStateChangeListener(Action<string, string, string> callback)
+    {
+        _callbacks.Add(callback);
+    }
+
+    /// <summary>
+    /// Add transition rule - O(1) performance
+    /// </summary>
+    public void AddTransition(string from, string onEvent, string to)
+    {
+        if (!_transitions.ContainsKey(from))
+        {
+            _transitions[from] = new();
+        }
+
+        _transitions[from][onEvent] = to;
+    }
+
+    /// <summary>
+    /// Check if transition is valid without executing
+    /// </summary>
+    public bool CanTransition(string eventTrigger)
+        => _transitions.TryGetValue(CurrentState, out var stateTransitions) &&
+           stateTransitions.ContainsKey(eventTrigger);
+
+    /// <summary>
+    /// Get available events from current state
+    /// </summary>
+    public IEnumerable<string> GetAvailableEvents()
+    {
+        if (_transitions.TryGetValue(CurrentState, out var stateTransitions))
+        {
+            return stateTransitions.Keys;
+        }
+
+        return Array.Empty<string>();
+    }
+
+    /// <summary>
+    /// Get recent transition history
+    /// </summary>
+    public StateTransition[] GetHistory(int limit = 10)
+    {
+        var historyArray = _history.ToArray();
+        var startIndex = Math.Max(0, historyArray.Length - limit);
+        var result = new StateTransition[Math.Min(limit, historyArray.Length)];
+        Array.Copy(historyArray, startIndex, result, 0, result.Length);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Remove callback for state changes
+    /// </summary>
+    public bool RemoveStateChangeListener(Action<string, string, string> callback)
+        => _callbacks.Remove(callback);
+
+    /// <summary>
+    /// Reset to specific state
+    /// </summary>
+    public void Reset(string newState)
+    {
+        CurrentState = newState;
+        _history.Clear();
     }
 
     /// <summary>
@@ -81,7 +156,8 @@ public class DefaultAiStateMachine
             catch (Exception ex)
             {
                 Log.ForContext<DefaultAiStateMachine>()
-                    .Warning(ex, "Conditional transition predicate error");
+                   .Warning(ex, "Conditional transition predicate error");
+
                 return false;
             }
         }
@@ -95,7 +171,7 @@ public class DefaultAiStateMachine
             _history.Dequeue();
         }
 
-        _history.Enqueue(new StateTransition(previousState, nextState, eventTrigger, DateTime.UtcNow));
+        _history.Enqueue(new(previousState, nextState, eventTrigger, DateTime.UtcNow));
 
         /// Notify callbacks efficiently
         NotifyCallbacks(previousState, nextState, eventTrigger);
@@ -104,49 +180,11 @@ public class DefaultAiStateMachine
     }
 
     /// <summary>
-    /// Check if transition is valid without executing
-    /// </summary>
-    public bool CanTransition(string eventTrigger)
-    {
-        return _transitions.TryGetValue(CurrentState, out var stateTransitions) &&
-               stateTransitions.ContainsKey(eventTrigger);
-    }
-
-    /// <summary>
-    /// Get available events from current state
-    /// </summary>
-    public IEnumerable<string> GetAvailableEvents()
-    {
-        if (_transitions.TryGetValue(CurrentState, out var stateTransitions))
-        {
-            return stateTransitions.Keys;
-        }
-
-        return Array.Empty<string>();
-    }
-
-    /// <summary>
-    /// Add callback for state changes - ultra fast Action delegate
-    /// </summary>
-    public void AddStateChangeListener(Action<string, string, string> callback)
-    {
-        _callbacks.Add(callback);
-    }
-
-    /// <summary>
-    /// Remove callback for state changes
-    /// </summary>
-    public bool RemoveStateChangeListener(Action<string, string, string> callback)
-    {
-        return _callbacks.Remove(callback);
-    }
-
-    /// <summary>
     /// Notify callbacks with maximum performance
     /// </summary>
     private void NotifyCallbacks(string from, string to, string eventTrigger)
     {
-        for (int i = 0; i < _callbacks.Count; i++)
+        for (var i = 0; i < _callbacks.Count; i++)
         {
             try
             {
@@ -157,48 +195,8 @@ public class DefaultAiStateMachine
             {
                 /// Log error without breaking state machine
                 Log.ForContext<DefaultAiStateMachine>()
-                    .Warning(ex, "State machine callback error");
+                   .Warning(ex, "State machine callback error");
             }
-        }
-    }
-
-    /// <summary>
-    /// Reset to specific state
-    /// </summary>
-    public void Reset(string newState)
-    {
-        CurrentState = newState;
-        _history.Clear();
-    }
-
-    /// <summary>
-    /// Get recent transition history
-    /// </summary>
-    public StateTransition[] GetHistory(int limit = 10)
-    {
-        var historyArray = _history.ToArray();
-        var startIndex = Math.Max(0, historyArray.Length - limit);
-        var result = new StateTransition[Math.Min(limit, historyArray.Length)];
-        Array.Copy(historyArray, startIndex, result, 0, result.Length);
-        return result;
-    }
-
-    /// <summary>
-    /// State transition record for history tracking
-    /// </summary>
-    public readonly struct StateTransition
-    {
-        public readonly string FromState;
-        public readonly string ToState;
-        public readonly string Event;
-        public readonly DateTime Timestamp;
-
-        public StateTransition(string from, string to, string eventTrigger, DateTime timestamp)
-        {
-            FromState = from;
-            ToState = to;
-            Event = eventTrigger;
-            Timestamp = timestamp;
         }
     }
 }
@@ -209,14 +207,14 @@ public class DefaultAiStateMachine
 /// </summary>
 public class AIStateMachineBrain : DefaultAiStateMachine
 {
-    private readonly string _brainId;
-
     public AIStateMachineBrain(string brainId, string initialState)
         : base(initialState)
     {
-        _brainId = brainId;
+        BrainId = brainId;
         SetupCommonAITransitions();
     }
+
+    public string BrainId { get; }
 
     /// <summary>
     /// Setup common AI state transitions
@@ -243,6 +241,4 @@ public class AIStateMachineBrain : DefaultAiStateMachine
         AddTransition("fleeing", "safe_distance", "idle");
         AddTransition("fleeing", "cornered", "combat");
     }
-
-    public string BrainId => _brainId;
 }

@@ -5,7 +5,7 @@ namespace Moongate.UO.Data.MegaCliloc;
 /// </summary>
 public static class CommonClilocIds
 {
-    #region Object Names and Basic Info
+#region Object Names and Basic Info
 
     /// <summary>
     /// Generic object name cliloc
@@ -41,9 +41,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint Insured = 1060848;
 
-    #endregion
+#endregion
 
-    #region Weapon Properties
+#region Weapon Properties
 
     /// <summary>
     /// Weapon Damage ~1_val~ - ~2_val~
@@ -70,9 +70,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint SwingSpeedIncrease = 1060486;
 
-    #endregion
+#endregion
 
-    #region Armor Properties
+#region Armor Properties
 
     /// <summary>
     /// Physical Resist ~1_val~%
@@ -104,9 +104,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint ArmorRating = 1060448;
 
-    #endregion
+#endregion
 
-    #region Creature Properties
+#region Creature Properties
 
     /// <summary>
     /// Hit Points ~1_val~ / ~2_val~
@@ -143,9 +143,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint TamingDifficulty = 1060578;
 
-    #endregion
+#endregion
 
-    #region Player Properties
+#region Player Properties
 
     /// <summary>
     /// Guild: ~1_val~
@@ -172,9 +172,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint Fame = 1060580;
 
-    #endregion
+#endregion
 
-    #region Special Properties
+#region Special Properties
 
     /// <summary>
     /// Slayer: ~1_val~
@@ -221,9 +221,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint StaminaRegeneration = 1060443;
 
-    #endregion
+#endregion
 
-    #region Skill Properties
+#region Skill Properties
 
     /// <summary>
     /// Skill Bonus: ~1_val~ +~2_val~
@@ -235,9 +235,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint AllSkills = 1060366;
 
-    #endregion
+#endregion
 
-    #region Container Properties
+#region Container Properties
 
     /// <summary>
     /// Contents: ~1_val~ items, ~2_val~ stones
@@ -249,9 +249,9 @@ public static class CommonClilocIds
     /// </summary>
     public const uint UsesRemaining = 1060584;
 
-    #endregion
+#endregion
 
-    #region Book Properties
+#region Book Properties
 
     /// <summary>
     /// Pages: ~1_val~
@@ -268,5 +268,5 @@ public static class CommonClilocIds
     /// </summary>
     public const uint BookTitle = 1060579;
 
-    #endregion
+#endregion
 }

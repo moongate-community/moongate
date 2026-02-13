@@ -4,7 +4,6 @@ namespace Moongate.Core.Extensions.Collections;
 
 public static class CollectionExtensions
 {
-
     public static T RandomElement<T>(this IReadOnlyCollection<T> collection)
     {
         if (collection == null || collection.Count == 0)
@@ -13,7 +12,7 @@ public static class CollectionExtensions
         }
 
         var randomIndex = BuiltInRng.Next(0, collection.Count);
+
         return collection.ElementAt(randomIndex);
     }
-
 }

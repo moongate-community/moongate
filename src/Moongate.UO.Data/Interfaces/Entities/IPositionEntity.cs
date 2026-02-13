@@ -9,5 +9,5 @@ public interface IPositionEntity
 
     Point3D Location { get; set; }
 
-   // void MoveTo(Point3D newLocation);
+    // void MoveTo(Point3D newLocation);
 }

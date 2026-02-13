@@ -28,6 +28,7 @@ public class HueValueConverter<T> : JsonConverter<T> where T : struct
             if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
                 var hexValue = Convert.ToInt32(str, 16);
+
                 return (T)Convert.ChangeType(hexValue, typeof(T));
             }
 
@@ -35,6 +36,7 @@ public class HueValueConverter<T> : JsonConverter<T> where T : struct
             if (IsHexString(str))
             {
                 var hexValue = Convert.ToInt32(str, 16);
+
                 return (T)Convert.ChangeType(hexValue, typeof(T));
             }
         }
@@ -58,35 +60,42 @@ public class HueValueConverter<T> : JsonConverter<T> where T : struct
     }
 
     /// <summary>
-    /// Parses hue expressions like "hue(1:50)" and returns a random value in the range
-    /// </summary>
-    private static object ParseHueExpression(string expression, Type targetType)
-    {
-        var match = Regex.Match(expression, @"hue\((\d+):(\d+)\)");
-        if (!match.Success)
-            throw new JsonException($"Invalid hue expression: {expression}. Expected format: hue(min:max)");
-
-        var minStr = match.Groups[1].Value;
-        var maxStr = match.Groups[2].Value;
-
-        if (!int.TryParse(minStr, out var min) || !int.TryParse(maxStr, out var max))
-            throw new JsonException($"Invalid hue range values in: {expression}");
-
-        if (min > max)
-            throw new JsonException($"Invalid hue range: min ({min}) cannot be greater than max ({max})");
-
-        /// Generate random hue value in the specified range (inclusive)
-        var randomHue = _random.Next(min, max + 1);
-
-        return Convert.ChangeType(randomHue, targetType);
-    }
-
-    /// <summary>
     /// Checks if a string contains only hexadecimal characters
     /// </summary>
     private static bool IsHexString(string value)
     {
         return !string.IsNullOrEmpty(value) &&
-               value.All(c => char.IsDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'));
+               value.All(c => char.IsDigit(c) || c >= 'A' && c <= 'F' || c >= 'a' && c <= 'f');
+    }
+
+    /// <summary>
+    /// Parses hue expressions like "hue(1:50)" and returns a random value in the range
+    /// </summary>
+    private static object ParseHueExpression(string expression, Type targetType)
+    {
+        var match = Regex.Match(expression, @"hue\((\d+):(\d+)\)");
+
+        if (!match.Success)
+        {
+            throw new JsonException($"Invalid hue expression: {expression}. Expected format: hue(min:max)");
+        }
+
+        var minStr = match.Groups[1].Value;
+        var maxStr = match.Groups[2].Value;
+
+        if (!int.TryParse(minStr, out var min) || !int.TryParse(maxStr, out var max))
+        {
+            throw new JsonException($"Invalid hue range values in: {expression}");
+        }
+
+        if (min > max)
+        {
+            throw new JsonException($"Invalid hue range: min ({min}) cannot be greater than max ({max})");
+        }
+
+        /// Generate random hue value in the specified range (inclusive)
+        var randomHue = _random.Next(min, max + 1);
+
+        return Convert.ChangeType(randomHue, targetType);
     }
 }

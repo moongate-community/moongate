@@ -1,6 +1,6 @@
-namespace Moongate.UO.Data.Skills;
+namespace Moongate.UO.Data.Types;
 
-public enum SkillName
+public enum UOSkillName
 {
     Alchemy = 0,
     Anatomy = 1,

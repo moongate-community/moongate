@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsAotCompatible>true</IsAotCompatible>
@@ -12,15 +12,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Moongate.Core.Network\Moongate.Core.Network.csproj" />
-      <ProjectReference Include="..\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj" />
-      <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj" />
-      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
-      <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj" />
+        <ProjectReference Include="..\Moongate.Core.Network\Moongate.Core.Network.csproj"/>
+        <ProjectReference Include="..\Moongate.Core.Persistence\Moongate.Core.Persistence.csproj"/>
+        <ProjectReference Include="..\Moongate.Core.Server\Moongate.Core.Server.csproj"/>
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="LibDeflate.Bindings" Version="1.0.2.120" />
+        <PackageReference Include="LibDeflate.Bindings" Version="1.0.3"/>
     </ItemGroup>
 
 </Project>

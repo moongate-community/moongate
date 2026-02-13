@@ -7,7 +7,6 @@ namespace Moongate.UO.Extensions;
 
 public static class ItemReferenceExtensions
 {
-
     public static UOItemEntity ToEntity(this ItemReference itemReference)
     {
         var itemService = MoongateContext.Container.Resolve<IItemService>();
@@ -21,5 +20,4 @@ public static class ItemReferenceExtensions
 
         return item;
     }
-
 }

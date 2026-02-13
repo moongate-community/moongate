@@ -16,19 +16,9 @@ public class CallbackService : ICallbackService
     private readonly IEventLoopService _eventLoopService;
 
     public CallbackService(IEventLoopService eventLoopService)
-    {
-        _eventLoopService = eventLoopService;
-    }
+        => _eventLoopService = eventLoopService;
 
-
-    public void AddTargetCallBack(Serial serial, Action<Serial> callback)
-    {
-    }
-
-
-    public void Dispose()
-    {
-    }
+    public void AddTargetCallBack(Serial serial, Action<Serial> callback) { }
 
     public void AddTargetCallBack(Serial serial, ICallbackService.ClickCallbackDelegate callback)
     {
@@ -45,9 +35,13 @@ public class CallbackService : ICallbackService
         return rndSerial;
     }
 
+    public void Dispose() { }
 
     public bool ExecuteCallback(
-        Serial serial, CursorSelectionType selectionType, Point3D? point, Serial clickedSerial = default
+        Serial serial,
+        CursorSelectionType selectionType,
+        Point3D? point,
+        Serial clickedSerial = default
     )
     {
         if (_callbacks.TryGetValue(serial, out var callback))
@@ -58,10 +52,12 @@ public class CallbackService : ICallbackService
             );
 
             _callbacks.Remove(serial);
+
             return true;
         }
 
         _logger.Warning("No callback found for serial {Serial} with selection type {SelectionType}", serial, selectionType);
+
         return false;
     }
 }

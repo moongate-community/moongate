@@ -1,5 +1,6 @@
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Tiles;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Multi;
 
@@ -7,7 +8,8 @@ public sealed class MultiComponentList
 {
     public static readonly MultiComponentList Empty = new();
 
-    private Point2D m_Min, m_Max;
+    private Point2D m_Min,
+                    m_Max;
 
     public MultiComponentList(MultiComponentList toCopy)
     {
@@ -72,7 +74,7 @@ public sealed class MultiComponentList
     //             allTiles[i].OffsetX = reader.ReadShort();
     //             allTiles[i].OffsetY = reader.ReadShort();
     //             allTiles[i].OffsetZ = reader.ReadShort();
-    //             allTiles[i].Flags = (TileFlag)reader.ReadInt();
+    //             allTiles[i].Flags = (UOTileFlag)reader.ReadInt();
     //         }
     //     }
     //     else
@@ -83,7 +85,7 @@ public sealed class MultiComponentList
     //             allTiles[i].OffsetX = reader.ReadShort();
     //             allTiles[i].OffsetY = reader.ReadShort();
     //             allTiles[i].OffsetZ = reader.ReadShort();
-    //             allTiles[i].Flags = (TileFlag)reader.ReadInt();
+    //             allTiles[i].Flags = (UOTileFlag)reader.ReadInt();
     //         }
     //     }
     //
@@ -132,7 +134,7 @@ public sealed class MultiComponentList
             allTiles[i].OffsetX = reader.ReadInt16();
             allTiles[i].OffsetY = reader.ReadInt16();
             allTiles[i].OffsetZ = reader.ReadInt16();
-            allTiles[i].Flags = postHSFormat ? (TileFlag)reader.ReadUInt64() : (TileFlag)reader.ReadUInt32();
+            allTiles[i].Flags = postHSFormat ? (UOTileFlag)reader.ReadUInt64() : (UOTileFlag)reader.ReadUInt32();
 
             var e = allTiles[i];
 
@@ -160,7 +162,7 @@ public sealed class MultiComponentList
             }
         }
 
-        Center = new Point2D(-m_Min.X, -m_Min.Y);
+        Center = new(-m_Min.X, -m_Min.Y);
         Width = m_Max.X - m_Min.X + 1;
         Height = m_Max.Y - m_Min.Y + 1;
 
@@ -177,7 +179,7 @@ public sealed class MultiComponentList
                 tiles[xOffset] ??= new TileList[Height];
                 Tiles[xOffset] ??= new StaticTile[Height][];
 
-                tiles[xOffset][yOffset] ??= new TileList();
+                tiles[xOffset][yOffset] ??= new();
                 tiles[xOffset][yOffset].Add(allTiles[i].ItemId, (sbyte)allTiles[i].OffsetZ);
             }
         }
@@ -185,6 +187,7 @@ public sealed class MultiComponentList
         for (var x = 0; x < Width; ++x)
         {
             Tiles[x] ??= new StaticTile[Height][];
+
             for (var y = 0; y < Height; ++y)
             {
                 var tileList = tiles[x]?[y];
@@ -232,7 +235,7 @@ public sealed class MultiComponentList
             }
         }
 
-        Center = new Point2D(-m_Min.X, -m_Min.Y);
+        Center = new(-m_Min.X, -m_Min.Y);
         Width = m_Max.X - m_Min.X + 1;
         Height = m_Max.Y - m_Min.Y + 1;
 
@@ -246,7 +249,7 @@ public sealed class MultiComponentList
 
             for (var y = 0; y < Height; ++y)
             {
-                tiles[x][y] = new TileList();
+                tiles[x][y] = new();
             }
         }
 
@@ -305,9 +308,9 @@ public sealed class MultiComponentList
 
                 if (oldTiles[i].Z == z && oldTiles[i].Height > 0 == data.Height > 0)
                 {
-                    var newIsRoof = (data.Flags & TileFlag.Roof) != 0;
+                    var newIsRoof = (data.Flags & UOTileFlag.Roof) != 0;
                     var oldIsRoof =
-                        (TileData.ItemTable[oldTiles[i].ID & TileData.MaxItemValue].Flags & TileFlag.Roof) != 0;
+                        (TileData.ItemTable[oldTiles[i].ID & TileData.MaxItemValue].Flags & UOTileFlag.Roof) != 0;
 
                     if (newIsRoof == oldIsRoof)
                     {
@@ -321,7 +324,7 @@ public sealed class MultiComponentList
             var newTiles = new StaticTile[oldTiles.Length + 1];
             Array.Copy(oldTiles, newTiles, oldTiles.Length);
 
-            newTiles[^1] = new StaticTile((ushort)itemID, (sbyte)z);
+            newTiles[^1] = new((ushort)itemID, (sbyte)z);
 
             Tiles[vx][vy] = newTiles;
 
@@ -333,12 +336,12 @@ public sealed class MultiComponentList
                 newList[i] = oldList[i];
             }
 
-            newList[oldList.Length] = new MultiTileEntry(
+            newList[oldList.Length] = new(
                 (ushort)itemID,
                 (short)x,
                 (short)y,
                 (short)z,
-                TileFlag.Background
+                UOTileFlag.Background
             );
 
             List = newList;
@@ -361,52 +364,6 @@ public sealed class MultiComponentList
             if (y > m_Max.Y)
             {
                 m_Max.Y = y;
-            }
-        }
-    }
-
-    public void RemoveXYZH(int x, int y, int z, int minHeight)
-    {
-        var vx = x + Center.X;
-        var vy = y + Center.Y;
-
-        if (vx >= 0 && vx < Width && vy >= 0 && vy < Height)
-        {
-            var oldTiles = Tiles[vx][vy];
-
-            for (var i = 0; i < oldTiles.Length; ++i)
-            {
-                var tile = oldTiles[i];
-
-                if (tile.Z == z && tile.Height >= minHeight)
-                {
-                    var newTiles = new StaticTile[oldTiles.Length - 1];
-                    Array.Copy(oldTiles, newTiles, i);
-                    Array.Copy(oldTiles, i + 1, newTiles, i, oldTiles.Length - i - 1);
-
-                    Tiles[vx][vy] = newTiles;
-
-                    break;
-                }
-            }
-
-            var oldList = List;
-
-            for (var i = 0; i < oldList.Length; ++i)
-            {
-                var tile = oldList[i];
-
-                if (tile.OffsetX == (short)x && tile.OffsetY == (short)y && tile.OffsetZ == (short)z &&
-                    TileData.ItemTable[tile.ItemId & TileData.MaxItemValue].Height >= minHeight)
-                {
-                    var newList = new MultiTileEntry[oldList.Length - 1];
-                    Array.Copy(oldList, newList, i);
-                    Array.Copy(oldList, i + 1, newList, i, oldList.Length - i - 1);
-
-                    List = newList;
-
-                    break;
-                }
             }
         }
     }
@@ -442,8 +399,58 @@ public sealed class MultiComponentList
             {
                 var tile = oldList[i];
 
-                if (tile.ItemId == itemID && tile.OffsetX == (short)x && tile.OffsetY == (short)y &&
+                if (tile.ItemId == itemID &&
+                    tile.OffsetX == (short)x &&
+                    tile.OffsetY == (short)y &&
                     tile.OffsetZ == (short)z)
+                {
+                    var newList = new MultiTileEntry[oldList.Length - 1];
+                    Array.Copy(oldList, newList, i);
+                    Array.Copy(oldList, i + 1, newList, i, oldList.Length - i - 1);
+
+                    List = newList;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    public void RemoveXYZH(int x, int y, int z, int minHeight)
+    {
+        var vx = x + Center.X;
+        var vy = y + Center.Y;
+
+        if (vx >= 0 && vx < Width && vy >= 0 && vy < Height)
+        {
+            var oldTiles = Tiles[vx][vy];
+
+            for (var i = 0; i < oldTiles.Length; ++i)
+            {
+                var tile = oldTiles[i];
+
+                if (tile.Z == z && tile.Height >= minHeight)
+                {
+                    var newTiles = new StaticTile[oldTiles.Length - 1];
+                    Array.Copy(oldTiles, newTiles, i);
+                    Array.Copy(oldTiles, i + 1, newTiles, i, oldTiles.Length - i - 1);
+
+                    Tiles[vx][vy] = newTiles;
+
+                    break;
+                }
+            }
+
+            var oldList = List;
+
+            for (var i = 0; i < oldList.Length; ++i)
+            {
+                var tile = oldList[i];
+
+                if (tile.OffsetX == (short)x &&
+                    tile.OffsetY == (short)y &&
+                    tile.OffsetZ == (short)z &&
+                    TileData.ItemTable[tile.ItemId & TileData.MaxItemValue].Height >= minHeight)
                 {
                     var newList = new MultiTileEntry[oldList.Length - 1];
                     Array.Copy(oldList, newList, i);
@@ -459,7 +466,8 @@ public sealed class MultiComponentList
 
     public void Resize(int newWidth, int newHeight)
     {
-        int oldWidth = Width, oldHeight = Height;
+        int oldWidth = Width,
+            oldHeight = Height;
         var oldTiles = Tiles;
 
         var totalLength = 0;
@@ -528,12 +536,12 @@ public sealed class MultiComponentList
                         m_Max.Y = vy;
                     }
 
-                    List[index++] = new MultiTileEntry(
+                    List[index++] = new(
                         (ushort)tile.ID,
                         (short)vx,
                         (short)vy,
                         (short)tile.Z,
-                        TileFlag.Background
+                        UOTileFlag.Background
                     );
                 }
             }

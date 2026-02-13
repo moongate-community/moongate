@@ -5,16 +5,13 @@ namespace Moongate.UO.Data.Packets.Login;
 
 public class LoginRequestPacket : BaseUoPacket
 {
-
     public string Account { get; set; }
 
     public string Password { get; set; }
 
     public byte NextLoginKey { get; set; }
 
-    public LoginRequestPacket() : base(0x80)
-    {
-    }
+    public LoginRequestPacket() : base(0x80) { }
 
     protected override bool Read(SpanReader reader)
     {

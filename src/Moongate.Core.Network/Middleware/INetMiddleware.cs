@@ -5,14 +5,6 @@ namespace Moongate.Core.Network.Middleware;
 /// </summary>
 public interface INetMiddleware
 {
-
-    /// <summary>
-    /// Process data before sending
-    /// </summary>
-    /// <param name="input">A data to be sent (might be processed by other middleware)</param>
-    /// <param name="output">A processed data to be sent</param>
-    void ProcessSend(ref ReadOnlyMemory<byte> input, out ReadOnlyMemory<byte> output);
-
     /// <summary>
     /// Process data after receiving
     /// </summary>
@@ -23,4 +15,11 @@ public interface INetMiddleware
         ref ReadOnlyMemory<byte> input,
         out ReadOnlyMemory<byte> output
     );
+
+    /// <summary>
+    /// Process data before sending
+    /// </summary>
+    /// <param name="input">A data to be sent (might be processed by other middleware)</param>
+    /// <param name="output">A processed data to be sent</param>
+    void ProcessSend(ref ReadOnlyMemory<byte> input, out ReadOnlyMemory<byte> output);
 }

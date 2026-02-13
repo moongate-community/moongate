@@ -1,3 +1,5 @@
+using Moongate.UO.Data.Types;
+
 namespace Moongate.UO.Data.Skills;
 
 public class SkillEntry
@@ -7,5 +9,5 @@ public class SkillEntry
 
     public double Base { get; set; } = 0;
     public int Cap { get; set; }
-    public SkillLock Lock { get; set; }
+    public UOSkillLock Lock { get; set; }
 }

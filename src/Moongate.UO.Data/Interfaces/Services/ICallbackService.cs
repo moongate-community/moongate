@@ -8,7 +8,10 @@ namespace Moongate.UO.Data.Interfaces.Services;
 public interface ICallbackService : IMoongateService
 {
     delegate void ClickCallbackDelegate(
-        Serial serial, CursorSelectionType cursorSelectionType, Point3D? cursorPosition, Serial clickedSerial = default
+        Serial serial,
+        CursorSelectionType cursorSelectionType,
+        Point3D? cursorPosition,
+        Serial clickedSerial = default
     );
 
     void AddTargetCallBack(Serial serial, ClickCallbackDelegate callback);

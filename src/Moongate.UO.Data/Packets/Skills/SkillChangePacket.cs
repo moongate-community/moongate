@@ -4,23 +4,17 @@ using Moongate.UO.Data.Skills;
 
 namespace Moongate.UO.Data.Packets.Skills;
 
-public class SkillChangePacket  : BaseUoPacket
+public class SkillChangePacket : BaseUoPacket
 {
     public SkillEntry Skill { get; set; }
 
     public SkillChangePacket(SkillEntry skill) : this()
-    {
-        Skill = skill;
-    }
+        => Skill = skill;
 
-    public SkillChangePacket() : base(0x3A)
-    {
-    }
-
+    public SkillChangePacket() : base(0x3A) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
-
         writer.Write(OpCode);
         writer.Write((ushort)13);
         var v = Skill.Value;

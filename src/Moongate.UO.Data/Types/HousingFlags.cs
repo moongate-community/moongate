@@ -1,4 +1,4 @@
-namespace Moongate.Uo.Data.Types;
+namespace Moongate.UO.Data.Types;
 
 [Flags]
 public enum HousingFlags

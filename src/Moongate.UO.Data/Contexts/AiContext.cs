@@ -52,13 +52,37 @@ public class AiContext : IDisposable
         }
     }
 
-    #region Core Properties
+#region Disposal
+
+    public void Dispose()
+    {
+        /// Clean up any resources if needed
+        CancelScheduledAction("*"); /// Cancel all scheduled actions
+        ClearActionQueue();
+    }
+
+#endregion
+
+#region Main Update
+
+    /// <summary>
+    /// Main AI update method - call this every 500ms tick
+    /// </summary>
+    public void UpdateAI()
+    {
+        IncrementElapsedTime(0.5); /// 500ms = 0.5 seconds
+        ProcessActions();
+    }
+
+#endregion
+
+#region Core Properties
 
     public UOMobileEntity Self { get; set; }
 
-    private double _elapsedTime = 0.0;
+    private double _elapsedTime;
     private AiStateMachine _stateMachine;
-    private bool _stateMachineInitialized = false;
+    private bool _stateMachineInitialized;
     private readonly Dictionary<string, object> _internalData = new();
 
     private static readonly DirectionType[] directions =
@@ -67,9 +91,9 @@ public class AiContext : IDisposable
         DirectionType.South, DirectionType.West
     ];
 
-    #endregion
+#endregion
 
-    #region Initialization
+#region Initialization
 
     public void InitializeContext(UOMobileEntity mobile)
     {
@@ -83,18 +107,24 @@ public class AiContext : IDisposable
     /// </summary>
     public void RunBackground(Action<AiContext> action, string description = "")
     {
-        Task.Run(() =>
-        {
-            try
+        Task.Run(
+            () =>
             {
-                action(this);
+                try
+                {
+                    action(this);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(
+                        ex,
+                        "Error in background action for {Mobile}: {Description}",
+                        Self?.Name,
+                        description
+                    );
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error in background action for {Mobile}: {Description}",
-                    Self?.Name, description);
-            }
-        });
+        );
     }
 
     /// <summary>
@@ -108,20 +138,21 @@ public class AiContext : IDisposable
         }
 
         var stateMachineId = $"ai_sm_{Self.Id}_{Self.BrainId}";
-        _stateMachine = new AiStateMachine(stateMachineId, "idle");
+        _stateMachine = new(stateMachineId, "idle");
         _stateMachineInitialized = true;
 
         /// Add default state change logging
-        _stateMachine.AddStateChangeListener((from, to, eventName) =>
+        _stateMachine.AddStateChangeListener(
+            (from, to, eventName) =>
             {
                 Log.ForContext<AiContext>()
-                    .Debug(
-                        "AI {Mobile}: {From} -> {To} ({Event})",
-                        Self.Name,
-                        from,
-                        to,
-                        eventName
-                    );
+                   .Debug(
+                       "AI {Mobile}: {From} -> {To} ({Event})",
+                       Self.Name,
+                       from,
+                       to,
+                       eventName
+                   );
             }
         );
     }
@@ -135,22 +166,9 @@ public class AiContext : IDisposable
         SetData("action_queue", new List<AiQueuedAction>());
     }
 
-    #endregion
+#endregion
 
-    #region Main Update
-
-    /// <summary>
-    /// Main AI update method - call this every 500ms tick
-    /// </summary>
-    public void UpdateAI()
-    {
-        IncrementElapsedTime(0.5); /// 500ms = 0.5 seconds
-        ProcessActions();
-    }
-
-    #endregion
-
-    #region Time Management
+#region Time Management
 
     public void IncrementElapsedTime(double deltaTime)
     {
@@ -158,18 +176,16 @@ public class AiContext : IDisposable
     }
 
     public double GetElapsedTime()
-    {
-        return _elapsedTime;
-    }
+        => _elapsedTime;
 
     public void ResetElapsedTime()
     {
         _elapsedTime = 0.0;
     }
 
-    #endregion
+#endregion
 
-    #region Movement
+#region Movement
 
     public void Move(DirectionType direction)
     {
@@ -180,27 +196,23 @@ public class AiContext : IDisposable
 
         var newLocation = Self.Location + direction;
         var landTile = Self.Map.GetLandTile(newLocation.X, newLocation.Y);
-        newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
+        newLocation = new(newLocation.X, newLocation.Y, landTile.Z);
 
         MoongateContext.Container.Resolve<IMobileService>().MoveMobile(Self, newLocation);
     }
 
     public DirectionType RandomDirection()
-    {
-        return directions[Random.Shared.Next(directions.Length)];
-    }
+        => directions[Random.Shared.Next(directions.Length)];
 
-    #endregion
+#endregion
 
-    #region Internal Data Management
+#region Internal Data Management
 
     /// <summary>
     /// Get internal data with default value
     /// </summary>
     public T GetData<T>(string key, T defaultValue = default)
-    {
-        return _internalData.TryGetValue(key, out var value) && value is T tValue ? tValue : defaultValue;
-    }
+        => _internalData.TryGetValue(key, out var value) && value is T tValue ? tValue : defaultValue;
 
     /// <summary>
     /// Set internal data
@@ -214,9 +226,7 @@ public class AiContext : IDisposable
     /// Check if data exists
     /// </summary>
     public bool HasData(string key)
-    {
-        return _internalData.ContainsKey(key);
-    }
+        => _internalData.ContainsKey(key);
 
     /// <summary>
     /// Remove data
@@ -226,9 +236,9 @@ public class AiContext : IDisposable
         _internalData.Remove(key);
     }
 
-    #endregion
+#endregion
 
-    #region Action System
+#region Action System
 
     /// <summary>
     /// Schedule an action to be executed after a delay
@@ -247,12 +257,12 @@ public class AiContext : IDisposable
         SetData("scheduled_actions", scheduledActions);
 
         Log.ForContext<AiContext>()
-            .Debug(
-                "Scheduled action {ActionId} for {Mobile} in {DelayMs}ms",
-                actionId,
-                Self.Name,
-                delayMs
-            );
+           .Debug(
+               "Scheduled action {ActionId} for {Mobile} in {DelayMs}ms",
+               actionId,
+               Self.Name,
+               delayMs
+           );
     }
 
     /// <summary>
@@ -274,12 +284,12 @@ public class AiContext : IDisposable
         SetData("scheduled_actions", scheduledActions);
 
         Log.ForContext<AiContext>()
-            .Debug(
-                "Scheduled repeating action {ActionId} for {Mobile} every {IntervalMs}ms",
-                actionId,
-                Self.Name,
-                intervalMs
-            );
+           .Debug(
+               "Scheduled repeating action {ActionId} for {Mobile} every {IntervalMs}ms",
+               actionId,
+               Self.Name,
+               intervalMs
+           );
     }
 
     /// <summary>
@@ -294,11 +304,11 @@ public class AiContext : IDisposable
         if (removed > 0)
         {
             Log.ForContext<AiContext>()
-                .Debug(
-                    "Cancelled scheduled action {ActionId} for {Mobile}",
-                    actionId,
-                    Self.Name
-                );
+               .Debug(
+                   "Cancelled scheduled action {ActionId} for {Mobile}",
+                   actionId,
+                   Self.Name
+               );
         }
 
         return removed > 0;
@@ -322,12 +332,12 @@ public class AiContext : IDisposable
         SetData("action_queue", actionQueue);
 
         Log.ForContext<AiContext>()
-            .Debug(
-                "Queued action {ActionId} for {Mobile} with priority {Priority}",
-                actionId,
-                Self.Name,
-                priority
-            );
+           .Debug(
+               "Queued action {ActionId} for {Mobile} with priority {Priority}",
+               actionId,
+               Self.Name,
+               priority
+           );
     }
 
     /// <summary>
@@ -338,7 +348,9 @@ public class AiContext : IDisposable
         var actionQueue = GetData("action_queue", new List<AiQueuedAction>());
 
         if (actionQueue.Count == 0)
+        {
             return false;
+        }
 
         var nextAction = actionQueue[0];
         actionQueue.RemoveAt(0);
@@ -347,12 +359,13 @@ public class AiContext : IDisposable
         try
         {
             Log.ForContext<AiContext>()
-                .Debug(
-                    "Executing queued action {ActionId} for {Mobile}",
-                    nextAction.Id,
-                    Self.Name
-                );
+               .Debug(
+                   "Executing queued action {ActionId} for {Mobile}",
+                   nextAction.Id,
+                   Self.Name
+               );
             nextAction.Action(this);
+
             return true;
         }
         catch (Exception ex)
@@ -363,6 +376,7 @@ public class AiContext : IDisposable
                 nextAction.Id,
                 Self?.Name
             );
+
             return false;
         }
     }
@@ -382,6 +396,7 @@ public class AiContext : IDisposable
     public int GetQueuedActionCount()
     {
         var actionQueue = GetData("action_queue", new List<AiQueuedAction>());
+
         return actionQueue.Count;
     }
 
@@ -437,11 +452,11 @@ public class AiContext : IDisposable
             try
             {
                 Log.ForContext<AiContext>()
-                    .Debug(
-                        "Executing scheduled action {ActionId} for {Mobile}",
-                        action.Id,
-                        Self.Name
-                    );
+                   .Debug(
+                       "Executing scheduled action {ActionId} for {Mobile}",
+                       action.Id,
+                       Self.Name
+                   );
                 action.Action(this);
             }
             catch (Exception ex)
@@ -508,9 +523,9 @@ public class AiContext : IDisposable
         );
     }
 
-    #endregion
+#endregion
 
-    #region State Machine API
+#region State Machine API
 
     /// <summary>
     /// Get current AI state
@@ -521,17 +536,13 @@ public class AiContext : IDisposable
     /// Trigger state transition
     /// </summary>
     public bool Transition(string eventName)
-    {
-        return _stateMachine?.Transition(eventName) ?? false;
-    }
+        => _stateMachine?.Transition(eventName) ?? false;
 
     /// <summary>
     /// Check if transition is valid
     /// </summary>
     public bool CanTransition(string eventName)
-    {
-        return _stateMachine?.CanTransition(eventName) ?? false;
-    }
+        => _stateMachine?.CanTransition(eventName) ?? false;
 
     /// <summary>
     /// Add state transition rule
@@ -567,9 +578,9 @@ public class AiContext : IDisposable
         InitializeActionSystem(); /// Reinitialize action system
     }
 
-    #endregion
+#endregion
 
-    #region Timeout Management
+#region Timeout Management
 
     /// <summary>
     /// Start a timeout for current state
@@ -585,6 +596,7 @@ public class AiContext : IDisposable
     public bool IsTimeoutExpired(string timeoutKey)
     {
         var timeout = GetData<DateTime?>(timeoutKey);
+
         return timeout.HasValue && DateTime.UtcNow > timeout.Value;
     }
 
@@ -596,28 +608,26 @@ public class AiContext : IDisposable
         RemoveData(timeoutKey);
     }
 
-    #endregion
+#endregion
 
-    #region Query Methods
+#region Query Methods
 
     /// <summary>
     /// Find nearby players within range - placeholder implementation
     /// </summary>
     public List<UOMobileEntity> FindNearbyPlayers(int range)
-    {
+
         /// Placeholder - in real implementation this would use Moongate's spatial queries
         /// Return empty list for now - implement based on Moongate's world system
-        return new List<UOMobileEntity>();
-    }
+        => new();
 
     /// <summary>
     /// Check if this mobile is hostile towards target
     /// </summary>
     public bool IsHostileTowards(UOMobileEntity target)
-    {
+
         /// Placeholder - implement based on Moongate's faction/criminal system
-        return false;
-    }
+        => false;
 
     /// <summary>
     /// Get distance to target location
@@ -626,19 +636,9 @@ public class AiContext : IDisposable
     {
         var dx = Self.Location.X - target.X;
         var dy = Self.Location.Y - target.Y;
+
         return Math.Sqrt(dx * dx + dy * dy);
     }
 
-    #endregion
-
-    #region Disposal
-
-    public void Dispose()
-    {
-        /// Clean up any resources if needed
-        CancelScheduledAction("*"); /// Cancel all scheduled actions
-        ClearActionQueue();
-    }
-
-    #endregion
+#endregion
 }

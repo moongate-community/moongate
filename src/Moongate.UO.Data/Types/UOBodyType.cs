@@ -1,6 +1,6 @@
-namespace Moongate.UO.Data.Bodies;
+namespace Moongate.UO.Data.Types;
 
-public enum BodyType : byte
+public enum UOBodyType : byte
 {
     Empty,
     Monster,

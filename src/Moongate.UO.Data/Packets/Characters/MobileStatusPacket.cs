@@ -8,13 +8,11 @@ namespace Moongate.UO.Data.Packets.Characters;
 public class MobileStatusPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
-    public int Version { get; set; } = 0;
+    public int Version { get; set; }
 
     public bool CanBeRenamed { get; set; }
 
-    public MobileStatusPacket() : base(0x11)
-    {
-    }
+    public MobileStatusPacket() : base(0x11) { }
 
     public MobileStatusPacket(UOMobileEntity mobile, int version, bool canBeRenamed) : this()
     {
@@ -37,6 +35,7 @@ public class MobileStatusPacket : BaseUoPacket
         if (Version <= 0)
         {
             writer.WritePacketLength();
+
             return writer.ToArray();
         }
 
@@ -53,7 +52,6 @@ public class MobileStatusPacket : BaseUoPacket
         writer.Write((short)Mobile.MaxMana);
 
         writer.Write(Mobile.Gold);
-
 
         //TODO: Here is BodyWeight + TotalWeight
         writer.Write((short)1);
@@ -80,7 +78,6 @@ public class MobileStatusPacket : BaseUoPacket
             writer.Write((short)Mobile.EnergyResistance);
             writer.Write((short)Mobile.Luck);
 
-
             //TODO: Get Weapons Damage, now is hardcoded from 1 to 10
 
             writer.Write((short)1);
@@ -91,7 +88,7 @@ public class MobileStatusPacket : BaseUoPacket
 
         if (Version >= 6)
         {
-            for (int i = 0; i < 15; i++)
+            for (var i = 0; i < 15; i++)
             {
                 writer.Write((short)0);
             }

@@ -19,8 +19,95 @@ public class TimerService : ITimerService
     private readonly BlockingCollection<TimerDataObject> _timers = new();
 
     public TimerService(IEventLoopService eventLoopService)
+        => _eventLoopService = eventLoopService;
+
+    public void Dispose()
     {
-        _eventLoopService = eventLoopService;
+        _timerSemaphore.Dispose();
+        _timers.Dispose();
+
+        _eventLoopService.OnTick -= EventLoopServiceOnOnTick;
+
+        GC.SuppressFinalize(this);
+    }
+
+    public string RegisterTimer(string name, double intervalInMs, Action callback, double delayInMs = 0, bool repeat = false)
+    {
+        var existingTimer = _timers.FirstOrDefault(t => t.Name == name);
+
+        if (existingTimer != null)
+        {
+            _logger.Warning("Timer with name {Name} already exists. Unregistering it.", name);
+            UnregisterTimer(existingTimer.Id);
+        }
+
+        _timerSemaphore.Wait();
+
+        var timerId = Guid.NewGuid().ToString();
+        var timer = _timerDataPool.Get();
+
+        timer.Name = name;
+        timer.Id = timerId;
+        timer.IntervalInMs = intervalInMs;
+        timer.Callback = callback;
+        timer.Repeat = repeat;
+        timer.RemainingTimeInMs = intervalInMs;
+        timer.DelayInMs = delayInMs;
+
+        _timers.Add(timer);
+
+        _timerSemaphore.Release();
+
+        _logger.Debug(
+            "Registering timer: {TimerId}, Interval: {IntervalInSeconds} ms, Repeat: {Repeat}",
+            timerId,
+            intervalInMs,
+            repeat
+        );
+
+        return timerId;
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        _eventLoopService.OnTick += EventLoopServiceOnOnTick;
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+
+    public void UnregisterAllTimers()
+    {
+        _timerSemaphore.Wait();
+
+        while (_timers.TryTake(out var timer))
+        {
+            _logger.Information("Unregistering timer: {TimerId}", timer.Id);
+        }
+
+        _timerSemaphore.Release();
+    }
+
+    public void UnregisterTimer(string timerId)
+    {
+        _timerSemaphore.Wait();
+
+        var timer = _timers.FirstOrDefault(t => t.Id == timerId);
+
+        if (timer != null)
+        {
+            _timers.TryTake(out timer);
+            _logger.Information("Unregistering timer: {TimerId}", timer.Id);
+            _timerDataPool.Return(timer);
+        }
+        else
+        {
+            _logger.Warning("Timer with ID {TimerId} not found", timerId);
+        }
+
+        _timerSemaphore.Release();
     }
 
     private void EventLoopServiceOnOnTick(double tickDurationMs)
@@ -48,7 +135,7 @@ public class TimerService : ITimerService
                 }
                 else
                 {
-                    _timers.TryTake(out var _);
+                    _timers.TryTake(out _);
                     _logger.Information("Unregistering timer: {TimerId}", timer.Id);
                 }
             }
@@ -75,96 +162,5 @@ public class TimerService : ITimerService
                 _logger.Warning(ex, "Timer {TimerId} encountered an error", timerDataObject.Id);
             }
         }
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        _eventLoopService.OnTick += EventLoopServiceOnOnTick;
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public string RegisterTimer(string name, double intervalInMs, Action callback, double delayInMs = 0, bool repeat = false)
-    {
-        var existingTimer = _timers.FirstOrDefault(t => t.Name == name);
-
-        if (existingTimer != null)
-        {
-            _logger.Warning("Timer with name {Name} already exists. Unregistering it.", name);
-            UnregisterTimer(existingTimer.Id);
-        }
-
-        _timerSemaphore.Wait();
-
-        var timerId = Guid.NewGuid().ToString();
-        var timer = _timerDataPool.Get();
-
-        timer.Name = name;
-        timer.Id = timerId;
-        timer.IntervalInMs = intervalInMs;
-        timer.Callback = callback;
-        timer.Repeat = repeat;
-        timer.RemainingTimeInMs = intervalInMs;
-        timer.DelayInMs = delayInMs;
-
-
-        _timers.Add(timer);
-
-        _timerSemaphore.Release();
-
-        _logger.Debug(
-            "Registering timer: {TimerId}, Interval: {IntervalInSeconds} ms, Repeat: {Repeat}",
-            timerId,
-            intervalInMs,
-            repeat
-        );
-
-        return timerId;
-    }
-
-    public void UnregisterTimer(string timerId)
-    {
-        _timerSemaphore.Wait();
-
-        var timer = _timers.FirstOrDefault(t => t.Id == timerId);
-
-        if (timer != null)
-        {
-            _timers.TryTake(out timer);
-            _logger.Information("Unregistering timer: {TimerId}", timer.Id);
-            _timerDataPool.Return(timer);
-        }
-        else
-        {
-            _logger.Warning("Timer with ID {TimerId} not found", timerId);
-        }
-
-        _timerSemaphore.Release();
-    }
-
-    public void UnregisterAllTimers()
-    {
-        _timerSemaphore.Wait();
-
-        while (_timers.TryTake(out var timer))
-        {
-            _logger.Information("Unregistering timer: {TimerId}", timer.Id);
-        }
-
-        _timerSemaphore.Release();
-    }
-
-    public void Dispose()
-    {
-        _timerSemaphore.Dispose();
-        _timers.Dispose();
-
-        _eventLoopService.OnTick -= EventLoopServiceOnOnTick;
-
-        GC.SuppressFinalize(this);
     }
 }

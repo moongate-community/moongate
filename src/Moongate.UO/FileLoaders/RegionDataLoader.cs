@@ -14,7 +14,6 @@ public class RegionDataLoader : IFileLoader
 
     private readonly ILogger _logger = Log.ForContext<RegionDataLoader>();
 
-
     private readonly ISpatialWorldService _spatialWorldService;
 
     public RegionDataLoader(DirectoriesConfig directoriesConfig, ISpatialWorldService spatialWorldService)
@@ -32,7 +31,6 @@ public class RegionDataLoader : IFileLoader
         foreach (var regionFile in regionFiles)
         {
             var regionData = JsonUtils.DeserializeFromFile<JsonRegionWrap>(regionFile);
-
 
             foreach (var dataRegion in regionData.Regions)
             {

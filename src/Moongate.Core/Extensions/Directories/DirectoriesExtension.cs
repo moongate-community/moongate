@@ -13,7 +13,6 @@ public static class DirectoriesExtension
 
         path = path.Replace("~", Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
 
-
         path = Environment.ExpandEnvironmentVariables(path).ExpandEnvironmentVariables();
 
         return path;

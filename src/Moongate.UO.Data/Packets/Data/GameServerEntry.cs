@@ -22,6 +22,4 @@ public class GameServerEntry
 
         return writer.ToArray().AsMemory();
     }
-
-
 }

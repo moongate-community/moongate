@@ -11,5 +11,4 @@ public static class UOContext
     public static SkillInfo[] SkillsInfo { get; set; }
 
     public static Dictionary<int, StringEntry> LocalizedMessages { get; set; } = new();
-
 }

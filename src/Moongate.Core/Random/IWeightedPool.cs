@@ -16,8 +16,11 @@ public interface IWeightedPool<T>
     /// Add an item of type T to the WeightedPool with the given weight
     /// </summary>
     /// <param name="item">The item to add to the WeightedPool</param>
-    /// <param name="weight">The chance that the item will be picked at random from the pool when weighted against all other items. Higher weights mean it is more likely to be picked.</param>
-    void Add( T item, int weight );
+    /// <param name="weight">
+    /// The chance that the item will be picked at random from the pool when weighted against all other items.
+    /// Higher weights mean it is more likely to be picked.
+    /// </param>
+    void Add(T item, int weight);
 
     /// <summary>
     /// Choose an item at random from the pool, keeping weights into consideration.
@@ -27,15 +30,15 @@ public interface IWeightedPool<T>
     T Choose();
 
     /// <summary>
+    /// Remove all items from the WeightedPool.
+    /// The WeightedPool will be empty after calling this method.
+    /// </summary>
+    void Clear();
+
+    /// <summary>
     /// Take an item at random from the pool, keeping weights into consideration.
     /// The item will be removed from the pool.
     /// </summary>
     /// <returns>An item of type T from the WeightedPool</returns>
     T Draw();
-
-    /// <summary>
-    /// Remove all items from the WeightedPool.
-    /// The WeightedPool will be empty after calling this method.
-    /// </summary>
-    void Clear();
 }

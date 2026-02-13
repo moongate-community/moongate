@@ -20,7 +20,7 @@ public class MoongateFileWriter : IDisposable
     {
         _stream = stream ?? throw new ArgumentNullException(nameof(stream));
         _entityWriter = entityWriter ?? throw new ArgumentNullException(nameof(entityWriter));
-        _entities = new List<EntityDataBlock>();
+        _entities = new();
     }
 
     /// <summary>
@@ -37,6 +37,14 @@ public class MoongateFileWriter : IDisposable
         var dataBlock = new EntityDataBlock(typeName, jsonBytes);
 
         _entities.Add(dataBlock);
+    }
+
+    public void Dispose()
+    {
+        if (!_disposed)
+        {
+            _disposed = true;
+        }
     }
 
     /// <summary>
@@ -62,7 +70,7 @@ public class MoongateFileWriter : IDisposable
         {
             var currentOffset = (ulong)_stream.Position;
 
-            indexEntries.Add(new EntityIndexEntry(entity.DataHash, currentOffset));
+            indexEntries.Add(new(entity.DataHash, currentOffset));
 
             /// Write entity data block
             await WriteEntityDataAsync(entity);
@@ -85,26 +93,20 @@ public class MoongateFileWriter : IDisposable
         await _stream.FlushAsync();
 
         /// Debug logging
-        _logger.Debug("Written {EntitiesCount} entities, file size: {StreamPosition} bytes", _entities.Count, _stream.Position);
+        _logger.Debug(
+            "Written {EntitiesCount} entities, file size: {StreamPosition} bytes",
+            _entities.Count,
+            _stream.Position
+        );
+
         foreach (var entity in _entities)
         {
-            _logger.Debug("Entity: {EntityTypeName}, Data size: {EntityDataLength} bytes", entity.TypeName, entity.DataLength);
+            _logger.Debug(
+                "Entity: {EntityTypeName}, Data size: {EntityDataLength} bytes",
+                entity.TypeName,
+                entity.DataLength
+            );
         }
-    }
-
-    /// <summary>
-    /// Write file header
-    /// </summary>
-    private async Task WriteHeaderAsync()
-    {
-        /// Magic header "MOONGATE"
-        await _stream.WriteAsync(MoongateFileFormat.HEADER_MAGIC);
-
-        /// Version
-        await WriteUInt32Async(MoongateFileFormat.CURRENT_VERSION);
-
-        /// Entity count
-        await WriteUInt32Async((uint)_entities.Count);
     }
 
     /// <summary>
@@ -123,13 +125,31 @@ public class MoongateFileWriter : IDisposable
     }
 
     /// <summary>
+    /// Write file header
+    /// </summary>
+    private async Task WriteHeaderAsync()
+    {
+        /// Magic header "MOONGATE"
+        await _stream.WriteAsync(MoongateFileFormat.HEADER_MAGIC);
+
+        /// Version
+        await WriteUInt32Async(MoongateFileFormat.CURRENT_VERSION);
+
+        /// Entity count
+        await WriteUInt32Async((uint)_entities.Count);
+    }
+
+    /// <summary>
     /// Write UInt16 in little-endian format
     /// </summary>
     private async Task WriteUInt16Async(ushort value)
     {
         var bytes = BitConverter.GetBytes(value);
+
         if (!BitConverter.IsLittleEndian)
+        {
             Array.Reverse(bytes);
+        }
         await _stream.WriteAsync(bytes);
     }
 
@@ -139,8 +159,11 @@ public class MoongateFileWriter : IDisposable
     private async Task WriteUInt32Async(uint value)
     {
         var bytes = BitConverter.GetBytes(value);
+
         if (!BitConverter.IsLittleEndian)
+        {
             Array.Reverse(bytes);
+        }
         await _stream.WriteAsync(bytes);
     }
 
@@ -150,16 +173,11 @@ public class MoongateFileWriter : IDisposable
     private async Task WriteUInt64Async(ulong value)
     {
         var bytes = BitConverter.GetBytes(value);
-        if (!BitConverter.IsLittleEndian)
-            Array.Reverse(bytes);
-        await _stream.WriteAsync(bytes);
-    }
 
-    public void Dispose()
-    {
-        if (!_disposed)
+        if (!BitConverter.IsLittleEndian)
         {
-            _disposed = true;
+            Array.Reverse(bytes);
         }
+        await _stream.WriteAsync(bytes);
     }
 }

@@ -16,7 +16,6 @@ public class MegaClilocService : IMegaClilocService
     private readonly IItemService _itemService;
     private readonly IMobileService _mobileService;
 
-
     private readonly ILogger _logger = Log.ForContext<MegaClilocService>();
 
     private readonly ConcurrentDictionary<Serial, MegaClilocEntry> _entries = new();
@@ -27,8 +26,21 @@ public class MegaClilocService : IMegaClilocService
         _mobileService = mobileService;
     }
 
-    public void Dispose()
+    public void Dispose() { }
+
+    public async Task<MegaClilocEntry> GetMegaClilocEntryAsync(ISerialEntity entity)
+        => await GetMegaClilocEntryAsync(entity.Id);
+
+    public async Task<MegaClilocEntry> GetMegaClilocEntryAsync(Serial serial)
     {
+        if (_entries.TryGetValue(serial, out var entry))
+        {
+            return entry;
+        }
+
+        await RebuildProperties(serial);
+
+        return _entries[serial];
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
@@ -43,6 +55,12 @@ public class MegaClilocService : IMegaClilocService
         _itemService.ItemAdded -= ItemServiceOnItemCreated;
     }
 
+    private void ItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        var entity = sender as UOItemEntity;
+        RebuildPropertiesItemAsync(entity.Id);
+    }
+
     private void ItemServiceOnItemCreated(UOItemEntity item)
     {
         item.PropertyChanged += ItemOnPropertyChanged;
@@ -50,11 +68,7 @@ public class MegaClilocService : IMegaClilocService
         RebuildPropertiesItemAsync(item.Id);
     }
 
-    private void ItemOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        var entity = sender as UOItemEntity;
-        RebuildPropertiesItemAsync(entity.Id);
-    }
+    private void MobileOnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     private void MobileServiceOnMobileAdded(UOMobileEntity mobile)
     {
@@ -68,27 +82,6 @@ public class MegaClilocService : IMegaClilocService
     private void OnContainerItemChanged(UOItemEntity container, ItemReference item)
     {
         RebuildPropertiesItemAsync(item.Id);
-    }
-
-    private void MobileOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-    }
-
-    public async Task<MegaClilocEntry> GetMegaClilocEntryAsync(ISerialEntity entity)
-    {
-        return await GetMegaClilocEntryAsync(entity.Id);
-    }
-
-    public async Task<MegaClilocEntry> GetMegaClilocEntryAsync(Serial serial)
-    {
-        if (_entries.TryGetValue(serial, out var entry))
-        {
-            return entry;
-        }
-
-        await RebuildProperties(serial);
-
-        return _entries[serial];
     }
 
     private async Task RebuildProperties(Serial entity)
@@ -113,27 +106,6 @@ public class MegaClilocService : IMegaClilocService
         }
     }
 
-    private async Task RebuildPropertiesMobileAsync(Serial serial)
-    {
-        var mobile = _mobileService.GetMobile(serial);
-
-        if (mobile == null)
-        {
-            throw new InvalidOperationException($"Mobile with ID {serial} not found.");
-        }
-
-        _logger.Debug("Rebuilding properties for mobile: {MobileId} {MobileName}", mobile.Id, mobile.Name);
-
-        var entry = new MegaClilocEntry()
-        {
-            Serial = serial
-        };
-
-        entry.AddProperty(0x1005BD, mobile.Name + " " + mobile.Title);
-
-        _entries.TryAdd(serial, entry);
-    }
-
     private async Task RebuildPropertiesItemAsync(Serial serial)
     {
         var item = _itemService.GetItem(serial);
@@ -145,7 +117,7 @@ public class MegaClilocService : IMegaClilocService
 
         _logger.Debug("Rebuilding properties for item: {ItemId} {ItemName}", item.Id, item.Name);
 
-        var entry = new MegaClilocEntry()
+        var entry = new MegaClilocEntry
         {
             Serial = serial
         };
@@ -160,8 +132,29 @@ public class MegaClilocService : IMegaClilocService
 
         if (item.IsContainer)
         {
-            entry.AddProperty( CommonClilocIds.ContainerContents, item.ContainedItems.Count, "24");
+            entry.AddProperty(CommonClilocIds.ContainerContents, item.ContainedItems.Count, "24");
         }
+
+        _entries.TryAdd(serial, entry);
+    }
+
+    private async Task RebuildPropertiesMobileAsync(Serial serial)
+    {
+        var mobile = _mobileService.GetMobile(serial);
+
+        if (mobile == null)
+        {
+            throw new InvalidOperationException($"Mobile with ID {serial} not found.");
+        }
+
+        _logger.Debug("Rebuilding properties for mobile: {MobileId} {MobileName}", mobile.Id, mobile.Name);
+
+        var entry = new MegaClilocEntry
+        {
+            Serial = serial
+        };
+
+        entry.AddProperty(0x1005BD, mobile.Name + " " + mobile.Title);
 
         _entries.TryAdd(serial, entry);
     }

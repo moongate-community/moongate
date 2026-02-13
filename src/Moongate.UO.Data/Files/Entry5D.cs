@@ -9,7 +9,5 @@ public struct Entry5D
     public int extra;
 
     public override string ToString()
-    {
-        return $"File: {file}, Index: {index}, Lookup: {lookup}, Length: {length}, Extra: {extra}";
-    }
+        => $"File: {file}, Index: {index}, Lookup: {lookup}, Length: {length}, Extra: {extra}";
 }

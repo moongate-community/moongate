@@ -3,7 +3,6 @@ using System.Reflection;
 using DryIoc;
 using Jint;
 using Jint.Native;
-using Jint.Native.Object;
 using Jint.Runtime.Interop;
 using Moongate.Core.Data.Configs.Services;
 using Moongate.Core.Directories;
@@ -37,17 +36,17 @@ public class JsScriptEngineService : IScriptEngineService
     private readonly MoongateServerConfig _moongateServerConfig;
     private readonly IVersionService _versionService;
 
-
     private Func<string, string> _nameResolver;
 
     public JsScriptEngineService(
         DirectoriesConfig directoriesConfig,
         ScriptEngineConfig scriptEngineConfig,
-        IVersionService versionService, IContainer serviceProvider, MoongateServerConfig moongateServerConfig
+        IVersionService versionService,
+        IContainer serviceProvider,
+        MoongateServerConfig moongateServerConfig
     )
     {
         _directoriesConfig = directoriesConfig;
-
 
         _scriptEngineConfig = scriptEngineConfig;
 
@@ -61,7 +60,8 @@ public class JsScriptEngineService : IScriptEngineService
 
         var typeResolver = TypeResolver.Default;
         typeResolver.MemberNameCreator = MemberNameCreator;
-        _jsEngine = new Jint.Engine(options =>
+        _jsEngine = new(
+            options =>
             {
                 options.EnableModules(directoriesConfig[DirectoryType.Scripts]);
                 options.AllowClr(GetType().Assembly);
@@ -70,124 +70,15 @@ public class JsScriptEngineService : IScriptEngineService
         );
     }
 
-    private void CreateNameResolver()
+    public void AddCallback(string name, Action<object[]> callback)
     {
-        _nameResolver = name => name.ToSnakeCase();
-
-        _nameResolver = _scriptEngineConfig.ScriptNameConversion switch
-        {
-            ScriptNameConversion.CamelCase  => name => name.ToCamelCase(),
-            ScriptNameConversion.PascalCase => name => name.ToPascalCase(),
-            ScriptNameConversion.SnakeCase  => name => name.ToSnakeCase(),
-            _                               => _nameResolver
-        };
+        _callbacks[name] = callback;
     }
 
-    private IEnumerable<string> MemberNameCreator(MemberInfo memberInfo)
+    public void AddConstant(string name, object value)
     {
-        var memberType = _nameResolver(memberInfo.Name);
-        _logger.Verbose("[JS] Creating member name  {MemberInfo}", memberType);
-        yield return memberType;
-    }
-
-
-    private void ExecuteBootstrap()
-    {
-        foreach (var file in _initScripts.Select(s => Path.Combine(_directoriesConfig[DirectoryType.Scripts], s)))
-        {
-            if (File.Exists(file))
-            {
-                var fileName = Path.GetFileName(file);
-                _logger.Information("Executing {FileName} script", fileName);
-                ExecuteScriptFile(file);
-            }
-        }
-    }
-
-    [UnconditionalSuppressMessage("Trimming", "IL2111", Justification = "Required delegate is referenced explicitly.")]
-    public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        foreach (var module in _scriptModules)
-        {
-            var scriptModuleAttribute = module.ModuleType.GetCustomAttribute<ScriptModuleAttribute>();
-
-            if (!_serviceProvider.IsRegistered(module.ModuleType))
-            {
-                _serviceProvider.Register(module.ModuleType);
-            }
-
-            var instance = _serviceProvider.GetService(module.ModuleType);
-
-            if (instance == null)
-            {
-                throw new InvalidOperationException(
-                    $"Unable to create instance of script module {module.ModuleType.Name}"
-                );
-            }
-
-            _logger.Debug("Registering script module {Name}", scriptModuleAttribute.Name);
-
-            _jsEngine.SetValue(scriptModuleAttribute.Name, instance);
-        }
-
-        AddConstant("version", _versionService.GetVersionInfo().Version);
-
-        _logger.Debug("Generating scripts documentation in scripts directory named 'index.d.ts'");
-        var documentation = TypeScriptDocumentationGenerator.GenerateDocumentation(
-            "Moongate Server",
-            _versionService.GetVersionInfo().Version,
-            _scriptModules,
-            _constants,
-            _nameResolver
-        );
-
-
-        var enumsFound = TypeScriptDocumentationGenerator.FoundEnums;
-
-        foreach (var enumFound in enumsFound)
-        {
-            _jsEngine.SetValue(
-                _nameResolver.Invoke(enumFound.Name),
-                TypeReference.CreateTypeReference(_jsEngine, enumFound)
-            );
-        }
-
-        var definitionPath = Path.Combine(
-            _directoriesConfig.Root,
-            _moongateServerConfig.Scripts.IndexDefinitionDirectory
-        );
-        File.WriteAllText(definitionPath, documentation);
-
-
-        _jsEngine.SetValue("importSync", RequireModule);
-        _jsEngine.SetValue("require", RequireModule);
-
-        _jsEngine.SetValue(
-            "delay",
-            new Func<int, Task>(async milliseconds => { await Task.Delay(milliseconds); })
-        );
-
-        ExecuteBootstrap();
-
-
-        return Task.CompletedTask;
-    }
-
-    private JsValue RequireModule(string moduleName)
-    {
-        if (!moduleName.EndsWith(".js"))
-        {
-            moduleName += ".js";
-        }
-
-        var moduleNamespace = _jsEngine.Modules.Import(moduleName);
-
-        return moduleNamespace;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
+        _constants[name.ToSnakeCaseUpper()] = value;
+        _jsEngine.SetValue(name.ToSnakeCaseUpper(), value);
     }
 
     public void AddInitScript(string script)
@@ -198,6 +89,29 @@ public class JsScriptEngineService : IScriptEngineService
         }
 
         _initScripts.Add(script);
+    }
+
+    public void AddScriptModule(Type type)
+    {
+        _scriptModules.Add(new(type));
+    }
+
+    public void Dispose()
+    {
+        _jsEngine.Dispose();
+    }
+
+    public void ExecuteCallback(string name, params object[] args)
+    {
+        if (_callbacks.TryGetValue(name, out var callback))
+        {
+            _logger.Debug("Executing callback {Name}", name);
+            callback(args);
+        }
+        else
+        {
+            _logger.Warning("Callback {Name} not found", name);
+        }
     }
 
     public void ExecuteScript(string script)
@@ -219,42 +133,119 @@ public class JsScriptEngineService : IScriptEngineService
         ExecuteScript(content);
     }
 
-    public void AddCallback(string name, Action<object[]> callback)
+    [UnconditionalSuppressMessage("Trimming", "IL2111", Justification = "Required delegate is referenced explicitly.")]
+    public Task StartAsync(CancellationToken cancellationToken = default)
     {
-        _callbacks[name] = callback;
-    }
-
-    public void AddConstant(string name, object value)
-    {
-        _constants[name.ToSnakeCaseUpper()] = value;
-        _jsEngine.SetValue(name.ToSnakeCaseUpper(), value);
-    }
-
-    public void ExecuteCallback(string name, params object[] args)
-    {
-        if (_callbacks.TryGetValue(name, out var callback))
+        foreach (var module in _scriptModules)
         {
-            _logger.Debug("Executing callback {Name}", name);
-            callback(args);
+            var scriptModuleAttribute = module.ModuleType.GetCustomAttribute<ScriptModuleAttribute>();
+
+            if (!_serviceProvider.IsRegistered(module.ModuleType))
+            {
+                _serviceProvider.Register(module.ModuleType);
+            }
+
+            var instance = _serviceProvider.GetService(module.ModuleType);
+
+            if (instance == null)
+            {
+                throw new InvalidOperationException($"Unable to create instance of script module {module.ModuleType.Name}");
+            }
+
+            _logger.Debug("Registering script module {Name}", scriptModuleAttribute.Name);
+
+            _jsEngine.SetValue(scriptModuleAttribute.Name, instance);
         }
-        else
+
+        AddConstant("version", _versionService.GetVersionInfo().Version);
+
+        _logger.Debug("Generating scripts documentation in scripts directory named 'index.d.ts'");
+        var documentation = TypeScriptDocumentationGenerator.GenerateDocumentation(
+            "Moongate Server",
+            _versionService.GetVersionInfo().Version,
+            _scriptModules,
+            _constants,
+            _nameResolver
+        );
+
+        var enumsFound = TypeScriptDocumentationGenerator.FoundEnums;
+
+        foreach (var enumFound in enumsFound)
         {
-            _logger.Warning("Callback {Name} not found", name);
+            _jsEngine.SetValue(
+                _nameResolver.Invoke(enumFound.Name),
+                TypeReference.CreateTypeReference(_jsEngine, enumFound)
+            );
         }
+
+        var definitionPath = Path.Combine(
+            _directoriesConfig.Root,
+            _moongateServerConfig.Scripts.IndexDefinitionDirectory
+        );
+        File.WriteAllText(definitionPath, documentation);
+
+        _jsEngine.SetValue("importSync", RequireModule);
+        _jsEngine.SetValue("require", RequireModule);
+
+        _jsEngine.SetValue(
+            "delay",
+            new Func<int, Task>(async milliseconds => { await Task.Delay(milliseconds); })
+        );
+
+        ExecuteBootstrap();
+
+        return Task.CompletedTask;
     }
 
-    public void AddScriptModule(Type type)
-    {
-        _scriptModules.Add(new ScriptModuleData(type));
-    }
+    public Task StopAsync(CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
 
     public string ToScriptEngineFunctionName(string name)
+        => _nameResolver.Invoke(name);
+
+    private void CreateNameResolver()
     {
-        return _nameResolver.Invoke(name);
+        _nameResolver = name => name.ToSnakeCase();
+
+        _nameResolver = _scriptEngineConfig.ScriptNameConversion switch
+        {
+            ScriptNameConversion.CamelCase  => name => name.ToCamelCase(),
+            ScriptNameConversion.PascalCase => name => name.ToPascalCase(),
+            ScriptNameConversion.SnakeCase  => name => name.ToSnakeCase(),
+            _                               => _nameResolver
+        };
     }
 
-    public void Dispose()
+    private void ExecuteBootstrap()
     {
-        _jsEngine.Dispose();
+        foreach (var file in _initScripts.Select(s => Path.Combine(_directoriesConfig[DirectoryType.Scripts], s)))
+        {
+            if (File.Exists(file))
+            {
+                var fileName = Path.GetFileName(file);
+                _logger.Information("Executing {FileName} script", fileName);
+                ExecuteScriptFile(file);
+            }
+        }
+    }
+
+    private IEnumerable<string> MemberNameCreator(MemberInfo memberInfo)
+    {
+        var memberType = _nameResolver(memberInfo.Name);
+        _logger.Verbose("[JS] Creating member name  {MemberInfo}", memberType);
+
+        yield return memberType;
+    }
+
+    private JsValue RequireModule(string moduleName)
+    {
+        if (!moduleName.EndsWith(".js"))
+        {
+            moduleName += ".js";
+        }
+
+        var moduleNamespace = _jsEngine.Modules.Import(moduleName);
+
+        return moduleNamespace;
     }
 }

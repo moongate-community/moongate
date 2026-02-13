@@ -14,23 +14,6 @@ public class PersistenceTests
     private MoongateEntityFileService _entityFileService;
     private string _tmpDirectory;
 
-    [OneTimeSetUp]
-    public void Setup()
-    {
-        _tmpDirectory = Path.Combine(Path.GetTempPath(), "MoongateTests");
-        if (!Directory.Exists(_tmpDirectory))
-        {
-            Directory.CreateDirectory(_tmpDirectory);
-        }
-
-        _directoriesConfig = new DirectoriesConfig(_tmpDirectory, Enum.GetNames<DirectoryType>());
-        _entityFileService = new MoongateEntityFileService(
-            _directoriesConfig,
-            new TestReaderWriter(),
-            new TestReaderWriter()
-        );
-    }
-
     [OneTimeTearDown]
     public void Cleanup()
     {
@@ -40,22 +23,30 @@ public class PersistenceTests
         }
     }
 
-    [Test]
-    public Task TestSaveFilesAsync()
+    [OneTimeSetUp]
+    public void Setup()
     {
-        var randomEntities = Enumerable.Range(1, 100)
-            .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
-            .ToList();
+        _tmpDirectory = Path.Combine(Path.GetTempPath(), "MoongateTests");
 
-        return _entityFileService.SaveEntitiesAsync("test_entities.mga", randomEntities);
+        if (!Directory.Exists(_tmpDirectory))
+        {
+            Directory.CreateDirectory(_tmpDirectory);
+        }
+
+        _directoriesConfig = new(_tmpDirectory, Enum.GetNames<DirectoryType>());
+        _entityFileService = new(
+            _directoriesConfig,
+            new TestReaderWriter(),
+            new TestReaderWriter()
+        );
     }
 
     [Test]
     public async Task TestLoadFilesAsync()
     {
         var randomEntities = Enumerable.Range(1, 10_000)
-            .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
-            .ToList();
+                                       .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
+                                       .ToList();
 
         await _entityFileService.SaveEntitiesAsync("test_entities_2.mga", randomEntities);
 
@@ -64,6 +55,16 @@ public class PersistenceTests
         Assert.That(loadedEntities, Is.Not.Null);
         Assert.That(loadedEntities.Count, Is.EqualTo(randomEntities.Count));
         Assert.That(loadedEntities.Select(e => e.Id).Distinct().Count(), Is.EqualTo(randomEntities.Count));
+    }
+
+    [Test]
+    public Task TestSaveFilesAsync()
+    {
+        var randomEntities = Enumerable.Range(1, 100)
+                                       .Select(i => new TestEntity(Guid.NewGuid().ToString(), $"Entity {i}", i * 10))
+                                       .ToList();
+
+        return _entityFileService.SaveEntitiesAsync("test_entities.mga", randomEntities);
     }
 }
 
@@ -80,22 +81,15 @@ public class TestEntity
         Value = value;
     }
 
-    public TestEntity()
-    {
-    } // Parameterless constructor for deserialization
+    public TestEntity() { } // Parameterless constructor for deserialization
 }
 
 internal class TestReaderWriter : IEntityWriter, IEntityReader
 {
-    public byte[] SerializeEntity<T>(T entity) where T : class
-    {
-        return JsonSerializer.SerializeToUtf8Bytes(entity);
-    }
-
-
     public TEntity DeserializeEntity<TEntity>(byte[] data, Type entityType) where TEntity : class
-    {
-        return (TEntity)JsonSerializer.Deserialize(data, entityType)
-               ?? throw new InvalidOperationException("Deserialization failed");
-    }
+        => (TEntity)JsonSerializer.Deserialize(data, entityType) ??
+           throw new InvalidOperationException("Deserialization failed");
+
+    public byte[] SerializeEntity<T>(T entity) where T : class
+        => JsonSerializer.SerializeToUtf8Bytes(entity);
 }
