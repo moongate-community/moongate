@@ -52,7 +52,7 @@ public class ExpansionInfo
         CharacterListFlags = characterListFlags;
         HousingFlags = housingFlags;
         MobileStatusVersion = mobileStatusVersion;
-        UOMapSelectionFlags = mapSelectionFlags;
+        MapSelectionFlags = mapSelectionFlags;
     }
 
     public static ExpansionInfo CoreExpansion => GetInfo(UOExpansion.EJ);
@@ -78,7 +78,7 @@ public class ExpansionInfo
     public int MobileStatusVersion { get; set; }
 
     [JsonConverter(typeof(FlagsConverter<UOMapSelectionFlags>))]
-    public UOMapSelectionFlags UOMapSelectionFlags { get; set; }
+    public UOMapSelectionFlags MapSelectionFlags { get; set; }
 
     public static ExpansionInfo GetInfo(UOExpansion ex)
         => GetInfo((int)ex);
@@ -98,7 +98,7 @@ public class ExpansionInfo
     public static void StoreMapSelection(UOMapSelectionFlags mapSelectionFlags, UOExpansion expansion)
     {
         var expansionIndex = (int)expansion;
-        Table[expansionIndex].UOMapSelectionFlags = mapSelectionFlags;
+        Table[expansionIndex].MapSelectionFlags = mapSelectionFlags;
     }
 
     public override string ToString()
