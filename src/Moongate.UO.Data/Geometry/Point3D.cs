@@ -94,7 +94,7 @@ public struct Point3D
         => X == other.X && Y == other.Y && Z == other.Z;
 
     public bool Equals(IPoint3D other)
-        => X == other?.X && Y == other.Y && Z == other.Z;
+        => other != null && X == other.X && Y == other.Y && Z == other.Z;
 
     public override bool Equals(object obj)
         => obj is Point3D other && Equals(other);
@@ -105,7 +105,7 @@ public struct Point3D
     /// <param name="direction">Direction with or without running flag</param>
     /// <returns>Base direction without running flag</returns>
     public static DirectionType GetBaseDirection(DirectionType direction)
-        => (DirectionType)((byte)direction & (byte)DirectionType.Running);
+        => (DirectionType)((byte)direction & ~(byte)DirectionType.Running);
 
     /// <summary>
     /// Gets direction from current point to target point
@@ -327,10 +327,10 @@ public struct Point3D
         => !ReferenceEquals(r, null) && l.X > r.X && l.Y > r.Y && l.Z > r.Z;
 
     public static bool operator >=(Point3D l, Point3D r)
-        => l.X >= r.X && l.Y >= r.Y && l.Z > r.Z;
+        => l.X >= r.X && l.Y >= r.Y && l.Z >= r.Z;
 
     public static bool operator >=(Point3D l, IPoint3D r)
-        => !ReferenceEquals(r, null) && l.X >= r.X && l.Y >= r.Y && l.Z > r.Z;
+        => !ReferenceEquals(r, null) && l.X >= r.X && l.Y >= r.Y && l.Z >= r.Z;
 
     /// <summary>
     /// Implicit conversion from DirectionType to Point3D offset
@@ -341,7 +341,7 @@ public struct Point3D
     public static implicit operator Point3D(DirectionType direction)
     {
         // Remove running flag to get base direction
-        var baseDirection = (DirectionType)((byte)direction & (byte)DirectionType.Running);
+        var baseDirection = (DirectionType)((byte)direction & ~(byte)DirectionType.Running);
 
         return baseDirection switch
         {
@@ -390,16 +390,16 @@ public struct Point3D
         => !ReferenceEquals(r, null) && (l.X != r.X || l.Y != r.Y || l.Z != r.Z);
 
     public static bool operator <(Point3D l, Point3D r)
-        => l.X < r.X && l.Y < r.Y && l.Z > r.Z;
+        => l.X < r.X && l.Y < r.Y && l.Z < r.Z;
 
     public static bool operator <(Point3D l, IPoint3D r)
-        => !ReferenceEquals(r, null) && l.X < r.X && l.Y < r.Y && l.Z > r.Z;
+        => !ReferenceEquals(r, null) && l.X < r.X && l.Y < r.Y && l.Z < r.Z;
 
     public static bool operator <=(Point3D l, Point3D r)
-        => l.X <= r.X && l.Y <= r.Y && l.Z > r.Z;
+        => l.X <= r.X && l.Y <= r.Y && l.Z <= r.Z;
 
     public static bool operator <=(Point3D l, IPoint3D r)
-        => !ReferenceEquals(r, null) && l.X <= r.X && l.Y <= r.Y && l.Z > r.Z;
+        => !ReferenceEquals(r, null) && l.X <= r.X && l.Y <= r.Y && l.Z <= r.Z;
 
     /// <summary>
     /// Subtraction operator for Point3D

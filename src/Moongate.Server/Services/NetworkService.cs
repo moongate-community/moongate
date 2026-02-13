@@ -324,12 +324,12 @@ public class NetworkService : INetworkService
 
             if (packetDefinition.Length == -1)
             {
-                if (span.Length < 2)
+                if (span.Length < 4)  // Need 1 byte opcode + 3 bytes for size
                 {
                     break;
                 }
 
-                headerSize = BinaryPrimitives.ReadUInt16BigEndian(span.Slice(1, 3));
+                headerSize = BinaryPrimitives.ReadUInt16BigEndian(span.Slice(1, 2));
                 packetSize = headerSize;
 
                 if (span.Length < packetSize)
