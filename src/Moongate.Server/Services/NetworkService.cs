@@ -328,14 +328,17 @@ public class NetworkService : INetworkService
             {
                 if (span.Length < 4)  // Need 1 byte opcode + 3 bytes for size
                 {
+                    _logger.Warning("Variable-length packet 0x{Opcode:X2} needs 4 bytes but only {Available} available", opcode, span.Length);
                     break;
                 }
 
                 headerSize = BinaryPrimitives.ReadUInt16BigEndian(span.Slice(1, 2));
                 packetSize = headerSize;
+                _logger.Verbose("Variable-length packet 0x{Opcode:X2} declares size: {Size}, available: {Available}", opcode, packetSize, span.Length);
 
                 if (span.Length < packetSize)
                 {
+                    _logger.Warning("Variable-length packet 0x{Opcode:X2} size {DeclaredSize} exceeds available {Available}", opcode, packetSize, span.Length);
                     break;
                 }
             }
