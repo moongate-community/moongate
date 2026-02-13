@@ -15,7 +15,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 10.0.x
 
       - name: Cache NuGet packages
         uses: actions/cache@v3
@@ -45,7 +45,7 @@ jobs:
       - name: Extract project version
         id: project-version
         run: |
-          VERSION=$(grep -oP '<Version>\\K[^<]+' src/Moongate.Server/Moongate.Server.csproj || echo "0.0.1")
+          VERSION=$(grep -oP '<Version>\K[^<]+' src/Moongate.Server/Moongate.Server.csproj || echo "0.0.1")
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build Docker image
