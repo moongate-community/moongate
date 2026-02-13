@@ -136,21 +136,19 @@ public class CharactersHandler : IGamePacketHandler
         var shoesItem = _entityFactoryService.CreateItemEntity("shoes");
         playerMobileEntity.AddItem(ItemLayerType.Shoes, shoesItem);
 
+        session.Mobile = playerMobileEntity;
+
         _mobileService.AddInWorld(playerMobileEntity);
 
         await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 
-        if (session.Account.Characters.Count == 1)
-        {
-            session.Mobile = playerMobileEntity;
-            await _eventBusService.PublishAsync(
-                new CharacterLoggedEvent(
-                    session.SessionId,
-                    playerMobileEntity.Id,
-                    playerMobileEntity.Name
-                )
-            );
-        }
+        await _eventBusService.PublishAsync(
+            new CharacterLoggedEvent(
+                session.SessionId,
+                playerMobileEntity.Id,
+                playerMobileEntity.Name
+            )
+        );
     }
 
     private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)

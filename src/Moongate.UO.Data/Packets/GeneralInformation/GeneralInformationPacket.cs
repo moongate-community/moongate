@@ -56,19 +56,10 @@ public class GeneralInformationPacket : BaseUoPacket
         => new SubcommandParser(SubcommandType, SubcommandData);
 
     /// <inheritdoc />
-    public bool Read(SpanReader reader)
+    protected override bool Read(SpanReader reader)
     {
         try
         {
-            // // Read packet length
-            // Length = reader.ReadUInt16();
-            // if (Length < 5)
-            // {
-            //     return false;
-            // }
-
-            reader.ReadByte(); // Read OpCode (0xBF)
-
             Length = reader.ReadInt16();
 
             // Read subcommand type
@@ -92,9 +83,10 @@ public class GeneralInformationPacket : BaseUoPacket
 
                 return true;
             }
+
             SubcommandData = ReadOnlyMemory<byte>.Empty;
 
-            return false;
+            return true;
         }
         catch
         {

@@ -31,6 +31,7 @@ using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Chat;
+using Moongate.UO.Data.Packets.GeneralInformation;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Login;
 using Moongate.UO.Data.Packets.MegaCliloc;
@@ -161,6 +162,13 @@ await ConsoleApp.RunAsync(
 
                                                   // Bind send-only packets that don't have handlers
                                                   networkService.BindPacket<LoginCompletePacket>();
+
+                                                  // Bind and register no-op handler for General Information (0xBF)
+                                                  // Client sends this after login with screen size, language, etc.
+                                                  networkService.BindPacket<GeneralInformationPacket>();
+                                                  networkService.RegisterPacketHandler<GeneralInformationPacket>(
+                                                      (sessionId, packet) => Task.CompletedTask
+                                                  );
 
                                                   // Register no-op handler for packets that client shouldn't send but might
                                                   networkService.RegisterPacketHandler<LoginCompletePacket>(

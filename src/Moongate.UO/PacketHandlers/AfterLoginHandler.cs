@@ -73,17 +73,6 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
 
-        var keys = new List<uint>();
-
-        for (uint i = 0; i < 6; i++)
-        {
-            keys.Add(i + 2);
-        }
-
-        var fastWalk = GeneralInformationFactory.CreateInitializeFastWalkPrevention(keys.ToArray());
-
-        session.SendPackets(fastWalk);
-
         session.SendPackets(new LoginCompletePacket());
 
         session.SendPackets(new SetTimePacket());

@@ -362,12 +362,14 @@ public class NetworkService : INetworkService
             if (!_packetBuilders.TryGetValue(packetBuffer.ReadByte(), out var packetBuilder))
             {
                 _logger.Warning(
-                    "No packet builder found for opcode: 0x{Opcode:X2} ({PacketName})",
+                    "No packet builder found for opcode: 0x{Opcode:X2} ({PacketName}), skipping {PacketSize} bytes",
                     opcode,
-                    packetDefinition.Description
+                    packetDefinition.Description,
+                    packetSize
                 );
 
-                break;
+                remainingBuffer = remainingBuffer[packetSize..];
+                continue;
             }
 
             var packet = packetBuilder();

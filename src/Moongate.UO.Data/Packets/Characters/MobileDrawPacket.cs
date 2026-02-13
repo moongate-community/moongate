@@ -219,17 +219,13 @@ public class MobileDrawPacket : BaseUoPacket
     /// Check if mobile has facial hair
     /// </summary>
     private bool HasFacialHair()
-        => Beheld.FacialHairHue > 0;
+        => Beheld.FacialHairStyle > 0;
 
-    /// <summary>
-    /// Check if mobile has hair
-    /// </summary>
     private bool HasHair()
-        => Beheld.HairStyle > 0 && Beheld.HairHue > 0;
+        => Beheld.HairStyle > 0;
 
     private bool IsVisibleLayer(ItemLayerType layer)
     {
-        return true;
         return layer != ItemLayerType.Backpack &&
                layer != ItemLayerType.Bank &&
                layer != ItemLayerType.ShopBuy &&

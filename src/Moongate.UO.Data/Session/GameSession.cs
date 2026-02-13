@@ -18,7 +18,7 @@ public class GameSession : IDisposable
 
     public long MoveTime { get; set; }
 
-    public byte MoveSequence { get; set; } = 1;
+    public byte MoveSequence { get; set; }
 
     public NetworkSessionFeatureType Features { get; private set; } = NetworkSessionFeatureType.None;
     public NetworkSessionStateType State { get; private set; } = NetworkSessionStateType.None;

@@ -18,6 +18,7 @@ public class DrawContainer : BaseUoPacket
         writer.Write(OpCode);
         writer.Write(Container.Id.Value);
         writer.Write((ushort)Container.GumpId.Value);
+        writer.Write((short)0x7D); // HighSeas container type
 
         return writer.ToArray();
     }

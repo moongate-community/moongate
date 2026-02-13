@@ -14,7 +14,7 @@ public static class MobileExtensions
         {
             var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
 
-            var session = gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == mobile.Id);
+            var session = gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile?.Id == mobile.Id);
 
             if (session == null)
             {

@@ -13,11 +13,16 @@ public class DrawContainerAndAddItemCombinedPacket : BaseUoPacket
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
-        using var tmpSpanWriter = new SpanWriter(1, true);
+        using var drawContainerWriter = new SpanWriter(1, true);
+        var drawContainerData = new DrawContainer(Container).Write(drawContainerWriter);
 
-        tmpSpanWriter.Write(new DrawContainer(Container).Write(tmpSpanWriter).ToArray());
-        tmpSpanWriter.Write(new AddMultipleItemToContainerPacket(Container).Write(tmpSpanWriter).ToArray());
+        using var addItemsWriter = new SpanWriter(1, true);
+        var addItemsData = new AddMultipleItemToContainerPacket(Container).Write(addItemsWriter);
 
-        return tmpSpanWriter.ToArray();
+        using var combinedWriter = new SpanWriter(drawContainerData.Length + addItemsData.Length);
+        combinedWriter.Write(drawContainerData.Span);
+        combinedWriter.Write(addItemsData.Span);
+
+        return combinedWriter.ToArray();
     }
 }

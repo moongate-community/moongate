@@ -82,6 +82,14 @@ public static class DefaultCommands
 
         commandSystemService.RegisterCommand("orion", OnOrionCommand, "Add my cat in world");
 
+        commandSystemService.RegisterCommand(
+            "spawn",
+            OnSpawnCommand,
+            "Spawns a mobile by template id (e.g. spawn cat)",
+            AccountLevelType.Admin,
+            CommandSourceType.InGame
+        );
+
         commandSystemService.RegisterCommand("teleport", OnTeleportCommand, "Teleports to target cursor");
     }
 
@@ -222,13 +230,53 @@ public static class DefaultCommands
 
         var mobileService = MoongateContext.Container.Resolve<IMobileService>();
 
-        var mobile = entityFactoryService.CreateMobileEntity("orione");
+        var mobile = entityFactoryService.CreateMobileEntity("cat");
 
+        if (mobile == null)
+        {
+            context.Print("Cat template not found.");
+
+            return;
+        }
+
+        mobile.Name = "Orion";
         mobile.Map = gameSession.Mobile.Map;
-
         mobile.Location = gameSession.Mobile.Location + new Point3D(1, 1, 0);
 
         mobileService.AddInWorld(mobile);
+        context.Print("Spawned Orion the cat at your location.");
+    }
+
+    private static async Task OnSpawnCommand(CommandSystemContext context)
+    {
+        if (context.Arguments.Length == 0)
+        {
+            context.Print("Usage: spawn <template_id>");
+
+            return;
+        }
+
+        var templateId = context.Arguments[0];
+
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+        var entityFactoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
+
+        var mobile = entityFactoryService.CreateMobileEntity(templateId);
+
+        if (mobile == null)
+        {
+            context.Print("Mobile template '{0}' not found.", templateId);
+
+            return;
+        }
+
+        mobile.Map = gameSession.Mobile.Map;
+        mobile.Location = gameSession.Mobile.Location + new Point3D(1, 1, 0);
+
+        mobileService.AddInWorld(mobile);
+        context.Print("Spawned '{0}' at your location.", mobile.Name);
     }
 
     private static async Task OnSaveCommand(CommandSystemContext context)
