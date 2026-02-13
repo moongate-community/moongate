@@ -96,9 +96,6 @@ public class ItemService : IItemService
         return CreateItemAsync().GetAwaiter().GetResult();
     }
 
-        return item;
-    }
-
     public UOItemEntity CreateItemAndAdd()
     {
         var item = CreateItem();
