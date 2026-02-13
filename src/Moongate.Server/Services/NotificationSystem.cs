@@ -275,8 +275,6 @@ public class NotificationSystem : INotificationSystem
                     gameSession.SendPackets(new DrawGamePlayerPacket(mobile));
 
                     gameSession.SendPackets(new MobileDrawPacket(mobile, mobile, true, true));
-
-                    // gameSession.SendPackets(new WornItemsPacket(mobile));
                 }
             }
         }

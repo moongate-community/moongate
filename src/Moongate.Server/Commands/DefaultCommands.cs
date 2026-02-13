@@ -207,7 +207,7 @@ public static class DefaultCommands
         }
 
         var randomEnumValue = Enum.GetValues<MusicName>().ToList().RandomElement();
-        var musicPacket = new PlayMusicPacket((int)randomEnumValue);
+        var musicPacket = new SetMusicPacket((int)randomEnumValue);
         gameSession.SendPackets(musicPacket);
         context.Print("Playing music: {0}", randomEnumValue);
 

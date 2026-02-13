@@ -57,7 +57,14 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new MobileDrawPacket(session.Mobile, session.Mobile, true, true));
 
-        session.SendPackets(new WornItemsPacket(session.Mobile));
+        // Send worn items (spec PolServer: multiple items = multiple 0x2E packets)
+        foreach (var equipment in session.Mobile.Equipment)
+        {
+            if (equipment.Key != ItemLayerType.Backpack && equipment.Key != ItemLayerType.Bank)
+            {
+                session.SendPackets(new WornItemPacket(session.Mobile, equipment.Value, equipment.Key));
+            }
+        }
 
         session.SendPackets(new DrawContainerAndAddItemCombinedPacket(session.Mobile.GetBackpack()));
 
@@ -86,7 +93,7 @@ public class AfterLoginHandler : IMoongateService
 
         var music = _spatialWorldService.GetMusicFromLocation(session.Mobile.Location, session.Mobile.Map.MapID);
 
-        session.SendPackets(new PlayMusicPacket(music));
+        session.SendPackets(new SetMusicPacket(music));
 
         session.SendPackets(new PaperdollPacket(session.Mobile));
 
