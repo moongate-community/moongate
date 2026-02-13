@@ -68,20 +68,33 @@ public class ItemService : IItemService
         _logger.Information("Added item action for {ItemId}.", itemId);
     }
 
+    public async Task<UOItemEntity> CreateItemAsync()
+    {
+        await _saveLock.WaitAsync();
+        try
+        {
+            _lastSerial += 1;
+
+            var item = new UOItemEntity
+            {
+                Id = _lastSerial
+            };
+
+            ItemCreated?.Invoke(item);
+
+            return item;
+        }
+        finally
+        {
+            _saveLock.Release();
+        }
+    }
+
     public UOItemEntity CreateItem()
     {
-        _saveLock.Wait();
-
-        _lastSerial += 1;
-
-        var item = new UOItemEntity
-        {
-            Id = _lastSerial
-        };
-
-        ItemCreated?.Invoke(item);
-
-        _saveLock.Release();
+        // Synchronous wrapper for backward compatibility - NOT recommended for new code
+        return CreateItemAsync().GetAwaiter().GetResult();
+    }
 
         return item;
     }

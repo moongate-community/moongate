@@ -66,7 +66,7 @@ public class CharactersHandler : IGamePacketHandler
             characterCreation.CharacterName
         );
 
-        var playerMobileEntity = _mobileService.CreateMobile();
+        var playerMobileEntity = await _mobileService.CreateMobileAsync();
 
         session.Account.Characters.Add(
             new()
@@ -160,6 +160,18 @@ public class CharactersHandler : IGamePacketHandler
     private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)
     {
         var character = session.Account.GetCharacter(characterDeletion.Index);
+
+        if (character == null)
+        {
+            _logger.Warning(
+                "Character deletion failed for account {AccountName} - Character at index {Index} not found.",
+                session.Account.Username,
+                characterDeletion.Index
+            );
+
+            return;
+        }
+
         var mobileEntity = _mobileService.GetMobile(character.MobileId);
 
         if (mobileEntity == null)
@@ -195,7 +207,29 @@ public class CharactersHandler : IGamePacketHandler
     {
         var character = session.Account.GetCharacter(packet.CharacterName);
 
+        if (character == null)
+        {
+            _logger.Warning(
+                "Character selection failed for account {AccountName} - Character {CharacterName} not found.",
+                session.Account.Username,
+                packet.CharacterName
+            );
+
+            return;
+        }
+
         var mobile = _mobileService.GetMobile(character.MobileId);
+
+        if (mobile == null)
+        {
+            _logger.Warning(
+                "Character selection failed for account {AccountName} - Mobile entity for character {CharacterName} not found.",
+                session.Account.Username,
+                packet.CharacterName
+            );
+
+            return;
+        }
 
         session.Mobile = mobile;
         mobile.IsPlayer = true;

@@ -90,6 +90,11 @@ public class AccountService : IAccountService
 
     public void Dispose() { }
 
+    /// <summary>
+    /// Gets an account by ID.
+    /// </summary>
+    /// <param name="accountId">The account ID to search for</param>
+    /// <returns>Account entity or null if not found</returns>
     public Task<UOAccountEntity> GetAccountByIdAsync(string accountId)
     {
         if (_accounts.TryGetValue(accountId, out var account))
