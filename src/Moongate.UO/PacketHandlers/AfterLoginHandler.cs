@@ -11,7 +11,6 @@ using Moongate.UO.Data.Packets.GeneralInformation.Factory;
 using Moongate.UO.Data.Packets.Items;
 using Moongate.UO.Data.Packets.Lights;
 using Moongate.UO.Data.Packets.Login;
-using Moongate.UO.Data.Packets.Maps;
 using Moongate.UO.Data.Packets.System;
 using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Types;
@@ -69,7 +68,7 @@ public class AfterLoginHandler : IMoongateService
         session.SendPackets(new DrawContainerAndAddItemCombinedPacket(session.Mobile.GetBackpack()));
 
         session.SendPackets(new WarModePacket(session.Mobile));
-        session.SendPackets(new MapChangePacket(session.Mobile.Map));
+        session.SendPackets(GeneralInformationFactory.CreateSetCursorHueSetMap(session.Mobile.Map));
         session.SendPackets(new OverallLightLevelPacket(LightLevelType.Day));
         session.SendPackets(new PersonalLightLevelPacket(LightLevelType.Day, session.Mobile));
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
@@ -89,7 +88,7 @@ public class AfterLoginHandler : IMoongateService
 
         session.SendPackets(new SetTimePacket());
         session.SendPackets(new SeasonPacket(session.Mobile.Map.Season));
-        session.SendPackets(new MapChangePacket(session.Mobile.Map));
+        session.SendPackets(GeneralInformationFactory.CreateSetCursorHueSetMap(session.Mobile.Map));
 
         var music = _spatialWorldService.GetMusicFromLocation(session.Mobile.Location, session.Mobile.Map.MapID);
 

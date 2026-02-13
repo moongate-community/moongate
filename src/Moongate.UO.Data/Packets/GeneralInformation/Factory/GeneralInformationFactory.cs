@@ -1,4 +1,5 @@
 using Moongate.Core.Spans;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Packets.GeneralInformation.SubCommands;
 using Moongate.UO.Data.Packets.GeneralInformation.SubCommands.Base.Interfaces;
 using Moongate.UO.Data.Packets.GeneralInformation.Types;
@@ -222,6 +223,21 @@ public static class GeneralInformationFactory
             SubcommandType.ToggleGargoyleFlying,
             writer.Span.ToArray()
         );
+    }
+
+#endregion
+
+#region Map and Cursor
+
+    /// <summary>
+    /// Creates Set Cursor Hue/Set Map packet (0x08)
+    /// </summary>
+    /// <param name="map">Map to set</param>
+    /// <returns>GeneralInformationPacket instance</returns>
+    public static GeneralInformationPacket CreateSetCursorHueSetMap(Map map)
+    {
+        var data = new SetCursorHueSetMapData(map);
+        return new(SubcommandType.SetCursorHueSetMap, data);
     }
 
 #endregion
