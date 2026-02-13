@@ -15,7 +15,5 @@ public record WorldView
     public int MapIndex { get; init; }
 
     public override string ToString()
-    {
-        return $"WorldView: Player={Player}, NearbyMobilesCount={NearbyMobiles.Count}, NearbyItemsCount={NearbyItems.Count}, ViewRange={ViewRange}, MapIndex={MapIndex}";
-    }
+        => $"WorldView: Player={Player}, NearbyMobilesCount={NearbyMobiles.Count}, NearbyItemsCount={NearbyItems.Count}, ViewRange={ViewRange}, MapIndex={MapIndex}";
 }

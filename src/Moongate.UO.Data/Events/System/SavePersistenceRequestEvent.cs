@@ -1,6 +1,3 @@
 namespace Moongate.UO.Data.Events.System;
 
-public record SavePersistenceRequestEvent
-{
-
-}
+public record SavePersistenceRequestEvent { }

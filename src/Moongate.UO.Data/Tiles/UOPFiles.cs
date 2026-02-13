@@ -2,93 +2,12 @@ namespace Moongate.UO.Data.Tiles;
 
 public static class UOPFiles
 {
-    public static Dictionary<int, UOPEntry> ReadUOPIndexes(
-        FileStream stream, string fileExt, int entryCount = 0x14000, int expectedVersion = -1, int precision = 8
-    )
-    {
-        var reader = new BinaryReader(stream);
-        var length = (int)stream.Length;
-
-        // MYP\0
-        if (reader.ReadUInt32() != 0x50594D)
-        {
-            throw new FileLoadException($"Error loading file {stream.Name}. The file is not a UOP file.");
-        }
-
-        var version = reader.ReadInt32();
-        if (expectedVersion > -1 && version != expectedVersion)
-        {
-            throw new FileLoadException($"Error loading file {stream.Name}. Expected version {expectedVersion}.");
-        }
-
-        // Signature
-        if (reader.ReadUInt32() != 0xFD23EC43)
-        {
-            throw new FileLoadException($"Error loading file {stream.Name}. Invalid signature.");
-        }
-
-        var hashes = GenerateHashes(stream.Name, fileExt, entryCount, precision);
-
-        var nextBlock = reader.ReadInt64();
-
-        var entries = new Dictionary<int, UOPEntry>(0x10000);
-
-        do
-        {
-            stream.Seek(nextBlock, SeekOrigin.Begin);
-            var fileCount = reader.ReadInt32();
-            nextBlock = reader.ReadInt64();
-
-            for (var i = 0; i < fileCount; ++i)
-            {
-                var offset = reader.ReadInt64();
-                var headerLength = reader.ReadInt32();
-                var compressedLength = reader.ReadInt32();
-                var decompressedLength = reader.ReadInt32();
-                var fileNameHash = reader.ReadUInt64();
-
-                reader.ReadUInt32(); // Adler32
-
-                var compressed = reader.ReadInt16() == 1;
-
-                if (offset != 0 && hashes.TryGetValue(fileNameHash, out var fileIndex) && compressedLength > 0 &&
-                    decompressedLength > 0)
-                {
-                    entries[fileIndex] = new UOPEntry(offset + headerLength, decompressedLength)
-                    {
-                        Compressed = compressed,
-                        CompressedSize = compressedLength
-                    };
-                }
-            }
-        } while (nextBlock != 0 && nextBlock < length);
-
-        entries.TrimExcess();
-        return entries;
-    }
-
-    private static Dictionary<ulong, int> GenerateHashes(string filePath, string ext, int entryCount, int precision = 8)
-    {
-        var hashes = new Dictionary<ulong, int>();
-        Span<char> buffer = stackalloc char[precision];
-        var formatter = $"D{precision}".AsSpan();
-
-        var root = $"build/{Path.GetFileNameWithoutExtension(filePath).ToLowerInvariant()}";
-
-        for (var i = 0; i < entryCount; i++)
-        {
-            i.TryFormat(buffer, out _, formatter);
-            hashes[HashLittle2($"{root}/{buffer}{ext}")] = i;
-        }
-
-        return hashes;
-    }
-
     public static ulong HashLittle2(ReadOnlySpan<char> s)
     {
         var length = s.Length;
 
-        uint b, c;
+        uint b,
+             c;
         var a = b = c = 0xDEADBEEF + (uint)length;
 
         var k = 0;
@@ -193,6 +112,7 @@ public static class UOPFiles
                 case 1:
                     {
                         a += s[k];
+
                         break;
                     }
             }
@@ -214,5 +134,95 @@ public static class UOPFiles
         }
 
         return ((ulong)b << 32) | c;
+    }
+
+    public static Dictionary<int, UOPEntry> ReadUOPIndexes(
+        FileStream stream,
+        string fileExt,
+        int entryCount = 0x14000,
+        int expectedVersion = -1,
+        int precision = 8
+    )
+    {
+        var reader = new BinaryReader(stream);
+        var length = (int)stream.Length;
+
+        // MYP\0
+        if (reader.ReadUInt32() != 0x50594D)
+        {
+            throw new FileLoadException($"Error loading file {stream.Name}. The file is not a UOP file.");
+        }
+
+        var version = reader.ReadInt32();
+
+        if (expectedVersion > -1 && version != expectedVersion)
+        {
+            throw new FileLoadException($"Error loading file {stream.Name}. Expected version {expectedVersion}.");
+        }
+
+        // Signature
+        if (reader.ReadUInt32() != 0xFD23EC43)
+        {
+            throw new FileLoadException($"Error loading file {stream.Name}. Invalid signature.");
+        }
+
+        var hashes = GenerateHashes(stream.Name, fileExt, entryCount, precision);
+
+        var nextBlock = reader.ReadInt64();
+
+        var entries = new Dictionary<int, UOPEntry>(0x10000);
+
+        do
+        {
+            stream.Seek(nextBlock, SeekOrigin.Begin);
+            var fileCount = reader.ReadInt32();
+            nextBlock = reader.ReadInt64();
+
+            for (var i = 0; i < fileCount; ++i)
+            {
+                var offset = reader.ReadInt64();
+                var headerLength = reader.ReadInt32();
+                var compressedLength = reader.ReadInt32();
+                var decompressedLength = reader.ReadInt32();
+                var fileNameHash = reader.ReadUInt64();
+
+                reader.ReadUInt32(); // Adler32
+
+                var compressed = reader.ReadInt16() == 1;
+
+                if (offset != 0 &&
+                    hashes.TryGetValue(fileNameHash, out var fileIndex) &&
+                    compressedLength > 0 &&
+                    decompressedLength > 0)
+                {
+                    entries[fileIndex] = new(offset + headerLength, decompressedLength)
+                    {
+                        Compressed = compressed,
+                        CompressedSize = compressedLength
+                    };
+                }
+            }
+        } while (nextBlock != 0 && nextBlock < length);
+
+        entries.TrimExcess();
+
+        return entries;
+    }
+
+    private static Dictionary<ulong, int> GenerateHashes(string filePath, string ext, int entryCount, int precision = 8)
+    {
+        var hashes = new Dictionary<ulong, int>();
+        Span<char> buffer = stackalloc char[precision];
+        var formatter = $"D{precision}".AsSpan();
+
+        var root = $"build/{Path.GetFileNameWithoutExtension(filePath).ToLowerInvariant()}";
+
+        for (var i = 0; i < entryCount; i++)
+        {
+            i.TryFormat(buffer, out _, formatter);
+            hashes[HashLittle2($"{root}/{buffer}{ext}")] = i;
+        }
+
+        return hashes;
     }
 }

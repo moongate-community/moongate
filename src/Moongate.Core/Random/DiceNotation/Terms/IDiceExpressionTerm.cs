@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces;
 ﻿namespace Moongate.Core.Random.DiceNotation.Terms;
 
 /// <summary>
@@ -10,7 +11,7 @@ public interface IDiceExpressionTerm
     /// </summary>
     /// <param name="random">IRandom RNG used to perform the Roll.</param>
     /// <returns>An IEnumerable of TermResult which will have one item per result</returns>
-    IEnumerable<TermResult> GetResults( IRandom random );
+    IEnumerable<TermResult> GetResults(IRandom random);
 
     /// <summary>
     /// Gets the TermResults for the implementation

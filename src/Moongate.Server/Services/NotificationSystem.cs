@@ -31,7 +31,9 @@ public class NotificationSystem : INotificationSystem
     private readonly ISpatialWorldService _spatialWorldService;
 
     public NotificationSystem(
-        IMobileService mobileService, IGameSessionService gameSessionService, ICommandSystemService commandSystemService,
+        IMobileService mobileService,
+        IGameSessionService gameSessionService,
+        ICommandSystemService commandSystemService,
         ISpatialWorldService spatialWorldService
     )
     {
@@ -51,78 +53,81 @@ public class NotificationSystem : INotificationSystem
 
         _spatialWorldService.OnMobileAddedInSector += OnOnMobileAddedInSector;
 
-
         _mobileService.MobileAdded += OnMobileAdded;
     }
 
-    private void OnOnMobileAddedInSector(UOMobileEntity mobile, MapSector sector, WorldView worldView)
-    {
-        _logger.Debug("Mobile {MobileId} {Name} added to sector {Sector}", mobile.Id, mobile.Name, sector);
+    public void Dispose() { }
 
-        foreach (var mobileInView in worldView.NearbyMobiles)
+    public async Task SendChatMessageAsync(
+        UOMobileEntity mobile,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
+        int font
+    )
+    {
+        // check if command
+        if (text.StartsWith("."))
         {
-            if (mobileInView.IsPlayer)
-            {
-                var gameSession = _gameSessionService.GetGameSessionByMobile(mobileInView);
-
-                if (gameSession != null)
-                {
-                    gameSession.SendPackets(new DrawGamePlayerPacket(mobile));
-
-                    gameSession.SendPackets(new MobileDrawPacket(mobile, mobile, true, true));
-
-                    // gameSession.SendPackets(new WornItemsPacket(mobile));
-                }
-            }
-        }
-    }
-
-    private void OnItemRemoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
-    {
-    }
-
-    private void OnItemOnGround(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
-    {
-        foreach (var mobile in mobiles)
-        {
-            mobile.ViewItemOnGround(item, newLocation);
-        }
-    }
-
-    private void OnMobileAdded(UOMobileEntity mobile)
-    {
-        if (mobile.IsPlayer)
-        {
-            mobile.ChatMessageReceived += PlayerOnChatMessageReceived;
-            mobile.ChatMessageSent += PlayerOnChatMessageSent;
-            mobile.ItemOnGround += ((item, location) => PlayerItemOnGround(mobile, item, location));
-            mobile.MobileMoved += ((otherMobile, location) => OnOtherMobileMoved(mobile, otherMobile, location));
-            mobile.ItemRemoved += ((item, location) => PlayerItemRemoved(mobile, item, location));
-            mobile.GetBackpack().ContainerItemAdded +=
-                (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
-            mobile.GetBackpack().ContainerItemRemoved +=
-                (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
-            mobile.EquipmentAdded += MobileOnEquipmentAdded;
-            mobile.EquipmentRemoved += MobileOnEquipmentRemoved;
+            await HandleCommandAsync(mobile, text[1..]);
 
             return;
         }
 
-        mobile.ChatMessageReceived += BotReceivedMessage;
-        mobile.ChatMessageSent += BotSentMessage;
-        mobile.MobileMoved += MobileOnMobileMoved;
+        var nonPlayersToNotify =
+            _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
+
+        foreach (var other in nonPlayersToNotify)
+        {
+            if (other.Id == mobile.Id)
+            {
+                mobile.Speech(messageType, hue, text, graphic, font);
+
+                continue;
+            }
+
+            other.ReceiveSpeech(mobile, messageType, hue, text, graphic, font);
+        }
     }
 
-    private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D location)
+    public void SendSystemMessageToAll(string message)
     {
+        foreach (var other in _gameSessionService.QuerySessions(s => true).Select(s => s.Mobile))
+        {
+            // Log the system message
+            _logger.Information("Sending system message to mobile {MobileId}: {Message}", other.Id, message);
+
+            // Send the system message
+            SendSystemMessageToMobile(other, message);
+        }
     }
+
+    public void SendSystemMessageToMobile(UOMobileEntity mobile, string message)
+    {
+        mobile.ReceiveSpeech(null, ChatMessageType.System, 0, message, 0, 3);
+    }
+
+    private void BotReceivedMessage(
+        UOMobileEntity? self,
+        UOMobileEntity? sender,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
+        int font
+    ) { }
 
     private void BotSentMessage(
-        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+        UOMobileEntity? mobile,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
+        int font
     )
     {
         var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
-
 
         foreach (var other in worldView.NearbyMobiles)
         {
@@ -133,23 +138,32 @@ public class NotificationSystem : INotificationSystem
         }
     }
 
-    private void BotReceivedMessage(
-        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
-        int font
-    )
+    private async Task HandleCommandAsync(UOMobileEntity mobile, string command)
     {
+        _logger.Debug("Handling command '{Command}' for mobile {MobileId}", command, mobile.Id);
+
+        var gameSession = _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == mobile.Id);
+        await _commandSystemService.ExecuteCommandAsync(
+            command,
+            gameSession.SessionId,
+            gameSession.Account.AccountLevel,
+            CommandSourceType.InGame
+        );
     }
 
-    private void OnContainerItemChanged(UOMobileEntity mobile, UOItemEntity container, ItemReference item)
+    private void MobileOnEquipmentAdded(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)
     {
-        if (mobile.IsPlayer)
+        var mobileInSector = _spatialWorldService.GetPlayersInRange(
+            mobile.Location,
+            MapSectorConsts.MaxViewRange,
+            mobile.Map.MapID
+        );
+
+        foreach (var session in mobileInSector)
         {
-            var session = _gameSessionService.GetGameSessionByMobile(mobile);
-            if (session != null)
-            {
-                var containerItems = new AddMultipleItemToContainerPacket(container);
-                session.SendPackets(containerItems);
-            }
+            var itemWornPacket = new WornItemPacket(mobile, item, layer);
+            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
+            session.SendPackets(itemWornPacket, mobileDrawPacket);
         }
     }
 
@@ -168,24 +182,108 @@ public class NotificationSystem : INotificationSystem
         }
     }
 
-    private void MobileOnEquipmentAdded(UOMobileEntity mobile, ItemLayerType layer, ItemReference item)
+    private void MobileOnMobileMoved(UOMobileEntity mobile, Point3D location) { }
+
+    private void OnContainerItemChanged(UOMobileEntity mobile, UOItemEntity container, ItemReference item)
     {
-        var mobileInSector = _spatialWorldService.GetPlayersInRange(
-            mobile.Location,
-            MapSectorConsts.MaxViewRange,
-            mobile.Map.MapID
-        );
-        foreach (var session in mobileInSector)
+        if (mobile.IsPlayer)
         {
-            var itemWornPacket = new WornItemPacket(mobile, item, layer);
-            var mobileDrawPacket = new MobileDrawPacket(mobile, session.Mobile, true, true);
-            session.SendPackets(itemWornPacket, mobileDrawPacket);
+            var session = _gameSessionService.GetGameSessionByMobile(mobile);
+
+            if (session != null)
+            {
+                var containerItems = new AddMultipleItemToContainerPacket(container);
+                session.SendPackets(containerItems);
+            }
+        }
+    }
+
+    private void OnGameSessionBeforeDestroy(GameSession session) { }
+
+    private void OnGameSessionCreated(GameSession session) { }
+
+    private void OnItemOnGround(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles)
+    {
+        foreach (var mobile in mobiles)
+        {
+            mobile.ViewItemOnGround(item, newLocation);
+        }
+    }
+
+    private void OnItemRemoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles) { }
+
+    private void OnMobileAdded(UOMobileEntity mobile)
+    {
+        if (mobile.IsPlayer)
+        {
+            mobile.ChatMessageReceived += PlayerOnChatMessageReceived;
+            mobile.ChatMessageSent += PlayerOnChatMessageSent;
+            mobile.ItemOnGround += (item, location) => PlayerItemOnGround(mobile, item, location);
+            mobile.MobileMoved += (otherMobile, location) => OnOtherMobileMoved(mobile, otherMobile, location);
+            mobile.ItemRemoved += (item, location) => PlayerItemRemoved(mobile, item, location);
+            mobile.GetBackpack().ContainerItemAdded +=
+                (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
+            mobile.GetBackpack().ContainerItemRemoved +=
+                (container, itemRef) => OnContainerItemChanged(mobile, container, itemRef);
+            mobile.EquipmentAdded += MobileOnEquipmentAdded;
+            mobile.EquipmentRemoved += MobileOnEquipmentRemoved;
+
+            return;
+        }
+
+        mobile.ChatMessageReceived += BotReceivedMessage;
+        mobile.ChatMessageSent += BotSentMessage;
+        mobile.MobileMoved += MobileOnMobileMoved;
+    }
+
+    private void OnMobileMoved(UOMobileEntity mobile, Point3D location, WorldView worldView)
+    {
+        _logger.Debug("Mobile {MobileId} moved to {Location}", mobile.Id, location);
+
+        mobile.OtherMobileMoved(mobile, location);
+
+        foreach (var otMobile in worldView.NearbyMobiles)
+        {
+            otMobile.OtherMobileMoved(mobile, location);
+        }
+    }
+
+    private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)
+    {
+        var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
+
+        _logger.Debug(
+            "Mobile {MobileId} moved from sector {OldSector} to {NewSector}",
+            mobile.Id,
+            oldSector,
+            newSector
+        );
+    }
+
+    private void OnOnMobileAddedInSector(UOMobileEntity mobile, MapSector sector, WorldView worldView)
+    {
+        _logger.Debug("Mobile {MobileId} {Name} added to sector {Sector}", mobile.Id, mobile.Name, sector);
+
+        foreach (var mobileInView in worldView.NearbyMobiles)
+        {
+            if (mobileInView.IsPlayer)
+            {
+                var gameSession = _gameSessionService.GetGameSessionByMobile(mobileInView);
+
+                if (gameSession != null)
+                {
+                    gameSession.SendPackets(new DrawGamePlayerPacket(mobile));
+
+                    gameSession.SendPackets(new MobileDrawPacket(mobile, mobile, true, true));
+                }
+            }
         }
     }
 
     private void OnOtherMobileMoved(UOMobileEntity self, UOMobileEntity otherMobile, Point3D location)
     {
         var updatePlayerPacket = new UpdatePlayerPacket(otherMobile);
+
         // var drawPlayer = new DrawGamePlayerPacket(otherMobile);
 
         var mobileDraw = new MobileDrawPacket(otherMobile, self, true, true);
@@ -214,29 +312,13 @@ public class NotificationSystem : INotificationSystem
         session.SendPackets(deleteObjectPacket);
     }
 
-    private void PlayerOnChatMessageSent(
-        UOMobileEntity? mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
-    )
-    {
-        _logger.Debug("Player {MobileId} sent chat message: {Message}", mobile?.Id, text);
-
-        var messagePacket = new UnicodeSpeechResponsePacket()
-        {
-            Font = font,
-            Graphic = graphic,
-            Hue = hue,
-            IsUnicode = true,
-            Serial = mobile.Id,
-            MessageType = messageType,
-            Name = mobile?.Name ?? string.Empty,
-            Text = text,
-        };
-
-        mobile.SendPackets(messagePacket);
-    }
-
     private void PlayerOnChatMessageReceived(
-        UOMobileEntity? self, UOMobileEntity? sender, ChatMessageType messageType, short hue, string text, int graphic,
+        UOMobileEntity? self,
+        UOMobileEntity? sender,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
         int font
     )
     {
@@ -247,112 +329,44 @@ public class NotificationSystem : INotificationSystem
             text
         );
 
-        var messagePacket = new UnicodeSpeechResponsePacket()
+        var messagePacket = new UnicodeSpeechResponsePacket
         {
             Font = font,
             Graphic = graphic,
-            Hue = hue == 0 ? (short)1310 : hue,
+            Hue = hue == 0 ? 1310 : hue,
             IsUnicode = true,
             Serial = sender?.Id ?? Serial.Zero,
             MessageType = messageType,
             Name = sender?.Name ?? "System",
-            Text = text,
+            Text = text
         };
 
         self?.SendPackets(messagePacket);
     }
 
-    private void OnMobileMoved(UOMobileEntity mobile, Point3D location, WorldView worldView)
-    {
-        _logger.Debug("Mobile {MobileId} moved to {Location}", mobile.Id, location);
-
-        mobile.OtherMobileMoved(mobile, location);
-
-        foreach (var otMobile in worldView.NearbyMobiles)
-        {
-            otMobile.OtherMobileMoved(mobile, location);
-        }
-    }
-
-    private void OnMobileSectorMoved(UOMobileEntity mobile, MapSector oldSector, MapSector newSector)
-    {
-        var worldView = _spatialWorldService.GetPlayerWorldView(mobile);
-
-
-        _logger.Debug(
-            "Mobile {MobileId} moved from sector {OldSector} to {NewSector}",
-            mobile.Id,
-            oldSector,
-            newSector
-        );
-    }
-
-    private void OnGameSessionBeforeDestroy(GameSession session)
-    {
-    }
-
-    private void OnGameSessionCreated(GameSession session)
-    {
-    }
-
-
-    public void Dispose()
-    {
-    }
-
-    private async Task HandleCommandAsync(UOMobileEntity mobile, string command)
-    {
-        _logger.Debug("Handling command '{Command}' for mobile {MobileId}", command, mobile.Id);
-
-        var gameSession = _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile.Id == mobile.Id);
-        await _commandSystemService.ExecuteCommandAsync(
-            command,
-            gameSession.SessionId,
-            gameSession.Account.AccountLevel,
-            CommandSourceType.InGame
-        );
-    }
-
-    public void SendSystemMessageToAll(string message)
-    {
-        foreach (var other in _gameSessionService.QuerySessions(s => true).Select(s => s.Mobile))
-        {
-            // Log the system message
-            _logger.Information("Sending system message to mobile {MobileId}: {Message}", other.Id, message);
-
-            // Send the system message
-            SendSystemMessageToMobile(other, message);
-        }
-    }
-
-    public void SendSystemMessageToMobile(UOMobileEntity mobile, string message)
-    {
-        mobile.ReceiveSpeech(null, ChatMessageType.System, 0, message, 0, 3);
-    }
-
-    public async Task SendChatMessageAsync(
-        UOMobileEntity mobile, ChatMessageType messageType, short hue, string text, int graphic, int font
+    private void PlayerOnChatMessageSent(
+        UOMobileEntity? mobile,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
+        int font
     )
     {
-        // check if command
-        if (text.StartsWith("."))
+        _logger.Debug("Player {MobileId} sent chat message: {Message}", mobile?.Id, text);
+
+        var messagePacket = new UnicodeSpeechResponsePacket
         {
-            await HandleCommandAsync(mobile, text[1..]);
-            return;
-        }
+            Font = font,
+            Graphic = graphic,
+            Hue = hue,
+            IsUnicode = true,
+            Serial = mobile.Id,
+            MessageType = messageType,
+            Name = mobile?.Name ?? string.Empty,
+            Text = text
+        };
 
-        var nonPlayersToNotify =
-            _mobileService.QueryMobiles(m => m.Location.InRange(mobile.Location, UOContext.LineOfSight)).ToList();
-
-        foreach (var other in nonPlayersToNotify)
-        {
-            if (other.Id == mobile.Id)
-            {
-                mobile.Speech(messageType, hue, text, graphic, font);
-                continue;
-            }
-
-            other.ReceiveSpeech(mobile, messageType, hue, text, graphic, font);
-        }
+        mobile.SendPackets(messagePacket);
     }
 }

@@ -9,25 +9,18 @@ public class DeleteObjectPacket : BaseUoPacket
 {
     public Serial ObjectId { get; set; }
 
-
-    public DeleteObjectPacket() : base(0x1D)
-    {
-    }
+    public DeleteObjectPacket() : base(0x1D) { }
 
     public DeleteObjectPacket(Serial objectId) : this()
-    {
-        ObjectId = objectId;
-    }
+        => ObjectId = objectId;
 
-    public DeleteObjectPacket(ISerialEntity entity) : this(entity.Id)
-    {
-
-    }
+    public DeleteObjectPacket(ISerialEntity entity) : this(entity.Id) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Write(OpCode);
         writer.Write(ObjectId.Value);
+
         return writer.ToArray();
     }
 }

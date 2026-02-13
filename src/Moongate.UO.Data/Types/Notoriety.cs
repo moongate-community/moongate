@@ -9,5 +9,5 @@ public enum Notoriety : byte
     Criminal = 0x04,
     Enemy = 0x05,
     Murdered = 0x06,
-    Invulnerable = 0x07,
+    Invulnerable = 0x07
 }

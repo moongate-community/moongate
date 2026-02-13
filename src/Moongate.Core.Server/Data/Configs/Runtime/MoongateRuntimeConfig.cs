@@ -6,5 +6,4 @@ public class MoongateRuntimeConfig
     public bool IsPacketLoggingFileEnabled { get; set; }
 
     public bool IsPacketLoggingConsoleEnabled { get; set; }
-
 }

@@ -7,8 +7,8 @@ namespace Moongate.UO.FileLoaders;
 
 public class RaceLoader : IFileLoader
 {
-
     private readonly ILogger _logger = Log.ForContext<RaceLoader>();
+
     public async Task LoadAsync()
     {
         /* Here we configure all races. Some notes:
@@ -24,7 +24,5 @@ public class RaceLoader : IFileLoader
         RaceDefinitions.RegisterRace(new Gargoyle(2, 2));
 
         _logger.Information("Loaded {Count} races", 3);
-
-
     }
 }

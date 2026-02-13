@@ -17,11 +17,6 @@ public class Point3DList
 
     public Point3D this[int index] => m_List[index];
 
-    public void Clear()
-    {
-        Count = 0;
-    }
-
     public void Add(int x, int y, int z)
     {
         if (Count + 1 > m_List.Length)
@@ -58,6 +53,11 @@ public class Point3DList
         m_List[Count].Y = p.Y;
         m_List[Count].Z = p.Z;
         ++Count;
+    }
+
+    public void Clear()
+    {
+        Count = 0;
     }
 
     public Point3D[] ToArray()

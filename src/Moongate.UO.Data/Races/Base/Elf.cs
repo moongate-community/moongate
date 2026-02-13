@@ -25,9 +25,60 @@ public class Elf : Race
     };
 
     public Elf(int raceID, int raceIndex)
-        : base(raceID, raceIndex, "Elf", "Elves", 605, 606, 607, 608)
+        : base(raceID, raceIndex, "Elf", "Elves", 605, 606, 607, 608) { }
+
+    public override int ClipHairHue(int hue)
     {
+        for (var i = 0; i < m_HairHues.Length; i++)
+        {
+            if (m_HairHues[i] == hue)
+            {
+                return hue;
+            }
+        }
+
+        return m_HairHues[0];
     }
+
+    public override int ClipSkinHue(int hue)
+    {
+        for (var i = 0; i < m_SkinHues.Length; i++)
+        {
+            if (m_SkinHues[i] == hue)
+            {
+                return hue;
+            }
+        }
+
+        return m_SkinHues[0];
+    }
+
+    public override int RandomFacialHair(bool female)
+        => 0;
+
+    public override int RandomHair(bool female) // Random hair doesn't include baldness
+    {
+        return RandomUtils.Random(8) switch
+        {
+            0 => 0x2FC0,                   // Long Feather
+            1 => 0x2FC1,                   // Short
+            2 => 0x2FC2,                   // Mullet
+            3 => 0x2FCE,                   // Knob
+            4 => 0x2FCF,                   // Braided
+            5 => 0x2FD1,                   // Spiked
+            6 => female ? 0x2FCC : 0x2FBF, // Flower or Mid-long
+            _ => female ? 0x2FD0 : 0x2FCD
+        };
+    }
+
+    public override int RandomHairHue()
+        => m_HairHues.RandomElement();
+
+    public override int RandomSkinHue()
+        => m_SkinHues.RandomElement() | 0x8000;
+
+    public override bool ValidateFacialHair(bool female, int itemID)
+        => itemID == 0;
 
     public override bool ValidateHair(bool female, int itemID)
     {
@@ -53,53 +104,4 @@ public class Elf : Race
 
         return false;
     }
-
-    public override int RandomHair(bool female) // Random hair doesn't include baldness
-    {
-        return RandomUtils.Random(8) switch
-        {
-            0 => 0x2FC0,                   // Long Feather
-            1 => 0x2FC1,                   // Short
-            2 => 0x2FC2,                   // Mullet
-            3 => 0x2FCE,                   // Knob
-            4 => 0x2FCF,                   // Braided
-            5 => 0x2FD1,                   // Spiked
-            6 => female ? 0x2FCC : 0x2FBF, // Flower or Mid-long
-            _ => female ? 0x2FD0 : 0x2FCD
-        };
-    }
-
-    public override bool ValidateFacialHair(bool female, int itemID) => itemID == 0;
-
-    public override int RandomFacialHair(bool female) => 0;
-
-    public override int ClipSkinHue(int hue)
-    {
-        for (var i = 0; i < m_SkinHues.Length; i++)
-        {
-            if (m_SkinHues[i] == hue)
-            {
-                return hue;
-            }
-        }
-
-        return m_SkinHues[0];
-    }
-
-    public override int RandomSkinHue() => m_SkinHues.RandomElement() | 0x8000;
-
-    public override int ClipHairHue(int hue)
-    {
-        for (var i = 0; i < m_HairHues.Length; i++)
-        {
-            if (m_HairHues[i] == hue)
-            {
-                return hue;
-            }
-        }
-
-        return m_HairHues[0];
-    }
-
-    public override int RandomHairHue() => m_HairHues.RandomElement();
 }

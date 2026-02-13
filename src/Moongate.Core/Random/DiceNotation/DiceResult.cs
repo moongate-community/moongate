@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces;
 ﻿using System.Collections.ObjectModel;
 
 namespace Moongate.Core.Random.DiceNotation;
@@ -27,10 +28,10 @@ public class DiceResult
     /// </summary>
     /// <param name="results">An IEnumerable of TermResult that represents one result for each DiceTerm in the DiceExpression</param>
     /// <param name="randomUsed">The random number generator used to get this result</param>
-    public DiceResult( IEnumerable<TermResult> results, IRandom randomUsed )
+    public DiceResult(IEnumerable<TermResult> results, IRandom randomUsed)
     {
         RandomUsed = randomUsed;
-        Results = new ReadOnlyCollection<TermResult>( results.ToList() );
-        Value = results.Sum( r => r.Value * r.Scalar );
+        Results = new(results.ToList());
+        Value = results.Sum(r => r.Value * r.Scalar);
     }
 }

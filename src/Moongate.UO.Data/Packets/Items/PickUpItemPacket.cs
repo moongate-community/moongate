@@ -10,10 +10,7 @@ public class PickUpItemPacket : BaseUoPacket
 
     public int StackAmount { get; set; }
 
-
-    public PickUpItemPacket() : base(0x07)
-    {
-    }
+    public PickUpItemPacket() : base(0x07) { }
 
     protected override bool Read(SpanReader reader)
     {

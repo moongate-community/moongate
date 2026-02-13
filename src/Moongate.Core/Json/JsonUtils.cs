@@ -12,7 +12,7 @@ public static class JsonUtils
 
     public static List<JsonConverter> JsonConverters { get; } = new()
     {
-        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, true)
+        new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
     };
 
     static JsonUtils()
@@ -28,40 +28,6 @@ public static class JsonUtils
         _jsonSerializerOptions.Converters.Add(converter);
     }
 
-    private static void RebuildJsonSerializerContexts()
-    {
-        _jsonSerializerOptions = new JsonSerializerOptions()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            PropertyNameCaseInsensitive = true,
-            WriteIndented = true,
-            AllowTrailingCommas = true,
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            TypeInfoResolver = JsonTypeInfoResolver.Combine(JsonSerializerContexts.ToArray()),
-        };
-
-        foreach (var converter in JsonConverters)
-        {
-            _jsonSerializerOptions.Converters.Add(converter);
-        }
-    }
-
-    public static void RegisterJsonContext(JsonSerializerContext context)
-    {
-        ArgumentNullException.ThrowIfNull(context);
-
-        JsonSerializerContexts.Add(context);
-        RebuildJsonSerializerContexts();
-    }
-
-
-    public static string Serialize<T>(T obj)
-    {
-        ArgumentNullException.ThrowIfNull(obj);
-
-        return JsonSerializer.Serialize(obj, typeof(T), _jsonSerializerOptions);
-    }
-
     public static T Deserialize<T>(string json)
     {
         ArgumentNullException.ThrowIfNull(json);
@@ -73,16 +39,31 @@ public static class JsonUtils
     public static T DeserializeFromFile<T>(string filePath)
     {
         ArgumentNullException.ThrowIfNull(filePath);
+
         if (!File.Exists(filePath))
         {
             throw new FileNotFoundException($"The file '{filePath}' does not exist.");
         }
 
         var json = File.ReadAllText(filePath);
+
         return Deserialize<T>(json);
     }
 
+    public static void RegisterJsonContext(JsonSerializerContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
 
+        JsonSerializerContexts.Add(context);
+        RebuildJsonSerializerContexts();
+    }
+
+    public static string Serialize<T>(T obj)
+    {
+        ArgumentNullException.ThrowIfNull(obj);
+
+        return JsonSerializer.Serialize(obj, typeof(T), _jsonSerializerOptions);
+    }
 
     public static void SerializeToFile<T>(T obj, string filePath)
     {
@@ -91,5 +72,23 @@ public static class JsonUtils
 
         var json = Serialize(obj);
         File.WriteAllText(filePath, json);
+    }
+
+    private static void RebuildJsonSerializerContexts()
+    {
+        _jsonSerializerOptions = new()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNameCaseInsensitive = true,
+            WriteIndented = true,
+            AllowTrailingCommas = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            TypeInfoResolver = JsonTypeInfoResolver.Combine(JsonSerializerContexts.ToArray())
+        };
+
+        foreach (var converter in JsonConverters)
+        {
+            _jsonSerializerOptions.Converters.Add(converter);
+        }
     }
 }

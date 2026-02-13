@@ -8,6 +8,11 @@ namespace Moongate.UO.Data.Packets.GeneralInformation.SubCommands.Base.Interface
 public interface ISubcommandData
 {
     /// <summary>
+    /// Gets the data length in bytes
+    /// </summary>
+    int Length { get; }
+
+    /// <summary>
     /// Reads subcommand data from reader
     /// </summary>
     /// <param name="reader">Span reader</param>
@@ -18,9 +23,4 @@ public interface ISubcommandData
     /// </summary>
     /// <param name="writer">Span writer</param>
     ReadOnlyMemory<byte> Write(SpanWriter writer);
-
-    /// <summary>
-    /// Gets the data length in bytes
-    /// </summary>
-    int Length { get; }
 }

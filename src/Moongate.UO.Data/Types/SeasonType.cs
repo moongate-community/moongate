@@ -6,5 +6,5 @@ public enum SeasonType : byte
     Summer = 1,
     Fall = 2,
     Winter = 3,
-    Desolation = 4,
+    Desolation = 4
 }

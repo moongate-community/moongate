@@ -2,7 +2,6 @@ using Moongate.UO.Data.Geometry;
 
 namespace Moongate.UO.Data.Maps;
 
-
 /// <summary>
 /// Statistics for a single sector
 /// </summary>

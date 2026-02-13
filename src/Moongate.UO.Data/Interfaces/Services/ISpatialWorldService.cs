@@ -26,19 +26,26 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     delegate void MobileExitSectorHandler(UOMobileEntity mobile, MapSector sector, WorldView worldView);
 
     delegate void ItemMovedOnGroundHandler(
-        UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles
+        UOItemEntity item,
+        Point3D oldLocation,
+        Point3D newLocation,
+        List<UOMobileEntity> mobiles
     );
 
     delegate void ItemMovedOnContainerHandler(
-        UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
+        UOItemEntity item,
+        Point3D oldLocation,
+        Point3D newLocation,
+        WorldView worldView
     );
 
-    delegate void ItemPickedUpHandler(
-        UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView
-    );
+    delegate void ItemPickedUpHandler(UOItemEntity item, Point3D oldLocation, Point3D newLocation, WorldView worldView);
 
     delegate void ItemRemovedHandler(
-        UOItemEntity item, Point3D oldLocation, Point3D newLocation, List<UOMobileEntity> mobiles
+        UOItemEntity item,
+        Point3D oldLocation,
+        Point3D newLocation,
+        List<UOMobileEntity> mobiles
     );
 
     event EntityMovedSectorHandler EntityMovedSector;
@@ -51,37 +58,21 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
 
     event ItemRemovedHandler ItemRemoved;
 
-
-
     event MobileMovedHandler MobileMoved;
 
+    void AddMusics(List<JsonMusic> musics);
+
+    void AddRegion(JsonRegion region);
 
     /// <summary>
-    /// Call this when a mobile moves to update spatial index
+    /// Fast lookup for any entity by serial
     /// </summary>
-    /// <param name="mobile">Mobile that moved</param>
-    /// <param name="oldLocation">Previous location</param>
-    /// <param name="newLocation">New location</param>
-    void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation);
+    /// <typeparam name="T">Type of entity to find</typeparam>
+    /// <param name="serial">Serial of the entity</param>
+    /// <returns>Entity if found, null otherwise</returns>
+    T? FindEntity<T>(Serial serial) where T : class, IPositionEntity;
 
-    /// <summary>
-    /// Call this when an item moves (dropped, picked up, etc.) to update spatial index
-    /// </summary>
-    /// <param name="item">Item that moved</param>
-    /// <param name="oldLocation">Previous location</param>
-    /// <param name="newLocation">New location</param>
-    void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround);
-
-
-    /// <summary>
-    /// Gets all players within view range of a location (for packet broadcasting)
-    /// </summary>
-    /// <param name="location">Center location</param>
-    /// <param name="range">Range in tiles</param>
-    /// <param name="mapIndex">Map index</param>
-    /// <param name="excludeSession">Session to exclude from results</param>
-    /// <returns>List of game sessions within range</returns>
-    List<GameSession> GetPlayersInRange(Point3D location, int range, int mapIndex, GameSession? excludeSession = null);
+    int GetMusicFromLocation(Point3D location, int mapIndex);
 
     /// <summary>
     /// Gets all items near a location (for ground item display)
@@ -102,12 +93,14 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapIndex);
 
     /// <summary>
-    /// Fast lookup for any entity by serial
+    /// Gets all players within view range of a location (for packet broadcasting)
     /// </summary>
-    /// <typeparam name="T">Type of entity to find</typeparam>
-    /// <param name="serial">Serial of the entity</param>
-    /// <returns>Entity if found, null otherwise</returns>
-    T? FindEntity<T>(Serial serial) where T : class, IPositionEntity;
+    /// <param name="location">Center location</param>
+    /// <param name="range">Range in tiles</param>
+    /// <param name="mapIndex">Map index</param>
+    /// <param name="excludeSession">Session to exclude from results</param>
+    /// <returns>List of game sessions within range</returns>
+    List<GameSession> GetPlayersInRange(Point3D location, int range, int mapIndex, GameSession? excludeSession = null);
 
     /// <summary>
     /// Gets all entities visible to a player (for initial login)
@@ -117,14 +110,7 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <returns>WorldView containing all visible entities</returns>
     WorldView GetPlayerWorldView(UOMobileEntity player, int viewRange = 24);
 
-
-    /// <summary>
-    /// Removes an entity from spatial index (call when entity is deleted)
-    /// </summary>
-    /// <param name="entity">Entity to remove</param>
-    /// <param name="mapIndex">Map index</param>
-    void RemoveEntity(IPositionEntity entity, int mapIndex);
-
+    JsonRegion GetRegionFromLocation(Point3D location, int mapIndex);
 
     /// <summary>
     /// Gets statistics about the spatial system performance
@@ -132,11 +118,26 @@ public interface ISpatialWorldService : IMoongateAutostartService, IMetricsProvi
     /// <returns>Statistics about sectors and entities</returns>
     SectorSystemStats GetStats();
 
-    void AddRegion(JsonRegion region);
+    /// <summary>
+    /// Call this when an item moves (dropped, picked up, etc.) to update spatial index
+    /// </summary>
+    /// <param name="item">Item that moved</param>
+    /// <param name="oldLocation">Previous location</param>
+    /// <param name="newLocation">New location</param>
+    void OnItemMoved(UOItemEntity item, Point3D oldLocation, Point3D newLocation, bool isOnGround);
 
-    void AddMusics(List<JsonMusic> musics);
+    /// <summary>
+    /// Call this when a mobile moves to update spatial index
+    /// </summary>
+    /// <param name="mobile">Mobile that moved</param>
+    /// <param name="oldLocation">Previous location</param>
+    /// <param name="newLocation">New location</param>
+    void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation);
 
-    int GetMusicFromLocation(Point3D location, int mapIndex);
-
-    JsonRegion GetRegionFromLocation(Point3D location, int mapIndex);
+    /// <summary>
+    /// Removes an entity from spatial index (call when entity is deleted)
+    /// </summary>
+    /// <param name="entity">Entity to remove</param>
+    /// <param name="mapIndex">Map index</param>
+    void RemoveEntity(IPositionEntity entity, int mapIndex);
 }

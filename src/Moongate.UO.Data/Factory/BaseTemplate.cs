@@ -2,9 +2,8 @@ using System.Text.Json.Serialization;
 
 namespace Moongate.UO.Data.Factory;
 
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
-[JsonDerivedType(typeof(ItemTemplate), "item")]
-[JsonDerivedType(typeof(MobileTemplate), "mobile")]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type"), JsonDerivedType(typeof(ItemTemplate), "item"),
+ JsonDerivedType(typeof(MobileTemplate), "mobile")]
 public abstract class BaseTemplate
 {
     public string Id { get; set; }

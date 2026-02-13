@@ -4,6 +4,7 @@ using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.FileLoaders;
 
@@ -20,7 +21,6 @@ public class TileDataLoader : IFileLoader
 
         await using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var bin = new BinaryReader(fs);
-
 
         int itemLength;
 
@@ -49,13 +49,13 @@ public class TileDataLoader : IFileLoader
                 bin.ReadInt32(); // header
             }
 
-            var flags = (TileFlag)(is64BitFlags ? bin.ReadUInt64() : bin.ReadUInt32());
+            var flags = (UOTileFlag)(is64BitFlags ? bin.ReadUInt64() : bin.ReadUInt32());
             bin.ReadInt16(); // skip 2 bytes -- textureID
 
             bin.Read(buffer);
             var terminator = buffer.IndexOfTerminator(1);
             var name = Encoding.ASCII.GetString(buffer[..(terminator < 0 ? buffer.Length : terminator)]);
-            TileData.LandTable[i] = new LandData(string.Intern(name), flags);
+            TileData.LandTable[i] = new(string.Intern(name), flags);
         }
 
         for (var i = 0; i < itemLength; i++)
@@ -65,7 +65,7 @@ public class TileDataLoader : IFileLoader
                 bin.ReadInt32(); // header
             }
 
-            var flags = (TileFlag)(is64BitFlags ? bin.ReadUInt64() : bin.ReadUInt32());
+            var flags = (UOTileFlag)(is64BitFlags ? bin.ReadUInt64() : bin.ReadUInt32());
             int weight = bin.ReadByte();
             int quality = bin.ReadByte();
             int animation = bin.ReadUInt16();
@@ -80,7 +80,7 @@ public class TileDataLoader : IFileLoader
 
             var terminator = buffer.IndexOfTerminator(1);
             var name = Encoding.ASCII.GetString(buffer[..(terminator < 0 ? buffer.Length : terminator)]);
-            TileData.ItemTable[i] = new ItemData(
+            TileData.ItemTable[i] = new(
                 string.Intern(name),
                 flags,
                 weight,

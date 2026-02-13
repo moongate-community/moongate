@@ -18,7 +18,7 @@ public sealed class EnableMapDiffData : ISubcommandData
     public uint[] StaticPatches { get; set; } = [];
 
     /// <inheritdoc />
-    public int Length => 4 + ((int)NumberOfMaps * 8);
+    public int Length => 4 + (int)NumberOfMaps * 8;
 
     /// <inheritdoc />
     public void Read(SpanReader reader)
@@ -27,7 +27,7 @@ public sealed class EnableMapDiffData : ISubcommandData
         MapPatches = new uint[NumberOfMaps];
         StaticPatches = new uint[NumberOfMaps];
 
-        for (int i = 0; i < NumberOfMaps; i++)
+        for (var i = 0; i < NumberOfMaps; i++)
         {
             MapPatches[i] = reader.ReadUInt32();
             StaticPatches[i] = reader.ReadUInt32();
@@ -38,7 +38,8 @@ public sealed class EnableMapDiffData : ISubcommandData
     public ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Write(NumberOfMaps);
-        for (int i = 0; i < NumberOfMaps; i++)
+
+        for (var i = 0; i < NumberOfMaps; i++)
         {
             writer.Write(MapPatches[i]);
             writer.Write(StaticPatches[i]);

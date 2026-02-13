@@ -5,7 +5,6 @@ namespace Moongate.Core.Server.Data.Metrics.EventLoop;
 /// </summary>
 public record EventLoopMetrics
 {
-
     /// <summary>
     /// Gets or sets the total number of ticks processed.
     /// </summary>
@@ -37,7 +36,7 @@ public record EventLoopMetrics
     public double MaxProcessingTimeMs { get; set; }
 
     /// <summary>
-    ///  Get avarage time between ticks in milliseconds.
+    /// Get avarage time between ticks in milliseconds.
     /// </summary>
     public double AverageTimeBetweenTicksMs { get; set; }
 
@@ -65,5 +64,4 @@ public record EventLoopMetrics
     /// Gets or sets the current number of low priority actions in the queue.
     /// </summary>
     public int LowPriorityCount { get; set; }
-
 }

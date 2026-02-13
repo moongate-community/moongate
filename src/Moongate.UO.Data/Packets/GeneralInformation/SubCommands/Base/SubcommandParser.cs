@@ -26,6 +26,10 @@ public sealed class SubcommandParser : ISubcommandParser
     }
 
     /// <inheritdoc />
+    public ReadOnlySpan<byte> GetRawData()
+        => _data.Span;
+
+    /// <inheritdoc />
     public T Parse<T>() where T : class, new()
     {
         var instance = new T();
@@ -38,7 +42,4 @@ public sealed class SubcommandParser : ISubcommandParser
 
         return instance;
     }
-
-    /// <inheritdoc />
-    public ReadOnlySpan<byte> GetRawData() => _data.Span;
 }

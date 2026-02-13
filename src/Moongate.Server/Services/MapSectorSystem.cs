@@ -24,34 +24,10 @@ public class MapSectorSystem
     /// </summary>
     private readonly ConcurrentDictionary<Serial, (int mapIndex, int sectorX, int sectorY)> _entityLocations = new();
 
-
     public MapSectorSystem()
     {
         /// Initialize sectors for all known maps
         InitializeMapSectors();
-    }
-
-    private void InitializeMapSectors()
-    {
-        /// Initialize sectors for standard UO maps
-        for (int mapIndex = 0; mapIndex < Map.MapCount; mapIndex++)
-        {
-            _mapSectors[mapIndex] = new ConcurrentDictionary<(int x, int y), MapSector>();
-        }
-    }
-
-
-    /// <summary>
-    /// Gets the sector for a specific world coordinate
-    /// </summary>
-    /// <param name="mapIndex">Map index</param>
-    /// <param name="worldX">World X coordinate</param>
-    /// <param name="worldY">World Y coordinate</param>
-    /// <returns>MapSector if exists, null otherwise</returns>
-    public MapSector? GetSectorByWorldCoordinates(int mapIndex, int worldX, int worldY)
-    {
-        var (sectorX, sectorY) = GetSectorCoordinates(new Point3D(worldX, worldY, 0));
-        return GetSector(mapIndex, sectorX, sectorY);
     }
 
     /// <summary>
@@ -59,7 +35,10 @@ public class MapSectorSystem
     /// </summary>
     public void AddEntity(IPositionEntity entity, int mapIndex)
     {
-        if (entity?.Location == null) return;
+        if (entity?.Location == null)
+        {
+            return;
+        }
 
         var (sectorX, sectorY) = GetSectorCoordinates(entity.Location);
         var sector = GetOrCreateSector(mapIndex, sectorX, sectorY);
@@ -68,6 +47,7 @@ public class MapSectorSystem
 
         /// Update quick lookup
         var serial = GetEntitySerial(entity);
+
         if (serial != Serial.MinusOne)
         {
             _entityLocations[serial] = (mapIndex, sectorX, sectorY);
@@ -75,65 +55,19 @@ public class MapSectorSystem
     }
 
     /// <summary>
-    /// Removes an entity from the spatial index
+    /// Fast lookup for a specific entity by serial
     /// </summary>
-    public void RemoveEntity(IPositionEntity entity, int mapIndex)
+    public T? FindEntity<T>(Serial serial) where T : class, IPositionEntity
     {
-        if (entity?.Location == null) return;
-
-        var serial = GetEntitySerial(entity);
-        if (serial == Serial.MinusOne) return;
-
-        if (_entityLocations.TryRemove(serial, out var location))
+        if (_entityLocations.TryGetValue(serial, out var location))
         {
             var sector = GetSector(location.mapIndex, location.sectorX, location.sectorY);
-            sector?.RemoveEntity(entity);
+
+            return sector?.GetEntity<T>(serial);
         }
+
+        return null;
     }
-
-    /// <summary>
-    /// Moves an entity to a new location
-    /// </summary>
-    public void MoveEntity(IPositionEntity entity, int mapIndex, Point3D oldLocation, Point3D newLocation)
-    {
-        var oldSector = GetSectorCoordinates(oldLocation);
-        var newSector = GetSectorCoordinates(newLocation);
-
-        /// Update entity location ALWAYS
-        entity.Location = newLocation;
-
-        /// If same sector, no need to move between sectors
-        if (oldSector == newSector)
-        {
-            /// Update lookup with new location still
-            var serial = GetEntitySerial(entity);
-            if (serial != Serial.MinusOne)
-            {
-                _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
-            }
-
-            return;
-        }
-
-        /// Remove from old sector
-        var oldSectorObj = GetSector(mapIndex, oldSector.x, oldSector.y);
-        oldSectorObj?.RemoveEntity(entity);
-
-        /// Add to new sector
-        var newSectorObj = GetOrCreateSector(mapIndex, newSector.x, newSector.y);
-        newSectorObj.AddEntity(entity);
-
-        /// Update lookup
-        var serial2 = GetEntitySerial(entity);
-        if (serial2 != Serial.MinusOne)
-        {
-            _entityLocations[serial2] = (mapIndex, newSector.x, newSector.y);
-        }
-
-        /// Notify listeners about the move
-        EntityMovedSector?.Invoke(entity, oldSectorObj, newSectorObj);
-    }
-
 
     /// <summary>
     /// Gets all entities within range of a point
@@ -146,7 +80,11 @@ public class MapSectorSystem
         foreach (var (sectorX, sectorY) in sectorsToCheck)
         {
             var sector = GetSector(mapIndex, sectorX, sectorY);
-            if (sector == null) continue;
+
+            if (sector == null)
+            {
+                continue;
+            }
 
             var entities = sector.GetEntitiesInRange<T>(center, range);
             results.AddRange(entities);
@@ -156,22 +94,20 @@ public class MapSectorSystem
     }
 
     /// <summary>
-    /// Gets all mobiles within view range of a player
-    /// </summary>
-    public List<UOMobileEntity> GetMobilesInViewRange(
-        Point3D center, int mapIndex, int viewRange = MapSectorConsts.MaxViewRange
-    )
-    {
-        return GetEntitiesInRange<UOMobileEntity>(center, viewRange, mapIndex);
-    }
-
-    /// <summary>
     /// Gets all items within range of a point
     /// </summary>
     public List<UOItemEntity> GetItemsInRange(Point3D center, int range, int mapIndex)
-    {
-        return GetEntitiesInRange<UOItemEntity>(center, range, mapIndex);
-    }
+        => GetEntitiesInRange<UOItemEntity>(center, range, mapIndex);
+
+    /// <summary>
+    /// Gets all mobiles within view range of a player
+    /// </summary>
+    public List<UOMobileEntity> GetMobilesInViewRange(
+        Point3D center,
+        int mapIndex,
+        int viewRange = MapSectorConsts.MaxViewRange
+    )
+        => GetEntitiesInRange<UOMobileEntity>(center, viewRange, mapIndex);
 
     /// <summary>
     /// Gets all players within range (for broadcasting packets)
@@ -179,31 +115,37 @@ public class MapSectorSystem
     public List<UOMobileEntity> GetPlayersInRange(Point3D center, int range, int mapIndex)
     {
         return GetEntitiesInRange<UOMobileEntity>(center, range, mapIndex)
-            .Where(m => m.IsPlayer)
-            .ToList();
+               .Where(m => m.IsPlayer)
+               .ToList();
     }
 
     /// <summary>
-    /// Fast lookup for a specific entity by serial
+    /// Gets an existing sector
     /// </summary>
-    public T? FindEntity<T>(Serial serial) where T : class, IPositionEntity
+    public MapSector? GetSector(int mapIndex, int sectorX, int sectorY)
     {
-        if (_entityLocations.TryGetValue(serial, out var location))
+        if (_mapSectors.TryGetValue(mapIndex, out var mapSectors))
         {
-            var sector = GetSector(location.mapIndex, location.sectorX, location.sectorY);
-            return sector?.GetEntity<T>(serial);
+            mapSectors.TryGetValue((sectorX, sectorY), out var sector);
+
+            return sector;
         }
 
         return null;
     }
 
     /// <summary>
-    /// Gets sector coordinates for a world position
+    /// Gets the sector for a specific world coordinate
     /// </summary>
-    private (int x, int y) GetSectorCoordinates(Point3D location)
+    /// <param name="mapIndex">Map index</param>
+    /// <param name="worldX">World X coordinate</param>
+    /// <param name="worldY">World Y coordinate</param>
+    /// <returns>MapSector if exists, null otherwise</returns>
+    public MapSector? GetSectorByWorldCoordinates(int mapIndex, int worldX, int worldY)
     {
-        /// Fast division using bit shifting
-        return (location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+        var (sectorX, sectorY) = GetSectorCoordinates(new(worldX, worldY, 0));
+
+        return GetSector(mapIndex, sectorX, sectorY);
     }
 
     /// <summary>
@@ -220,9 +162,9 @@ public class MapSectorSystem
         var maxY = (center.Y + range) >> MapSectorConsts.SectorShift;
 
         /// Add all sectors in the bounding box
-        for (int x = minX; x <= maxX; x++)
+        for (var x = minX; x <= maxX; x++)
         {
-            for (int y = minY; y <= maxY; y++)
+            for (var y = minY; y <= maxY; y++)
             {
                 sectors.Add((x, y));
             }
@@ -230,45 +172,6 @@ public class MapSectorSystem
 
         return sectors;
     }
-
-
-    /// <summary>
-    /// Gets an existing sector
-    /// </summary>
-    public MapSector? GetSector(int mapIndex, int sectorX, int sectorY)
-    {
-        if (_mapSectors.TryGetValue(mapIndex, out var mapSectors))
-        {
-            mapSectors.TryGetValue((sectorX, sectorY), out var sector);
-            return sector;
-        }
-
-        return null;
-    }
-
-    /// <summary>
-    /// Gets or creates a sector
-    /// </summary>
-    private MapSector GetOrCreateSector(int mapIndex, int sectorX, int sectorY)
-    {
-        var mapSectors = _mapSectors.GetOrAdd(mapIndex, _ => new ConcurrentDictionary<(int x, int y), MapSector>());
-
-        return mapSectors.GetOrAdd((sectorX, sectorY), _ => new MapSector(mapIndex, sectorX, sectorY));
-    }
-
-    /// <summary>
-    /// Extracts serial from an entity
-    /// </summary>
-    private Serial GetEntitySerial(IPositionEntity entity)
-    {
-        return entity switch
-        {
-            UOMobileEntity mobile => mobile.Id,
-            UOItemEntity item     => item.Id,
-            _                     => Serial.MinusOne
-        };
-    }
-
 
     /// <summary>
     /// Gets statistics about the sector system
@@ -291,12 +194,121 @@ public class MapSectorSystem
             }
         }
 
-        return new SectorSystemStats
+        return new()
         {
             TotalSectors = totalSectors,
             TotalEntities = totalEntities,
             MaxEntitiesPerSector = maxEntitiesPerSector,
             AverageEntitiesPerSector = totalSectors > 0 ? (double)totalEntities / totalSectors : 0
         };
+    }
+
+    /// <summary>
+    /// Moves an entity to a new location
+    /// </summary>
+    public void MoveEntity(IPositionEntity entity, int mapIndex, Point3D oldLocation, Point3D newLocation)
+    {
+        var oldSector = GetSectorCoordinates(oldLocation);
+        var newSector = GetSectorCoordinates(newLocation);
+
+        /// Update entity location ALWAYS
+        entity.Location = newLocation;
+
+        /// If same sector, no need to move between sectors
+        if (oldSector == newSector)
+        {
+            /// Update lookup with new location still
+            var serial = GetEntitySerial(entity);
+
+            if (serial != Serial.MinusOne)
+            {
+                _entityLocations[serial] = (mapIndex, newSector.x, newSector.y);
+            }
+
+            return;
+        }
+
+        /// Remove from old sector
+        var oldSectorObj = GetSector(mapIndex, oldSector.x, oldSector.y);
+        oldSectorObj?.RemoveEntity(entity);
+
+        /// Add to new sector
+        var newSectorObj = GetOrCreateSector(mapIndex, newSector.x, newSector.y);
+        newSectorObj.AddEntity(entity);
+
+        /// Update lookup
+        var serial2 = GetEntitySerial(entity);
+
+        if (serial2 != Serial.MinusOne)
+        {
+            _entityLocations[serial2] = (mapIndex, newSector.x, newSector.y);
+        }
+
+        /// Notify listeners about the move
+        EntityMovedSector?.Invoke(entity, oldSectorObj, newSectorObj);
+    }
+
+    /// <summary>
+    /// Removes an entity from the spatial index
+    /// </summary>
+    public void RemoveEntity(IPositionEntity entity, int mapIndex)
+    {
+        if (entity?.Location == null)
+        {
+            return;
+        }
+
+        var serial = GetEntitySerial(entity);
+
+        if (serial == Serial.MinusOne)
+        {
+            return;
+        }
+
+        if (_entityLocations.TryRemove(serial, out var location))
+        {
+            var sector = GetSector(location.mapIndex, location.sectorX, location.sectorY);
+            sector?.RemoveEntity(entity);
+        }
+    }
+
+    /// <summary>
+    /// Extracts serial from an entity
+    /// </summary>
+    private Serial GetEntitySerial(IPositionEntity entity)
+    {
+        return entity switch
+        {
+            UOMobileEntity mobile => mobile.Id,
+            UOItemEntity item     => item.Id,
+            _                     => Serial.MinusOne
+        };
+    }
+
+    /// <summary>
+    /// Gets or creates a sector
+    /// </summary>
+    private MapSector GetOrCreateSector(int mapIndex, int sectorX, int sectorY)
+    {
+        var mapSectors = _mapSectors.GetOrAdd(mapIndex, _ => new());
+
+        return mapSectors.GetOrAdd((sectorX, sectorY), _ => new(mapIndex, sectorX, sectorY));
+    }
+
+    /// <summary>
+    /// Gets sector coordinates for a world position
+    /// </summary>
+    private (int x, int y) GetSectorCoordinates(Point3D location)
+
+        /// Fast division using bit shifting
+        => (location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+
+    private void InitializeMapSectors()
+    {
+        /// Initialize sectors for standard UO maps
+        for (var mapIndex = 0; mapIndex < Map.MapCount; mapIndex++)
+        {
+            _mapSectors[mapIndex] = new();
+        }
     }
 }

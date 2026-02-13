@@ -31,7 +31,7 @@ public sealed class Verdata
                 {
                     Patches = new Entry5D[bin.ReadInt32()];
 
-                    for (int i = 0; i < Patches.Length; ++i)
+                    for (var i = 0; i < Patches.Length; ++i)
                     {
                         Patches[i].file = bin.ReadInt32();
                         Patches[i].index = bin.ReadInt32();
@@ -59,4 +59,3 @@ public sealed class Verdata
         Stream.Seek(lookup, SeekOrigin.Begin);
     }
 }
-

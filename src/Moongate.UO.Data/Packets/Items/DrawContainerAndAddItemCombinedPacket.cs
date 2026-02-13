@@ -9,10 +9,7 @@ public class DrawContainerAndAddItemCombinedPacket : BaseUoPacket
     public UOItemEntity Container { get; set; }
 
     public DrawContainerAndAddItemCombinedPacket(UOItemEntity container) : base(0x01) // Meta packet opcode
-    {
-        Container = container;
-    }
-
+        => Container = container;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {

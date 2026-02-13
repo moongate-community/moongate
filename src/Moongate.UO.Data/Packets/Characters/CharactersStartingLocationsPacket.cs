@@ -8,10 +8,13 @@ namespace Moongate.UO.Data.Packets.Characters;
 
 public class CharactersStartingLocationsPacket : BaseUoPacket
 {
-    public List<CityInfo> Cities { get; set; } = new List<CityInfo>();
+    public List<CityInfo> Cities { get; set; } = new();
 
     public List<CharacterEntry> Characters { get; } = new();
 
+    // }
+
+    public CharactersStartingLocationsPacket() : base(0xA9) { }
 
     public void FillCharacters(List<CharacterEntry>? characters = null, int size = 7)
     {
@@ -28,7 +31,6 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
                     Characters.Add(null);
                 }
             }
-
         }
         else
         {
@@ -48,19 +50,20 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             if (Characters[i] != null)
             {
                 highSlot = i;
+
                 break;
             }
         }
 
         // Supported values are 1, 5, 6, or 7
         var count = Math.Max(highSlot + 1, 7);
+
         if (count is not 1 and < 5)
         {
             count = 5;
         }
 
-        var length = (11 + (32 * 2 + 25) * Cities.Count) + count * 60;
-
+        var length = 11 + (32 * 2 + 25) * Cities.Count + count * 60;
 
         writer.Write(OpCode);
         writer.Write((ushort)length);
@@ -71,6 +74,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
             if (character == null)
             {
                 writer.Clear(60);
+
                 continue;
             }
 
@@ -80,7 +84,7 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
 
         writer.Write((byte)Cities.Count);
 
-        for (int i = 0; i < Cities.Count; ++i)
+        for (var i = 0; i < Cities.Count; ++i)
         {
             var ci = Cities[i];
 
@@ -101,10 +105,5 @@ public class CharactersStartingLocationsPacket : BaseUoPacket
         writer.Write((short)-1);
 
         return writer.ToArray();
-    }
-    // }
-
-    public CharactersStartingLocationsPacket() : base(0xA9)
-    {
     }
 }

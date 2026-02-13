@@ -8,14 +8,10 @@ public class PaperdollPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
 
-    public PaperdollPacket() : base(0x88)
-    {
-    }
+    public PaperdollPacket() : base(0x88) { }
 
     public PaperdollPacket(UOMobileEntity mobile) : this()
-    {
-        Mobile = mobile;
-    }
+        => Mobile = mobile;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -30,13 +26,9 @@ public class PaperdollPacket : BaseUoPacket
             baseFlags |= 0x40;
         }
 
-
-
-
         baseFlags |= 0x02;
 
-        writer.Write((byte)baseFlags);
-
+        writer.Write(baseFlags);
 
         return writer.ToArray();
     }

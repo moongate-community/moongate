@@ -12,13 +12,13 @@ public class MobileDrawPacket : BaseUoPacket
     public bool StygianAbyss { get; set; }
     public bool NewMobileIncoming { get; set; }
 
-
-    public MobileDrawPacket() : base(0x78)
-    {
-    }
+    public MobileDrawPacket() : base(0x78) { }
 
     public MobileDrawPacket(
-        UOMobileEntity beholder, UOMobileEntity beheld, bool stygianAbyss = false, bool newMobileIncoming = false
+        UOMobileEntity beholder,
+        UOMobileEntity beheld,
+        bool stygianAbyss = false,
+        bool newMobileIncoming = false
     ) : this()
     {
         Beholder = beholder;
@@ -49,8 +49,6 @@ public class MobileDrawPacket : BaseUoPacket
         writer.Write(OpCode);
         writer.Seek(2, SeekOrigin.Current); // Space for length
 
-
-
         // Mobile data
         writer.Write(Beheld.Id.Value);
         writer.Write((short)Beheld.Body);
@@ -59,10 +57,11 @@ public class MobileDrawPacket : BaseUoPacket
         writer.Write((sbyte)Beheld.Z);
         writer.Write((byte)Beheld.Direction);
         writer.Write((short)Beheld.SkinHue);
-        writer.Write((byte)Beheld.GetPacketFlags(StygianAbyss));
+        writer.Write(Beheld.GetPacketFlags(StygianAbyss));
 
         // Calculate notoriety between beholder and beheld
-        byte notoriety = (byte)Beheld.Notoriety;
+        var notoriety = (byte)Beheld.Notoriety;
+
         if (Beholder != null)
         {
             // Here you should implement the logic of Notoriety.Compute(beholder, beheld)
@@ -71,18 +70,15 @@ public class MobileDrawPacket : BaseUoPacket
 
         writer.Write(notoriety);
 
-
         // Process equipped items
         foreach (var (layer, item) in items)
         {
             var layerByte = (byte)layer;
 
-
             if (Beheld != Beholder && !IsVisibleLayer(layer))
             {
                 continue;
             }
-
 
             // Check if item is valid and visible
             if (item.Id.Value == 0 || layers[layerByte])
@@ -96,8 +92,8 @@ public class MobileDrawPacket : BaseUoPacket
                 continue;
             }
 
-
             layers[layerByte] = true;
+
             //var itemHue = Beheld.SolidHueOverride >= 0 ? Beheld.SolidHueOverride : item.Hue;
 
             var itemID = item.ItemId & itemIdMask;
@@ -169,9 +165,7 @@ public class MobileDrawPacket : BaseUoPacket
         // Terminator
         writer.Write(0);
 
-
         writer.WritePacketLength();
-
 
         return writer.ToArray();
     }
@@ -180,75 +174,58 @@ public class MobileDrawPacket : BaseUoPacket
     /// Check if beholder can see the item
     /// </summary>
     private bool CanSeeItem(ItemReference item)
-    {
+
         // Implement visibility logic
         // For now return true as default
-        return true;
-    }
-
-    /// <summary>
-    /// Check if mobile has hair
-    /// </summary>
-    private bool HasHair()
-    {
-        return Beheld.HairStyle > 0 && Beheld.HairHue > 0;
-    }
-
-    /// <summary>
-    /// Get hair item ID
-    /// </summary>
-    private int GetHairItemID()
-    {
-        return Beheld.HairStyle;
-    }
-
-    /// <summary>
-    /// Get hair hue
-    /// </summary>
-    private int GetHairHue()
-    {
-        return Beheld.HairHue;
-    }
-
-    /// <summary>
-    /// Get virtual hair serial
-    /// </summary>
-    private uint GetHairSerial()
-    {
-        return Beheld.Id.Value + 0x40000000;
-    }
-
-    /// <summary>
-    /// Check if mobile has facial hair
-    /// </summary>
-    private bool HasFacialHair()
-    {
-        return Beheld.FacialHairHue > 0;
-    }
-
-    /// <summary>
-    /// Get facial hair item ID
-    /// </summary>
-    private int GetFacialHairItemID()
-    {
-        return Beheld.FacialHairStyle;
-    }
+        => true;
 
     /// <summary>
     /// Get facial hair hue
     /// </summary>
     private int GetFacialHairHue()
-    {
-        return Beheld.FacialHairHue;
-    }
+        => Beheld.FacialHairHue;
+
+    /// <summary>
+    /// Get facial hair item ID
+    /// </summary>
+    private int GetFacialHairItemID()
+        => Beheld.FacialHairStyle;
 
     /// <summary>
     /// Get virtual facial hair serial
     /// </summary>
     private uint GetFacialHairSerial()
-    {
-        return Beheld.Id.Value + 0x50000000;
-    }
+        => Beheld.Id.Value + 0x50000000;
+
+    /// <summary>
+    /// Get hair hue
+    /// </summary>
+    private int GetHairHue()
+        => Beheld.HairHue;
+
+    /// <summary>
+    /// Get hair item ID
+    /// </summary>
+    private int GetHairItemID()
+        => Beheld.HairStyle;
+
+    /// <summary>
+    /// Get virtual hair serial
+    /// </summary>
+    private uint GetHairSerial()
+        => Beheld.Id.Value + 0x40000000;
+
+    /// <summary>
+    /// Check if mobile has facial hair
+    /// </summary>
+    private bool HasFacialHair()
+        => Beheld.FacialHairHue > 0;
+
+    /// <summary>
+    /// Check if mobile has hair
+    /// </summary>
+    private bool HasHair()
+        => Beheld.HairStyle > 0 && Beheld.HairHue > 0;
 
     private bool IsVisibleLayer(ItemLayerType layer)
     {

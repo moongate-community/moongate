@@ -3,7 +3,6 @@ using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.Items;
-using Moongate.UO.Data.Packets.Mouse;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Handlers;
@@ -18,39 +17,35 @@ public class ClickHandler : IGamePacketHandler
     private readonly IItemService _itemService;
 
     public ClickHandler(IItemService itemService)
-    {
-        _itemService = itemService;
-    }
-
+        => _itemService = itemService;
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {
         if (packet is SingleClickPacket singleClickPacket)
         {
             await HandleSingleClickAsync(session, singleClickPacket);
+
             return;
         }
 
         if (packet is DoubleClickPacket doubleClickPacket)
         {
             await HandleDoubleClickAsync(session, doubleClickPacket);
-            return;
         }
     }
-
 
     private async Task HandleDoubleClickAsync(GameSession session, DoubleClickPacket packet)
     {
         if (packet.IsPaperdoll)
         {
             session.SendPackets(new PaperdollPacket(session.Mobile));
+
             return;
         }
 
         if (packet.TargetSerial.IsItem)
         {
             var item = _itemService.GetItem(packet.TargetSerial);
-
 
             if (packet.TargetSerial == session.Mobile.GetBackpack().Id)
             {
@@ -83,12 +78,9 @@ public class ClickHandler : IGamePacketHandler
 
             _logger.Information("Double-clicking item {ItemId} ({ItemName})", item.Id, item.Name);
 
-
             _itemService.UseItem(item, session.Mobile);
         }
     }
 
-    private async Task HandleSingleClickAsync(GameSession session, SingleClickPacket packet)
-    {
-    }
+    private async Task HandleSingleClickAsync(GameSession session, SingleClickPacket packet) { }
 }

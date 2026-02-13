@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using Jint;
 using Jint.Native;
 using Moongate.Core.Server.Interfaces.Services;
@@ -9,7 +8,8 @@ namespace Moongate.Server.Utils;
 public static class JsInteropUtils
 {
     public static bool ImplementsInterface<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] T>(
-        JsValue jsValue, IScriptEngineService scriptEngineService
+        JsValue jsValue,
+        IScriptEngineService scriptEngineService
     )
     {
         if (!jsValue.IsObject())
@@ -23,6 +23,7 @@ public static class JsInteropUtils
         foreach (var method in type.GetMethods())
         {
             var jsProp = obj.Get(scriptEngineService.ToScriptEngineFunctionName(method.Name));
+
             if (jsProp is JsUndefined)
             {
                 throw new InvalidOperationException(
@@ -33,6 +34,4 @@ public static class JsInteropUtils
 
         return true;
     }
-
-
 }

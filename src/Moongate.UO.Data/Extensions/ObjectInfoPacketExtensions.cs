@@ -1,4 +1,3 @@
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Packets.Objects;
 using Moongate.UO.Data.Persistence.Entities;
@@ -11,6 +10,39 @@ namespace Moongate.UO.Data.Extensions;
 /// </summary>
 public static class ObjectInfoPacketExtensions
 {
+    /// <summary>
+    /// Creates an ObjectInfoPacket for an animated item
+    /// </summary>
+    public static ObjectInfoPacket CreateForAnimatedItem(UOItemEntity item, byte animationFrame)
+    {
+        var packet = CreateForItem(item);
+
+        /// Add increment counter for animation
+        packet.IncrementCounter = animationFrame;
+
+        return packet;
+    }
+
+    /// <summary>
+    /// Creates an ObjectInfoPacket for a corpse
+    /// </summary>
+    public static ObjectInfoPacket CreateForCorpse(
+        Serial corpseSerial,
+        ushort corpseGraphic,
+        ushort x,
+        ushort y,
+        sbyte z,
+        ushort originalBodyGraphic
+    )
+    {
+        var packet = new ObjectInfoPacket(corpseSerial, corpseGraphic, new(x, y, z));
+
+        /// For corpses, ItemCount contains the original body graphic
+        packet.ItemCount = originalBodyGraphic;
+
+        return packet;
+    }
+
     /// <summary>
     /// Creates an ObjectInfoPacket for a simple item
     /// </summary>
@@ -55,52 +87,33 @@ public static class ObjectInfoPacketExtensions
         var flags = ObjectInfoFlags.None;
 
         if (mobile.Gender == GenderType.Female)
+        {
             flags |= ObjectInfoFlags.Female;
+        }
 
         if (mobile.IsPoisoned)
+        {
             flags |= ObjectInfoFlags.Poisoned;
+        }
 
         if (mobile.IsWarMode)
+        {
             flags |= ObjectInfoFlags.WarMode;
+        }
 
         if (mobile.IsHidden)
+        {
             flags |= ObjectInfoFlags.Hidden;
+        }
 
         /// Add yellow hits if HP is low
         // if (mobile.CurrentHitPoints < mobile.MaxHitPoints * 0.3)
         //   flags |= ObjectInfoFlags.YellowHits;
 
         if (flags != ObjectInfoFlags.None)
+        {
             packet.Flags = flags;
-
-        return packet;
-    }
-
-    /// <summary>
-    /// Creates an ObjectInfoPacket for a corpse
-    /// </summary>
-    public static ObjectInfoPacket CreateForCorpse(
-        Serial corpseSerial, ushort corpseGraphic,
-        ushort x, ushort y, sbyte z, ushort originalBodyGraphic
-    )
-    {
-        var packet = new ObjectInfoPacket(corpseSerial, corpseGraphic, new Point3D(x, y, z));
-
-        /// For corpses, ItemCount contains the original body graphic
-        packet.ItemCount = originalBodyGraphic;
-
-        return packet;
-    }
-
-    /// <summary>
-    /// Creates an ObjectInfoPacket for an animated item
-    /// </summary>
-    public static ObjectInfoPacket CreateForAnimatedItem(UOItemEntity item, byte animationFrame)
-    {
-        var packet = CreateForItem(item);
-
-        /// Add increment counter for animation
-        packet.IncrementCounter = animationFrame;
+        }
 
         return packet;
     }
@@ -115,44 +128,26 @@ public static class ObjectInfoPacketFactory
     /// Creates packet for item dropped on ground
     /// </summary>
     public static ObjectInfoPacket CreateGroundItem(
-        Serial serial, ushort graphic,
-        ushort x, ushort y, sbyte z, ushort amount = 1, ushort hue = 0
+        Serial serial,
+        ushort graphic,
+        ushort x,
+        ushort y,
+        sbyte z,
+        ushort amount = 1,
+        ushort hue = 0
     )
     {
-        var packet = new ObjectInfoPacket(serial, graphic, new Point3D(x, y, z));
+        var packet = new ObjectInfoPacket(serial, graphic, new(x, y, z));
 
         if (amount > 1)
+        {
             packet.ItemCount = amount;
+        }
 
         if (hue != 0)
+        {
             packet.Dye = hue;
-
-        return packet;
-    }
-
-    /// <summary>
-    /// Creates packet for player character
-    /// </summary>
-    public static ObjectInfoPacket CreatePlayer(
-        Serial serial, ushort bodyType,
-        ushort x, ushort y, sbyte z, byte direction, ushort hue = 0,
-        bool isFemale = false, bool isWarMode = false, bool isHidden = false
-    )
-    {
-        var packet = new ObjectInfoPacket(serial, bodyType, new Point3D(x, y, z));
-
-        packet.Facing = direction;
-
-        if (hue != 0)
-            packet.Dye = hue;
-
-        var flags = ObjectInfoFlags.None;
-        if (isFemale) flags |= ObjectInfoFlags.Female;
-        if (isWarMode) flags |= ObjectInfoFlags.WarMode;
-        if (isHidden) flags |= ObjectInfoFlags.Hidden;
-
-        if (flags != ObjectInfoFlags.None)
-            packet.Flags = flags;
+        }
 
         return packet;
     }
@@ -161,24 +156,92 @@ public static class ObjectInfoPacketFactory
     /// Creates packet for NPC
     /// </summary>
     public static ObjectInfoPacket CreateNPC(
-        Serial serial, ushort bodyType,
-        ushort x, ushort y, sbyte z, byte direction, ushort hue = 0,
-        bool isPoisoned = false, bool isYellowHits = false
+        Serial serial,
+        ushort bodyType,
+        ushort x,
+        ushort y,
+        sbyte z,
+        byte direction,
+        ushort hue = 0,
+        bool isPoisoned = false,
+        bool isYellowHits = false
     )
     {
-        var packet = new ObjectInfoPacket(serial, bodyType, new Point3D(x, y, z));
+        var packet = new ObjectInfoPacket(serial, bodyType, new(x, y, z));
 
         packet.Facing = direction;
 
         if (hue != 0)
+        {
             packet.Dye = hue;
+        }
 
         var flags = ObjectInfoFlags.None;
-        if (isPoisoned) flags |= ObjectInfoFlags.Poisoned;
-        if (isYellowHits) flags |= ObjectInfoFlags.YellowHits;
+
+        if (isPoisoned)
+        {
+            flags |= ObjectInfoFlags.Poisoned;
+        }
+
+        if (isYellowHits)
+        {
+            flags |= ObjectInfoFlags.YellowHits;
+        }
 
         if (flags != ObjectInfoFlags.None)
+        {
             packet.Flags = flags;
+        }
+
+        return packet;
+    }
+
+    /// <summary>
+    /// Creates packet for player character
+    /// </summary>
+    public static ObjectInfoPacket CreatePlayer(
+        Serial serial,
+        ushort bodyType,
+        ushort x,
+        ushort y,
+        sbyte z,
+        byte direction,
+        ushort hue = 0,
+        bool isFemale = false,
+        bool isWarMode = false,
+        bool isHidden = false
+    )
+    {
+        var packet = new ObjectInfoPacket(serial, bodyType, new(x, y, z));
+
+        packet.Facing = direction;
+
+        if (hue != 0)
+        {
+            packet.Dye = hue;
+        }
+
+        var flags = ObjectInfoFlags.None;
+
+        if (isFemale)
+        {
+            flags |= ObjectInfoFlags.Female;
+        }
+
+        if (isWarMode)
+        {
+            flags |= ObjectInfoFlags.WarMode;
+        }
+
+        if (isHidden)
+        {
+            flags |= ObjectInfoFlags.Hidden;
+        }
+
+        if (flags != ObjectInfoFlags.None)
+        {
+            packet.Flags = flags;
+        }
 
         return packet;
     }

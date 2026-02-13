@@ -10,5 +10,5 @@ public interface IDiceParser
     /// </summary>
     /// <param name="expression">A dice notation string expression. Ex. 3d6+3</param>
     /// <returns>A DiceExpression parsed from the specified string</returns>
-    DiceExpression Parse( string expression );
+    DiceExpression Parse(string expression);
 }

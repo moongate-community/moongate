@@ -1,4 +1,3 @@
-
 namespace Moongate.Core.Server.Data.Configs.Services;
 
 /// <summary>

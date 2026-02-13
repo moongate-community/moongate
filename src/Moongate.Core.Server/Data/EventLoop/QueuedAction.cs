@@ -44,7 +44,7 @@ public struct QueuedAction
     public long ExecutionEndTimestamp { get; set; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="QueuedAction"/> struct.
+    /// Initializes a new instance of the <see cref="QueuedAction" /> struct.
     /// </summary>
     /// <param name="name">The name of the action for identification.</param>
     /// <param name="action">The action to be executed.</param>

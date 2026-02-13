@@ -9,9 +9,7 @@ public class SeasonPacket : BaseUoPacket
     public bool PlaySounds { get; set; }
     public SeasonType Season { get; set; }
 
-    public SeasonPacket() : base(0xBC)
-    {
-    }
+    public SeasonPacket() : base(0xBC) { }
 
     public SeasonPacket(SeasonType season, bool playingSounds = true) : this()
     {
@@ -24,7 +22,6 @@ public class SeasonPacket : BaseUoPacket
         writer.Write(OpCode);
         writer.Write((byte)Season);
         writer.Write(PlaySounds);
-
 
         return writer.ToArray();
     }

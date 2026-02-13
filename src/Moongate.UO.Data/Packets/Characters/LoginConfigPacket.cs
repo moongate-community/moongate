@@ -9,13 +9,9 @@ public class LoginConfigPacket : BaseUoPacket
     public UOMobileEntity Mobile { get; set; }
 
     public LoginConfigPacket(UOMobileEntity mobile) : this()
-    {
-        Mobile = mobile;
-    }
+        => Mobile = mobile;
 
-    public LoginConfigPacket() : base(0x1B)
-    {
-    }
+    public LoginConfigPacket() : base(0x1B) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {

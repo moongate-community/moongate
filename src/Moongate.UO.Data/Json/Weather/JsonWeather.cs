@@ -16,21 +16,21 @@ public class JsonWeather
     // Rain properties
     public int RainChance { get; set; }
 
-    public JsonIntensityRange RainIntensity { get; set; } = new JsonIntensityRange();
+    public JsonIntensityRange RainIntensity { get; set; } = new();
 
     public int RainTempDrop { get; set; }
 
     // Snow properties
     public int SnowChance { get; set; }
 
-    public JsonIntensityRange SnowIntensity { get; set; } = new JsonIntensityRange();
+    public JsonIntensityRange SnowIntensity { get; set; } = new();
 
     public int SnowThreshold { get; set; }
 
     // Storm properties
     public int StormChance { get; set; }
 
-    public JsonIntensityRange StormIntensity { get; set; } = new JsonIntensityRange();
+    public JsonIntensityRange StormIntensity { get; set; } = new();
 
     public int StormTempDrop { get; set; }
 
@@ -110,7 +110,7 @@ public class JsonWeather
     /// <returns>Current weather condition</returns>
     public JsonWeatherCondition DetermineJsonWeatherCondition(int currentTemp, Random? random = null)
     {
-        random ??= new Random();
+        random ??= new();
 
         // Check for snow first (higher priority in cold weather)
         if (currentTemp <= SnowThreshold && random.Next(100) < SnowChance)
@@ -134,22 +134,6 @@ public class JsonWeather
     }
 
     /// <summary>
-    /// Gets the appropriate temperature drop for the current weather
-    /// </summary>
-    /// <param name="condition">Current weather condition</param>
-    /// <returns>Temperature drop amount</returns>
-    public int GetTemperatureDrop(JsonWeatherCondition condition)
-    {
-        return condition switch
-        {
-            JsonWeatherCondition.Rain  => RainTempDrop,
-            JsonWeatherCondition.Storm => StormTempDrop,
-            JsonWeatherCondition.Snow  => RainTempDrop, // Snow uses rain temp drop
-            _                          => 0
-        };
-    }
-
-    /// <summary>
     /// Gets the damage intensity for the current weather condition
     /// </summary>
     /// <param name="condition">Current weather condition</param>
@@ -166,8 +150,22 @@ public class JsonWeather
         };
     }
 
-    public override string ToString()
+    /// <summary>
+    /// Gets the appropriate temperature drop for the current weather
+    /// </summary>
+    /// <param name="condition">Current weather condition</param>
+    /// <returns>Temperature drop amount</returns>
+    public int GetTemperatureDrop(JsonWeatherCondition condition)
     {
-        return $"{Name} (ID: {Id}) - Temp: {MinTemp}-{MaxTemp}°C";
+        return condition switch
+        {
+            JsonWeatherCondition.Rain  => RainTempDrop,
+            JsonWeatherCondition.Storm => StormTempDrop,
+            JsonWeatherCondition.Snow  => RainTempDrop, // Snow uses rain temp drop
+            _                          => 0
+        };
     }
+
+    public override string ToString()
+        => $"{Name} (ID: {Id}) - Temp: {MinTemp}-{MaxTemp}°C";
 }

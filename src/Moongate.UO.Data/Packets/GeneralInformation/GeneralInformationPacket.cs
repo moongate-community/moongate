@@ -21,13 +21,10 @@ public class GeneralInformationPacket : BaseUoPacket
     /// </summary>
     public ReadOnlyMemory<byte> SubcommandData { get; private set; }
 
-
     /// <summary>
     /// Initializes a new GeneralInformationPacket
     /// </summary>
-    public GeneralInformationPacket() : base(0xBF)
-    {
-    }
+    public GeneralInformationPacket() : base(0xBF) { }
 
     /// <summary>
     /// Initializes a new GeneralInformationPacket with subcommand data
@@ -56,9 +53,7 @@ public class GeneralInformationPacket : BaseUoPacket
     /// </summary>
     /// <returns>Subcommand parser instance</returns>
     public ISubcommandParser CreateParser()
-    {
-        return new SubcommandParser(SubcommandType, SubcommandData);
-    }
+        => new SubcommandParser(SubcommandType, SubcommandData);
 
     /// <inheritdoc />
     public bool Read(SpanReader reader)
@@ -81,10 +76,12 @@ public class GeneralInformationPacket : BaseUoPacket
 
             // Read remaining data
             var dataLength = Length - 5; // Total length - header (1 + 2 + 2)
+
             if (dataLength > 0)
             {
                 var data = new byte[dataLength];
-                for (int i = 0; i < dataLength; i++)
+
+                for (var i = 0; i < dataLength; i++)
                 {
                     data[i] = reader.ReadByte();
                 }
@@ -95,12 +92,9 @@ public class GeneralInformationPacket : BaseUoPacket
 
                 return true;
             }
-            else
-            {
-                SubcommandData = ReadOnlyMemory<byte>.Empty;
+            SubcommandData = ReadOnlyMemory<byte>.Empty;
 
-                return false;
-            }
+            return false;
         }
         catch
         {
@@ -123,6 +117,7 @@ public class GeneralInformationPacket : BaseUoPacket
         }
 
         var endPosition = writer.Position;
+
         return writer.RawBuffer.Slice(startPosition, endPosition - startPosition).ToArray();
     }
 }

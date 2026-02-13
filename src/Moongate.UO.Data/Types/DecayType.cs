@@ -5,5 +5,5 @@ public enum DecayType : byte
 {
     None,
     ItemDecay,
-    CorpseDecay,
+    CorpseDecay
 }

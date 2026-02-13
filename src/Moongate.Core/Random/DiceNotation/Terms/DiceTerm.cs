@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces;
 ﻿using Moongate.Core.Random.DiceNotation.Exceptions;
 
 namespace Moongate.Core.Random.DiceNotation.Terms;
@@ -13,22 +14,22 @@ public class DiceTerm : IDiceExpressionTerm
     /// <summary>
     /// The number of dice
     /// </summary>
-    public int Multiplicity { get; private set; }
+    public int Multiplicity { get; }
 
     /// <summary>
     /// The number of sides per die
     /// </summary>
-    public int Sides { get; private set; }
+    public int Sides { get; }
 
     /// <summary>
     /// The amount to multiply the final sum of the dice by
     /// </summary>
-    public int Scalar { get; private set; }
+    public int Scalar { get; }
 
     /// <summary>
     /// Sum this many dice with the highest values out of those rolled
     /// </summary>
-    protected int Choose { get; private set; }
+    protected int Choose { get; }
 
     /// <summary>
     /// Construct a new instance of the DiceTerm class using the specified values
@@ -36,9 +37,8 @@ public class DiceTerm : IDiceExpressionTerm
     /// <param name="multiplicity">The number of dice</param>
     /// <param name="sides">The number of sides per die</param>
     /// <param name="scalar">The amount to multiply the final sum of the dice by</param>
-    public DiceTerm( int multiplicity, int sides, int scalar )
-        : this( multiplicity, sides, multiplicity, scalar )
-    { }
+    public DiceTerm(int multiplicity, int sides, int scalar)
+        : this(multiplicity, sides, multiplicity, scalar) { }
 
     /// <summary>
     /// Construct a new instance of the DiceTerm class using the specified values
@@ -47,23 +47,26 @@ public class DiceTerm : IDiceExpressionTerm
     /// <param name="sides">The number of sides per die</param>
     /// <param name="choose">Sum this many dice with the highest values out of those rolled</param>
     /// <param name="scalar">The amount to multiply the final sum of the dice by</param>
-    public DiceTerm( int multiplicity, int sides, int choose, int scalar )
+    public DiceTerm(int multiplicity, int sides, int choose, int scalar)
     {
-        if ( sides <= 0 )
+        if (sides <= 0)
         {
-            throw new ImpossibleDieException( $"Cannot construct a die with {sides} sides" );
+            throw new ImpossibleDieException($"Cannot construct a die with {sides} sides");
         }
-        if ( multiplicity < 0 )
+
+        if (multiplicity < 0)
         {
-            throw new InvalidMultiplicityException( $"Cannot roll {multiplicity} dice; this quantity is less than 0" );
+            throw new InvalidMultiplicityException($"Cannot roll {multiplicity} dice; this quantity is less than 0");
         }
-        if ( choose < 0 )
+
+        if (choose < 0)
         {
-            throw new InvalidChooseException( "Cannot choose {0} of the dice; it is less than 0" );
+            throw new InvalidChooseException("Cannot choose {0} of the dice; it is less than 0");
         }
-        if ( choose > multiplicity )
+
+        if (choose > multiplicity)
         {
-            throw new InvalidChooseException( $"Cannot choose {choose} dice, only {multiplicity} were rolled" );
+            throw new InvalidChooseException($"Cannot choose {choose} dice, only {multiplicity} were rolled");
         }
 
         Sides = sides;
@@ -77,17 +80,18 @@ public class DiceTerm : IDiceExpressionTerm
     /// </summary>
     /// <param name="random">IRandom RNG used to perform the Roll.</param>
     /// <returns>An IEnumerable of TermResult which will have one item per die rolled</returns>
-    public IEnumerable<TermResult> GetResults( IRandom random )
+    public IEnumerable<TermResult> GetResults(IRandom random)
     {
         IEnumerable<TermResult> results =
-            from i in Enumerable.Range( 0, Multiplicity )
+            from i in Enumerable.Range(0, Multiplicity)
             select new TermResult
             {
                 Scalar = Scalar,
-                Value = random.Next( 1, Sides ),
+                Value = random.Next(1, Sides),
                 TermType = "d" + Sides
             };
-        return results.OrderByDescending( d => d.Value ).Take( Choose );
+
+        return results.OrderByDescending(d => d.Value).Take(Choose);
     }
 
     /// <summary>
@@ -96,9 +100,7 @@ public class DiceTerm : IDiceExpressionTerm
     /// <returns>An IEnumerable of TermResult which will have one item per die rolled</returns>
     /// <remarks>Uses DotNetRandom as its RNG</remarks>
     public IEnumerable<TermResult> GetResults()
-    {
-        return GetResults( Singleton.DefaultRandom );
-    }
+        => GetResults(Singleton.DefaultRandom);
 
     /// <summary>
     /// Returns a string that represents this DiceTerm
@@ -106,7 +108,8 @@ public class DiceTerm : IDiceExpressionTerm
     /// <returns>A string representing this DiceTerm</returns>
     public override string ToString()
     {
-        string choose = Choose == Multiplicity ? "" : "k" + Choose;
+        var choose = Choose == Multiplicity ? "" : "k" + Choose;
+
         return Scalar == 1 ? $"{Multiplicity}d{Sides}{choose}" : $"{Scalar}*{Multiplicity}d{Sides}{choose}";
     }
 }

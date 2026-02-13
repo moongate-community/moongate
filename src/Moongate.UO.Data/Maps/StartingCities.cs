@@ -8,7 +8,7 @@ public class StartingCities
     [
         new("Haven", "The Bountiful Harvest Inn", 3677, 2625, 0, Map.Trammel),
         new("Britain", "Sweet Dreams Inn", 1075074, 1496, 1628, 10, Map.Trammel),
-        new("Magincia", "The Great Horns Tavern", 1075077, 3734, 2222, 20, Map.Trammel),
+        new("Magincia", "The Great Horns Tavern", 1075077, 3734, 2222, 20, Map.Trammel)
     ];
 
     public static readonly CityInfo[] FeluccaStartingCities =
@@ -32,13 +32,14 @@ public class StartingCities
         new("Trinsic", "The Traveler's Inn", 1075076, 1845, 2745, 0, Map.Trammel),
         new("Jhelom", "The Mercenary Inn", 1075078, 1374, 3826, 0, Map.Trammel),
         new("Skara Brae", "The Falconer's Inn", 1075079, 618, 2234, 0, Map.Trammel),
-        new("Vesper", "The Ironwood Inn", 1075080, 2771, 976, 0, Map.Trammel),
+        new("Vesper", "The Ironwood Inn", 1075080, 2771, 976, 0, Map.Trammel)
     ];
 
     public static readonly CityInfo[] NewHavenStartingCities =
     [
         new("New Haven", "The Bountiful Harvest Inn", 1150168, 3503, 2574, 14, Map.Trammel),
         new("Britain", "The Wayfarer's Inn", 1075074, 1602, 1591, 20, Map.Trammel)
+
         // Magincia removed because it burned down.
     ];
 
@@ -47,7 +48,5 @@ public class StartingCities
         new("Royal City", "Royal City Inn", 1150169, 738, 3486, -19, Map.TerMur)
     ];
 
-
-    public static CityInfo[] AvailableStartingCities =>
-        [..NewHavenStartingCities, ..TrammelStartingCities];
+    public static CityInfo[] AvailableStartingCities => [..NewHavenStartingCities, ..TrammelStartingCities];
 }

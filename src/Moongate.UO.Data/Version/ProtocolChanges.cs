@@ -21,6 +21,7 @@ public enum ProtocolChanges
     None = 0x00000000,
     NewSpellbook = 0x00000001,
     DamagePacket = 0x00000002,
+
     // Unpack = 0x00000004,
     BuffIcon = 0x00000008,
     NewHaven = 0x00000010,

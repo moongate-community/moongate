@@ -11,16 +11,15 @@ public class SupportFeaturesPacket : BaseUoPacket
 
     public SupportFeaturesPacket() : base(0xB9)
     {
-
         Flags = ExpansionInfo.CoreExpansion.SupportedFeatures;
         Flags |= FeatureFlags.LiveAccount;
         Flags |= FeatureFlags.SeventhCharacterSlot;
-
     }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Write(OpCode);
+
         //16749275
 
         //185
@@ -29,6 +28,7 @@ public class SupportFeaturesPacket : BaseUoPacket
         //146
         //219
         writer.Write((uint)Flags);
+
         return writer.ToArray();
     }
 }

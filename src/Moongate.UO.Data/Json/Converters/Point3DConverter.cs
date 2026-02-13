@@ -13,13 +13,15 @@ public class Point3DConverter : JsonConverter<Point3D>
             throw new JsonException("Expected start of object.");
         }
 
-        int x = 0, y = 0, z = 0;
+        int x = 0,
+            y = 0,
+            z = 0;
 
         while (reader.Read())
         {
             if (reader.TokenType == JsonTokenType.EndObject)
             {
-                return new Point3D(x, y, z);
+                return new(x, y, z);
             }
 
             if (reader.TokenType == JsonTokenType.PropertyName)
@@ -31,12 +33,15 @@ public class Point3DConverter : JsonConverter<Point3D>
                 {
                     case "x":
                         x = reader.GetInt32();
+
                         break;
                     case "y":
                         y = reader.GetInt32();
+
                         break;
                     case "z":
                         z = reader.GetInt32();
+
                         break;
                     default:
                         throw new JsonException($"Unexpected property: {propertyName}");
@@ -47,6 +52,16 @@ public class Point3DConverter : JsonConverter<Point3D>
         throw new JsonException("Expected end of object.");
     }
 
+    /// <summary>
+    /// Read Point3D from JSON property name (dictionary key)
+    /// </summary>
+    public override Point3D ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var value = reader.GetString();
+
+        return ParseFromString(value);
+    }
+
     public override void Write(Utf8JsonWriter writer, Point3D value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
@@ -54,15 +69,6 @@ public class Point3DConverter : JsonConverter<Point3D>
         writer.WriteNumber("y", value.Y);
         writer.WriteNumber("z", value.Z);
         writer.WriteEndObject();
-    }
-
-    /// <summary>
-    /// Read Point3D from JSON property name (dictionary key)
-    /// </summary>
-    public override Point3D ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        var value = reader.GetString();
-        return ParseFromString(value);
     }
 
     /// <summary>
@@ -81,21 +87,32 @@ public class Point3DConverter : JsonConverter<Point3D>
     private static Point3D ParseFromString(string value)
     {
         if (string.IsNullOrEmpty(value))
+        {
             throw new JsonException("Point3D string value cannot be null or empty");
+        }
 
         var parts = value.Split(',');
+
         if (parts.Length != 3)
+        {
             throw new JsonException($"Invalid Point3D string format: {value}. Expected format: 'x,y,z'");
+        }
 
         if (!int.TryParse(parts[0].Trim(), out var x))
+        {
             throw new JsonException($"Invalid X coordinate in Point3D: {parts[0]}");
+        }
 
         if (!int.TryParse(parts[1].Trim(), out var y))
+        {
             throw new JsonException($"Invalid Y coordinate in Point3D: {parts[1]}");
+        }
 
         if (!int.TryParse(parts[2].Trim(), out var z))
+        {
             throw new JsonException($"Invalid Z coordinate in Point3D: {parts[2]}");
+        }
 
-        return new Point3D(x, y, z);
+        return new(x, y, z);
     }
 }

@@ -22,7 +22,6 @@ public class CommandSystemService : ICommandSystemService
     private readonly Dictionary<string, CommandDefinition> _commands = new();
     private readonly IGameSessionService _gameSessionService;
 
-
     private readonly List<string> _commandHistory = new();
 
     private int _commandHistoryIndex = -1;
@@ -36,68 +35,53 @@ public class CommandSystemService : ICommandSystemService
         RegisterDefaultCommands();
     }
 
-    private void RegisterDefaultCommands()
-    {
-        RegisterCommand("help|?", OnHelpCommand, "Displays this help message.");
-        RegisterCommand(
-            "lock|" + _unlockCharacter,
-            OnLockCommand,
-            "Locks the console input. Press '*' to unlock.",
-            AccountLevelType.Admin,
-            CommandSourceType.Console
-        );
-        RegisterCommand(
-            "exit|shutdown",
-            OnExitCommand,
-            "Exits the application.",
-            AccountLevelType.Admin,
-            CommandSourceType.Console
-        );
+    public void Dispose() { }
 
-    }
-
-    private async Task OnExitCommand(CommandSystemContext context)
+    public async Task ExecuteCommandAsync(
+        string commandWithArgs,
+        string sessionId,
+        AccountLevelType accountLevel,
+        CommandSourceType source
+    )
     {
-        AnsiConsole.Markup("[red]Exiting application in 5 seconds...[/]");
-        var bootstrap = MoongateContext.Container.Resolve<MoongateBootstrap>();
-        await Task.Delay(5000);
-        await bootstrap.RequestShutdownAsync();
-    }
+        var command = commandWithArgs.Split(' ').FirstOrDefault()?.ToLowerInvariant();
+        var context = CreateCommandContext(commandWithArgs, sessionId, source);
 
-    private Task OnLockCommand(CommandSystemContext context)
-    {
-        _isConsoleLocked = true;
-        AnsiConsole.Markup("[red]Console locked. Press '*' to unlock.[/]");
-        Console.WriteLine();
-        return Task.CompletedTask;
-    }
-
-    private Task OnHelpCommand(CommandSystemContext context)
-    {
-        // TODO: Show only commands available to the user
-        var helpMessage = new StringBuilder();
-        helpMessage.AppendLine("Available commands:");
-        foreach (var command in _commands.Values.Where(s => s.Source.HasFlag(context.SourceType)))
+        if (string.IsNullOrEmpty(command) || !_commands.TryGetValue(command, out var commandDefinition))
         {
-            helpMessage.AppendLine($"- {command.Name}: {command.Description}");
+            context.Print("Unknown command: {0}", commandWithArgs);
+
+            return;
         }
 
-        context.Print(helpMessage.ToString());
-        return Task.CompletedTask;
+        if (source == CommandSourceType.Console)
+        {
+            await commandDefinition.Handler(context);
+
+            return;
+        }
+
+        // TODO: Check if the session exists and if the account level is sufficient
+
+        await commandDefinition.Handler(context);
     }
 
-
     public void RegisterCommand(
-        string commandName, ICommandSystemService.CommandHandlerDelegate handler, string description = "",
-        AccountLevelType accountLevel = AccountLevelType.User, CommandSourceType source = CommandSourceType.InGame
+        string commandName,
+        ICommandSystemService.CommandHandlerDelegate handler,
+        string description = "",
+        AccountLevelType accountLevel = AccountLevelType.User,
+        CommandSourceType source = CommandSourceType.InGame
     )
     {
         foreach (var splitCommand in commandName.Split('|'))
         {
             var trimmedCommand = splitCommand.Trim().ToLowerInvariant();
+
             if (_commands.ContainsKey(trimmedCommand))
             {
                 _logger.Warning("Command '{CommandName}' is already registered.", trimmedCommand);
+
                 continue;
             }
 
@@ -115,70 +99,6 @@ public class CommandSystemService : ICommandSystemService
         }
     }
 
-    public async Task ExecuteCommandAsync(
-        string commandWithArgs, string sessionId, AccountLevelType accountLevel, CommandSourceType source
-    )
-    {
-        var command = commandWithArgs.Split(' ').FirstOrDefault()?.ToLowerInvariant();
-        var context = CreateCommandContext(commandWithArgs, sessionId, source);
-        if (string.IsNullOrEmpty(command) || !_commands.TryGetValue(command, out var commandDefinition))
-        {
-            context.Print("Unknown command: {0}", commandWithArgs);
-            return;
-        }
-
-        if (source == CommandSourceType.Console)
-        {
-            await commandDefinition.Handler(context);
-
-            return;
-        }
-
-        // TODO: Check if the session exists and if the account level is sufficient
-
-        await commandDefinition.Handler(context);
-    }
-
-    private async Task HookConsoleCommandAsync(CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            try
-            {
-                if (Console.KeyAvailable)
-                {
-                    var keyInfo = Console.ReadKey(true);
-                    if (_isConsoleLocked)
-                    {
-                        if (keyInfo.KeyChar == _unlockCharacter)
-                        {
-                            _isConsoleLocked = false;
-                            AnsiConsole.Markup("[green]Console unlocked.[/]");
-                            Console.WriteLine();
-                            AnsiConsole.Markup(_prompt);
-                        }
-                        else
-                        {
-                            AnsiConsole.MarkupLine($"[red]Console is locked. Press {_unlockCharacter} to unlock  [/]");
-                        }
-
-                        continue;
-                    }
-
-                    await ProcessKeyPress(keyInfo);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Error processing console input.");
-                AnsiConsole.Markup("[red]An error occurred while processing input. Please try again. [/]");
-            }
-
-
-            await Task.Delay(10, cancellationToken);
-        }
-    }
-
     public async Task StartConsoleAsync(CancellationToken cancellationToken)
     {
         _ = Task.Run(
@@ -191,64 +111,26 @@ public class CommandSystemService : ICommandSystemService
         );
     }
 
-    private async Task ProcessKeyPress(ConsoleKeyInfo keyInfo)
+    private CommandSystemContext CreateCommandContext(string command, string sessionId, CommandSourceType source)
     {
-        switch (keyInfo.Key)
+        var context = new CommandSystemContext
         {
-            case ConsoleKey.Backspace:
-                HandleBackspace();
-                break;
+            Command = command,
+            SourceType = source,
+            Arguments = command.Split(' ').Skip(1).ToArray()
+        };
 
-            case ConsoleKey.Enter:
-                await HandleEnterKey();
-                AnsiConsole.Markup(_prompt);
-                break;
-
-            case ConsoleKey.Tab:
-                break;
-
-            case ConsoleKey.UpArrow:
-                if (_isConsoleLocked)
-                {
-                    break;
-                }
-
-                if (_commandHistoryIndex < _commandHistory.Count - 1)
-                {
-                    _commandHistoryIndex++;
-                    _inputBuffer = _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex];
-                    AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
-                }
-
-                break;
-
-            case ConsoleKey.DownArrow:
-                if (_isConsoleLocked)
-                {
-                    break;
-                }
-
-                if (_commandHistoryIndex > 0)
-                {
-                    _commandHistoryIndex--;
-                    _inputBuffer = _commandHistory.Count > _commandHistoryIndex
-                        ? _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex]
-                        : string.Empty;
-                    AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
-                }
-                else
-                {
-                    _commandHistoryIndex = -1;
-                    _inputBuffer = string.Empty;
-                    AnsiConsole.Markup($"\r{_prompt}");
-                }
-
-                break;
-
-            default:
-                HandleCharacterInput(keyInfo.KeyChar);
-                break;
+        if (string.IsNullOrEmpty(sessionId))
+        {
+            context.OnPrint += OnPrintToConsole;
         }
+        else
+        {
+            context.OnPrint += OnPrintToMobile;
+            context.SessionId = sessionId;
+        }
+
+        return context;
     }
 
     private void HandleBackspace()
@@ -282,28 +164,77 @@ public class CommandSystemService : ICommandSystemService
         await ExecuteCommandAsync(command, string.Empty, AccountLevelType.Admin, CommandSourceType.Console);
     }
 
-    private CommandSystemContext CreateCommandContext(
-        string command, string sessionId, CommandSourceType source
-    )
+    private async Task HookConsoleCommandAsync(CancellationToken cancellationToken)
     {
-        var context = new CommandSystemContext
+        while (!cancellationToken.IsCancellationRequested)
         {
-            Command = command,
-            SourceType = source,
-            Arguments = command.Split(' ').Skip(1).ToArray(),
-        };
+            try
+            {
+                if (Console.KeyAvailable)
+                {
+                    var keyInfo = Console.ReadKey(true);
 
-        if (string.IsNullOrEmpty(sessionId))
-        {
-            context.OnPrint += OnPrintToConsole;
+                    if (_isConsoleLocked)
+                    {
+                        if (keyInfo.KeyChar == _unlockCharacter)
+                        {
+                            _isConsoleLocked = false;
+                            AnsiConsole.Markup("[green]Console unlocked.[/]");
+                            Console.WriteLine();
+                            AnsiConsole.Markup(_prompt);
+                        }
+                        else
+                        {
+                            AnsiConsole.MarkupLine($"[red]Console is locked. Press {_unlockCharacter} to unlock  [/]");
+                        }
+
+                        continue;
+                    }
+
+                    await ProcessKeyPress(keyInfo);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Error processing console input.");
+                AnsiConsole.Markup("[red]An error occurred while processing input. Please try again. [/]");
+            }
+
+            await Task.Delay(10, cancellationToken);
         }
-        else
+    }
+
+    private async Task OnExitCommand(CommandSystemContext context)
+    {
+        AnsiConsole.Markup("[red]Exiting application in 5 seconds...[/]");
+        var bootstrap = MoongateContext.Container.Resolve<MoongateBootstrap>();
+        await Task.Delay(5000);
+        await bootstrap.RequestShutdownAsync();
+    }
+
+    private Task OnHelpCommand(CommandSystemContext context)
+    {
+        // TODO: Show only commands available to the user
+        var helpMessage = new StringBuilder();
+        helpMessage.AppendLine("Available commands:");
+
+        foreach (var command in _commands.Values.Where(s => s.Source.HasFlag(context.SourceType)))
         {
-            context.OnPrint += OnPrintToMobile;
-            context.SessionId = sessionId;
+            helpMessage.AppendLine($"- {command.Name}: {command.Description}");
         }
 
-        return context;
+        context.Print(helpMessage.ToString());
+
+        return Task.CompletedTask;
+    }
+
+    private Task OnLockCommand(CommandSystemContext context)
+    {
+        _isConsoleLocked = true;
+        AnsiConsole.Markup("[red]Console locked. Press '*' to unlock.[/]");
+        Console.WriteLine();
+
+        return Task.CompletedTask;
     }
 
     private void OnPrintToConsole(string sessionId, string message, object[] args)
@@ -318,7 +249,85 @@ public class CommandSystemService : ICommandSystemService
         gameSession.Mobile.ReceiveSpeech(null, ChatMessageType.System, 0, string.Format(message, args), 0, 3);
     }
 
-    public void Dispose()
+    private async Task ProcessKeyPress(ConsoleKeyInfo keyInfo)
     {
+        switch (keyInfo.Key)
+        {
+            case ConsoleKey.Backspace:
+                HandleBackspace();
+
+                break;
+
+            case ConsoleKey.Enter:
+                await HandleEnterKey();
+                AnsiConsole.Markup(_prompt);
+
+                break;
+
+            case ConsoleKey.Tab:
+                break;
+
+            case ConsoleKey.UpArrow:
+                if (_isConsoleLocked)
+                {
+                    break;
+                }
+
+                if (_commandHistoryIndex < _commandHistory.Count - 1)
+                {
+                    _commandHistoryIndex++;
+                    _inputBuffer = _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex];
+                    AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
+                }
+
+                break;
+
+            case ConsoleKey.DownArrow:
+                if (_isConsoleLocked)
+                {
+                    break;
+                }
+
+                if (_commandHistoryIndex > 0)
+                {
+                    _commandHistoryIndex--;
+                    _inputBuffer = _commandHistory.Count > _commandHistoryIndex
+                                       ? _commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex]
+                                       : string.Empty;
+                    AnsiConsole.Markup($"\r{_prompt}{_inputBuffer}");
+                }
+                else
+                {
+                    _commandHistoryIndex = -1;
+                    _inputBuffer = string.Empty;
+                    AnsiConsole.Markup($"\r{_prompt}");
+                }
+
+                break;
+
+            default:
+                HandleCharacterInput(keyInfo.KeyChar);
+
+                break;
+        }
+    }
+
+    private void RegisterDefaultCommands()
+    {
+        RegisterCommand("help|?", OnHelpCommand, "Displays this help message.");
+        RegisterCommand(
+            "lock|" + _unlockCharacter,
+            OnLockCommand,
+            "Locks the console input. Press '*' to unlock.",
+            AccountLevelType.Admin,
+            CommandSourceType.Console
+        );
+        RegisterCommand(
+            "exit|shutdown",
+            OnExitCommand,
+            "Exits the application.",
+            AccountLevelType.Admin,
+            CommandSourceType.Console
+        );
     }
 }

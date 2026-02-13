@@ -3,42 +3,42 @@ namespace Moongate.UO.Data.Utils;
 public static class MoveToFrontCoding
 {
     // complexity : O(256*N) -> O(N)
-    public static byte[] Encode(byte[] input)
+    public static byte[] Decode(byte[] input)
     {
         Span<byte> symbols = stackalloc byte[256];
-        byte[] output = new byte[input.Length];
+        var output = new byte[input.Length];
 
-        for (int i = 0; i < 256; i++)
+        for (var i = 0; i < 256; i++)
         {
             symbols[i] = (byte)i;
         }
 
-        for (int i = 0; i < input.Length; i++)
+        for (var i = 0; i < input.Length; i++)
         {
-            int ind = MoveToFront(symbols, input[i]);
-            output[i] = (byte)ind;
+            int ind = input[i];
+            output[i] = symbols[ind];
+
+            MoveToFront(symbols, ind);
         }
 
         return output;
     }
 
     // complexity : O(256*N) -> O(N)
-    public static byte[] Decode(byte[] input)
+    public static byte[] Encode(byte[] input)
     {
         Span<byte> symbols = stackalloc byte[256];
-        byte[] output = new byte[input.Length];
+        var output = new byte[input.Length];
 
-        for (int i = 0; i < 256; i++)
+        for (var i = 0; i < 256; i++)
         {
             symbols[i] = (byte)i;
         }
 
-        for (int i = 0; i < input.Length; i++)
+        for (var i = 0; i < input.Length; i++)
         {
-            int ind = input[i];
-            output[i] = symbols[ind];
-
-            MoveToFront(symbols, ind);
+            var ind = MoveToFront(symbols, input[i]);
+            output[i] = (byte)ind;
         }
 
         return output;
@@ -54,9 +54,9 @@ public static class MoveToFrontCoding
             return 0;
         }
 
-        int elementInd = -1;
+        var elementInd = -1;
 
-        for (int i = array.Length - 1; i > 0; i--)
+        for (var i = array.Length - 1; i > 0; i--)
         {
             if (array[i] == element)
             {
@@ -80,9 +80,9 @@ public static class MoveToFrontCoding
     // best case : O(1), worst case : O(N)
     private static void MoveToFront(Span<byte> array, int elementInd)
     {
-        byte element = array[elementInd];
+        var element = array[elementInd];
 
-        for (int i = elementInd; i > 0; i--)
+        for (var i = elementInd; i > 0; i--)
         {
             array[i] = array[i - 1];
         }

@@ -12,12 +12,12 @@ public class SendSkillResponsePacket : BaseUoPacket
     public SendSkillResponseType ResponseType { get; set; }
     public int? SingleSkillId { get; set; } // For single skill updates
 
-    public SendSkillResponsePacket() : base(0x3A)
-    {
-    }
+    public SendSkillResponsePacket() : base(0x3A) { }
 
     public SendSkillResponsePacket(
-        UOMobileEntity mobile, SendSkillResponseType responseType, int? singleSkillId = null
+        UOMobileEntity mobile,
+        SendSkillResponseType responseType,
+        int? singleSkillId = null
     ) : this()
     {
         Mobile = mobile;
@@ -41,6 +41,7 @@ public class SendSkillResponsePacket : BaseUoPacket
             if (SingleSkillId.HasValue)
             {
                 var skillEntry = Mobile.Skills.FirstOrDefault(s => s.Skill.SkillID == SingleSkillId.Value);
+
                 if (skillEntry != null)
                 {
                     WriteSkillEntry(writer, skillEntry);

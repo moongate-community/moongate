@@ -11,9 +11,8 @@ public class ConnectToGameServerPacket : BaseUoPacket
     public int ServerPort { get; set; }
     public uint AuthKey { get; set; }
 
-    public ConnectToGameServerPacket() : base(0x8C)
-    {
-    }
+    public ConnectToGameServerPacket() : base(0x8C) { }
+
     public ConnectToGameServerPacket(IPAddress serverAddress, int serverPort, uint authKey) : this()
     {
         ServerAddress = serverAddress;

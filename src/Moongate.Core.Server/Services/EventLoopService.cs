@@ -22,12 +22,6 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
     private readonly IEventBusService _eventBusService;
     private readonly EventLoopConfig _config;
 
-    public object GetMetrics()
-    {
-        return Metrics;
-    }
-
-
     public string ProviderName => "EventLoopService";
 
     // Dictionary with priorities as keys and FIFO queues as values
@@ -42,7 +36,6 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
     private static readonly EventLoopPriority[] _allPriorities =
         [EventLoopPriority.Normal, EventLoopPriority.High, EventLoopPriority.Low];
 
-
     private readonly object _tickLock = new();
     private CancellationTokenSource _cancellationTokenSource;
     private Task _loopTask;
@@ -51,7 +44,7 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
     private bool _isDisposed;
 
     // Performance metrics
-    public EventLoopMetrics Metrics { get; } = new EventLoopMetrics();
+    public EventLoopMetrics Metrics { get; } = new();
 
     // Events
     public long TickCount => Metrics.TotalTicksProcessed;
@@ -76,11 +69,146 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         _config = config;
 
         // Initialize queues for each priority level
-        foreach (EventLoopPriority priority in _allPriorities)
+        foreach (var priority in _allPriorities)
         {
-            _priorityQueues[priority] = new ConcurrentQueue<QueuedAction>();
+            _priorityQueues[priority] = new();
         }
     }
+
+    /// <summary>
+    /// Class that tracks a queued action to facilitate cancellation.
+    /// </summary>
+    private class QueuedActionReference
+    {
+        public EventLoopPriority Priority { get; }
+        public string ActionId { get; }
+
+        public QueuedActionReference(EventLoopPriority priority, string actionId)
+        {
+            Priority = priority;
+            ActionId = actionId;
+        }
+    }
+
+    /// <summary>
+    /// Class that represents a delayed action.
+    /// </summary>
+    private class DelayedAction
+    {
+        public QueuedAction Action { get; }
+        public DateTime ExecuteAt { get; }
+
+        public DelayedAction(QueuedAction action, DateTime executeAt)
+        {
+            Action = action;
+            ExecuteAt = executeAt;
+        }
+    }
+
+    public Task Delay(int milliseconds)
+    {
+        var tcs = new TaskCompletionSource();
+
+        EnqueueDelayedAction(
+            $"Delay_{Guid.NewGuid()}",
+            () => tcs.TrySetResult(),
+            TimeSpan.FromMilliseconds(milliseconds),
+            EventLoopPriority.Normal
+        );
+
+        return tcs.Task;
+    }
+
+    /// <summary>
+    /// Disposes resources used by the event loop service.
+    /// </summary>
+    public void Dispose()
+    {
+        if (_isDisposed)
+        {
+            return;
+        }
+
+        // Make sure the event loop is stopped
+        if (_isRunning)
+        {
+            StopAsync().GetAwaiter().GetResult();
+        }
+
+        _cancellationTokenSource?.Dispose();
+        _cancellationTokenSource = null;
+
+        _isDisposed = true;
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Enqueues an action to be executed with normal priority.
+    /// </summary>
+    public string EnqueueAction(string name, Action action)
+        => EnqueueAction(name, action, EventLoopPriority.Normal);
+
+    /// <summary>
+    /// Enqueues an action to be executed with the specified priority.
+    /// </summary>
+    public string EnqueueAction(string name, Action action, EventLoopPriority priority)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+
+        var queuedAction = new QueuedAction(name, action, priority);
+        var queue = _priorityQueues[priority];
+        queue.Enqueue(queuedAction);
+
+        // Register the action to allow cancellation later
+        _actionRegistry[queuedAction.Id] = new(priority, queuedAction.Id);
+
+        UpdatePriorityMetrics();
+
+        _logger.Verbose(
+            "Action '{Name}' with ID {Id} enqueued with priority {Priority}",
+            name,
+            queuedAction.Id,
+            priority
+        );
+
+        return queuedAction.Id;
+    }
+
+    /// <summary>
+    /// Enqueues an action to be executed after the specified delay with normal priority.
+    /// </summary>
+    public string EnqueueDelayedAction(string name, Action action, TimeSpan delay)
+        => EnqueueDelayedAction(name, action, delay, EventLoopPriority.Normal);
+
+    /// <summary>
+    /// Enqueues an action to be executed after the specified delay with the specified priority.
+    /// </summary>
+    public string EnqueueDelayedAction(string name, Action action, TimeSpan delay, EventLoopPriority priority)
+    {
+        if (action == null)
+        {
+            throw new ArgumentNullException(nameof(action));
+        }
+
+        var queuedAction = new QueuedAction(name, action, priority);
+        var executeAt = DateTime.UtcNow.Add(delay);
+        var delayedAction = new DelayedAction(queuedAction, executeAt);
+
+        _delayedActions[queuedAction.Id] = delayedAction;
+
+        _logger.Verbose(
+            "Delayed action '{Name}' with ID {Id} enqueued with priority {Priority} to execute at {ExecuteAt}",
+            name,
+            queuedAction.Id,
+            priority,
+            executeAt
+        );
+
+        return queuedAction.Id;
+    }
+
+    public object GetMetrics()
+        => Metrics;
 
     /// <summary>
     /// Starts the event loop service.
@@ -93,55 +221,11 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         }
 
         _isRunning = true;
-        _cancellationTokenSource = new CancellationTokenSource();
+        _cancellationTokenSource = new();
         _loopTask = Task.Run(EventLoopAsync, _cancellationTokenSource.Token);
         await _eventBusService.PublishAsync(new RegisterMetricEvent(this), cancellationToken);
 
         _logger.Information("EventLoopService started with tick interval of {TickIntervalMs}ms", TickIntervalMs);
-    }
-
-    /// <summary>
-    /// The main event loop that runs on a dedicated task.
-    /// </summary>
-    private async Task EventLoopAsync()
-    {
-        try
-        {
-            _logger.Debug("Event loop task started");
-
-            while (!_cancellationTokenSource.Token.IsCancellationRequested)
-            {
-                long tickStartTimestamp = Stopwatch.GetTimestamp();
-
-                // Process a single tick
-                ProcessTick();
-
-                // Calculate actual execution time for this tick
-                long tickEndTimestamp = Stopwatch.GetTimestamp();
-                double tickDurationMs = Stopwatch.GetElapsedTime(tickStartTimestamp, tickEndTimestamp).TotalMilliseconds;
-
-                // Determine delay to maintain consistent tick rate
-                int delayMs = tickDurationMs >= TickIntervalMs
-                    ? 1 // Minimal delay to allow other tasks to run
-                    : (int)(TickIntervalMs - tickDurationMs);
-
-                // Wait until the next tick
-                await Task.Delay(delayMs, _cancellationTokenSource.Token);
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            // Expected when token is cancelled, no need to log as error
-            _logger.Debug("Event loop task cancelled");
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Unhandled exception in event loop task");
-        }
-        finally
-        {
-            _logger.Debug("Event loop task stopped");
-        }
     }
 
     /// <summary>
@@ -193,75 +277,6 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
     }
 
     /// <summary>
-    /// Enqueues an action to be executed with normal priority.
-    /// </summary>
-    public string EnqueueAction(string name, Action action)
-    {
-        return EnqueueAction(name, action, EventLoopPriority.Normal);
-    }
-
-    /// <summary>
-    /// Enqueues an action to be executed with the specified priority.
-    /// </summary>
-    public string EnqueueAction(string name, Action action, EventLoopPriority priority)
-    {
-        ArgumentNullException.ThrowIfNull(action);
-
-        var queuedAction = new QueuedAction(name, action, priority);
-        var queue = _priorityQueues[priority];
-        queue.Enqueue(queuedAction);
-
-        // Register the action to allow cancellation later
-        _actionRegistry[queuedAction.Id] = new QueuedActionReference(priority, queuedAction.Id);
-
-        UpdatePriorityMetrics();
-
-        _logger.Verbose(
-            "Action '{Name}' with ID {Id} enqueued with priority {Priority}",
-            name,
-            queuedAction.Id,
-            priority
-        );
-
-        return queuedAction.Id;
-    }
-
-    /// <summary>
-    /// Enqueues an action to be executed after the specified delay with normal priority.
-    /// </summary>
-    public string EnqueueDelayedAction(string name, Action action, TimeSpan delay)
-    {
-        return EnqueueDelayedAction(name, action, delay, EventLoopPriority.Normal);
-    }
-
-    /// <summary>
-    /// Enqueues an action to be executed after the specified delay with the specified priority.
-    /// </summary>
-    public string EnqueueDelayedAction(string name, Action action, TimeSpan delay, EventLoopPriority priority)
-    {
-        if (action == null)
-        {
-            throw new ArgumentNullException(nameof(action));
-        }
-
-        var queuedAction = new QueuedAction(name, action, priority);
-        var executeAt = DateTime.UtcNow.Add(delay);
-        var delayedAction = new DelayedAction(queuedAction, executeAt);
-
-        _delayedActions[queuedAction.Id] = delayedAction;
-
-        _logger.Verbose(
-            "Delayed action '{Name}' with ID {Id} enqueued with priority {Priority} to execute at {ExecuteAt}",
-            name,
-            queuedAction.Id,
-            priority,
-            executeAt
-        );
-
-        return queuedAction.Id;
-    }
-
-    /// <summary>
     /// Tries to cancel a previously enqueued action.
     /// </summary>
     public bool TryCancelAction(string actionId)
@@ -276,6 +291,7 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
             );
 
             UpdatePriorityMetrics();
+
             return true;
         }
 
@@ -291,10 +307,207 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
             );
 
             UpdatePriorityMetrics();
+
             return true;
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// The main event loop that runs on a dedicated task.
+    /// </summary>
+    private async Task EventLoopAsync()
+    {
+        try
+        {
+            _logger.Debug("Event loop task started");
+
+            while (!_cancellationTokenSource.Token.IsCancellationRequested)
+            {
+                var tickStartTimestamp = Stopwatch.GetTimestamp();
+
+                // Process a single tick
+                ProcessTick();
+
+                // Calculate actual execution time for this tick
+                var tickEndTimestamp = Stopwatch.GetTimestamp();
+                var tickDurationMs = Stopwatch.GetElapsedTime(tickStartTimestamp, tickEndTimestamp).TotalMilliseconds;
+
+                // Determine delay to maintain consistent tick rate
+                var delayMs = tickDurationMs >= TickIntervalMs
+                                  ? 1 // Minimal delay to allow other tasks to run
+                                  : (int)(TickIntervalMs - tickDurationMs);
+
+                // Wait until the next tick
+                await Task.Delay(delayMs, _cancellationTokenSource.Token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Expected when token is cancelled, no need to log as error
+            _logger.Debug("Event loop task cancelled");
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Unhandled exception in event loop task");
+        }
+        finally
+        {
+            _logger.Debug("Event loop task stopped");
+        }
+    }
+
+    /// <summary>
+    /// Gets the total number of queued actions.
+    /// </summary>
+    private int GetTotalQueuedActionsCount()
+    {
+        return _priorityQueues.Values.Sum(q => q.Count) + _delayedActions.Count;
+    }
+
+    /// <summary>
+    /// Processes delayed actions that are due to be executed.
+    /// </summary>
+    private void ProcessDelayedActions()
+    {
+        var now = DateTime.UtcNow;
+        var actionsToExecute = _delayedActions
+                               .Where(kv => kv.Value.ExecuteAt <= now)
+                               .ToList();
+
+        foreach (var actionEntry in actionsToExecute)
+        {
+            if (_delayedActions.TryRemove(actionEntry.Key, out var delayedAction))
+            {
+                var priority = delayedAction.Action.Priority;
+                _priorityQueues[priority].Enqueue(delayedAction.Action);
+                _actionRegistry[delayedAction.Action.Id] = new(priority, delayedAction.Action.Id);
+
+                _logger.Verbose(
+                    "Delayed action '{Name}' with ID {Id} is now ready for execution",
+                    delayedAction.Action.Name,
+                    actionEntry.Key
+                );
+            }
+        }
+
+        UpdatePriorityMetrics();
+    }
+
+    /// <summary>
+    /// Processes queued actions according to their priority.
+    /// </summary>
+    private void ProcessQueuedActions()
+    {
+        var totalQueuedActions = GetTotalQueuedActionsCount();
+
+        if (totalQueuedActions == 0)
+        {
+            return;
+        }
+
+        // Process queues in descending priority order (highest first)
+        var prioritiesInOrder = _priorityQueues.Keys
+                                               .OrderByDescending(p => p)
+                                               .ToList();
+
+        var actionsProcessed = 0;
+        var totalProcessingTime = 0.0;
+        var maxProcessingTime = 0.0;
+        var maxActionsToProcess = _config.MaxActionsPerTick;
+
+        // For each priority level, process actions in FIFO order
+        foreach (var priority in prioritiesInOrder)
+        {
+            var queue = _priorityQueues[priority];
+
+            while (queue.TryDequeue(out var action))
+            {
+                if (!_isRunning || actionsProcessed >= maxActionsToProcess)
+                {
+                    return;
+                }
+
+                // Check if the action was cancelled
+                if (!_actionRegistry.ContainsKey(action.Id))
+                {
+                    // Action was cancelled, skip it
+                    continue;
+                }
+
+                // Remove the action from the registry
+                _actionRegistry.TryRemove(action.Id, out _);
+
+                try
+                {
+                    _logger.Verbose("Executing action '{Name}' with ID {Id}", action.Name, action.Id);
+
+                    // Record start timestamp
+                    var executionStartTimestamp = Stopwatch.GetTimestamp();
+
+                    // Execute the action
+                    action.Action.Invoke();
+
+                    // Record end timestamp
+                    var executionEndTimestamp = Stopwatch.GetTimestamp();
+
+                    // Calculate execution time
+                    var processingTime = Stopwatch.GetElapsedTime(
+                                                      executionStartTimestamp,
+                                                      executionEndTimestamp
+                                                  )
+                                                  .TotalMilliseconds;
+                    totalProcessingTime += processingTime;
+                    maxProcessingTime = Math.Max(maxProcessingTime, processingTime);
+                    actionsProcessed++;
+
+                    _logger.Verbose(
+                        "Action '{Name}' with ID {Id} executed in {ProcessingTime}ms",
+                        action.Name,
+                        action.Id,
+                        processingTime.ToString("F2")
+                    );
+
+                    // Log slow actions
+                    if (processingTime > _config.SlowActionThresholdMs)
+                    {
+                        _logger.Warning(
+                            "Slow action detected: '{Name}' ({ActionId}) took {ProcessingTime}ms to execute with priority {Priority}",
+                            action.Name,
+                            action.Id,
+                            processingTime.ToString("F2"),
+                            action.Priority
+                        );
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error(
+                        ex,
+                        "Error executing action '{Name}' ({ActionId}) with priority {Priority}",
+                        action.Name,
+                        action.Id,
+                        action.Priority
+                    );
+                }
+            }
+        }
+
+        // Update metrics
+        if (actionsProcessed > 0)
+        {
+            Metrics.ActionsProcessedInTick = actionsProcessed;
+            Metrics.TotalActionsProcessed += actionsProcessed;
+            Metrics.AverageProcessingTimeMs = totalProcessingTime / actionsProcessed;
+            Metrics.MaxProcessingTimeMs = Math.Max(Metrics.MaxProcessingTimeMs, maxProcessingTime);
+        }
+        else
+        {
+            Metrics.ActionsProcessedInTick = 0;
+        }
+
+        UpdatePriorityMetrics();
     }
 
     /// <summary>
@@ -310,11 +523,11 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
 
         try
         {
-            long tickStartTimestamp = Stopwatch.GetTimestamp();
+            var tickStartTimestamp = Stopwatch.GetTimestamp();
 
             if (_lastTickTimestamp != 0)
             {
-                double timeSinceLastTick =
+                var timeSinceLastTick =
                     Stopwatch.GetElapsedTime(_lastTickTimestamp, tickStartTimestamp).TotalMilliseconds;
 
                 if (Math.Abs(timeSinceLastTick - TickIntervalMs) > TickIntervalMs)
@@ -327,7 +540,7 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
                 }
 
                 Metrics.AverageTimeBetweenTicksMs =
-                    (Metrics.AverageTimeBetweenTicksMs * 0.9) + (timeSinceLastTick * 0.1);
+                    Metrics.AverageTimeBetweenTicksMs * 0.9 + timeSinceLastTick * 0.1;
             }
 
             // Process delayed actions that are due
@@ -385,8 +598,6 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
             }
 
             _lastTickTimestamp = Stopwatch.GetTimestamp();
-
-
         }
         catch (Exception ex)
         {
@@ -396,144 +607,6 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
         {
             Monitor.Exit(_tickLock);
         }
-    }
-
-    /// <summary>
-    /// Processes delayed actions that are due to be executed.
-    /// </summary>
-    private void ProcessDelayedActions()
-    {
-        var now = DateTime.UtcNow;
-        var actionsToExecute = _delayedActions
-            .Where(kv => kv.Value.ExecuteAt <= now)
-            .ToList();
-
-        foreach (var actionEntry in actionsToExecute)
-        {
-            if (_delayedActions.TryRemove(actionEntry.Key, out var delayedAction))
-            {
-                var priority = delayedAction.Action.Priority;
-                _priorityQueues[priority].Enqueue(delayedAction.Action);
-                _actionRegistry[delayedAction.Action.Id] = new QueuedActionReference(priority, delayedAction.Action.Id);
-
-                _logger.Verbose(
-                    "Delayed action '{Name}' with ID {Id} is now ready for execution",
-                    delayedAction.Action.Name,
-                    actionEntry.Key
-                );
-            }
-        }
-
-        UpdatePriorityMetrics();
-    }
-
-    /// <summary>
-    /// Processes queued actions according to their priority.
-    /// </summary>
-    private void ProcessQueuedActions()
-    {
-        var totalQueuedActions = GetTotalQueuedActionsCount();
-        if (totalQueuedActions == 0)
-            return;
-
-        // Process queues in descending priority order (highest first)
-        var prioritiesInOrder = _priorityQueues.Keys
-            .OrderByDescending(p => p)
-            .ToList();
-
-        var actionsProcessed = 0;
-        var totalProcessingTime = 0.0;
-        var maxProcessingTime = 0.0;
-        var maxActionsToProcess = _config.MaxActionsPerTick;
-
-        // For each priority level, process actions in FIFO order
-        foreach (var priority in prioritiesInOrder)
-        {
-            var queue = _priorityQueues[priority];
-
-            while (queue.TryDequeue(out var action))
-            {
-                if (!_isRunning || actionsProcessed >= maxActionsToProcess)
-                    return;
-
-                // Check if the action was cancelled
-                if (!_actionRegistry.ContainsKey(action.Id))
-                {
-                    // Action was cancelled, skip it
-                    continue;
-                }
-
-                // Remove the action from the registry
-                _actionRegistry.TryRemove(action.Id, out _);
-
-                try
-                {
-                    _logger.Verbose("Executing action '{Name}' with ID {Id}", action.Name, action.Id);
-
-                    // Record start timestamp
-                    var executionStartTimestamp = Stopwatch.GetTimestamp();
-
-                    // Execute the action
-                    action.Action.Invoke();
-
-                    // Record end timestamp
-                    var executionEndTimestamp = Stopwatch.GetTimestamp();
-
-                    // Calculate execution time
-                    var processingTime = Stopwatch.GetElapsedTime(
-                            executionStartTimestamp,
-                            executionEndTimestamp
-                        )
-                        .TotalMilliseconds;
-                    totalProcessingTime += processingTime;
-                    maxProcessingTime = Math.Max(maxProcessingTime, processingTime);
-                    actionsProcessed++;
-
-                    _logger.Verbose(
-                        "Action '{Name}' with ID {Id} executed in {ProcessingTime}ms",
-                        action.Name,
-                        action.Id,
-                        processingTime.ToString("F2")
-                    );
-                    // Log slow actions
-                    if (processingTime > _config.SlowActionThresholdMs)
-                    {
-                        _logger.Warning(
-                            "Slow action detected: '{Name}' ({ActionId}) took {ProcessingTime}ms to execute with priority {Priority}",
-                            action.Name,
-                            action.Id,
-                            processingTime.ToString("F2"),
-                            action.Priority
-                        );
-                    }
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error(
-                        ex,
-                        "Error executing action '{Name}' ({ActionId}) with priority {Priority}",
-                        action.Name,
-                        action.Id,
-                        action.Priority
-                    );
-                }
-            }
-        }
-
-        // Update metrics
-        if (actionsProcessed > 0)
-        {
-            Metrics.ActionsProcessedInTick = actionsProcessed;
-            Metrics.TotalActionsProcessed += actionsProcessed;
-            Metrics.AverageProcessingTimeMs = totalProcessingTime / actionsProcessed;
-            Metrics.MaxProcessingTimeMs = Math.Max(Metrics.MaxProcessingTimeMs, maxProcessingTime);
-        }
-        else
-        {
-            Metrics.ActionsProcessedInTick = 0;
-        }
-
-        UpdatePriorityMetrics();
     }
 
     /// <summary>
@@ -547,82 +620,6 @@ public class EventLoopService : IEventLoopService, IMetricsProvider
             Metrics.NormalPriorityCount = _priorityQueues[EventLoopPriority.Normal].Count;
             Metrics.LowPriorityCount = _priorityQueues[EventLoopPriority.Low].Count;
             Metrics.QueuedActionsCount = GetTotalQueuedActionsCount();
-        }
-    }
-
-    /// <summary>
-    /// Gets the total number of queued actions.
-    /// </summary>
-    private int GetTotalQueuedActionsCount()
-    {
-        return _priorityQueues.Values.Sum(q => q.Count) + _delayedActions.Count;
-    }
-
-    public Task Delay(int milliseconds)
-    {
-        var tcs = new TaskCompletionSource();
-
-        EnqueueDelayedAction(
-            $"Delay_{Guid.NewGuid()}",
-            () => tcs.TrySetResult(),
-            TimeSpan.FromMilliseconds(milliseconds),
-            EventLoopPriority.Normal
-        );
-
-        return tcs.Task;
-    }
-
-
-    /// <summary>
-    /// Disposes resources used by the event loop service.
-    /// </summary>
-    public void Dispose()
-    {
-        if (_isDisposed)
-        {
-            return;
-        }
-
-        // Make sure the event loop is stopped
-        if (_isRunning)
-        {
-            StopAsync().GetAwaiter().GetResult();
-        }
-
-        _cancellationTokenSource?.Dispose();
-        _cancellationTokenSource = null;
-
-        _isDisposed = true;
-        GC.SuppressFinalize(this);
-    }
-
-    /// <summary>
-    /// Class that tracks a queued action to facilitate cancellation.
-    /// </summary>
-    private class QueuedActionReference
-    {
-        public EventLoopPriority Priority { get; }
-        public string ActionId { get; }
-
-        public QueuedActionReference(EventLoopPriority priority, string actionId)
-        {
-            Priority = priority;
-            ActionId = actionId;
-        }
-    }
-
-    /// <summary>
-    /// Class that represents a delayed action.
-    /// </summary>
-    private class DelayedAction
-    {
-        public QueuedAction Action { get; }
-        public DateTime ExecuteAt { get; }
-
-        public DelayedAction(QueuedAction action, DateTime executeAt)
-        {
-            Action = action;
-            ExecuteAt = executeAt;
         }
     }
 }

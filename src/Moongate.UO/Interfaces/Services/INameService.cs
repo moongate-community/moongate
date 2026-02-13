@@ -5,9 +5,8 @@ namespace Moongate.UO.Interfaces.Services;
 
 public interface INameService : IMoongateService
 {
-    string GenerateName(string type);
-
     void AddNames(string type, params string[] names);
+    string GenerateName(string type);
 
     string GenerateName(MobileTemplate template);
 }

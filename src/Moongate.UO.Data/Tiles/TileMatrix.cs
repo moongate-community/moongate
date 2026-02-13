@@ -13,7 +13,6 @@ public class TileMatrix
     private readonly StaticTile[][][][][] _staticTiles;
     private readonly LandTile[][][] _landTiles;
     private readonly LandTile[] _invalidLandBlock;
-    private readonly StaticTile[][][] _emptyStaticBlock;
     private readonly UOPEntry[] _uopMapEntries;
 
     private readonly int _fileIndex;
@@ -33,15 +32,7 @@ public class TileMatrix
 
     public static bool Pre6000ClientSupport { get; private set; }
 
-    public static void Configure()
-    {
-        // Set to true to support < 6.0.0 clients where map0.mul is both Felucca & Trammel
-        var isPre6000Trammel = false;
-        Pre6000ClientSupport =
-            isPre6000Trammel; //ServerConfiguration.GetSetting("maps.enablePre6000Trammel", isPre6000Trammel);
-    }
-
-//    public TileMatrix(Map owner, int fileIndex, int mapID, int width, int height)
+    //    public TileMatrix(Map owner, int fileIndex, int mapID, int width, int height)
 
     public TileMatrix(int fileIndex, int mapID, int width, int height)
     {
@@ -81,7 +72,7 @@ public class TileMatrix
 
             if (mapPath != null)
             {
-                MapStream = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                MapStream = new(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
             else
             {
@@ -89,7 +80,7 @@ public class TileMatrix
 
                 if (mapPath != null)
                 {
-                    MapStream = new FileStream(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    MapStream = new(mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
                     var uopEntries = UOPFiles.ReadUOPIndexes(MapStream, ".dat", 0x14000, 5);
 
@@ -108,8 +99,8 @@ public class TileMatrix
 
             if (indexPath != null)
             {
-                IndexStream = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                IndexReader = new BinaryReader(IndexStream);
+                IndexStream = new(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                IndexReader = new(IndexStream);
             }
             else
             {
@@ -120,7 +111,7 @@ public class TileMatrix
 
             if (staticsPath != null)
             {
-                DataStream = new FileStream(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                DataStream = new(staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
             }
             else
             {
@@ -128,15 +119,15 @@ public class TileMatrix
             }
         }
 
-        _emptyStaticBlock = new StaticTile[8][][];
+        EmptyStaticBlock = new StaticTile[8][][];
 
         for (var i = 0; i < 8; ++i)
         {
-            _emptyStaticBlock[i] = new StaticTile[8][];
+            EmptyStaticBlock[i] = new StaticTile[8][];
 
             for (var j = 0; j < 8; ++j)
             {
-                _emptyStaticBlock[i][j] = new StaticTile[0];
+                EmptyStaticBlock[i][j] = new StaticTile[0];
             }
         }
 
@@ -147,30 +138,113 @@ public class TileMatrix
         _staticPatches = new int[BlockWidth][];
         _landPatches = new int[BlockWidth][];
 
-        Patch = new TileMatrixPatch(this, fileIndex);
+        Patch = new(this, fileIndex);
     }
 
-    public StaticTile[][][] EmptyStaticBlock => _emptyStaticBlock;
+    public StaticTile[][][] EmptyStaticBlock { get; }
 
-    public void SetStaticBlock(int x, int y, StaticTile[][][] value)
+    private TileList[][] m_Lists;
+
+    private StaticTile[] m_TileBuffer = new StaticTile[128];
+
+    private DateTime m_NextStaticWarning;
+    private DateTime m_NextLandWarning;
+
+    public static void Configure()
     {
-        if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
+        // Set to true to support < 6.0.0 clients where map0.mul is both Felucca & Trammel
+        var isPre6000Trammel = false;
+        Pre6000ClientSupport =
+            isPre6000Trammel; //ServerConfiguration.GetSetting("maps.enablePre6000Trammel", isPre6000Trammel);
+    }
+
+    public void Dispose()
+    {
+        MapStream?.Close();
+        DataStream?.Close();
+        IndexReader?.Close();
+    }
+
+    public long FindOffset(long offset)
+    {
+        var total = 0;
+
+        for (var i = 0; i < _uopMapEntries.Length; ++i)
         {
-            return;
+            var entry = _uopMapEntries[i];
+            var newTotal = total + entry.Size;
+
+            if (offset < newTotal)
+            {
+                return entry.Offset + (offset - total);
+            }
+
+            total = newTotal;
         }
 
-        _staticTiles[x] ??= new StaticTile[BlockHeight][][][];
-        _staticTiles[x][y] = value;
+        return -1;
+    }
 
-        _staticPatches[x] ??= new int[(BlockHeight + 31) >> 5];
-        _staticPatches[x][y >> 5] |= 1 << (y & 0x1F);
+    public LandTile[] GetLandBlock(int x, int y)
+    {
+        if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight || MapStream == null)
+        {
+            return _invalidLandBlock;
+        }
+
+        _landTiles[x] ??= new LandTile[BlockHeight][];
+
+        var tiles = _landTiles[x][y];
+
+        if (tiles != null)
+        {
+            return tiles;
+        }
+
+        for (var i = 0; tiles == null && i < _fileShare.Count; ++i)
+        {
+            var shared = _fileShare[i];
+
+            if (x < shared.BlockWidth && y < shared.BlockHeight)
+            {
+                var theirTiles = shared._landTiles[x];
+
+                if (theirTiles != null)
+                {
+                    tiles = theirTiles[y];
+                }
+
+                if (tiles != null)
+                {
+                    var theirBits = shared._landPatches[x];
+
+                    if (theirBits != null && (theirBits[y >> 5] & (1 << (y & 0x1F))) != 0)
+                    {
+                        tiles = null;
+                    }
+                }
+            }
+        }
+
+        tiles ??= ReadLandBlock(x, y);
+
+        _landTiles[x][y] = tiles;
+
+        return tiles;
+    }
+
+    public LandTile GetLandTile(int x, int y)
+    {
+        var tiles = GetLandBlock(x >> SectorShift, y >> SectorShift);
+
+        return tiles[((y & 0x7) << 3) + (x & 0x7)];
     }
 
     public StaticTile[][][] GetStaticBlock(int x, int y)
     {
         if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight || DataStream == null || IndexStream == null)
         {
-            return _emptyStaticBlock;
+            return EmptyStaticBlock;
         }
 
         _staticTiles[x] ??= new StaticTile[BlockHeight][][][];
@@ -238,64 +312,70 @@ public class TileMatrix
         _landPatches[x][y >> 5] |= 1 << (y & 0x1F);
     }
 
-    public LandTile[] GetLandBlock(int x, int y)
+    public void SetStaticBlock(int x, int y, StaticTile[][][] value)
     {
-        if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight || MapStream == null)
+        if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
         {
-            return _invalidLandBlock;
+            return;
         }
 
-        _landTiles[x] ??= new LandTile[BlockHeight][];
+        _staticTiles[x] ??= new StaticTile[BlockHeight][][][];
+        _staticTiles[x][y] = value;
 
-        var tiles = _landTiles[x][y];
+        _staticPatches[x] ??= new int[(BlockHeight + 31) >> 5];
+        _staticPatches[x][y >> 5] |= 1 << (y & 0x1F);
+    }
 
-        if (tiles != null)
+    private void ConvertToMapEntries(FileStream stream)
+    {
+        // Sorting by offset to make seeking faster
+        Array.Sort(_uopMapEntries, (a, b) => a.Offset.CompareTo(b.Offset));
+
+        var reader = new BinaryReader(stream);
+
+        for (var i = 0; i < _uopMapEntries.Length; ++i)
         {
+            var entry = _uopMapEntries[i];
+            stream.Seek(entry.Offset, SeekOrigin.Begin);
+            _uopMapEntries[i].Extra = reader.ReadInt32(); // order
+        }
+
+        Array.Sort(_uopMapEntries, (a, b) => a.Extra.CompareTo(b.Extra));
+    }
+
+    private unsafe LandTile[] ReadLandBlock(int x, int y)
+    {
+        try
+        {
+            long offset = (x * BlockHeight + y) * 196 + 4;
+
+            if (_uopMapEntries != null)
+            {
+                offset = FindOffset(offset);
+            }
+
+            MapStream.Seek(offset, SeekOrigin.Begin);
+
+            var tiles = new LandTile[64];
+
+            fixed (LandTile* pTiles = tiles)
+            {
+                _ = MapStream.Read(new(pTiles, 192));
+            }
+
             return tiles;
         }
-
-        for (var i = 0; tiles == null && i < _fileShare.Count; ++i)
+        catch (Exception ex)
         {
-            var shared = _fileShare[i];
-
-            if (x < shared.BlockWidth && y < shared.BlockHeight)
+            if (DateTime.Now >= m_NextLandWarning)
             {
-                var theirTiles = shared._landTiles[x];
-
-                if (theirTiles != null)
-                {
-                    tiles = theirTiles[y];
-                }
-
-                if (tiles != null)
-                {
-                    var theirBits = shared._landPatches[x];
-
-                    if (theirBits != null && (theirBits[y >> 5] & (1 << (y & 0x1F))) != 0)
-                    {
-                        tiles = null;
-                    }
-                }
+                // logger.Warning("Warning: Land EOS for {0} ({1}, {2})", _map, x, y);
+                m_NextLandWarning = DateTime.Now + TimeSpan.FromMinutes(1.0);
             }
+
+            return _invalidLandBlock;
         }
-
-        tiles ??= ReadLandBlock(x, y);
-
-        _landTiles[x][y] = tiles;
-
-        return tiles;
     }
-
-    public LandTile GetLandTile(int x, int y)
-    {
-        var tiles = GetLandBlock(x >> SectorShift, y >> SectorShift);
-
-        return tiles[((y & 0x7) << 3) + (x & 0x7)];
-    }
-
-    private TileList[][] m_Lists;
-
-    private StaticTile[] m_TileBuffer = new StaticTile[128];
 
     private unsafe StaticTile[][][] ReadStaticBlock(int x, int y)
     {
@@ -308,7 +388,7 @@ public class TileMatrix
 
             if (lookup < 0 || length <= 0)
             {
-                return _emptyStaticBlock;
+                return EmptyStaticBlock;
             }
 
             var count = length / 7;
@@ -324,7 +404,7 @@ public class TileMatrix
 
             fixed (StaticTile* pTiles = staTiles)
             {
-                _ = DataStream.Read(new Span<byte>(pTiles, length));
+                _ = DataStream.Read(new(pTiles, length));
 
                 if (m_Lists == null)
                 {
@@ -336,14 +416,15 @@ public class TileMatrix
 
                         for (var j = 0; j < 8; ++j)
                         {
-                            m_Lists[i][j] = new TileList();
+                            m_Lists[i][j] = new();
                         }
                     }
                 }
 
                 var lists = m_Lists;
 
-                StaticTile* pCur = pTiles, pEnd = pTiles + count;
+                StaticTile* pCur = pTiles,
+                            pEnd = pTiles + count;
 
                 while (pCur < pEnd)
                 {
@@ -375,89 +456,7 @@ public class TileMatrix
                 m_NextStaticWarning = DateTime.Now + TimeSpan.FromMinutes(1.0);
             }
 
-            return _emptyStaticBlock;
+            return EmptyStaticBlock;
         }
-    }
-
-    private DateTime m_NextStaticWarning;
-    private DateTime m_NextLandWarning;
-
-
-    private unsafe LandTile[] ReadLandBlock(int x, int y)
-    {
-        try
-        {
-            long offset = (x * BlockHeight + y) * 196 + 4;
-
-            if (_uopMapEntries != null)
-            {
-                offset = FindOffset(offset);
-            }
-
-            MapStream.Seek(offset, SeekOrigin.Begin);
-
-            var tiles = new LandTile[64];
-
-            fixed (LandTile* pTiles = tiles)
-            {
-                _ = MapStream.Read(new Span<byte>(pTiles, 192));
-            }
-
-            return tiles;
-        }
-        catch (Exception ex)
-        {
-            if (DateTime.Now >= m_NextLandWarning)
-            {
-                // logger.Warning("Warning: Land EOS for {0} ({1}, {2})", _map, x, y);
-                m_NextLandWarning = DateTime.Now + TimeSpan.FromMinutes(1.0);
-            }
-
-            return _invalidLandBlock;
-        }
-    }
-
-    public long FindOffset(long offset)
-    {
-        var total = 0;
-
-        for (var i = 0; i < _uopMapEntries.Length; ++i)
-        {
-            var entry = _uopMapEntries[i];
-            var newTotal = total + entry.Size;
-
-            if (offset < newTotal)
-            {
-                return entry.Offset + (offset - total);
-            }
-
-            total = newTotal;
-        }
-
-        return -1;
-    }
-
-    private void ConvertToMapEntries(FileStream stream)
-    {
-        // Sorting by offset to make seeking faster
-        Array.Sort(_uopMapEntries, (a, b) => a.Offset.CompareTo(b.Offset));
-
-        var reader = new BinaryReader(stream);
-
-        for (var i = 0; i < _uopMapEntries.Length; ++i)
-        {
-            var entry = _uopMapEntries[i];
-            stream.Seek(entry.Offset, SeekOrigin.Begin);
-            _uopMapEntries[i].Extra = reader.ReadInt32(); // order
-        }
-
-        Array.Sort(_uopMapEntries, (a, b) => a.Extra.CompareTo(b.Extra));
-    }
-
-    public void Dispose()
-    {
-        MapStream?.Close();
-        DataStream?.Close();
-        IndexReader?.Close();
     }
 }

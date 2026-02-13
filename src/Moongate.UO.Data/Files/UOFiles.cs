@@ -5,12 +5,12 @@ namespace Moongate.UO.Data.Files;
 public class UoFiles
 {
     /// <summary>
-    ///     Should loaded Data be cached
+    /// Should loaded Data be cached
     /// </summary>
     public static bool CacheData { get; set; } = true;
 
     /// <summary>
-    ///     Should a Hashfile be used to speed up loading
+    /// Should a Hashfile be used to speed up loading
     /// </summary>
     public static bool UseHashFile { get; set; }
 
@@ -19,7 +19,7 @@ public class UoFiles
     private static readonly ILogger _logger = Log.ForContext<UoFiles>();
 
     /// <summary>
-    ///     Contains the path infos
+    /// Contains the path infos
     /// </summary>
     public static Dictionary<string, string> MulPath { get; } = new();
 
@@ -27,7 +27,8 @@ public class UoFiles
     [
         "anim.idx", "anim.mul", "anim2.idx", "anim2.mul", "anim3.idx", "anim3.mul", "anim4.idx", "anim4.mul", "anim5.idx",
         "anim5.mul", "animdata.mul", "art.mul", "artidx.mul", "artlegacymul.uop", "body.def", "bodyconv.def", "client.exe",
-        "cliloc.custom1", "cliloc.custom2", "cliloc.deu", "cliloc.enu", "cliloc.fra", "cliloc.chs", "cliloc.jpg" , "equipconv.def", "facet00.mul", "facet01.mul",
+        "cliloc.custom1", "cliloc.custom2", "cliloc.deu", "cliloc.enu", "cliloc.fra", "cliloc.chs", "cliloc.jpg",
+        "equipconv.def", "facet00.mul", "facet01.mul",
         "facet02.mul", "facet03.mul", "facet04.mul", "facet05.mul", "fonts.mul", "gump.def", "gumpart.mul", "gumpidx.mul",
         "gumpartlegacymul.uop", "hues.mul", "light.mul", "lightidx.mul", "map0.mul", "map1.mul", "map2.mul", "map3.mul",
         "map4.mul", "map5.mul", "map0legacymul.uop", "map1legacymul.uop", "map2legacymul.uop", "map3legacymul.uop",
@@ -43,6 +44,20 @@ public class UoFiles
         "unifont9.mul", "unifont10.mul", "unifont11.mul", "unifont12.mul", "uotd.exe", "verdata.mul"
     ];
 
+    public static string? FindDataFile(string fileName, bool throwError = true)
+    {
+        var filePath = MulPath.GetValueOrDefault(fileName.ToLower());
+
+        if (filePath == null && throwError)
+        {
+            throw new FileNotFoundException($"File {fileName} not found in {RootDir}");
+        }
+
+        return filePath;
+    }
+
+    public static string GetFilePath(string fileName)
+        => MulPath.GetValueOrDefault(fileName.ToLower());
 
     public static void ReLoadDirectory()
     {
@@ -50,7 +65,6 @@ public class UoFiles
 
         ScanForFiles(RootDir);
     }
-
 
     public static void ScanForFiles(string path = "")
     {
@@ -67,6 +81,7 @@ public class UoFiles
                 var fileName = Path.GetFileName(file);
                 var filePath = Path.GetDirectoryName(file);
                 var fileLength = new FileInfo(file).Length;
+
                 if (filePath != null)
                 {
                     MulPath[fileName.ToLower()] = Path.Combine(filePath, fileName);
@@ -77,28 +92,12 @@ public class UoFiles
     }
 
     /// <summary>
-    ///     Sets <see cref="MulPath" /> key to path
+    /// Sets <see cref="MulPath" /> key to path
     /// </summary>
     /// <param name="path"></param>
     /// <param name="key"></param>
     public static void SetMulPath(string path, string key)
     {
         MulPath[key] = path;
-    }
-
-    public static string GetFilePath(string fileName)
-    {
-        return MulPath.GetValueOrDefault(fileName.ToLower());
-    }
-
-    public static string? FindDataFile(string fileName, bool throwError = true)
-    {
-        var filePath = MulPath.GetValueOrDefault(fileName.ToLower());
-        if (filePath == null && throwError)
-        {
-            throw new FileNotFoundException($"File {fileName} not found in {RootDir}");
-        }
-
-        return filePath;
     }
 }

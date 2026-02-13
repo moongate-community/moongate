@@ -20,14 +20,7 @@ public class ItemUseContext
     }
 
     public static ItemUseContext Create(GameSession session, UOItemEntity item, UOMobileEntity mobile)
-    {
-        return new ItemUseContext(session, item, mobile);
-    }
-
-    protected void WriteConsole(string message, params object[] args)
-    {
-        Mobile.ReceiveSpeech(Mobile, ChatMessageType.System, 3, string.Format(message, args), 3, 1);
-    }
+        => new(session, item, mobile);
 
     protected void Speech(string message, params object[] args)
     {
@@ -50,5 +43,10 @@ public class ItemUseContext
         {
             Item.Amount -= 1;
         }
+    }
+
+    protected void WriteConsole(string message, params object[] args)
+    {
+        Mobile.ReceiveSpeech(Mobile, ChatMessageType.System, 3, string.Format(message, args), 3, 1);
     }
 }

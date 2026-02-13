@@ -11,17 +11,13 @@ namespace Moongate.UO.Data.Events.Contexts;
 
 public class UoEventContext
 {
-    private readonly IEntityFactoryService _entityFactoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+    private readonly IEntityFactoryService _entityFactoryService =
+        MoongateContext.Container.Resolve<IEntityFactoryService>();
+
     private readonly ILogger _logger = Log.ForContext<UoEventContext>();
 
-
-    public static UoEventContext CreateInstance()
-    {
-        return new UoEventContext();
-    }
-
     /// <summary>
-    ///  Adds an item to a mobile entity based on the specified template ID and layer.
+    /// Adds an item to a mobile entity based on the specified template ID and layer.
     /// </summary>
     /// <param name="templateId"></param>
     /// <param name="layer"></param>
@@ -30,6 +26,7 @@ public class UoEventContext
     public void AddItem(string templateId, ItemLayerType layer, UOMobileEntity mobile)
     {
         var item = _entityFactoryService.CreateItemEntity(templateId);
+
         if (item == null)
         {
             throw new InvalidOperationException($"Item template '{templateId}' not found.");
@@ -39,21 +36,10 @@ public class UoEventContext
         mobile.AddItem(layer, item);
     }
 
-    public UOItemEntity CreateItem(string templateId)
-    {
-        var item = _entityFactoryService.CreateItemEntity(templateId);
-        if (item == null)
-        {
-            throw new InvalidOperationException($"Item template '{templateId}' not found.");
-        }
-
-        _logger.Debug("Created item {ItemId} from template {TemplateId}", item.Id, templateId);
-        return item;
-    }
-
     public void AddItemToBackpack(string templateId, UOMobileEntity mobile)
     {
         var backpack = mobile.GetBackpack();
+
         if (backpack == null)
         {
             throw new InvalidOperationException("Backpack not found.");
@@ -64,5 +50,20 @@ public class UoEventContext
         backpack.AddItem(item, Point2D.Zero);
     }
 
+    public static UoEventContext CreateInstance()
+        => new();
 
+    public UOItemEntity CreateItem(string templateId)
+    {
+        var item = _entityFactoryService.CreateItemEntity(templateId);
+
+        if (item == null)
+        {
+            throw new InvalidOperationException($"Item template '{templateId}' not found.");
+        }
+
+        _logger.Debug("Created item {ItemId} from template {TemplateId}", item.Id, templateId);
+
+        return item;
+    }
 }

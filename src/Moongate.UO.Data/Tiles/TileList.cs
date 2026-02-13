@@ -26,20 +26,9 @@ public class TileList
 
     public int Count { get; private set; }
 
-    public void AddRange(ReadOnlySpan<StaticTile> tiles)
-    {
-        if (tiles.Length == 0)
-        {
-            return;
-        }
-
-        TryResize(tiles.Length);
-        tiles.CopyTo(_tiles.AsSpan(Count));
-        Count += tiles.Length;
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public unsafe void Add(StaticTile* ptr) => Add(Marshal.PtrToStructure<StaticTile>((nint)ptr));
+    public unsafe void Add(StaticTile* ptr)
+        => Add(Marshal.PtrToStructure<StaticTile>((nint)ptr));
 
     public void Add(StaticTile tile)
     {
@@ -69,18 +58,16 @@ public class TileList
         tile.m_Hue = 0;
     }
 
-    private void TryResize(int length)
+    public void AddRange(ReadOnlySpan<StaticTile> tiles)
     {
-        _tiles ??= STArrayPool<StaticTile>.Shared.Rent(length);
-
-        var newLength = Count + length;
-        if (newLength > _tiles.Length)
+        if (tiles.Length == 0)
         {
-            var old = _tiles;
-            _tiles = STArrayPool<StaticTile>.Shared.Rent(newLength);
-            old.CopyTo(_tiles.AsSpan());
-            STArrayPool<StaticTile>.Shared.Return(old);
+            return;
         }
+
+        TryResize(tiles.Length);
+        tiles.CopyTo(_tiles.AsSpan(Count));
+        Count += tiles.Length;
     }
 
     public StaticTile[] ToArray()
@@ -99,5 +86,20 @@ public class TileList
         Count = 0;
 
         return tiles;
+    }
+
+    private void TryResize(int length)
+    {
+        _tiles ??= STArrayPool<StaticTile>.Shared.Rent(length);
+
+        var newLength = Count + length;
+
+        if (newLength > _tiles.Length)
+        {
+            var old = _tiles;
+            _tiles = STArrayPool<StaticTile>.Shared.Rent(newLength);
+            old.CopyTo(_tiles.AsSpan());
+            STArrayPool<StaticTile>.Shared.Return(old);
+        }
     }
 }

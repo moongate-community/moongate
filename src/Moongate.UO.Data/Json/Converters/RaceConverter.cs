@@ -10,7 +10,7 @@ public class RaceConverter : JsonConverter<Race>
     {
         return reader.TokenType switch
         {
-            JsonTokenType.Number => Race.AllRaces[reader.GetInt32()],
+            JsonTokenType.Number => Race.AllRaces[reader.GetInt32()]
         };
     }
 

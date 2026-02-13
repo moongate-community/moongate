@@ -4,5 +4,5 @@ public enum ScriptNameConversion
 {
     CamelCase,
     PascalCase,
-    SnakeCase,
+    SnakeCase
 }

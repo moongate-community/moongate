@@ -13,5 +13,4 @@ public class EquipmentItemTemplate
     /// Layer where this item should be equipped
     /// </summary>
     public ItemLayerType Layer { get; set; }
-
 }

@@ -14,7 +14,7 @@ public class AccountService : IAccountService
 {
     private readonly ILogger _logger = Log.ForContext<AccountService>();
 
-    private readonly SemaphoreSlim _saveLock = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _saveLock = new(1, 1);
     private readonly IEventBusService _eventBusService;
     private const string accountsFilePath = "accounts.mga";
     private readonly Dictionary<string, UOAccountEntity> _accounts = new();
@@ -26,47 +26,48 @@ public class AccountService : IAccountService
         _eventBusService = eventBusService;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken = default)
+    public async Task<bool> ChangeLevel(string accountName, AccountLevelType levelType)
     {
-        await LoadAccountAsync();
+        var account =
+            _accounts.Values.FirstOrDefault(a => a.Username.Equals(accountName, StringComparison.OrdinalIgnoreCase));
 
-        if (_accounts.Count == 0)
+        if (account == null)
         {
-            CreateAccount("admin", "admin", AccountLevelType.Admin);
-            await SaveAccountsAsync();
-        }
-    }
-
-    private async Task SaveAccountsAsync()
-    {
-        await _saveLock.WaitAsync();
-        await _entityFileService.SaveEntitiesAsync(accountsFilePath, _accounts.Values);
-        _saveLock.Release();
-    }
-
-    private async Task LoadAccountAsync()
-    {
-        await _saveLock.WaitAsync();
-        _accounts.Clear();
-
-        var accounts = await _entityFileService.LoadEntitiesAsync<UOAccountEntity>(accountsFilePath);
-
-        foreach (var account in accounts)
-        {
-            _accounts[account.Id] = account;
+            return false;
         }
 
-        _saveLock.Release();
-    }
+        account.AccountLevel = levelType;
 
-    public async Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.Information("Saving {Count} accounts to file...", _accounts.Count);
         await SaveAccountsAsync();
+        await _eventBusService.PublishAsync(new AccountLevelChangedEvent(accountName, levelType));
+
+        return true;
+    }
+
+    public async Task<bool> ChangePassword(string accountName, string newPassword)
+    {
+        var account =
+            _accounts.Values.FirstOrDefault(a => a.Username.Equals(accountName, StringComparison.OrdinalIgnoreCase));
+
+        if (account == null)
+        {
+            _logger.Warning("Account not found: {AccountName}", accountName);
+
+            return false;
+        }
+
+        account.HashedPassword = newPassword;
+        _logger.Information("Password changed for account: {AccountName}", accountName);
+
+        await SaveAccountsAsync();
+
+        return true;
     }
 
     public async Task<string> CreateAccount(
-        string username, string password, AccountLevelType accountLevel = AccountLevelType.User
+        string username,
+        string password,
+        AccountLevelType accountLevel = AccountLevelType.User
     )
     {
         var account = new UOAccountEntity
@@ -87,41 +88,7 @@ public class AccountService : IAccountService
         return account.Id;
     }
 
-    public async Task<bool> ChangePassword(string accountName, string newPassword)
-    {
-        var account =
-            _accounts.Values.FirstOrDefault(a => a.Username.Equals(accountName, StringComparison.OrdinalIgnoreCase));
-        if (account == null)
-        {
-            _logger.Warning("Account not found: {AccountName}", accountName);
-            return false;
-        }
-
-        account.HashedPassword = newPassword;
-        _logger.Information("Password changed for account: {AccountName}", accountName);
-
-        await SaveAccountsAsync();
-
-        return true;
-    }
-
-    public async Task<bool> ChangeLevel(string accountName, AccountLevelType levelType)
-    {
-        var account =
-            _accounts.Values.FirstOrDefault(a => a.Username.Equals(accountName, StringComparison.OrdinalIgnoreCase));
-
-        if (account == null)
-        {
-            return false;
-        }
-
-        account.AccountLevel = levelType;
-
-
-        await SaveAccountsAsync();
-        await _eventBusService.PublishAsync(new AccountLevelChangedEvent(accountName, levelType));
-        return true;
-    }
+    public void Dispose() { }
 
     public Task<UOAccountEntity> GetAccountByIdAsync(string accountId)
     {
@@ -131,8 +98,12 @@ public class AccountService : IAccountService
         }
 
         _logger.Warning("Account not found: {AccountId}", accountId);
+
         return Task.FromResult<UOAccountEntity>(null);
     }
+
+    public Task LoadAsync(CancellationToken cancellationToken = default)
+        => LoadAccountAsync();
 
     public async Task<Result<UOAccountEntity>> LoginAsync(string username, string password)
     {
@@ -144,20 +115,49 @@ public class AccountService : IAccountService
         }
 
         await _eventBusService.PublishAsync(new AccountLoginEvent(account.Id, username));
+
         return Result<UOAccountEntity>.Success(account);
     }
 
-    public void Dispose()
-    {
-    }
-
-    public Task LoadAsync(CancellationToken cancellationToken = default)
-    {
-        return LoadAccountAsync();
-    }
-
     public Task SaveAsync(CancellationToken cancellationToken = default)
+        => SaveAccountsAsync();
+
+    public async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        return SaveAccountsAsync();
+        await LoadAccountAsync();
+
+        if (_accounts.Count == 0)
+        {
+            CreateAccount("admin", "admin", AccountLevelType.Admin);
+            await SaveAccountsAsync();
+        }
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Information("Saving {Count} accounts to file...", _accounts.Count);
+        await SaveAccountsAsync();
+    }
+
+    private async Task LoadAccountAsync()
+    {
+        await _saveLock.WaitAsync();
+        _accounts.Clear();
+
+        var accounts = await _entityFileService.LoadEntitiesAsync<UOAccountEntity>(accountsFilePath);
+
+        foreach (var account in accounts)
+        {
+            _accounts[account.Id] = account;
+        }
+
+        _saveLock.Release();
+    }
+
+    private async Task SaveAccountsAsync()
+    {
+        await _saveLock.WaitAsync();
+        await _entityFileService.SaveEntitiesAsync(accountsFilePath, _accounts.Values);
+        _saveLock.Release();
     }
 }

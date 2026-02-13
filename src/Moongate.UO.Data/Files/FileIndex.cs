@@ -5,140 +5,14 @@ namespace Moongate.UO.Data.Files;
 
 public class FileIndex
 {
-    public Entry3D[] Index { get; private set; }
+    public Entry3D[] Index { get; }
     public Stream Stream { get; private set; }
-    public long IdxLength { get; private set; }
+    public long IdxLength { get; }
 
     private readonly string MulPath;
 
-    public Stream Seek(int index, out int length, out int extra, out bool patched)
-    {
-        if (index < 0 || index >= Index.Length)
-        {
-            length = extra = 0;
-            patched = false;
-            return null;
-        }
-
-        Entry3D e = Index[index];
-
-        if (e.lookup < 0)
-        {
-            length = extra = 0;
-            patched = false;
-            return null;
-        }
-
-        length = e.length & 0x7FFFFFFF;
-        extra = e.extra;
-
-        if ((e.length & (1 << 31)) != 0)
-        {
-            patched = true;
-            Verdata.Seek(e.lookup);
-            return Verdata.Stream;
-        }
-
-        if (e.length < 0)
-        {
-            length = extra = 0;
-            patched = false;
-            return null;
-        }
-
-        if ((Stream == null) || (!Stream.CanRead) || (!Stream.CanSeek))
-        {
-            if (MulPath == null)
-            {
-                Stream = null;
-            }
-            else
-            {
-                Stream = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-            }
-        }
-
-        if (Stream == null)
-        {
-            length = extra = 0;
-            patched = false;
-            return null;
-        }
-        else if (Stream.Length < e.lookup)
-        {
-            length = extra = 0;
-            patched = false;
-            return null;
-        }
-
-        patched = false;
-
-        Stream.Seek(e.lookup, SeekOrigin.Begin);
-        return Stream;
-    }
-
-    public bool Valid(int index, out int length, out int extra, out bool patched)
-    {
-        if (index < 0 || index >= Index.Length)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        Entry3D e = Index[index];
-
-        if (e.lookup < 0)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        length = e.length & 0x7FFFFFFF;
-        extra = e.extra;
-
-        if ((e.length & (1 << 31)) != 0)
-        {
-            patched = true;
-            return true;
-        }
-
-        if (e.length < 0)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        if ((MulPath == null) || !File.Exists(MulPath))
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        if ((Stream == null) || (!Stream.CanRead) || (!Stream.CanSeek))
-        {
-            Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        }
-
-        if (Stream.Length < e.lookup)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        patched = false;
-
-        return true;
-    }
-
     public FileIndex(string idxFile, string mulFile, int length, int file)
-        : this(idxFile, mulFile, null, length, file, ".dat", -1, false)
-    {
-    }
+        : this(idxFile, mulFile, null, length, file, ".dat", -1, false) { }
 
     public FileIndex(
         string idxFile,
@@ -157,24 +31,23 @@ public class FileIndex
         MulPath = null;
         string uopPath = null;
 
-
         if (UoFiles.MulPath.Count > 0)
         {
             idxPath = UoFiles.MulPath[idxFile.ToLower()];
             MulPath = UoFiles.MulPath[mulFile.ToLower()];
 
-            if (!String.IsNullOrEmpty(uopFile) && UoFiles.MulPath.ContainsKey(uopFile.ToLower()))
+            if (!string.IsNullOrEmpty(uopFile) && UoFiles.MulPath.ContainsKey(uopFile.ToLower()))
             {
                 uopPath = UoFiles.MulPath[uopFile.ToLower()];
             }
 
-            if (String.IsNullOrEmpty(idxPath))
+            if (string.IsNullOrEmpty(idxPath))
             {
                 idxPath = null;
             }
             else
             {
-                if (String.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
                 {
                     idxPath = Path.Combine(UoFiles.RootDir, idxPath);
                 }
@@ -185,13 +58,13 @@ public class FileIndex
                 }
             }
 
-            if (String.IsNullOrEmpty(MulPath))
+            if (string.IsNullOrEmpty(MulPath))
             {
                 MulPath = null;
             }
             else
             {
-                if (String.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
                 {
                     MulPath = Path.Combine(UoFiles.RootDir, MulPath);
                 }
@@ -202,13 +75,13 @@ public class FileIndex
                 }
             }
 
-            if (String.IsNullOrEmpty(uopPath))
+            if (string.IsNullOrEmpty(uopPath))
             {
                 uopPath = null;
             }
             else
             {
-                if (String.IsNullOrEmpty(Path.GetDirectoryName(uopPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(uopPath)))
                 {
                     uopPath = Path.Combine(UoFiles.RootDir, uopPath);
                 }
@@ -237,7 +110,7 @@ public class FileIndex
             Stream = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
             var fi = new FileInfo(MulPath);
-            string uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
+            var uopPattern = fi.Name.Replace(fi.Extension, "").ToLowerInvariant();
 
             using var br = new BinaryReader(Stream);
             br.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -248,9 +121,9 @@ public class FileIndex
             }
 
             br.ReadInt64(); // version + signature
-            long nextBlock = br.ReadInt64();
+            var nextBlock = br.ReadInt64();
             br.ReadInt32(); // block capacity
-            int count = br.ReadInt32();
+            var count = br.ReadInt32();
 
             if (idxLength > 0)
             {
@@ -259,10 +132,10 @@ public class FileIndex
 
             var hashes = new Dictionary<ulong, int>();
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
-                string entryName = string.Format("build/{0}/{1:D8}{2}", uopPattern, i, uopEntryExtension);
-                ulong hash = HashFileName(entryName);
+                var entryName = string.Format("build/{0}/{1:D8}{2}", uopPattern, i, uopEntryExtension);
+                var hash = HashFileName(entryName);
 
                 if (!hashes.ContainsKey(hash))
                 {
@@ -274,20 +147,20 @@ public class FileIndex
 
             do
             {
-                int filesCount = br.ReadInt32();
+                var filesCount = br.ReadInt32();
                 nextBlock = br.ReadInt64();
 
-                for (int i = 0; i < filesCount; i++)
+                for (var i = 0; i < filesCount; i++)
                 {
-                    long offset = br.ReadInt64();
-                    int headerLength = br.ReadInt32();
-                    int compressedLength = br.ReadInt32();
-                    int decompressedLength = br.ReadInt32();
-                    ulong hash = br.ReadUInt64();
+                    var offset = br.ReadInt64();
+                    var headerLength = br.ReadInt32();
+                    var compressedLength = br.ReadInt32();
+                    var decompressedLength = br.ReadInt32();
+                    var hash = br.ReadUInt64();
                     br.ReadUInt32(); // Adler32
-                    short flag = br.ReadInt16();
+                    var flag = br.ReadInt16();
 
-                    int entryLength = flag == 1 ? compressedLength : decompressedLength;
+                    var entryLength = flag == 1 ? compressedLength : decompressedLength;
 
                     if (offset == 0)
                     {
@@ -295,6 +168,7 @@ public class FileIndex
                     }
 
                     int idx;
+
                     if (hashes.TryGetValue(hash, out idx))
                     {
                         if (idx < 0 || idx > Index.Length)
@@ -309,17 +183,17 @@ public class FileIndex
 
                         if (hasExtra)
                         {
-                            long curPos = br.BaseStream.Position;
+                            var curPos = br.BaseStream.Position;
 
                             br.BaseStream.Seek(offset + headerLength, SeekOrigin.Begin);
 
-                            byte[] extra = br.ReadBytes(8);
+                            var extra = br.ReadBytes(8);
 
                             var extra1 = (ushort)((extra[3] << 24) | (extra[2] << 16) | (extra[1] << 8) | extra[0]);
                             var extra2 = (ushort)((extra[7] << 24) | (extra[6] << 16) | (extra[5] << 8) | extra[4]);
 
                             Index[idx].lookup += 8;
-                            Index[idx].extra = extra1 << 16 | extra2;
+                            Index[idx].extra = (extra1 << 16) | extra2;
 
                             br.BaseStream.Seek(curPos, SeekOrigin.Begin);
                         }
@@ -327,19 +201,20 @@ public class FileIndex
                 }
             } while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
         }
-        else if ((idxPath != null) && (MulPath != null))
+        else if (idxPath != null && MulPath != null)
         {
             using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
             {
                 Stream = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
                 var count = (int)(index.Length / 12);
                 IdxLength = index.Length;
-                GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
+                var gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
                 var buffer = new byte[index.Length];
                 index.ReadExactly(buffer, 0, (int)index.Length);
                 Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)Math.Min(IdxLength, length * 12));
                 gc.Free();
-                for (int i = count; i < length; ++i)
+
+                for (var i = count; i < length; ++i)
                 {
                     Index[i].lookup = -1;
                     Index[i].length = -1;
@@ -350,16 +225,17 @@ public class FileIndex
         else
         {
             Stream = null;
+
             return;
         }
 
-        Entry5D[] patches = Verdata.Patches;
+        var patches = Verdata.Patches;
 
         if (file > -1)
         {
-            for (int i = 0; i < patches.Length; ++i)
+            for (var i = 0; i < patches.Length; ++i)
             {
-                Entry5D patch = patches[i];
+                var patch = patches[i];
 
                 if (patch.file == file && patch.index >= 0 && patch.index < length)
                 {
@@ -376,18 +252,18 @@ public class FileIndex
         string idxPath = null;
         MulPath = null;
 
-
         if (UoFiles.MulPath.Count > 0)
         {
             idxPath = UoFiles.MulPath[idxFile.ToLower()];
             MulPath = UoFiles.MulPath[mulFile.ToLower()];
-            if (String.IsNullOrEmpty(idxPath))
+
+            if (string.IsNullOrEmpty(idxPath))
             {
                 idxPath = null;
             }
             else
             {
-                if (String.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(idxPath)))
                 {
                     idxPath = Path.Combine(UoFiles.RootDir, idxPath);
                 }
@@ -398,13 +274,13 @@ public class FileIndex
                 }
             }
 
-            if (String.IsNullOrEmpty(MulPath))
+            if (string.IsNullOrEmpty(MulPath))
             {
                 MulPath = null;
             }
             else
             {
-                if (String.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
                 {
                     MulPath = Path.Combine(UoFiles.RootDir, MulPath);
                 }
@@ -416,14 +292,14 @@ public class FileIndex
             }
         }
 
-        if ((idxPath != null) && (MulPath != null))
+        if (idxPath != null && MulPath != null)
         {
             using var index = new FileStream(idxPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             Stream = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
             var count = (int)(index.Length / 12);
             IdxLength = index.Length;
             Index = new Entry3D[count];
-            GCHandle gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
+            var gc = GCHandle.Alloc(Index, GCHandleType.Pinned);
             var buffer = new byte[index.Length];
             index.ReadExactly(buffer, 0, (int)index.Length);
             Marshal.Copy(buffer, 0, gc.AddrOfPinnedObject(), (int)index.Length);
@@ -433,16 +309,17 @@ public class FileIndex
         {
             Stream = null;
             Index = new Entry3D[1];
+
             return;
         }
 
-        Entry5D[] patches = Verdata.Patches;
+        var patches = Verdata.Patches;
 
         if (file > -1)
         {
-            for (int i = 0; i < patches.Length; ++i)
+            for (var i = 0; i < patches.Length; ++i)
             {
-                Entry5D patch = patches[i];
+                var patch = patches[i];
 
                 if (patch.file == file && patch.index >= 0 && patch.index < Index.Length)
                 {
@@ -455,19 +332,24 @@ public class FileIndex
     }
 
     /// <summary>
-    ///     Method for calculating entry hash by it's name.
-    ///     Taken from Mythic.Package.dll
+    /// Method for calculating entry hash by it's name.
+    /// Taken from Mythic.Package.dll
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
     public static ulong HashFileName(string s)
     {
-        uint eax, ecx, edx, ebx, esi, edi;
+        uint eax,
+             ecx,
+             edx,
+             ebx,
+             esi,
+             edi;
 
         eax = ecx = edx = ebx = esi = edi = 0;
         ebx = edi = esi = (uint)s.Length + 0xDEADBEEF;
 
-        int i = 0;
+        var i = 0;
 
         for (i = 0; i + 12 < s.Length; i += 12)
         {
@@ -528,6 +410,7 @@ public class FileIndex
                     goto case 1;
                 case 1:
                     ebx += s[i];
+
                     break;
             }
 
@@ -545,5 +428,141 @@ public class FileIndex
         return ((ulong)esi << 32) | eax;
     }
 
+    public Stream Seek(int index, out int length, out int extra, out bool patched)
+    {
+        if (index < 0 || index >= Index.Length)
+        {
+            length = extra = 0;
+            patched = false;
 
+            return null;
+        }
+
+        var e = Index[index];
+
+        if (e.lookup < 0)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return null;
+        }
+
+        length = e.length & 0x7FFFFFFF;
+        extra = e.extra;
+
+        if ((e.length & (1 << 31)) != 0)
+        {
+            patched = true;
+            Verdata.Seek(e.lookup);
+
+            return Verdata.Stream;
+        }
+
+        if (e.length < 0)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return null;
+        }
+
+        if (Stream == null || !Stream.CanRead || !Stream.CanSeek)
+        {
+            if (MulPath == null)
+            {
+                Stream = null;
+            }
+            else
+            {
+                Stream = new FileStream(MulPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            }
+        }
+
+        if (Stream == null)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return null;
+        }
+
+        if (Stream.Length < e.lookup)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return null;
+        }
+
+        patched = false;
+
+        Stream.Seek(e.lookup, SeekOrigin.Begin);
+
+        return Stream;
+    }
+
+    public bool Valid(int index, out int length, out int extra, out bool patched)
+    {
+        if (index < 0 || index >= Index.Length)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        var e = Index[index];
+
+        if (e.lookup < 0)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        length = e.length & 0x7FFFFFFF;
+        extra = e.extra;
+
+        if ((e.length & (1 << 31)) != 0)
+        {
+            patched = true;
+
+            return true;
+        }
+
+        if (e.length < 0)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        if (MulPath == null || !File.Exists(MulPath))
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        if (Stream == null || !Stream.CanRead || !Stream.CanSeek)
+        {
+            Stream = new FileStream(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
+
+        if (Stream.Length < e.lookup)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        patched = false;
+
+        return true;
+    }
 }

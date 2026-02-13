@@ -13,13 +13,11 @@ public sealed class CityInfo
         City = city;
         Building = building;
         Description = description;
-        Location = new Point3D(x, y, z);
+        Location = new(x, y, z);
         Map = m;
     }
 
-    public CityInfo(string city, string building, int x, int y, int z, Map m) : this(city, building, 0, x, y, z, m)
-    {
-    }
+    public CityInfo(string city, string building, int x, int y, int z, Map m) : this(city, building, 0, x, y, z, m) { }
 
     public CityInfo(string city, string building, int description, int x, int y, int z) : this(
         city,
@@ -29,13 +27,9 @@ public sealed class CityInfo
         y,
         z,
         Map.Trammel
-    )
-    {
-    }
+    ) { }
 
-    public CityInfo(string city, string building, int x, int y, int z) : this(city, building, 0, x, y, z, Map.Trammel)
-    {
-    }
+    public CityInfo(string city, string building, int x, int y, int z) : this(city, building, 0, x, y, z, Map.Trammel) { }
 
     public string City { get; set; }
 
@@ -70,7 +64,6 @@ public sealed class CityInfo
     public Map Map { get; set; }
 
     public static int Length => 89;
-
 
     public byte[] ToArray(int index)
     {

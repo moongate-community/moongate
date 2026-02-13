@@ -46,23 +46,7 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
 
     public Map Map { get; set; } = Map.Felucca;
 
-    public Point3D Location { get; set; } = new Point3D(-1, -1, -1);
-
-    public void MoveTo(Point3D newLocation, bool isOnGround)
-    {
-        var oldLocation = Location;
-        Location = newLocation;
-        ItemMoved?.Invoke(this, oldLocation, newLocation, isOnGround);
-    }
-
-    public UOItemEntity()
-    {
-        //PropertyChanged += OnPropertyChanged;
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-    }
+    public Point3D Location { get; set; } = new(-1, -1, -1);
 
     //public DateTime LastAccessed { get; set; }
 
@@ -73,7 +57,7 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     {
         item.ParentId = Id;
 
-        item.Location = new Point3D(position.X, position.Y, -1); // Assuming Z is the same as the container's Z
+        item.Location = new(position.X, position.Y, -1); // Assuming Z is the same as the container's Z
 
         ContainedItems[position] = item.ToItemReference();
 
@@ -88,20 +72,29 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     public bool ContainsItem(int itemId, out UOItemEntity item)
     {
         item = ContainedItems.Values
-            .Where(reference => reference.ItemId == itemId)
-            .Select(k => k.ToEntity())
-            .FirstOrDefault();
+                             .Where(reference => reference.ItemId == itemId)
+                             .Select(k => k.ToEntity())
+                             .FirstOrDefault();
 
         return item != null;
     }
 
+    public void MoveTo(Point3D newLocation, bool isOnGround)
+    {
+        var oldLocation = Location;
+        Location = newLocation;
+        ItemMoved?.Invoke(this, oldLocation, newLocation, isOnGround);
+    }
+
+    public static explicit operator ItemReference(UOItemEntity item)
+        => item.ToItemReference();
 
     public void RemoveItem(UOItemEntity item)
     {
         // Logic to remove an item from this item, e.g., from a container
         if (item.ParentId == Id)
         {
-            ContainedItems.Remove(new Point2D(item.Location.X, item.Location.Y));
+            ContainedItems.Remove(new(item.Location.X, item.Location.Y));
             ContainerItemRemoved?.Invoke(this, item.ToItemReference());
             item.ParentId = null;
         }
@@ -111,21 +104,14 @@ public class UOItemEntity : IPositionEntity, ISerialEntity, INotifyPropertyChang
     {
         // Logic to remove an item from this item, e.g., from a container
         ContainedItems.Remove(position);
-        ContainerItemRemoved?.Invoke(this, new ItemReference(Id, ItemId, Hue));
+        ContainerItemRemoved?.Invoke(this, new(Id, ItemId, Hue));
     }
 
     public ItemReference ToItemReference()
-    {
-        return new ItemReference(Id, ItemId, Hue);
-    }
-
-    public static explicit operator ItemReference(UOItemEntity item)
-    {
-        return item.ToItemReference();
-    }
+        => new(Id, ItemId, Hue);
 
     public override string ToString()
-    {
-        return $"Item: {Name} (ID: {Id}, ItemId: {ItemId}, Hue: {Hue}, Amount: {Amount}, Location: {Location})";
-    }
+        => $"Item: {Name} (ID: {Id}, ItemId: {ItemId}, Hue: {Hue}, Amount: {Amount}, Location: {Location})";
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 }

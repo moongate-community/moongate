@@ -28,7 +28,6 @@ public class MobileTemplate : BaseTemplate
 
     public string Brain { get; set; } = "None";
 
-
     /// <summary>
     /// Fixed equipment that always spawns on this mobile
     /// </summary>

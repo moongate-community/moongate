@@ -30,6 +30,7 @@ public class RandomValueConverter<T> : JsonConverter<T>
             {
                 var diceExpr = str.Substring(5, str.Length - 6); // Remove "dice(" and ")"
                 var result = new DiceParser().Parse(diceExpr).Roll().Value;
+
                 return (T)Convert.ChangeType(result, typeof(T));
             }
 
@@ -51,16 +52,52 @@ public class RandomValueConverter<T> : JsonConverter<T>
         /// Normal value parsing for non-string tokens
         return typeof(T) switch
         {
-            var t when t == typeof(int) => (T)(object)reader.GetInt32(),
+            var t when t == typeof(int)    => (T)(object)reader.GetInt32(),
             var t when t == typeof(double) => (T)(object)reader.GetDouble(),
             var t when t == typeof(string) => (T)(object)reader.GetString(),
-            _ => throw new JsonException($"Unsupported type: {typeof(T)}")
+            _                              => throw new JsonException($"Unsupported type: {typeof(T)}")
         };
     }
 
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         JsonSerializer.Serialize(writer, value, options);
+    }
+
+    private static object ParseRandomExpression(string expression, Type targetType)
+    {
+        var match = Regex.Match(expression, @"random\((.+)\)");
+
+        if (!match.Success)
+        {
+            throw new JsonException($"Invalid random expression: {expression}");
+        }
+
+        var content = match.Groups[1].Value.Trim();
+        var parts = content.Split(',').Select(p => p.Trim()).ToArray();
+
+        if (parts.Length == 2 && targetType == typeof(int))
+        {
+            var min = int.Parse(parts[0]);
+            var max = int.Parse(parts[1]);
+
+            return _random.Next(min, max + 1);
+        }
+
+        if (parts.Length == 2 && targetType == typeof(double))
+        {
+            var min = double.Parse(parts[0]);
+            var max = double.Parse(parts[1]);
+
+            return min + _random.NextDouble() * (max - min);
+        }
+
+        if (targetType == typeof(string))
+        {
+            return parts[_random.Next(parts.Length)];
+        }
+
+        throw new JsonException($"Unsupported random expression: {expression}");
     }
 
     /// <summary>
@@ -71,7 +108,9 @@ public class RandomValueConverter<T> : JsonConverter<T>
         result = null;
 
         if (string.IsNullOrEmpty(str))
+        {
             return false;
+        }
 
         try
         {
@@ -80,6 +119,7 @@ public class RandomValueConverter<T> : JsonConverter<T>
                 if (int.TryParse(str, out var intValue))
                 {
                     result = intValue;
+
                     return true;
                 }
             }
@@ -88,6 +128,7 @@ public class RandomValueConverter<T> : JsonConverter<T>
                 if (double.TryParse(str, out var doubleValue))
                 {
                     result = doubleValue;
+
                     return true;
                 }
             }
@@ -96,6 +137,7 @@ public class RandomValueConverter<T> : JsonConverter<T>
                 if (float.TryParse(str, out var floatValue))
                 {
                     result = floatValue;
+
                     return true;
                 }
             }
@@ -104,6 +146,7 @@ public class RandomValueConverter<T> : JsonConverter<T>
                 if (decimal.TryParse(str, out var decimalValue))
                 {
                     result = decimalValue;
+
                     return true;
                 }
             }
@@ -112,6 +155,7 @@ public class RandomValueConverter<T> : JsonConverter<T>
                 if (long.TryParse(str, out var longValue))
                 {
                     result = longValue;
+
                     return true;
                 }
             }
@@ -122,36 +166,5 @@ public class RandomValueConverter<T> : JsonConverter<T>
         }
 
         return false;
-    }
-
-    private static object ParseRandomExpression(string expression, Type targetType)
-    {
-        var match = Regex.Match(expression, @"random\((.+)\)");
-        if (!match.Success)
-            throw new JsonException($"Invalid random expression: {expression}");
-
-        var content = match.Groups[1].Value.Trim();
-        var parts = content.Split(',').Select(p => p.Trim()).ToArray();
-
-        if (parts.Length == 2 && targetType == typeof(int))
-        {
-            var min = int.Parse(parts[0]);
-            var max = int.Parse(parts[1]);
-            return _random.Next(min, max + 1);
-        }
-
-        if (parts.Length == 2 && targetType == typeof(double))
-        {
-            var min = double.Parse(parts[0]);
-            var max = double.Parse(parts[1]);
-            return min + (_random.NextDouble() * (max - min));
-        }
-
-        if (targetType == typeof(string))
-        {
-            return parts[_random.Next(parts.Length)];
-        }
-
-        throw new JsonException($"Unsupported random expression: {expression}");
     }
 }

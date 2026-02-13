@@ -12,9 +12,7 @@ public class MoveRequestPacket : BaseUoPacket
 
     public bool IsRunning => Direction.HasFlag(DirectionType.Running);
 
-    public MoveRequestPacket() : base(0x02)
-    {
-    }
+    public MoveRequestPacket() : base(0x02) { }
 
     protected override bool Read(SpanReader reader)
     {

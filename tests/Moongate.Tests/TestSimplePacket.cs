@@ -5,17 +5,15 @@ namespace Moongate.Tests;
 
 public class TestSimplePacket : BaseUoPacket
 {
-
     public int Number { get; set; }
-    public TestSimplePacket() : base(0x01)
-    {
-    }
 
+    public TestSimplePacket() : base(0x01) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
         writer.Write(OpCode);
         writer.Write(Number);
+
         return writer.ToArray();
     }
 

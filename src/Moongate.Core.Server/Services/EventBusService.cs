@@ -27,7 +27,7 @@ public class EventBusService : IEventBusService, IDisposable
     public EventBusService()
     {
         _channel = Channel.CreateUnbounded<EventDispatchJob>(
-            new UnboundedChannelOptions
+            new()
             {
                 SingleReader = true,
                 SingleWriter = false
@@ -37,6 +37,79 @@ public class EventBusService : IEventBusService, IDisposable
         _processingTask = Task.Run(ProcessEventsAsync, _cts.Token);
 
         _logger.Information("EventBusService initialized with Channel");
+    }
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _channel.Writer.TryComplete();
+        _processingTask.Wait();
+        _cts.Dispose();
+    }
+
+    /// <summary>
+    /// Returns total listener count
+    /// </summary>
+    public int GetListenerCount()
+    {
+        var total = 0;
+
+        foreach (var kvp in _listeners)
+        {
+            if (kvp.Value is ICollection collection)
+            {
+                total += collection.Count;
+            }
+        }
+
+        return total;
+    }
+
+    /// <summary>
+    /// Returns listener count for a specific event type
+    /// </summary>
+    public int GetListenerCount<TEvent>() where TEvent : class
+    {
+        if (_listeners.TryGetValue(typeof(TEvent), out var listenersObj))
+        {
+            var listeners = (ConcurrentBag<IEventBusListener<TEvent>>)listenersObj;
+
+            return listeners.Count;
+        }
+
+        return 0;
+    }
+
+    /// <summary>
+    /// Publishes an event to all registered listeners asynchronously
+    /// </summary>
+    public async Task PublishAsync<TEvent>(TEvent eventData, CancellationToken cancellationToken = default)
+        where TEvent : class
+    {
+        var eventType = typeof(TEvent);
+
+        _allEventsSubject.OnNext(eventData);
+
+        if (!_listeners.TryGetValue(eventType, out var listenersObj))
+        {
+            _logger.Verbose("No listeners registered for event {EventType}", eventType.Name);
+
+            return;
+        }
+
+        var listeners = (ConcurrentBag<IEventBusListener<TEvent>>)listenersObj;
+
+        _logger.Verbose(
+            "Publishing event {EventType} to {ListenerCount} listeners",
+            eventType.Name,
+            listeners.Count
+        );
+
+        foreach (var listener in listeners)
+        {
+            var job = new EventDispatchJob<TEvent>(listener, eventData);
+            await _channel.Writer.WriteAsync(job, cancellationToken);
+        }
     }
 
     /// <summary>
@@ -105,8 +178,9 @@ public class EventBusService : IEventBusService, IDisposable
         {
             var listeners = (ConcurrentBag<IEventBusListener<TEvent>>)listenersObj;
             var updatedListeners = new ConcurrentBag<IEventBusListener<TEvent>>(
-                listeners.Where(l => !(l is FunctionSignalListener<TEvent> functionListener) ||
-                                     !functionListener.HasSameHandler(handler)
+                listeners.Where(
+                    l => !(l is FunctionSignalListener<TEvent> functionListener) ||
+                         !functionListener.HasSameHandler(handler)
                 )
             );
 
@@ -114,69 +188,6 @@ public class EventBusService : IEventBusService, IDisposable
 
             _logger.Verbose("Unregistered function handler for event {EventType}", eventType.Name);
         }
-    }
-
-    /// <summary>
-    /// Publishes an event to all registered listeners asynchronously
-    /// </summary>
-    public async Task PublishAsync<TEvent>(TEvent eventData, CancellationToken cancellationToken = default)
-        where TEvent : class
-    {
-        var eventType = typeof(TEvent);
-
-        _allEventsSubject.OnNext(eventData);
-
-        if (!_listeners.TryGetValue(eventType, out var listenersObj))
-        {
-            _logger.Verbose("No listeners registered for event {EventType}", eventType.Name);
-            return;
-        }
-
-        var listeners = (ConcurrentBag<IEventBusListener<TEvent>>)listenersObj;
-
-        _logger.Verbose(
-            "Publishing event {EventType} to {ListenerCount} listeners",
-            eventType.Name,
-            listeners.Count
-        );
-
-        foreach (var listener in listeners)
-        {
-            var job = new EventDispatchJob<TEvent>(listener, eventData);
-            await _channel.Writer.WriteAsync(job, cancellationToken);
-        }
-    }
-
-    /// <summary>
-    /// Returns total listener count
-    /// </summary>
-    public int GetListenerCount()
-    {
-        int total = 0;
-
-        foreach (var kvp in _listeners)
-        {
-            if (kvp.Value is ICollection collection)
-            {
-                total += collection.Count;
-            }
-        }
-
-        return total;
-    }
-
-    /// <summary>
-    /// Returns listener count for a specific event type
-    /// </summary>
-    public int GetListenerCount<TEvent>() where TEvent : class
-    {
-        if (_listeners.TryGetValue(typeof(TEvent), out var listenersObj))
-        {
-            var listeners = (ConcurrentBag<IEventBusListener<TEvent>>)listenersObj;
-            return listeners.Count;
-        }
-
-        return 0;
     }
 
     /// <summary>
@@ -215,13 +226,5 @@ public class EventBusService : IEventBusService, IDisposable
         {
             _logger.Error(ex, "Unexpected error in event processing task");
         }
-    }
-
-    public void Dispose()
-    {
-        _cts.Cancel();
-        _channel.Writer.TryComplete();
-        _processingTask.Wait();
-        _cts.Dispose();
     }
 }

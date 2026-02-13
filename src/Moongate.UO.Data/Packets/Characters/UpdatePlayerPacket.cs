@@ -8,19 +8,13 @@ public class UpdatePlayerPacket : BaseUoPacket
 {
     public UOMobileEntity Mobile { get; set; }
 
-
-    public UpdatePlayerPacket() : base(0x77)
-    {
-    }
+    public UpdatePlayerPacket() : base(0x77) { }
 
     public UpdatePlayerPacket(UOMobileEntity mobile) : this()
-    {
-        Mobile = mobile;
-    }
+        => Mobile = mobile;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
-
         writer.Write(OpCode);
         writer.Write(Mobile.Id.Value);
         writer.Write((short)Mobile.Body);
@@ -31,7 +25,6 @@ public class UpdatePlayerPacket : BaseUoPacket
         writer.Write((short)Mobile.SkinHue);
         writer.Write(Mobile.GetPacketFlags(true));
         writer.Write((byte)Mobile.Notoriety);
-
 
         /**
          *

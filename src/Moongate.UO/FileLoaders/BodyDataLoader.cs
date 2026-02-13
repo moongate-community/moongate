@@ -1,6 +1,7 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Bodies;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
 
@@ -13,13 +14,11 @@ public class BodyDataLoader : IFileLoader
     private readonly DirectoriesConfig _directoriesConfig;
 
     public BodyDataLoader(DirectoriesConfig directoriesConfig)
-    {
-        _directoriesConfig = directoriesConfig;
-    }
+        => _directoriesConfig = directoriesConfig;
 
     public async Task LoadAsync()
     {
-        var bodyTable =  Path.Combine(_directoriesConfig[DirectoryType.Data], "bodyTable.cfg");
+        var bodyTable = Path.Combine(_directoriesConfig[DirectoryType.Data], "bodyTable.cfg");
 
         if (!File.Exists(bodyTable))
         {
@@ -27,8 +26,8 @@ public class BodyDataLoader : IFileLoader
             Body.Types = [];
         }
 
-        using StreamReader ip = new StreamReader(bodyTable);
-        Body.Types = new BodyType[0x1000];
+        using var ip = new StreamReader(bodyTable);
+        Body.Types = new UOBodyType[0x1000];
 
         while (await ip.ReadLineAsync() is { } line)
         {
@@ -39,7 +38,9 @@ public class BodyDataLoader : IFileLoader
 
             var split = line.Split('\t');
 
-            if (int.TryParse(split[0], out var bodyID) && Enum.TryParse(split[1], true, out BodyType type) && bodyID >= 0 &&
+            if (int.TryParse(split[0], out var bodyID) &&
+                Enum.TryParse(split[1], true, out UOBodyType type) &&
+                bodyID >= 0 &&
                 bodyID < Body.Types.Length)
             {
                 Body.Types[bodyID] = type;
@@ -52,6 +53,5 @@ public class BodyDataLoader : IFileLoader
         }
 
         _logger.Information("Loaded {Count} body types from {FilePath}", Body.Types.Length, bodyTable);
-
     }
 }

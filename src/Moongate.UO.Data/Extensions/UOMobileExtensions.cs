@@ -1,4 +1,3 @@
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -12,7 +11,7 @@ public static class UOMobileExtensions
 
         if (haveBackpack)
         {
-            backpackRef.ToEntity().ContainedItems.Add(new Point2D(0, 0), item.ToItemReference());
+            backpackRef.ToEntity().ContainedItems.Add(new(0, 0), item.ToItemReference());
         }
     }
 

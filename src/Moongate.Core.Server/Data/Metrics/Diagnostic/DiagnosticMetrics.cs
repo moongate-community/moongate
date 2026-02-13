@@ -29,7 +29,6 @@ public record DiagnosticMetrics
     public double AverageTickProcessingTime { get; init; }
     public int QueuedActions { get; init; }
 
-
     // Constructor
     public DiagnosticMetrics(
         long privateMemoryBytes = 0,
@@ -68,20 +67,19 @@ public record DiagnosticMetrics
 
     // Method to create a snapshot of current diagnostics
     public static DiagnosticMetrics CreateSnapshot(Process process)
-    {
-        return new DiagnosticMetrics(
-            privateMemoryBytes: process.WorkingSet64,
-            pagedMemoryBytes: process.PagedMemorySize64,
-            managedMemoryBytes: GC.GetTotalMemory(false),
-            threadCount: process.Threads.Count,
-            processId: process.Id,
-            uptime: GetUptime(process),
-            cpuUsagePercent: 0, // This needs to be calculated separately
-            gcGen0Collections: GC.CollectionCount(0),
-            gcGen1Collections: GC.CollectionCount(1),
-            gcGen2Collections: GC.CollectionCount(2)
+        => new(
+            process.WorkingSet64,
+            process.PagedMemorySize64,
+            GC.GetTotalMemory(false),
+            process.Threads.Count,
+            process.Id,
+            GetUptime(process),
+            0, // This needs to be calculated separately
+            GC.CollectionCount(0),
+            GC.CollectionCount(1),
+            GC.CollectionCount(2)
         );
-    }
 
-    public static TimeSpan GetUptime(Process process) => DateTime.Now - process.StartTime;
+    public static TimeSpan GetUptime(Process process)
+        => DateTime.Now - process.StartTime;
 }

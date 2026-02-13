@@ -28,16 +28,95 @@ public class MobileService : IMobileService
     private readonly IEntityFileService _entityFileService;
 
     public MobileService(IEntityFileService entityFileService)
+        => _entityFileService = entityFileService;
+
+    public void AddInWorld(UOMobileEntity mobile)
     {
-        _entityFileService = entityFileService;
+        if (!_mobiles.TryAdd(mobile.Id, mobile))
+        {
+            _logger.Warning("Mobile with ID {Id} already exists.", mobile.Id);
+
+            return;
+        }
+
+        MobileAdded?.Invoke(mobile);
     }
 
-    private async Task SaveMobilesAsync()
-
+    public UOMobileEntity CreateMobile()
     {
-        await _saveLock.WaitAsync();
-        await _entityFileService.SaveEntitiesAsync(mobilesFilePath, _availableMobiles.Values);
+        _saveLock.Wait();
+        var lastSerial = new Serial(Serial.MobileStart);
+
+        if (_availableMobiles.Count > 0)
+        {
+            lastSerial = _availableMobiles.Keys.Last() + 1;
+        }
+
+        var mobile = new UOMobileEntity
+        {
+            Id = lastSerial
+        };
+
+        _availableMobiles[lastSerial] = mobile;
+
         _saveLock.Release();
+
+        return mobile;
+    }
+
+    public void Dispose()
+    {
+        // TODO release managed resources here
+    }
+
+    public UOMobileEntity? GetMobile(Serial id)
+    {
+        if (_availableMobiles.TryGetValue(id, out var mobile))
+        {
+            return mobile;
+        }
+
+        _logger.Warning("Mobile with ID {Id} not found.", id);
+
+        return null;
+    }
+
+    public Task LoadAsync(CancellationToken cancellationToken = default)
+        => LoadMobilesAsync();
+
+    public void MoveMobile(UOMobileEntity mobile, Point3D newLocation)
+    {
+        if (mobile.Location == newLocation)
+        {
+            return;
+        }
+
+        var oldLocation = mobile.Location;
+        mobile.Location = newLocation;
+
+        _logger.Verbose("Mobile {Id} moved from {OldLocation} to {NewLocation}", mobile.Id, oldLocation, newLocation);
+
+        MobileMoved?.Invoke(mobile, oldLocation, newLocation);
+    }
+
+    public IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate)
+        => _availableMobiles.Values.AsValueEnumerable().Where(predicate).ToList();
+
+    public Task SaveAsync(CancellationToken cancellationToken = default)
+        => SaveMobilesAsync();
+
+    public Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Information("Loading mobiles from file...");
+
+        return LoadMobilesAsync();
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Information("Saving {Count} mobiles to file...", _availableMobiles.Count);
+
+        return SaveMobilesAsync();
     }
 
     private async Task LoadMobilesAsync()
@@ -55,99 +134,11 @@ public class MobileService : IMobileService
         _saveLock.Release();
     }
 
+    private async Task SaveMobilesAsync()
 
-    public Task StartAsync(CancellationToken cancellationToken = default)
     {
-        _logger.Information("Loading mobiles from file...");
-
-        return LoadMobilesAsync();
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.Information("Saving {Count} mobiles to file...", _availableMobiles.Count);
-        return SaveMobilesAsync();
-    }
-
-
-    public UOMobileEntity CreateMobile()
-    {
-        _saveLock.Wait();
-        var lastSerial = new Serial(Serial.MobileStart);
-
-        if (_availableMobiles.Count > 0)
-        {
-            lastSerial = _availableMobiles.Keys.Last() + 1;
-        }
-
-        var mobile = new UOMobileEntity
-        {
-            Id = lastSerial,
-        };
-
-
-        _availableMobiles[lastSerial] = mobile;
-
+        await _saveLock.WaitAsync();
+        await _entityFileService.SaveEntitiesAsync(mobilesFilePath, _availableMobiles.Values);
         _saveLock.Release();
-
-        return mobile;
-    }
-
-    public UOMobileEntity? GetMobile(Serial id)
-    {
-        if (_availableMobiles.TryGetValue(id, out var mobile))
-        {
-            return mobile;
-        }
-
-        _logger.Warning("Mobile with ID {Id} not found.", id);
-        return null;
-    }
-
-    public IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate)
-    {
-        return _availableMobiles.Values.AsValueEnumerable().Where(predicate).ToList();
-    }
-
-    public void MoveMobile(UOMobileEntity mobile, Point3D newLocation)
-    {
-        if (mobile.Location == newLocation)
-        {
-            return;
-        }
-
-        var oldLocation = mobile.Location;
-        mobile.Location = newLocation;
-
-        _logger.Verbose("Mobile {Id} moved from {OldLocation} to {NewLocation}", mobile.Id, oldLocation, newLocation);
-
-        MobileMoved?.Invoke(mobile, oldLocation, newLocation);
-    }
-
-
-    public void Dispose()
-    {
-        // TODO release managed resources here
-    }
-
-    public Task LoadAsync(CancellationToken cancellationToken = default)
-    {
-        return LoadMobilesAsync();
-    }
-
-    public Task SaveAsync(CancellationToken cancellationToken = default)
-    {
-        return SaveMobilesAsync();
-    }
-
-    public void AddInWorld(UOMobileEntity mobile)
-    {
-        if (!_mobiles.TryAdd(mobile.Id, mobile))
-        {
-            _logger.Warning("Mobile with ID {Id} already exists.", mobile.Id);
-            return;
-        }
-
-        MobileAdded?.Invoke(mobile);
     }
 }

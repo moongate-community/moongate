@@ -14,19 +14,26 @@ public class Gargoyle : Race
     };
 
     public Gargoyle(int raceID, int raceIndex)
-        : base(raceID, raceIndex, "Gargoyle", "Gargoyles", 666, 667, 402, 403)
-    {
-    }
+        : base(raceID, raceIndex, "Gargoyle", "Gargoyles", 666, 667, 402, 403) { }
 
-    public override bool ValidateHair(bool female, int itemID)
+    public override int ClipHairHue(int hue)
     {
-        if (female == false)
+        for (var i = 0; i < m_HornHues.Length; i++)
         {
-            return itemID is >= 0x4258 and <= 0x425F;
+            if (m_HornHues[i] == hue)
+            {
+                return hue;
+            }
         }
 
-        return itemID is 0x4261 or 0x4262 or >= 0x4273 and <= 0x4275 or 0x42B0 or 0x42B1 or 0x42AA or 0x42AB;
+        return m_HornHues[0];
     }
+
+    public override int ClipSkinHue(int hue)
+        => hue;
+
+    public override int RandomFacialHair(bool female)
+        => female ? 0 : RandomUtils.RandomList(0, 0x42AD, 0x42AE, 0x42AF, 0x42B0);
 
     public override int RandomHair(bool female)
     {
@@ -55,28 +62,22 @@ public class Gargoyle : Race
         };
     }
 
-    public override bool ValidateFacialHair(bool female, int itemID) =>
-        !female && itemID is >= 0x42AD and <= 0x42B0;
+    public override int RandomHairHue()
+        => m_HornHues.RandomElement();
 
-    public override int RandomFacialHair(bool female) =>
-        female ? 0 : RandomUtils.RandomList(0, 0x42AD, 0x42AE, 0x42AF, 0x42B0);
+    public override int RandomSkinHue()
+        => RandomUtils.Random(1755, 25) | 0x8000;
 
-    public override int ClipSkinHue(int hue) => hue;
+    public override bool ValidateFacialHair(bool female, int itemID)
+        => !female && itemID is >= 0x42AD and <= 0x42B0;
 
-    public override int RandomSkinHue() => RandomUtils.Random(1755, 25) | 0x8000;
-
-    public override int ClipHairHue(int hue)
+    public override bool ValidateHair(bool female, int itemID)
     {
-        for (var i = 0; i < m_HornHues.Length; i++)
+        if (!female)
         {
-            if (m_HornHues[i] == hue)
-            {
-                return hue;
-            }
+            return itemID is >= 0x4258 and <= 0x425F;
         }
 
-        return m_HornHues[0];
+        return itemID is 0x4261 or 0x4262 or >= 0x4273 and <= 0x4275 or 0x42B0 or 0x42B1 or 0x42AA or 0x42AB;
     }
-
-    public override int RandomHairHue() => m_HornHues.RandomElement();
 }

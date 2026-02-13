@@ -5,5 +5,5 @@ public enum NetworkSessionFeatureType
 {
     None,
     Compression,
-    Encryption,
+    Encryption
 }

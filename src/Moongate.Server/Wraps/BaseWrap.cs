@@ -16,20 +16,19 @@ public class BaseWrap
         Value = jsValue;
     }
 
+    public TOut Call<TOut>(string methodName, params object[] args)
+        => Call(methodName, args).ToObject() is TOut result ? result : default!;
+
     protected JsValue Call(string methodName, params object[] args)
     {
         var method = Value.Get(_scriptEngineService.ToScriptEngineFunctionName(methodName));
 
         return Value.AsObject()
-            .Engine.Call(
-                method,
-                Value.AsObject(),
-                args.Select(arg => JsValue.FromObject(Value.AsObject().Engine, arg)).ToArray()
-            );
-    }
-
-    public TOut Call<TOut>(string methodName, params object[] args)
-    {
-        return Call(methodName, args).ToObject() is TOut result ? result : default!;
+                    .Engine
+                    .Call(
+                        method,
+                        Value.AsObject(),
+                        args.Select(arg => JsValue.FromObject(Value.AsObject().Engine, arg)).ToArray()
+                    );
     }
 }

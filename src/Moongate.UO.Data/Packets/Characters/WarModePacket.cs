@@ -9,14 +9,9 @@ public class WarModePacket : BaseUoPacket
     public UOMobileEntity Mobile { get; set; }
 
     public WarModePacket(UOMobileEntity mobile) : this()
-    {
-        Mobile = mobile;
-    }
+        => Mobile = mobile;
 
-    public WarModePacket() : base(0x72)
-    {
-    }
-
+    public WarModePacket() : base(0x72) { }
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {

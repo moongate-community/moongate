@@ -1,7 +1,5 @@
-using System.Net.NetworkInformation;
 using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Types;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
 using Moongate.UO.Data.Packets.GeneralInformation.Factory;
@@ -29,10 +27,17 @@ public class CharacterMoveHandler : IGamePacketHandler
     private const int WalkMountDelay = 200;
     private const int RunMountDelay = 100;
 
-
     public CharacterMoveHandler(IMobileService mobileService)
+        => _mobileService = mobileService;
+
+    public static int ComputeSpeed(UOMobileEntity mobile, DirectionType direction)
     {
-        _mobileService = mobileService;
+        if (mobile.IsMounted)
+        {
+            return (direction & DirectionType.Running) != 0 ? RunMountDelay : WalkMountDelay;
+        }
+
+        return (direction & DirectionType.Running) != 0 ? RunFootDelay : WalkFootDelay;
     }
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
@@ -49,75 +54,7 @@ public class CharacterMoveHandler : IGamePacketHandler
                 session.SessionId,
                 moveAckPacket.Sequence
             );
-            return;
         }
-    }
-
-    private async Task ProcessMoveRequestAsync(GameSession session, MoveRequestPacket packet)
-    {
-        if (session.MoveSequence == 0 && packet.Sequence != 0)
-        {
-            session.SendPackets(new MoveRejectionPacket(packet.Sequence, session.Mobile.Location, packet.Direction));
-            session.MoveSequence = 0;
-        }
-
-
-        if (Throttle(session))
-        {
-            session.SendPackets(new MoveRejectionPacket(packet.Sequence, session.Mobile.Location, packet.Direction));
-            return;
-        }
-
-        var newLocation = session.Mobile.Location + packet.Direction;
-
-        var landTile = session.Mobile.Map.GetLandTile(newLocation.X, newLocation.Y);
-
-        newLocation = new Point3D(newLocation.X, newLocation.Y, landTile.Z);
-
-        _mobileService.MoveMobile(session.Mobile, newLocation);
-        bool isRunning = (packet.Direction & DirectionType.Running) != 0;
-
-        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Running);
-
-        session.Mobile.Direction = baseDirection;
-
-
-        if (session.MoveSequence == 255)
-        {
-            session.MoveSequence = 1;
-        }
-
-        session.MoveSequence++;
-
-
-        _logger.Debug(
-            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning} fastWalk {FastWalk}",
-            session.SessionId,
-            session.MoveSequence,
-            packet.Direction,
-            isRunning,
-            packet.FastKey
-        );
-
-
-        session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
-
-        var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
-        var addFastKey = GeneralInformationFactory.CreateAddKeyToFastWalkStack((uint)packet.Sequence + 1);
-        // var mountSpeed = GeneralInformationFactory.CreateMountSpeed(3);
-
-        session.SendPackets(moveAckPacket, addFastKey);
-    }
-
-
-    public static int ComputeSpeed(UOMobileEntity mobile, DirectionType direction)
-    {
-        if (mobile.IsMounted)
-        {
-            return (direction & DirectionType.Running) != 0 ? RunMountDelay : WalkMountDelay;
-        }
-
-        return (direction & DirectionType.Running) != 0 ? RunFootDelay : WalkFootDelay;
     }
 
     public static bool Throttle(GameSession session)
@@ -136,10 +73,11 @@ public class CharacterMoveHandler : IGamePacketHandler
         {
             session.MoveCredit = 0;
             session.MoveTime = now;
+
             return false;
         }
 
-        long cost = nextMove - now;
+        var cost = nextMove - now;
 
         if (credit < cost)
         {
@@ -149,6 +87,61 @@ public class CharacterMoveHandler : IGamePacketHandler
 
         // On the next event loop, the player receives up to 400ms in grace latency
         session.MoveCredit = Math.Min(MovementThrottleThreshold, credit - cost);
+
         return false;
+    }
+
+    private async Task ProcessMoveRequestAsync(GameSession session, MoveRequestPacket packet)
+    {
+        if (session.MoveSequence == 0 && packet.Sequence != 0)
+        {
+            session.SendPackets(new MoveRejectionPacket(packet.Sequence, session.Mobile.Location, packet.Direction));
+            session.MoveSequence = 0;
+        }
+
+        if (Throttle(session))
+        {
+            session.SendPackets(new MoveRejectionPacket(packet.Sequence, session.Mobile.Location, packet.Direction));
+
+            return;
+        }
+
+        var newLocation = session.Mobile.Location + packet.Direction;
+
+        var landTile = session.Mobile.Map.GetLandTile(newLocation.X, newLocation.Y);
+
+        newLocation = new(newLocation.X, newLocation.Y, landTile.Z);
+
+        _mobileService.MoveMobile(session.Mobile, newLocation);
+        var isRunning = (packet.Direction & DirectionType.Running) != 0;
+
+        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Running);
+
+        session.Mobile.Direction = baseDirection;
+
+        if (session.MoveSequence == 255)
+        {
+            session.MoveSequence = 1;
+        }
+
+        session.MoveSequence++;
+
+        _logger.Debug(
+            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning} fastWalk {FastWalk}",
+            session.SessionId,
+            session.MoveSequence,
+            packet.Direction,
+            isRunning,
+            packet.FastKey
+        );
+
+        session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
+
+        var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
+        var addFastKey = GeneralInformationFactory.CreateAddKeyToFastWalkStack((uint)packet.Sequence + 1);
+
+        // var mountSpeed = GeneralInformationFactory.CreateMountSpeed(3);
+
+        session.SendPackets(moveAckPacket, addFastKey);
     }
 }

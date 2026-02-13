@@ -7,19 +7,12 @@ namespace Moongate.Core.Server.Interfaces.Services;
 public interface IDiagnosticService : IMoongateAutostartService
 {
     /// <summary>
-    ///  Get the current metrics
-    /// </summary>
-    /// <returns></returns>
-    Task<List<MetricProviderData>> GetCurrentMetricsAsync();
-
-    /// <summary>
-    ///  Get the current metrics
+    /// Get the current metrics
     /// </summary>
     IObservable<MetricProviderData> Metrics { get; }
 
-
     /// <summary>
-    ///  Get Pid file path
+    /// Get Pid file path
     /// </summary>
     string PidFilePath { get; }
 
@@ -29,6 +22,17 @@ public interface IDiagnosticService : IMoongateAutostartService
     /// <returns></returns>
     Task CollectMetricsAsync();
 
+    /// <summary>
+    /// Get all metrics from registered providers
+    /// </summary>
+    /// <returns>Dictionary with provider names as keys and metrics objects as values</returns>
+    Dictionary<string, object> GetAllProvidersMetrics();
+
+    /// <summary>
+    /// Get the current metrics
+    /// </summary>
+    /// <returns></returns>
+    Task<List<MetricProviderData>> GetCurrentMetricsAsync();
 
     /// <summary>
     /// Register a provider of metrics
@@ -41,10 +45,4 @@ public interface IDiagnosticService : IMoongateAutostartService
     /// </summary>
     /// <param name="providerName">The name of the provider to unregister</param>
     void UnregisterMetricsProvider(string providerName);
-
-    /// <summary>
-    /// Get all metrics from registered providers
-    /// </summary>
-    /// <returns>Dictionary with provider names as keys and metrics objects as values</returns>
-    Dictionary<string, object> GetAllProvidersMetrics();
 }

@@ -1,5 +1,4 @@
 using Moongate.Core.Server.Interfaces.Services;
-using Moongate.Core.Server.Interfaces.Services.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
@@ -27,7 +26,8 @@ public class SpatialWorldService : ISpatialWorldService
     private readonly IDiagnosticService _diagnosticService;
     private readonly IGameSessionService _gameSessionService;
 
-    private readonly Dictionary<Rectangle2D, JsonRegion> _regionsDefinition = new();
+    private readonly Dictionary<int, JsonRegion> _regionsDefinition = new();
+    private readonly Dictionary<Rectangle2D, int> _regionCoordinates = new();
 
     private readonly Dictionary<int, JsonMusic> _musicDefinition = new();
 
@@ -42,7 +42,9 @@ public class SpatialWorldService : ISpatialWorldService
     public event ISpatialWorldService.MobileMovedHandler? MobileMoved;
 
     public SpatialWorldService(
-        IItemService itemService, IMobileService mobileService, IDiagnosticService diagnosticService,
+        IItemService itemService,
+        IMobileService mobileService,
+        IDiagnosticService diagnosticService,
         IGameSessionService gameSessionService
     )
     {
@@ -50,28 +52,52 @@ public class SpatialWorldService : ISpatialWorldService
         _mobileService = mobileService;
         _diagnosticService = diagnosticService;
         _gameSessionService = gameSessionService;
-        _sectorSystem = new MapSectorSystem();
+        _sectorSystem = new();
 
         _sectorSystem.EntityMovedSector += (entity, oldSector, newSector) =>
-        {
-            if (entity is UOMobileEntity mobile)
-            {
-                MobileSectorMoved?.Invoke(mobile, oldSector, newSector);
-                var worldView = GetPlayerWorldView(mobile);
-                OnMobileAddedInSector?.Invoke(mobile, newSector, worldView);
+                                           {
+                                               if (entity is UOMobileEntity mobile)
+                                               {
+                                                   MobileSectorMoved?.Invoke(mobile, oldSector, newSector);
+                                                   var worldView = GetPlayerWorldView(mobile);
+                                                   OnMobileAddedInSector?.Invoke(mobile, newSector, worldView);
 
-                if (oldSector != newSector)
-                {
-                    OnMobileExitSector?.Invoke(mobile, oldSector, worldView);
-                }
-            }
+                                                   if (oldSector != newSector)
+                                                   {
+                                                       OnMobileExitSector?.Invoke(mobile, oldSector, worldView);
+                                                   }
+                                               }
 
-            EntityMovedSector?.Invoke(entity, oldSector, newSector);
-        };
+                                               EntityMovedSector?.Invoke(entity, oldSector, newSector);
+                                           };
 
         /// Subscribe to entity events to keep spatial index updated
         SubscribeToEntityEvents();
     }
+
+    public string ProviderName => "SpatialWorldService";
+
+    public void Dispose()
+    {
+        /// Unsubscribe from events
+        _itemService.ItemCreated -= OnItemCreated;
+        _itemService.ItemAdded -= OnItemAdded;
+        _mobileService.MobileCreated -= OnMobileCreated;
+        _mobileService.MobileAdded -= OnMobileAdded;
+    }
+
+    public object GetMetrics()
+        => _sectorSystem.GetStats();
+
+    public Task StartAsync(CancellationToken cancellationToken = default)
+    {
+        _diagnosticService.RegisterMetricsProvider(this);
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
 
     private void SubscribeToEntityEvents()
     {
@@ -87,7 +113,7 @@ public class SpatialWorldService : ISpatialWorldService
         _itemService.ItemMoved += OnItemMoved;
     }
 
-    #region Entity Event Handlers
+#region Entity Event Handlers
 
     private void OnItemCreated(UOItemEntity item)
     {
@@ -119,14 +145,12 @@ public class SpatialWorldService : ISpatialWorldService
         var worldView = GetPlayerWorldView(mobile);
 
         OnMobileAddedInSector?.Invoke(mobile, sector, worldView);
-
     }
 
     private void OnMobileAdded(UOMobileEntity mobile)
     {
         OnMobileCreated(mobile);
     }
-
 
     /// <summary>
     /// Call this when a mobile moves
@@ -209,9 +233,9 @@ public class SpatialWorldService : ISpatialWorldService
         );
     }
 
-    #endregion
+#endregion
 
-    #region Spatial Queries
+#region Spatial Queries
 
     /// <summary>
     /// Gets all players within view range of a location (for packet broadcasting)
@@ -221,12 +245,13 @@ public class SpatialWorldService : ISpatialWorldService
         var players = _sectorSystem.GetPlayersInRange(location, range, mapIndex);
 
         return players
-            .Select(player =>
-                _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile != null && s.Mobile.Id == player.Id)
-            )
-            .OfType<GameSession>()
-            .Where(session => session != excludeSession)
-            .ToList();
+               .Select(
+                   player =>
+                       _gameSessionService.QuerySessionFirstOrDefault(s => s.Mobile != null && s.Mobile.Id == player.Id)
+               )
+               .OfType<GameSession>()
+               .Where(session => session != excludeSession)
+               .ToList();
     }
 
     /// <summary>
@@ -235,17 +260,15 @@ public class SpatialWorldService : ISpatialWorldService
     public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapIndex)
     {
         return _sectorSystem.GetItemsInRange(location, range, mapIndex)
-            .Where(item => item.IsOnGround) /// Only ground items
-            .ToList();
+                            .Where(item => item.IsOnGround) /// Only ground items
+                            .ToList();
     }
 
     /// <summary>
     /// Gets all mobiles near a location (for client display)
     /// </summary>
     public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapIndex)
-    {
-        return _sectorSystem.GetMobilesInViewRange(location, mapIndex, range);
-    }
+        => _sectorSystem.GetMobilesInViewRange(location, mapIndex, range);
 
     /// <summary>
     /// Fast lookup for any entity by serial
@@ -254,8 +277,11 @@ public class SpatialWorldService : ISpatialWorldService
     {
         /// Try spatial index first (fastest)
         var entity = _sectorSystem.FindEntity<T>(serial);
+
         if (entity != null)
+        {
             return entity;
+        }
 
         /// Fallback to service lookups if not in spatial index
         if (typeof(T) == typeof(UOItemEntity))
@@ -279,12 +305,12 @@ public class SpatialWorldService : ISpatialWorldService
         var mapIndex = GetMapIndex(player);
 
         var nearbyMobiles = GetNearbyMobiles(player.Location, viewRange, mapIndex)
-            .Where(m => m.Id != player.Id) /// Exclude self
-            .ToList();
+                            .Where(m => m.Id != player.Id) /// Exclude self
+                            .ToList();
 
         var nearbyItems = GetNearbyItems(player.Location, viewRange, mapIndex);
 
-        return new WorldView
+        return new()
         {
             Player = player,
             NearbyMobiles = nearbyMobiles,
@@ -294,17 +320,15 @@ public class SpatialWorldService : ISpatialWorldService
         };
     }
 
-    #endregion
+#endregion
 
-    #region Utility Methods
+#region Utility Methods
 
     /// <summary>
     /// Gets map index for an entity
     /// </summary>
     private static int GetMapIndex(IPositionEntity entity)
-    {
-        return entity.Map.Index;
-    }
+        => entity.Map.Index;
 
     /// <summary>
     /// Removes an entity from spatial index (call when entity is deleted)
@@ -318,12 +342,19 @@ public class SpatialWorldService : ISpatialWorldService
     /// Gets statistics about the spatial system
     /// </summary>
     public SectorSystemStats GetStats()
-    {
-        return _sectorSystem.GetStats();
-    }
+        => _sectorSystem.GetStats();
 
     public void AddRegion(JsonRegion region)
     {
+        // Add region if not already exists
+        if (!_regionsDefinition.TryAdd(region.Id, region))
+        {
+            _logger.Warning("Region {RegionId} already exists in the spatial index", region.Id);
+            return;
+        }
+
+        // Add all coordinates for this region
+        int coordinatesAdded = 0;
         foreach (var regionCoordinate in region.Coordinates)
         {
             var rectangle = new Rectangle2D(
@@ -333,35 +364,40 @@ public class SpatialWorldService : ISpatialWorldService
                 regionCoordinate.Height
             );
 
-            if (!_regionsDefinition.TryAdd(rectangle, region))
+            // Skip if coordinate is already mapped (can happen with duplicate coordinates in JSON)
+            if (_regionCoordinates.ContainsKey(rectangle))
             {
-                _logger.Warning("Region {RegionId} already exists in the spatial index", region.Id);
+                _logger.Verbose("Duplicate coordinate for region {RegionId}, skipping", region.Id);
                 continue;
             }
 
-            _logger.Information("Added region {RegionId} {RegionName} to spatial index", region.Id, region.Name);
+            _regionCoordinates.Add(rectangle, region.Id);
+            coordinatesAdded++;
         }
+
+        _logger.Information("Added region {RegionId} {RegionName} with {CoordinateCount} coordinates to spatial index", region.Id, region.Name, coordinatesAdded);
     }
 
     public void AddMusics(List<JsonMusic> musics)
     {
         foreach (var music in musics)
         {
-            if (!_musicDefinition.TryAdd(music.Id, music))
-            {
-                continue;
-            }
+            if (!_musicDefinition.TryAdd(music.Id, music)) { }
         }
     }
 
     public int GetMusicFromLocation(Point3D location, int mapIndex)
     {
         /// Find the region that contains this location
-        foreach (var region in _regionsDefinition)
+        foreach (var coordinate in _regionCoordinates)
         {
-            if (region.Key.Contains(location.X, location.Y))
+            if (coordinate.Key.Contains(location.X, location.Y))
             {
-                return _musicDefinition[region.Value.MusicList].Music;
+                var regionId = coordinate.Value;
+                if (_regionsDefinition.TryGetValue(regionId, out var region))
+                {
+                    return _musicDefinition[region.MusicList].Music;
+                }
             }
         }
 
@@ -370,43 +406,20 @@ public class SpatialWorldService : ISpatialWorldService
 
     public JsonRegion? GetRegionFromLocation(Point3D location, int mapIndex)
     {
-        foreach (var region in _regionsDefinition)
+        foreach (var coordinate in _regionCoordinates)
         {
-            if (region.Key.Contains(location.X, location.Y))
+            if (coordinate.Key.Contains(location.X, location.Y))
             {
-                return region.Value;
+                var regionId = coordinate.Value;
+                if (_regionsDefinition.TryGetValue(regionId, out var region))
+                {
+                    return region;
+                }
             }
         }
 
         return null; /// No region found
     }
 
-    #endregion
-
-    public void Dispose()
-    {
-        /// Unsubscribe from events
-        _itemService.ItemCreated -= OnItemCreated;
-        _itemService.ItemAdded -= OnItemAdded;
-        _mobileService.MobileCreated -= OnMobileCreated;
-        _mobileService.MobileAdded -= OnMobileAdded;
-    }
-
-    public Task StartAsync(CancellationToken cancellationToken = default)
-    {
-        _diagnosticService.RegisterMetricsProvider(this);
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
-
-    public string ProviderName => "SpatialWorldService";
-
-    public object GetMetrics()
-    {
-        return _sectorSystem.GetStats();
-    }
+#endregion
 }

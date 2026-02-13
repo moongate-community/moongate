@@ -6,18 +6,15 @@ public class JsonContainerSize
 {
     public int ItemId { get; set; }
 
-
     public int Width { get; set; }
 
     public int Height { get; set; }
 
     public string Name { get; set; }
 
-    [JsonIgnore] public int TotalSlots => Width * Height;
-
+    [JsonIgnore]
+    public int TotalSlots => Width * Height;
 
     public override string ToString()
-    {
-        return $"ItemId: {ItemId}, Width: {Width}, Height: {Height}, Name: {Name}, TotalSlots: {TotalSlots}";
-    }
+        => $"ItemId: {ItemId}, Width: {Width}, Height: {Height}, Name: {Name}, TotalSlots: {TotalSlots}";
 }

@@ -14,7 +14,6 @@ using Moongate.UO.Data.Packets.World;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Extensions;
 using Moongate.UO.Interfaces.Services;
-using Moongate.UO.Interfaces.Services.Systems;
 
 namespace Moongate.Server.Commands;
 
@@ -69,47 +68,46 @@ public static class DefaultCommands
             AccountLevelType.Admin
         );
 
-        commandSystemService.RegisterCommand("color", OnColorCommand, "Changes the color of an item", AccountLevelType.User);
+        commandSystemService.RegisterCommand("color", OnColorCommand, "Changes the color of an item");
 
-        commandSystemService.RegisterCommand("select", OnSelect, "Selects an item", AccountLevelType.User);
+        commandSystemService.RegisterCommand("select", OnSelect, "Selects an item");
 
         commandSystemService.RegisterCommand(
             "blood",
             OnBloodCommand,
-            "Spawns a blood effect at your location",
-            AccountLevelType.User
+            "Spawns a blood effect at your location"
         );
 
+        commandSystemService.RegisterCommand("music", OnMusicCommand, "Plays a music track");
 
-        commandSystemService.RegisterCommand("music", OnMusicCommand, "Plays a music track", AccountLevelType.User);
-
-        commandSystemService.RegisterCommand("orion", OnOrionCommand, "Add my cat in world", AccountLevelType.User);
+        commandSystemService.RegisterCommand("orion", OnOrionCommand, "Add my cat in world");
 
         commandSystemService.RegisterCommand("teleport", OnTeleportCommand, "Teleports to target cursor");
     }
 
-    private static async Task OnTeleportCommand(CommandSystemContext context)
+    private static Task OnAddBackpackItemCommand(CommandSystemContext context)
     {
+        var itemTemplateName = context.Arguments[0];
+
+        var factoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+
+        var item = factoryService.CreateItemEntity(itemTemplateName);
+
+        if (item == null)
+        {
+            context.Print("Item template '{0}' not found.", itemTemplateName);
+
+            return Task.CompletedTask;
+        }
+
+        context.Print("Adding item '{0}'...", item);
+
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
-        var callbackService = MoongateContext.Container.Resolve<ICallbackService>();
-        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
-
-
         var gameSession = gameSessionService.GetSession(context.SessionId);
 
-        var targetCursorId = callbackService.AddTargetCallBack((serial, type, position, clickedSerial) =>
-            {
-                mobileService.MoveMobile(gameSession.Mobile, position.Value);
-            }
-        );
+        gameSession.Mobile.GetBackpack().AddItem(item, Point2D.Zero);
 
-        var cursorPacket = new TargetCursorPacket(
-            CursorSelectionType.Location,
-            CursorType.Helpful,
-            targetCursorId
-        );
-
-        gameSession.SendPackets(cursorPacket);
+        return Task.CompletedTask;
     }
 
     private static async Task OnAddItem(CommandSystemContext context)
@@ -123,16 +121,17 @@ public static class DefaultCommands
         if (item == null)
         {
             context.Print("Item template '{0}' not found.", itemTemplateName);
+
             return;
         }
 
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
         var callbackService = MoongateContext.Container.Resolve<ICallbackService>();
 
-
         var gameSession = gameSessionService.GetSession(context.SessionId);
 
-        var targetCursorId = callbackService.AddTargetCallBack((serial, type, position, clickedSerial) =>
+        var targetCursorId = callbackService.AddTargetCallBack(
+            (serial, type, position, clickedSerial) =>
             {
                 //item.Location = position.Value;
                 item.Map = gameSession.Mobile.Map;
@@ -150,41 +149,6 @@ public static class DefaultCommands
         );
 
         gameSession.SendPackets(cursorPacket);
-    }
-
-    private static async Task OnOrionCommand(CommandSystemContext context)
-    {
-        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
-        var gameSession = gameSessionService.GetSession(context.SessionId);
-        var entityFactoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
-
-        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
-
-        var mobile = entityFactoryService.CreateMobileEntity("orione");
-
-        mobile.Map = gameSession.Mobile.Map;
-
-        mobile.Location = gameSession.Mobile.Location + new Point3D(1, 1, 0);
-
-        mobileService.AddInWorld(mobile);
-    }
-
-    private static Task OnMusicCommand(CommandSystemContext context)
-    {
-        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
-        var gameSession = gameSessionService.GetSession(context.SessionId);
-
-        if (gameSession?.Mobile == null)
-        {
-            return Task.CompletedTask;
-        }
-
-        var randomEnumValue = Enum.GetValues<MusicName>().ToList().RandomElement();
-        var musicPacket = new PlayMusicPacket((int)randomEnumValue);
-        gameSession.SendPackets(musicPacket);
-        context.Print("Playing music: {0}", randomEnumValue);
-
-        return Task.CompletedTask;
     }
 
     private static Task OnBloodCommand(CommandSystemContext context)
@@ -205,13 +169,23 @@ public static class DefaultCommands
         return Task.CompletedTask;
     }
 
-    private static async Task OnSelect(CommandSystemContext context)
+    private static async Task OnBroadcastCommand(CommandSystemContext context)
     {
-        var cursorPacket = new TargetCursorPacket(CursorSelectionType.Object, CursorType.Helpful, Serial.Parse("1234"));
-        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
-        var gameSession = gameSessionService.GetSession(context.SessionId);
+        if (context.Arguments.Length == 0)
+        {
+            context.Print("Usage: broadcast <message>");
 
-        gameSession.SendPackets(cursorPacket);
+            return;
+        }
+
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+
+        var text = string.Join(" ", context.Arguments);
+
+        foreach (var session in gameSessionService.GetSessions())
+        {
+            session.Mobile.ReceiveSpeech(null, ChatMessageType.System, 0, $"[SYSTEM] {text}", 0, 3);
+        }
     }
 
     private static async Task OnColorCommand(CommandSystemContext context)
@@ -222,23 +196,55 @@ public static class DefaultCommands
         gameSession.SendPackets(new DyeWindowRequestPacket(Serial.Zero));
     }
 
-    private static async Task OnBroadcastCommand(CommandSystemContext context)
+    private static Task OnMusicCommand(CommandSystemContext context)
     {
-        if (context.Arguments.Length == 0)
-        {
-            context.Print("Usage: broadcast <message>");
-            return;
-        }
-
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
 
-
-        var text = string.Join(" ", context.Arguments);
-
-        foreach (var session in gameSessionService.GetSessions())
+        if (gameSession?.Mobile == null)
         {
-            session.Mobile.ReceiveSpeech(null, ChatMessageType.System, 0, $"[SYSTEM] {text}", 0, 3);
+            return Task.CompletedTask;
         }
+
+        var randomEnumValue = Enum.GetValues<MusicName>().ToList().RandomElement();
+        var musicPacket = new SetMusicPacket((int)randomEnumValue);
+        gameSession.SendPackets(musicPacket);
+        context.Print("Playing music: {0}", randomEnumValue);
+
+        return Task.CompletedTask;
+    }
+
+    private static async Task OnOrionCommand(CommandSystemContext context)
+    {
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+        var entityFactoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
+
+        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
+
+        var mobile = entityFactoryService.CreateMobileEntity("orione");
+
+        mobile.Map = gameSession.Mobile.Map;
+
+        mobile.Location = gameSession.Mobile.Location + new Point3D(1, 1, 0);
+
+        mobileService.AddInWorld(mobile);
+    }
+
+    private static async Task OnSaveCommand(CommandSystemContext context)
+    {
+        var persistenceService = MoongateContext.Container.Resolve<IPersistenceService>();
+
+        persistenceService.RequestSave();
+    }
+
+    private static async Task OnSelect(CommandSystemContext context)
+    {
+        var cursorPacket = new TargetCursorPacket(CursorSelectionType.Object, CursorType.Helpful, Serial.Parse("1234"));
+        var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var gameSession = gameSessionService.GetSession(context.SessionId);
+
+        gameSession.SendPackets(cursorPacket);
     }
 
     private static Task OnSetWeatherCommand(CommandSystemContext context)
@@ -252,29 +258,28 @@ public static class DefaultCommands
         return Task.CompletedTask;
     }
 
-    private static Task OnAddBackpackItemCommand(CommandSystemContext context)
+    private static async Task OnTeleportCommand(CommandSystemContext context)
     {
-        var itemTemplateName = context.Arguments[0];
-
-        var factoryService = MoongateContext.Container.Resolve<IEntityFactoryService>();
-
-        var item = factoryService.CreateItemEntity(itemTemplateName);
-
-        if (item == null)
-        {
-            context.Print("Item template '{0}' not found.", itemTemplateName);
-            return Task.CompletedTask;
-        }
-
-        context.Print("Adding item '{0}'...", item);
-
-
         var gameSessionService = MoongateContext.Container.Resolve<IGameSessionService>();
+        var callbackService = MoongateContext.Container.Resolve<ICallbackService>();
+        var mobileService = MoongateContext.Container.Resolve<IMobileService>();
+
         var gameSession = gameSessionService.GetSession(context.SessionId);
 
-        gameSession.Mobile.GetBackpack().AddItem(item, Point2D.Zero);
+        var targetCursorId = callbackService.AddTargetCallBack(
+            (serial, type, position, clickedSerial) =>
+            {
+                mobileService.MoveMobile(gameSession.Mobile, position.Value);
+            }
+        );
 
-        return Task.CompletedTask;
+        var cursorPacket = new TargetCursorPacket(
+            CursorSelectionType.Location,
+            CursorType.Helpful,
+            targetCursorId
+        );
+
+        gameSession.SendPackets(cursorPacket);
     }
 
     private static async Task OnWhereCommand(CommandSystemContext context)
@@ -289,12 +294,5 @@ public static class DefaultCommands
             mobile.Location.Y,
             mobile.Location.Z
         );
-    }
-
-    private static async Task OnSaveCommand(CommandSystemContext context)
-    {
-        var persistenceService = MoongateContext.Container.Resolve<IPersistenceService>();
-
-        persistenceService.RequestSave();
     }
 }

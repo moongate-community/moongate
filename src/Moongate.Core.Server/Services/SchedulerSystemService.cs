@@ -16,11 +16,45 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventBusListener
 
     public SchedulerSystemService(IEventBusService eventBusService)
     {
-        _jobs = new ConcurrentDictionary<string, ScheduledJobData>();
-        _pausedJobs = new ConcurrentDictionary<string, IDisposable>();
-        eventBusService.Subscribe<AddSchedulerJobEvent>(this);
+        _jobs = new();
+        _pausedJobs = new();
+        eventBusService.Subscribe(this);
     }
 
+    public void Dispose()
+    {
+        foreach (var job in _jobs.Values)
+        {
+            job.Subscription?.Dispose();
+        }
+
+        _jobs.Clear();
+        _pausedJobs.Clear();
+        GC.SuppressFinalize(this);
+    }
+
+    public async Task HandleAsync(AddSchedulerJobEvent @event, CancellationToken cancellationToken = default)
+    {
+        _logger.Information("Registering job '{JobName}'", @event.Name);
+        _ = RegisterJob(@event.Name, @event.Action, @event.TotalSpan);
+    }
+
+    public Task<bool> IsJobRegistered(string name)
+        => Task.FromResult(_jobs.ContainsKey(name));
+
+    public async Task PauseJob(string name)
+    {
+        if (!await IsJobRegistered(name))
+        {
+            throw new InvalidOperationException($"Job '{name}' is not registered");
+        }
+
+        if (_jobs.TryGetValue(name, out var job))
+        {
+            job.Subscription?.Dispose();
+            _pausedJobs.TryAdd(name, job.Subscription);
+        }
+    }
 
     public async Task RegisterJob(string name, Func<Task> task, TimeSpan interval)
     {
@@ -41,21 +75,24 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventBusListener
             throw new InvalidOperationException($"Job '{name}' is already registered");
         }
 
-        var subscription = System.Reactive.Linq.Observable
-            .Interval(interval)
-            .Subscribe(async _ =>
-                {
-                    try
-                    {
-                        await ExecuteJob(_jobs[name]);
-                    }
-                    catch (Exception ex)
-                    {
-                        // Log the exception or handle it according to your needs
-                        _logger.Error(ex, "Error occurred while executing job '{JobName}'", name);
-                    }
-                }
-            );
+        var subscription = System.Reactive
+                                 .Linq
+                                 .Observable
+                                 .Interval(interval)
+                                 .Subscribe(
+                                     async _ =>
+                                     {
+                                         try
+                                         {
+                                             await ExecuteJob(_jobs[name]);
+                                         }
+                                         catch (Exception ex)
+                                         {
+                                             // Log the exception or handle it according to your needs
+                                             _logger.Error(ex, "Error occurred while executing job '{JobName}'", name);
+                                         }
+                                     }
+                                 );
 
         var job = new ScheduledJobData
         {
@@ -66,6 +103,26 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventBusListener
         };
 
         _jobs.TryAdd(name, job);
+    }
+
+    public async Task ResumeJob(string name)
+    {
+        if (!await IsJobRegistered(name))
+        {
+            throw new InvalidOperationException($"Job '{name}' is not registered");
+        }
+
+        if (_jobs.TryGetValue(name, out var job))
+        {
+            var subscription = System.Reactive
+                                     .Linq
+                                     .Observable
+                                     .Interval(job.Interval)
+                                     .Subscribe(async _ => await ExecuteJob(_jobs[name]));
+
+            job.Subscription = subscription;
+            _pausedJobs.TryRemove(name, out _);
+        }
     }
 
     public async Task UnregisterJob(string name)
@@ -79,25 +136,6 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventBusListener
         }
     }
 
-    public Task<bool> IsJobRegistered(string name)
-    {
-        return Task.FromResult(_jobs.ContainsKey(name));
-    }
-
-    public async Task PauseJob(string name)
-    {
-        if (!await IsJobRegistered(name))
-        {
-            throw new InvalidOperationException($"Job '{name}' is not registered");
-        }
-
-        if (_jobs.TryGetValue(name, out var job))
-        {
-            job.Subscription?.Dispose();
-            _pausedJobs.TryAdd(name, job.Subscription);
-        }
-    }
-
     private async Task ExecuteJob(ScheduledJobData jobData)
     {
         var startTime = Stopwatch.GetTimestamp();
@@ -106,42 +144,5 @@ public class SchedulerSystemService : ISchedulerSystemService, IEventBusListener
         var elapsed = Stopwatch.GetElapsedTime(startTime);
 
         _logger.Verbose("Job '{JobName}' executed in {Elapsed} ms", jobData.Name, elapsed);
-    }
-
-    public async Task ResumeJob(string name)
-    {
-        if (!await IsJobRegistered(name))
-        {
-            throw new InvalidOperationException($"Job '{name}' is not registered");
-        }
-
-        if (_jobs.TryGetValue(name, out var job))
-        {
-            var subscription = System.Reactive.Linq.Observable
-                .Interval(job.Interval)
-                .Subscribe(async _ => await ExecuteJob(_jobs[name]));
-
-            job.Subscription = subscription;
-            _pausedJobs.TryRemove(name, out _);
-        }
-    }
-
-    public void Dispose()
-    {
-        foreach (var job in _jobs.Values)
-        {
-            job.Subscription?.Dispose();
-        }
-
-        _jobs.Clear();
-        _pausedJobs.Clear();
-        GC.SuppressFinalize(this);
-    }
-
-
-    public async Task HandleAsync(AddSchedulerJobEvent @event, CancellationToken cancellationToken = default)
-    {
-        _logger.Information("Registering job '{JobName}'", @event.Name);
-        _ = RegisterJob(@event.Name, @event.Action, @event.TotalSpan);
     }
 }

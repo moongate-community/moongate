@@ -6,5 +6,5 @@ public enum DirectoryType
     Saves,
     Scripts,
     Logs,
-    Templates,
+    Templates
 }

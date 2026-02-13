@@ -10,9 +10,7 @@ public class SetWeatherPacket : BaseUoPacket
     public int NumOfEffects { get; set; }
     public int Temperature { get; set; }
 
-    public SetWeatherPacket() : base(0x65)
-    {
-    }
+    public SetWeatherPacket() : base(0x65) { }
 
     public SetWeatherPacket(WeatherType weatherType, int numOfEffects, int temperature) : this()
     {
@@ -31,6 +29,7 @@ public class SetWeatherPacket : BaseUoPacket
         writer.Write((byte)WeatherType);
         writer.Write((byte)NumOfEffects);
         writer.Write((byte)Temperature);
+
         return writer.ToArray();
     }
 }

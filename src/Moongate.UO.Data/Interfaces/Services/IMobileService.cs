@@ -10,9 +10,8 @@ public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSav
 {
     delegate void MobileEventHandler(UOMobileEntity mobile);
 
-    delegate void MobileMovedEventHandler(
-        UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation
-    );
+    delegate void MobileMovedEventHandler(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation);
+
     event MobileEventHandler? MobileCreated;
     event MobileEventHandler? MobileRemoved;
     event MobileEventHandler? MobileAdded;
@@ -21,6 +20,6 @@ public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSav
     void AddInWorld(UOMobileEntity mobile);
     UOMobileEntity CreateMobile();
     UOMobileEntity? GetMobile(Serial id);
-    IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate);
     void MoveMobile(UOMobileEntity mobile, Point3D newLocation);
+    IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate);
 }

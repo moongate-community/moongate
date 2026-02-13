@@ -11,9 +11,7 @@ public class ChatHandler : IGamePacketHandler
     private readonly INotificationSystem _notificationSystem;
 
     public ChatHandler(INotificationSystem notificationSystem)
-    {
-        _notificationSystem = notificationSystem;
-    }
+        => _notificationSystem = notificationSystem;
 
     public async Task HandlePacketAsync(GameSession session, IUoNetworkPacket packet)
     {

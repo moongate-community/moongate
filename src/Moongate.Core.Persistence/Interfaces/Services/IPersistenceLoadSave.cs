@@ -5,5 +5,4 @@ public interface IPersistenceLoadSave
     Task LoadAsync(CancellationToken cancellationToken = default);
 
     Task SaveAsync(CancellationToken cancellationToken = default);
-
 }

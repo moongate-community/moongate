@@ -8,9 +8,19 @@ public class SkillInfo
 {
     [JsonConstructor]
     public SkillInfo(
-        int skillID, string name, double strScale, double dexScale, double intScale, string title,
-        double strGain, double dexGain, double intGain, double gainFactor,
-        string professionSkillName, Stat primaryStat, Stat secondaryStat
+        int skillID,
+        string name,
+        double strScale,
+        double dexScale,
+        double intScale,
+        string title,
+        double strGain,
+        double dexGain,
+        double intGain,
+        double gainFactor,
+        string professionSkillName,
+        Stat primaryStat,
+        Stat secondaryStat
     )
     {
         Name = name;
@@ -28,7 +38,6 @@ public class SkillInfo
         PrimaryStat = primaryStat;
         SecondaryStat = secondaryStat;
     }
-
 
     public int SkillID { get; }
 

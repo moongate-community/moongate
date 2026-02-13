@@ -16,24 +16,24 @@ public class CommonEventModule
         _scriptEngineService = scriptEngineService;
     }
 
+    [ScriptFunction("Register handler for character created event")]
+    public void OnCharacterCreated(Func<CharacterCreatedEvent, Task> handler)
+    {
+        _scriptEngineService.AddCallback(
+            nameof(OnCharacterCreated),
+            args =>
+            {
+                if (args.Length == 1 && args[0] is CharacterCreatedEvent characterCreatedEvent)
+                {
+                    handler(characterCreatedEvent);
+                }
+            }
+        );
+    }
+
     [ScriptFunction("Register handler for CharacterInGameEvent")]
     public void OnCharacterInGame(Func<CharacterInGameEvent, Task> handler)
     {
         _eventBusService.Subscribe(handler);
     }
-
-
-    [ScriptFunction("Register handler for character created event")]
-    public void OnCharacterCreated(Func<CharacterCreatedEvent, Task> handler)
-    {
-        _scriptEngineService.AddCallback(nameof(OnCharacterCreated), (args) =>
-        {
-            if (args.Length == 1 && args[0] is CharacterCreatedEvent characterCreatedEvent)
-            {
-                handler(characterCreatedEvent);
-            }
-        });
-
-    }
-
 }

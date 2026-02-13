@@ -13,7 +13,4 @@ public class MoongateServerConfig
     public string Language { get; set; } = "enu";
 
     public ScriptConfig Scripts { get; set; } = new();
-
-
-
 }

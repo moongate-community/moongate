@@ -8,14 +8,10 @@ public class SetTimePacket : BaseUoPacket
     public DateTime Time { get; set; }
 
     public SetTimePacket(DateTime time) : this()
-    {
-        Time = time;
-    }
+        => Time = time;
 
     public SetTimePacket() : base(0x5B)
-    {
-        Time = DateTime.Now;
-    }
+        => Time = DateTime.Now;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -23,6 +19,7 @@ public class SetTimePacket : BaseUoPacket
         writer.Write((byte)Time.Hour);
         writer.Write((byte)Time.Minute);
         writer.Write((byte)Time.Second);
+
         return writer.ToArray();
     }
 }

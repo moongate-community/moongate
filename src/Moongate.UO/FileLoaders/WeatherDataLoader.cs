@@ -1,7 +1,6 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Server.Types;
-using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Interfaces.FileLoaders;
 using Serilog;
@@ -14,11 +13,8 @@ public class WeatherDataLoader : IFileLoader
 
     private readonly ILogger _logger = Log.ForContext<WeatherDataLoader>();
 
-
     public WeatherDataLoader(DirectoriesConfig directoriesConfig)
-    {
-        _directoriesConfig = directoriesConfig;
-    }
+        => _directoriesConfig = directoriesConfig;
 
     public async Task LoadAsync()
     {

@@ -6,6 +6,6 @@ public static class MultiData
 
     public static int Count => Components.Count;
 
-    public static MultiComponentList GetComponents(int multiID) =>
-        Components.TryGetValue(multiID & 0x3FFF, out var mcl) ? mcl : MultiComponentList.Empty;
+    public static MultiComponentList GetComponents(int multiID)
+        => Components.TryGetValue(multiID & 0x3FFF, out var mcl) ? mcl : MultiComponentList.Empty;
 }

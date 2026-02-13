@@ -9,6 +9,4 @@ public interface IGamePacketHandlerService : IMoongateService
     void RegisterGamePacketHandler<TPacket, TGamePacketHandler>()
         where TPacket : IUoNetworkPacket, new()
         where TGamePacketHandler : IGamePacketHandler;
-
-
 }

@@ -1,5 +1,4 @@
 using Moongate.Core.Server.Data.Internal.Commands;
-using Moongate.Core.Server.Instances;
 using Moongate.Core.Server.Interfaces.Services;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Interfaces.Services;
@@ -14,7 +13,6 @@ public class AccountCommands
     {
         _accountService = accountService;
 
-
         commandSystemService.RegisterCommand(
             "create_account",
             CreateAccount,
@@ -26,12 +24,13 @@ public class AccountCommands
     private async Task CreateAccount(CommandSystemContext context)
     {
         var level = Enum.TryParse(context.Arguments[2], true, out AccountLevelType accountType)
-            ? accountType
-            : AccountLevelType.User;
+                        ? accountType
+                        : AccountLevelType.User;
 
         if (context.Arguments.Length < 3)
         {
             context.Print("Usage: create_account <username> <password> [account_level]");
+
             return;
         }
 

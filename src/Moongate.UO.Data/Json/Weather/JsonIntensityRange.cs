@@ -9,17 +9,6 @@ public class JsonIntensityRange
     public int Max { get; set; }
 
     /// <summary>
-    /// Gets a random value within the intensity range
-    /// </summary>
-    /// <param name="random">Random instance (optional)</param>
-    /// <returns>Random intensity value between min and max</returns>
-    public int GetRandomValue(Random? random = null)
-    {
-        random ??= new Random();
-        return random.Next(Min, Max + 1);
-    }
-
-    /// <summary>
     /// Gets the average intensity value
     /// </summary>
     public double Average => (Min + Max) / 2.0;
@@ -30,8 +19,18 @@ public class JsonIntensityRange
     [JsonIgnore]
     public bool IsZero => Min == 0 && Max == 0;
 
-    public override string ToString()
+    /// <summary>
+    /// Gets a random value within the intensity range
+    /// </summary>
+    /// <param name="random">Random instance (optional)</param>
+    /// <returns>Random intensity value between min and max</returns>
+    public int GetRandomValue(Random? random = null)
     {
-        return Min == Max ? $"{Min}" : $"{Min}-{Max}";
+        random ??= new();
+
+        return random.Next(Min, Max + 1);
     }
+
+    public override string ToString()
+        => Min == Max ? $"{Min}" : $"{Min}-{Max}";
 }

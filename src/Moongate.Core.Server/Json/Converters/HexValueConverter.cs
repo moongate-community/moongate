@@ -18,6 +18,7 @@ public class HexValueConverter<T> : JsonConverter<T> where T : struct
             if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
             {
                 var hexValue = Convert.ToInt32(str, 16);
+
                 return (T)Convert.ChangeType(hexValue, typeof(T));
             }
 
@@ -25,6 +26,7 @@ public class HexValueConverter<T> : JsonConverter<T> where T : struct
             if (IsHexString(str))
             {
                 var hexValue = Convert.ToInt32(str, 16);
+
                 return (T)Convert.ChangeType(hexValue, typeof(T));
             }
         }
@@ -48,6 +50,6 @@ public class HexValueConverter<T> : JsonConverter<T> where T : struct
     private static bool IsHexString(string value)
     {
         return !string.IsNullOrEmpty(value) &&
-               value.All(c => char.IsDigit(c) || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'));
+               value.All(c => char.IsDigit(c) || c >= 'A' && c <= 'F' || c >= 'a' && c <= 'f');
     }
 }

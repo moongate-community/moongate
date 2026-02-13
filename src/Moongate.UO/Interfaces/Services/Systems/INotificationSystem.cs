@@ -6,8 +6,15 @@ namespace Moongate.UO.Interfaces.Services.Systems;
 
 public interface INotificationSystem : IMoongateService
 {
+    Task SendChatMessageAsync(
+        UOMobileEntity mobile,
+        ChatMessageType messageType,
+        short hue,
+        string text,
+        int graphic,
+        int font
+    );
+
     void SendSystemMessageToAll(string message);
     void SendSystemMessageToMobile(UOMobileEntity mobile, string message);
-    Task SendChatMessageAsync(UOMobileEntity mobile,  ChatMessageType messageType, short hue, string text, int graphic, int font);
-
 }

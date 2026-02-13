@@ -21,14 +21,10 @@ public class MegaClilocResponsePacket : BaseUoPacket
     /// </summary>
     public List<MegaClilocProperty> Properties { get; set; } = new();
 
-    public MegaClilocResponsePacket() : base(0xD6)
-    {
-    }
+    public MegaClilocResponsePacket() : base(0xD6) { }
 
     public MegaClilocResponsePacket(Serial serial) : base(0xD6)
-    {
-        Serial = serial;
-    }
+        => Serial = serial;
 
     public override ReadOnlyMemory<byte> Write(SpanWriter writer)
     {
@@ -81,7 +77,6 @@ public class MegaClilocResponsePacket : BaseUoPacket
                 var textBytes = Encoding.Unicode.GetBytes(property.Text);
                 writer.Write((short)textBytes.Length);
                 writer.WriteLittleUni(property.Text);
-
             }
         }
 

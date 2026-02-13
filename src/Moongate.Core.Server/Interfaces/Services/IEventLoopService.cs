@@ -10,27 +10,27 @@ namespace Moongate.Core.Server.Interfaces.Services;
 public interface IEventLoopService : IMoongateAutostartService
 {
     /// <summary>
-    ///  Represents a method that will handle the event loop tick event.
+    /// Represents a method that will handle the event loop tick event.
     /// </summary>
-    public delegate void EventLoopTickHandler(double tickDurationMs);
+    delegate void EventLoopTickHandler(double tickDurationMs);
 
     /// <summary>
-    ///  Represents a method that will handle the event loop reset event.
+    /// Represents a method that will handle the event loop reset event.
     /// </summary>
-    public delegate void EventLoopResetHandler();
+    delegate void EventLoopResetHandler();
 
     /// <summary>
-    ///  Gets the current tick count of the event loop.
+    /// Gets the current tick count of the event loop.
     /// </summary>
     long TickCount { get; }
 
     /// <summary>
-    ///  Occurs when the event loop ticks.
+    /// Occurs when the event loop ticks.
     /// </summary>
     event EventLoopTickHandler OnTick;
 
     /// <summary>
-    ///  Occurs when the event loop is reset.
+    /// Occurs when the event loop is reset.
     /// </summary>
     event EventLoopResetHandler OnTickReset;
 
@@ -43,6 +43,13 @@ public interface IEventLoopService : IMoongateAutostartService
     /// Gets the current metrics of the event loop.
     /// </summary>
     EventLoopMetrics Metrics { get; }
+
+    /// <summary>
+    /// Delays the execution of the current thread for the specified number of milliseconds.
+    /// </summary>
+    /// <param name="milliseconds"></param>
+    /// <returns></returns>
+    Task Delay(int milliseconds);
 
     /// <summary>
     /// Enqueues an action to be executed with normal priority.
@@ -69,13 +76,6 @@ public interface IEventLoopService : IMoongateAutostartService
     /// <param name="delay">The delay before executing the action.</param>
     /// <returns>The ID of the queued action.</returns>
     string EnqueueDelayedAction(string name, Action action, TimeSpan delay);
-
-    /// <summary>
-    ///  Delays the execution of the current thread for the specified number of milliseconds.
-    /// </summary>
-    /// <param name="milliseconds"></param>
-    /// <returns></returns>
-    Task Delay(int milliseconds);
 
     /// <summary>
     /// Enqueues an action to be executed after the specified delay with the specified priority.

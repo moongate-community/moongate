@@ -14,7 +14,11 @@ public static class SpatialWorldServiceExtensions
     /// </summary>
     public static async Task BroadcastToNearbyPlayers(
         this ISpatialWorldService spatialService,
-        Point3D location, int mapIndex, object packet, GameSession? excludeSession = null, int range = 24
+        Point3D location,
+        int mapIndex,
+        object packet,
+        GameSession? excludeSession = null,
+        int range = 24
     )
     {
         var nearbySessions = spatialService.GetPlayersInRange(location, range, mapIndex, excludeSession);

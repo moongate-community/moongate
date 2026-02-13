@@ -25,8 +25,6 @@ public class MapLoader : IFileLoader
 
         Map.RegisterMap(0x7F, 0x7F, 0, 1, 1, SeasonType.Spring, "Internal", MapRules.Internal);
 
-
         _logger.Information("Loaded {Count} maps", Map.MapCount);
-
     }
 }

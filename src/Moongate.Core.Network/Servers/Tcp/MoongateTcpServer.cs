@@ -43,8 +43,7 @@ public class MoongateTcpServer
     private Socket _listenSocket;
     private SocketAsyncEventArgs _acceptEventArgs;
 
-
-    private readonly List<MoongateTcpClient> _clients = new List<MoongateTcpClient>();
+    private readonly List<MoongateTcpClient> _clients = new();
     private readonly IPEndPoint _endPoint;
 
     public MoongateTcpServer(string id, IPEndPoint endPoint)
@@ -55,20 +54,18 @@ public class MoongateTcpServer
         BufferSize = 8192;
     }
 
-
     /// <summary>
     /// Starts the server and begins listening for incoming connections.
     /// </summary>
     public void Start()
     {
-        _listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        _listenSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         _listenSocket.Bind(_endPoint);
         _listenSocket.Listen(100);
 
         // Set up the SocketAsyncEventArgs for accepting connections.
-        _acceptEventArgs = new SocketAsyncEventArgs();
+        _acceptEventArgs = new();
         _acceptEventArgs.Completed += ProcessAccept;
-
 
         // Start the first accept operation.
         StartAccept();
@@ -110,6 +107,60 @@ public class MoongateTcpServer
         _logger.Information("{Id} Server stopped", Id);
     }
 
+    private void ProcessAccept(object sender, SocketAsyncEventArgs e)
+    {
+        if (e.SocketError == SocketError.Success)
+        {
+            // Retrieve the accepted socket.
+            var acceptedSocket = e.AcceptSocket;
+
+            // Create a new NetClient using the accepted socket.
+            var client = new MoongateTcpClient
+            {
+                ServerId = Id
+            };
+
+            lock (_clients)
+            {
+                _clients.Add(client);
+            }
+
+            _logger.Information(
+                "{Id} Client connected: {RemoteEndPoint} sessionId: {SessionId}",
+                Id,
+                acceptedSocket.RemoteEndPoint,
+                client.Id
+            );
+            client.OnConnected += () => OnClientConnected?.Invoke(client);
+            client.OnDisconnected += () =>
+                                     {
+                                         OnClientDisconnected?.Invoke(client);
+                                         _logger.Information(
+                                             "{Id} Client disconnected:  sessionId: {SessionId}",
+                                             Id,
+                                             client.Id
+                                         );
+
+                                         lock (_clients)
+                                         {
+                                             _clients.Remove(client);
+                                         }
+                                     };
+            client.OnDataReceived += data => OnClientDataReceived?.Invoke(client, data);
+            client.OnError += OnError;
+            client.Connect(acceptedSocket, BufferSize);
+        }
+
+        // If the accept operation was canceled, then the server is stopped.
+        else if (e.SocketError != SocketError.Interrupted && e.SocketError != SocketError.OperationAborted)
+        {
+            OnError?.Invoke(new SocketException((int)e.SocketError));
+        }
+
+        // Continue accepting the next connection.
+        StartAccept();
+    }
+
     private void StartAccept()
     {
         // If the accept socket is null, then the server is stopped.
@@ -138,57 +189,5 @@ public class MoongateTcpServer
         {
             OnError?.Invoke(ex);
         }
-    }
-
-    private void ProcessAccept(object sender, SocketAsyncEventArgs e)
-    {
-        if (e.SocketError == SocketError.Success)
-        {
-            // Retrieve the accepted socket.
-            Socket? acceptedSocket = e.AcceptSocket;
-
-            // Create a new NetClient using the accepted socket.
-            var client = new MoongateTcpClient
-            {
-                ServerId = Id
-            };
-
-            lock (_clients)
-            {
-                _clients.Add(client);
-            }
-
-            _logger.Information(
-                "{Id} Client connected: {RemoteEndPoint} sessionId: {SessionId}",
-                Id,
-                acceptedSocket.RemoteEndPoint,
-                client.Id
-            );
-            client.OnConnected += () => OnClientConnected?.Invoke(client);
-            client.OnDisconnected += () =>
-            {
-                OnClientDisconnected?.Invoke(client);
-                _logger.Information(
-                    "{Id} Client disconnected:  sessionId: {SessionId}",
-                    Id,
-                    client.Id
-                );
-                lock (_clients)
-                {
-                    _clients.Remove(client);
-                }
-            };
-            client.OnDataReceived += data => OnClientDataReceived?.Invoke(client, data);
-            client.OnError += OnError;
-            client.Connect(acceptedSocket, BufferSize);
-        }
-        // If the accept operation was canceled, then the server is stopped.
-        else if (e.SocketError != SocketError.Interrupted && e.SocketError != SocketError.OperationAborted)
-        {
-            OnError?.Invoke(new SocketException((int)e.SocketError));
-        }
-
-        // Continue accepting the next connection.
-        StartAccept();
     }
 }

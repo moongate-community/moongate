@@ -9,6 +9,7 @@ public static class IpAddressExtensions
     {
         Span<byte> integer = stackalloc byte[4];
         endPoint.Address.MapToIPv4().TryWriteBytes(integer, out var bytesWritten);
+
         if (bytesWritten != 4)
         {
             throw new InvalidOperationException("IP Address could not be serialized to an integer");
@@ -21,6 +22,7 @@ public static class IpAddressExtensions
     {
         Span<byte> integer = stackalloc byte[4];
         ipAddress.MapToIPv4().TryWriteBytes(integer, out var bytesWritten);
+
         if (bytesWritten != 4)
         {
             throw new InvalidOperationException("IP Address could not be serialized to an integer");

@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace Moongate.Core.Persistence.Data;
 
 /// <summary>
@@ -38,7 +40,7 @@ public struct EntityDataBlock
     /// </summary>
     private static ulong ComputeDataHash(byte[] data)
     {
-        var hashBytes = System.Security.Cryptography.SHA256.HashData(data);
+        var hashBytes = SHA256.HashData(data);
 
         var hash = BitConverter.ToUInt64(hashBytes, 0);
 
