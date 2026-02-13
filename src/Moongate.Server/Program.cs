@@ -162,6 +162,11 @@ await ConsoleApp.RunAsync(
                                                   // Bind send-only packets that don't have handlers
                                                   networkService.BindPacket<LoginCompletePacket>();
 
+                                                  // Register no-op handler for packets that client shouldn't send but might
+                                                  networkService.RegisterPacketHandler<LoginCompletePacket>(
+                                                      (sessionId, packet) => Task.CompletedTask
+                                                  );
+
                                                   // Registering all packet handlers
 
                                                   gamePacketHandlerService
