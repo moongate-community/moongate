@@ -213,6 +213,9 @@ await ConsoleApp.RunAsync(
                                                   gamePacketHandlerService
                                                       .RegisterGamePacketHandler<GetPlayerStatusPacket,
                                                           PlayerStatusHandler>();
+
+                                                  gamePacketHandlerService
+                                                      .RegisterGamePacketHandler<TalkRequestPacket, TalkRequestHandler>();
                                               };
 
         bootstrap.AfterInitialize += (container, config) =>
