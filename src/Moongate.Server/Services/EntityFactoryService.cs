@@ -208,6 +208,36 @@ public class EntityFactoryService : IEntityFactoryService
             GoldValue = 1,
             Weight = 25
         };
+
+        _itemTemplates["shirt"] = new()
+        {
+            Id = "shirt",
+            Name = "Shirt",
+            Category = "Clothing",
+            Tags = ["clothing", "shirt"],
+            ItemId = 0x1517,
+            Weight = 1
+        };
+
+        _itemTemplates["pants"] = new()
+        {
+            Id = "pants",
+            Name = "Pants",
+            Category = "Clothing",
+            Tags = ["clothing", "pants"],
+            ItemId = 0x152E,
+            Weight = 1
+        };
+
+        _itemTemplates["shoes"] = new()
+        {
+            Id = "shoes",
+            Name = "Shoes",
+            Category = "Clothing",
+            Tags = ["clothing", "shoes"],
+            ItemId = 0x170F,
+            Weight = 1
+        };
     }
 
     private UOItemEntity CreateItemEntity(ItemTemplate itemTemplate, Dictionary<string, object> overrides = null)

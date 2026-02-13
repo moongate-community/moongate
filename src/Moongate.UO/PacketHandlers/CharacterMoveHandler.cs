@@ -117,7 +117,7 @@ public class CharacterMoveHandler : IGamePacketHandler
 
         var baseDirection = (DirectionType)((byte)packet.Direction & ~(byte)DirectionType.Running);
 
-        session.Mobile.Direction = baseDirection;
+        session.Mobile.Direction = packet.Direction;
 
         if (session.MoveSequence == 255)
         {

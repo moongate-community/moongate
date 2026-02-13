@@ -17,7 +17,7 @@ public class DrawContainer : BaseUoPacket
     {
         writer.Write(OpCode);
         writer.Write(Container.Id.Value);
-        writer.Write(Container.GumpId.Value);
+        writer.Write((ushort)Container.GumpId.Value);
 
         return writer.ToArray();
     }

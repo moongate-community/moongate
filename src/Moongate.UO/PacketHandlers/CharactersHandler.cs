@@ -124,21 +124,17 @@ public class CharactersHandler : IGamePacketHandler
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
 
-        // TODO: Move logic for default items and colors
+        // Create default clothing items
+        var shirtItem = _entityFactoryService.CreateItemEntity("shirt");
+        shirtItem.Hue = characterCreation.Shirt.Hue;
+        playerMobileEntity.AddItem(ItemLayerType.Shirt, shirtItem);
 
-        if (playerMobileEntity.HasItem(ItemLayerType.Pants))
-        {
-            var pantsItem = playerMobileEntity.GetItem(ItemLayerType.Pants);
+        var pantsItem = _entityFactoryService.CreateItemEntity("pants");
+        pantsItem.Hue = characterCreation.Pants.Hue;
+        playerMobileEntity.AddItem(ItemLayerType.Pants, pantsItem);
 
-            pantsItem.Hue = characterCreation.Pants.Hue;
-        }
-
-        if (playerMobileEntity.HasItem(ItemLayerType.Shirt))
-        {
-            var shirtItem = playerMobileEntity.GetItem(ItemLayerType.Shirt);
-
-            shirtItem.Hue = characterCreation.Shirt.Hue;
-        }
+        var shoesItem = _entityFactoryService.CreateItemEntity("shoes");
+        playerMobileEntity.AddItem(ItemLayerType.Shoes, shoesItem);
 
         _mobileService.AddInWorld(playerMobileEntity);
 
