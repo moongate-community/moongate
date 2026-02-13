@@ -354,6 +354,7 @@ public class SpatialWorldService : ISpatialWorldService
         }
 
         // Add all coordinates for this region
+        int coordinatesAdded = 0;
         foreach (var regionCoordinate in region.Coordinates)
         {
             var rectangle = new Rectangle2D(
@@ -363,14 +364,18 @@ public class SpatialWorldService : ISpatialWorldService
                 regionCoordinate.Height
             );
 
-            if (!_regionCoordinates.TryAdd(rectangle, region.Id))
+            // Skip if coordinate is already mapped (can happen with duplicate coordinates in JSON)
+            if (_regionCoordinates.ContainsKey(rectangle))
             {
-                _logger.Warning("Region coordinate already mapped for region {RegionId}", region.Id);
+                _logger.Verbose("Duplicate coordinate for region {RegionId}, skipping", region.Id);
                 continue;
             }
+
+            _regionCoordinates.Add(rectangle, region.Id);
+            coordinatesAdded++;
         }
 
-        _logger.Information("Added region {RegionId} {RegionName} to spatial index", region.Id, region.Name);
+        _logger.Information("Added region {RegionId} {RegionName} with {CoordinateCount} coordinates to spatial index", region.Id, region.Name, coordinatesAdded);
     }
 
     public void AddMusics(List<JsonMusic> musics)
