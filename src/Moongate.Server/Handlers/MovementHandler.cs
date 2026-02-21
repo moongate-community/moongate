@@ -115,7 +115,7 @@ public class MovementHandler : BasePacketListener
         var credit = session.MoveCredit;
         var nextMove = session.MoveTime;
 
-        if (now - nextMove + MovementThrottleResetMs > 0)
+        if (now - nextMove - MovementThrottleResetMs > 0)
         {
             session.MoveCredit = 0;
             session.MoveTime = now;

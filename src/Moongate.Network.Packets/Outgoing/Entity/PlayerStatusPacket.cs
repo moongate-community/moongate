@@ -7,7 +7,7 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
-[PacketHandler(0x11, PacketSizing.Fixed, Length = 43, Description = "Status Bar Info")]
+[PacketHandler(0x11, PacketSizing.Variable, Description = "Status Bar Info")]
 public class PlayerStatusPacket : BaseGameNetworkPacket
 {
     public bool CanBeRenamed { get; set; }
@@ -25,14 +25,14 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
     public byte Version { get; set; }
 
     public PlayerStatusPacket()
-        : base(0x11, 43) { }
+        : base(0x11, -1) { }
 
-    public PlayerStatusPacket(UOMobileEntity mobile, bool canBeRenamed = false)
+    public PlayerStatusPacket(UOMobileEntity mobile, byte version = 0, bool canBeRenamed = false)
         : this()
     {
         Mobile = mobile;
         CanBeRenamed = canBeRenamed;
-        Version = 0;
+        Version = version;
     }
 
     public override void Write(ref SpanWriter writer)
@@ -46,12 +46,29 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
         var currentHits = Math.Clamp(Mobile.Hits, 0, maxHits);
 
         writer.Write(OpCode);
-        writer.Write((ushort)Length);
+        writer.Write((ushort)0); // Placeholder for length
         writer.Write(Mobile.Id.Value);
         writer.WriteAscii(Mobile.Name ?? string.Empty, 30);
         writer.WriteAttribute(maxHits, currentHits, normalize: true, reverse: true);
         writer.Write(CanBeRenamed);
         writer.Write(Version);
+
+        if (Version >= 1)
+        {
+            writer.Write(Mobile.Gender == Moongate.UO.Data.Types.GenderType.Female);
+            writer.Write((ushort)Mobile.Strength);
+            writer.Write((ushort)Mobile.Dexterity);
+            writer.Write((ushort)Mobile.Intelligence);
+            writer.Write((ushort)Mobile.Stamina);
+            writer.Write((ushort)Mobile.MaxStamina);
+            writer.Write((ushort)Mobile.Mana);
+            writer.Write((ushort)Mobile.MaxMana);
+            writer.Write(0); // Gold
+            writer.Write((ushort)0); // Resistance
+            writer.Write((ushort)0); // Weight
+        }
+
+        writer.WritePacketLength();
     }
 
     protected override bool ParsePayload(ref SpanReader reader)

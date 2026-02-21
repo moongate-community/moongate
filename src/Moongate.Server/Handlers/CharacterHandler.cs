@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Incoming.System;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
@@ -82,6 +83,8 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         Enqueue(session, new LoginConfirmPacket(character));
         Enqueue(session, new SupportFeaturesPacket());
         Enqueue(session, new DrawPlayerPacket(character));
+        Enqueue(session, new MovementSpeedControlPacket(MovementSpeedControlType.Disable));
+        Enqueue(session, new PlayerStatusPacket(character, 1));
 
         Enqueue(session, new MobileDrawPacket(character, character, true, true));
         EnqueueWornItems(session, character);
