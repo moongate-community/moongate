@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="0.24.0"></a>
+## [0.24.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.24.0) (2026-02-13)
+
+### Features
+
+* **fase-2:** implement GREEN phase - all Login packet tests passing (107/107) ([2847380](https://www.github.com/moongate-community/moongate/commit/2847380a07ac01dac67db38dc8bafca01a2b3c95))
+* **packets:** implement ServerListingPacket (0x5E) ([0b1778e](https://www.github.com/moongate-community/moongate/commit/0b1778e16eaf2b6ceed948fad7857e03169fe998))
+
+### Bug Fixes
+
+* correct ExpansionInfo property name for JSON deserialization ([589131b](https://www.github.com/moongate-community/moongate/commit/589131bcc2d76f237e7eb51464f5e23e32a63723))
+* prevent duplicate region warnings in spatial world service ([8f8dc62](https://www.github.com/moongate-community/moongate/commit/8f8dc6203dd6ef6968024e73c129ed7300ab28ec))
+* silently handle duplicate region coordinates ([f3ac2b9](https://www.github.com/moongate-community/moongate/commit/f3ac2b971dc8850a296840902cb453526d3fd9e9))
+* **commit:** correct commit message from corrupted cat alias ([ffa5c39](https://www.github.com/moongate-community/moongate/commit/ffa5c39e4159bd6730a7dd3bef1478c4fb6535d6))
+* **commit:** correct commit message from corrupted cat alias ([359fc1b](https://www.github.com/moongate-community/moongate/commit/359fc1b8cea91ba2915cb33a264af6dcdb24ba7f))
+* **commit:** correct commit message from corrupted cat alias ([091dd95](https://www.github.com/moongate-community/moongate/commit/091dd95f59a235683b46cdc4929eaf4be4641b2e))
+* **commit:** correct commit message from corrupted cat alias ([b5f4db1](https://www.github.com/moongate-community/moongate/commit/b5f4db1d736058e8ca00a93547c1662a89d81901))
+* **commit:** correct commit message from corrupted cat alias ([e968fc8](https://www.github.com/moongate-community/moongate/commit/e968fc836ce109a2b6f92d68ab005b100a789368))
+
+<a name="0.23.0"></a>
+## [0.23.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.23.0) (2025-08-12)
+
+### Features
+
+* update Moongate Server to v0.19.17.0 and add new item templates ([32eac71](https://www.github.com/moongate-community/moongate/commit/32eac716861d19c77d495bd42c13e3ab41afdb14))
+* **AiContext:** enhance AI context with action scheduling and state management ([028435d](https://www.github.com/moongate-community/moongate/commit/028435d8d0cf13be14acb422f1aa70fd8d5d1faf))
+* **commands:** add new "add_item" command for world item placement ([6700017](https://www.github.com/moongate-community/moongate/commit/6700017fdc20a6591f2b174e044541dab916a04c))
+* **commands:** add teleport command for user to teleport to target cursor ([4780214](https://www.github.com/moongate-community/moongate/commit/4780214f320d1f15d9962fb1502de50f0548e027))
+* **data:** add equipment item templates and random equipment pool ([46c6bfc](https://www.github.com/moongate-community/moongate/commit/46c6bfc9187ee10a98b8d10a9757adf7d16642a7))
+* **moongate:** add TypeScript support and configuration for scripts ([db0e905](https://www.github.com/moongate-community/moongate/commit/db0e90591ae5d44a39368b06f61f10abcbbba1e7))
+* **moongate:** update TypeScript definitions to v0.19.14.0 ([bcad3b6](https://www.github.com/moongate-community/moongate/commit/bcad3b657532ff62c5b6f73c685b69195a8c54a3))
+
+<a name="0.22.0"></a>
+## [0.22.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.22.0) (2025-07-22)
+
+### Features
+
+* **ai:** add speech recognition to AI brain actions ([b3fd287](https://www.github.com/moongate-community/moongate/commit/b3fd28724dc83f140d363768c092ad644ed015ef))
+* **EventLoopService:** add null check for action parameter in EnqueueDelayedAction to prevent null reference exceptions ([95910ba](https://www.github.com/moongate-community/moongate/commit/95910ba0adcfd840ac03f887d12fcb5f5b510c52))
+* **GraphicEffectPacket:** add properties for effect details and serialization ([20aeeb7](https://www.github.com/moongate-community/moongate/commit/20aeeb7cbb01d02ce943b1efdd5cf6cf8d0cc481))
+* **UOMobileEntity:** add speech and emote methods for enhanced interaction ([91ea804](https://www.github.com/moongate-community/moongate/commit/91ea8049145ca86c846e4d153e2fa61d07d5df3b))
+
+<a name="0.21.0"></a>
+## [0.21.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.21.0) (2025-07-22)
+
+### Features
+
+* **ai:** introduce Orion AI brain with basic speech actions ([b0609a8](https://www.github.com/moongate-community/moongate/commit/b0609a8e52ffe7f297aef1def5fabeb9030f4648))
+* **ai/orion.js:** add random movement to AI behavior to enhance realism ([c503d75](https://www.github.com/moongate-community/moongate/commit/c503d75726f841b1740627a32784400d4d61a04f))
+
+### Bug Fixes
+
+* **EventLoopConfig:** adjust default tick interval to 50ms for better performance ([3dac033](https://www.github.com/moongate-community/moongate/commit/3dac03327e3805ece56740e7ced5b00f5d54f171))
+* **orion.js:** correct method call to wrap.Say and randomize message selection ([8851d2a](https://www.github.com/moongate-community/moongate/commit/8851d2a8372d2a53f7f95f8dee135acf2beb9b6d))
+
+<a name="0.20.0"></a>
+## [0.20.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.20.0) (2025-07-21)
+
+### Features
+
+* **ai:** introduce AI module and service for brain management ([8e493d7](https://www.github.com/moongate-community/moongate/commit/8e493d7b5f6725e1b997553950297195bb8c758a))
+
+### Bug Fixes
+
+* **MobileService:** change serial initialization to use MobileStart for consistency ([0999816](https://www.github.com/moongate-community/moongate/commit/099981683494ec893764ce6df72a56d504f9fb56))
+
 <a name="0.19.0"></a>
 ## [0.19.0](https://www.github.com/moongate-community/moongate/releases/tag/v0.19.0) (2025-07-19)
 
