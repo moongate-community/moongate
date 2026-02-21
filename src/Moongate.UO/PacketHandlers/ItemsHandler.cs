@@ -44,6 +44,12 @@ public class ItemsHandler : IGamePacketHandler
     {
         var droppingItem = _itemService.GetItem(packet.ItemId);
 
+        if (droppingItem == null)
+        {
+            _logger.Warning("Item {ItemId} not found", packet.ItemId);
+            return;
+        }
+
         _logger.Information("Dropping item {DroppingItemId} on ground: {Ground}", droppingItem.Name, packet.IsGround);
 
         droppingItem.Map = session.Mobile.Map;
@@ -64,6 +70,12 @@ public class ItemsHandler : IGamePacketHandler
         droppingItem.MoveTo(packet.Location, false);
 
         var parentContainer = _itemService.GetItem(packet.ContainerId);
+
+        if (parentContainer == null)
+        {
+            _logger.Warning("Container {ContainerId} not found", packet.ContainerId);
+            return;
+        }
 
         if (!parentContainer.ContainsItem(droppingItem))
         {
@@ -88,6 +100,12 @@ public class ItemsHandler : IGamePacketHandler
 
         var droppingItem = _itemService.GetItem(packet.ItemId);
 
+        if (droppingItem == null)
+        {
+            _logger.Warning("Item {ItemId} not found", packet.ItemId);
+            return;
+        }
+
         mobile.AddItem(packet.Layer, droppingItem);
         droppingItem.ParentId = mobile.Id;
         droppingItem.Map = Map.Felucca;
@@ -105,6 +123,12 @@ public class ItemsHandler : IGamePacketHandler
     private async Task HandlePickUpItemAsync(GameSession session, PickUpItemPacket packet)
     {
         var item = _itemService.GetItem(packet.ItemSerial);
+
+        if (item == null)
+        {
+            _logger.Warning("Item {ItemId} not found", packet.ItemSerial);
+            return;
+        }
 
         if (!item.IsMovable)
         {

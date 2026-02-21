@@ -42,7 +42,7 @@ public class GameSessionService : IGameSessionService
     {
         var session = _sessions.Values
                                .AsValueEnumerable()
-                               .FirstOrDefault(s => s.Mobile.Id == mobile.Id);
+                               .FirstOrDefault(s => s.Mobile?.Id == mobile.Id);
 
         if (session != null)
         {

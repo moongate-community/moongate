@@ -43,6 +43,7 @@ public class NetworkService : INetworkService
     {
         var packet = new TPacket();
         _packetBuilders[packet.OpCode] = () => new TPacket();
+        _logger.Debug("Bound packet: OpCode={OpCode}, Type={PacketType}", packet.OpCode.ToPacketString(), typeof(TPacket).Name);
     }
 
     public void BroadcastPacket(IUoNetworkPacket packet)
@@ -305,6 +306,7 @@ public class NetworkService : INetworkService
             }
 
             var opcode = span[0];
+            _logger.Verbose("Processing opcode: 0x{Opcode:X2}, remaining: {Length} bytes", opcode, span.Length);
 
             if (!_packetDefinitions.TryGetValue(opcode, out var packetDefinition))
             {
@@ -324,17 +326,22 @@ public class NetworkService : INetworkService
 
             if (packetDefinition.Length == -1)
             {
-                if (span.Length < 2)
+                if (span.Length < 4)  // Need 1 byte opcode + 3 bytes for size
                 {
+                    _logger.Warning("Variable-length packet 0x{Opcode:X2} needs 4 bytes but only {Available} available", opcode, span.Length);
                     break;
                 }
 
-                headerSize = BinaryPrimitives.ReadUInt16BigEndian(span.Slice(1, 3));
+                headerSize = BinaryPrimitives.ReadUInt16BigEndian(span.Slice(1, 2));
                 packetSize = headerSize;
+                _logger.Verbose("Variable-length packet 0x{Opcode:X2} declares size: {Size}, available: {Available}", opcode, packetSize, span.Length);
 
                 if (span.Length < packetSize)
                 {
-                    break;
+                    _logger.Warning("Variable-length packet 0x{Opcode:X2} size {DeclaredSize} exceeds available {Available}, skipping", opcode, packetSize, span.Length);
+                    // Skip this malformed packet and try next byte
+                    remainingBuffer = remainingBuffer[1..];
+                    continue;
                 }
             }
             else
@@ -343,6 +350,7 @@ public class NetworkService : INetworkService
 
                 if (span.Length < packetSize)
                 {
+                    _logger.Verbose("Fixed-length packet 0x{Opcode:X2} size {DeclaredSize} exceeds available {Available}, breaking", opcode, packetSize, span.Length);
                     break;
                 }
             }
@@ -354,12 +362,14 @@ public class NetworkService : INetworkService
             if (!_packetBuilders.TryGetValue(packetBuffer.ReadByte(), out var packetBuilder))
             {
                 _logger.Warning(
-                    "No packet builder found for opcode: 0x{Opcode:X2} ({PacketName})",
+                    "No packet builder found for opcode: 0x{Opcode:X2} ({PacketName}), skipping {PacketSize} bytes",
                     opcode,
-                    packetDefinition.Description
+                    packetDefinition.Description,
+                    packetSize
                 );
 
-                break;
+                remainingBuffer = remainingBuffer[packetSize..];
+                continue;
             }
 
             var packet = packetBuilder();
@@ -383,6 +393,8 @@ public class NetworkService : INetworkService
             }
 
             remainingBuffer = remainingBuffer[packetSize..];
+            _logger.Verbose("Successfully processed opcode: 0x{Opcode:X2}, advanced {PacketSize} bytes, {Remaining} bytes left",
+                opcode, packetSize, remainingBuffer.Length);
         }
 
         if (remainingBuffer.Length > 0)

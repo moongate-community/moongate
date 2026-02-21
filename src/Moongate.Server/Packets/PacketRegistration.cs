@@ -275,7 +275,7 @@ public static class PacketRegistration
         networkService.RegisterPacket(0x9F, -1, "Sell List Reply");
 
         /// Draw Container
-        networkService.RegisterPacket(0x24, 7, "Draw Container");
+        networkService.RegisterPacket(0x24, 9, "Draw Container");
 
         /// Add Item To Container
         networkService.RegisterPacket(0x25, 20, "Add Item To Container");
@@ -847,7 +847,7 @@ public static class PacketRegistration
         networkService.RegisterPacket(0xBC, 3, "Seasonal Information");
 
         /// Enable locked client features
-        networkService.RegisterPacket(0xB9, 3, "Enable locked client features");
+        networkService.RegisterPacket(0xB9, 5, "Enable locked client features");
 
         /// Quest Arrow
         networkService.RegisterPacket(0xBA, 6, "Quest Arrow");

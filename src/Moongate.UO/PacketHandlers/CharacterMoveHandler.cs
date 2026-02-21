@@ -2,7 +2,6 @@ using Moongate.Core.Server.Interfaces.Packets;
 using Moongate.Core.Server.Types;
 using Moongate.UO.Data.Interfaces.Services;
 using Moongate.UO.Data.Packets.Characters;
-using Moongate.UO.Data.Packets.GeneralInformation.Factory;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Session;
 using Moongate.UO.Data.Types;
@@ -64,7 +63,7 @@ public class CharacterMoveHandler : IGamePacketHandler
             return false; // Admins | GM  are not throttled
         }
 
-        var now = DateTime.UtcNow.Ticks;
+        var now = Environment.TickCount64;
         var credit = session.MoveCredit;
         var nextMove = session.MoveTime;
 
@@ -93,10 +92,13 @@ public class CharacterMoveHandler : IGamePacketHandler
 
     private async Task ProcessMoveRequestAsync(GameSession session, MoveRequestPacket packet)
     {
+        // Bug fix: return after sequence mismatch rejection
         if (session.MoveSequence == 0 && packet.Sequence != 0)
         {
             session.SendPackets(new MoveRejectionPacket(packet.Sequence, session.Mobile.Location, packet.Direction));
             session.MoveSequence = 0;
+
+            return;
         }
 
         if (Throttle(session))
@@ -106,42 +108,47 @@ public class CharacterMoveHandler : IGamePacketHandler
             return;
         }
 
-        var newLocation = session.Mobile.Location + packet.Direction;
+        var currentDir = (DirectionType)((byte)session.Mobile.Direction & 0x07);
+        var requestedDir = (DirectionType)((byte)packet.Direction & 0x07);
 
-        var landTile = session.Mobile.Map.GetLandTile(newLocation.X, newLocation.Y);
-
-        newLocation = new(newLocation.X, newLocation.Y, landTile.Z);
-
-        _mobileService.MoveMobile(session.Mobile, newLocation);
-        var isRunning = (packet.Direction & DirectionType.Running) != 0;
-
-        var baseDirection = (DirectionType)((byte)packet.Direction & (byte)DirectionType.Running);
-
-        session.Mobile.Direction = baseDirection;
-
-        if (session.MoveSequence == 255)
+        if (currentDir == requestedDir)
         {
-            session.MoveSequence = 1;
+            // Same base direction = actual positional movement
+            var newLocation = session.Mobile.Location + packet.Direction;
+            var landTile = session.Mobile.Map.GetLandTile(newLocation.X, newLocation.Y);
+            newLocation = new(newLocation.X, newLocation.Y, landTile.Z);
+
+            _mobileService.MoveMobile(session.Mobile, newLocation);
         }
 
-        session.MoveSequence++;
+        // Update direction (with Running flag preserved)
+        session.Mobile.Direction = packet.Direction;
+
+        var isRunning = (packet.Direction & DirectionType.Running) != 0;
 
         _logger.Debug(
-            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning} fastWalk {FastWalk}",
+            "Processing move request for session {SessionId} with sequence {MoveSequence} Direction {Direction} is running {IsRunning}",
             session.SessionId,
             session.MoveSequence,
             packet.Direction,
-            isRunning,
-            packet.FastKey
+            isRunning
         );
 
         session.MoveTime += ComputeSpeed(session.Mobile, packet.Direction);
 
-        var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)packet.Sequence);
-        var addFastKey = GeneralInformationFactory.CreateAddKeyToFastWalkStack((uint)packet.Sequence + 1);
+        // Send ack with server sequence BEFORE incrementing
+        var moveAckPacket = new MoveAckPacket(session.Mobile, (byte)session.MoveSequence);
 
-        // var mountSpeed = GeneralInformationFactory.CreateMountSpeed(3);
+        session.SendPackets(moveAckPacket);
 
-        session.SendPackets(moveAckPacket, addFastKey);
+        // Increment sequence AFTER sending ack (matching ModernUO)
+        var newSeq = (int)packet.Sequence + 1;
+
+        if (newSeq == 256)
+        {
+            newSeq = 1;
+        }
+
+        session.MoveSequence = (byte)newSeq;
     }
 }

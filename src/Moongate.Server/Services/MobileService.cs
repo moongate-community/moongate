@@ -42,26 +42,37 @@ public class MobileService : IMobileService
         MobileAdded?.Invoke(mobile);
     }
 
+    public async Task<UOMobileEntity> CreateMobileAsync()
+    {
+        await _saveLock.WaitAsync();
+        try
+        {
+            var lastSerial = new Serial(Serial.MobileStart);
+
+            if (_availableMobiles.Count > 0)
+            {
+                lastSerial = _availableMobiles.Keys.Last() + 1;
+            }
+
+            var mobile = new UOMobileEntity
+            {
+                Id = lastSerial
+            };
+
+            _availableMobiles[lastSerial] = mobile;
+
+            return mobile;
+        }
+        finally
+        {
+            _saveLock.Release();
+        }
+    }
+
     public UOMobileEntity CreateMobile()
     {
-        _saveLock.Wait();
-        var lastSerial = new Serial(Serial.MobileStart);
-
-        if (_availableMobiles.Count > 0)
-        {
-            lastSerial = _availableMobiles.Keys.Last() + 1;
-        }
-
-        var mobile = new UOMobileEntity
-        {
-            Id = lastSerial
-        };
-
-        _availableMobiles[lastSerial] = mobile;
-
-        _saveLock.Release();
-
-        return mobile;
+        // Synchronous wrapper for backward compatibility - NOT recommended for new code
+        return CreateMobileAsync().GetAwaiter().GetResult();
     }
 
     public void Dispose()

@@ -19,6 +19,7 @@ public interface IMobileService : IMoongateAutostartService, IPersistenceLoadSav
 
     void AddInWorld(UOMobileEntity mobile);
     UOMobileEntity CreateMobile();
+    Task<UOMobileEntity> CreateMobileAsync();
     UOMobileEntity? GetMobile(Serial id);
     void MoveMobile(UOMobileEntity mobile, Point3D newLocation);
     IEnumerable<UOMobileEntity> QueryMobiles(Func<UOMobileEntity, bool> predicate);

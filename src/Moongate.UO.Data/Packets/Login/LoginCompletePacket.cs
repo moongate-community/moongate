@@ -13,4 +13,10 @@ public class LoginCompletePacket : BaseUoPacket
 
         return writer.ToArray();
     }
+
+    protected override bool Read(SpanReader reader)
+    {
+        // LoginComplete is typically server-to-client only, but accept if received
+        return true;
+    }
 }

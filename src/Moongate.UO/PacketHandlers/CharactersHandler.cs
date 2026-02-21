@@ -66,7 +66,7 @@ public class CharactersHandler : IGamePacketHandler
             characterCreation.CharacterName
         );
 
-        var playerMobileEntity = _mobileService.CreateMobile();
+        var playerMobileEntity = await _mobileService.CreateMobileAsync();
 
         session.Account.Characters.Add(
             new()
@@ -124,42 +124,48 @@ public class CharactersHandler : IGamePacketHandler
 
         _scriptEngineService.ExecuteCallback("OnCharacterCreated", createContext);
 
-        // TODO: Move logic for default items and colors
+        // Create default clothing items
+        var shirtItem = _entityFactoryService.CreateItemEntity("shirt");
+        shirtItem.Hue = characterCreation.Shirt.Hue;
+        playerMobileEntity.AddItem(ItemLayerType.Shirt, shirtItem);
 
-        if (playerMobileEntity.HasItem(ItemLayerType.Pants))
-        {
-            var pantsItem = playerMobileEntity.GetItem(ItemLayerType.Pants);
+        var pantsItem = _entityFactoryService.CreateItemEntity("pants");
+        pantsItem.Hue = characterCreation.Pants.Hue;
+        playerMobileEntity.AddItem(ItemLayerType.Pants, pantsItem);
 
-            pantsItem.Hue = characterCreation.Pants.Hue;
-        }
+        var shoesItem = _entityFactoryService.CreateItemEntity("shoes");
+        playerMobileEntity.AddItem(ItemLayerType.Shoes, shoesItem);
 
-        if (playerMobileEntity.HasItem(ItemLayerType.Shirt))
-        {
-            var shirtItem = playerMobileEntity.GetItem(ItemLayerType.Shirt);
-
-            shirtItem.Hue = characterCreation.Shirt.Hue;
-        }
+        session.Mobile = playerMobileEntity;
 
         _mobileService.AddInWorld(playerMobileEntity);
 
         await _eventBusService.PublishAsync(new SavePersistenceRequestEvent());
 
-        if (session.Account.Characters.Count == 1)
-        {
-            session.Mobile = playerMobileEntity;
-            await _eventBusService.PublishAsync(
-                new CharacterLoggedEvent(
-                    session.SessionId,
-                    playerMobileEntity.Id,
-                    playerMobileEntity.Name
-                )
-            );
-        }
+        await _eventBusService.PublishAsync(
+            new CharacterLoggedEvent(
+                session.SessionId,
+                playerMobileEntity.Id,
+                playerMobileEntity.Name
+            )
+        );
     }
 
     private async Task DeleteCharacterAsync(GameSession session, CharacterDeletePacket characterDeletion)
     {
         var character = session.Account.GetCharacter(characterDeletion.Index);
+
+        if (character == null)
+        {
+            _logger.Warning(
+                "Character deletion failed for account {AccountName} - Character at index {Index} not found.",
+                session.Account.Username,
+                characterDeletion.Index
+            );
+
+            return;
+        }
+
         var mobileEntity = _mobileService.GetMobile(character.MobileId);
 
         if (mobileEntity == null)
@@ -195,7 +201,29 @@ public class CharactersHandler : IGamePacketHandler
     {
         var character = session.Account.GetCharacter(packet.CharacterName);
 
+        if (character == null)
+        {
+            _logger.Warning(
+                "Character selection failed for account {AccountName} - Character {CharacterName} not found.",
+                session.Account.Username,
+                packet.CharacterName
+            );
+
+            return;
+        }
+
         var mobile = _mobileService.GetMobile(character.MobileId);
+
+        if (mobile == null)
+        {
+            _logger.Warning(
+                "Character selection failed for account {AccountName} - Mobile entity for character {CharacterName} not found.",
+                session.Account.Username,
+                packet.CharacterName
+            );
+
+            return;
+        }
 
         session.Mobile = mobile;
         mobile.IsPlayer = true;
