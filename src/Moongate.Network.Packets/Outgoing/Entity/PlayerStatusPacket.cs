@@ -73,14 +73,14 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        if (reader.Remaining != 42)
+        if (reader.Remaining < 42)
         {
             return false;
         }
 
         var declaredLength = reader.ReadUInt16();
 
-        if (declaredLength != Length)
+        if (declaredLength != reader.Length)
         {
             return false;
         }
@@ -91,6 +91,26 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
         MaxHits = reader.ReadUInt16();
         CanBeRenamed = reader.ReadBoolean();
         Version = reader.ReadByte();
+
+        if (Version >= 1)
+        {
+            if (reader.Remaining < 24)
+            {
+                return false;
+            }
+
+            _ = reader.ReadBoolean(); // Sex+Race
+            _ = reader.ReadUInt16(); // Strength
+            _ = reader.ReadUInt16(); // Dexterity
+            _ = reader.ReadUInt16(); // Intelligence
+            _ = reader.ReadUInt16(); // Current Stamina
+            _ = reader.ReadUInt16(); // Max Stamina
+            _ = reader.ReadUInt16(); // Current Mana
+            _ = reader.ReadUInt16(); // Max Mana
+            _ = reader.ReadUInt32(); // Gold
+            _ = reader.ReadUInt16(); // Resistance
+            _ = reader.ReadUInt16(); // Weight
+        }
 
         return reader.Remaining == 0;
     }

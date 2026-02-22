@@ -19,8 +19,7 @@ public class NamesLoaderTests
             DirectoryType.Scripts,
             DirectoryType.Save,
             DirectoryType.Logs,
-            DirectoryType.Cache,
-            DirectoryType.Database
+            DirectoryType.Cache
         );
 
         var namesDirectory = Path.Combine(directoriesConfig[DirectoryType.Data], "names");

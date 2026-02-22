@@ -41,7 +41,7 @@ public sealed class OutboundPacketSender : IOutboundPacketSender
         if (_logPacketData)
         {
             _packetDataLogger.Information(
-                "Outbound packet Session={SessionId} OpCode=0x{OpCode:X2} Name={PacketName} Length={Length}{NewLine}{Dump}",
+                ">> packet Session={SessionId} OpCode=0x{OpCode:X2} Name={PacketName} Length={Length}{NewLine}{Dump}",
                 outgoingPacket.SessionId,
                 outgoingPacket.Packet.OpCode,
                 outgoingPacket.Packet.GetType().Name,

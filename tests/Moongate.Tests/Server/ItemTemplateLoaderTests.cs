@@ -32,8 +32,7 @@ public class ItemTemplateLoaderTests
             DirectoryType.Scripts,
             DirectoryType.Save,
             DirectoryType.Logs,
-            DirectoryType.Cache,
-            DirectoryType.Database
+            DirectoryType.Cache
         );
 
         var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "clothes");
