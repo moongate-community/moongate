@@ -20,6 +20,10 @@ public sealed partial class ItemSnapshot
 
     public int Weight { get; set; }
 
+    public bool IsStackable { get; set; }
+
+    public byte Rarity { get; set; }
+
     public int ItemId { get; set; }
 
     public int Hue { get; set; }

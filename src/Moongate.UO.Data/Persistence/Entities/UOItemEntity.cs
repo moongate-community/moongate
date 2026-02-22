@@ -26,6 +26,10 @@ public class UOItemEntity : IItemEntity
 
     public int? GumpId { get; set; }
 
+    public bool IsStackable { get; set; }
+
+    public ItemRarity Rarity { get; set; }
+
     /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>

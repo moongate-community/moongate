@@ -52,6 +52,8 @@ public sealed class EntityFactoryService : IEntityFactoryService
             Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
             Name = template.Name,
             Weight = (int)template.Weight,
+            IsStackable = template.Stackable,
+            Rarity = ItemRarity.Common,
             ItemId = ParseItemId(template.ItemId),
             Hue = template.Hue.Resolve(),
             GumpId = ParseOptionalInt(template.GumpId),
@@ -59,7 +61,7 @@ public sealed class EntityFactoryService : IEntityFactoryService
             ParentContainerId = Serial.Zero,
             ContainerPosition = Point2D.Zero,
             EquippedMobileId = Serial.Zero,
-            EquippedLayer = null
+            EquippedLayer = null,
         };
 
         var itemFromTile = TileData.ItemTable[item.ItemId];
@@ -73,7 +75,6 @@ public sealed class EntityFactoryService : IEntityFactoryService
         {
             item.Weight = itemFromTile.Weight;
         }
-
 
         return item;
     }
@@ -182,6 +183,8 @@ public sealed class EntityFactoryService : IEntityFactoryService
             Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
             Name = "Backpack",
             Weight = 0,
+            IsStackable = false,
+            Rarity = ItemRarity.Common,
             ItemId = 0x0E75,
             Hue = 0,
             Location = Point3D.Zero,

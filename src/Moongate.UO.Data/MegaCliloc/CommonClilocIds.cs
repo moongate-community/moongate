@@ -25,6 +25,11 @@ public static class CommonClilocIds
     public const uint Weight = 1072788;
 
     /// <summary>
+    /// Artifact rarity ~1_val~
+    /// </summary>
+    public const uint ItemRarity = 1061078;
+
+    /// <summary>
     /// Durability ~1_val~ / ~2_val~
     /// </summary>
     public const uint Durability = 1060639;

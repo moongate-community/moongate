@@ -11,6 +11,7 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.MegaCliloc;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
 
@@ -55,6 +56,50 @@ public class ToolTipHandlerTests
                 Assert.That(response.IsClientRequest, Is.False);
                 Assert.That(response.Serial, Is.EqualTo(itemSerial));
                 Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.ObjectName), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldIncludeRarityProperty_WhenItemHasRarity()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000021u;
+        await persistenceService.UnitOfWork.Items.UpsertAsync(
+            new UOItemEntity
+            {
+                Id = itemSerial,
+                ItemId = 0x0EED,
+                Hue = 0x0021,
+                Rarity = ItemRarity.Legendary
+            }
+        );
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        var handled = await handler.HandlePacketAsync(session, request);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+            }
+        );
+
+        var response = DeserializeResponse(outbound.Packet);
+        var rarityProperty = response.Properties.FirstOrDefault(p => p.ClilocId == CommonClilocIds.ItemRarity);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(rarityProperty.ClilocId, Is.EqualTo(CommonClilocIds.ItemRarity));
+                Assert.That(rarityProperty.Text, Is.EqualTo(ItemRarity.Legendary.ToString()));
             }
         );
     }
