@@ -1,6 +1,6 @@
 {
-  "startingGold": 1000,
-  "baseBackpackItems": [
+  "schema": "moongate.startup.base.v1",
+  "backpack": [
     {
       "templateId": "RedBook",
       "args": {
@@ -15,119 +15,12 @@
       "amount": 1000
     },
     {
-      "templateId": "Dagger"
-    },
-    {
       "templateId": "Candle"
     }
   ],
-  "baseAppearanceRules": {
-    "shirt": {
-      "human": [
-        {
-          "templateId": "Shirt",
-          "hue": "input.shirtHue"
-        },
-        {
-          "templateId": "FancyShirt",
-          "hue": "input.shirtHue"
-        },
-        {
-          "templateId": "Doublet",
-          "hue": "input.shirtHue"
-        }
-      ],
-      "elf": [
-        {
-          "templateId": "ElvenShirt",
-          "hue": "input.shirtHue"
-        }
-      ],
-      "gargoyle": {
-        "male": [
-          {
-            "templateId": "GargishClothChestType1",
-            "hue": "input.shirtHue"
-          }
-        ],
-        "female": [
-          {
-            "templateId": "GargishClothChestType2",
-            "hue": "input.shirtHue"
-          }
-        ]
-      }
-    },
-    "pants": {
-      "human": {
-        "male": [
-          {
-            "templateId": "LongPants",
-            "hue": "input.pantsHue"
-          },
-          {
-            "templateId": "ShortPants",
-            "hue": "input.pantsHue"
-          }
-        ],
-        "female": [
-          {
-            "templateId": "Skirt",
-            "hue": "input.pantsHue"
-          },
-          {
-            "templateId": "Kilt",
-            "hue": "input.pantsHue"
-          }
-        ]
-      },
-      "elf": [
-        {
-          "templateId": "ElvenPants",
-          "hue": "input.pantsHue"
-        }
-      ],
-      "gargoyle": {
-        "male": [
-          {
-            "templateId": "GargishClothLegsType1",
-            "hue": "input.pantsHue"
-          }
-        ],
-        "female": [
-          {
-            "templateId": "GargishClothLegsType2",
-            "hue": "input.pantsHue"
-          }
-        ]
-      }
-    },
-    "shoes": {
-      "human": [
-        {
-          "templateId": "Shoes",
-          "hue": "random.yellow"
-        }
-      ],
-      "elf": [
-        {
-          "templateId": "ElvenBoots"
-        }
-      ],
-      "gargoyle": []
-    }
-  },
-  "globalRules": [
+  "equip": [
     {
-      "when": {
-        "race": "elf"
-      },
-      "equip": [
-        {
-          "templateId": "WildStaff"
-        }
-      ],
-      "description": "Applied at end of profession setup in ModernUO"
+      "templateId": "Dagger"
     }
   ]
 }
