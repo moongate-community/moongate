@@ -1,6 +1,8 @@
 using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -9,6 +11,7 @@ using Moongate.Server.Types.Commands;
 
 namespace Moongate.Server.Handlers;
 
+[RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket)]
 public class SpeechHandler : BasePacketListener
 {
     private readonly ICommandSystemService _commandSystemService;

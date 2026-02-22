@@ -58,6 +58,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Server.Metrics.Generators\Moongate.Server.Metrics.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\Moongate.Server.PacketHandlers.Generators\Moongate.Server.PacketHandlers.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <ItemGroup>

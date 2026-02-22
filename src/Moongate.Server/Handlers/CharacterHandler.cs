@@ -1,10 +1,12 @@
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.System;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -20,6 +22,7 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
+[RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
 public class CharacterHandler : BasePacketListener, IGameEventListener<CharacterSelectedEvent>
 {
     private readonly ILogger _logger = Log.ForContext<CharacterHandler>();

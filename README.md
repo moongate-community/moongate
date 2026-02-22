@@ -46,6 +46,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Persistence](#persistence)
 - [Templates](#templates)
 - [Solution Structure](#solution-structure)
+- [Source Generators (AOT)](#source-generators-aot)
 - [Event And Packet Separation](#event-and-packet-separation)
 - [Game Loop Scheduling](#game-loop-scheduling)
 - [Requirements](#requirements)
@@ -193,6 +194,8 @@ Resolution model:
 - `src/Moongate.Server`: host/bootstrap, game loop, network orchestration, session/event services.
 - `src/Moongate.Network.Packets`: packet contracts, descriptors, registry, packet definitions.
 - `src/Moongate.Network.Packets.Generators`: source generator for packet table registration.
+- `src/Moongate.Server.PacketHandlers.Generators`: source generator for packet listener bootstrap registration.
+- `src/Moongate.Server.Metrics.Generators`: source generator for metric snapshot mapping.
 - `src/Moongate.UO.Data`: UO domain data types and utility models.
 - `src/Moongate.Core`: shared low-level utilities.
 - `src/Moongate.Network`: TCP/network primitives.
@@ -200,6 +203,26 @@ Resolution model:
 - `src/Moongate.Server.Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
 - `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
+
+## Source Generators (AOT)
+
+Moongate uses source generators to reduce runtime reflection/discovery work and improve Native AOT compatibility and startup performance.
+
+Current generators:
+
+- `Moongate.Network.Packets.Generators`
+  - Generates packet table/registry wiring from packet metadata.
+- `Moongate.Server.PacketHandlers.Generators`
+  - Generates bootstrap packet listener registrations from `[RegisterPacketHandler(...)]` attributes.
+  - Supports multiple opcode attributes on the same listener class.
+- `Moongate.Server.Metrics.Generators`
+  - Generates metric snapshot mappers from metric-decorated snapshot models.
+
+Why this helps for AOT:
+
+- Moves dynamic mapping logic from runtime to compile time.
+- Reduces dependency on reflection-based registration paths.
+- Improves deterministic startup behavior.
 
 ## Event And Packet Separation
 
