@@ -7,6 +7,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Serilog;
 
@@ -49,6 +50,8 @@ public sealed class EntityFactoryService : IEntityFactoryService
         var item = new UOItemEntity
         {
             Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
+            Name = template.Name,
+            Weight = (int)template.Weight,
             ItemId = ParseItemId(template.ItemId),
             Hue = template.Hue.Resolve(),
             GumpId = ParseOptionalInt(template.GumpId),
@@ -58,6 +61,19 @@ public sealed class EntityFactoryService : IEntityFactoryService
             EquippedMobileId = Serial.Zero,
             EquippedLayer = null
         };
+
+        var itemFromTile = TileData.ItemTable[item.ItemId];
+
+        if (string.IsNullOrEmpty(item.Name))
+        {
+            item.Name = itemFromTile.Name;
+        }
+
+        if (item.Weight == 0)
+        {
+            item.Weight = itemFromTile.Weight;
+        }
+
 
         return item;
     }
@@ -164,6 +180,8 @@ public sealed class EntityFactoryService : IEntityFactoryService
         return new()
         {
             Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
+            Name = "Backpack",
+            Weight = 0,
             ItemId = 0x0E75,
             Hue = 0,
             Location = Point3D.Zero,

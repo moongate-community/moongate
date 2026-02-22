@@ -98,7 +98,7 @@ public class ToolTipHandler : BasePacketListener
                 return null;
             }
 
-            return MegaClilocBuilder.CreateItemTooltip(item.Id, $"Item 0x{item.ItemId:X4}", item.ItemId, hue: item.Hue);
+            return MegaClilocBuilder.CreateItemTooltip(item.Id, item.Name, item.ItemId, hue: item.Hue);
         }
 
         _logger.Debug("MegaCliloc request ignored. Invalid serial {Serial}.", serial);

@@ -16,6 +16,10 @@ public class UOItemEntity : IItemEntity
 
     public Point3D Location { get; set; }
 
+    public string? Name { get; set; }
+
+    public int Weight { get; set; }
+
     public int ItemId { get; set; }
 
     public int Hue { get; set; }
@@ -60,5 +64,5 @@ public class UOItemEntity : IItemEntity
     }
 
     public override string ToString()
-        => $"Item(Id={Id}, ItemId=0x{ItemId:X4}, Location={Location})";
+        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, Location={Location})";
 }

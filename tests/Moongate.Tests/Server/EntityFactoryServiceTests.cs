@@ -33,7 +33,8 @@ public class EntityFactoryServiceTests
                 Hue = HueSpec.FromValue(100),
                 GoldValue = GoldValueSpec.FromValue(1),
                 LootType = LootType.Regular,
-                ScriptId = "none"
+                ScriptId = "none",
+                Weight = 6
             }
         );
 
@@ -50,6 +51,8 @@ public class EntityFactoryServiceTests
             () =>
             {
                 Assert.That(item.Id.IsItem, Is.True);
+                Assert.That(item.Name, Is.EqualTo("Shirt"));
+                Assert.That(item.Weight, Is.EqualTo(6));
                 Assert.That(item.ItemId, Is.EqualTo(0x1517));
                 Assert.That(item.Hue, Is.EqualTo(100));
             }
@@ -154,7 +157,8 @@ public class EntityFactoryServiceTests
                 Hue = HueSpec.FromValue(0),
                 GoldValue = GoldValueSpec.FromValue(0),
                 LootType = LootType.Regular,
-                ScriptId = "none"
+                ScriptId = "none",
+                Weight = 1
             }
         );
 
@@ -171,6 +175,8 @@ public class EntityFactoryServiceTests
             () =>
             {
                 Assert.That(backpack.Id.IsItem, Is.True);
+                Assert.That(backpack.Name, Is.EqualTo("Backpack"));
+                Assert.That(backpack.Weight, Is.EqualTo(1));
                 Assert.That(backpack.ItemId, Is.EqualTo(0x0E75));
             }
         );

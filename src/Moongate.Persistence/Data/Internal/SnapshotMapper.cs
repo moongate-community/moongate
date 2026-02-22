@@ -48,6 +48,8 @@ internal static class SnapshotMapper
         {
             Id = (Serial)snapshot.Id,
             Location = new(snapshot.X, snapshot.Y, snapshot.Z),
+            Name = snapshot.Name,
+            Weight = snapshot.Weight,
             ItemId = snapshot.ItemId,
             Hue = snapshot.Hue,
             GumpId = snapshot.GumpId,
@@ -64,6 +66,8 @@ internal static class SnapshotMapper
             X = entity.Location.X,
             Y = entity.Location.Y,
             Z = entity.Location.Z,
+            Name = entity.Name,
+            Weight = entity.Weight,
             ItemId = entity.ItemId,
             Hue = entity.Hue,
             GumpId = entity.GumpId,

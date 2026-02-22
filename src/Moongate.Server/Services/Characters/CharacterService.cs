@@ -6,6 +6,7 @@ using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Serilog;
 
@@ -233,6 +234,8 @@ public class CharacterService : ICharacterService
         var item = new UOItemEntity
         {
             Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
+            Name = itemId == GoldItemId ? TileData.ItemTable[itemId].Name : null,
+            Weight = TileData.ItemTable[itemId].Weight,
             ItemId = itemId,
             Hue = 0,
             Location = Point3D.Zero,
@@ -256,6 +259,8 @@ public class CharacterService : ICharacterService
         var item = new UOItemEntity
         {
             Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
+            Name = TileData.ItemTable[itemId].Name,
+            Weight = TileData.ItemTable[itemId].Weight,
             ItemId = itemId,
             Hue = 0,
             Location = Point3D.Zero,
@@ -292,6 +297,8 @@ public class CharacterService : ICharacterService
                        new UOItemEntity
                        {
                            Id = character.BackpackId,
+                           Name = "Backpack",
+                           Weight = 0,
                            ItemId = BackpackItemId,
                            Hue = 0,
                            Location = Point3D.Zero,
@@ -364,6 +371,8 @@ public class CharacterService : ICharacterService
         {
             Id = item.Id,
             Location = item.Location,
+            Name = item.Name,
+            Weight = item.Weight,
             ItemId = item.ItemId,
             Hue = item.Hue,
             GumpId = item.GumpId,
