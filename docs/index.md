@@ -2,7 +2,7 @@
 
 Welcome to the official documentation for **Moongate v2**, a modern Ultima Online server emulator built with .NET 10 and NativeAOT compilation.
 
-![Moongate v2 Banner](../images/moongate_logo.png)
+![Moongate v2 Banner](images/moongate_logo.png)
 
 > **Moongate v2** is designed for performance, modularity, and extensibility. It leverages modern .NET features to deliver an ultra-fast, customizable UO server experience.
 
@@ -26,6 +26,7 @@ Understand the internal workings:
 - [Game Loop](articles/architecture/game-loop.md) - Timestamp-driven game loop scheduling
 - [Event System](articles/architecture/events.md) - Domain events and message bus
 - [Session Management](articles/architecture/sessions.md) - Client session handling
+- [Source Generators](articles/architecture/generators.md) - Compile-time registration and mapping
 
 ### Scripting
 
@@ -76,6 +77,8 @@ Moongate v2 is **actively in development**. Current capabilities include:
 - ✅ TCP server with connection lifecycle management
 - ✅ Packet framing/parsing for fixed and variable sizes
 - ✅ Source-generated packet registration
+- ✅ Source-generated packet listener bootstrap registration
+- ✅ Source-generated metrics snapshot mapping
 - ✅ Inbound message bus for network → game-loop communication
 - ✅ Domain event bus with player connect/disconnect events
 - ✅ Lua scripting runtime with `.luarc` generation

@@ -22,7 +22,8 @@ docs/
 │   │   ├── game-loop.md
 │   │   ├── events.md
 │   │   ├── sessions.md
-│   │   └── solution.md
+│   │   ├── solution.md
+│   │   └── generators.md
 │   ├── scripting/          # Lua scripting
 │   │   ├── overview.md
 │   │   ├── modules.md
@@ -54,6 +55,7 @@ dotnet tool update -g docfx
 
 ```bash
 cd docs
+dotnet build ../src/Moongate.Network.Packets/Moongate.Network.Packets.csproj -c Release
 docfx docfx.json
 ```
 

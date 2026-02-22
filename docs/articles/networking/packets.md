@@ -61,6 +61,29 @@ The packets generator project provides generated artifacts used by runtime:
 
 This avoids manual opcode duplication and keeps registration centralized.
 
+## Listener Registration Generation
+
+Server listener wiring is also source-generated.
+
+Listener classes declare handled opcodes:
+
+```csharp
+[RegisterPacketHandler(PacketDefinition.MoveRequestPacket)]
+public class MovementHandler : BasePacketListener
+{
+    // ...
+}
+```
+
+`Moongate.Server.PacketHandlers.Generators` produces bootstrap code that calls
+`RegisterPacketHandler<TListener>(container, opCode)` for all discovered attributes.
+
+This keeps:
+
+- listener mapping explicit and compile-time validated.
+- bootstrap code shorter and easier to maintain.
+- runtime startup free from reflection-based handler scanning.
+
 ---
 
 **Previous**: [Protocol Reference](protocol.md)

@@ -1,6 +1,8 @@
 using Moongate.Network.Packets.Incoming.Movement;
+using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Movement;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Listeners.Base;
@@ -10,6 +12,7 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
+[RegisterPacketHandler(PacketDefinition.MoveRequestPacket)]
 public class MovementHandler : BasePacketListener
 {
     private const long MovementThrottleResetMs = 1000;
@@ -115,7 +118,7 @@ public class MovementHandler : BasePacketListener
         var credit = session.MoveCredit;
         var nextMove = session.MoveTime;
 
-        if (now - nextMove + MovementThrottleResetMs > 0)
+        if (now - nextMove - MovementThrottleResetMs > 0)
         {
             session.MoveCredit = 0;
             session.MoveTime = now;

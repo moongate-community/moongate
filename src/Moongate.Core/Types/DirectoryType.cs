@@ -7,6 +7,5 @@ public enum DirectoryType
     Scripts,
     Save,
     Logs,
-    Cache,
-    Database
+    Cache
 }

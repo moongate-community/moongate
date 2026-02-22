@@ -475,7 +475,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
             if (_logPacketData)
             {
                 _packetDataLogger.Information(
-                    "Inbound packet Session={SessionId} OpCode=0x{OpCode:X2} Name={PacketName} Length={Length}{NewLine}{Dump}",
+                    "<< packet Session={SessionId} OpCode=0x{OpCode:X2} Name={PacketName} Length={Length}{NewLine}{Dump}",
                     session.SessionId,
                     opCode,
                     descriptor.Description,

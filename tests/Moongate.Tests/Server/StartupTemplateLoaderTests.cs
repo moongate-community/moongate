@@ -31,8 +31,7 @@ public class StartupTemplateLoaderTests
             DirectoryType.Scripts,
             DirectoryType.Save,
             DirectoryType.Logs,
-            DirectoryType.Cache,
-            DirectoryType.Database
+            DirectoryType.Cache
         );
 
         var startupDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "startup");

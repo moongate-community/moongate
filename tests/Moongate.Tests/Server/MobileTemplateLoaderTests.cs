@@ -31,8 +31,7 @@ public class MobileTemplateLoaderTests
             DirectoryType.Scripts,
             DirectoryType.Save,
             DirectoryType.Logs,
-            DirectoryType.Cache,
-            DirectoryType.Database
+            DirectoryType.Cache
         );
 
         var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");

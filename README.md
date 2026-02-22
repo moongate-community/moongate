@@ -43,12 +43,15 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Project Goals](#project-goals)
 - [Project Story](#project-story)
 - [Current Status](#current-status)
+- [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
 - [Templates](#templates)
 - [Solution Structure](#solution-structure)
+- [Source Generators (AOT)](#source-generators-aot)
 - [Event And Packet Separation](#event-and-packet-separation)
 - [Game Loop Scheduling](#game-loop-scheduling)
 - [Requirements](#requirements)
+- [Server Startup Tutorial](#server-startup-tutorial)
 - [Quick Start](#quick-start)
 - [Scripting](#scripting)
 - [Scripts](#scripts)
@@ -94,6 +97,58 @@ The project is actively in development and already includes:
 - Timestamp-driven game loop scheduling with timer delta updates and optional idle CPU throttling.
 
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
+
+## UO Feature Support (Current)
+
+This section reflects the current server-side implementation status.
+
+### Supported now
+
+- Login/auth handshake:
+  - `0xEF` Login Seed
+  - `0x80` Account Login
+  - `0xA0` Server Select
+  - `0x91` Game Login
+  - `0x5D` Login Character
+  - denial flow with `LoginDeniedPacket` when credentials are invalid.
+- Character lifecycle:
+  - character creation (`0x00`) and persistence.
+  - account -> character linkage and character selection.
+- After-login world bootstrap:
+  - login confirm / support features / draw player.
+  - mobile draw + worn items + backpack container draw.
+  - warmode, light, season, login complete, time, paperdoll.
+- Movement:
+  - move request (`0x02`) with sequence/throttle checks.
+  - move confirm / move deny responses.
+- Player status:
+  - get player status (`0x34`, basic status path) -> status response (`0x11`).
+- Speech:
+  - Unicode speech inbound (`0xAD`).
+  - local echo response and in-game command dispatch for messages starting with `.`.
+- Ping:
+  - ping message (`0x73`) request/response.
+- Tooltips (MegaCliloc):
+  - inbound request (`0xD6`) for item/mobile serials.
+  - outbound object property list (`0xD6`) response.
+
+### Partially implemented
+
+- Packet model coverage is broader than runtime listener coverage.
+  - Many packets exist in `Moongate.Network.Packets` and can parse/write.
+  - Only packets bound to active listeners are currently used by gameplay flow.
+- HTTP administration/metrics/OpenAPI are available, but gameplay admin features are still minimal.
+- Lua scripting runtime is integrated, but gameplay script surface is still growing.
+
+### Not yet implemented (major areas)
+
+- Full combat loop (swing/spell damage pipeline, notoriety-driven combat rules).
+- Skill system execution and progression.
+- Item interaction core (pickup/drop/use/equip transaction flow across all cases).
+- NPC AI, vendors, loot systems, pathfinding, spawn regions.
+- World simulation breadth (housing, boats, advanced map interactions, seasons/weather effects gameplay-side).
+- Economy systems, trading, banking behavior completeness.
+- Full UO protocol coverage in listeners (many opcodes still intentionally unhandled).
 
 ## Persistence
 
@@ -193,6 +248,8 @@ Resolution model:
 - `src/Moongate.Server`: host/bootstrap, game loop, network orchestration, session/event services.
 - `src/Moongate.Network.Packets`: packet contracts, descriptors, registry, packet definitions.
 - `src/Moongate.Network.Packets.Generators`: source generator for packet table registration.
+- `src/Moongate.Server.PacketHandlers.Generators`: source generator for packet listener bootstrap registration.
+- `src/Moongate.Server.Metrics.Generators`: source generator for metric snapshot mapping.
 - `src/Moongate.UO.Data`: UO domain data types and utility models.
 - `src/Moongate.Core`: shared low-level utilities.
 - `src/Moongate.Network`: TCP/network primitives.
@@ -200,6 +257,26 @@ Resolution model:
 - `src/Moongate.Server.Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
 - `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
+
+## Source Generators (AOT)
+
+Moongate uses source generators to reduce runtime reflection/discovery work and improve Native AOT compatibility and startup performance.
+
+Current generators:
+
+- `Moongate.Network.Packets.Generators`
+  - Generates packet table/registry wiring from packet metadata.
+- `Moongate.Server.PacketHandlers.Generators`
+  - Generates bootstrap packet listener registrations from `[RegisterPacketHandler(...)]` attributes.
+  - Supports multiple opcode attributes on the same listener class.
+- `Moongate.Server.Metrics.Generators`
+  - Generates metric snapshot mappers from metric-decorated snapshot models.
+
+Why this helps for AOT:
+
+- Moves dynamic mapping logic from runtime to compile time.
+- Reduces dependency on reflection-based registration paths.
+- Improves deterministic startup behavior.
 
 ## Event And Packet Separation
 
@@ -223,6 +300,51 @@ The server loop is timestamp-driven (monotonic `Stopwatch`) rather than fixed-sl
 ## Requirements
 
 - .NET SDK 10.0.x
+
+## Server Startup Tutorial
+
+This is the recommended first-time setup to run the server locally.
+
+1. Prepare directories:
+   - `MOONGATE_ROOT_DIRECTORY`: server root (config, save, logs, scripts, templates).
+   - `MOONGATE_UO_DIRECTORY`: Ultima Online client data directory.
+2. Export env vars:
+
+```bash
+export MOONGATE_ROOT_DIRECTORY="$HOME/moongate"
+export MOONGATE_UO_DIRECTORY="/path/to/uo-client"
+```
+
+3. Restore/build/test:
+
+```bash
+dotnet restore
+dotnet build
+dotnet test
+```
+
+4. Start server:
+
+```bash
+dotnet run --project src/Moongate.Server
+```
+
+5. First startup behavior:
+   - If `moongate.json` is missing, it is created in `MOONGATE_ROOT_DIRECTORY`.
+   - Asset/data files are copied only when missing.
+   - If no accounts exist, a default admin is created.
+
+6. Optional admin credentials override:
+
+```bash
+export MOONGATE_ADMIN_USERNAME="admin"
+export MOONGATE_ADMIN_PASSWORD="change-me-now"
+```
+
+7. Verify runtime:
+   - Game TCP server: port `2593`
+   - HTTP endpoints (default): `http://localhost:8088/health`, `http://localhost:8088/metrics`, `http://localhost:8088/scalar`
+   - Logs: `MOONGATE_ROOT_DIRECTORY/logs`
 
 ## Quick Start
 

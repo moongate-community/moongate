@@ -1,7 +1,9 @@
 using System.Net;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -15,6 +17,11 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
+[RegisterPacketHandler(PacketDefinition.LoginSeedPacket)]
+[RegisterPacketHandler(PacketDefinition.AccountLoginPacket)]
+[RegisterPacketHandler(PacketDefinition.ServerSelectPacket)]
+[RegisterPacketHandler(PacketDefinition.GameLoginPacket)]
+[RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
 public class LoginHandler : BasePacketListener
 {
     private readonly ILogger _logger = Log.ForContext<LoginHandler>();

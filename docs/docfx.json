@@ -13,6 +13,8 @@
             "**/*.Tests.csproj",
             "**/Moongate.Server.Metrics.Generators.csproj",
             "**/Moongate.Network.Packets.Generators.csproj",
+            "**/Moongate.Server.PacketHandlers.Generators.csproj",
+            "**/Moongate.Server/Moongate.Server.csproj",
             "**/Moongate.Abstractions/Moongate.Abstractions.csproj",
             "**/Moongate.Core/Moongate.Core.csproj",
             "**/Moongate.Scripting/Moongate.Scripting.csproj"
@@ -26,7 +28,10 @@
       "noRestore": false,
       "namespaceLayout": "flattened",
       "allowCompilationErrors": false,
-      "filter": "filterConfig.yml"
+      "filter": "filterConfig.yml",
+      "properties": {
+        "DocfxBuild": "true"
+      }
     }
   ],
   "build": {

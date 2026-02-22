@@ -171,13 +171,11 @@ public static class NetworkCompression
     }
 
     /// <summary>
-    /// Compresses input data and returns the result as a new Memory
-    /// <byte>
-    /// .
+    /// Compresses input data and returns the result as a new <see cref="Memory{T}" /> of bytes.
     /// This method allocates a new buffer for the compressed output.
     /// </summary>
     /// <param name="input">Input data to compress</param>
-    /// <returns>Compressed data as Memory<byte>, or empty if compression failed</returns>
+    /// <returns>Compressed data as <see cref="Memory{T}" /> of bytes, or empty if compression failed.</returns>
     public static Memory<byte> CompressToMemory(ReadOnlyMemory<byte> input)
     {
         if (input.Length == 0)
@@ -276,11 +274,11 @@ public static class NetworkCompression
     }
 
     /// <summary>
-    /// Decompresses data and returns the result as a new Memory<byte>.
+    /// Decompresses data and returns the result as a new <see cref="Memory{T}" /> of bytes.
     /// </summary>
     /// <param name="input">Compressed input data</param>
     /// <param name="maxOutputSize">Maximum expected size of decompressed data</param>
-    /// <returns>Decompressed data as Memory<byte>, or empty if decompression failed</returns>
+    /// <returns>Decompressed data as <see cref="Memory{T}" /> of bytes, or empty if decompression failed.</returns>
     public static Memory<byte> DecompressToMemory(ReadOnlyMemory<byte> input, int maxOutputSize = BufferSize)
     {
         if (input.Length == 0)

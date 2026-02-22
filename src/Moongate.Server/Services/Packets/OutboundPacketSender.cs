@@ -41,7 +41,7 @@ public sealed class OutboundPacketSender : IOutboundPacketSender
         if (_logPacketData)
         {
             _packetDataLogger.Information(
-                "Outbound packet Session={SessionId} OpCode=0x{OpCode:X2} Name={PacketName} Length={Length}{NewLine}{Dump}",
+                ">> packet Session={SessionId} OpCode=0x{OpCode:X2} Name={PacketName} Length={Length}{NewLine}{Dump}",
                 outgoingPacket.SessionId,
                 outgoingPacket.Packet.OpCode,
                 outgoingPacket.Packet.GetType().Name,
@@ -127,23 +127,33 @@ public sealed class OutboundPacketSender : IOutboundPacketSender
 
     private static byte[] SerializePacket(IGameNetworkPacket packet)
     {
-        if (packet is UnicodeSpeechMessagePacket speechMessagePacket)
-        {
-            return SpeechMessageFactory.CreateMessageBytes(speechMessagePacket);
-        }
-
-        var initialCapacity = packet.Length > 0 ? packet.Length : 256;
-        var writer = new SpanWriter(initialCapacity, true);
-
         try
         {
-            packet.Write(ref writer);
+            if (packet is UnicodeSpeechMessagePacket speechMessagePacket)
+            {
+                return SpeechMessageFactory.CreateMessageBytes(speechMessagePacket);
+            }
 
-            return writer.ToArray();
+            var initialCapacity = packet.Length > 0 ? packet.Length : 256;
+            var writer = new SpanWriter(initialCapacity, true);
+
+            try
+            {
+                packet.Write(ref writer);
+
+                return writer.ToArray();
+            }
+            finally
+            {
+                writer.Dispose();
+            }
         }
         finally
         {
-            writer.Dispose();
+            if (packet is IDisposable disposablePacket)
+            {
+                disposablePacket.Dispose();
+            }
         }
     }
 }
