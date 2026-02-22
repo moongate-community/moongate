@@ -15,14 +15,19 @@ public static class MegaClilocBuilder
     public static ObjectPropertyList CreateItemTooltip(Serial serial, string name, int itemId, int amount = 1, int weight = 0, int hue = 0)
     {
         var list = new ObjectPropertyList(serial);
-        list.Add(CommonClilocIds.ObjectName, name);
 
-        if (!string.IsNullOrEmpty(name))
+        if (!string.IsNullOrWhiteSpace(name))
         {
-            list.Add(CommonClilocIds.ItemName, name);
+            if (amount > 1)
+            {
+                list.Add(CommonClilocIds.ItemName, $"{amount}\t{name}");
+            }
+            else
+            {
+                list.Add(name);
+            }
         }
-
-        if (amount > 1)
+        else if (amount > 1)
         {
             list.Add(CommonClilocIds.Amount, amount);
         }
@@ -119,8 +124,10 @@ public static class MegaClilocBuilder
         bool isMurderer = false)
     {
         var list = new ObjectPropertyList(serial);
-
-        list.Add(CommonClilocIds.ObjectName, name);
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            list.Add(name);
+        }
 
         list.Add(CommonClilocIds.HitPoints, $"{hits}\t{hitsMax}");
         list.Add(CommonClilocIds.Mana, $"{mana}\t{manaMax}");

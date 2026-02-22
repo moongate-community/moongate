@@ -39,11 +39,11 @@ public class EntityFactoryServiceTests
             }
         );
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             itemTemplateService,
             new MobileTemplateService(),
-            new NameService(),
-            persistence
+            new NameService()
         );
 
         var item = service.CreateItemFromTemplate("item.shirt");
@@ -92,11 +92,11 @@ public class EntityFactoryServiceTests
             }
         );
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             new ItemTemplateService(),
             mobileTemplateService,
-            nameService,
-            persistence
+            nameService
         );
 
         var mobile = service.CreateMobileFromTemplate("orc_warrior");
@@ -121,11 +121,11 @@ public class EntityFactoryServiceTests
         var packet = new CharacterCreationPacket();
         _ = packet.TryParse(BuildCharacterCreationPayload());
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             new ItemTemplateService(),
             new MobileTemplateService(),
-            new NameService(),
-            persistence
+            new NameService()
         );
 
         var mobile = service.CreatePlayerMobile(packet, (Serial)0x00000101);
@@ -166,11 +166,11 @@ public class EntityFactoryServiceTests
             }
         );
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             itemTemplateService,
             new MobileTemplateService(),
-            new NameService(),
-            persistence
+            new NameService()
         );
 
         var backpack = service.GetNewBackpack();
@@ -251,5 +251,18 @@ public class EntityFactoryServiceTests
         await persistence.StartAsync();
 
         return persistence;
+    }
+
+    private static EntityFactoryService CreateEntityFactoryService(
+        PersistenceService persistenceService,
+        ItemTemplateService itemTemplateService,
+        MobileTemplateService mobileTemplateService,
+        NameService nameService
+    )
+    {
+        var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
+        var mobileFactoryService = new MobileFactoryService(mobileTemplateService, nameService, persistenceService);
+        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
+        return new EntityFactoryService(itemFactoryService, mobileFactoryService, starterItemFactoryService);
     }
 }

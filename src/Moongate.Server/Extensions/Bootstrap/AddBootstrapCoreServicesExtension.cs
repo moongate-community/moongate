@@ -37,6 +37,9 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IMessageBusService, MessageBusService>(Reuse.Singleton);
         container.Register<IGameEventBusService, GameEventBusService>(Reuse.Singleton);
         container.Register<IServerLifetimeService, ServerLifetimeService>(Reuse.Singleton);
+        container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+        container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+        container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
         container.Register<IEntityFactoryService, EntityFactoryService>(Reuse.Singleton);
         container.Register<IOutgoingPacketQueue, OutgoingPacketQueue>(Reuse.Singleton);
         container.Register<IOutboundPacketSender, OutboundPacketSender>(Reuse.Singleton);

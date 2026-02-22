@@ -297,8 +297,16 @@ public sealed class MoongateBootstrap : IDisposable
     {
         var sourceDataDirectory = Path.Combine(AppContext.BaseDirectory, "Assets", "data");
         var destinationDataDirectory = _directoriesConfig[DirectoryType.Data];
+        var sourceTemplatesDirectory = Path.Combine(AppContext.BaseDirectory, "Assets", "templates");
+        var destinationTemplatesDirectory = _directoriesConfig[DirectoryType.Templates];
 
         DataAssetsBootstrapper.EnsureDataAssets(sourceDataDirectory, destinationDataDirectory, _logger);
+        DataAssetsBootstrapper.EnsureAssets(
+            sourceTemplatesDirectory,
+            destinationTemplatesDirectory,
+            _logger,
+            "Template assets"
+        );
     }
 
     private void RegisterFileLoaders()

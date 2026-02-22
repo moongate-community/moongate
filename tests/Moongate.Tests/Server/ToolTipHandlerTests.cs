@@ -55,7 +55,7 @@ public class ToolTipHandlerTests
             {
                 Assert.That(response.IsClientRequest, Is.False);
                 Assert.That(response.Serial, Is.EqualTo(itemSerial));
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.ObjectName), Is.True);
+                Assert.That(response.Properties.Count, Is.GreaterThan(0));
             }
         );
     }
@@ -150,7 +150,7 @@ public class ToolTipHandlerTests
                 Assert.That(response.Serial, Is.EqualTo(mobileSerial));
                 Assert.That(
                     response.Properties.Any(
-                        p => p.ClilocId == CommonClilocIds.ObjectName && string.Equals(p.Text, "Tester", StringComparison.Ordinal)
+                        p => string.Equals(p.Text, "Tester", StringComparison.Ordinal)
                     ),
                     Is.True
                 );

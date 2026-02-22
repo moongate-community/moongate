@@ -410,11 +410,17 @@ public class CharacterServiceTests
             }
         );
 
-        var entityFactoryService = new EntityFactoryService(
-            itemTemplateService,
+        var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
+        var mobileFactoryService = new MobileFactoryService(
             new MobileTemplateService(),
             new NameService(),
             persistenceService
+        );
+        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
+        var entityFactoryService = new EntityFactoryService(
+            itemFactoryService,
+            mobileFactoryService,
+            starterItemFactoryService
         );
 
         return new(persistenceService, entityFactoryService, gameEventBusService);

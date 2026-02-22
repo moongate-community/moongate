@@ -650,6 +650,7 @@ public class PersistenceUnitOfWorkTests
                 Id = (Serial)0x40000010,
                 Name = "Fancy Shirt",
                 Weight = 7,
+                Amount = 3,
                 IsStackable = false,
                 Rarity = ItemRarity.Rare,
                 ItemId = 0x0EED,
@@ -719,6 +720,7 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem.ContainerPosition.Y, Is.EqualTo(84));
                 Assert.That(loadedItem.Name, Is.EqualTo("Fancy Shirt"));
                 Assert.That(loadedItem.Weight, Is.EqualTo(7));
+                Assert.That(loadedItem.Amount, Is.EqualTo(3));
                 Assert.That(loadedItem.IsStackable, Is.False);
                 Assert.That(loadedItem.Rarity, Is.EqualTo(ItemRarity.Rare));
                 Assert.That(loadedItem.Hue, Is.EqualTo(0x0481));
@@ -741,6 +743,7 @@ public class PersistenceUnitOfWorkTests
                 Id = (Serial)0x40001000,
                 Name = "Snapshot Item",
                 Weight = 2,
+                Amount = 11,
                 IsStackable = true,
                 Rarity = ItemRarity.Uncommon,
                 ItemId = 0x0EED
@@ -755,6 +758,7 @@ public class PersistenceUnitOfWorkTests
                 Id = (Serial)0x40001001,
                 Name = "Journal Item",
                 Weight = 3,
+                Amount = 7,
                 IsStackable = false,
                 Rarity = ItemRarity.Epic,
                 ItemId = 0x0F3F
@@ -776,6 +780,8 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(journalItem!.Name, Is.EqualTo("Journal Item"));
                 Assert.That(snapshotItem.Weight, Is.EqualTo(2));
                 Assert.That(journalItem.Weight, Is.EqualTo(3));
+                Assert.That(snapshotItem.Amount, Is.EqualTo(11));
+                Assert.That(journalItem.Amount, Is.EqualTo(7));
                 Assert.That(snapshotItem.IsStackable, Is.True);
                 Assert.That(journalItem.IsStackable, Is.False);
                 Assert.That(snapshotItem.Rarity, Is.EqualTo(ItemRarity.Uncommon));

@@ -99,7 +99,13 @@ public class ToolTipHandler : BasePacketListener
                 return null;
             }
 
-            var propertyList = MegaClilocBuilder.CreateItemTooltip(item.Id, item.Name, item.ItemId, hue: item.Hue);
+            var propertyList = MegaClilocBuilder.CreateItemTooltip(
+                item.Id,
+                item.Name,
+                item.ItemId,
+                amount: item.Amount,
+                hue: item.Hue
+            );
             propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
             return propertyList;
         }

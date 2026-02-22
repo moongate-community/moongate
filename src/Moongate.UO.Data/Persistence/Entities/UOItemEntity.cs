@@ -20,6 +20,8 @@ public class UOItemEntity : IItemEntity
 
     public int Weight { get; set; }
 
+    public int Amount { get; set; } = 1;
+
     public int ItemId { get; set; }
 
     public int Hue { get; set; }
