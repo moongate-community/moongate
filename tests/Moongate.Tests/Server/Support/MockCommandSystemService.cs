@@ -2,6 +2,7 @@ using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Support;
 
@@ -33,7 +34,13 @@ public sealed class MockCommandSystemService : ICommandSystemService
         return Task.CompletedTask;
     }
 
-    public void RegisterCommand(string commandName, Func<CommandSystemContext, Task> handler, string description = "", CommandSourceType source = CommandSourceType.Console)
+    public void RegisterCommand(
+        string commandName,
+        Func<CommandSystemContext, Task> handler,
+        string description = "",
+        CommandSourceType source = CommandSourceType.Console,
+        AccountType minimumAccountType = AccountType.Administrator
+    )
     {
     }
 

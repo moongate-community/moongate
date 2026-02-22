@@ -53,6 +53,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Requirements](#requirements)
 - [Server Startup Tutorial](#server-startup-tutorial)
 - [Quick Start](#quick-start)
+- [Command System](#command-system)
 - [Scripting](#scripting)
 - [Scripts](#scripts)
 - [Docker](#docker)
@@ -373,6 +374,49 @@ HTTP service defaults:
 - Health endpoint: `/health`
 - OpenAPI JSON: `/openapi/v1.json`
 - Scalar UI: `/scalar`
+
+## Command System
+
+Commands are registered through `ICommandSystemService.RegisterCommand(...)` with:
+
+- `commandName`: one command or aliases separated by `|`
+- `handler`: async callback with `CommandSystemContext`
+- `description`: text shown in `help`
+- `source`: allowed source (`Console`, `InGame`, or both)
+- `minimumAccountType`: minimum role required (`Regular`, `GameMaster`, `Administrator`)
+
+Authorization behavior:
+
+- Console source is always evaluated as `AccountType.Administrator`.
+- In-game source is evaluated using `GameSession.AccountType` (set during login).
+- If source is valid but role is too low, command execution is rejected with warning output.
+
+Example registration:
+
+```csharp
+commandSystemService.RegisterCommand(
+    "whoami|me",
+    context =>
+    {
+        context.Print("You are connected.");
+        return Task.CompletedTask;
+    },
+    description: "Shows basic identity information.",
+    source: CommandSourceType.Console | CommandSourceType.InGame,
+    minimumAccountType: AccountType.Regular
+);
+```
+
+Usage:
+
+- Console: type command directly, for example `help`.
+- In-game: prefix with `.` in Unicode chat, for example `.help`.
+
+Built-in commands:
+
+- `help|?` -> Console + InGame, `Regular`
+- `lock|*` -> Console only, `Administrator`
+- `exit|shutdown` -> Console only, `Administrator`
 
 ## Scripting
 

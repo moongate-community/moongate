@@ -34,6 +34,11 @@ public sealed class GameSession
     public Serial AccountId { get; set; }
 
     /// <summary>
+    /// Gets or sets the authenticated account type for this session.
+    /// </summary>
+    public AccountType AccountType { get; set; } = AccountType.Regular;
+
+    /// <summary>
     ///  Gets or sets the currently active character identifier for this session, when a character is selected.
     /// </summary>
     public Serial CharacterId { get; set; }

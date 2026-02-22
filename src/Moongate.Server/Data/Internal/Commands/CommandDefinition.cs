@@ -1,4 +1,5 @@
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Data.Internal.Commands;
 
@@ -14,4 +15,6 @@ public sealed class CommandDefinition
     public required Func<CommandSystemContext, Task> Handler { get; init; }
 
     public CommandSourceType Source { get; init; }
+
+    public AccountType MinimumAccountType { get; init; }
 }

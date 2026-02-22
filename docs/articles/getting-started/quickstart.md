@@ -51,9 +51,15 @@ HTTP checks:
 
 Built-in default commands currently include:
 
-- `help`
-- `lock`
-- `exit`
+- `help` / `?` (console + in-game, minimum `Regular`)
+- `lock` / `*` (console only, minimum `Administrator`)
+- `exit` / `shutdown` (console only, minimum `Administrator`)
+
+Command source and authorization rules:
+
+- Console commands are always treated as `AccountType.Administrator`.
+- In-game commands use the authenticated `GameSession.AccountType`.
+- In-game command input is triggered by Unicode speech starting with `.` (example: `.help`).
 
 ## 6. Docker (optional)
 

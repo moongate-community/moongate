@@ -270,7 +270,7 @@ public sealed class ConsoleUiService : IConsoleUiService
 
         var line = promptPrefix + _input;
         var visible = line.Length > width ? line[..width] : line;
-        AnsiConsole.Console.Write(new Text(visible, new(Color.Grey)));
+        AnsiConsole.Console.Write(new Text(visible, new(Color.Green)));
 
         var cursorColumn = Math.Min(width - 1, promptPrefix.Length + _input.Length);
         System.Console.SetCursorPosition(cursorColumn, promptRow);
