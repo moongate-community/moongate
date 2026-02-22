@@ -33,15 +33,17 @@ public class EntityFactoryServiceTests
                 Hue = HueSpec.FromValue(100),
                 GoldValue = GoldValueSpec.FromValue(1),
                 LootType = LootType.Regular,
-                ScriptId = "none"
+                ScriptId = "none",
+                Stackable = true,
+                Weight = 6
             }
         );
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             itemTemplateService,
             new MobileTemplateService(),
-            new NameService(),
-            persistence
+            new NameService()
         );
 
         var item = service.CreateItemFromTemplate("item.shirt");
@@ -50,6 +52,10 @@ public class EntityFactoryServiceTests
             () =>
             {
                 Assert.That(item.Id.IsItem, Is.True);
+                Assert.That(item.Name, Is.EqualTo("Shirt"));
+                Assert.That(item.Weight, Is.EqualTo(6));
+                Assert.That(item.IsStackable, Is.False);
+                Assert.That(item.Rarity, Is.EqualTo(ItemRarity.Common));
                 Assert.That(item.ItemId, Is.EqualTo(0x1517));
                 Assert.That(item.Hue, Is.EqualTo(100));
             }
@@ -86,11 +92,11 @@ public class EntityFactoryServiceTests
             }
         );
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             new ItemTemplateService(),
             mobileTemplateService,
-            nameService,
-            persistence
+            nameService
         );
 
         var mobile = service.CreateMobileFromTemplate("orc_warrior");
@@ -115,11 +121,11 @@ public class EntityFactoryServiceTests
         var packet = new CharacterCreationPacket();
         _ = packet.TryParse(BuildCharacterCreationPayload());
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             new ItemTemplateService(),
             new MobileTemplateService(),
-            new NameService(),
-            persistence
+            new NameService()
         );
 
         var mobile = service.CreatePlayerMobile(packet, (Serial)0x00000101);
@@ -154,15 +160,17 @@ public class EntityFactoryServiceTests
                 Hue = HueSpec.FromValue(0),
                 GoldValue = GoldValueSpec.FromValue(0),
                 LootType = LootType.Regular,
-                ScriptId = "none"
+                ScriptId = "none",
+                Stackable = false,
+                Weight = 1
             }
         );
 
-        var service = new EntityFactoryService(
+        var service = CreateEntityFactoryService(
+            persistence,
             itemTemplateService,
             new MobileTemplateService(),
-            new NameService(),
-            persistence
+            new NameService()
         );
 
         var backpack = service.GetNewBackpack();
@@ -171,6 +179,10 @@ public class EntityFactoryServiceTests
             () =>
             {
                 Assert.That(backpack.Id.IsItem, Is.True);
+                Assert.That(backpack.Name, Is.EqualTo("Backpack"));
+                Assert.That(backpack.Weight, Is.EqualTo(1));
+                Assert.That(backpack.IsStackable, Is.False);
+                Assert.That(backpack.Rarity, Is.EqualTo(ItemRarity.Common));
                 Assert.That(backpack.ItemId, Is.EqualTo(0x0E75));
             }
         );
@@ -239,5 +251,18 @@ public class EntityFactoryServiceTests
         await persistence.StartAsync();
 
         return persistence;
+    }
+
+    private static EntityFactoryService CreateEntityFactoryService(
+        PersistenceService persistenceService,
+        ItemTemplateService itemTemplateService,
+        MobileTemplateService mobileTemplateService,
+        NameService nameService
+    )
+    {
+        var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
+        var mobileFactoryService = new MobileFactoryService(mobileTemplateService, nameService, persistenceService);
+        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
+        return new EntityFactoryService(itemFactoryService, mobileFactoryService, starterItemFactoryService);
     }
 }

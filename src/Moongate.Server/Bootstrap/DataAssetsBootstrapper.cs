@@ -8,29 +8,42 @@ namespace Moongate.Server.Bootstrap;
 /// </summary>
 public static class DataAssetsBootstrapper
 {
-    public static int EnsureDataAssets(string sourceDataDirectory, string destinationDataDirectory, ILogger logger)
+    /// <summary>
+    /// Copies bundled assets from a source root to a destination root when missing.
+    /// Existing files are never overwritten.
+    /// </summary>
+    public static int EnsureAssets(
+        string sourceDirectory,
+        string destinationDirectory,
+        ILogger logger,
+        string assetLabel = "Assets"
+    )
     {
-        if (!Directory.Exists(sourceDataDirectory))
+        ArgumentException.ThrowIfNullOrWhiteSpace(sourceDirectory);
+        ArgumentException.ThrowIfNullOrWhiteSpace(destinationDirectory);
+        ArgumentNullException.ThrowIfNull(logger);
+
+        if (!Directory.Exists(sourceDirectory))
         {
-            logger.Warning("Data assets source directory not found: {SourceDataDirectory}", sourceDataDirectory);
+            logger.Warning("{AssetLabel} source directory not found: {SourceDirectory}", assetLabel, sourceDirectory);
 
             return 0;
         }
 
-        Directory.CreateDirectory(destinationDataDirectory);
+        Directory.CreateDirectory(destinationDirectory);
 
         var copiedFiles = 0;
-        var sourceFiles = Directory.GetFiles(sourceDataDirectory, "*", SearchOption.AllDirectories);
+        var sourceFiles = Directory.GetFiles(sourceDirectory, "*", SearchOption.AllDirectories);
 
         foreach (var sourceFile in sourceFiles)
         {
-            var relativePath = Path.GetRelativePath(sourceDataDirectory, sourceFile);
-            var destinationFile = Path.Combine(destinationDataDirectory, relativePath);
-            var destinationDirectory = Path.GetDirectoryName(destinationFile);
+            var relativePath = Path.GetRelativePath(sourceDirectory, sourceFile);
+            var destinationFile = Path.Combine(destinationDirectory, relativePath);
+            var destinationFileDirectory = Path.GetDirectoryName(destinationFile);
 
-            if (!string.IsNullOrWhiteSpace(destinationDirectory))
+            if (!string.IsNullOrWhiteSpace(destinationFileDirectory))
             {
-                Directory.CreateDirectory(destinationDirectory);
+                Directory.CreateDirectory(destinationFileDirectory);
             }
 
             if (File.Exists(destinationFile))
@@ -43,11 +56,15 @@ public static class DataAssetsBootstrapper
         }
 
         logger.Information(
-            "Data assets synchronization completed. Copied {CopiedFiles} missing files into {DestinationDataDirectory}",
+            "{AssetLabel} synchronization completed. Copied {CopiedFiles} missing files into {DestinationDirectory}",
+            assetLabel,
             copiedFiles,
-            destinationDataDirectory
+            destinationDirectory
         );
 
         return copiedFiles;
     }
+
+    public static int EnsureDataAssets(string sourceDataDirectory, string destinationDataDirectory, ILogger logger)
+        => EnsureAssets(sourceDataDirectory, destinationDataDirectory, logger, "Data assets");
 }

@@ -40,7 +40,7 @@ public class AddMultipleItemsToContainerPacket : BaseGameNetworkPacket
             writer.Write(item.Id.Value);
             writer.Write((ushort)item.ItemId);
             writer.Write((byte)0);
-            writer.Write((short)1);
+            writer.Write((short)Math.Clamp(item.Amount, 1, short.MaxValue));
             writer.Write((short)position.X);
             writer.Write((short)position.Y);
             writer.Write((byte)i);

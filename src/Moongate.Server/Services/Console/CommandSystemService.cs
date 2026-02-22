@@ -8,6 +8,7 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Serilog;
 using Serilog.Events;
@@ -102,6 +103,28 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             return;
         }
 
+        var invokerAccountType = ResolveInvokerAccountType(source, session);
+
+        if (invokerAccountType < commandDefinition.MinimumAccountType)
+        {
+            _logger.Verbose(
+                "Command '{Command}' requires account type {RequiredAccountType}, but invoker has {InvokerAccountType}",
+                command,
+                commandDefinition.MinimumAccountType,
+                invokerAccountType
+            );
+            WriteCommandOutput(
+                source,
+                session,
+                LogEventLevel.Warning,
+                "Command '{0}' requires account type '{1}'.",
+                command,
+                commandDefinition.MinimumAccountType
+            );
+
+            return;
+        }
+
         var context = new CommandSystemContext(
             commandWithArgs,
             tokens.Skip(1).ToArray(),
@@ -142,7 +165,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         string commandName,
         Func<CommandSystemContext, Task> handler,
         string description = "",
-        CommandSourceType source = CommandSourceType.Console
+        CommandSourceType source = CommandSourceType.Console,
+        AccountType minimumAccountType = AccountType.Administrator
     )
     {
         if (string.IsNullOrWhiteSpace(commandName))
@@ -156,7 +180,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             Name = aliases[0].Trim().ToLowerInvariant(),
             Description = description,
             Handler = handler,
-            Source = source
+            Source = source,
+            MinimumAccountType = minimumAccountType
         };
 
         foreach (var alias in aliases)
@@ -240,7 +265,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             "help|?",
             OnHelpCommand,
             "Displays available commands.",
-            CommandSourceType.Console | CommandSourceType.InGame
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Regular
         );
         RegisterCommand(
             "lock|*",
@@ -296,5 +322,20 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
 
             _outgoingPacketQueue.Enqueue(session.SessionId, SpeechMessageFactory.CreateSystem(normalized, hue: hue));
         }
+    }
+
+    private static AccountType ResolveInvokerAccountType(CommandSourceType source, GameSession? session)
+    {
+        if (source == CommandSourceType.Console)
+        {
+            return AccountType.Administrator;
+        }
+
+        if (source == CommandSourceType.InGame && session is not null)
+        {
+            return session.AccountType;
+        }
+
+        return AccountType.Regular;
     }
 }

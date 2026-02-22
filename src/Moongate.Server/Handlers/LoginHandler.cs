@@ -100,6 +100,7 @@ public class LoginHandler : BasePacketListener
         }
 
         session.AccountId = account.Id;
+        session.AccountType = account.AccountType;
 
         Enqueue(session, _serverListPacket);
 
@@ -124,6 +125,7 @@ public class LoginHandler : BasePacketListener
         }
 
         session.AccountId = account.Id;
+        session.AccountType = account.AccountType;
 
         session.NetworkSession.EnableCompression();
 

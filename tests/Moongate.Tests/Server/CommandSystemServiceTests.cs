@@ -189,7 +189,8 @@ public class CommandSystemServiceTests
                 context.Print("one\r\ntwo\n\nthree");
                 return Task.CompletedTask;
             },
-            source: CommandSourceType.InGame
+            source: CommandSourceType.InGame,
+            minimumAccountType: AccountType.Regular
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -253,7 +254,8 @@ public class CommandSystemServiceTests
         service.RegisterCommand(
             "consoleonly",
             _ => Task.CompletedTask,
-            source: CommandSourceType.Console
+            source: CommandSourceType.Console,
+            minimumAccountType: AccountType.Administrator
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -284,7 +286,8 @@ public class CommandSystemServiceTests
         service.RegisterCommand(
             "broken",
             _ => throw new InvalidOperationException("boom"),
-            source: CommandSourceType.InGame
+            source: CommandSourceType.InGame,
+            minimumAccountType: AccountType.Regular
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -297,5 +300,71 @@ public class CommandSystemServiceTests
         Assert.That(speechPacket.Hue, Is.EqualTo(SpeechHues.Red));
         Assert.That(speechPacket.Text, Is.EqualTo("Command 'broken' failed. Check logs for details."));
         Assert.That(consoleUiService.Lines.Count, Is.Zero);
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenInGameAccountTypeIsTooLow_ShouldSendWarningInGame()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService
+        );
+
+        service.RegisterCommand(
+            "adminonly",
+            _ => Task.CompletedTask,
+            source: CommandSourceType.InGame,
+            minimumAccountType: AccountType.Administrator
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            AccountType = AccountType.Regular
+        };
+
+        await service.ExecuteCommandAsync("adminonly", CommandSourceType.InGame, session);
+
+        Assert.That(outgoingPacketQueue.TryDequeue(out var outbound), Is.True);
+        var speechPacket = (UnicodeSpeechMessagePacket)outbound.Packet;
+        Assert.That(speechPacket.Hue, Is.EqualTo(SpeechHues.Yellow));
+        Assert.That(speechPacket.Text, Does.Contain("requires account type"));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenSourceIsConsole_ShouldExecuteAdminCommandWithoutSession()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService
+        );
+
+        var executed = false;
+        service.RegisterCommand(
+            "adminconsole",
+            _ =>
+            {
+                executed = true;
+                return Task.CompletedTask;
+            },
+            source: CommandSourceType.Console,
+            minimumAccountType: AccountType.Administrator
+        );
+
+        await service.ExecuteCommandAsync("adminconsole", CommandSourceType.Console, null);
+
+        Assert.That(executed, Is.True);
     }
 }

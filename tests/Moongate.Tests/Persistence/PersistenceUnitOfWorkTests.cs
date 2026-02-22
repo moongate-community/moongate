@@ -648,6 +648,11 @@ public class PersistenceUnitOfWorkTests
             new()
             {
                 Id = (Serial)0x40000010,
+                Name = "Fancy Shirt",
+                Weight = 7,
+                Amount = 3,
+                IsStackable = false,
+                Rarity = ItemRarity.Rare,
                 ItemId = 0x0EED,
                 Hue = 0x0481,
                 Location = new(10, 20, 0),
@@ -713,9 +718,74 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem!.ParentContainerId, Is.EqualTo((Serial)0x40000020));
                 Assert.That(loadedItem.ContainerPosition.X, Is.EqualTo(42));
                 Assert.That(loadedItem.ContainerPosition.Y, Is.EqualTo(84));
+                Assert.That(loadedItem.Name, Is.EqualTo("Fancy Shirt"));
+                Assert.That(loadedItem.Weight, Is.EqualTo(7));
+                Assert.That(loadedItem.Amount, Is.EqualTo(3));
+                Assert.That(loadedItem.IsStackable, Is.False);
+                Assert.That(loadedItem.Rarity, Is.EqualTo(ItemRarity.Rare));
                 Assert.That(loadedItem.Hue, Is.EqualTo(0x0481));
                 Assert.That(loadedItem.EquippedMobileId, Is.EqualTo((Serial)0x00000010));
                 Assert.That(loadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+            }
+        );
+    }
+
+    [Test]
+    public async Task InitializeAsync_ShouldPreserveItemNameAcrossSnapshotAndJournalReplay()
+    {
+        using var tempDirectory = new TempDirectory();
+        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await unitOfWork.InitializeAsync();
+
+        await unitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x40001000,
+                Name = "Snapshot Item",
+                Weight = 2,
+                Amount = 11,
+                IsStackable = true,
+                Rarity = ItemRarity.Uncommon,
+                ItemId = 0x0EED
+            }
+        );
+
+        await unitOfWork.SaveSnapshotAsync();
+
+        await unitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x40001001,
+                Name = "Journal Item",
+                Weight = 3,
+                Amount = 7,
+                IsStackable = false,
+                Rarity = ItemRarity.Epic,
+                ItemId = 0x0F3F
+            }
+        );
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await secondUnitOfWork.InitializeAsync();
+
+        var snapshotItem = await secondUnitOfWork.Items.GetByIdAsync((Serial)0x40001000);
+        var journalItem = await secondUnitOfWork.Items.GetByIdAsync((Serial)0x40001001);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshotItem, Is.Not.Null);
+                Assert.That(journalItem, Is.Not.Null);
+                Assert.That(snapshotItem!.Name, Is.EqualTo("Snapshot Item"));
+                Assert.That(journalItem!.Name, Is.EqualTo("Journal Item"));
+                Assert.That(snapshotItem.Weight, Is.EqualTo(2));
+                Assert.That(journalItem.Weight, Is.EqualTo(3));
+                Assert.That(snapshotItem.Amount, Is.EqualTo(11));
+                Assert.That(journalItem.Amount, Is.EqualTo(7));
+                Assert.That(snapshotItem.IsStackable, Is.True);
+                Assert.That(journalItem.IsStackable, Is.False);
+                Assert.That(snapshotItem.Rarity, Is.EqualTo(ItemRarity.Uncommon));
+                Assert.That(journalItem.Rarity, Is.EqualTo(ItemRarity.Epic));
             }
         );
     }

@@ -2,6 +2,7 @@ using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Interfaces.Services.Console;
 
@@ -31,10 +32,12 @@ public interface ICommandSystemService : IMoongateService
     /// <param name="handler">Command handler delegate.</param>
     /// <param name="description">Command help description.</param>
     /// <param name="source">Allowed command source.</param>
+    /// <param name="minimumAccountType">Minimum account type required to run the command.</param>
     void RegisterCommand(
         string commandName,
         Func<CommandSystemContext, Task> handler,
         string description = "",
-        CommandSourceType source = CommandSourceType.Console
+        CommandSourceType source = CommandSourceType.Console,
+        AccountType minimumAccountType = AccountType.Administrator
     );
 }

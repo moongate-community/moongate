@@ -16,6 +16,16 @@ public sealed partial class ItemSnapshot
 
     public int Z { get; set; }
 
+    public string? Name { get; set; }
+
+    public int Weight { get; set; }
+
+    public int Amount { get; set; }
+
+    public bool IsStackable { get; set; }
+
+    public byte Rarity { get; set; }
+
     public int ItemId { get; set; }
 
     public int Hue { get; set; }

@@ -8,6 +8,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.MegaCliloc;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
 
@@ -98,7 +99,15 @@ public class ToolTipHandler : BasePacketListener
                 return null;
             }
 
-            return MegaClilocBuilder.CreateItemTooltip(item.Id, $"Item 0x{item.ItemId:X4}", item.ItemId, hue: item.Hue);
+            var propertyList = MegaClilocBuilder.CreateItemTooltip(
+                item.Id,
+                item.Name,
+                item.ItemId,
+                amount: item.Amount,
+                hue: item.Hue
+            );
+            propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
+            return propertyList;
         }
 
         _logger.Debug("MegaCliloc request ignored. Invalid serial {Serial}.", serial);

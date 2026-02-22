@@ -16,11 +16,21 @@ public class UOItemEntity : IItemEntity
 
     public Point3D Location { get; set; }
 
+    public string? Name { get; set; }
+
+    public int Weight { get; set; }
+
+    public int Amount { get; set; } = 1;
+
     public int ItemId { get; set; }
 
     public int Hue { get; set; }
 
     public int? GumpId { get; set; }
+
+    public bool IsStackable { get; set; }
+
+    public ItemRarity Rarity { get; set; }
 
     /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
@@ -60,5 +70,5 @@ public class UOItemEntity : IItemEntity
     }
 
     public override string ToString()
-        => $"Item(Id={Id}, ItemId=0x{ItemId:X4}, Location={Location})";
+        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, Location={Location})";
 }
