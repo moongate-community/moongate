@@ -127,23 +127,33 @@ public sealed class OutboundPacketSender : IOutboundPacketSender
 
     private static byte[] SerializePacket(IGameNetworkPacket packet)
     {
-        if (packet is UnicodeSpeechMessagePacket speechMessagePacket)
-        {
-            return SpeechMessageFactory.CreateMessageBytes(speechMessagePacket);
-        }
-
-        var initialCapacity = packet.Length > 0 ? packet.Length : 256;
-        var writer = new SpanWriter(initialCapacity, true);
-
         try
         {
-            packet.Write(ref writer);
+            if (packet is UnicodeSpeechMessagePacket speechMessagePacket)
+            {
+                return SpeechMessageFactory.CreateMessageBytes(speechMessagePacket);
+            }
 
-            return writer.ToArray();
+            var initialCapacity = packet.Length > 0 ? packet.Length : 256;
+            var writer = new SpanWriter(initialCapacity, true);
+
+            try
+            {
+                packet.Write(ref writer);
+
+                return writer.ToArray();
+            }
+            finally
+            {
+                writer.Dispose();
+            }
         }
         finally
         {
-            writer.Dispose();
+            if (packet is IDisposable disposablePacket)
+            {
+                disposablePacket.Dispose();
+            }
         }
     }
 }

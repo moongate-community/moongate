@@ -50,6 +50,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Event And Packet Separation](#event-and-packet-separation)
 - [Game Loop Scheduling](#game-loop-scheduling)
 - [Requirements](#requirements)
+- [Server Startup Tutorial](#server-startup-tutorial)
 - [Quick Start](#quick-start)
 - [Scripting](#scripting)
 - [Scripts](#scripts)
@@ -246,6 +247,51 @@ The server loop is timestamp-driven (monotonic `Stopwatch`) rather than fixed-sl
 ## Requirements
 
 - .NET SDK 10.0.x
+
+## Server Startup Tutorial
+
+This is the recommended first-time setup to run the server locally.
+
+1. Prepare directories:
+   - `MOONGATE_ROOT_DIRECTORY`: server root (config, save, logs, scripts, templates).
+   - `MOONGATE_UO_DIRECTORY`: Ultima Online client data directory.
+2. Export env vars:
+
+```bash
+export MOONGATE_ROOT_DIRECTORY="$HOME/moongate"
+export MOONGATE_UO_DIRECTORY="/path/to/uo-client"
+```
+
+3. Restore/build/test:
+
+```bash
+dotnet restore
+dotnet build
+dotnet test
+```
+
+4. Start server:
+
+```bash
+dotnet run --project src/Moongate.Server
+```
+
+5. First startup behavior:
+   - If `moongate.json` is missing, it is created in `MOONGATE_ROOT_DIRECTORY`.
+   - Asset/data files are copied only when missing.
+   - If no accounts exist, a default admin is created.
+
+6. Optional admin credentials override:
+
+```bash
+export MOONGATE_ADMIN_USERNAME="admin"
+export MOONGATE_ADMIN_PASSWORD="change-me-now"
+```
+
+7. Verify runtime:
+   - Game TCP server: port `2593`
+   - HTTP endpoints (default): `http://localhost:8088/health`, `http://localhost:8088/metrics`, `http://localhost:8088/scalar`
+   - Logs: `MOONGATE_ROOT_DIRECTORY/logs`
 
 ## Quick Start
 
