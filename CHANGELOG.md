@@ -1,3 +1,15 @@
+## [0.12.0](https://github.com/moongate-community/moongatev2/compare/v0.11.1...v0.12.0) (2026-02-22)
+
+### Features
+
+* **server:** generate packet listener registrations via attributes ([c2d238b](https://github.com/moongate-community/moongatev2/commit/c2d238bd21e6e3d422ab7c04e9429f3114370854))
+* **server:** implement mega cliloc tooltip responses ([2d7dedc](https://github.com/moongate-community/moongatev2/commit/2d7dedc9b4a5b8b9cb067b32919d3cc83165f749))
+
+### Bug Fixes
+
+* send extended player status and correct movement throttle reset ([d30ead8](https://github.com/moongate-community/moongatev2/commit/d30ead86288044f7fb7374af362618b76c57490d))
+* update packet log markers and align tests with directory types ([b3ae7da](https://github.com/moongate-community/moongatev2/commit/b3ae7da2125eeefff318f35d1a0eea62a0f522b4))
+
 ## [0.11.1](https://github.com/moongate-community/moongatev2/compare/v0.11.0...v0.11.1) (2026-02-21)
 
 ### Bug Fixes
