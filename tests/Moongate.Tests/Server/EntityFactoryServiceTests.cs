@@ -54,7 +54,7 @@ public class EntityFactoryServiceTests
                 Assert.That(item.Id.IsItem, Is.True);
                 Assert.That(item.Name, Is.EqualTo("Shirt"));
                 Assert.That(item.Weight, Is.EqualTo(6));
-                Assert.That(item.IsStackable, Is.True);
+                Assert.That(item.IsStackable, Is.False);
                 Assert.That(item.Rarity, Is.EqualTo(ItemRarity.Common));
                 Assert.That(item.ItemId, Is.EqualTo(0x1517));
                 Assert.That(item.Hue, Is.EqualTo(100));

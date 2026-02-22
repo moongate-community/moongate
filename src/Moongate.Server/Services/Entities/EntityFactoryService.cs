@@ -71,6 +71,8 @@ public sealed class EntityFactoryService : IEntityFactoryService
             item.Name = itemFromTile.Name;
         }
 
+        item.IsStackable = itemFromTile[UOTileFlag.Generic];
+
         if (item.Weight == 0)
         {
             item.Weight = itemFromTile.Weight;
