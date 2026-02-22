@@ -43,6 +43,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Project Goals](#project-goals)
 - [Project Story](#project-story)
 - [Current Status](#current-status)
+- [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
 - [Templates](#templates)
 - [Solution Structure](#solution-structure)
@@ -96,6 +97,58 @@ The project is actively in development and already includes:
 - Timestamp-driven game loop scheduling with timer delta updates and optional idle CPU throttling.
 
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
+
+## UO Feature Support (Current)
+
+This section reflects the current server-side implementation status.
+
+### Supported now
+
+- Login/auth handshake:
+  - `0xEF` Login Seed
+  - `0x80` Account Login
+  - `0xA0` Server Select
+  - `0x91` Game Login
+  - `0x5D` Login Character
+  - denial flow with `LoginDeniedPacket` when credentials are invalid.
+- Character lifecycle:
+  - character creation (`0x00`) and persistence.
+  - account -> character linkage and character selection.
+- After-login world bootstrap:
+  - login confirm / support features / draw player.
+  - mobile draw + worn items + backpack container draw.
+  - warmode, light, season, login complete, time, paperdoll.
+- Movement:
+  - move request (`0x02`) with sequence/throttle checks.
+  - move confirm / move deny responses.
+- Player status:
+  - get player status (`0x34`, basic status path) -> status response (`0x11`).
+- Speech:
+  - Unicode speech inbound (`0xAD`).
+  - local echo response and in-game command dispatch for messages starting with `.`.
+- Ping:
+  - ping message (`0x73`) request/response.
+- Tooltips (MegaCliloc):
+  - inbound request (`0xD6`) for item/mobile serials.
+  - outbound object property list (`0xD6`) response.
+
+### Partially implemented
+
+- Packet model coverage is broader than runtime listener coverage.
+  - Many packets exist in `Moongate.Network.Packets` and can parse/write.
+  - Only packets bound to active listeners are currently used by gameplay flow.
+- HTTP administration/metrics/OpenAPI are available, but gameplay admin features are still minimal.
+- Lua scripting runtime is integrated, but gameplay script surface is still growing.
+
+### Not yet implemented (major areas)
+
+- Full combat loop (swing/spell damage pipeline, notoriety-driven combat rules).
+- Skill system execution and progression.
+- Item interaction core (pickup/drop/use/equip transaction flow across all cases).
+- NPC AI, vendors, loot systems, pathfinding, spawn regions.
+- World simulation breadth (housing, boats, advanced map interactions, seasons/weather effects gameplay-side).
+- Economy systems, trading, banking behavior completeness.
+- Full UO protocol coverage in listeners (many opcodes still intentionally unhandled).
 
 ## Persistence
 

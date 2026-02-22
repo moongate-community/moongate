@@ -18,6 +18,7 @@ moongatev2/
 │   ├── Moongate.Server.Http
 │   ├── Moongate.Server.Metrics
 │   ├── Moongate.Server.Metrics.Generators
+│   ├── Moongate.Server.PacketHandlers.Generators
 │   └── Moongate.UO.Data
 ├── tests/
 │   └── Moongate.Tests
@@ -50,6 +51,8 @@ moongatev2/
   - metrics provider abstractions and snapshot collection.
 - `Moongate.Server.Metrics.Generators`
   - generated metric mapping utilities.
+- `Moongate.Server.PacketHandlers.Generators`
+  - generated packet listener bootstrap registration.
 - `Moongate.UO.Data`
   - UO entities, enums, templates, gameplay data contracts.
 
@@ -68,4 +71,4 @@ Startup also handles:
 
 ---
 
-**Previous**: [Architecture TOC](toc.yml) | **Next**: [Architecture Overview](overview.md)
+**Previous**: [Architecture TOC](toc.yml) | **Next**: [Source Generators](generators.md)

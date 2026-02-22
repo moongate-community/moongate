@@ -11,3 +11,5 @@ items:
     href: sessions.md
   - name: Solution Structure
     href: solution.md
+  - name: Source Generators
+    href: generators.md
