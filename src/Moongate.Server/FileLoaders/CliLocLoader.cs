@@ -8,6 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents CliLocLoader.
+/// </summary>
 public class CliLocLoader : IFileLoader
 {
     private static byte[] _buffer = new byte[1024];

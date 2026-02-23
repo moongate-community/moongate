@@ -12,6 +12,9 @@ using Moongate.Server.Types.Commands;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket)]
+/// <summary>
+/// Represents SpeechHandler.
+/// </summary>
 public class SpeechHandler : BasePacketListener
 {
     private readonly ICommandSystemService _commandSystemService;

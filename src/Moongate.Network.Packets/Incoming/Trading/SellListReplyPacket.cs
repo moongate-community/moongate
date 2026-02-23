@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Trading;
 
 [PacketHandler(0x9F, PacketSizing.Variable, Description = "Sell List Reply")]
+/// <summary>
+/// Represents SellListReplyPacket.
+/// </summary>
 public class SellListReplyPacket : BaseGameNetworkPacket
 {
     public SellListReplyPacket()

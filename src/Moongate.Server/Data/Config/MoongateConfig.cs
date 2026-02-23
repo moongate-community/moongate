@@ -3,6 +3,9 @@ using Moongate.Core.Types;
 
 namespace Moongate.Server.Data.Config;
 
+/// <summary>
+/// Represents MoongateConfig.
+/// </summary>
 public class MoongateConfig
 {
     [JsonIgnore]

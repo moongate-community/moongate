@@ -7,6 +7,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.UI;
 
 [PacketHandler(0xB1, PacketSizing.Variable, Description = "Gump Menu Selection")]
+/// <summary>
+/// Represents GumpMenuSelectionPacket.
+/// </summary>
 public class GumpMenuSelectionPacket : BaseGameNetworkPacket
 {
     public uint ButtonId { get; private set; }

@@ -7,6 +7,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0xBC, PacketSizing.Fixed, Length = 3, Description = "Season")]
+/// <summary>
+/// Represents SeasonPacket.
+/// </summary>
 public class SeasonPacket : BaseGameNetworkPacket
 {
     public bool PlaySound { get; set; }

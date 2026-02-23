@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents SendSkillResponseType.
+/// </summary>
 public enum SendSkillResponseType : byte
 {
     FullSkillList = 0x00,

@@ -7,6 +7,9 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0x1B, PacketSizing.Fixed, Length = 37, Description = "Char Locale and Body")]
+/// <summary>
+/// Represents LoginConfirmPacket.
+/// </summary>
 public class LoginConfirmPacket : BaseGameNetworkPacket
 {
     public UOMobileEntity? Mobile { get; set; }

@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+/// <summary>
+/// Represents PacketSerializationBenchmark.
+/// </summary>
 public class PacketSerializationBenchmark
 {
     private readonly ServerListPacket _packet = new();

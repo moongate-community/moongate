@@ -5,6 +5,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents MapLoader.
+/// </summary>
 public class MapLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<MapLoader>();

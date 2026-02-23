@@ -1,5 +1,8 @@
 namespace Moongate.Server.Data.Config;
 
+/// <summary>
+/// Represents MoongateHttpJwtConfig.
+/// </summary>
 public class MoongateHttpJwtConfig
 {
     public bool IsEnabled { get; set; } = true;

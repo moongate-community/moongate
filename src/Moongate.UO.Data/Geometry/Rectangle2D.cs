@@ -18,6 +18,9 @@ using Moongate.Core.Extensions.Strings;
 
 namespace Moongate.UO.Data.Geometry;
 
+/// <summary>
+/// Represents Rectangle2D.
+/// </summary>
 public struct Rectangle2D : IEquatable<Rectangle2D>, ISpanFormattable, ISpanParsable<Rectangle2D>
 {
     public static Rectangle2D Empty => new();

@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Json.Weather;
 
+/// <summary>
+/// Represents JsonWeatherWrap.
+/// </summary>
 public class JsonWeatherWrap
 {
     public JsonDfnHeader Header { get; set; }

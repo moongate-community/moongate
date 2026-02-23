@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents Notoriety.
+/// </summary>
 public enum Notoriety : byte
 {
     Invalid = 0x00,

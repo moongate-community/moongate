@@ -9,6 +9,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+/// <summary>
+/// Represents PacketStreamParsingBenchmark.
+/// </summary>
 public class PacketStreamParsingBenchmark
 {
     private readonly PacketRegistry _registry = new();

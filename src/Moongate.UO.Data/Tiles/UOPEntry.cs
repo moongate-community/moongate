@@ -15,6 +15,9 @@
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents UOPEntry.
+/// </summary>
 public struct UOPEntry
 {
     public readonly long Offset;

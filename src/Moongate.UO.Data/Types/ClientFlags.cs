@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+/// <summary>
+/// Represents ClientFlags.
+/// </summary>
 public enum ClientFlags
 {
     None = 0x00000000,

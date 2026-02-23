@@ -4,6 +4,9 @@ using Moongate.Server.Services.Timing;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+/// <summary>
+/// Represents TimerWheelBenchmark.
+/// </summary>
 public class TimerWheelBenchmark
 {
     private TimerWheelService _timerWheelService = null!;

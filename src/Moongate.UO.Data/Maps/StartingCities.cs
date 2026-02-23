@@ -2,6 +2,9 @@ using Moongate.UO.Data.Packets.Data;
 
 namespace Moongate.UO.Data.Maps;
 
+/// <summary>
+/// Represents StartingCities.
+/// </summary>
 public class StartingCities
 {
     public static readonly CityInfo[] OldHavenStartingCities =

@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents LightLevelType.
+/// </summary>
 public enum LightLevelType : byte
 {
     Black = 0x1F,

@@ -7,6 +7,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Packets;
 
+/// <summary>
+/// Represents PacketDispatchService.
+/// </summary>
 public class PacketDispatchService : IPacketDispatchService
 {
     private static readonly PacketRegistry _packetRegistry = CreatePacketRegistry();

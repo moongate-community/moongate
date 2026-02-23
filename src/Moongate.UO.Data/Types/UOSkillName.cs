@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents UOSkillName.
+/// </summary>
 public enum UOSkillName
 {
     Alchemy = 0,

@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.UI;
 
 [PacketHandler(0x9B, PacketSizing.Fixed, Length = 258, Description = "Request Help")]
+/// <summary>
+/// Represents RequestHelpPacket.
+/// </summary>
 public class RequestHelpPacket : BaseGameNetworkPacket
 {
     public RequestHelpPacket()

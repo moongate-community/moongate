@@ -11,6 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Characters;
 
+/// <summary>
+/// Represents CharacterService.
+/// </summary>
 public class CharacterService : ICharacterService
 {
     private const int StarterGoldQuantity = 1000;

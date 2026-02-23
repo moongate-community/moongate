@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+/// <summary>
+/// Represents UOTileFlag.
+/// </summary>
 public enum UOTileFlag : ulong
 {
     None = 0x00000000,

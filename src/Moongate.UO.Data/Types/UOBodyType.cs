@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents UOBodyType.
+/// </summary>
 public enum UOBodyType : byte
 {
     Empty,

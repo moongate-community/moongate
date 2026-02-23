@@ -26,6 +26,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Network;
 
+/// <summary>
+/// Represents NetworkService.
+/// </summary>
 public class NetworkService : INetworkService, INetworkMetricsSource
 {
     private const int MaxPendingBufferBytes = 64 * 1024;

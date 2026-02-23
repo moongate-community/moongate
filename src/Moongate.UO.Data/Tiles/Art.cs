@@ -2,6 +2,9 @@ using Moongate.UO.Data.Files;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents Art.
+/// </summary>
 public class Art
 {
     private static readonly FileIndex m_FileIndex = new(

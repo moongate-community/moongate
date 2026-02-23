@@ -2,6 +2,9 @@ using Moongate.UO.Data.Files;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents TileMatrixPatch.
+/// </summary>
 public class TileMatrixPatch
 {
     private StaticTile[] _tileBuffer = new StaticTile[128];

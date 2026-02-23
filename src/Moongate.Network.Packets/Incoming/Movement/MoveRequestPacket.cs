@@ -7,6 +7,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Incoming.Movement;
 
 [PacketHandler(0x02, PacketSizing.Fixed, Length = 7, Description = "Move Request")]
+/// <summary>
+/// Represents MoveRequestPacket.
+/// </summary>
 public class MoveRequestPacket : BaseGameNetworkPacket
 {
     public DirectionType Direction { get; set; }

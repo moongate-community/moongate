@@ -20,6 +20,9 @@ namespace Moongate.Server.Handlers;
 [RegisterPacketHandler(PacketDefinition.LoginSeedPacket), RegisterPacketHandler(PacketDefinition.AccountLoginPacket),
  RegisterPacketHandler(PacketDefinition.ServerSelectPacket), RegisterPacketHandler(PacketDefinition.GameLoginPacket),
  RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
+/// <summary>
+/// Represents LoginHandler.
+/// </summary>
 public class LoginHandler : BasePacketListener
 {
     private readonly ILogger _logger = Log.ForContext<LoginHandler>();

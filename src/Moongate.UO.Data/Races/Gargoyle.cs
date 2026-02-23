@@ -4,6 +4,9 @@ using Moongate.UO.Data.Races.Base;
 
 namespace Moongate.UO.Data.Races;
 
+/// <summary>
+/// Represents Gargoyle.
+/// </summary>
 public class Gargoyle : Race
 {
     private static readonly int[] m_HornHues =

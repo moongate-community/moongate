@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+/// <summary>
+/// Represents DirectionType.
+/// </summary>
 public enum DirectionType : byte
 {
     North = 0x0,

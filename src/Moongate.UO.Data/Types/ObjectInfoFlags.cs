@@ -4,6 +4,9 @@ namespace Moongate.UO.Data.Types;
 /// Flags for Object Info packet
 /// </summary>
 [Flags]
+/// <summary>
+/// Represents ObjectInfoFlags.
+/// </summary>
 public enum ObjectInfoFlags : byte
 {
     /// <summary>

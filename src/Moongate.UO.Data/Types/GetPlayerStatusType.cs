@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents GetPlayerStatusType.
+/// </summary>
 public enum GetPlayerStatusType : byte
 {
     GodClient = 0x00,

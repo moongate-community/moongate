@@ -19,6 +19,9 @@ using Moongate.Core.Buffers;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents TileList.
+/// </summary>
 public class TileList
 {
     private static readonly StaticTile[] _emptyTiles = [];

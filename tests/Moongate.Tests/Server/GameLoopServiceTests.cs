@@ -1,7 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Loop;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;

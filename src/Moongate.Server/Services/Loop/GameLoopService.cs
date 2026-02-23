@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Moongate.Abstractions.Services.Base;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Interfaces.Services.GameLoop;
+using Moongate.Server.Interfaces.Services.Loop;
 using Moongate.Server.Interfaces.Services.Messaging;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -10,8 +10,11 @@ using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Metrics.Data;
 using Serilog;
 
-namespace Moongate.Server.Services.GameLoop;
+namespace Moongate.Server.Services.Loop;
 
+/// <summary>
+/// Represents GameLoopService.
+/// </summary>
 public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopMetricsSource, IDisposable
 {
     private static readonly bool UseFastTimestampMath = Stopwatch.Frequency % 1000 == 0;

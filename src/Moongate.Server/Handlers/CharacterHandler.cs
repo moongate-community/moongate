@@ -23,6 +23,9 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
+/// <summary>
+/// Represents CharacterHandler.
+/// </summary>
 public class CharacterHandler : BasePacketListener, IGameEventListener<CharacterSelectedEvent>
 {
     private readonly ILogger _logger = Log.ForContext<CharacterHandler>();

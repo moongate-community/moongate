@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents MusicName.
+/// </summary>
 public enum MusicName
 {
     Invalid = -1,

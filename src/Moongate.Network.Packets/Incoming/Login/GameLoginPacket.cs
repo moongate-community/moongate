@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0x91, PacketSizing.Fixed, Length = 65, Description = "Game Server Login")]
+/// <summary>
+/// Represents GameLoginPacket.
+/// </summary>
 public class GameLoginPacket : BaseGameNetworkPacket
 {
     public uint SessionKey { get; set; }

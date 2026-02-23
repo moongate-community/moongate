@@ -7,6 +7,9 @@ using Moongate.UO.Data.Ids;
 
 namespace Moongate.Network.Packets.Incoming.System;
 
+/// <summary>
+/// Represents struct.
+/// </summary>
 public record struct MegaClilocProperty(uint ClilocId, string? Text);
 
 /// <summary>
@@ -32,6 +35,9 @@ public record struct MegaClilocProperty(uint ClilocId, string? Text);
 /// - BYTE[4] Serial
 /// </remarks>
 [PacketHandler(0xD6, PacketSizing.Variable, Description = "Mega Cliloc")]
+/// <summary>
+/// Represents MegaClilocPacket.
+/// </summary>
 public class MegaClilocPacket : BaseGameNetworkPacket
 {
     /// <summary>

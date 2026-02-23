@@ -4,6 +4,9 @@ using Moongate.UO.Data.Geometry;
 
 namespace Moongate.UO.Data.Json.Converters;
 
+/// <summary>
+/// Represents Point3DConverter.
+/// </summary>
 public class Point3DConverter : JsonConverter<Point3D>
 {
     public override Point3D Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

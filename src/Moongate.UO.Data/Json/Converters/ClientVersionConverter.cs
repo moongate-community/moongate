@@ -19,6 +19,9 @@ namespace Moongate.UO.Data.Json.Converters;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  *************************************************************************/
 
+/// <summary>
+/// Represents ClientVersionConverter.
+/// </summary>
 public class ClientVersionConverter : JsonConverter<ClientVersion>
 {
     public override ClientVersion Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

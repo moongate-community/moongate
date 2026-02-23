@@ -7,6 +7,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0x82, PacketSizing.Fixed, Length = 2, Description = "Login Denied Response")]
+/// <summary>
+/// Represents LoginDeniedPacket.
+/// </summary>
 public class LoginDeniedPacket : BaseGameNetworkPacket
 {
     public byte Reason { get; set; }

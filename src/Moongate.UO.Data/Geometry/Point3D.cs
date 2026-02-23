@@ -21,6 +21,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Geometry;
 
+/// <summary>
+/// Represents Point3D.
+/// </summary>
 public struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
       IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>, INotifyPropertyChanged

@@ -1,5 +1,5 @@
 using DryIoc;
-using Moongate.Server.Interfaces.Services.GameLoop;
+using Moongate.Server.Interfaces.Services.Loop;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Network;
 using Moongate.Server.Interfaces.Services.Persistence;

@@ -7,6 +7,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Incoming.Speech;
 
 [PacketHandler(0xAD, PacketSizing.Variable, Description = "Unicode/Ascii speech request")]
+/// <summary>
+/// Represents UnicodeSpeechPacket.
+/// </summary>
 public class UnicodeSpeechPacket : BaseGameNetworkPacket
 {
     public short Font { get; set; }

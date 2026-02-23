@@ -7,6 +7,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Books;
 
 [PacketHandler(0xD4, PacketSizing.Variable, Description = "Book Header ( New )")]
+/// <summary>
+/// Represents BookHeaderNewPacket.
+/// </summary>
 public class BookHeaderNewPacket : BaseGameNetworkPacket
 {
     public uint BookSerial { get; set; }

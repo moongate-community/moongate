@@ -15,6 +15,9 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.MegaClilocPacket)]
+/// <summary>
+/// Represents ToolTipHandler.
+/// </summary>
 public class ToolTipHandler : BasePacketListener
 {
     private readonly ILogger _logger = Log.ForContext<ToolTipHandler>();

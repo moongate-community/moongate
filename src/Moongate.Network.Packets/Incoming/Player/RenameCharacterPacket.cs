@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Player;
 
 [PacketHandler(0x75, PacketSizing.Fixed, Length = 35, Description = "Rename Character")]
+/// <summary>
+/// Represents RenameCharacterPacket.
+/// </summary>
 public class RenameCharacterPacket : BaseGameNetworkPacket
 {
     public RenameCharacterPacket()

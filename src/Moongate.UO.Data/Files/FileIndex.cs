@@ -3,6 +3,9 @@ using Moongate.UO.Data.Tiles;
 
 namespace Moongate.UO.Data.Files;
 
+/// <summary>
+/// Represents FileIndex.
+/// </summary>
 public class FileIndex
 {
     public Entry3D[] Index { get; }

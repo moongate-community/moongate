@@ -11,6 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents ProfessionsLoader.
+/// </summary>
 public class ProfessionsLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<ProfessionsLoader>();

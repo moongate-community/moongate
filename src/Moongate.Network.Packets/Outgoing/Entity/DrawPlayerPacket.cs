@@ -7,6 +7,9 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x20, PacketSizing.Fixed, Length = 19, Description = "Draw Game Player")]
+/// <summary>
+/// Represents DrawPlayerPacket.
+/// </summary>
 public class DrawPlayerPacket : BaseGameNetworkPacket
 {
     public UOMobileEntity? Mobile { get; set; }

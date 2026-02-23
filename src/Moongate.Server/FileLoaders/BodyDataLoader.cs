@@ -7,6 +7,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents BodyDataLoader.
+/// </summary>
 public class BodyDataLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<BodyDataLoader>();

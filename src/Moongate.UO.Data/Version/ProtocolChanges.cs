@@ -16,6 +16,9 @@
 namespace Moongate.UO.Data.Version;
 
 [Flags]
+/// <summary>
+/// Represents ProtocolChanges.
+/// </summary>
 public enum ProtocolChanges
 {
     None = 0x00000000,

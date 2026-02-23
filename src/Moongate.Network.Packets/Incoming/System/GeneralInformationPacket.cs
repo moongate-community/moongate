@@ -8,6 +8,9 @@ using UOMap = Moongate.UO.Data.Maps.Map;
 namespace Moongate.Network.Packets.Incoming.System;
 
 [PacketHandler(0xBF, PacketSizing.Variable, Description = "General Information Packet")]
+/// <summary>
+/// Represents GeneralInformationPacket.
+/// </summary>
 public class GeneralInformationPacket : BaseGameNetworkPacket
 {
     public GeneralInformationSubcommandType SubcommandType { get; set; }

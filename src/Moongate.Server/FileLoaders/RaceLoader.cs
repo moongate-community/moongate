@@ -5,6 +5,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents RaceLoader.
+/// </summary>
 public class RaceLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<RaceLoader>();

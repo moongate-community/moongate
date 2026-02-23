@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Utils;
 
+/// <summary>
+/// Represents MapSectorConsts.
+/// </summary>
 public class MapSectorConsts
 {
     /// <summary>

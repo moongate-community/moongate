@@ -2,6 +2,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Multi;
 
+/// <summary>
+/// Represents MultiTileEntry.
+/// </summary>
 public struct MultiTileEntry
 {
     public ushort ItemId { get; set; }

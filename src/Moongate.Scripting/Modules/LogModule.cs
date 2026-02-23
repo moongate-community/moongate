@@ -5,6 +5,9 @@ using Serilog.Events;
 namespace Moongate.Scripting.Modules;
 
 [ScriptModule("log", "Provides logging functionalities to scripts.")]
+/// <summary>
+/// Represents LogModule.
+/// </summary>
 public class LogModule
 {
     private readonly ILogger _logger = Log.ForContext<LogModule>();

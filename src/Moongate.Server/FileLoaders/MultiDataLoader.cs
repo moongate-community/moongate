@@ -11,6 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents MultiDataLoader.
+/// </summary>
 public class MultiDataLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<MultiDataLoader>();

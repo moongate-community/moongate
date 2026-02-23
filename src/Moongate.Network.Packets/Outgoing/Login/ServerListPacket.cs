@@ -7,6 +7,9 @@ using Moongate.UO.Data.Packets.Data;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0xA8, PacketSizing.Variable, Description = "Game Server List")]
+/// <summary>
+/// Represents ServerListPacket.
+/// </summary>
 public class ServerListPacket : BaseGameNetworkPacket
 {
     public List<GameServerEntry> Shards { get; } = [];

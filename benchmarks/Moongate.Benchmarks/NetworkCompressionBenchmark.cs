@@ -5,6 +5,9 @@ using Moongate.UO.Data.Middlewares;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+/// <summary>
+/// Represents NetworkCompressionBenchmark.
+/// </summary>
 public class NetworkCompressionBenchmark
 {
     private readonly CompressionMiddleware _compressionMiddleware = new();

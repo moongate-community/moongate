@@ -1,5 +1,8 @@
 namespace Moongate.Server.Data.Config;
 
+/// <summary>
+/// Represents MoongateGameConfig.
+/// </summary>
 public class MoongateGameConfig
 {
     public string ShardName { get; set; } = "Moongate Shard";

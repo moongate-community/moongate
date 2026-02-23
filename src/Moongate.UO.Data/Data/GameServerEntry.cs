@@ -4,6 +4,9 @@ using Moongate.Network.Spans;
 
 namespace Moongate.UO.Data.Packets.Data;
 
+/// <summary>
+/// Represents GameServerEntry.
+/// </summary>
 public class GameServerEntry
 {
     public int Index { get; set; }

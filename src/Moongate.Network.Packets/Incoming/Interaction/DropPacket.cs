@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Interaction;
 
 [PacketHandler(0x08, PacketSizing.Fixed, Length = 14, Description = "Drop Item")]
+/// <summary>
+/// Represents DropPacket.
+/// </summary>
 public class DropPacket : BaseGameNetworkPacket
 {
     public DropPacket()

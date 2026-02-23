@@ -10,6 +10,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x78, PacketSizing.Variable, Description = "Draw Object")]
+/// <summary>
+/// Represents MobileIncomingPacket.
+/// </summary>
 public class MobileIncomingPacket : BaseGameNetworkPacket
 {
     private const uint FacialHairVirtualSerialBase = 0x7F800000;

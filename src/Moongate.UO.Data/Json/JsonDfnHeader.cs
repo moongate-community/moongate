@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Json;
 
+/// <summary>
+/// Represents JsonDfnHeader.
+/// </summary>
 public class JsonDfnHeader
 {
     public string Title { get; set; }

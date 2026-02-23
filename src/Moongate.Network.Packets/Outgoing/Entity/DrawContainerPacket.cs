@@ -7,6 +7,9 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x24, PacketSizing.Fixed, Length = 9, Description = "Draw Container")]
+/// <summary>
+/// Represents DrawContainerPacket.
+/// </summary>
 public class DrawContainerPacket : BaseGameNetworkPacket
 {
     public UOItemEntity? Container { get; set; }

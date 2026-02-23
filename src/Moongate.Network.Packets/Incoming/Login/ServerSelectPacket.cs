@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xA0, PacketSizing.Fixed, Length = 3, Description = "Select Server")]
+/// <summary>
+/// Represents ServerSelectPacket.
+/// </summary>
 public class ServerSelectPacket : BaseGameNetworkPacket
 {
     public int SelectedServerIndex { get; set; }

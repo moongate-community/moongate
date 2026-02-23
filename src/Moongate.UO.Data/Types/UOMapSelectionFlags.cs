@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+/// <summary>
+/// Represents UOMapSelectionFlags.
+/// </summary>
 public enum UOMapSelectionFlags
 {
     Felucca = 0x00000001,

@@ -9,6 +9,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x11, PacketSizing.Variable, Description = "Status Bar Info")]
+/// <summary>
+/// Represents PlayerStatusPacket.
+/// </summary>
 public class PlayerStatusPacket : BaseGameNetworkPacket
 {
     public bool CanBeRenamed { get; set; }

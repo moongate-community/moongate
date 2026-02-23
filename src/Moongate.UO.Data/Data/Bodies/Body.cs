@@ -2,6 +2,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Bodies;
 
+/// <summary>
+/// Represents Body.
+/// </summary>
 public struct Body
 {
     public static UOBodyType[] Types;

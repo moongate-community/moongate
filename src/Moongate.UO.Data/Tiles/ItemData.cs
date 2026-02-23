@@ -3,6 +3,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents ItemData.
+/// </summary>
 public struct ItemData
 {
     private byte _weight;

@@ -13,6 +13,9 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.MoveRequestPacket)]
+/// <summary>
+/// Represents MovementHandler.
+/// </summary>
 public class MovementHandler : BasePacketListener
 {
     private const long MovementThrottleResetMs = 1000;

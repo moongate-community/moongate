@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Geometry;
 
+/// <summary>
+/// Represents Point3DList.
+/// </summary>
 public class Point3DList
 {
     private static readonly Point3D[] m_EmptyList = [];

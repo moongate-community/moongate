@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Player;
 
 [PacketHandler(0x01, PacketSizing.Fixed, Length = 5, Description = "Disconnect Notification")]
+/// <summary>
+/// Represents DisconnectNotificationPacket.
+/// </summary>
 public class DisconnectNotificationPacket : BaseGameNetworkPacket
 {
     public DisconnectNotificationPacket()

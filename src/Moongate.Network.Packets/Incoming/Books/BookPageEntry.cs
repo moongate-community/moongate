@@ -1,5 +1,8 @@
 namespace Moongate.Network.Packets.Incoming.Books;
 
+/// <summary>
+/// Represents BookPageEntry.
+/// </summary>
 public class BookPageEntry
 {
     public ushort PageNumber { get; set; }

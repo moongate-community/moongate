@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 namespace Moongate.UO.Data.Tiles;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
+/// <summary>
+/// Represents LandTile.
+/// </summary>
 public struct LandTile
 {
     internal short m_ID;

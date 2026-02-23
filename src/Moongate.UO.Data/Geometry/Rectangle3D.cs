@@ -19,6 +19,9 @@ using Moongate.UO.Data.Interfaces.Geometry;
 
 namespace Moongate.UO.Data.Geometry;
 
+/// <summary>
+/// Represents Rectangle3D.
+/// </summary>
 public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
 {
     private Point3D _start;

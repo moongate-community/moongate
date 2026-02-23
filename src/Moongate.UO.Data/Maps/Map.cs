@@ -3,6 +3,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Maps;
 
+/// <summary>
+/// Represents Map.
+/// </summary>
 public class Map : IComparable<Map>, IComparable
 {
     private static readonly List<Map> _allMaps = new();
