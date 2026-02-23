@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/benchmarks/">
     <Project Path="benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj" />
+    <Project Path="benchmarks/Moongate.Benchmarks.Compare/Moongate.Benchmarks.Compare.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Moongate.Abstractions/Moongate.Abstractions.csproj" />

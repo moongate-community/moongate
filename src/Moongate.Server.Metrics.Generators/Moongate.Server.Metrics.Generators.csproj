@@ -13,6 +13,7 @@
         <EnableAotAnalyzer>false</EnableAotAnalyzer>
         <IsTrimmable>false</IsTrimmable>
         <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+        <PublishAot>false</PublishAot>
     </PropertyGroup>
 
     <ItemGroup>

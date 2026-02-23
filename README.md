@@ -450,6 +450,7 @@ Repository helper scripts in `scripts/`:
 - `scripts/build_image.sh`: builds the Docker image using `docker buildx`, with options for tag, platform, push, and no-cache.
 - `scripts/run_aot.sh`: publishes and runs the server with NativeAOT settings for local AOT verification.
 - `scripts/run_benchmarks.sh`: runs BenchmarkDotNet benchmarks (`markdown` + `csv` exporters).
+- `scripts/run_benchmarks_compare.sh`: runs side-by-side `JIT vs NativeAOT` micro-benchmark comparison and writes `BenchmarkDotNet.Artifacts/results/aot-vs-jit.md`.
 
 ## Benchmarks
 
@@ -465,6 +466,12 @@ Latest local snapshot (`2026-02-23`, `BenchmarkDotNet 0.14.0`, macOS `Darwin 25.
 |---|---:|---:|
 | `PacketParsingBenchmark.ParseLoginSeedPacket` | `94.82 ns` | `664 B` |
 | `PacketSerializationBenchmark.WriteServerListPacket` | `64.19 ns` | `128 B` |
+| `PacketStreamParsingBenchmark.ParseMixedPacketStreamInChunks` | `24.25 us` | `56 KB` |
+| `PacketDispatchBenchmark.DispatchToThreeListeners` | `68.21 ns` | `296 B` |
+| `PacketDispatchBenchmark.DispatchWithoutListeners` | `8.99 ns` | `64 B` |
+| `NetworkCompressionBenchmark.Compress256Bytes` | `220.76 ns` | `-` |
+| `NetworkCompressionBenchmark.CompressAndDecompress1024Bytes` | `60.03 us` | `48.10 KB` |
+| `NetworkCompressionBenchmark.CompressionMiddlewareProcessSend1024Bytes` | `908.72 ns` | `1.48 KB` |
 | `QueueThroughputBenchmark.OutgoingQueueEnqueueThenDrain` | `24.309 us` | `-` |
 | `QueueThroughputBenchmark.MessageBusPublishThenDrain` | `9.725 us` | `-` |
 | `TimerWheelBenchmark.UpdateTicksDelta` | `2.893 us` | `4.05 KB` |
@@ -473,6 +480,29 @@ Generated reports are stored in:
 
 - `BenchmarkDotNet.Artifacts/results/*.md`
 - `BenchmarkDotNet.Artifacts/results/*.csv`
+
+### AOT vs JIT
+
+Run side-by-side comparison:
+
+```bash
+./scripts/run_benchmarks_compare.sh
+```
+
+Latest comparison snapshot (`2026-02-23`, `net10.0`, Apple `M4 Max`, `osx-arm64`):
+
+| Benchmark | JIT Mean | AOT Mean | Speedup (JIT/AOT) |
+|---|---:|---:|---:|
+| `Compress256Bytes` | `934.48 ns` | `319.04 ns` | `2.93x` |
+| `CompressAndDecompress1024Bytes` | `59.60 us` | `102.20 us` | `0.58x` |
+| `CompressionMiddlewareProcessSend1024Bytes` | `974.86 ns` | `1.34 us` | `0.73x` |
+| `ParseLoginSeedPacket` | `360.97 ns` | `71.66 ns` | `5.04x` |
+| `ParseMixedPacketStreamInChunks` | `26.10 us` | `37.71 us` | `0.69x` |
+| `WriteServerListPacket` | `585.93 ns` | `98.31 ns` | `5.96x` |
+
+Detailed report:
+
+- `BenchmarkDotNet.Artifacts/results/aot-vs-jit.md`
 
 ## Docker
 
