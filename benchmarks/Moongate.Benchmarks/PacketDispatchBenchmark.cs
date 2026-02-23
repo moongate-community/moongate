@@ -13,6 +13,14 @@ public class PacketDispatchBenchmark
     private IncomingGamePacket _withListenersPacket;
     private IncomingGamePacket _withoutListenersPacket;
 
+    [Benchmark]
+    public bool DispatchToThreeListeners()
+        => _packetDispatchService.NotifyPacketListeners(_withListenersPacket);
+
+    [Benchmark]
+    public bool DispatchWithoutListeners()
+        => _packetDispatchService.NotifyPacketListeners(_withoutListenersPacket);
+
     [GlobalSetup]
     public void Setup()
     {
@@ -21,13 +29,7 @@ public class PacketDispatchBenchmark
         _packetDispatchService.AddPacketListener(0xEF, new NoOpPacketListener());
 
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        _withListenersPacket = new IncomingGamePacket(null!, 0xEF, _packet, timestamp);
-        _withoutListenersPacket = new IncomingGamePacket(null!, 0x7E, _packet, timestamp);
+        _withListenersPacket = new(null!, 0xEF, _packet, timestamp);
+        _withoutListenersPacket = new(null!, 0x7E, _packet, timestamp);
     }
-
-    [Benchmark]
-    public bool DispatchToThreeListeners() => _packetDispatchService.NotifyPacketListeners(_withListenersPacket);
-
-    [Benchmark]
-    public bool DispatchWithoutListeners() => _packetDispatchService.NotifyPacketListeners(_withoutListenersPacket);
 }

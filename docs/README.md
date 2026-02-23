@@ -42,6 +42,39 @@ docs/
 └── _site/                  # Generated site (created by build)
 ```
 
+## Using Obsidian Vault Files
+
+The `docs/` folder is also an Obsidian vault.
+
+### Open the vault
+
+1. Open Obsidian
+2. Select **Open folder as vault**
+3. Choose the repository `docs/` directory
+
+### Main notes to start from
+
+- `docs/Home.md`: vault navigation hub
+- `docs/OBSIDIAN_SETUP.md`: plugin and editor setup
+- `docs/plans/`: roadmap and status snapshots
+- `docs/sprints/`: sprint planning and closeouts
+- `docs/journal/`: development session notes
+- `docs/protocol/`: protocol-specific notes
+
+### Recommended workflow
+
+1. Track implementation progress in `docs/plans/` status snapshots
+2. Add daily/feature notes in `docs/journal/`
+3. Keep sprint notes updated in `docs/sprints/`
+4. Reflect protocol changes in `docs/protocol/`
+5. Ensure the same changes are represented in DocFX articles under `docs/articles/`
+
+### Obsidian vs DocFX
+
+- Obsidian notes are optimized for internal engineering workflow.
+- DocFX pages are optimized for published documentation.
+- Keep both aligned when features or architecture change.
+
 ## Building Documentation
 
 ### Prerequisites

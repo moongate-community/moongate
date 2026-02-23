@@ -517,6 +517,7 @@ Run the container:
 ```bash
 docker run --rm -it \
   -p 2593:2593 \
+  -p 8088:8088 \
   -v /path/host/moongate-root:/app \
   -v /path/host/uo-client:/uo:ro \
   --name moongate \

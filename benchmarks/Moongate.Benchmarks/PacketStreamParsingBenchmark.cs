@@ -15,31 +15,6 @@ public class PacketStreamParsingBenchmark
     private readonly List<byte[]> _chunks = [];
     private readonly List<byte> _pendingBytes = [];
 
-    [GlobalSetup]
-    public void Setup()
-    {
-        PacketTable.Register(_registry);
-
-        var ping = new byte[] { 0x73, 0x3A };
-        var move = new byte[] { 0x02, 0x81, 0x10, 0x00, 0x00, 0x00, 0x01 };
-        var generalInfo = BuildGeneralInformationPacket();
-
-        var stream = new List<byte>(32 * 1024);
-        for (var i = 0; i < 256; i++)
-        {
-            stream.AddRange(ping);
-            stream.AddRange(move);
-            stream.AddRange(generalInfo);
-        }
-
-        const int chunkSize = 64;
-        for (var offset = 0; offset < stream.Count; offset += chunkSize)
-        {
-            var length = Math.Min(chunkSize, stream.Count - offset);
-            _chunks.Add(stream.GetRange(offset, length).ToArray());
-        }
-    }
-
     [Benchmark]
     public int ParseMixedPacketStreamInChunks()
     {
@@ -55,6 +30,50 @@ public class PacketStreamParsingBenchmark
         return parsed;
     }
 
+    [GlobalSetup]
+    public void Setup()
+    {
+        PacketTable.Register(_registry);
+
+        var ping = new byte[] { 0x73, 0x3A };
+        var move = new byte[] { 0x02, 0x81, 0x10, 0x00, 0x00, 0x00, 0x01 };
+        var generalInfo = BuildGeneralInformationPacket();
+
+        var stream = new List<byte>(32 * 1024);
+
+        for (var i = 0; i < 256; i++)
+        {
+            stream.AddRange(ping);
+            stream.AddRange(move);
+            stream.AddRange(generalInfo);
+        }
+
+        const int chunkSize = 64;
+
+        for (var offset = 0; offset < stream.Count; offset += chunkSize)
+        {
+            var length = Math.Min(chunkSize, stream.Count - offset);
+            _chunks.Add(stream.GetRange(offset, length).ToArray());
+        }
+    }
+
+    private static byte[] BuildGeneralInformationPacket()
+    {
+        var packet = GeneralInformationPacket.CreateSetCursorHueSetMap(0);
+        var writer = new SpanWriter(32, true);
+
+        try
+        {
+            packet.Write(ref writer);
+
+            return writer.ToArray();
+        }
+        finally
+        {
+            writer.Dispose();
+        }
+    }
+
     private int ParseAvailablePackets(List<byte> pendingBytes)
     {
         var parsed = 0;
@@ -66,10 +85,12 @@ public class PacketStreamParsingBenchmark
             if (!_registry.TryGetDescriptor(opCode, out var descriptor))
             {
                 pendingBytes.RemoveAt(0);
+
                 continue;
             }
 
             var expectedLength = ResolvePacketLength(pendingBytes, descriptor);
+
             if (expectedLength is null || expectedLength.Value <= 0 || pendingBytes.Count < expectedLength.Value)
             {
                 break;
@@ -105,21 +126,5 @@ public class PacketStreamParsingBenchmark
         lengthBuffer[1] = pendingBytes[2];
 
         return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
-    }
-
-    private static byte[] BuildGeneralInformationPacket()
-    {
-        var packet = GeneralInformationPacket.CreateSetCursorHueSetMap(0);
-        var writer = new SpanWriter(32, true);
-
-        try
-        {
-            packet.Write(ref writer);
-            return writer.ToArray();
-        }
-        finally
-        {
-            writer.Dispose();
-        }
     }
 }

@@ -42,10 +42,10 @@ public sealed class StatJsonConverter : JsonConverter<Stat>
     {
         var text = value switch
         {
-            Stat.Strength => "Str",
-            Stat.Dexterity => "Dex",
+            Stat.Strength     => "Str",
+            Stat.Dexterity    => "Dex",
             Stat.Intelligence => "Int",
-            _ => value.ToString()
+            _                 => value.ToString()
         };
 
         writer.WriteStringValue(text);
@@ -59,6 +59,7 @@ public sealed class StatJsonConverter : JsonConverter<Stat>
             value.Equals("Strength", StringComparison.OrdinalIgnoreCase))
         {
             stat = Stat.Strength;
+
             return true;
         }
 
@@ -66,6 +67,7 @@ public sealed class StatJsonConverter : JsonConverter<Stat>
             value.Equals("Dexterity", StringComparison.OrdinalIgnoreCase))
         {
             stat = Stat.Dexterity;
+
             return true;
         }
 
@@ -73,6 +75,7 @@ public sealed class StatJsonConverter : JsonConverter<Stat>
             value.Equals("Intelligence", StringComparison.OrdinalIgnoreCase))
         {
             stat = Stat.Intelligence;
+
             return true;
         }
 

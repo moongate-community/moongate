@@ -7,6 +7,28 @@ namespace Moongate.Tests.Network.Packets;
 
 public class GeneralInformationPacketTests
 {
+    [Test]
+    public void TryParse_ShouldFail_WhenSubcommandPayloadIsInvalid()
+    {
+        var raw = new byte[] { 0xBF, 0x00, 0x05, 0x00, 0x08 };
+        var packet = new GeneralInformationPacket();
+
+        var ok = packet.TryParse(raw);
+
+        Assert.That(ok, Is.False);
+    }
+
+    [Test]
+    public void Write_ShouldThrow_WhenSubcommandPayloadIsInvalid()
+    {
+        var packet = GeneralInformationPacket.Create(
+            GeneralInformationSubcommandType.SetCursorHueSetMap,
+            ReadOnlyMemory<byte>.Empty
+        );
+
+        Assert.Throws<InvalidOperationException>(() => Write(packet));
+    }
+
     [TestCaseSource(nameof(AllKnownSubcommands))]
     public void WriteAndParse_ShouldRoundtrip_AllKnownSubcommands(
         GeneralInformationSubcommandType subcommandType,
@@ -36,28 +58,6 @@ public class GeneralInformationPacketTests
                 Assert.That(parsed.SubcommandData.ToArray(), Is.EqualTo(payload));
             }
         );
-    }
-
-    [Test]
-    public void TryParse_ShouldFail_WhenSubcommandPayloadIsInvalid()
-    {
-        var raw = new byte[] { 0xBF, 0x00, 0x05, 0x00, 0x08 };
-        var packet = new GeneralInformationPacket();
-
-        var ok = packet.TryParse(raw);
-
-        Assert.That(ok, Is.False);
-    }
-
-    [Test]
-    public void Write_ShouldThrow_WhenSubcommandPayloadIsInvalid()
-    {
-        var packet = GeneralInformationPacket.Create(
-            GeneralInformationSubcommandType.SetCursorHueSetMap,
-            ReadOnlyMemory<byte>.Empty
-        );
-
-        Assert.Throws<InvalidOperationException>(() => Write(packet));
     }
 
     private static IEnumerable<TestCaseData> AllKnownSubcommands()
