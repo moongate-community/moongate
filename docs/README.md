@@ -10,6 +10,10 @@ docs/
 ├── filterConfig.yml        # API filter configuration
 ├── index.md                # Documentation homepage
 ├── toc.yml                 # Main table of contents
+├── templates/              # Custom DocFX template overrides
+│   └── moongate/
+│       └── public/
+│           └── main.css    # Moongate palette + typography override
 ├── articles/               # Documentation articles
 │   ├── getting-started/    # Introduction and setup
 │   │   ├── introduction.md
@@ -71,6 +75,10 @@ Open http://localhost:8080 in your browser.
 ## GitHub Pages
 
 Documentation is automatically built and deployed to GitHub Pages via GitHub Actions.
+
+Published documentation:
+
+- https://moongate-community.github.io/moongatev2/
 
 ### Workflow
 
@@ -183,6 +191,18 @@ Place images in repository `images/` and reference them from `docs/`:
 ```markdown
 ![Moongate Logo](../images/moongate_logo.png)
 ```
+
+## Theme Customization
+
+DocFX theme customization is applied through:
+
+- `docs/templates/moongate/public/main.css`
+
+It currently defines:
+
+- moon-first navbar branding (logo hidden)
+- Moongate color palette
+- `Fira Code` typography
 
 ## Updating Documentation
 
