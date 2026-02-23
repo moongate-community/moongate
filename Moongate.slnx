@@ -13,4 +13,5 @@
     <Project Path="src/Moongate.Server/Moongate.Server.csproj"/>
     <Project Path="src/Moongate.UO.Data/Moongate.UO.Data.csproj"/>
     <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj"/>
+    <Project Path="benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj"/>
 </Solution>
