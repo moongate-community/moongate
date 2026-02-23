@@ -6,7 +6,6 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Version>0.13.0</Version>
         <Codename>Moongate</Codename>
         <MoongateVersion>$(Version)</MoongateVersion>
         <MoongateCodename>$(Codename)</MoongateCodename>

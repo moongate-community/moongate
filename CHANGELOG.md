@@ -1,3 +1,9 @@
+## [0.14.0](https://github.com/moongate-community/moongatev2/compare/v0.13.0...v0.14.0) (2026-02-23)
+
+### Features
+
+* **commands:** add tab autocomplete and contextual help ([21d3e23](https://github.com/moongate-community/moongatev2/commit/21d3e233d41832d6b684e0b9e0fe164b3917b014))
+
 ## [0.13.0](https://github.com/moongate-community/moongatev2/compare/v0.12.0...v0.13.0) (2026-02-22)
 
 ### Features
