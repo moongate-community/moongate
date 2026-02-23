@@ -1,3 +1,15 @@
+## [0.13.0](https://github.com/moongate-community/moongatev2/compare/v0.12.0...v0.13.0) (2026-02-22)
+
+### Features
+
+* **commands:** enforce account-type authorization and update docs ([07128f0](https://github.com/moongate-community/moongatev2/commit/07128f0b2957fc59ee3866908ccf1b1fd4588634))
+* **item:** persist stackable and rarity metadata ([453a10f](https://github.com/moongate-community/moongatev2/commit/453a10f14fddda4c20f797d4952041befcfb0059))
+* **persistence:** persist item name and weight across snapshots ([b0629bf](https://github.com/moongate-community/moongatev2/commit/b0629bf3d5b5c07ec2bdfbcb07d0f1256c2df073))
+
+### Bug Fixes
+
+* **item:** derive stackable flag from mul tile data ([e9dfc2c](https://github.com/moongate-community/moongatev2/commit/e9dfc2c2e643d010050ae3fb00fec971b849a338))
+
 ## [0.12.0](https://github.com/moongate-community/moongatev2/compare/v0.11.1...v0.12.0) (2026-02-22)
 
 ### Features
