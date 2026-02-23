@@ -1,3 +1,9 @@
+## [0.15.1](https://github.com/moongate-community/moongatev2/compare/v0.15.0...v0.15.1) (2026-02-23)
+
+### Bug Fixes
+
+* **docker:** add binutils for AOT symbol stripping and update generator paths ([b77baec](https://github.com/moongate-community/moongatev2/commit/b77baec40065afc66d6792832b6f32a848ee706d))
+
 ## [0.15.0](https://github.com/moongate-community/moongatev2/compare/v0.14.0...v0.15.0) (2026-02-23)
 
 ### Features
