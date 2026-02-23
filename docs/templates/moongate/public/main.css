@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap");
+
 :root {
   --mg-bg: #242130;
   --mg-bg-soft: #343455;
@@ -13,6 +15,7 @@ html[data-bs-theme="dark"] body,
 html[data-bs-theme="light"] body {
   background: radial-gradient(circle at top right, #3c4d81 0%, #242130 46%, #1f1c2a 100%);
   color: var(--mg-text);
+  font-family: "Fira Code", monospace;
 }
 
 html[data-bs-theme="dark"] .navbar,
