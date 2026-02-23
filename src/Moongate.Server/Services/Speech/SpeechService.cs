@@ -57,12 +57,12 @@ public sealed class SpeechService : ISpeechService
 
         await _gameEventBusService.PublishAsync(
             new BroadcastFromServerEvent(
+                GameEventBase.CreateNow(),
                 text,
                 hue,
                 font,
                 language,
-                recipients,
-                GameEventClock.UnixMillisecondsNow()
+                recipients
             )
         );
 
@@ -85,12 +85,12 @@ public sealed class SpeechService : ISpeechService
         _outgoingPacketQueue.Enqueue(session.SessionId, SpeechMessageFactory.CreateSystem(text, hue, font, language));
         await _gameEventBusService.PublishAsync(
             new SendMessageFromServerEvent(
+                GameEventBase.CreateNow(),
                 session.SessionId,
                 text,
                 hue,
                 font,
-                language,
-                GameEventClock.UnixMillisecondsNow()
+                language
             )
         );
 

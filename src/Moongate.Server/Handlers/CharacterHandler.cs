@@ -49,7 +49,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
     public async Task HandleAsync(CharacterSelectedEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        if (_gameNetworkSessionService.TryGet(gameEvent.Sessionid, out var gameSession))
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var gameSession))
         {
             await HandleCharacterLoggedIn(gameSession, gameEvent.CharacterId);
         }

@@ -11,7 +11,6 @@ using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Extensions.Scripts;
-using Moongate.Scripting.Modules;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
@@ -380,7 +379,7 @@ public sealed class MoongateBootstrap : IDisposable
                 "0.1.0"
             )
         );
-        _container.RegisterScriptModule<LogModule>();
+        BootstrapScriptModuleRegistration.Register(_container);
     }
 
     private void RegisterScriptUserData()

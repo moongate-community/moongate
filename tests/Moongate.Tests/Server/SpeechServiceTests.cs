@@ -164,7 +164,7 @@ public class SpeechServiceTests
                 Assert.That(listener.EventCount, Is.EqualTo(1));
                 Assert.That(listener.LastEvent.RecipientCount, Is.EqualTo(2));
                 Assert.That(listener.LastEvent.Text, Is.EqualTo("Welcome to Moongate"));
-                Assert.That(listener.LastEvent.Timestamp, Is.GreaterThan(0));
+                Assert.That(listener.LastEvent.BaseEvent.Timestamp, Is.GreaterThan(0));
             }
         );
     }
@@ -209,7 +209,7 @@ public class SpeechServiceTests
                 Assert.That(listener.EventCount, Is.EqualTo(1));
                 Assert.That(listener.LastEvent.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(listener.LastEvent.Text, Is.EqualTo("MOTD: Hello"));
-                Assert.That(listener.LastEvent.Timestamp, Is.GreaterThan(0));
+                Assert.That(listener.LastEvent.BaseEvent.Timestamp, Is.GreaterThan(0));
             }
         );
     }
