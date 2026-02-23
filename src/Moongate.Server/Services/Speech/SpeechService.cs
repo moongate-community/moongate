@@ -1,7 +1,9 @@
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
@@ -18,19 +20,22 @@ public sealed class SpeechService : ISpeechService
     private readonly ICommandSystemService _commandSystemService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IGameEventBusService _gameEventBusService;
 
     public SpeechService(
         ICommandSystemService commandSystemService,
         IOutgoingPacketQueue outgoingPacketQueue,
-        IGameNetworkSessionService gameNetworkSessionService
+        IGameNetworkSessionService gameNetworkSessionService,
+        IGameEventBusService gameEventBusService
     )
     {
         _commandSystemService = commandSystemService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _gameEventBusService = gameEventBusService;
     }
 
-    public int BroadcastFromServer(
+    public async Task<int> BroadcastFromServerAsync(
         string text,
         short hue = SpeechHues.System,
         short font = SpeechHues.DefaultFont,
@@ -50,10 +55,21 @@ public sealed class SpeechService : ISpeechService
             recipients++;
         }
 
+        await _gameEventBusService.PublishAsync(
+            new BroadcastFromServerEvent(
+                text,
+                hue,
+                font,
+                language,
+                recipients,
+                GameEventClock.UnixMillisecondsNow()
+            )
+        );
+
         return recipients;
     }
 
-    public bool SendMessageFromServer(
+    public async Task<bool> SendMessageFromServerAsync(
         GameSession session,
         string text,
         short hue = SpeechHues.System,
@@ -67,6 +83,16 @@ public sealed class SpeechService : ISpeechService
         }
 
         _outgoingPacketQueue.Enqueue(session.SessionId, SpeechMessageFactory.CreateSystem(text, hue, font, language));
+        await _gameEventBusService.PublishAsync(
+            new SendMessageFromServerEvent(
+                session.SessionId,
+                text,
+                hue,
+                font,
+                language,
+                GameEventClock.UnixMillisecondsNow()
+            )
+        );
 
         return true;
     }

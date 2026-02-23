@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
@@ -19,7 +20,16 @@ public class SpeechHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var handler = new SpeechHandler(queue, new SpeechService(new MockCommandSystemService(), queue, gameNetworkSessionService));
+        var gameEventBusService = new GameEventBusService();
+        var handler = new SpeechHandler(
+            queue,
+            new SpeechService(
+                new MockCommandSystemService(),
+                queue,
+                gameNetworkSessionService,
+                gameEventBusService
+            )
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
@@ -76,7 +86,16 @@ public class SpeechHandlerTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var commandSystemService = new MockCommandSystemService();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var handler = new SpeechHandler(queue, new SpeechService(commandSystemService, queue, gameNetworkSessionService));
+        var gameEventBusService = new GameEventBusService();
+        var handler = new SpeechHandler(
+            queue,
+            new SpeechService(
+                commandSystemService,
+                queue,
+                gameNetworkSessionService,
+                gameEventBusService
+            )
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))

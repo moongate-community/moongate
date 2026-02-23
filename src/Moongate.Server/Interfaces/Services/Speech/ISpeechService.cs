@@ -18,7 +18,7 @@ public interface ISpeechService
     /// <param name="font">Speech font.</param>
     /// <param name="language">Language code.</param>
     /// <returns>Number of sessions that received the message.</returns>
-    int BroadcastFromServer(
+    Task<int> BroadcastFromServerAsync(
         string text,
         short hue = SpeechHues.System,
         short font = SpeechHues.DefaultFont,
@@ -36,7 +36,7 @@ public interface ISpeechService
     /// <returns>
     /// <c>true</c> when the message was enqueued; otherwise <c>false</c> (for invalid input).
     /// </returns>
-    bool SendMessageFromServer(
+    Task<bool> SendMessageFromServerAsync(
         GameSession session,
         string text,
         short hue = SpeechHues.System,

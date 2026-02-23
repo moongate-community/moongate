@@ -2,7 +2,9 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
@@ -19,7 +21,13 @@ public class SpeechServiceTests
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var speechService = new SpeechService(commandSystemService, outgoingPacketQueue, gameNetworkSessionService);
+        var gameEventBusService = new GameEventBusService();
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
@@ -58,7 +66,13 @@ public class SpeechServiceTests
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var speechService = new SpeechService(commandSystemService, outgoingPacketQueue, gameNetworkSessionService);
+        var gameEventBusService = new GameEventBusService();
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
@@ -95,12 +109,20 @@ public class SpeechServiceTests
     }
 
     [Test]
-    public void BroadcastFromServer_ShouldEnqueueSystemMessage_ForAllActiveSessions()
+    public async Task BroadcastFromServerAsync_ShouldEnqueueSystemMessage_ForAllActiveSessions()
     {
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var speechService = new SpeechService(commandSystemService, outgoingPacketQueue, gameNetworkSessionService);
+        var gameEventBusService = new GameEventBusService();
+        var listener = new TestBroadcastFromServerEventListener();
+        gameEventBusService.RegisterListener(listener);
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService
+        );
         using var clientA = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         using var clientB = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
@@ -127,7 +149,7 @@ public class SpeechServiceTests
         gameNetworkSessionService.Add(sessionA);
         gameNetworkSessionService.Add(sessionB);
 
-        var recipients = speechService.BroadcastFromServer("Welcome to Moongate");
+        var recipients = await speechService.BroadcastFromServerAsync("Welcome to Moongate");
         var dequeuedA = outgoingPacketQueue.TryDequeue(out var packetA);
         var dequeuedB = outgoingPacketQueue.TryDequeue(out var packetB);
 
@@ -139,17 +161,29 @@ public class SpeechServiceTests
                 Assert.That(dequeuedB, Is.True);
                 Assert.That(packetA.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
                 Assert.That(packetB.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+                Assert.That(listener.EventCount, Is.EqualTo(1));
+                Assert.That(listener.LastEvent.RecipientCount, Is.EqualTo(2));
+                Assert.That(listener.LastEvent.Text, Is.EqualTo("Welcome to Moongate"));
+                Assert.That(listener.LastEvent.Timestamp, Is.GreaterThan(0));
             }
         );
     }
 
     [Test]
-    public void SendMessageFromServer_ShouldEnqueueSystemMessage_ForTargetSession()
+    public async Task SendMessageFromServerAsync_ShouldEnqueueSystemMessage_ForTargetSession()
     {
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var speechService = new SpeechService(commandSystemService, outgoingPacketQueue, gameNetworkSessionService);
+        var gameEventBusService = new GameEventBusService();
+        var listener = new TestSendMessageFromServerEventListener();
+        gameEventBusService.RegisterListener(listener);
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
@@ -162,7 +196,7 @@ public class SpeechServiceTests
             }
         };
 
-        var enqueued = speechService.SendMessageFromServer(session, "MOTD: Hello");
+        var enqueued = await speechService.SendMessageFromServerAsync(session, "MOTD: Hello");
         var dequeued = outgoingPacketQueue.TryDequeue(out var outgoing);
 
         Assert.Multiple(
@@ -172,6 +206,10 @@ public class SpeechServiceTests
                 Assert.That(dequeued, Is.True);
                 Assert.That(outgoing.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(outgoing.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+                Assert.That(listener.EventCount, Is.EqualTo(1));
+                Assert.That(listener.LastEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(listener.LastEvent.Text, Is.EqualTo("MOTD: Hello"));
+                Assert.That(listener.LastEvent.Timestamp, Is.GreaterThan(0));
             }
         );
     }
