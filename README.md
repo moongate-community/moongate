@@ -506,6 +506,9 @@ For full setup details, volumes, troubleshooting, and dashboard notes, see `stac
 ## Documentation
 
 Project documentation (Obsidian vault) is in `docs/`.
+Published documentation is available at:
+
+- https://moongate-community.github.io/moongatev2/
 
 - Docs home: `docs/Home.md`
 - Development plan: `docs/plans/moongate-v2-development-plan.md`
