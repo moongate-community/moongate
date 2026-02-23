@@ -12,7 +12,7 @@ public class CharactersStartingLocationsPacketTests
     {
         var packet = new CharactersStartingLocationsPacket();
 
-        packet.FillCharacters([new CharacterEntry("alpha")], 7);
+        packet.FillCharacters([new CharacterEntry("alpha")]);
 
         Assert.That(packet.Characters.Count, Is.EqualTo(7));
         Assert.That(packet.Characters[0]?.Name, Is.EqualTo("alpha"));
@@ -46,7 +46,7 @@ public class CharactersStartingLocationsPacketTests
     public void Write_WithOneCharacterAndNoCities_ShouldSerializeHeaderAndFlags()
     {
         var packet = new CharactersStartingLocationsPacket();
-        packet.FillCharacters([new CharacterEntry("alpha")], 7);
+        packet.FillCharacters([new CharacterEntry("alpha")]);
 
         var writer = new SpanWriter(1024, true);
         packet.Write(ref writer);

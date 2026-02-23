@@ -4,6 +4,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Templates.Items;
 
+/// <summary>
+/// Represents ItemTemplateDefinition.
+/// </summary>
 public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 {
     public string? ContainerLayoutId { get; set; }

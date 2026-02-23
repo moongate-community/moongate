@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Moongate.UO.Data.Json;
 
+/// <summary>
+/// Represents JsonContainerSize.
+/// </summary>
 public class JsonContainerSize
 {
     public string Id { get; set; }

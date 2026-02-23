@@ -45,16 +45,17 @@ public sealed class EntityFactoryService : IEntityFactoryService
         => _starterItemFactoryService.CreateStarterBackpack(mobileId, profileContext);
 
     /// <inheritdoc />
+    public UOItemEntity CreateStarterEquipment(Serial mobileId, ItemLayerType layer, StarterProfileContext profileContext)
+        => _starterItemFactoryService.CreateStarterEquipment(mobileId, layer, profileContext);
+
+    /// <inheritdoc />
     public UOItemEntity CreateStarterGold(
         Serial containerId,
         Point2D containerPosition,
         int quantity,
         StarterProfileContext profileContext
-    ) => _starterItemFactoryService.CreateStarterGold(containerId, containerPosition, quantity, profileContext);
-
-    /// <inheritdoc />
-    public UOItemEntity CreateStarterEquipment(Serial mobileId, ItemLayerType layer, StarterProfileContext profileContext)
-        => _starterItemFactoryService.CreateStarterEquipment(mobileId, layer, profileContext);
+    )
+        => _starterItemFactoryService.CreateStarterGold(containerId, containerPosition, quantity, profileContext);
 
     /// <inheritdoc />
     public UOItemEntity GetNewBackpack()

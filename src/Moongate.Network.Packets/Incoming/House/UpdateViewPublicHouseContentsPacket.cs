@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.House;
 
 [PacketHandler(0xFB, PacketSizing.Fixed, Length = 2, Description = "Update View Public House Contents")]
+/// <summary>
+/// Represents UpdateViewPublicHouseContentsPacket.
+/// </summary>
 public class UpdateViewPublicHouseContentsPacket : BaseGameNetworkPacket
 {
     public UpdateViewPublicHouseContentsPacket()

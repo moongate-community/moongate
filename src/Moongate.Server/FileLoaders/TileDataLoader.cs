@@ -8,6 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents TileDataLoader.
+/// </summary>
 public class TileDataLoader : IFileLoader
 
 {

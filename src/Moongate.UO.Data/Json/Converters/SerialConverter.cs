@@ -4,6 +4,9 @@ using Moongate.UO.Data.Ids;
 
 namespace Moongate.UO.Data.Json.Converters;
 
+/// <summary>
+/// Represents SerialConverter.
+/// </summary>
 public class SerialConverter : JsonConverter<Serial>
 {
     public override Serial Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

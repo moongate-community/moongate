@@ -5,6 +5,9 @@ using Serilog;
 
 namespace Moongate.UO.Data.Containers;
 
+/// <summary>
+/// Represents ContainerLayoutSystem.
+/// </summary>
 public class ContainerLayoutSystem
 {
     private readonly ILogger _logger = Log.ForContext<ContainerLayoutSystem>();

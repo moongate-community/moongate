@@ -263,96 +263,6 @@ public class NetworkServiceTests
     }
 
     [Test]
-    public void OnClientData_WhenUnknownOpcodesStayBelowLimit_ShouldContinueParsingSubsequentValidPacket()
-    {
-        var messageBus = new NetworkServiceTestMessageBusService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var sessions = new GameNetworkSessionService();
-        using var service = new NetworkService(
-            messageBus,
-            eventBus,
-            new PacketDispatchService(),
-            sessions,
-            new()
-            {
-                RootDirectory = Path.GetTempPath(),
-                LogLevel = LogLevelType.Debug,
-                LogPacketData = false
-            }
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-
-        InvokeOnClientData(service, client, [0x12, 0x34, 0x56, 0x78]);
-
-        var payload = new byte[31 + 21];
-        Array.Fill(payload, (byte)0xFF, 0, 31);
-        payload[31] = 0xEF;
-
-        InvokeOnClientData(service, client, payload);
-
-        var hasParsedPacket = service.TryDequeueParsedPacket(out var parsedPacket);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(hasParsedPacket, Is.True);
-                Assert.That(parsedPacket.PacketId, Is.EqualTo(0xEF));
-                Assert.That(parsedPacket.Packet, Is.TypeOf<LoginSeedPacket>());
-                Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
-                Assert.That(session.NetworkSession.State, Is.EqualTo(NetworkSessionState.Login));
-                Assert.That(messageBus.Packets.Count, Is.EqualTo(1));
-            }
-        );
-    }
-
-    [Test]
-    public void OnClientData_WhenVariablePacketLengthExceedsLimit_ShouldDropMalformedHeaderAndParseFollowingPacket()
-    {
-        var messageBus = new NetworkServiceTestMessageBusService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        using var service = new NetworkService(
-            messageBus,
-            eventBus,
-            new PacketDispatchService(),
-            new GameNetworkSessionService(),
-            new()
-            {
-                RootDirectory = Path.GetTempPath(),
-                LogLevel = LogLevelType.Debug,
-                LogPacketData = false
-            }
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-
-        var payload = new byte[4 + 3 + 62];
-        payload[0] = 0x12;
-        payload[1] = 0x34;
-        payload[2] = 0x56;
-        payload[3] = 0x78;
-        payload[4] = 0xAD;
-        payload[5] = 0x40;
-        payload[6] = 0x01;
-        payload[7] = 0x80;
-
-        InvokeOnClientData(service, client, payload);
-
-        var hasPacket = service.TryDequeueParsedPacket(out var parsedPacket);
-        var hasOtherPackets = service.TryDequeueParsedPacket(out _);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(hasPacket, Is.True);
-                Assert.That(hasOtherPackets, Is.False);
-                Assert.That(parsedPacket.PacketId, Is.EqualTo(0x80));
-                Assert.That(parsedPacket.Packet, Is.TypeOf<AccountLoginPacket>());
-                Assert.That(messageBus.Packets.Count, Is.EqualTo(1));
-                Assert.That(messageBus.Packets[0].PacketId, Is.EqualTo(0x80));
-            }
-        );
-    }
-
-    [Test]
     public void OnClientData_WhenReconnectSeedAndGameLoginAreInSameBuffer_ShouldParseGameLoginPacket()
     {
         var messageBus = new NetworkServiceTestMessageBusService();
@@ -437,6 +347,49 @@ public class NetworkServiceTests
     }
 
     [Test]
+    public void OnClientData_WhenUnknownOpcodesStayBelowLimit_ShouldContinueParsingSubsequentValidPacket()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        InvokeOnClientData(service, client, [0x12, 0x34, 0x56, 0x78]);
+
+        var payload = new byte[31 + 21];
+        Array.Fill(payload, (byte)0xFF, 0, 31);
+        payload[31] = 0xEF;
+
+        InvokeOnClientData(service, client, payload);
+
+        var hasParsedPacket = service.TryDequeueParsedPacket(out var parsedPacket);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasParsedPacket, Is.True);
+                Assert.That(parsedPacket.PacketId, Is.EqualTo(0xEF));
+                Assert.That(parsedPacket.Packet, Is.TypeOf<LoginSeedPacket>());
+                Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
+                Assert.That(session.NetworkSession.State, Is.EqualTo(NetworkSessionState.Login));
+                Assert.That(messageBus.Packets.Count, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public void OnClientData_WhenVariablePacketIsFragmented_ShouldParseAfterLengthIsComplete()
     {
         var messageBus = new NetworkServiceTestMessageBusService();
@@ -481,6 +434,53 @@ public class NetworkServiceTests
                 Assert.That(messageBus.Packets[0].Packet, Is.TypeOf<UnicodeSpeechPacket>());
                 Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
                 Assert.That(session.NetworkSession.Seed, Is.EqualTo(0x12345678u));
+            }
+        );
+    }
+
+    [Test]
+    public void OnClientData_WhenVariablePacketLengthExceedsLimit_ShouldDropMalformedHeaderAndParseFollowingPacket()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            new GameNetworkSessionService(),
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var payload = new byte[4 + 3 + 62];
+        payload[0] = 0x12;
+        payload[1] = 0x34;
+        payload[2] = 0x56;
+        payload[3] = 0x78;
+        payload[4] = 0xAD;
+        payload[5] = 0x40;
+        payload[6] = 0x01;
+        payload[7] = 0x80;
+
+        InvokeOnClientData(service, client, payload);
+
+        var hasPacket = service.TryDequeueParsedPacket(out var parsedPacket);
+        var hasOtherPackets = service.TryDequeueParsedPacket(out _);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasPacket, Is.True);
+                Assert.That(hasOtherPackets, Is.False);
+                Assert.That(parsedPacket.PacketId, Is.EqualTo(0x80));
+                Assert.That(parsedPacket.Packet, Is.TypeOf<AccountLoginPacket>());
+                Assert.That(messageBus.Packets.Count, Is.EqualTo(1));
+                Assert.That(messageBus.Packets[0].PacketId, Is.EqualTo(0x80));
             }
         );
     }

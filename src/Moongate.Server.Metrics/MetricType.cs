@@ -18,5 +18,5 @@ public enum MetricType
     /// <summary>
     /// A histogram for measuring distributions (e.g., request latency).
     /// </summary>
-    Histogram,
+    Histogram
 }

@@ -1,8 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Loop;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
@@ -42,6 +41,23 @@ public class GameLoopServiceTests
                 Assert.That(snapshot.OutboundPacketsTotal, Is.Zero);
             }
         );
+    }
+
+    [Test]
+    public void OutgoingPacketQueue_ShouldAcceptEnqueuedPackets()
+    {
+        var sessions = new GameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = sessions.GetOrCreate(client);
+        var outgoingQueue = new OutgoingPacketQueue();
+
+        outgoingQueue.Enqueue(session.SessionId, new GameLoopTestPacket(0x20, 0));
+        Assert.That(outgoingQueue.CurrentQueueDepth, Is.EqualTo(1));
+
+        Assert.That(outgoingQueue.TryDequeue(out var dequeued), Is.True);
+        Assert.That(dequeued.SessionId, Is.EqualTo(session.SessionId));
+        Assert.That(dequeued.Packet.OpCode, Is.EqualTo(0x20));
+        Assert.That(outgoingQueue.CurrentQueueDepth, Is.EqualTo(0));
     }
 
     [Test]
@@ -110,20 +126,37 @@ public class GameLoopServiceTests
     }
 
     [Test]
-    public void OutgoingPacketQueue_ShouldAcceptEnqueuedPackets()
+    public async Task StartAsync_ShouldFlushOutgoingPacketsFromQueue()
     {
+        var packetDispatch = new PacketDispatchService();
+        var messageBus = new MessageBusService();
+        var outgoingQueue = new OutgoingPacketQueue();
         var sessions = new GameNetworkSessionService();
+        var sender = new GameLoopTestOutboundPacketSender();
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = sessions.GetOrCreate(client);
-        var outgoingQueue = new OutgoingPacketQueue();
+        outgoingQueue.Enqueue(session.SessionId, new GameLoopTestPacket(0x22, 99));
 
-        outgoingQueue.Enqueue(session.SessionId, new GameLoopTestPacket(0x20, 0));
-        Assert.That(outgoingQueue.CurrentQueueDepth, Is.EqualTo(1));
+        _service = new(
+            packetDispatch,
+            messageBus,
+            outgoingQueue,
+            sessions,
+            CreateTimerService(),
+            sender
+        );
+        await _service.StartAsync();
 
-        Assert.That(outgoingQueue.TryDequeue(out var dequeued), Is.True);
-        Assert.That(dequeued.SessionId, Is.EqualTo(session.SessionId));
-        Assert.That(dequeued.Packet.OpCode, Is.EqualTo(0x20));
-        Assert.That(outgoingQueue.CurrentQueueDepth, Is.EqualTo(0));
+        var sent = await WaitUntilAsync(() => sender.SentPackets.Count == 1, TimeSpan.FromSeconds(2));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True, "Outgoing queue was not flushed in time.");
+                Assert.That(sender.SentPackets[0].SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(sender.SentPackets[0].Packet.OpCode, Is.EqualTo(0x22));
+            }
+        );
     }
 
     [Test]
@@ -215,40 +248,6 @@ public class GameLoopServiceTests
         await Task.Delay(500);
 
         Assert.That(_service.GetMetricsSnapshot().TickCount, Is.LessThanOrEqualTo(tickAfterStop + 1));
-    }
-
-    [Test]
-    public async Task StartAsync_ShouldFlushOutgoingPacketsFromQueue()
-    {
-        var packetDispatch = new PacketDispatchService();
-        var messageBus = new MessageBusService();
-        var outgoingQueue = new OutgoingPacketQueue();
-        var sessions = new GameNetworkSessionService();
-        var sender = new GameLoopTestOutboundPacketSender();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = sessions.GetOrCreate(client);
-        outgoingQueue.Enqueue(session.SessionId, new GameLoopTestPacket(0x22, 99));
-
-        _service = new(
-            packetDispatch,
-            messageBus,
-            outgoingQueue,
-            sessions,
-            CreateTimerService(),
-            sender
-        );
-        await _service.StartAsync();
-
-        var sent = await WaitUntilAsync(() => sender.SentPackets.Count == 1, TimeSpan.FromSeconds(2));
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(sent, Is.True, "Outgoing queue was not flushed in time.");
-                Assert.That(sender.SentPackets[0].SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(sender.SentPackets[0].Packet.OpCode, Is.EqualTo(0x22));
-            }
-        );
     }
 
     [TearDown]

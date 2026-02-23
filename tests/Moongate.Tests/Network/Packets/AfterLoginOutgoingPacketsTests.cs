@@ -202,7 +202,7 @@ public class AfterLoginOutgoingPacketsTests
         };
         beheld.AddEquippedItem(ItemLayerType.Shirt, equipped);
 
-        var packet = new MobileIncomingPacket(beholder, beheld, true, true);
+        var packet = new MobileIncomingPacket(beholder, beheld);
         var data = Write(packet);
 
         var entryOffset = 19;

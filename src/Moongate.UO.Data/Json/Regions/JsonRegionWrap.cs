@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Json.Regions;
 
+/// <summary>
+/// Represents JsonRegionWrap.
+/// </summary>
 public class JsonRegionWrap
 {
     public JsonDfnHeader Header { get; set; }

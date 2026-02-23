@@ -10,6 +10,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
+using Moongate.Network.Spans;
 
 namespace Moongate.Tests.Network.Packets;
 
@@ -21,7 +22,7 @@ public class PacketRegistryTests
         public RegistryFixedPacket()
             : base(0xEE, 3) { }
 
-        protected override bool ParsePayload(ref Moongate.Network.Spans.SpanReader reader)
+        protected override bool ParsePayload(ref SpanReader reader)
             => reader.Remaining == 2;
     }
 
@@ -30,7 +31,7 @@ public class PacketRegistryTests
         public RegistryPacketWithoutAttribute()
             : base(0xED, 3) { }
 
-        protected override bool ParsePayload(ref Moongate.Network.Spans.SpanReader reader)
+        protected override bool ParsePayload(ref SpanReader reader)
             => reader.Remaining == 2;
     }
 
@@ -178,17 +179,6 @@ public class PacketRegistryTests
     }
 
     [Test]
-    public void RegisterFromAttribute_WhenAttributeIsMissing_ShouldThrow()
-    {
-        var registry = new PacketRegistry();
-
-        Assert.That(
-            () => registry.RegisterFromAttribute<RegistryPacketWithoutAttribute>(),
-            Throws.TypeOf<InvalidOperationException>()
-        );
-    }
-
-    [Test]
     public void RegisterFromAttribute_ShouldUseAttributeDescription()
     {
         var registry = new PacketRegistry();
@@ -204,6 +194,17 @@ public class PacketRegistryTests
                 Assert.That(descriptor.Length, Is.EqualTo(3));
                 Assert.That(descriptor.Description, Is.EqualTo("Registry Test Fixed"));
             }
+        );
+    }
+
+    [Test]
+    public void RegisterFromAttribute_WhenAttributeIsMissing_ShouldThrow()
+    {
+        var registry = new PacketRegistry();
+
+        Assert.That(
+            () => registry.RegisterFromAttribute<RegistryPacketWithoutAttribute>(),
+            Throws.TypeOf<InvalidOperationException>()
         );
     }
 

@@ -3,6 +3,9 @@ using Serilog;
 
 namespace Moongate.UO.Data.Files;
 
+/// <summary>
+/// Represents UoFiles.
+/// </summary>
 public class UoFiles
 {
     /// <summary>

@@ -42,6 +42,57 @@ public sealed class StartupCompositionService : IStartupCompositionService
         return loadout;
     }
 
+    private void AddItems(
+        List<StartupLoadoutItem> destination,
+        JsonElement source,
+        string propertyName,
+        StarterProfileContext profileContext,
+        string playerName
+    )
+    {
+        if (!source.TryGetProperty(propertyName, out var items) || items.ValueKind != JsonValueKind.Array)
+        {
+            return;
+        }
+
+        foreach (var item in items.EnumerateArray())
+        {
+            if (!item.TryGetProperty("templateId", out var templateIdElement) ||
+                templateIdElement.ValueKind != JsonValueKind.String)
+            {
+                continue;
+            }
+
+            var templateId = templateIdElement.GetString();
+
+            if (string.IsNullOrWhiteSpace(templateId))
+            {
+                continue;
+            }
+
+            var amount = item.TryGetProperty("amount", out var amountElement) &&
+                         amountElement.TryGetInt32(out var parsedAmount)
+                             ? Math.Max(1, parsedAmount)
+                             : 1;
+
+            JsonElement? args = null;
+
+            if (item.TryGetProperty("args", out var argsElement) && argsElement.ValueKind == JsonValueKind.Object)
+            {
+                args = _placeholderResolver.Resolve(argsElement, profileContext, playerName);
+            }
+
+            destination.Add(
+                new()
+                {
+                    TemplateId = templateId,
+                    Amount = amount,
+                    Args = args
+                }
+            );
+        }
+    }
+
     private void ApplyBase(StartupLoadout loadout, StarterProfileContext profileContext, string playerName)
     {
         if (!_startupTemplateService.TryGet("startup_base", out var document) || document is null)
@@ -93,6 +144,23 @@ public sealed class StartupCompositionService : IStartupCompositionService
         }
     }
 
+    private static void RemoveItems(List<StartupLoadoutItem> destination, JsonElement source, string propertyName)
+    {
+        if (!source.TryGetProperty(propertyName, out var removeArray) || removeArray.ValueKind != JsonValueKind.Array)
+        {
+            return;
+        }
+
+        var ids = removeArray
+                  .EnumerateArray()
+                  .Where(static item => item.ValueKind == JsonValueKind.String)
+                  .Select(static item => item.GetString())
+                  .Where(static id => !string.IsNullOrWhiteSpace(id))
+                  .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        destination.RemoveAll(item => ids.Contains(item.TemplateId));
+    }
+
     private static bool RuleMatches(JsonElement rule, string matchFieldName, string expectedValue)
     {
         if (!rule.TryGetProperty("match", out var match) || match.ValueKind != JsonValueKind.Object)
@@ -111,71 +179,4 @@ public sealed class StartupCompositionService : IStartupCompositionService
             StringComparison.OrdinalIgnoreCase
         );
     }
-
-    private void AddItems(
-        List<StartupLoadoutItem> destination,
-        JsonElement source,
-        string propertyName,
-        StarterProfileContext profileContext,
-        string playerName
-    )
-    {
-        if (!source.TryGetProperty(propertyName, out var items) || items.ValueKind != JsonValueKind.Array)
-        {
-            return;
-        }
-
-        foreach (var item in items.EnumerateArray())
-        {
-            if (!item.TryGetProperty("templateId", out var templateIdElement) || templateIdElement.ValueKind != JsonValueKind.String)
-            {
-                continue;
-            }
-
-            var templateId = templateIdElement.GetString();
-
-            if (string.IsNullOrWhiteSpace(templateId))
-            {
-                continue;
-            }
-
-            var amount = item.TryGetProperty("amount", out var amountElement) && amountElement.TryGetInt32(out var parsedAmount)
-                ? Math.Max(1, parsedAmount)
-                : 1;
-
-            JsonElement? args = null;
-
-            if (item.TryGetProperty("args", out var argsElement) && argsElement.ValueKind == JsonValueKind.Object)
-            {
-                args = _placeholderResolver.Resolve(argsElement, profileContext, playerName);
-            }
-
-            destination.Add(
-                new()
-                {
-                    TemplateId = templateId,
-                    Amount = amount,
-                    Args = args
-                }
-            );
-        }
-    }
-
-    private static void RemoveItems(List<StartupLoadoutItem> destination, JsonElement source, string propertyName)
-    {
-        if (!source.TryGetProperty(propertyName, out var removeArray) || removeArray.ValueKind != JsonValueKind.Array)
-        {
-            return;
-        }
-
-        var ids = removeArray
-                  .EnumerateArray()
-                  .Where(static item => item.ValueKind == JsonValueKind.String)
-                  .Select(static item => item.GetString())
-                  .Where(static id => !string.IsNullOrWhiteSpace(id))
-                  .ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        destination.RemoveAll(item => ids.Contains(item.TemplateId));
-    }
-
 }

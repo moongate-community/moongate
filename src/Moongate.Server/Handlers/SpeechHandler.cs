@@ -1,26 +1,25 @@
-using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Listeners.Base;
-using Moongate.Server.Types.Commands;
 
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket)]
+/// <summary>
+/// Represents SpeechHandler.
+/// </summary>
 public class SpeechHandler : BasePacketListener
 {
-    private readonly ICommandSystemService _commandSystemService;
+    private readonly ISpeechService _speechService;
 
-    public SpeechHandler(IOutgoingPacketQueue outgoingPacketQueue, ICommandSystemService commandSystemService)
+    public SpeechHandler(IOutgoingPacketQueue outgoingPacketQueue, ISpeechService speechService)
         : base(outgoingPacketQueue)
-    {
-        _commandSystemService = commandSystemService;
-    }
+        => _speechService = speechService;
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {
@@ -29,32 +28,12 @@ public class SpeechHandler : BasePacketListener
             return true;
         }
 
-        var text = speechPacket.Text.Trim();
+        var outgoingSpeechPacket = await _speechService.ProcessIncomingSpeechAsync(session, speechPacket);
 
-        if (text.Length == 0)
+        if (outgoingSpeechPacket is not null)
         {
-            return true;
+            Enqueue(session, outgoingSpeechPacket);
         }
-
-        if (text.StartsWith('.'))
-        {
-            text = speechPacket.Text[1..];
-            await _commandSystemService.ExecuteCommandAsync(text, CommandSourceType.InGame, session);
-
-            return true;
-        }
-
-        Enqueue(
-            session,
-            SpeechMessageFactory.CreateFromSpeaker(
-                session.Character,
-                speechPacket.MessageType,
-                speechPacket.Hue,
-                speechPacket.Font,
-                speechPacket.Language,
-                text
-            )
-        );
 
         return true;
     }

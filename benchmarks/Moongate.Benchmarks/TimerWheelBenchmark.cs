@@ -1,10 +1,12 @@
 using BenchmarkDotNet.Attributes;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Timing;
 
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+/// <summary>
+/// Represents TimerWheelBenchmark.
+/// </summary>
 public class TimerWheelBenchmark
 {
     private TimerWheelService _timerWheelService = null!;
@@ -13,8 +15,8 @@ public class TimerWheelBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        _timerWheelService = new TimerWheelService(
-            new TimerServiceConfig
+        _timerWheelService = new(
+            new()
             {
                 TickDuration = TimeSpan.FromMilliseconds(8),
                 WheelSize = 512

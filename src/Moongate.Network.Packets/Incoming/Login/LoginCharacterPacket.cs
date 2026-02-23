@@ -7,6 +7,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0x5D, PacketSizing.Fixed, Length = 73, Description = "Login Character")]
+/// <summary>
+/// Represents LoginCharacterPacket.
+/// </summary>
 public class LoginCharacterPacket : BaseGameNetworkPacket
 {
     public string CharacterName { get; set; } = string.Empty;

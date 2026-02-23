@@ -15,6 +15,9 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.MegaClilocPacket)]
+/// <summary>
+/// Represents ToolTipHandler.
+/// </summary>
 public class ToolTipHandler : BasePacketListener
 {
     private readonly ILogger _logger = Log.ForContext<ToolTipHandler>();
@@ -37,28 +40,6 @@ public class ToolTipHandler : BasePacketListener
         return true;
     }
 
-    private async Task<bool> HandleMegaClilocPacketAsync(GameSession session, MegaClilocPacket clilocPacket)
-    {
-        if (!clilocPacket.IsClientRequest || clilocPacket.RequestedSerials.Count == 0)
-        {
-            return true;
-        }
-
-        foreach (var requestedSerial in clilocPacket.RequestedSerials)
-        {
-            var propertyList = await CreatePropertyListAsync(session, requestedSerial);
-
-            if (propertyList is null)
-            {
-                continue;
-            }
-
-            Enqueue(session, propertyList);
-        }
-
-        return true;
-    }
-
     private async Task<IGameNetworkPacket?> CreatePropertyListAsync(GameSession session, Serial serial)
     {
         if (serial.IsMobile)
@@ -68,6 +49,7 @@ public class ToolTipHandler : BasePacketListener
             if (mobile is null)
             {
                 _logger.Debug("MegaCliloc request ignored. Unknown mobile serial {Serial}.", serial);
+
                 return null;
             }
 
@@ -96,6 +78,7 @@ public class ToolTipHandler : BasePacketListener
             if (item is null)
             {
                 _logger.Debug("MegaCliloc request ignored. Unknown item serial {Serial}.", serial);
+
                 return null;
             }
 
@@ -103,15 +86,39 @@ public class ToolTipHandler : BasePacketListener
                 item.Id,
                 item.Name,
                 item.ItemId,
-                amount: item.Amount,
+                item.Amount,
                 hue: item.Hue
             );
             propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
+
             return propertyList;
         }
 
         _logger.Debug("MegaCliloc request ignored. Invalid serial {Serial}.", serial);
+
         return null;
+    }
+
+    private async Task<bool> HandleMegaClilocPacketAsync(GameSession session, MegaClilocPacket clilocPacket)
+    {
+        if (!clilocPacket.IsClientRequest || clilocPacket.RequestedSerials.Count == 0)
+        {
+            return true;
+        }
+
+        foreach (var requestedSerial in clilocPacket.RequestedSerials)
+        {
+            var propertyList = await CreatePropertyListAsync(session, requestedSerial);
+
+            if (propertyList is null)
+            {
+                continue;
+            }
+
+            Enqueue(session, propertyList);
+        }
+
+        return true;
     }
 
     private async Task<UOMobileEntity?> ResolveMobileAsync(GameSession session, Serial serial)

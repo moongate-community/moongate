@@ -8,6 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents ExpansionLoader.
+/// </summary>
 public class ExpansionLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

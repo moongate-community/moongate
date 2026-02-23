@@ -8,6 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Accounting;
 
+/// <summary>
+/// Represents AccountService.
+/// </summary>
 public class AccountService : IAccountService
 {
     private readonly ILogger _logger = Log.ForContext<AccountService>();

@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Attributes;
@@ -13,6 +13,9 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.MoveRequestPacket)]
+/// <summary>
+/// Represents MovementHandler.
+/// </summary>
 public class MovementHandler : BasePacketListener
 {
     private const long MovementThrottleResetMs = 1000;
@@ -26,15 +29,13 @@ public class MovementHandler : BasePacketListener
     private readonly ILogger _logger = Log.ForContext<MovementHandler>();
 
     public MovementHandler(IOutgoingPacketQueue outgoingPacketQueue)
-        : base(outgoingPacketQueue)
-    { }
+        : base(outgoingPacketQueue) { }
 
     protected override Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {
         if (packet is not MoveRequestPacket moveRequestPacket)
         {
             return Task.FromResult(true);
-
         }
 
         _logger.Debug(
@@ -97,7 +98,8 @@ public class MovementHandler : BasePacketListener
 
         session.MoveSequence = (byte)nextSequence;
         Enqueue(session, new MoveConfirmPacket(moveRequestPacket.Sequence, session.SelfNotoriety));
-        session.MoveTime += isFacingChangeOnly ? TurnDelayMs : ComputeSpeedMs(session.IsMounted, moveRequestPacket.Direction);
+        session.MoveTime +=
+            isFacingChangeOnly ? TurnDelayMs : ComputeSpeedMs(session.IsMounted, moveRequestPacket.Direction);
 
         return Task.FromResult(true);
     }

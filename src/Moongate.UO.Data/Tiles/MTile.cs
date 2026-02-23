@@ -2,6 +2,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents MTile.
+/// </summary>
 public struct MTile : IComparable
 {
     internal ushort m_ID;

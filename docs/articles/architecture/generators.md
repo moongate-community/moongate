@@ -12,62 +12,54 @@ This improves startup predictability, reduces reflection-heavy paths, and helps 
 
 ## Current Generators
 
-### `Moongate.Network.Packets.Generators`
+Moongate now uses a single generator project: `Moongate.Generators`.
 
-Purpose:
+It contains these generators:
 
-- Generates packet registry/table wiring from packet metadata attributes.
-- Produces packet opcode constants (`PacketDefinition`) used by server handlers.
+### Packet Table Generator
 
-Input:
+- Input: packet classes decorated with `[PacketHandler(...)]`
+- Output:
+  - generated packet-table registration (`PacketTable.RegisterGenerated(...)`)
+  - generated opcode constants (`PacketDefinition`)
 
-- packet classes decorated with `[PacketHandler(...)]`.
+### Packet Listener Registration Generator
 
-Output:
+- Input: listener classes decorated with `[RegisterPacketHandler(...)]`
+- Output:
+  - generated bootstrap listener wiring (`BootstrapPacketHandlerRegistration.RegisterGenerated(...)`)
+  - compile-time mapping `opcode -> RegisterPacketHandler<TListener>(...)`
 
-- generated registration code for packet metadata.
-- generated opcode constants consumed by server code.
+### Metrics Mapper Generator
 
-### `Moongate.Server.PacketHandlers.Generators`
+- Input: snapshot properties decorated with metric metadata
+- Output:
+  - generated metric mapper extensions used by collection/HTTP export
 
-Purpose:
+### Script Module Registration Generator
 
-- Generates server packet listener bootstrap registration.
+- Input: classes in `Moongate.Scripting` decorated with `[ScriptModule(...)]`
+- Output:
+  - generated `Moongate.Scripting.Generated.ScriptModuleRegistry.Register(...)`
+  - compile-time registration of script modules in DryIoc
 
-Input:
+### Version Metadata Generator
 
-- listener classes decorated with `[RegisterPacketHandler(opCode)]`.
-- supports multiple attributes per listener class.
-
-Output:
-
-- generated implementation for `BootstrapPacketHandlerRegistration.RegisterGenerated(...)`.
-- compile-time mapping:
-  - `opcode -> listener registration call`
-  - no manual hardcoded bootstrap list required.
-
-### `Moongate.Server.Metrics.Generators`
-
-Purpose:
-
-- Generates metric snapshot mapping code from metric-decorated snapshot models.
-
-Input:
-
-- snapshot models/properties marked for metrics export.
-
-Output:
-
-- generated mapper extensions used by HTTP metrics/export paths.
+- Input: `Moongate.Server` project properties (`Version`, `Codename`)
+- Output:
+  - generated `Moongate.Server.Data.Version.VersionUtils`
+  - strongly-typed version/codename values for runtime bootstrap usage
 
 ## Runtime Flow
 
 1. Build compiles generators and emits generated C# files.
-2. `Moongate.Server` consumes generated artifacts through analyzer references.
+2. Runtime projects consume generated artifacts through analyzer references.
 3. At runtime:
    - packet descriptors come from generated packet table registration.
    - listener wiring comes from generated bootstrap registration.
    - metric snapshots are mapped through generated mappers.
+   - script modules are registered through generated script module registry.
+   - version/codename are read from generated `VersionUtils`.
 
 ## Notes
 

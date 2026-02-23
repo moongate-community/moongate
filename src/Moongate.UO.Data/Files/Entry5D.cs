@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Files;
 
+/// <summary>
+/// Represents Entry5D.
+/// </summary>
 public struct Entry5D
 {
     public int file;

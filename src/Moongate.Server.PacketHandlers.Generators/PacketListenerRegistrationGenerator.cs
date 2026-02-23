@@ -24,25 +24,22 @@ public sealed class PacketListenerRegistrationGenerator : IIncrementalGenerator
             static (syntaxContext, _) => CreateModels(syntaxContext)
         );
 
-        var registrationModels = candidates.SelectMany(
-            static (models, _) => models ?? []
-        );
+        var registrationModels = candidates.SelectMany(static (models, _) => models ?? []);
 
         var collected = registrationModels
-            .Where(static model => model is not null)
-            .Collect();
+                        .Where(static model => model is not null)
+                        .Collect();
 
         context.RegisterSourceOutput(
             collected,
             static (productionContext, models) =>
             {
                 var registrations = models
-                    .Where(static model => model is not null)
-                    .Cast<PacketListenerRegistrationModel>()
-                    .Distinct()
-                    .OrderBy(static model => model.OpCode)
-                    .ThenBy(static model => model.ListenerTypeName, StringComparer.Ordinal)
-                    .ToArray();
+                                    .Where(static model => model is not null)
+                                    .Distinct()
+                                    .OrderBy(static model => model.OpCode)
+                                    .ThenBy(static model => model.ListenerTypeName, StringComparer.Ordinal)
+                                    .ToArray();
 
                 var source = BuildSource(registrations);
                 productionContext.AddSource(
@@ -83,9 +80,7 @@ public sealed class PacketListenerRegistrationGenerator : IIncrementalGenerator
         return sb.ToString();
     }
 
-    private static IReadOnlyList<PacketListenerRegistrationModel>? CreateModels(
-        GeneratorAttributeSyntaxContext context
-    )
+    private static IReadOnlyList<PacketListenerRegistrationModel>? CreateModels(GeneratorAttributeSyntaxContext context)
     {
         if (context.TargetSymbol is not INamedTypeSymbol typeSymbol)
         {
@@ -104,8 +99,8 @@ public sealed class PacketListenerRegistrationGenerator : IIncrementalGenerator
 
         var fullTypeName = typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         var normalizedTypeName = fullTypeName.StartsWith("global::", StringComparison.Ordinal)
-            ? fullTypeName.Substring("global::".Length)
-            : fullTypeName;
+                                     ? fullTypeName.Substring("global::".Length)
+                                     : fullTypeName;
 
         var models = new List<PacketListenerRegistrationModel>(context.Attributes.Length);
 

@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Json.Regions;
 
+/// <summary>
+/// Represents JsonRegion.
+/// </summary>
 public class JsonRegion
 {
     public int Id { get; set; }

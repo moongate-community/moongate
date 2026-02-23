@@ -55,6 +55,9 @@ public ref struct SpanWriter : IDisposable
         BytesWritten = 0;
     }
 
+    /// <summary>
+    /// Represents SpanOwner.
+    /// </summary>
     public struct SpanOwner : IDisposable
     {
         private readonly int _length;

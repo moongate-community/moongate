@@ -2,6 +2,9 @@ using System.Text.Json.Serialization;
 
 namespace Moongate.UO.Data.Json.Weather;
 
+/// <summary>
+/// Represents JsonIntensityRange.
+/// </summary>
 public class JsonIntensityRange
 {
     public int Min { get; set; }

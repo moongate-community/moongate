@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.UI;
 
 [PacketHandler(0x7D, PacketSizing.Fixed, Length = 13, Description = "Response To Dialog Box")]
+/// <summary>
+/// Represents DialogResponsePacket.
+/// </summary>
 public class DialogResponsePacket : BaseGameNetworkPacket
 {
     public DialogResponsePacket()

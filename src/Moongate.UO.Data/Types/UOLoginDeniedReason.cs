@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents UOLoginDeniedReason.
+/// </summary>
 public enum UOLoginDeniedReason : byte
 {
     IncorrectNameOrPassword = 0x00,

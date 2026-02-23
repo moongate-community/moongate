@@ -11,14 +11,12 @@ moongatev2/
 │   ├── Moongate.Core
 │   ├── Moongate.Network
 │   ├── Moongate.Network.Packets
-│   ├── Moongate.Network.Packets.Generators
+│   ├── Moongate.Generators
 │   ├── Moongate.Persistence
 │   ├── Moongate.Scripting
 │   ├── Moongate.Server
 │   ├── Moongate.Server.Http
 │   ├── Moongate.Server.Metrics
-│   ├── Moongate.Server.Metrics.Generators
-│   ├── Moongate.Server.PacketHandlers.Generators
 │   └── Moongate.UO.Data
 ├── tests/
 │   └── Moongate.Tests
@@ -37,8 +35,13 @@ moongatev2/
   - TCP transport, spans, network middleware pipeline.
 - `Moongate.Network.Packets`
   - packet contracts and concrete packet implementations.
-- `Moongate.Network.Packets.Generators`
-  - source generation for packet table/definitions.
+- `Moongate.Generators`
+  - unified source generators for:
+    - packet table/definitions
+    - packet listener bootstrap registration
+    - metrics snapshot mapping
+    - script module registry
+    - server version metadata (`VersionUtils`)
 - `Moongate.Persistence`
   - snapshot/journal storage and repositories.
 - `Moongate.Scripting`
@@ -49,10 +52,6 @@ moongatev2/
   - HTTP service host and metric exposure endpoints.
 - `Moongate.Server.Metrics`
   - metrics provider abstractions and snapshot collection.
-- `Moongate.Server.Metrics.Generators`
-  - generated metric mapping utilities.
-- `Moongate.Server.PacketHandlers.Generators`
-  - generated packet listener bootstrap registration.
 - `Moongate.UO.Data`
   - UO entities, enums, templates, gameplay data contracts.
 

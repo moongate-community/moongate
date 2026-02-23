@@ -8,6 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents WeatherDataLoader.
+/// </summary>
 public class WeatherDataLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

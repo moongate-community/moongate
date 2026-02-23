@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents SeasonType.
+/// </summary>
 public enum SeasonType : byte
 {
     Spring = 0,

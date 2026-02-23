@@ -3,6 +3,9 @@ using Moongate.UO.Data.Races.Base;
 
 namespace Moongate.UO.Data.Races;
 
+/// <summary>
+/// Represents Human.
+/// </summary>
 public class Human : Race
 {
     public Human(int raceID, int raceIndex)

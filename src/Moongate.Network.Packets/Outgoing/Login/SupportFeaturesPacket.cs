@@ -8,6 +8,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0xB9, PacketSizing.Fixed, Length = 5, Description = "Enable locked client features")]
+/// <summary>
+/// Represents SupportFeaturesPacket.
+/// </summary>
 public class SupportFeaturesPacket : BaseGameNetworkPacket
 {
     public FeatureFlags Flags { get; set; }

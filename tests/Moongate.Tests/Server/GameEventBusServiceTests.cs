@@ -1,6 +1,5 @@
 using Moongate.Server.Data.Events;
 using Moongate.Server.Services.Events;
-using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
 
 namespace Moongate.Tests.Server;
@@ -12,7 +11,7 @@ public class GameEventBusServiceTests
     {
         var bus = new GameEventBusService();
         var listener = new GameEventBusTrackingCommandEnteredListener();
-        var commandEvent = new CommandEnteredEvent("help", CommandSourceType.Console);
+        var commandEvent = new CommandEnteredEvent("help");
 
         bus.RegisterListener(listener);
         await bus.PublishAsync(commandEvent);

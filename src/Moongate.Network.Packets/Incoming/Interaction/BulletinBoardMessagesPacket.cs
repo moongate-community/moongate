@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Interaction;
 
 [PacketHandler(0x71, PacketSizing.Variable, Description = "Bulletin Board Messages")]
+/// <summary>
+/// Represents BulletinBoardMessagesPacket.
+/// </summary>
 public class BulletinBoardMessagesPacket : BaseGameNetworkPacket
 {
     public BulletinBoardMessagesPacket()

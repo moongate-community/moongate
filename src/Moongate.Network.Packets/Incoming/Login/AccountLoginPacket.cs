@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0x80, PacketSizing.Fixed, Length = 62, Description = "Login Request")]
+/// <summary>
+/// Represents AccountLoginPacket.
+/// </summary>
 public class AccountLoginPacket : BaseGameNetworkPacket
 {
     public string Account { get; set; }

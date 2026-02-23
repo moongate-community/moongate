@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.System;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
@@ -14,15 +14,18 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.UO.Data.Persistence.Entities;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
+/// <summary>
+/// Represents CharacterHandler.
+/// </summary>
 public class CharacterHandler : BasePacketListener, IGameEventListener<CharacterSelectedEvent>
 {
     private readonly ILogger _logger = Log.ForContext<CharacterHandler>();
@@ -46,7 +49,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
     public async Task HandleAsync(CharacterSelectedEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        if (_gameNetworkSessionService.TryGet(gameEvent.Sessionid, out var gameSession))
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var gameSession))
         {
             await HandleCharacterLoggedIn(gameSession, gameEvent.CharacterId);
         }
@@ -120,21 +123,16 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         return true;
     }
 
-    private async Task<bool> HandleCharacterCreationPacketAsync(
-        GameSession session,
-        CharacterCreationPacket characterCreationPacket
-    )
+    private async Task EnqueueBackpackAsync(GameSession session, UOMobileEntity character)
     {
-        var entity = _entityFactoryService.CreatePlayerMobile(characterCreationPacket, session.AccountId);
+        var backpack = await _characterService.GetBackpackWithItemsAsync(character);
 
-        entity.Title = "the grandmaster of moongate";
-        var newCharacter = await _characterService.CreateCharacterAsync(entity);
+        if (backpack is null)
+        {
+            return;
+        }
 
-        await _characterService.AddCharacterToAccountAsync(session.AccountId, newCharacter);
-
-        await HandleCharacterLoggedIn(session, newCharacter);
-
-        return true;
+        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(backpack));
     }
 
     private void EnqueueWornItems(GameSession session, UOMobileEntity character)
@@ -150,15 +148,20 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         }
     }
 
-    private async Task EnqueueBackpackAsync(GameSession session, UOMobileEntity character)
+    private async Task<bool> HandleCharacterCreationPacketAsync(
+        GameSession session,
+        CharacterCreationPacket characterCreationPacket
+    )
     {
-        var backpack = await _characterService.GetBackpackWithItemsAsync(character);
+        var entity = _entityFactoryService.CreatePlayerMobile(characterCreationPacket, session.AccountId);
 
-        if (backpack is null)
-        {
-            return;
-        }
+        entity.Title = "the grandmaster of moongate";
+        var newCharacter = await _characterService.CreateCharacterAsync(entity);
 
-        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(backpack));
+        await _characterService.AddCharacterToAccountAsync(session.AccountId, newCharacter);
+
+        await HandleCharacterLoggedIn(session, newCharacter);
+
+        return true;
     }
 }

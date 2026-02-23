@@ -9,6 +9,9 @@ using Moongate.UO.Data.Utils;
 namespace Moongate.Network.Packets.Outgoing.Speech;
 
 [PacketHandler(0xAE, PacketSizing.Variable, Description = "Unicode Speech message")]
+/// <summary>
+/// Represents UnicodeSpeechMessagePacket.
+/// </summary>
 public class UnicodeSpeechMessagePacket : BaseGameNetworkPacket
 {
     public short Font { get; set; }
@@ -31,7 +34,7 @@ public class UnicodeSpeechMessagePacket : BaseGameNetworkPacket
         : base(0xAE)
     {
         Font = SpeechHues.DefaultFont;
-        Graphic = (ushort)SpeechHues.DefaultGraphic;
+        Graphic = SpeechHues.DefaultGraphic;
         Hue = SpeechHues.Default;
         Language = "ENU";
         MessageType = ChatMessageType.Regular;

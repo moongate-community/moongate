@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -53,115 +51,6 @@ public sealed class MetricsMapperGenerator : IIncrementalGenerator
                 productionContext.AddSource("MetricSnapshotMappers.Generated.g.cs", SourceText.From(source, Encoding.UTF8));
             }
         );
-    }
-
-    private static MetricSnapshotModel? CreateModel(GeneratorSyntaxContext context)
-    {
-        if (context.Node is not AttributeSyntax attributeSyntax)
-        {
-            return null;
-        }
-
-        if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeCtor)
-        {
-            return null;
-        }
-
-        if (!string.Equals(attributeCtor.ContainingType.ToDisplayString(), MetricAttributeName, StringComparison.Ordinal))
-        {
-            return null;
-        }
-
-        var propertySymbol = ResolveTargetPropertySymbol(context, attributeSyntax);
-
-        if (propertySymbol is null || propertySymbol.ContainingType is not { } containingType)
-        {
-            return null;
-        }
-
-        var attributeData = propertySymbol
-                            .GetAttributes()
-                            .FirstOrDefault(
-                                a => string.Equals(
-                                    a.AttributeClass?.ToDisplayString(),
-                                    MetricAttributeName,
-                                    StringComparison.Ordinal
-                                )
-                            );
-
-        if (attributeData is null
-            || attributeData.ConstructorArguments.Length == 0
-            || attributeData.ConstructorArguments[0].Value is not string metricName)
-        {
-            return null;
-        }
-
-        var aliases = Array.Empty<string>();
-        var transformTypeName = MetricValueTransformTypeName + ".None";
-
-        foreach (var pair in attributeData.NamedArguments)
-        {
-            if (pair.Key == "Aliases")
-            {
-                aliases = pair.Value.Values
-                              .Where(static v => v.Value is string)
-                              .Select(static v => (string)v.Value!)
-                              .Where(static s => !string.IsNullOrWhiteSpace(s))
-                              .Distinct(StringComparer.Ordinal)
-                              .ToArray();
-            }
-
-            if (pair.Key == "Transform" && pair.Value.Value is not null)
-            {
-                transformTypeName = GetTransformTypeName(pair.Value);
-            }
-        }
-
-        var property = new MetricPropertyModel(
-            metricName,
-            propertySymbol.Name,
-            IsNumericType(propertySymbol.Type),
-            propertySymbol.Type.SpecialType == SpecialType.System_Boolean,
-            propertySymbol.Type.TypeKind == TypeKind.Enum,
-            IsTimeSpanType(propertySymbol.Type),
-            IsDateTimeOffsetType(propertySymbol.Type),
-            IsNullableDateTimeOffsetType(propertySymbol.Type),
-            transformTypeName,
-            aliases
-        );
-
-        return new MetricSnapshotModel(
-            containingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", ""),
-            containingType.ContainingNamespace.ToDisplayString(),
-            new[] { property }
-        );
-    }
-
-    private static IPropertySymbol? ResolveTargetPropertySymbol(GeneratorSyntaxContext context, AttributeSyntax attributeSyntax)
-    {
-        var targetNode = attributeSyntax.Parent?.Parent;
-
-        return targetNode switch
-        {
-            PropertyDeclarationSyntax propertyDeclaration => context.SemanticModel.GetDeclaredSymbol(propertyDeclaration) as IPropertySymbol,
-            ParameterSyntax parameterSyntax => ResolveRecordPropertyFromParameter(
-                context.SemanticModel.GetDeclaredSymbol(parameterSyntax) as IParameterSymbol
-            ),
-            _ => null
-        };
-    }
-
-    private static IPropertySymbol? ResolveRecordPropertyFromParameter(IParameterSymbol? parameter)
-    {
-        if (parameter?.ContainingType is not { } containingType)
-        {
-            return null;
-        }
-
-        return containingType
-               .GetMembers(parameter.Name)
-               .OfType<IPropertySymbol>()
-               .FirstOrDefault(property => string.Equals(property.Name, parameter.Name, StringComparison.Ordinal));
     }
 
     private static string BuildSource(IReadOnlyList<MetricSnapshotModel> snapshots)
@@ -220,6 +109,7 @@ public sealed class MetricsMapperGenerator : IIncrementalGenerator
 
         sb.AppendLine("}");
         sb.AppendLine("#pragma warning restore CS1591");
+
         return sb.ToString();
     }
 
@@ -230,45 +120,101 @@ public sealed class MetricsMapperGenerator : IIncrementalGenerator
         return property.TransformTypeName switch
         {
             MetricValueTransformTypeName + ".TimeSpanMilliseconds" => property.IsTimeSpan
-                ? propertyAccess + ".TotalMilliseconds"
-                : null,
-            MetricValueTransformTypeName + ".UnixTimeMillisecondsOrZero" => property.IsNullableDateTimeOffset
-                ? propertyAccess + "?.ToUnixTimeMilliseconds() ?? 0d"
-                : property.IsDateTimeOffset
-                    ? propertyAccess + ".ToUnixTimeMilliseconds()"
-                    : null,
-            _ => property.IsBoolean
-                ? "(" + propertyAccess + " ? 1d : 0d)"
-                : property.IsNumeric || property.IsEnum
-                    ? "(double)" + propertyAccess
-                    : null
+                                                                          ? propertyAccess + ".TotalMilliseconds"
+                                                                          : null,
+            MetricValueTransformTypeName + ".UnixTimeMillisecondsOrZero" => property.IsNullableDateTimeOffset ?
+                                                                                propertyAccess +
+                                                                                "?.ToUnixTimeMilliseconds() ?? 0d" :
+                                                                                property.IsDateTimeOffset ?
+                                                                                    propertyAccess +
+                                                                                    ".ToUnixTimeMilliseconds()" : null,
+            _ => property.IsBoolean ? "(" + propertyAccess + " ? 1d : 0d)" :
+                 property.IsNumeric || property.IsEnum ? "(double)" + propertyAccess : null
         };
     }
 
-    private static bool IsNumericType(ITypeSymbol typeSymbol)
-        => typeSymbol.SpecialType is SpecialType.System_Byte
-            or SpecialType.System_SByte
-            or SpecialType.System_Int16
-            or SpecialType.System_UInt16
-            or SpecialType.System_Int32
-            or SpecialType.System_UInt32
-            or SpecialType.System_Int64
-            or SpecialType.System_UInt64
-            or SpecialType.System_Single
-            or SpecialType.System_Double
-            or SpecialType.System_Decimal;
+    private static MetricSnapshotModel? CreateModel(GeneratorSyntaxContext context)
+    {
+        if (context.Node is not AttributeSyntax attributeSyntax)
+        {
+            return null;
+        }
 
-    private static bool IsTimeSpanType(ITypeSymbol typeSymbol)
-        => string.Equals(typeSymbol.ToDisplayString(), "System.TimeSpan", StringComparison.Ordinal);
+        if (context.SemanticModel.GetSymbolInfo(attributeSyntax).Symbol is not IMethodSymbol attributeCtor)
+        {
+            return null;
+        }
 
-    private static bool IsDateTimeOffsetType(ITypeSymbol typeSymbol)
-        => string.Equals(typeSymbol.ToDisplayString(), "System.DateTimeOffset", StringComparison.Ordinal);
+        if (!string.Equals(attributeCtor.ContainingType.ToDisplayString(), MetricAttributeName, StringComparison.Ordinal))
+        {
+            return null;
+        }
 
-    private static bool IsNullableDateTimeOffsetType(ITypeSymbol typeSymbol)
-        => typeSymbol is INamedTypeSymbol namedType
-            && namedType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T
-            && namedType.TypeArguments.Length == 1
-            && string.Equals(namedType.TypeArguments[0].ToDisplayString(), "System.DateTimeOffset", StringComparison.Ordinal);
+        var propertySymbol = ResolveTargetPropertySymbol(context, attributeSyntax);
+
+        if (propertySymbol is null || propertySymbol.ContainingType is not { } containingType)
+        {
+            return null;
+        }
+
+        var attributeData = propertySymbol
+                            .GetAttributes()
+                            .FirstOrDefault(
+                                a => string.Equals(
+                                    a.AttributeClass?.ToDisplayString(),
+                                    MetricAttributeName,
+                                    StringComparison.Ordinal
+                                )
+                            );
+
+        if (attributeData is null ||
+            attributeData.ConstructorArguments.Length == 0 ||
+            attributeData.ConstructorArguments[0].Value is not string metricName)
+        {
+            return null;
+        }
+
+        var aliases = Array.Empty<string>();
+        var transformTypeName = MetricValueTransformTypeName + ".None";
+
+        foreach (var pair in attributeData.NamedArguments)
+        {
+            if (pair.Key == "Aliases")
+            {
+                aliases = pair.Value
+                              .Values
+                              .Where(static v => v.Value is string)
+                              .Select(static v => (string)v.Value!)
+                              .Where(static s => !string.IsNullOrWhiteSpace(s))
+                              .Distinct(StringComparer.Ordinal)
+                              .ToArray();
+            }
+
+            if (pair.Key == "Transform" && pair.Value.Value is not null)
+            {
+                transformTypeName = GetTransformTypeName(pair.Value);
+            }
+        }
+
+        var property = new MetricPropertyModel(
+            metricName,
+            propertySymbol.Name,
+            IsNumericType(propertySymbol.Type),
+            propertySymbol.Type.SpecialType == SpecialType.System_Boolean,
+            propertySymbol.Type.TypeKind == TypeKind.Enum,
+            IsTimeSpanType(propertySymbol.Type),
+            IsDateTimeOffsetType(propertySymbol.Type),
+            IsNullableDateTimeOffsetType(propertySymbol.Type),
+            transformTypeName,
+            aliases
+        );
+
+        return new(
+            containingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", ""),
+            containingType.ContainingNamespace.ToDisplayString(),
+            new[] { property }
+        );
+    }
 
     private static string Escape(string value)
         => value.Replace("\\", "\\\\").Replace("\"", "\\\"");
@@ -291,5 +237,61 @@ public sealed class MetricsMapperGenerator : IIncrementalGenerator
         }
 
         return MetricValueTransformTypeName + ".None";
+    }
+
+    private static bool IsDateTimeOffsetType(ITypeSymbol typeSymbol)
+        => string.Equals(typeSymbol.ToDisplayString(), "System.DateTimeOffset", StringComparison.Ordinal);
+
+    private static bool IsNullableDateTimeOffsetType(ITypeSymbol typeSymbol)
+        => typeSymbol is INamedTypeSymbol namedType &&
+           namedType.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T &&
+           namedType.TypeArguments.Length == 1 &&
+           string.Equals(namedType.TypeArguments[0].ToDisplayString(), "System.DateTimeOffset", StringComparison.Ordinal);
+
+    private static bool IsNumericType(ITypeSymbol typeSymbol)
+        => typeSymbol.SpecialType is SpecialType.System_Byte or
+                                     SpecialType.System_SByte or
+                                     SpecialType.System_Int16 or
+                                     SpecialType.System_UInt16 or
+                                     SpecialType.System_Int32 or
+                                     SpecialType.System_UInt32 or
+                                     SpecialType.System_Int64 or
+                                     SpecialType.System_UInt64 or
+                                     SpecialType.System_Single or
+                                     SpecialType.System_Double or
+                                     SpecialType.System_Decimal;
+
+    private static bool IsTimeSpanType(ITypeSymbol typeSymbol)
+        => string.Equals(typeSymbol.ToDisplayString(), "System.TimeSpan", StringComparison.Ordinal);
+
+    private static IPropertySymbol? ResolveRecordPropertyFromParameter(IParameterSymbol? parameter)
+    {
+        if (parameter?.ContainingType is not { } containingType)
+        {
+            return null;
+        }
+
+        return containingType
+               .GetMembers(parameter.Name)
+               .OfType<IPropertySymbol>()
+               .FirstOrDefault(property => string.Equals(property.Name, parameter.Name, StringComparison.Ordinal));
+    }
+
+    private static IPropertySymbol? ResolveTargetPropertySymbol(
+        GeneratorSyntaxContext context,
+        AttributeSyntax attributeSyntax
+    )
+    {
+        var targetNode = attributeSyntax.Parent?.Parent;
+
+        return targetNode switch
+        {
+            PropertyDeclarationSyntax propertyDeclaration =>
+                context.SemanticModel.GetDeclaredSymbol(propertyDeclaration) as IPropertySymbol,
+            ParameterSyntax parameterSyntax => ResolveRecordPropertyFromParameter(
+                context.SemanticModel.GetDeclaredSymbol(parameterSyntax) as IParameterSymbol
+            ),
+            _ => null
+        };
     }
 }

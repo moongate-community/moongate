@@ -5,6 +5,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Professions;
 
+/// <summary>
+/// Represents ProfessionInfo.
+/// </summary>
 public class ProfessionInfo
 {
     public static ProfessionInfo[] Professions;

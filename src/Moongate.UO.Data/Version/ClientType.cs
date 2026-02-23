@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Version;
 
 [Flags]
+/// <summary>
+/// Represents ClientType.
+/// </summary>
 public enum ClientType
 {
     None = 0x00,

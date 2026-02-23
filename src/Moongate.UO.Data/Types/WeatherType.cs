@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents WeatherType.
+/// </summary>
 public enum WeatherType : byte
 {
     /*

@@ -9,6 +9,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents SkillLoader.
+/// </summary>
 public class SkillLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

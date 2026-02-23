@@ -2,6 +2,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Skills;
 
+/// <summary>
+/// Represents SkillEntry.
+/// </summary>
 public class SkillEntry
 {
     public double Value { get; set; }

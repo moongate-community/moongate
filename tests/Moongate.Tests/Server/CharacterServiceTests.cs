@@ -129,7 +129,7 @@ public class CharacterServiceTests
     }
 
     [Test]
-    public async Task GetCharacterAsync_ShouldReturnCharacter_WhenExists()
+    public async Task GetBackpackWithItemsAsync_ShouldReturnBackpackWithContainedItems()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
@@ -137,21 +137,44 @@ public class CharacterServiceTests
             persistence,
             new()
         );
-        var characterId = (Serial)0x00000210;
+        var characterId = (Serial)0x00000251;
+        var backpackId = (Serial)0x40000051;
+        var goldId = (Serial)0x40000052;
 
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+        var character = new UOMobileEntity
+        {
+            Id = characterId,
+            Name = "pack-mobile",
+            IsPlayer = true,
+            BackpackId = backpackId
+        };
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
             new()
             {
-                Id = characterId,
-                Name = "single-mobile",
-                IsPlayer = true
+                Id = backpackId,
+                ItemId = 0x0E75,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Backpack
             }
         );
 
-        var character = await service.GetCharacterAsync(characterId);
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = goldId,
+                ItemId = 0x0EED,
+                ParentContainerId = backpackId,
+                ContainerPosition = new(11, 22)
+            }
+        );
 
-        Assert.That(character, Is.Not.Null);
-        Assert.That(character!.Id, Is.EqualTo(characterId));
+        var backpack = await service.GetBackpackWithItemsAsync(character);
+
+        Assert.That(backpack, Is.Not.Null);
+        Assert.That(backpack!.Items.Count, Is.EqualTo(1));
+        Assert.That(backpack.Items[0].Item.Id, Is.EqualTo(goldId));
+        Assert.That(backpack.Items[0].Position, Is.EqualTo(new Point2D(11, 22)));
     }
 
     [Test]
@@ -196,6 +219,32 @@ public class CharacterServiceTests
         Assert.That(character!.TryGetEquippedReference(ItemLayerType.Shirt, out var reference), Is.True);
         Assert.That(reference.ItemId, Is.EqualTo(0x1517));
         Assert.That(reference.Hue, Is.EqualTo(0x0444));
+    }
+
+    [Test]
+    public async Task GetCharacterAsync_ShouldReturnCharacter_WhenExists()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new()
+        );
+        var characterId = (Serial)0x00000210;
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = characterId,
+                Name = "single-mobile",
+                IsPlayer = true
+            }
+        );
+
+        var character = await service.GetCharacterAsync(characterId);
+
+        Assert.That(character, Is.Not.Null);
+        Assert.That(character!.Id, Is.EqualTo(characterId));
     }
 
     [Test]
@@ -289,55 +338,6 @@ public class CharacterServiceTests
 
         Assert.That(characters, Has.Count.EqualTo(1));
         Assert.That(characters[0].Id, Is.EqualTo(existingCharacterId));
-    }
-
-    [Test]
-    public async Task GetBackpackWithItemsAsync_ShouldReturnBackpackWithContainedItems()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var service = CreateCharacterService(
-            persistence,
-            new()
-        );
-        var characterId = (Serial)0x00000251;
-        var backpackId = (Serial)0x40000051;
-        var goldId = (Serial)0x40000052;
-
-        var character = new UOMobileEntity
-        {
-            Id = characterId,
-            Name = "pack-mobile",
-            IsPlayer = true,
-            BackpackId = backpackId
-        };
-
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = backpackId,
-                ItemId = 0x0E75,
-                EquippedMobileId = characterId,
-                EquippedLayer = ItemLayerType.Backpack
-            }
-        );
-
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = goldId,
-                ItemId = 0x0EED,
-                ParentContainerId = backpackId,
-                ContainerPosition = new(11, 22)
-            }
-        );
-
-        var backpack = await service.GetBackpackWithItemsAsync(character);
-
-        Assert.That(backpack, Is.Not.Null);
-        Assert.That(backpack!.Items.Count, Is.EqualTo(1));
-        Assert.That(backpack.Items[0].Item.Id, Is.EqualTo(goldId));
-        Assert.That(backpack.Items[0].Position, Is.EqualTo(new Point2D(11, 22)));
     }
 
     [Test]

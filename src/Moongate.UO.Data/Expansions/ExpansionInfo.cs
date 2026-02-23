@@ -5,6 +5,9 @@ using Moongate.UO.Data.Version;
 
 namespace Moongate.UO.Data.Expansions;
 
+/// <summary>
+/// Represents ExpansionInfo.
+/// </summary>
 public class ExpansionInfo
 {
     public static bool ForceOldAnimations { get; private set; }

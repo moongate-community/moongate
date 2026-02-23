@@ -2,6 +2,9 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents LandData.
+/// </summary>
 public struct LandData
 {
     public string Name { get; set; }

@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Incoming.Player;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Player;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
@@ -14,6 +14,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.GetPlayerStatusPacket)]
+/// <summary>
+/// Represents PlayerStatusHandler.
+/// </summary>
 public class PlayerStatusHandler : BasePacketListener
 {
     private readonly ICharacterService _characterService;

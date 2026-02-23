@@ -6,6 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Events;
 
+/// <summary>
+/// Represents GameEventScriptBridgeService.
+/// </summary>
 public class GameEventScriptBridgeService : IGameEventScriptBridgeService, IGameEventListener<IGameEvent>
 {
     private readonly ILogger _logger = Log.ForContext<GameEventScriptBridgeService>();

@@ -45,23 +45,16 @@ log.info("Sum: " .. sum)  -- "Sum: 8"
 
 ### Automatic Registration
 
-Modules are automatically discovered and registered at startup:
+Modules are automatically registered through source generation.
 
-```csharp
-// In MoongateBootstrap.cs
-private void RegisterScriptModules()
-{
-    var moduleTypes = Assembly.GetExecutingAssembly()
-        .GetTypes()
-        .Where(t => t.GetCustomAttribute<ScriptModuleAttribute>() != null);
-    
-    foreach (var moduleType in moduleTypes)
-    {
-        var module = ActivatorUtilities.CreateInstance(_serviceProvider, moduleType);
-        _luaEngine.RegisterModule(module);
-    }
-}
-```
+- Any class decorated with `[ScriptModule(...)]` in `Moongate.Scripting` or `Moongate.Server` is picked up at compile time.
+- `Moongate.Generators` emits:
+  - `Moongate.Scripting.Generated.ScriptModuleRegistry`
+  - `Moongate.Server.Generated.ScriptModuleRegistry`
+- Bootstrap calls both registries during startup.
+- Each discovered module is registered via `container.RegisterScriptModule<TModule>()`.
+
+This removes runtime reflection scanning for module discovery.
 
 ### Manual Registration
 

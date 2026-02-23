@@ -6,6 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents ClientVersionLoader.
+/// </summary>
 public class ClientVersionLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<ClientVersionLoader>();

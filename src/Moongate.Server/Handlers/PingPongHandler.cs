@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Incoming.Player;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Player;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
@@ -9,6 +9,9 @@ using Moongate.Server.Listeners.Base;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.PingMessagePacket)]
+/// <summary>
+/// Represents PingPongHandler.
+/// </summary>
 public class PingPongHandler : BasePacketListener
 {
     public PingPongHandler(IOutgoingPacketQueue outgoingPacketQueue) : base(outgoingPacketQueue) { }

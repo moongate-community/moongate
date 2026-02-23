@@ -9,6 +9,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents NamesLoader.
+/// </summary>
 public class NamesLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

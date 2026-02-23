@@ -2,7 +2,6 @@ using System.Text;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
-using Moongate.Server.Types.Commands;
 using Serilog;
 using Serilog.Events;
 
@@ -81,6 +80,33 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
         {
             // graceful shutdown
         }
+    }
+
+    private void ApplyAutocomplete(StringBuilder buffer, bool reverse)
+    {
+        var currentInput = buffer.ToString();
+
+        if (_autocompleteSeed.Length == 0 || !string.Equals(_autocompleteSeed, currentInput, StringComparison.Ordinal))
+        {
+            _autocompleteSeed = currentInput;
+            _autocompleteCandidates.Clear();
+            _autocompleteCandidates.AddRange(_commandSystemService.GetAutocompleteSuggestions(currentInput));
+            _autocompleteIndex = -1;
+        }
+
+        if (_autocompleteCandidates.Count == 0)
+        {
+            return;
+        }
+
+        _autocompleteIndex = reverse
+                                 ? _autocompleteIndex <= 0 ? _autocompleteCandidates.Count - 1 : _autocompleteIndex - 1
+                                 : (_autocompleteIndex + 1) % _autocompleteCandidates.Count;
+
+        var suggestion = _autocompleteCandidates[_autocompleteIndex];
+        buffer.Clear();
+        buffer.Append(suggestion);
+        _consoleUiService.UpdateInput(buffer.ToString());
     }
 
     private async Task InputLoopAsync(CancellationToken cancellationToken)
@@ -206,7 +232,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
 
             if (key.Key == ConsoleKey.Tab)
             {
-                ApplyAutocomplete(buffer, reverse: (key.Modifiers & ConsoleModifiers.Shift) != 0);
+                ApplyAutocomplete(buffer, (key.Modifiers & ConsoleModifiers.Shift) != 0);
                 lockWarningShown = false;
 
                 continue;
@@ -220,6 +246,13 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
                 lockWarningShown = false;
             }
         }
+    }
+
+    private void ResetAutocompleteState()
+    {
+        _autocompleteSeed = string.Empty;
+        _autocompleteIndex = -1;
+        _autocompleteCandidates.Clear();
     }
 
     private async Task SubmitCommandAsync(string rawCommand, CancellationToken cancellationToken)
@@ -236,42 +269,8 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
         _logger.Verbose("Console command entered: {Command}", command);
 
         await _gameEventBusService.PublishAsync(
-            new CommandEnteredEvent(command, CommandSourceType.Console, null),
+            new CommandEnteredEvent(command),
             cancellationToken
         );
-    }
-
-    private void ApplyAutocomplete(StringBuilder buffer, bool reverse)
-    {
-        var currentInput = buffer.ToString();
-
-        if (_autocompleteSeed.Length == 0 || !string.Equals(_autocompleteSeed, currentInput, StringComparison.Ordinal))
-        {
-            _autocompleteSeed = currentInput;
-            _autocompleteCandidates.Clear();
-            _autocompleteCandidates.AddRange(_commandSystemService.GetAutocompleteSuggestions(currentInput));
-            _autocompleteIndex = -1;
-        }
-
-        if (_autocompleteCandidates.Count == 0)
-        {
-            return;
-        }
-
-        _autocompleteIndex = reverse
-            ? (_autocompleteIndex <= 0 ? _autocompleteCandidates.Count - 1 : _autocompleteIndex - 1)
-            : (_autocompleteIndex + 1) % _autocompleteCandidates.Count;
-
-        var suggestion = _autocompleteCandidates[_autocompleteIndex];
-        buffer.Clear();
-        buffer.Append(suggestion);
-        _consoleUiService.UpdateInput(buffer.ToString());
-    }
-
-    private void ResetAutocompleteState()
-    {
-        _autocompleteSeed = string.Empty;
-        _autocompleteIndex = -1;
-        _autocompleteCandidates.Clear();
     }
 }

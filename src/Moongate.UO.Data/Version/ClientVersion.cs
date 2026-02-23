@@ -19,6 +19,9 @@ namespace Moongate.UO.Data.Version;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  *************************************************************************/
 
+/// <summary>
+/// Represents ClientVersion.
+/// </summary>
 public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion>, IEquatable<ClientVersion>
 {
     public static readonly ClientVersion Version400a = new("4.0.0a");

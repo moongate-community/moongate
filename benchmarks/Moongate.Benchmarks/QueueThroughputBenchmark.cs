@@ -7,6 +7,9 @@ using Moongate.Server.Services.Packets;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+/// <summary>
+/// Represents QueueThroughputBenchmark.
+/// </summary>
 public class QueueThroughputBenchmark
 {
     private const int Operations = 1024;
@@ -14,23 +17,6 @@ public class QueueThroughputBenchmark
     private readonly MessageBusService _messageBusService = new();
     private readonly OutgoingPacketQueue _outgoingPacketQueue = new();
     private readonly LoginSeedPacket _packet = new();
-
-    [Benchmark]
-    public int OutgoingQueueEnqueueThenDrain()
-    {
-        for (var i = 0; i < Operations; i++)
-        {
-            _outgoingPacketQueue.Enqueue(1, _packet);
-        }
-
-        var drained = 0;
-        while (_outgoingPacketQueue.TryDequeue(out _))
-        {
-            drained++;
-        }
-
-        return drained;
-    }
 
     [Benchmark]
     public int MessageBusPublishThenDrain()
@@ -44,7 +30,26 @@ public class QueueThroughputBenchmark
         }
 
         var drained = 0;
+
         while (_messageBusService.TryReadIncomingPacket(out _))
+        {
+            drained++;
+        }
+
+        return drained;
+    }
+
+    [Benchmark]
+    public int OutgoingQueueEnqueueThenDrain()
+    {
+        for (var i = 0; i < Operations; i++)
+        {
+            _outgoingPacketQueue.Enqueue(1, _packet);
+        }
+
+        var drained = 0;
+
+        while (_outgoingPacketQueue.TryDequeue(out _))
         {
             drained++;
         }

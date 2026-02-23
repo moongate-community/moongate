@@ -11,6 +11,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xF8, PacketSizing.Fixed, Length = 106, Description = "Character Creation ( 7.0.16.0 )")]
+/// <summary>
+/// Represents CharacterCreationPacket.
+/// </summary>
 public class CharacterCreationPacket : BaseGameNetworkPacket
 {
     public int Slot { get; private set; }

@@ -8,6 +8,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0x8C, PacketSizing.Fixed, Length = 11, Description = "Connect To Game Server")]
+/// <summary>
+/// Represents ServerRedirectPacket.
+/// </summary>
 public class ServerRedirectPacket : BaseGameNetworkPacket
 {
     public IPAddress IPAddress { get; set; }

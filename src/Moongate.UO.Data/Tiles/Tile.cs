@@ -3,6 +3,9 @@ using System.Runtime.InteropServices;
 namespace Moongate.UO.Data.Tiles;
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
+/// <summary>
+/// Represents Tile.
+/// </summary>
 public struct Tile : IComparable
 {
     internal ushort m_ID;

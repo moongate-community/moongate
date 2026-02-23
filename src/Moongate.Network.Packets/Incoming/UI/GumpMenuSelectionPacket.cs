@@ -1,12 +1,15 @@
+using System.Text;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
-using System.Text;
 
 namespace Moongate.Network.Packets.Incoming.UI;
 
 [PacketHandler(0xB1, PacketSizing.Variable, Description = "Gump Menu Selection")]
+/// <summary>
+/// Represents GumpMenuSelectionPacket.
+/// </summary>
 public class GumpMenuSelectionPacket : BaseGameNetworkPacket
 {
     public uint ButtonId { get; private set; }
@@ -31,6 +34,7 @@ public class GumpMenuSelectionPacket : BaseGameNetworkPacket
         }
 
         var declaredLength = reader.ReadUInt16();
+
         if (declaredLength != reader.Length)
         {
             return false;
@@ -41,6 +45,7 @@ public class GumpMenuSelectionPacket : BaseGameNetworkPacket
         ButtonId = reader.ReadUInt32();
 
         var switchCount = reader.ReadInt32();
+
         if (switchCount < 0 || reader.Remaining < switchCount * 4 + 4)
         {
             return false;
@@ -63,12 +68,14 @@ public class GumpMenuSelectionPacket : BaseGameNetworkPacket
         }
 
         var textCount = reader.ReadInt32();
+
         if (textCount < 0)
         {
             return false;
         }
 
         var textEntries = new Dictionary<ushort, string>(textCount);
+
         for (var i = 0; i < textCount; i++)
         {
             if (reader.Remaining < 4)
@@ -78,7 +85,7 @@ public class GumpMenuSelectionPacket : BaseGameNetworkPacket
 
             var entryId = reader.ReadUInt16();
             var charLength = reader.ReadUInt16();
-            var byteLength = checked((int)charLength * 2);
+            var byteLength = checked(charLength * 2);
 
             if (reader.Remaining < byteLength)
             {

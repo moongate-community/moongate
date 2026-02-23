@@ -1,12 +1,15 @@
+using System.Text;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
-using System.Text;
 
 namespace Moongate.Network.Packets.Incoming.Books;
 
 [PacketHandler(0x66, PacketSizing.Variable, Description = "Books (Pages)")]
+/// <summary>
+/// Represents BookPagesPacket.
+/// </summary>
 public class BookPagesPacket : BaseGameNetworkPacket
 {
     public uint BookSerial { get; set; }
@@ -17,9 +20,7 @@ public class BookPagesPacket : BaseGameNetworkPacket
 
     public BookPagesPacket()
         : base(0x66)
-    {
-        Pages = new List<BookPageEntry>();
-    }
+        => Pages = new();
 
     public override void Write(ref SpanWriter writer)
     {
@@ -35,6 +36,7 @@ public class BookPagesPacket : BaseGameNetworkPacket
             if (page.IsPageRequest)
             {
                 writer.Write((ushort)0xFFFF);
+
                 continue;
             }
 
@@ -120,8 +122,8 @@ public class BookPagesPacket : BaseGameNetworkPacket
 
         var bytes = reader.ReadBytes(terminatorIndex + 1);
         value = terminatorIndex == 0
-            ? string.Empty
-            : Encoding.UTF8.GetString(bytes, 0, terminatorIndex);
+                    ? string.Empty
+                    : Encoding.UTF8.GetString(bytes, 0, terminatorIndex);
 
         return true;
     }

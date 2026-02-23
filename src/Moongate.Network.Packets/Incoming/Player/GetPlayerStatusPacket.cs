@@ -7,6 +7,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Incoming.Player;
 
 [PacketHandler(0x34, PacketSizing.Fixed, Length = 10, Description = "Get Player Status")]
+/// <summary>
+/// Represents GetPlayerStatusPacket.
+/// </summary>
 public class GetPlayerStatusPacket : BaseGameNetworkPacket
 {
     public uint MobileSerial { get; set; }

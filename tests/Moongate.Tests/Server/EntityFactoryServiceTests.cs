@@ -42,8 +42,8 @@ public class EntityFactoryServiceTests
         var service = CreateEntityFactoryService(
             persistence,
             itemTemplateService,
-            new MobileTemplateService(),
-            new NameService()
+            new(),
+            new()
         );
 
         var item = service.CreateItemFromTemplate("item.shirt");
@@ -94,7 +94,7 @@ public class EntityFactoryServiceTests
 
         var service = CreateEntityFactoryService(
             persistence,
-            new ItemTemplateService(),
+            new(),
             mobileTemplateService,
             nameService
         );
@@ -123,9 +123,9 @@ public class EntityFactoryServiceTests
 
         var service = CreateEntityFactoryService(
             persistence,
-            new ItemTemplateService(),
-            new MobileTemplateService(),
-            new NameService()
+            new(),
+            new(),
+            new()
         );
 
         var mobile = service.CreatePlayerMobile(packet, (Serial)0x00000101);
@@ -169,8 +169,8 @@ public class EntityFactoryServiceTests
         var service = CreateEntityFactoryService(
             persistence,
             itemTemplateService,
-            new MobileTemplateService(),
-            new NameService()
+            new(),
+            new()
         );
 
         var backpack = service.GetNewBackpack();
@@ -233,6 +233,20 @@ public class EntityFactoryServiceTests
         return result;
     }
 
+    private static EntityFactoryService CreateEntityFactoryService(
+        PersistenceService persistenceService,
+        ItemTemplateService itemTemplateService,
+        MobileTemplateService mobileTemplateService,
+        NameService nameService
+    )
+    {
+        var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
+        var mobileFactoryService = new MobileFactoryService(mobileTemplateService, nameService, persistenceService);
+        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
+
+        return new(itemFactoryService, mobileFactoryService, starterItemFactoryService);
+    }
+
     private static async Task<PersistenceService> CreatePersistenceServiceAsync(string rootDirectory)
     {
         var directories = new DirectoriesConfig(rootDirectory, Enum.GetNames<DirectoryType>());
@@ -251,18 +265,5 @@ public class EntityFactoryServiceTests
         await persistence.StartAsync();
 
         return persistence;
-    }
-
-    private static EntityFactoryService CreateEntityFactoryService(
-        PersistenceService persistenceService,
-        ItemTemplateService itemTemplateService,
-        MobileTemplateService mobileTemplateService,
-        NameService nameService
-    )
-    {
-        var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
-        var mobileFactoryService = new MobileFactoryService(mobileTemplateService, nameService, persistenceService);
-        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
-        return new EntityFactoryService(itemFactoryService, mobileFactoryService, starterItemFactoryService);
     }
 }

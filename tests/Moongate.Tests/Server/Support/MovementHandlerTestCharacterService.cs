@@ -22,29 +22,27 @@ public sealed class MovementHandlerTestCharacterService : ICharacterService
         return Task.FromResult((Serial)1u);
     }
 
-    public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
+    public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
     {
-        return Task.FromResult<UOMobileEntity?>(
+        _ = character;
+
+        return Task.FromResult<UOItemEntity?>(null);
+    }
+
+    public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
+        => Task.FromResult<UOMobileEntity?>(
             new()
             {
                 Id = characterId,
                 Notoriety = Notoriety.Innocent
             }
         );
-    }
 
     public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
     {
         _ = accountId;
 
         return Task.FromResult(new List<UOMobileEntity>());
-    }
-
-    public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
-    {
-        _ = character;
-
-        return Task.FromResult<UOItemEntity?>(null);
     }
 
     public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)

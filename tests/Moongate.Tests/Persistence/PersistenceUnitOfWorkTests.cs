@@ -207,46 +207,6 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
-    public async Task ConcurrentWritersAcrossMultipleUnitOfWorkInstances_ShouldRemainConsistentAfterReload()
-    {
-        using var tempDirectory = new TempDirectory();
-        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await firstUnitOfWork.InitializeAsync();
-        await secondUnitOfWork.InitializeAsync();
-
-        const int writesPerWriter = 150;
-
-        var firstWriterTask = WriteAccountsWithRetryAsync(firstUnitOfWork, 1_000, writesPerWriter);
-        var secondWriterTask = WriteAccountsWithRetryAsync(secondUnitOfWork, 2_000, writesPerWriter);
-
-        await Task.WhenAll(firstWriterTask, secondWriterTask);
-
-        var reloadedUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await reloadedUnitOfWork.InitializeAsync();
-
-        var accounts = await reloadedUnitOfWork.Accounts.GetAllAsync();
-        Assert.That(accounts.Count, Is.EqualTo(writesPerWriter * 2));
-
-        for (var i = 0; i < writesPerWriter; i++)
-        {
-            var firstUsername = $"multi-uow-{1_000 + i}";
-            var secondUsername = $"multi-uow-{2_000 + i}";
-
-            Assert.That(
-                await reloadedUnitOfWork.Accounts.GetByUsernameAsync(firstUsername),
-                Is.Not.Null,
-                $"Missing account '{firstUsername}' after multi-instance writes."
-            );
-            Assert.That(
-                await reloadedUnitOfWork.Accounts.GetByUsernameAsync(secondUsername),
-                Is.Not.Null,
-                $"Missing account '{secondUsername}' after multi-instance writes."
-            );
-        }
-    }
-
-    [Test]
     public async Task ConcurrentAddAndRemove_OnSingleUnitOfWork_ShouldRemainConsistentAfterReload()
     {
         using var tempDirectory = new TempDirectory();
@@ -294,6 +254,46 @@ public class PersistenceUnitOfWorkTests
 
         var count = await reloadedUnitOfWork.Accounts.CountAsync();
         Assert.That(count, Is.Zero);
+    }
+
+    [Test]
+    public async Task ConcurrentWritersAcrossMultipleUnitOfWorkInstances_ShouldRemainConsistentAfterReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await firstUnitOfWork.InitializeAsync();
+        await secondUnitOfWork.InitializeAsync();
+
+        const int writesPerWriter = 150;
+
+        var firstWriterTask = WriteAccountsWithRetryAsync(firstUnitOfWork, 1_000, writesPerWriter);
+        var secondWriterTask = WriteAccountsWithRetryAsync(secondUnitOfWork, 2_000, writesPerWriter);
+
+        await Task.WhenAll(firstWriterTask, secondWriterTask);
+
+        var reloadedUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await reloadedUnitOfWork.InitializeAsync();
+
+        var accounts = await reloadedUnitOfWork.Accounts.GetAllAsync();
+        Assert.That(accounts.Count, Is.EqualTo(writesPerWriter * 2));
+
+        for (var i = 0; i < writesPerWriter; i++)
+        {
+            var firstUsername = $"multi-uow-{1_000 + i}";
+            var secondUsername = $"multi-uow-{2_000 + i}";
+
+            Assert.That(
+                await reloadedUnitOfWork.Accounts.GetByUsernameAsync(firstUsername),
+                Is.Not.Null,
+                $"Missing account '{firstUsername}' after multi-instance writes."
+            );
+            Assert.That(
+                await reloadedUnitOfWork.Accounts.GetByUsernameAsync(secondUsername),
+                Is.Not.Null,
+                $"Missing account '{secondUsername}' after multi-instance writes."
+            );
+        }
     }
 
     [Test]
@@ -479,6 +479,66 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(journalAccount, Is.Not.Null);
                 Assert.That(snapshotAccount!.AccountType, Is.EqualTo(AccountType.GameMaster));
                 Assert.That(journalAccount!.AccountType, Is.EqualTo(AccountType.Administrator));
+            }
+        );
+    }
+
+    [Test]
+    public async Task InitializeAsync_ShouldPreserveItemNameAcrossSnapshotAndJournalReplay()
+    {
+        using var tempDirectory = new TempDirectory();
+        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await unitOfWork.InitializeAsync();
+
+        await unitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x40001000,
+                Name = "Snapshot Item",
+                Weight = 2,
+                Amount = 11,
+                IsStackable = true,
+                Rarity = ItemRarity.Uncommon,
+                ItemId = 0x0EED
+            }
+        );
+
+        await unitOfWork.SaveSnapshotAsync();
+
+        await unitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x40001001,
+                Name = "Journal Item",
+                Weight = 3,
+                Amount = 7,
+                IsStackable = false,
+                Rarity = ItemRarity.Epic,
+                ItemId = 0x0F3F
+            }
+        );
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await secondUnitOfWork.InitializeAsync();
+
+        var snapshotItem = await secondUnitOfWork.Items.GetByIdAsync((Serial)0x40001000);
+        var journalItem = await secondUnitOfWork.Items.GetByIdAsync((Serial)0x40001001);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshotItem, Is.Not.Null);
+                Assert.That(journalItem, Is.Not.Null);
+                Assert.That(snapshotItem!.Name, Is.EqualTo("Snapshot Item"));
+                Assert.That(journalItem!.Name, Is.EqualTo("Journal Item"));
+                Assert.That(snapshotItem.Weight, Is.EqualTo(2));
+                Assert.That(journalItem.Weight, Is.EqualTo(3));
+                Assert.That(snapshotItem.Amount, Is.EqualTo(11));
+                Assert.That(journalItem.Amount, Is.EqualTo(7));
+                Assert.That(snapshotItem.IsStackable, Is.True);
+                Assert.That(journalItem.IsStackable, Is.False);
+                Assert.That(snapshotItem.Rarity, Is.EqualTo(ItemRarity.Uncommon));
+                Assert.That(journalItem.Rarity, Is.EqualTo(ItemRarity.Epic));
             }
         );
     }
@@ -726,66 +786,6 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem.Hue, Is.EqualTo(0x0481));
                 Assert.That(loadedItem.EquippedMobileId, Is.EqualTo((Serial)0x00000010));
                 Assert.That(loadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
-            }
-        );
-    }
-
-    [Test]
-    public async Task InitializeAsync_ShouldPreserveItemNameAcrossSnapshotAndJournalReplay()
-    {
-        using var tempDirectory = new TempDirectory();
-        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await unitOfWork.InitializeAsync();
-
-        await unitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = (Serial)0x40001000,
-                Name = "Snapshot Item",
-                Weight = 2,
-                Amount = 11,
-                IsStackable = true,
-                Rarity = ItemRarity.Uncommon,
-                ItemId = 0x0EED
-            }
-        );
-
-        await unitOfWork.SaveSnapshotAsync();
-
-        await unitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = (Serial)0x40001001,
-                Name = "Journal Item",
-                Weight = 3,
-                Amount = 7,
-                IsStackable = false,
-                Rarity = ItemRarity.Epic,
-                ItemId = 0x0F3F
-            }
-        );
-
-        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await secondUnitOfWork.InitializeAsync();
-
-        var snapshotItem = await secondUnitOfWork.Items.GetByIdAsync((Serial)0x40001000);
-        var journalItem = await secondUnitOfWork.Items.GetByIdAsync((Serial)0x40001001);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(snapshotItem, Is.Not.Null);
-                Assert.That(journalItem, Is.Not.Null);
-                Assert.That(snapshotItem!.Name, Is.EqualTo("Snapshot Item"));
-                Assert.That(journalItem!.Name, Is.EqualTo("Journal Item"));
-                Assert.That(snapshotItem.Weight, Is.EqualTo(2));
-                Assert.That(journalItem.Weight, Is.EqualTo(3));
-                Assert.That(snapshotItem.Amount, Is.EqualTo(11));
-                Assert.That(journalItem.Amount, Is.EqualTo(7));
-                Assert.That(snapshotItem.IsStackable, Is.True);
-                Assert.That(journalItem.IsStackable, Is.False);
-                Assert.That(snapshotItem.Rarity, Is.EqualTo(ItemRarity.Uncommon));
-                Assert.That(journalItem.Rarity, Is.EqualTo(ItemRarity.Epic));
             }
         );
     }

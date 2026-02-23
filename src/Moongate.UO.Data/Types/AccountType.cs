@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents AccountType.
+/// </summary>
 public enum AccountType
 {
     Regular = 0x00,

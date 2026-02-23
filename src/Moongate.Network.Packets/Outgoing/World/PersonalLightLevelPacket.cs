@@ -8,6 +8,9 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0x4E, PacketSizing.Fixed, Length = 6, Description = "Personal Light Level")]
+/// <summary>
+/// Represents PersonalLightLevelPacket.
+/// </summary>
 public class PersonalLightLevelPacket : BaseGameNetworkPacket
 {
     public LightLevelType LightLevel { get; set; }

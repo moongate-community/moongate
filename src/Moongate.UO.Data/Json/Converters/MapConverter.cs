@@ -4,6 +4,9 @@ using Moongate.UO.Data.Maps;
 
 namespace Moongate.UO.Data.Json.Converters;
 
+/// <summary>
+/// Represents MapConverter.
+/// </summary>
 public class MapConverter : JsonConverter<Map>
 {
     public override Map Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

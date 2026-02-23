@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+/// <summary>
+/// Represents HousingFlags.
+/// </summary>
 public enum HousingFlags
 {
     None = 0x0,

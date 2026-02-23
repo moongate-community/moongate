@@ -8,6 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+/// <summary>
+/// Represents RegionDataLoader.
+/// </summary>
 public class RegionDataLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

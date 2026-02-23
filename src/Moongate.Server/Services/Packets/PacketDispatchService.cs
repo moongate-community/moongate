@@ -7,6 +7,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Packets;
 
+/// <summary>
+/// Represents PacketDispatchService.
+/// </summary>
 public class PacketDispatchService : IPacketDispatchService
 {
     private static readonly PacketRegistry _packetRegistry = CreatePacketRegistry();
@@ -65,6 +68,14 @@ public class PacketDispatchService : IPacketDispatchService
         return true;
     }
 
+    private static PacketRegistry CreatePacketRegistry()
+    {
+        var registry = new PacketRegistry();
+        PacketTable.Register(registry);
+
+        return registry;
+    }
+
     private async Task NotifyListenerSafeAsync(byte opCode, IncomingGamePacket gamePacket, IPacketListener listener)
     {
         try
@@ -75,13 +86,5 @@ public class PacketDispatchService : IPacketDispatchService
         {
             _logger.Error(ex, "Listener failed for packet opcode 0x{OpCode:X2}", opCode);
         }
-    }
-
-    private static PacketRegistry CreatePacketRegistry()
-    {
-        var registry = new PacketRegistry();
-        PacketTable.Register(registry);
-
-        return registry;
     }
 }

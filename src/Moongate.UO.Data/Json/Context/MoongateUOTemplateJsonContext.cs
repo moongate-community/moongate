@@ -16,4 +16,7 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(MobileEquipmentItemTemplate[])),
  JsonSerializable(typeof(MobileRandomEquipmentPoolTemplate[])),
  JsonSerializable(typeof(MobileWeightedEquipmentItemTemplate[]))]
+/// <summary>
+/// Represents MoongateUOTemplateJsonContext.
+/// </summary>
 public partial class MoongateUOTemplateJsonContext : JsonSerializerContext { }

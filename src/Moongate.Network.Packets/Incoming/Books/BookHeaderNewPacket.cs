@@ -1,12 +1,15 @@
+using System.Text;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
-using System.Text;
 
 namespace Moongate.Network.Packets.Incoming.Books;
 
 [PacketHandler(0xD4, PacketSizing.Variable, Description = "Book Header ( New )")]
+/// <summary>
+/// Represents BookHeaderNewPacket.
+/// </summary>
 public class BookHeaderNewPacket : BaseGameNetworkPacket
 {
     public uint BookSerial { get; set; }
@@ -76,12 +79,24 @@ public class BookHeaderNewPacket : BaseGameNetworkPacket
         return reader.Remaining == 0;
     }
 
-    private static void WriteStringField(ref SpanWriter writer, string value)
+    private static string DecodeStringField(byte[] bytes)
     {
-        var bytes = Encoding.UTF8.GetBytes(value);
-        writer.Write((ushort)(bytes.Length + 1));
-        writer.Write(bytes);
-        writer.Write((byte)0);
+        if (bytes.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        if (bytes.Length >= 2 && bytes.Length % 2 == 0 && bytes[^2] == 0 && bytes[^1] == 0)
+        {
+            return Encoding.Unicode.GetString(bytes, 0, bytes.Length - 2);
+        }
+
+        if (bytes[^1] == 0)
+        {
+            return Encoding.UTF8.GetString(bytes, 0, bytes.Length - 1);
+        }
+
+        return Encoding.UTF8.GetString(bytes);
     }
 
     private static bool TryReadStringField(ref SpanReader reader, out string value)
@@ -106,23 +121,11 @@ public class BookHeaderNewPacket : BaseGameNetworkPacket
         return true;
     }
 
-    private static string DecodeStringField(byte[] bytes)
+    private static void WriteStringField(ref SpanWriter writer, string value)
     {
-        if (bytes.Length == 0)
-        {
-            return string.Empty;
-        }
-
-        if (bytes.Length >= 2 && (bytes.Length % 2) == 0 && bytes[^2] == 0 && bytes[^1] == 0)
-        {
-            return Encoding.Unicode.GetString(bytes, 0, bytes.Length - 2);
-        }
-
-        if (bytes[^1] == 0)
-        {
-            return Encoding.UTF8.GetString(bytes, 0, bytes.Length - 1);
-        }
-
-        return Encoding.UTF8.GetString(bytes);
+        var bytes = Encoding.UTF8.GetBytes(value);
+        writer.Write((ushort)(bytes.Length + 1));
+        writer.Write(bytes);
+        writer.Write((byte)0);
     }
 }

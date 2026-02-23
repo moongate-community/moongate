@@ -3,6 +3,9 @@ using Moongate.Core.Utils;
 
 namespace Moongate.UO.Data.Races.Base;
 
+/// <summary>
+/// Represents Elf.
+/// </summary>
 public class Elf : Race
 {
     private static readonly int[] m_SkinHues =

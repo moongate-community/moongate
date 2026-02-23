@@ -13,6 +13,9 @@ namespace Moongate.Core.Buffers;
  * Adaptation of the ArrayPool
  * <T>.Shared (TlsOverPerCoreLockedStacksArrayPool) for single threaded *unsafe* usage.
  */
+/// <summary>
+/// Represents STArrayPool.
+/// </summary>
 public class STArrayPool<T> : ArrayPool<T>
 {
 #if DEBUG_ARRAYPOOL

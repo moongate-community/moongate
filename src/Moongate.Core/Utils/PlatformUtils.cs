@@ -27,6 +27,13 @@ public static class PlatformUtils
     }
 
     /// <summary>
+    /// Checks if the application is running inside a Docker container.
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsRunningFromDocker()
+        => Environment.GetEnvironmentVariable("MOONGATE_IS_DOCKER") == "true";
+
+    /// <summary>
     /// Checks if the application is running on Linux.
     /// </summary>
     /// <returns>True if running on Linux, otherwise false.</returns>
@@ -46,14 +53,4 @@ public static class PlatformUtils
     /// <returns>True if running on Windows, otherwise false.</returns>
     public static bool IsRunningOnWindows()
         => OperatingSystem.IsWindows();
-
-
-    /// <summary>
-    ///  Checks if the application is running inside a Docker container.
-    /// </summary>
-    /// <returns></returns>
-    public static bool IsRunningFromDocker()
-    {
-        return Environment.GetEnvironmentVariable("MOONGATE_IS_DOCKER") == "true";
-    }
 }

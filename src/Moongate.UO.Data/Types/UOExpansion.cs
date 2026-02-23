@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents UOExpansion.
+/// </summary>
 public enum UOExpansion
 {
     None,

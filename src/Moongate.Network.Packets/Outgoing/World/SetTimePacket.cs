@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0x5B, PacketSizing.Fixed, Length = 4, Description = "Set Time")]
+/// <summary>
+/// Represents SetTimePacket.
+/// </summary>
 public class SetTimePacket : BaseGameNetworkPacket
 {
     public DateTime Time { get; set; }

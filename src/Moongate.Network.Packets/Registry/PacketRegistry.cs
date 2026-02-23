@@ -6,6 +6,9 @@ using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Registry;
 
+/// <summary>
+/// Represents PacketRegistry.
+/// </summary>
 public class PacketRegistry
 {
     private readonly Dictionary<byte, PacketRegistration> _registrations = [];

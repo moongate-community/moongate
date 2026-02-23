@@ -1,5 +1,8 @@
 namespace Moongate.UO.Data.Types;
 
+/// <summary>
+/// Represents CursorType.
+/// </summary>
 public enum CursorType : byte
 {
     Neutral = 0,

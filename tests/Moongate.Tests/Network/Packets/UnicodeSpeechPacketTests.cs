@@ -12,10 +12,10 @@ public class UnicodeSpeechPacketTests
         var packet = new UnicodeSpeechPacket();
         var data = BuildPayload(
             ChatMessageType.Regular,
-            hue: 0x0035,
-            font: 0x0003,
-            language: "ENU",
-            text: "hello"
+            0x0035,
+            0x0003,
+            "ENU",
+            "hello"
         );
 
         var parsed = packet.TryParse(data);
@@ -41,10 +41,10 @@ public class UnicodeSpeechPacketTests
 
         var data = BuildPayload(
             ChatMessageType.Regular,
-            hue: 0x0035,
-            font: 0x0003,
-            language: "ENU",
-            text: "hello"
+            0x0035,
+            0x0003,
+            "ENU",
+            "hello"
         );
 
         data[1] = 0x00;

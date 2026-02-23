@@ -41,6 +41,9 @@ public sealed partial class PlaceholderResolverService : IPlaceholderResolverSer
         };
     }
 
+    [GeneratedRegex("<[A-Za-z][A-Za-z0-9]*>", RegexOptions.Compiled)]
+    private static partial Regex PlaceHolderGeneratedRegex();
+
     private static void ReplaceTokens(JsonNode? node, IReadOnlyDictionary<string, string> tokens)
     {
         if (node is JsonObject jsonObject)
@@ -78,7 +81,4 @@ public sealed partial class PlaceholderResolverService : IPlaceholderResolverSer
             node.ReplaceWith(JsonValue.Create(replaced));
         }
     }
-
-    [GeneratedRegex("<[A-Za-z][A-Za-z0-9]*>", RegexOptions.Compiled)]
-    private static partial Regex PlaceHolderGeneratedRegex();
 }

@@ -4,6 +4,9 @@ using System.Text.Json.Serialization;
 
 namespace Moongate.UO.Data.Json.Converters;
 
+/// <summary>
+/// Represents FlagsConverter.
+/// </summary>
 public class FlagsConverter<T> : JsonConverter<T> where T : struct, Enum
 {
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

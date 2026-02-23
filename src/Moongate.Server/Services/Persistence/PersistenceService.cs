@@ -5,10 +5,10 @@ using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Persistence.Services.Persistence;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Metrics.Data;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Metrics.Data;
 using Serilog;
 
 namespace Moongate.Server.Services.Persistence;
@@ -52,6 +52,14 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
     }
 
     public IPersistenceUnitOfWork UnitOfWork { get; }
+
+    public void Dispose()
+    {
+        if (UnitOfWork is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+    }
 
     public PersistenceMetricsSnapshot GetMetricsSnapshot()
     {
@@ -149,14 +157,6 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
             }
 
             throw;
-        }
-    }
-
-    public void Dispose()
-    {
-        if (UnitOfWork is IDisposable disposable)
-        {
-            disposable.Dispose();
         }
     }
 }

@@ -4,10 +4,11 @@ using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
+using Moongate.Server.Services.Events;
+using Moongate.Server.Services.Speech;
 using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
@@ -18,12 +19,22 @@ public class SpeechHandlerTests
     public async Task HandlePacketAsync_ShouldEnqueueUnicodeSpeechMessagePacket_ForSenderSession()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new SpeechHandler(queue, new MockCommandSystemService());
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
+        var gameEventBusService = new GameEventBusService();
+        var handler = new SpeechHandler(
+            queue,
+            new SpeechService(
+                new MockCommandSystemService(),
+                queue,
+                gameNetworkSessionService,
+                gameEventBusService
+            )
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000002,
                 Name = "Tom",
@@ -74,12 +85,22 @@ public class SpeechHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var commandSystemService = new MockCommandSystemService();
-        var handler = new SpeechHandler(queue, commandSystemService);
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
+        var gameEventBusService = new GameEventBusService();
+        var handler = new SpeechHandler(
+            queue,
+            new SpeechService(
+                commandSystemService,
+                queue,
+                gameNetworkSessionService,
+                gameEventBusService
+            )
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000002,
                 Name = "Tom",

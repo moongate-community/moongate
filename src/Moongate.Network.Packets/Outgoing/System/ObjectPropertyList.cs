@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Text;
 using Moongate.Abstractions.Interfaces;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Spans;
@@ -27,7 +28,7 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
     private int _bufferPos;
     private int _hash;
     private int _stringNumbersIndex;
-    
+
     public int Hash => 0x40000000 + _hash;
     public Serial Serial { get; }
     public uint Header { get; private set; }
@@ -38,7 +39,7 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         _buffer = ArrayPool<byte>.Shared.Rent(512);
 
         var writer = new SpanWriter(_buffer);
-        
+
         // Write subcommand 0x0001
         writer.Write((ushort)0x0001);
         writer.Write(Serial.Value);
@@ -48,32 +49,12 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         _bufferPos = writer.Position;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void EnsureCapacity(int requiredBytes)
-    {
-        if (_buffer == null)
-            throw new ObjectDisposedException(nameof(ObjectPropertyList));
-
-        if (_bufferPos + requiredBytes > _buffer.Length)
-        {
-            var newSize = Math.Max(_buffer.Length * 2, _bufferPos + requiredBytes);
-            var newBuffer = ArrayPool<byte>.Shared.Rent(newSize);
-            
-            _buffer.AsSpan(0, _bufferPos).CopyTo(newBuffer);
-            ArrayPool<byte>.Shared.Return(_buffer);
-            _buffer = newBuffer;
-        }
-    }
-
-    private void AddHash(int val)
-    {
-        _hash ^= val & 0x3FFFFFF;
-        _hash ^= (val >> 26) & 0x3F;
-    }
-
     public void Add(uint clilocId)
     {
-        if (clilocId == 0) return;
+        if (clilocId == 0)
+        {
+            return;
+        }
 
         if (Header == 0)
         {
@@ -86,7 +67,7 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         var writer = new SpanWriter(_buffer.AsSpan(_bufferPos));
         writer.Write(clilocId);
         writer.Write((ushort)0); // No string arguments
-        
+
         _bufferPos += 6;
     }
 
@@ -111,9 +92,65 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         InternalAdd(clilocId, value.ToString(CultureInfo.InvariantCulture));
     }
 
+    public void Dispose()
+    {
+        if (_buffer != null)
+        {
+            ArrayPool<byte>.Shared.Return(_buffer);
+            _buffer = null;
+        }
+    }
+
+    public override void Write(ref SpanWriter writer)
+    {
+        if (_buffer == null)
+        {
+            throw new ObjectDisposedException(nameof(ObjectPropertyList));
+        }
+
+        EnsureCapacity(4); // Terminator
+        var termWriter = new SpanWriter(_buffer.AsSpan(_bufferPos));
+        termWriter.Write((uint)0x00000000); // 4-byte terminator
+
+        writer.Write(OpCode);
+        writer.Write((ushort)(_bufferPos + 4 + 3)); // Calculate total length
+        writer.Write(_buffer.AsSpan(0, _bufferPos + 4));
+    }
+
+    protected override bool ParsePayload(ref SpanReader reader)
+        => false;
+
+    private void AddHash(int val)
+    {
+        _hash ^= val & 0x3FFFFFF;
+        _hash ^= (val >> 26) & 0x3F;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void EnsureCapacity(int requiredBytes)
+    {
+        if (_buffer == null)
+        {
+            throw new ObjectDisposedException(nameof(ObjectPropertyList));
+        }
+
+        if (_bufferPos + requiredBytes > _buffer.Length)
+        {
+            var newSize = Math.Max(_buffer.Length * 2, _bufferPos + requiredBytes);
+            var newBuffer = ArrayPool<byte>.Shared.Rent(newSize);
+
+            _buffer.AsSpan(0, _bufferPos).CopyTo(newBuffer);
+            ArrayPool<byte>.Shared.Return(_buffer);
+            _buffer = newBuffer;
+        }
+    }
+
     private void InternalAdd(uint clilocId, string? argument)
     {
-        if (clilocId == 0) return;
+        if (clilocId == 0)
+        {
+            return;
+        }
 
         if (Header == 0)
         {
@@ -129,6 +166,7 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
             w1.Write(clilocId);
             w1.Write((ushort)0);
             _bufferPos += 6;
+
             return;
         }
 
@@ -140,33 +178,8 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         var writer = new SpanWriter(_buffer.AsSpan(_bufferPos));
         writer.Write(clilocId);
         writer.Write((ushort)textBytesLength);
-        writer.Write(global::System.Text.Encoding.Unicode.GetBytes(argument));
+        writer.Write(Encoding.Unicode.GetBytes(argument));
 
         _bufferPos += writer.Position;
-    }
-
-    public override void Write(ref SpanWriter writer)
-    {
-        if (_buffer == null)
-            throw new ObjectDisposedException(nameof(ObjectPropertyList));
-
-        EnsureCapacity(4); // Terminator
-        var termWriter = new SpanWriter(_buffer.AsSpan(_bufferPos));
-        termWriter.Write((uint)0x00000000); // 4-byte terminator
-
-        writer.Write(OpCode);
-        writer.Write((ushort)(_bufferPos + 4 + 3)); // Calculate total length
-        writer.Write(_buffer.AsSpan(0, _bufferPos + 4));
-    }
-
-    protected override bool ParsePayload(ref SpanReader reader) => false;
-
-    public void Dispose()
-    {
-        if (_buffer != null)
-        {
-            ArrayPool<byte>.Shared.Return(_buffer);
-            _buffer = null;
-        }
     }
 }

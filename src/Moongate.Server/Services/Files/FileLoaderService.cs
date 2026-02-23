@@ -6,6 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Files;
 
+/// <summary>
+/// Represents FileLoaderService.
+/// </summary>
 public class FileLoaderService : IFileLoaderService
 {
     private readonly List<IFileLoader> _fileLoaders = new();

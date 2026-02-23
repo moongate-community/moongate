@@ -4,6 +4,9 @@ using Moongate.UO.Data.Professions;
 
 namespace Moongate.UO.Data.Json.Converters;
 
+/// <summary>
+/// Represents ProfessionInfoConverter.
+/// </summary>
 public class ProfessionInfoConverter : JsonConverter<ProfessionInfo>
 {
     public override ProfessionInfo? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

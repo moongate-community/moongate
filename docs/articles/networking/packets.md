@@ -54,7 +54,7 @@ Outbound packets are serialized with `SpanWriter` in `OutboundPacketSender`.
 
 ## Source Generation
 
-The packets generator project provides generated artifacts used by runtime:
+`Moongate.Generators` provides generated packet artifacts used by runtime:
 
 - packet table registration code
 - packet opcode constants (`PacketDefinition` partial)
@@ -75,7 +75,7 @@ public class MovementHandler : BasePacketListener
 }
 ```
 
-`Moongate.Server.PacketHandlers.Generators` produces bootstrap code that calls
+`Moongate.Generators` produces bootstrap code that calls
 `RegisterPacketHandler<TListener>(container, opCode)` for all discovered attributes.
 
 This keeps:

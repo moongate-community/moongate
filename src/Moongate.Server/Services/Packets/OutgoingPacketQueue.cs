@@ -26,6 +26,7 @@ public sealed class OutgoingPacketQueue : IOutgoingPacketQueue
         }
 
         Interlocked.Decrement(ref _queueDepth);
+
         return true;
     }
 }

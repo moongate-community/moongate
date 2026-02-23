@@ -3,6 +3,9 @@ using Serilog;
 
 namespace Moongate.UO.Data.Tiles;
 
+/// <summary>
+/// Represents TileMatrix.
+/// </summary>
 public class TileMatrix
 {
     public const int SectorShift = 3;

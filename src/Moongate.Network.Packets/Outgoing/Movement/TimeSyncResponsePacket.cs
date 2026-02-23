@@ -6,6 +6,9 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Outgoing.Movement;
 
 [PacketHandler(0xF2, PacketSizing.Fixed, Length = 13, Description = "Time Sync Response")]
+/// <summary>
+/// Represents TimeSyncResponsePacket.
+/// </summary>
 public class TimeSyncResponsePacket : BaseGameNetworkPacket
 {
     public int Tick1 { get; set; }

@@ -1,6 +1,9 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+/// <summary>
+/// Represents FeatureFlags.
+/// </summary>
 public enum FeatureFlags
 {
     None = 0x00000000,
