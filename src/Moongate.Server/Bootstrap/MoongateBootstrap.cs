@@ -12,7 +12,6 @@ using Moongate.Core.Types;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
-using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
@@ -382,7 +381,8 @@ public sealed class MoongateBootstrap : IDisposable
                 VersionUtils.Version
             )
         );
-        ScriptModuleRegistry.Register(_container);
+        Moongate.Scripting.Generated.ScriptModuleRegistry.Register(_container);
+        Moongate.Server.Generated.ScriptModuleRegistry.Register(_container);
 
         if (!_container.IsRegistered<List<ScriptModuleData>>())
         {

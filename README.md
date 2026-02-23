@@ -249,9 +249,7 @@ Resolution model:
 
 - `src/Moongate.Server`: host/bootstrap, game loop, network orchestration, session/event services.
 - `src/Moongate.Network.Packets`: packet contracts, descriptors, registry, packet definitions.
-- `src/Moongate.Network.Packets.Generators`: source generator for packet table registration.
-- `src/Moongate.Server.PacketHandlers.Generators`: source generator for packet listener bootstrap registration.
-- `src/Moongate.Server.Metrics.Generators`: source generator for metric snapshot mapping.
+- `src/Moongate.Generators`: unified source generators for packets, handlers, metrics, script-module registry, and version metadata.
 - `src/Moongate.UO.Data`: UO domain data types and utility models.
 - `src/Moongate.Core`: shared low-level utilities.
 - `src/Moongate.Network`: TCP/network primitives.
@@ -265,15 +263,14 @@ Resolution model:
 
 Moongate uses source generators to reduce runtime reflection/discovery work and improve Native AOT compatibility and startup performance.
 
-Current generators:
+Current generator project:
 
-- `Moongate.Network.Packets.Generators`
-  - Generates packet table/registry wiring from packet metadata.
-- `Moongate.Server.PacketHandlers.Generators`
-  - Generates bootstrap packet listener registrations from `[RegisterPacketHandler(...)]` attributes.
-  - Supports multiple opcode attributes on the same listener class.
-- `Moongate.Server.Metrics.Generators`
-  - Generates metric snapshot mappers from metric-decorated snapshot models.
+- `Moongate.Generators`
+  - Generates packet table/registry wiring and `PacketDefinition` constants from packet metadata.
+  - Generates bootstrap packet-listener registrations from `[RegisterPacketHandler(...)]`.
+  - Generates metric snapshot mappers from metric-decorated models.
+  - Generates script module registries from `[ScriptModule(...)]` in `Moongate.Scripting` and `Moongate.Server`.
+  - Generates `VersionUtils` metadata for server version/codename.
 
 Why this helps for AOT:
 
@@ -426,6 +423,7 @@ Moongate includes a Lua scripting subsystem in `src/Moongate.Scripting`, based o
 
 - `LuaScriptEngineService` handles script execution, callbacks, constants, and function invocation.
 - Script modules are exposed with attributes (`[ScriptModule]`, `[ScriptFunction]`).
+- Script module registration is compile-time generated (`ScriptModuleRegistry`) and invoked from bootstrap.
 - `LuaScriptLoader` resolves scripts from configured script directories.
 - `.luarc` metadata generation is included to improve editor tooling.
 
