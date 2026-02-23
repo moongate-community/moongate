@@ -7,8 +7,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Version>0.13.0</Version>
+        <Codename>Moongate</Codename>
+        <MoongateVersion>$(Version)</MoongateVersion>
+        <MoongateCodename>$(Codename)</MoongateCodename>
         <Description>Moongate dedicated game server host process and runtime composition root.</Description>
         <PublishAot>true</PublishAot>
+        <Codename>Lilly</Codename>
         <InvariantGlobalization>true</InvariantGlobalization>
 
         <!-- NativeAOT warning suppression for known incompatible packages -->
@@ -57,8 +61,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Moongate.Server.Metrics.Generators\Moongate.Server.Metrics.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-        <ProjectReference Include="..\Moongate.Server.PacketHandlers.Generators\Moongate.Server.PacketHandlers.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\Moongate.Generators\Moongate.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <CompilerVisibleProperty Include="Version"/>
+        <CompilerVisibleProperty Include="Codename"/>
+        <CompilerVisibleProperty Include="MoongateVersion"/>
+        <CompilerVisibleProperty Include="MoongateCodename"/>
     </ItemGroup>
 
     <ItemGroup>

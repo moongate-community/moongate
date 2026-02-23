@@ -17,4 +17,8 @@
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Moongate.Generators\Moongate.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+    </ItemGroup>
+
 </Project>

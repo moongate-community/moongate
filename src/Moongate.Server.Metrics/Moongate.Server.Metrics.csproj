@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Moongate.Server.Metrics.Generators\Moongate.Server.Metrics.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Condition="'$(DocfxBuild)' != 'true'"/>
+        <ProjectReference Include="..\Moongate.Generators\Moongate.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" Condition="'$(DocfxBuild)' != 'true'"/>
     </ItemGroup>
 
 </Project>

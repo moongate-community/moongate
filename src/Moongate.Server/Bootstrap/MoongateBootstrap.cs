@@ -10,7 +10,9 @@ using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Scripting.Data.Config;
+using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
@@ -29,6 +31,7 @@ using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
+using Moongate.Server.Data.Version;
 using Serilog;
 using Serilog.Filters;
 
@@ -376,10 +379,15 @@ public sealed class MoongateBootstrap : IDisposable
             new LuaEngineConfig(
                 _directoriesConfig[DirectoryType.Scripts],
                 _directoriesConfig[DirectoryType.Scripts],
-                "0.1.0"
+                VersionUtils.Version
             )
         );
-        BootstrapScriptModuleRegistration.Register(_container);
+        ScriptModuleRegistry.Register(_container);
+
+        if (!_container.IsRegistered<List<ScriptModuleData>>())
+        {
+            _container.RegisterInstance(new List<ScriptModuleData>());
+        }
     }
 
     private void RegisterScriptUserData()
