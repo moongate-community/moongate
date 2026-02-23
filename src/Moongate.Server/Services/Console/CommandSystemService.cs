@@ -166,7 +166,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         Func<CommandSystemContext, Task> handler,
         string description = "",
         CommandSourceType source = CommandSourceType.Console,
-        AccountType minimumAccountType = AccountType.Administrator
+        AccountType minimumAccountType = AccountType.Administrator,
+        Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
     )
     {
         if (string.IsNullOrWhiteSpace(commandName))
@@ -181,7 +182,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             Description = description,
             Handler = handler,
             Source = source,
-            MinimumAccountType = minimumAccountType
+            MinimumAccountType = minimumAccountType,
+            AutocompleteProvider = autocompleteProvider
         };
 
         foreach (var alias in aliases)
@@ -197,6 +199,79 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
 
             _logger.Debug("Registered command {CommandName}", normalizedAlias);
         }
+    }
+
+    public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+    {
+        if (commandWithArgs.Length == 0)
+        {
+            return _commands.Keys
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+        }
+
+        var firstSpaceIndex = commandWithArgs.IndexOf(' ');
+        if (firstSpaceIndex < 0)
+        {
+            return _commands.Keys
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .Where(key => key.StartsWith(commandWithArgs, StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+        }
+
+        var commandToken = commandWithArgs[..firstSpaceIndex];
+        if (!_commands.TryGetValue(commandToken, out var commandDefinition))
+        {
+            return _commands.Keys
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .Where(key => key.StartsWith(commandToken, StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+        }
+
+        if (commandDefinition.AutocompleteProvider is null)
+        {
+            return [];
+        }
+
+        var argumentText = commandWithArgs[(firstSpaceIndex + 1)..];
+        var endsWithWhitespace = commandWithArgs.Length > 0 && char.IsWhiteSpace(commandWithArgs[^1]);
+        var arguments = argumentText.Split(
+            ' ',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+        );
+
+        var context = new CommandAutocompleteContext
+        {
+            CommandName = commandToken,
+            Arguments = arguments,
+            EndsWithWhitespace = endsWithWhitespace
+        };
+
+        var providerSuggestions = commandDefinition.AutocompleteProvider(context);
+        if (providerSuggestions.Count == 0)
+        {
+            return [];
+        }
+
+        var prefix = string.Empty;
+        var stableArgs = arguments;
+
+        if (!endsWithWhitespace && arguments.Length > 0)
+        {
+            prefix = arguments[^1];
+            stableArgs = arguments[..^1];
+        }
+
+        return providerSuggestions
+               .Where(static suggestion => !string.IsNullOrWhiteSpace(suggestion))
+               .Where(suggestion => suggestion.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+               .Select(suggestion => BuildAutocompleteLine(commandToken, stableArgs, suggestion))
+               .Distinct(StringComparer.OrdinalIgnoreCase)
+               .OrderBy(static suggestion => suggestion, StringComparer.OrdinalIgnoreCase)
+               .ToArray();
     }
 
     public Task StartAsync()
@@ -220,6 +295,22 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
 
     private Task OnHelpCommand(CommandSystemContext context)
     {
+        if (context.Arguments.Length > 0)
+        {
+            var requestedCommand = context.Arguments[0];
+
+            if (!_commands.TryGetValue(requestedCommand, out var requestedDefinition))
+            {
+                context.Print("No help found for: {0}", requestedCommand);
+
+                return Task.CompletedTask;
+            }
+
+            context.Print("{0}: {1}", requestedDefinition.Name, requestedDefinition.Description);
+
+            return Task.CompletedTask;
+        }
+
         var uniqueCommands = _commands
                              .Values
                              .Distinct()
@@ -337,5 +428,15 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         }
 
         return AccountType.Regular;
+    }
+
+    private static string BuildAutocompleteLine(string commandToken, string[] stableArgs, string suggestion)
+    {
+        if (stableArgs.Length == 0)
+        {
+            return $"{commandToken} {suggestion}";
+        }
+
+        return $"{commandToken} {string.Join(' ', stableArgs)} {suggestion}";
     }
 }

@@ -54,7 +54,9 @@
     "resource": [
       {
         "files": [
-          "images/**"
+          "images/**",
+          "styles/**",
+          "public/**"
         ]
       }
     ],
@@ -63,13 +65,13 @@
     "fileMetadataFiles": [],
     "template": [
       "default",
-      "modern"
+      "modern",
+      "templates/moongate"
     ],
     "globalMetadata": {
       "_appName": "Moongate v2",
-      "_appTitle": "Moongate v2 Documentation",
+      "_appTitle": "🌙 Moongate v2 Documentation",
       "_appFooter": "Moongate v2 - Ultima Online Server Emulator. Licensed under GPL-3.0.",
-      "_appLogoPath": "images/moongate_logo.png",
       "_appFaviconPath": "images/favicon.ico",
       "_enableSearch": true,
       "pdf": false

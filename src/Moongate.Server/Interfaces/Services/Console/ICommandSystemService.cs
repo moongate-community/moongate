@@ -38,6 +38,14 @@ public interface ICommandSystemService : IMoongateService
         Func<CommandSystemContext, Task> handler,
         string description = "",
         CommandSourceType source = CommandSourceType.Console,
-        AccountType minimumAccountType = AccountType.Administrator
+        AccountType minimumAccountType = AccountType.Administrator,
+        Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
     );
+
+    /// <summary>
+    /// Gets autocomplete suggestions for the current command line.
+    /// </summary>
+    /// <param name="commandWithArgs">Current command line.</param>
+    /// <returns>Replacement suggestions for the input line.</returns>
+    IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs);
 }

@@ -32,4 +32,9 @@ public sealed class CommandDefinition
     /// Gets the minimum account type required to execute the command.
     /// </summary>
     public AccountType MinimumAccountType { get; init; }
+
+    /// <summary>
+    /// Gets the optional autocomplete provider used to suggest command arguments.
+    /// </summary>
+    public Func<CommandAutocompleteContext, IReadOnlyList<string>>? AutocompleteProvider { get; init; }
 }
