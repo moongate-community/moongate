@@ -1,0 +1,76 @@
+:root {
+  --mg-bg: #242130;
+  --mg-bg-soft: #343455;
+  --mg-surface: #3c4d81;
+  --mg-accent: #6aa5da;
+  --mg-accent-2: #7675c3;
+  --mg-text: #f9f4ed;
+  --mg-muted: #b9bbd3;
+  --mg-border: rgba(106, 165, 218, 0.25);
+}
+
+html[data-bs-theme="dark"] body,
+html[data-bs-theme="light"] body {
+  background: radial-gradient(circle at top right, #3c4d81 0%, #242130 46%, #1f1c2a 100%);
+  color: var(--mg-text);
+}
+
+html[data-bs-theme="dark"] .navbar,
+html[data-bs-theme="light"] .navbar,
+html[data-bs-theme="dark"] .content,
+html[data-bs-theme="light"] .content,
+html[data-bs-theme="dark"] .sidetoc,
+html[data-bs-theme="light"] .sidetoc,
+html[data-bs-theme="dark"] .toc,
+html[data-bs-theme="light"] .toc {
+  background-color: rgba(36, 33, 48, 0.9);
+}
+
+.navbar-brand #logo {
+  display: none;
+}
+
+.navbar-brand::before {
+  content: "🌙";
+  margin-right: 0.45rem;
+}
+
+html[data-bs-theme="dark"] .navbar-brand,
+html[data-bs-theme="light"] .navbar-brand,
+html[data-bs-theme="dark"] a,
+html[data-bs-theme="light"] a {
+  color: var(--mg-accent);
+}
+
+html[data-bs-theme="dark"] a:hover,
+html[data-bs-theme="light"] a:hover,
+html[data-bs-theme="dark"] a:focus,
+html[data-bs-theme="light"] a:focus {
+  color: var(--mg-accent-2);
+}
+
+html[data-bs-theme="dark"] .toc .nav > li > a,
+html[data-bs-theme="light"] .toc .nav > li > a {
+  color: var(--mg-muted);
+}
+
+html[data-bs-theme="dark"] .toc .nav > li.active > a,
+html[data-bs-theme="light"] .toc .nav > li.active > a {
+  color: var(--mg-text);
+  border-left-color: var(--mg-accent);
+}
+
+html[data-bs-theme="dark"] code,
+html[data-bs-theme="light"] code,
+html[data-bs-theme="dark"] pre,
+html[data-bs-theme="light"] pre {
+  background-color: rgba(52, 52, 85, 0.65);
+  border-color: var(--mg-border);
+}
+
+html[data-bs-theme="dark"] .table > thead > tr > th,
+html[data-bs-theme="dark"] .table > tbody > tr > td,
+html[data-bs-theme="light"] .table > thead > tr > th,
+html[data-bs-theme="light"] .table > tbody > tr > td {
+  border-color: var(--mg-border);
+}
