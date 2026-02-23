@@ -59,6 +59,48 @@ public class CommandSystemServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_WhenHelpWithKnownCommandEntered_ShouldPrintSingleCommandHelp()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService
+        );
+        await service.StartAsync();
+
+        await gameEventBusService.PublishAsync(new CommandEnteredEvent("help lock", CommandSourceType.Console));
+
+        Assert.That(consoleUiService.Lines.Count, Is.GreaterThan(0));
+        Assert.That(consoleUiService.Lines[^1].Message, Is.EqualTo("lock: Locks console input. Press '*' to unlock."));
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenHelpWithUnknownCommandEntered_ShouldPrintUnknownHelpMessage()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService
+        );
+        await service.StartAsync();
+
+        await gameEventBusService.PublishAsync(new CommandEnteredEvent("help doesnotexist", CommandSourceType.Console));
+
+        Assert.That(consoleUiService.Lines.Count, Is.GreaterThan(0));
+        Assert.That(consoleUiService.Lines[^1].Message, Is.EqualTo("No help found for: doesnotexist"));
+    }
+
+    [Test]
     public async Task HandleAsync_WhenLockCommandEntered_ShouldLockConsoleInput()
     {
         var gameEventBusService = new GameEventBusService();
@@ -366,5 +408,51 @@ public class CommandSystemServiceTests
         await service.ExecuteCommandAsync("adminconsole", CommandSourceType.Console, null);
 
         Assert.That(executed, Is.True);
+    }
+
+    [Test]
+    public void GetAutocompleteSuggestions_WhenPrefixMatchesCommands_ShouldReturnCommandMatches()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService
+        );
+
+        var suggestions = service.GetAutocompleteSuggestions("he");
+
+        Assert.That(suggestions, Contains.Item("help"));
+    }
+
+    [Test]
+    public void GetAutocompleteSuggestions_WhenCommandProvidesArgumentSuggestions_ShouldReturnExpandedLines()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService
+        );
+
+        service.RegisterCommand(
+            "tp",
+            _ => Task.CompletedTask,
+            source: CommandSourceType.Console | CommandSourceType.InGame,
+            minimumAccountType: AccountType.Regular,
+            autocompleteProvider: _ => ["Britain", "Buccaneer's Den", "Yew"]
+        );
+
+        var suggestions = service.GetAutocompleteSuggestions("tp B");
+
+        Assert.That(suggestions, Is.EqualTo(new[] { "tp Britain", "tp Buccaneer's Den" }));
     }
 }

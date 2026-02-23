@@ -39,10 +39,14 @@ public sealed class MockCommandSystemService : ICommandSystemService
         Func<CommandSystemContext, Task> handler,
         string description = "",
         CommandSourceType source = CommandSourceType.Console,
-        AccountType minimumAccountType = AccountType.Administrator
+        AccountType minimumAccountType = AccountType.Administrator,
+        Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
     )
     {
     }
+
+    public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+        => [];
 
     public Task StartAsync() => Task.CompletedTask;
 

@@ -14,17 +14,26 @@ namespace Moongate.Server.Services.Console;
 public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
 {
     private readonly IConsoleUiService _consoleUiService;
+    private readonly ICommandSystemService _commandSystemService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ILogger _logger = Log.ForContext<ConsoleCommandService>();
     private readonly List<string> _commandHistory = [];
+    private readonly List<string> _autocompleteCandidates = [];
 
     private CancellationTokenSource _lifetimeCts = new();
     private Task _inputLoopTask = Task.CompletedTask;
     private int _commandHistoryIndex = -1;
+    private string _autocompleteSeed = string.Empty;
+    private int _autocompleteIndex = -1;
 
-    public ConsoleCommandService(IConsoleUiService consoleUiService, IGameEventBusService gameEventBusService)
+    public ConsoleCommandService(
+        IConsoleUiService consoleUiService,
+        ICommandSystemService commandSystemService,
+        IGameEventBusService gameEventBusService
+    )
     {
         _consoleUiService = consoleUiService;
+        _commandSystemService = commandSystemService;
         _gameEventBusService = gameEventBusService;
     }
 
@@ -116,6 +125,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
                 await SubmitCommandAsync(buffer.ToString(), cancellationToken);
                 buffer.Clear();
                 _commandHistoryIndex = -1;
+                ResetAutocompleteState();
                 _consoleUiService.UpdateInput(string.Empty);
                 lockWarningShown = false;
 
@@ -127,6 +137,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
                 if (buffer.Length > 0)
                 {
                     buffer.Length--;
+                    ResetAutocompleteState();
                     _consoleUiService.UpdateInput(buffer.ToString());
                 }
 
@@ -139,6 +150,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
             {
                 buffer.Clear();
                 _commandHistoryIndex = -1;
+                ResetAutocompleteState();
                 _consoleUiService.UpdateInput(string.Empty);
                 lockWarningShown = false;
 
@@ -159,6 +171,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
 
                 buffer.Clear();
                 buffer.Append(_commandHistory[_commandHistory.Count - 1 - _commandHistoryIndex]);
+                ResetAutocompleteState();
                 _consoleUiService.UpdateInput(buffer.ToString());
                 lockWarningShown = false;
 
@@ -184,7 +197,16 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
                     buffer.Clear();
                 }
 
+                ResetAutocompleteState();
                 _consoleUiService.UpdateInput(buffer.ToString());
+                lockWarningShown = false;
+
+                continue;
+            }
+
+            if (key.Key == ConsoleKey.Tab)
+            {
+                ApplyAutocomplete(buffer, reverse: (key.Modifiers & ConsoleModifiers.Shift) != 0);
                 lockWarningShown = false;
 
                 continue;
@@ -193,6 +215,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
             if (!char.IsControl(key.KeyChar))
             {
                 buffer.Append(key.KeyChar);
+                ResetAutocompleteState();
                 _consoleUiService.UpdateInput(buffer.ToString());
                 lockWarningShown = false;
             }
@@ -216,5 +239,39 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
             new CommandEnteredEvent(command, CommandSourceType.Console, null),
             cancellationToken
         );
+    }
+
+    private void ApplyAutocomplete(StringBuilder buffer, bool reverse)
+    {
+        var currentInput = buffer.ToString();
+
+        if (_autocompleteSeed.Length == 0 || !string.Equals(_autocompleteSeed, currentInput, StringComparison.Ordinal))
+        {
+            _autocompleteSeed = currentInput;
+            _autocompleteCandidates.Clear();
+            _autocompleteCandidates.AddRange(_commandSystemService.GetAutocompleteSuggestions(currentInput));
+            _autocompleteIndex = -1;
+        }
+
+        if (_autocompleteCandidates.Count == 0)
+        {
+            return;
+        }
+
+        _autocompleteIndex = reverse
+            ? (_autocompleteIndex <= 0 ? _autocompleteCandidates.Count - 1 : _autocompleteIndex - 1)
+            : (_autocompleteIndex + 1) % _autocompleteCandidates.Count;
+
+        var suggestion = _autocompleteCandidates[_autocompleteIndex];
+        buffer.Clear();
+        buffer.Append(suggestion);
+        _consoleUiService.UpdateInput(buffer.ToString());
+    }
+
+    private void ResetAutocompleteState()
+    {
+        _autocompleteSeed = string.Empty;
+        _autocompleteIndex = -1;
+        _autocompleteCandidates.Clear();
     }
 }
