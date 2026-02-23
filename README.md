@@ -56,6 +56,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Command System](#command-system)
 - [Scripting](#scripting)
 - [Scripts](#scripts)
+- [Benchmarks](#benchmarks)
 - [Docker](#docker)
 - [Docker Monitoring Stack](#docker-monitoring-stack)
 - [Documentation](#documentation)
@@ -257,6 +258,7 @@ Resolution model:
 - `src/Moongate.Scripting`: Lua engine service, script modules, script loaders, and scripting helpers.
 - `src/Moongate.Server.Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
+- `benchmarks/Moongate.Benchmarks`: BenchmarkDotNet performance suite.
 - `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
 
 ## Source Generators (AOT)
@@ -447,6 +449,30 @@ Repository helper scripts in `scripts/`:
 
 - `scripts/build_image.sh`: builds the Docker image using `docker buildx`, with options for tag, platform, push, and no-cache.
 - `scripts/run_aot.sh`: publishes and runs the server with NativeAOT settings for local AOT verification.
+- `scripts/run_benchmarks.sh`: runs BenchmarkDotNet benchmarks (`markdown` + `csv` exporters).
+
+## Benchmarks
+
+Run locally:
+
+```bash
+./scripts/run_benchmarks.sh --filter '*'
+```
+
+Latest local snapshot (`2026-02-23`, `BenchmarkDotNet 0.14.0`, macOS `Darwin 25.3.0`, Apple `M4 Max`, `.NET 10.0.3`):
+
+| Benchmark | Mean | Allocated |
+|---|---:|---:|
+| `PacketParsingBenchmark.ParseLoginSeedPacket` | `94.82 ns` | `664 B` |
+| `PacketSerializationBenchmark.WriteServerListPacket` | `64.19 ns` | `128 B` |
+| `QueueThroughputBenchmark.OutgoingQueueEnqueueThenDrain` | `24.309 us` | `-` |
+| `QueueThroughputBenchmark.MessageBusPublishThenDrain` | `9.725 us` | `-` |
+| `TimerWheelBenchmark.UpdateTicksDelta` | `2.893 us` | `4.05 KB` |
+
+Generated reports are stored in:
+
+- `BenchmarkDotNet.Artifacts/results/*.md`
+- `BenchmarkDotNet.Artifacts/results/*.csv`
 
 ## Docker
 
@@ -506,6 +532,9 @@ For full setup details, volumes, troubleshooting, and dashboard notes, see `stac
 ## Documentation
 
 Project documentation (Obsidian vault) is in `docs/`.
+Published documentation is available at:
+
+- https://moongate-community.github.io/moongatev2/
 
 - Docs home: `docs/Home.md`
 - Development plan: `docs/plans/moongate-v2-development-plan.md`
