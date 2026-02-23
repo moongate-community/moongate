@@ -16,23 +16,6 @@ public class QueueThroughputBenchmark
     private readonly LoginSeedPacket _packet = new();
 
     [Benchmark]
-    public int OutgoingQueueEnqueueThenDrain()
-    {
-        for (var i = 0; i < Operations; i++)
-        {
-            _outgoingPacketQueue.Enqueue(1, _packet);
-        }
-
-        var drained = 0;
-        while (_outgoingPacketQueue.TryDequeue(out _))
-        {
-            drained++;
-        }
-
-        return drained;
-    }
-
-    [Benchmark]
     public int MessageBusPublishThenDrain()
     {
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -44,7 +27,26 @@ public class QueueThroughputBenchmark
         }
 
         var drained = 0;
+
         while (_messageBusService.TryReadIncomingPacket(out _))
+        {
+            drained++;
+        }
+
+        return drained;
+    }
+
+    [Benchmark]
+    public int OutgoingQueueEnqueueThenDrain()
+    {
+        for (var i = 0; i < Operations; i++)
+        {
+            _outgoingPacketQueue.Enqueue(1, _packet);
+        }
+
+        var drained = 0;
+
+        while (_outgoingPacketQueue.TryDequeue(out _))
         {
             drained++;
         }

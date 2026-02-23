@@ -12,7 +12,6 @@ using Moongate.Network.Server;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Internal.Network;
-using Moongate.Server.Metrics.Data;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Listener;
@@ -22,6 +21,7 @@ using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Network;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Metrics.Data;
 using Serilog;
 
 namespace Moongate.Server.Services.Network;

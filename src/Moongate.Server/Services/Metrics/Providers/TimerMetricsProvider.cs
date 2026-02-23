@@ -1,5 +1,5 @@
-using Moongate.Server.Metrics.Data;
 using Moongate.Server.Interfaces.Services.Metrics;
+using Moongate.Server.Metrics.Data;
 
 namespace Moongate.Server.Services.Metrics.Providers;
 
@@ -18,6 +18,7 @@ public sealed class TimerMetricsProvider : IMetricProvider
     public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
     {
         var snapshot = _timerMetricsSource.GetMetricsSnapshot();
+
         return ValueTask.FromResult(snapshot.ToMetricSamples());
     }
 }

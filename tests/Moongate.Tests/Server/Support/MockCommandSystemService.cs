@@ -34,6 +34,9 @@ public sealed class MockCommandSystemService : ICommandSystemService
         return Task.CompletedTask;
     }
 
+    public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+        => [];
+
     public void RegisterCommand(
         string commandName,
         Func<CommandSystemContext, Task> handler,
@@ -41,14 +44,11 @@ public sealed class MockCommandSystemService : ICommandSystemService
         CommandSourceType source = CommandSourceType.Console,
         AccountType minimumAccountType = AccountType.Administrator,
         Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
-    )
-    {
-    }
+    ) { }
 
-    public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
-        => [];
+    public Task StartAsync()
+        => Task.CompletedTask;
 
-    public Task StartAsync() => Task.CompletedTask;
-
-    public Task StopAsync() => Task.CompletedTask;
+    public Task StopAsync()
+        => Task.CompletedTask;
 }

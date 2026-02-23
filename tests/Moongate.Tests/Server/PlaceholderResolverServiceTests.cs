@@ -2,13 +2,38 @@ using System.Text.Json;
 using Moongate.Server.Data.Entities;
 using Moongate.Server.Services.Entities;
 using Moongate.Tests.Server.Support;
-using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
 
 public class PlaceholderResolverServiceTests
 {
+    [Test]
+    public void Resolve_ShouldLeaveUnknownTokensUntouched()
+    {
+        var resolver = new PlaceholderResolverService();
+        var args = JsonSerializer.SerializeToElement(
+            new
+            {
+                value = "Hello <unknownToken>"
+            }
+        );
+
+        var context = new StarterProfileContext(
+            new()
+            {
+                ID = 1,
+                Name = "Warrior"
+            },
+            null,
+            GenderType.Male
+        );
+
+        var resolved = resolver.Resolve(args, context, "Bob");
+
+        Assert.That(resolved.GetProperty("value").GetString(), Is.EqualTo("Hello <unknownToken>"));
+    }
+
     [Test]
     public void Resolve_ShouldReplaceKnownTokensAndPreservePrimitiveTypes()
     {
@@ -28,7 +53,7 @@ public class PlaceholderResolverServiceTests
         );
 
         var context = new StarterProfileContext(
-            new ProfessionInfo
+            new()
             {
                 ID = 2,
                 Name = "Mage"
@@ -49,31 +74,5 @@ public class PlaceholderResolverServiceTests
                 Assert.That(resolved.GetProperty("writable").GetBoolean(), Is.True);
             }
         );
-    }
-
-    [Test]
-    public void Resolve_ShouldLeaveUnknownTokensUntouched()
-    {
-        var resolver = new PlaceholderResolverService();
-        var args = JsonSerializer.SerializeToElement(
-            new
-            {
-                value = "Hello <unknownToken>"
-            }
-        );
-
-        var context = new StarterProfileContext(
-            new ProfessionInfo
-            {
-                ID = 1,
-                Name = "Warrior"
-            },
-            null,
-            GenderType.Male
-        );
-
-        var resolved = resolver.Resolve(args, context, "Bob");
-
-        Assert.That(resolved.GetProperty("value").GetString(), Is.EqualTo("Hello <unknownToken>"));
     }
 }

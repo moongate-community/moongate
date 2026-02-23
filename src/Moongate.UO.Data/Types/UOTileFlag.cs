@@ -15,6 +15,7 @@ public enum UOTileFlag : ulong
     Unknown1 = 0x00000100,
     Surface = 0x00000200,
     Bridge = 0x00000400,
+
     // lose 2 days for understanding that Generic is not a flag but is Stackable
     Generic = 0x00000800,
     Window = 0x00001000,

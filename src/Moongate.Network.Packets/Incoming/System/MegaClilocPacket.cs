@@ -1,9 +1,9 @@
+using System.Text;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.MegaCliloc;
 
 namespace Moongate.Network.Packets.Incoming.System;
 
@@ -21,16 +21,15 @@ public record struct MegaClilocProperty(uint ClilocId, string? Text);
 /// - BYTE[2] 0x0000
 /// - BYTE[4] Serial (repeated)
 /// - Loop of properties:
-///   - BYTE[4] Cliloc ID
-///   - BYTE[2] Text length
-///   - BYTE[?] Unicode text
+/// - BYTE[4] Cliloc ID
+/// - BYTE[2] Text length
+/// - BYTE[?] Unicode text
 /// - BYTE[4] 0x00000000 (terminator)
-/// 
 /// Client Version (Inbound):
 /// - BYTE[1] 0xD6
 /// - BYTE[2] Length
 /// - Loop of serials to request tooltip for:
-///   - BYTE[4] Serial
+/// - BYTE[4] Serial
 /// </remarks>
 [PacketHandler(0xD6, PacketSizing.Variable, Description = "Mega Cliloc")]
 public class MegaClilocPacket : BaseGameNetworkPacket
@@ -48,12 +47,12 @@ public class MegaClilocPacket : BaseGameNetworkPacket
     /// <summary>
     /// List of cliloc properties for this object
     /// </summary>
-    public List<MegaClilocProperty> Properties { get; private set; } = new();
+    public List<MegaClilocProperty> Properties { get; } = new();
 
     /// <summary>
     /// For client requests: list of serials being requested
     /// </summary>
-    public List<Serial> RequestedSerials { get; private set; } = new();
+    public List<Serial> RequestedSerials { get; } = new();
 
     /// <summary>
     /// Indicates if this is a client request (true) or server response (false)
@@ -105,7 +104,7 @@ public class MegaClilocPacket : BaseGameNetworkPacket
             var firstSerial = payloadReader.ReadUInt32();
             _ = payloadReader.ReadUInt16(); // Always 0x0000
             _ = payloadReader.ReadUInt32(); // repeated serial
-            Serial = new Serial(firstSerial);
+            Serial = new(firstSerial);
 
             while (payloadReader.Remaining >= 4)
             {
@@ -131,10 +130,10 @@ public class MegaClilocPacket : BaseGameNetworkPacket
                         return false;
                     }
 
-                    text = global::System.Text.Encoding.Unicode.GetString(payloadReader.ReadBytes(textLength));
+                    text = Encoding.Unicode.GetString(payloadReader.ReadBytes(textLength));
                 }
 
-                Properties.Add(new MegaClilocProperty(clilocId, text));
+                Properties.Add(new(clilocId, text));
             }
 
             return true;
@@ -147,7 +146,7 @@ public class MegaClilocPacket : BaseGameNetworkPacket
 
             if (serial != 0)
             {
-                RequestedSerials.Add(new Serial(serial));
+                RequestedSerials.Add(new(serial));
             }
         }
 

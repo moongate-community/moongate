@@ -2,7 +2,6 @@ using System.Net;
 using BenchmarkDotNet.Attributes;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Spans;
-using Moongate.UO.Data.Packets.Data;
 
 namespace Moongate.Benchmarks;
 
@@ -16,7 +15,7 @@ public class PacketSerializationBenchmark
     {
         _packet.Shards.Clear();
         _packet.Shards.Add(
-            new GameServerEntry
+            new()
             {
                 Index = 0,
                 ServerName = "Moongate",
@@ -24,7 +23,7 @@ public class PacketSerializationBenchmark
             }
         );
         _packet.Shards.Add(
-            new GameServerEntry
+            new()
             {
                 Index = 1,
                 ServerName = "Moongate Test",

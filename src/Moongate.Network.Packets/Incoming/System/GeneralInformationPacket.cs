@@ -27,7 +27,8 @@ public class GeneralInformationPacket : BaseGameNetworkPacket
     public static GeneralInformationPacket Create(
         GeneralInformationSubcommandType subcommandType,
         ReadOnlyMemory<byte> subcommandData
-    ) => new(subcommandType, subcommandData);
+    )
+        => new(subcommandType, subcommandData);
 
     public static GeneralInformationPacket CreateSetCursorHueSetMap(byte mapId)
         => new(GeneralInformationSubcommandType.SetCursorHueSetMap, new[] { mapId });

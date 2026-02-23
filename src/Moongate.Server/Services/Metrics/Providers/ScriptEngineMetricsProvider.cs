@@ -1,6 +1,6 @@
 using Moongate.Scripting.Interfaces;
-using Moongate.Server.Metrics.Data;
 using Moongate.Server.Interfaces.Services.Metrics;
+using Moongate.Server.Metrics.Data;
 
 namespace Moongate.Server.Services.Metrics.Providers;
 

@@ -9,14 +9,6 @@ namespace Moongate.Tests.Network.Packets;
 public class SpeechMessageFactoryTests
 {
     [Test]
-    public void GetMaxMessageLength_ShouldMatchProtocolFormula()
-    {
-        var maxLength = SpeechMessageFactory.GetMaxMessageLength("abc");
-
-        Assert.That(maxLength, Is.EqualTo(56));
-    }
-
-    [Test]
     public void CreateFromSpeaker_ShouldApplyDefaultsAndSpeakerData()
     {
         var speaker = new UOMobileEntity
@@ -29,10 +21,10 @@ public class SpeechMessageFactoryTests
         var packet = SpeechMessageFactory.CreateFromSpeaker(
             speaker,
             ChatMessageType.Regular,
-            hue: 0,
-            font: 0,
-            language: null,
-            text: "hello"
+            0,
+            0,
+            null,
+            "hello"
         );
 
         Assert.Multiple(
@@ -45,6 +37,23 @@ public class SpeechMessageFactoryTests
                 Assert.That(packet.Font, Is.EqualTo(SpeechHues.DefaultFont));
                 Assert.That(packet.Language, Is.EqualTo("ENU"));
                 Assert.That(packet.Text, Is.EqualTo("hello"));
+            }
+        );
+    }
+
+    [Test]
+    public void CreateMessageBytes_ShouldSerializeUnicodeSpeechPacketWithLength()
+    {
+        var packet = SpeechMessageFactory.CreateSystem("Shard online");
+
+        var data = SpeechMessageFactory.CreateMessageBytes(packet);
+        var declaredLength = (data[1] << 8) | data[2];
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data[0], Is.EqualTo(0xAE));
+                Assert.That(declaredLength, Is.EqualTo(data.Length));
             }
         );
     }
@@ -112,19 +121,10 @@ public class SpeechMessageFactoryTests
     }
 
     [Test]
-    public void CreateMessageBytes_ShouldSerializeUnicodeSpeechPacketWithLength()
+    public void GetMaxMessageLength_ShouldMatchProtocolFormula()
     {
-        var packet = SpeechMessageFactory.CreateSystem("Shard online");
+        var maxLength = SpeechMessageFactory.GetMaxMessageLength("abc");
 
-        var data = SpeechMessageFactory.CreateMessageBytes(packet);
-        var declaredLength = (data[1] << 8) | data[2];
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(data[0], Is.EqualTo(0xAE));
-                Assert.That(declaredLength, Is.EqualTo(data.Length));
-            }
-        );
+        Assert.That(maxLength, Is.EqualTo(56));
     }
 }

@@ -36,6 +36,25 @@ public class StartupCompositionServiceTests
     }
 
     [Test]
+    public void Compose_ShouldApplyRaceSpecificRemovalRules()
+    {
+        var startupTemplateService = new StartupTemplateService();
+        SeedDefaultTemplates(startupTemplateService);
+        var service = new StartupCompositionService(startupTemplateService, new PlaceholderResolverService());
+        var context = CreateContext("Warrior", GenderType.Male, new TestRace("gargoyle", 2));
+
+        var loadout = service.Compose(context, "Garg");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loadout.Equip.Any(static item => item.TemplateId == "Shoes"), Is.False);
+                Assert.That(loadout.Equip.Any(static item => item.TemplateId == "GargishDagger"), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public void Compose_ShouldReplacePlayerNamePlaceholderAndKeepJsonTypes()
     {
         var startupTemplateService = new StartupTemplateService();
@@ -57,53 +76,6 @@ public class StartupCompositionServiceTests
                 Assert.That(args.GetProperty("writable").GetBoolean(), Is.True);
             }
         );
-    }
-
-    [Test]
-    public void Compose_ShouldApplyRaceSpecificRemovalRules()
-    {
-        var startupTemplateService = new StartupTemplateService();
-        SeedDefaultTemplates(startupTemplateService);
-        var service = new StartupCompositionService(startupTemplateService, new PlaceholderResolverService());
-        var context = CreateContext("Warrior", GenderType.Male, new TestRace("gargoyle", 2));
-
-        var loadout = service.Compose(context, "Garg");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(loadout.Equip.Any(static item => item.TemplateId == "Shoes"), Is.False);
-                Assert.That(loadout.Equip.Any(static item => item.TemplateId == "GargishDagger"), Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public void Compose_WhenTemplatesMissing_ShouldReturnEmptyLoadout()
-    {
-        var service = new StartupCompositionService(new StartupTemplateService(), new PlaceholderResolverService());
-        var context = CreateContext("Warrior", GenderType.Male);
-
-        var loadout = service.Compose(context, "Tester");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(loadout.Backpack, Is.Empty);
-                Assert.That(loadout.Equip, Is.Empty);
-            }
-        );
-    }
-
-    private static StarterProfileContext CreateContext(string professionName, GenderType gender, Race? race = null)
-    {
-        var profession = new ProfessionInfo
-        {
-            ID = 1,
-            Name = professionName
-        };
-
-        return new(profession, race, gender);
     }
 
     [Test]
@@ -161,6 +133,34 @@ public class StartupCompositionServiceTests
                 Assert.That(args.GetProperty("audience").GetString(), Is.EqualTo("elf-female"));
             }
         );
+    }
+
+    [Test]
+    public void Compose_WhenTemplatesMissing_ShouldReturnEmptyLoadout()
+    {
+        var service = new StartupCompositionService(new StartupTemplateService(), new PlaceholderResolverService());
+        var context = CreateContext("Warrior", GenderType.Male);
+
+        var loadout = service.Compose(context, "Tester");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loadout.Backpack, Is.Empty);
+                Assert.That(loadout.Equip, Is.Empty);
+            }
+        );
+    }
+
+    private static StarterProfileContext CreateContext(string professionName, GenderType gender, Race? race = null)
+    {
+        var profession = new ProfessionInfo
+        {
+            ID = 1,
+            Name = professionName
+        };
+
+        return new(profession, race, gender);
     }
 
     private static void SeedDefaultTemplates(StartupTemplateService startupTemplateService)

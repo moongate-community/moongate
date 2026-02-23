@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Text;
 using Moongate.Network.Packets.Incoming.Books;
 using Moongate.Network.Spans;
 
@@ -7,15 +8,27 @@ namespace Moongate.Tests.Network.Packets;
 public class BookHeaderNewPacketTests
 {
     [Test]
+    public void TryParse_WithInvalidDeclaredLength_ShouldFail()
+    {
+        var raw = BuildRawPacket(0x40000010u, true, false, 10, "Author", "Title");
+        BinaryPrimitives.WriteUInt16BigEndian(raw.AsSpan(1, 2), (ushort)(raw.Length - 1));
+
+        var packet = new BookHeaderNewPacket();
+        var ok = packet.TryParse(raw);
+
+        Assert.That(ok, Is.False);
+    }
+
+    [Test]
     public void TryParse_WithValidPayload_ShouldPopulateFields()
     {
         var raw = BuildRawPacket(
             0x40000010u,
-            flag1: true,
-            isWritable: true,
-            pageCount: 64,
-            author: "Moongate Team",
-            title: "Roadmap"
+            true,
+            true,
+            64,
+            "Moongate Team",
+            "Roadmap"
         );
 
         var packet = new BookHeaderNewPacket();
@@ -33,18 +46,6 @@ public class BookHeaderNewPacketTests
                 Assert.That(packet.Title, Is.EqualTo("Roadmap"));
             }
         );
-    }
-
-    [Test]
-    public void TryParse_WithInvalidDeclaredLength_ShouldFail()
-    {
-        var raw = BuildRawPacket(0x40000010u, true, false, 10, "Author", "Title");
-        BinaryPrimitives.WriteUInt16BigEndian(raw.AsSpan(1, 2), (ushort)(raw.Length - 1));
-
-        var packet = new BookHeaderNewPacket();
-        var ok = packet.TryParse(raw);
-
-        Assert.That(ok, Is.False);
     }
 
     [Test]
@@ -111,7 +112,7 @@ public class BookHeaderNewPacketTests
 
     private static void WriteUtf8StringWithLength(ref SpanWriter writer, string value)
     {
-        var bytes = System.Text.Encoding.UTF8.GetBytes(value);
+        var bytes = Encoding.UTF8.GetBytes(value);
         writer.Write((ushort)(bytes.Length + 1));
         writer.Write(bytes);
         writer.Write((byte)0);

@@ -17,13 +17,16 @@ public sealed class CompareOptions
                 case "--iterations" when i + 1 < args.Length && int.TryParse(args[i + 1], out var iterations):
                     options.Iterations = Math.Max(10_000, iterations);
                     i++;
+
                     break;
                 case "--output" when i + 1 < args.Length:
                     options.OutputPath = args[i + 1];
                     i++;
+
                     break;
                 case "--json":
                     options.JsonOutput = true;
+
                     break;
             }
         }

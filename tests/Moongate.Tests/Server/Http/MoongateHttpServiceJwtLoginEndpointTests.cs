@@ -1,6 +1,6 @@
 using System.Net;
-using System.Net.Sockets;
 using System.Net.Http.Json;
+using System.Net.Sockets;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
@@ -24,7 +24,7 @@ public class MoongateHttpServiceJwtLoginEndpointTests
                 DirectoriesConfig = directories,
                 Port = port,
                 IsOpenApiEnabled = false,
-                Jwt = new MoongateHttpJwtOptions
+                Jwt = new()
                 {
                     IsEnabled = true,
                     SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
@@ -33,16 +33,16 @@ public class MoongateHttpServiceJwtLoginEndpointTests
                     ExpirationMinutes = 5
                 },
                 AuthenticateUserAsync = (username, password, _) =>
-                    Task.FromResult<MoongateHttpAuthenticatedUser?>(
-                        username == "admin" && password == "admin"
-                            ? new MoongateHttpAuthenticatedUser
-                            {
-                                AccountId = "1",
-                                Username = "admin",
-                                Role = "admin"
-                            }
-                            : null
-                    )
+                                            Task.FromResult<MoongateHttpAuthenticatedUser?>(
+                                                username == "admin" && password == "admin"
+                                                    ? new MoongateHttpAuthenticatedUser
+                                                    {
+                                                        AccountId = "1",
+                                                        Username = "admin",
+                                                        Role = "admin"
+                                                    }
+                                                    : null
+                                            )
             }
         );
 
@@ -52,13 +52,13 @@ public class MoongateHttpServiceJwtLoginEndpointTests
         {
             using var http = new HttpClient();
             var response = await http.PostAsJsonAsync(
-                $"http://127.0.0.1:{port}/auth/login",
-                new MoongateHttpLoginRequest
-                {
-                    Username = "admin",
-                    Password = "admin"
-                }
-            );
+                               $"http://127.0.0.1:{port}/auth/login",
+                               new MoongateHttpLoginRequest
+                               {
+                                   Username = "admin",
+                                   Password = "admin"
+                               }
+                           );
 
             var payload = await response.Content.ReadFromJsonAsync<MoongateHttpLoginResponse>();
 
@@ -83,6 +83,7 @@ public class MoongateHttpServiceJwtLoginEndpointTests
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
         var endpoint = (IPEndPoint)listener.LocalEndpoint;
+
         return endpoint.Port;
     }
 }

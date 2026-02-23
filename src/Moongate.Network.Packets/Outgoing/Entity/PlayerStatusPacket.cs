@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
@@ -25,7 +26,7 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
     public byte Version { get; set; }
 
     public PlayerStatusPacket()
-        : base(0x11, -1) { }
+        : base(0x11) { }
 
     public PlayerStatusPacket(UOMobileEntity mobile, byte version = 0, bool canBeRenamed = false)
         : this()
@@ -49,13 +50,13 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
         writer.Write((ushort)0); // Placeholder for length
         writer.Write(Mobile.Id.Value);
         writer.WriteAscii(Mobile.Name ?? string.Empty, 30);
-        writer.WriteAttribute(maxHits, currentHits, normalize: true, reverse: true);
+        writer.WriteAttribute(maxHits, currentHits, true, true);
         writer.Write(CanBeRenamed);
         writer.Write(Version);
 
         if (Version >= 1)
         {
-            writer.Write(Mobile.Gender == Moongate.UO.Data.Types.GenderType.Female);
+            writer.Write(Mobile.Gender == GenderType.Female);
             writer.Write((ushort)Mobile.Strength);
             writer.Write((ushort)Mobile.Dexterity);
             writer.Write((ushort)Mobile.Intelligence);
@@ -63,7 +64,7 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
             writer.Write((ushort)Mobile.MaxStamina);
             writer.Write((ushort)Mobile.Mana);
             writer.Write((ushort)Mobile.MaxMana);
-            writer.Write(0); // Gold
+            writer.Write(0);         // Gold
             writer.Write((ushort)0); // Resistance
             writer.Write((ushort)0); // Weight
         }
@@ -100,16 +101,16 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
             }
 
             _ = reader.ReadBoolean(); // Sex+Race
-            _ = reader.ReadUInt16(); // Strength
-            _ = reader.ReadUInt16(); // Dexterity
-            _ = reader.ReadUInt16(); // Intelligence
-            _ = reader.ReadUInt16(); // Current Stamina
-            _ = reader.ReadUInt16(); // Max Stamina
-            _ = reader.ReadUInt16(); // Current Mana
-            _ = reader.ReadUInt16(); // Max Mana
-            _ = reader.ReadUInt32(); // Gold
-            _ = reader.ReadUInt16(); // Resistance
-            _ = reader.ReadUInt16(); // Weight
+            _ = reader.ReadUInt16();  // Strength
+            _ = reader.ReadUInt16();  // Dexterity
+            _ = reader.ReadUInt16();  // Intelligence
+            _ = reader.ReadUInt16();  // Current Stamina
+            _ = reader.ReadUInt16();  // Max Stamina
+            _ = reader.ReadUInt16();  // Current Mana
+            _ = reader.ReadUInt16();  // Max Mana
+            _ = reader.ReadUInt32();  // Gold
+            _ = reader.ReadUInt16();  // Resistance
+            _ = reader.ReadUInt16();  // Weight
         }
 
         return reader.Remaining == 0;

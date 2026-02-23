@@ -14,6 +14,57 @@ namespace Moongate.Tests.Server;
 
 public class PlayerStatusHandlerTests
 {
+    private sealed class TestCharacterService : ICharacterService
+    {
+        public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
+        {
+            _ = accountId;
+            _ = characterId;
+
+            return Task.FromResult(true);
+        }
+
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+        {
+            _ = character;
+
+            return Task.FromResult((Serial)1u);
+        }
+
+        public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
+        {
+            _ = character;
+
+            return Task.FromResult<UOItemEntity?>(null);
+        }
+
+        public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
+            => Task.FromResult<UOMobileEntity?>(
+                new()
+                {
+                    Id = characterId,
+                    Name = "Loaded",
+                    Hits = 50,
+                    MaxHits = 100
+                }
+            );
+
+        public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
+        {
+            _ = accountId;
+
+            return Task.FromResult(new List<UOMobileEntity>());
+        }
+
+        public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
+        {
+            _ = accountId;
+            _ = characterId;
+
+            return Task.FromResult(true);
+        }
+    }
+
     [Test]
     public async Task HandlePacketAsync_ShouldEnqueueStatusPacket_WhenBasicStatusRequested()
     {
@@ -65,7 +116,7 @@ public class PlayerStatusHandlerTests
         var session = new GameSession(new(client))
         {
             CharacterId = (Serial)0x00000002,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000002,
                 Name = "Tommy",
@@ -90,58 +141,5 @@ public class PlayerStatusHandlerTests
                 Assert.That(dequeued, Is.False);
             }
         );
-    }
-
-    private sealed class TestCharacterService : ICharacterService
-    {
-        public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
-        {
-            _ = accountId;
-            _ = characterId;
-
-            return Task.FromResult(true);
-        }
-
-        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
-        {
-            _ = character;
-
-            return Task.FromResult((Serial)1u);
-        }
-
-        public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
-        {
-            return Task.FromResult<UOMobileEntity?>(
-                new UOMobileEntity
-                {
-                    Id = characterId,
-                    Name = "Loaded",
-                    Hits = 50,
-                    MaxHits = 100
-                }
-            );
-        }
-
-        public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
-        {
-            _ = accountId;
-
-            return Task.FromResult(new List<UOMobileEntity>());
-        }
-
-        public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
-        {
-            _ = character;
-
-            return Task.FromResult<UOItemEntity?>(null);
-        }
-
-        public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
-        {
-            _ = accountId;
-            _ = characterId;
-
-            return Task.FromResult(true);
-        }
     }
 }

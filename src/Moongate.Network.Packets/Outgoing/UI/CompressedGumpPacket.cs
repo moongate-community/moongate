@@ -45,6 +45,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
         writer.Write(compressedLayout);
 
         writer.Write((uint)TextLines.Count);
+
         if (compressedStrings.Length == 0)
         {
             writer.Write(0u);
@@ -69,6 +70,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
             }
 
             var declaredLength = reader.ReadUInt16();
+
             if (declaredLength != reader.Length)
             {
                 return false;
@@ -80,6 +82,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
             Y = reader.ReadUInt32();
 
             var layoutCompressedLengthWithHeader = reader.ReadUInt32();
+
             if (layoutCompressedLengthWithHeader < 4)
             {
                 return false;
@@ -148,6 +151,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
     private static byte[] BuildLayoutBytes(string layout)
     {
         var text = layout ?? string.Empty;
+
         if (text.Length > 0 && text[^1] == '\0')
         {
             return Encoding.ASCII.GetBytes(text);
@@ -168,7 +172,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
         }
 
         using var ms = new MemoryStream();
-        using var writer = new BinaryWriter(ms, Encoding.UTF8, leaveOpen: true);
+        using var writer = new BinaryWriter(ms, Encoding.UTF8, true);
 
         foreach (var line in lines)
         {
@@ -180,18 +184,33 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
         }
 
         writer.Flush();
+
         return ms.ToArray();
     }
 
     private static byte[] Compress(ReadOnlySpan<byte> input)
     {
         using var ms = new MemoryStream();
-        using (var zlib = new ZLibStream(ms, CompressionLevel.Optimal, leaveOpen: true))
+
+        using (var zlib = new ZLibStream(ms, CompressionLevel.Optimal, true))
         {
             zlib.Write(input);
         }
 
         return ms.ToArray();
+    }
+
+    private static string DecodeLayout(ReadOnlySpan<byte> bytes)
+    {
+        if (bytes.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        var terminatorIndex = bytes.IndexOf((byte)0);
+        var content = terminatorIndex >= 0 ? bytes[..terminatorIndex] : bytes;
+
+        return Encoding.ASCII.GetString(content);
     }
 
     private static byte[] Decompress(ReadOnlySpan<byte> input, int expectedLength)
@@ -210,18 +229,6 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
         return result;
     }
 
-    private static string DecodeLayout(ReadOnlySpan<byte> bytes)
-    {
-        if (bytes.Length == 0)
-        {
-            return string.Empty;
-        }
-
-        var terminatorIndex = bytes.IndexOf((byte)0);
-        var content = terminatorIndex >= 0 ? bytes[..terminatorIndex] : bytes;
-        return Encoding.ASCII.GetString(content);
-    }
-
     private void ParseTextLines(ReadOnlySpan<byte> textBytes, int expectedCount)
     {
         var reader = new SpanReader(textBytes);
@@ -234,7 +241,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
             }
 
             var charLength = reader.ReadUInt16();
-            var bytesLength = checked((int)charLength * 2);
+            var bytesLength = checked(charLength * 2);
 
             if (reader.Remaining < bytesLength)
             {

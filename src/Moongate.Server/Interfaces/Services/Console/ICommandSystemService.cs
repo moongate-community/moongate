@@ -26,6 +26,13 @@ public interface ICommandSystemService : IMoongateService
     );
 
     /// <summary>
+    /// Gets autocomplete suggestions for the current command line.
+    /// </summary>
+    /// <param name="commandWithArgs">Current command line.</param>
+    /// <returns>Replacement suggestions for the input line.</returns>
+    IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs);
+
+    /// <summary>
     /// Registers one command or multiple aliases separated by <c>|</c>.
     /// </summary>
     /// <param name="commandName">Primary command name or aliases list.</param>
@@ -41,11 +48,4 @@ public interface ICommandSystemService : IMoongateService
         AccountType minimumAccountType = AccountType.Administrator,
         Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
     );
-
-    /// <summary>
-    /// Gets autocomplete suggestions for the current command line.
-    /// </summary>
-    /// <param name="commandWithArgs">Current command line.</param>
-    /// <returns>Replacement suggestions for the input line.</returns>
-    IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs);
 }

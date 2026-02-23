@@ -10,6 +10,17 @@ public class PacketParsingBenchmark
     private readonly PacketRegistry _registry = new();
     private readonly byte[] _loginSeedBuffer = new byte[21];
 
+    [Benchmark]
+    public bool ParseLoginSeedPacket()
+    {
+        if (!_registry.TryCreatePacket(0xEF, out var packet))
+        {
+            return false;
+        }
+
+        return packet is LoginSeedPacket && packet.TryParse(_loginSeedBuffer);
+    }
+
     [GlobalSetup]
     public void Setup()
     {
@@ -36,16 +47,5 @@ public class PacketParsingBenchmark
         _loginSeedBuffer[18] = 0x00;
         _loginSeedBuffer[19] = 0x00;
         _loginSeedBuffer[20] = 0x72;
-    }
-
-    [Benchmark]
-    public bool ParseLoginSeedPacket()
-    {
-        if (!_registry.TryCreatePacket(0xEF, out var packet))
-        {
-            return false;
-        }
-
-        return packet is LoginSeedPacket && packet.TryParse(_loginSeedBuffer);
     }
 }

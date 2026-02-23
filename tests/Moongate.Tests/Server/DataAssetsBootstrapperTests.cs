@@ -7,6 +7,30 @@ namespace Moongate.Tests.Server;
 public class DataAssetsBootstrapperTests
 {
     [Test]
+    public void EnsureAssets_WhenTemplateStartupFilesAreMissing_ShouldCopyPreservingStructure()
+    {
+        using var source = new TempDirectory();
+        using var destination = new TempDirectory();
+
+        var sourceFile = Path.Combine(source.Path, "startup", "startup_base.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(sourceFile)!);
+        File.WriteAllText(sourceFile, "{\"id\":\"startup.base\"}");
+
+        var copied = DataAssetsBootstrapper.EnsureAssets(
+            source.Path,
+            destination.Path,
+            new LoggerConfiguration().CreateLogger(),
+            "Template assets"
+        );
+
+        Assert.That(copied, Is.EqualTo(1));
+
+        var destinationFile = Path.Combine(destination.Path, "startup", "startup_base.json");
+        Assert.That(File.Exists(destinationFile), Is.True);
+        Assert.That(File.ReadAllText(destinationFile), Is.EqualTo("{\"id\":\"startup.base\"}"));
+    }
+
+    [Test]
     public void EnsureDataAssets_WhenDestinationFileExists_ShouldNotOverwrite()
     {
         using var source = new TempDirectory();
@@ -53,29 +77,5 @@ public class DataAssetsBootstrapperTests
         var destinationFile = Path.Combine(destination.Path, "regions", "regions.json");
         Assert.That(File.Exists(destinationFile), Is.True);
         Assert.That(File.ReadAllText(destinationFile), Is.EqualTo("{\"ok\":true}"));
-    }
-
-    [Test]
-    public void EnsureAssets_WhenTemplateStartupFilesAreMissing_ShouldCopyPreservingStructure()
-    {
-        using var source = new TempDirectory();
-        using var destination = new TempDirectory();
-
-        var sourceFile = Path.Combine(source.Path, "startup", "startup_base.json");
-        Directory.CreateDirectory(Path.GetDirectoryName(sourceFile)!);
-        File.WriteAllText(sourceFile, "{\"id\":\"startup.base\"}");
-
-        var copied = DataAssetsBootstrapper.EnsureAssets(
-            source.Path,
-            destination.Path,
-            new LoggerConfiguration().CreateLogger(),
-            "Template assets"
-        );
-
-        Assert.That(copied, Is.EqualTo(1));
-
-        var destinationFile = Path.Combine(destination.Path, "startup", "startup_base.json");
-        Assert.That(File.Exists(destinationFile), Is.True);
-        Assert.That(File.ReadAllText(destinationFile), Is.EqualTo("{\"id\":\"startup.base\"}"));
     }
 }

@@ -14,16 +14,9 @@ public class NetworkCompressionBenchmark
     private readonly byte[] _compressedBuffer1024 = new byte[NetworkCompression.BufferSize];
     private readonly byte[] _decompressedBuffer1024 = new byte[NetworkCompression.BufferSize];
 
-    [GlobalSetup]
-    public void Setup()
-    {
-        var random = new Random(1337);
-        random.NextBytes(_payload256);
-        random.NextBytes(_payload1024);
-    }
-
     [Benchmark]
-    public int Compress256Bytes() => NetworkCompression.Compress(_payload256, _compressedBuffer256);
+    public int Compress256Bytes()
+        => NetworkCompression.Compress(_payload256, _compressedBuffer256);
 
     [Benchmark]
     public int CompressAndDecompress1024Bytes()
@@ -45,6 +38,15 @@ public class NetworkCompressionBenchmark
     public async Task<int> CompressionMiddlewareProcessSend1024Bytes()
     {
         var result = await _compressionMiddleware.ProcessSendAsync(null, _payload1024);
+
         return result.Length;
+    }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        var random = new Random(1337);
+        random.NextBytes(_payload256);
+        random.NextBytes(_payload1024);
     }
 }

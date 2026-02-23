@@ -331,7 +331,7 @@ public sealed class MoongateBootstrap : IDisposable
                 ServiceMappings = null,
                 MinimumLogLevel = _moongateConfig.LogLevel.ToSerilogLogLevel(),
                 MetricsSnapshotFactory = CreateHttpMetricsSnapshot,
-                Jwt = new MoongateHttpJwtOptions
+                Jwt = new()
                 {
                     IsEnabled = _moongateConfig.Http.Jwt.IsEnabled,
                     SigningKey = jwtSigningKey,
@@ -340,22 +340,22 @@ public sealed class MoongateBootstrap : IDisposable
                     ExpirationMinutes = _moongateConfig.Http.Jwt.ExpirationMinutes
                 },
                 AuthenticateUserAsync = async (username, password, _) =>
-                {
-                    var accountService = _container.Resolve<IAccountService>();
-                    var account = await accountService.LoginAsync(username, password);
+                                        {
+                                            var accountService = _container.Resolve<IAccountService>();
+                                            var account = await accountService.LoginAsync(username, password);
 
-                    if (account is null)
-                    {
-                        return null;
-                    }
+                                            if (account is null)
+                                            {
+                                                return null;
+                                            }
 
-                    return new MoongateHttpAuthenticatedUser
-                    {
-                        AccountId = account.Id.Value.ToString(),
-                        Username = account.Username,
-                        Role = account.AccountType.ToString()
-                    };
-                }
+                                            return new()
+                                            {
+                                                AccountId = account.Id.Value.ToString(),
+                                                Username = account.Username,
+                                                Role = account.AccountType.ToString()
+                                            };
+                                        }
             };
 
             _container.RegisterInstance(httpServiceOptions);
@@ -364,6 +364,35 @@ public sealed class MoongateBootstrap : IDisposable
         {
             _logger.Information("HTTP Server disabled.");
         }
+    }
+
+    private void RegisterPacketHandlers()
+    {
+        BootstrapPacketHandlerRegistration.Register(_container);
+    }
+
+    private void RegisterScriptModules()
+    {
+        _container.RegisterInstance(
+            new LuaEngineConfig(
+                _directoriesConfig[DirectoryType.Scripts],
+                _directoriesConfig[DirectoryType.Scripts],
+                "0.1.0"
+            )
+        );
+        _container.RegisterScriptModule<LogModule>();
+    }
+
+    private void RegisterScriptUserData()
+    {
+        _container.RegisterLuaUserData<PlayerConnectedEvent>();
+        _container.RegisterLuaUserData<PlayerDisconnectedEvent>();
+        _container.RegisterLuaUserData<ClientVersion>();
+    }
+
+    private void RegisterServices()
+    {
+        BootstrapServiceRegistration.Register(_container, _moongateConfig, _directoriesConfig, _consoleUiService);
     }
 
     private string ResolveHttpJwtSigningKey()
@@ -397,35 +426,6 @@ public sealed class MoongateBootstrap : IDisposable
         );
 
         return generated;
-    }
-
-    private void RegisterPacketHandlers()
-    {
-        BootstrapPacketHandlerRegistration.Register(_container);
-    }
-
-    private void RegisterScriptModules()
-    {
-        _container.RegisterInstance(
-            new LuaEngineConfig(
-                _directoriesConfig[DirectoryType.Scripts],
-                _directoriesConfig[DirectoryType.Scripts],
-                "0.1.0"
-            )
-        );
-        _container.RegisterScriptModule<LogModule>();
-    }
-
-    private void RegisterScriptUserData()
-    {
-        _container.RegisterLuaUserData<PlayerConnectedEvent>();
-        _container.RegisterLuaUserData<PlayerDisconnectedEvent>();
-        _container.RegisterLuaUserData<ClientVersion>();
-    }
-
-    private void RegisterServices()
-    {
-        BootstrapServiceRegistration.Register(_container, _moongateConfig, _directoriesConfig, _consoleUiService);
     }
 
     private async Task StopAsync(List<IMoongateService> runningServices)

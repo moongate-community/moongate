@@ -7,28 +7,19 @@ namespace Moongate.Tests.Network.Packets;
 public class BookPagesPacketTests
 {
     [Test]
-    public void TryParse_WithPageRequest_ShouldReadSentinelLineCount()
+    public void TryParse_WithInvalidDeclaredLength_ShouldFail()
     {
+        var lines = new[] { "a" };
         var raw = BuildPacket(
-            serial: 0x40000031u,
-            pages: new[] { (page: (ushort)3, lines: (ushort)0xFFFF, text: Array.Empty<string>()) }
+            0x40000034u,
+            new[] { (page: (ushort)1, lines: (ushort)1, text: lines) }
         );
+        BinaryPrimitives.WriteUInt16BigEndian(raw.AsSpan(1, 2), (ushort)(raw.Length - 1));
 
         var packet = new BookPagesPacket();
         var ok = packet.TryParse(raw);
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ok, Is.True);
-                Assert.That(packet.BookSerial, Is.EqualTo(0x40000031u));
-                Assert.That(packet.PageCount, Is.EqualTo((ushort)1));
-                Assert.That(packet.Pages.Count, Is.EqualTo(1));
-                Assert.That(packet.Pages[0].PageNumber, Is.EqualTo((ushort)3));
-                Assert.That(packet.Pages[0].LineCount, Is.EqualTo((ushort)0xFFFF));
-                Assert.That(packet.Pages[0].Lines, Is.Empty);
-            }
-        );
+        Assert.That(ok, Is.False);
     }
 
     [Test]
@@ -36,8 +27,8 @@ public class BookPagesPacketTests
     {
         var lines = new[] { "line one", "line two" };
         var raw = BuildPacket(
-            serial: 0x40000032u,
-            pages: new[] { (page: (ushort)1, lines: (ushort)2, text: lines) }
+            0x40000032u,
+            new[] { (page: (ushort)1, lines: (ushort)2, text: lines) }
         );
 
         var packet = new BookPagesPacket();
@@ -58,6 +49,31 @@ public class BookPagesPacketTests
     }
 
     [Test]
+    public void TryParse_WithPageRequest_ShouldReadSentinelLineCount()
+    {
+        var raw = BuildPacket(
+            0x40000031u,
+            new[] { (page: (ushort)3, lines: (ushort)0xFFFF, text: Array.Empty<string>()) }
+        );
+
+        var packet = new BookPagesPacket();
+        var ok = packet.TryParse(raw);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(packet.BookSerial, Is.EqualTo(0x40000031u));
+                Assert.That(packet.PageCount, Is.EqualTo((ushort)1));
+                Assert.That(packet.Pages.Count, Is.EqualTo(1));
+                Assert.That(packet.Pages[0].PageNumber, Is.EqualTo((ushort)3));
+                Assert.That(packet.Pages[0].LineCount, Is.EqualTo((ushort)0xFFFF));
+                Assert.That(packet.Pages[0].Lines, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
     public void Write_ShouldRoundtripWithTryParse()
     {
         var source = new BookPagesPacket
@@ -65,8 +81,8 @@ public class BookPagesPacketTests
             BookSerial = 0x40000033u,
             Pages =
             {
-                new BookPageEntry { PageNumber = 1, LineCount = 2, Lines = { "first", "second" } },
-                new BookPageEntry { PageNumber = 2, LineCount = 0xFFFF }
+                new() { PageNumber = 1, LineCount = 2, Lines = { "first", "second" } },
+                new() { PageNumber = 2, LineCount = 0xFFFF }
             }
         };
 
@@ -90,22 +106,6 @@ public class BookPagesPacketTests
                 Assert.That(parsed.Pages[1].Lines, Is.Empty);
             }
         );
-    }
-
-    [Test]
-    public void TryParse_WithInvalidDeclaredLength_ShouldFail()
-    {
-        var lines = new[] { "a" };
-        var raw = BuildPacket(
-            serial: 0x40000034u,
-            pages: new[] { (page: (ushort)1, lines: (ushort)1, text: lines) }
-        );
-        BinaryPrimitives.WriteUInt16BigEndian(raw.AsSpan(1, 2), (ushort)(raw.Length - 1));
-
-        var packet = new BookPagesPacket();
-        var ok = packet.TryParse(raw);
-
-        Assert.That(ok, Is.False);
     }
 
     private static byte[] BuildPacket(

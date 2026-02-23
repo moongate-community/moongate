@@ -7,7 +7,6 @@ using Moongate.Server.Handlers;
 using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
@@ -23,7 +22,7 @@ public class SpeechHandlerTests
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000002,
                 Name = "Tom",
@@ -79,7 +78,7 @@ public class SpeechHandlerTests
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000002,
                 Name = "Tom",

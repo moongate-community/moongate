@@ -25,6 +25,7 @@ public sealed class MessageBusService : IMessageBusService
         if (!_incomingPackets.Writer.TryWrite(packet))
         {
             _logger.Warning("Failed to publish incoming packet 0x{OpCode:X2}", packet.PacketId);
+
             return;
         }
 
@@ -39,6 +40,7 @@ public sealed class MessageBusService : IMessageBusService
         }
 
         Interlocked.Decrement(ref _queueDepth);
+
         return true;
     }
 }

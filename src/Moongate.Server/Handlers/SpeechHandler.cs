@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
@@ -18,9 +18,7 @@ public class SpeechHandler : BasePacketListener
 
     public SpeechHandler(IOutgoingPacketQueue outgoingPacketQueue, ICommandSystemService commandSystemService)
         : base(outgoingPacketQueue)
-    {
-        _commandSystemService = commandSystemService;
-    }
+        => _commandSystemService = commandSystemService;
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

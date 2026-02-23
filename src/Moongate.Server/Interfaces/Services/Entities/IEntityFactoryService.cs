@@ -44,6 +44,15 @@ public interface IEntityFactoryService
     UOItemEntity CreateStarterBackpack(Serial mobileId, StarterProfileContext profileContext);
 
     /// <summary>
+    /// Creates a starter equipped item for the given layer.
+    /// </summary>
+    /// <param name="mobileId">Owner mobile serial.</param>
+    /// <param name="layer">Equipment layer.</param>
+    /// <param name="profileContext">Starter profile context.</param>
+    /// <returns>Initialized equipped item entity with allocated serial.</returns>
+    UOItemEntity CreateStarterEquipment(Serial mobileId, ItemLayerType layer, StarterProfileContext profileContext);
+
+    /// <summary>
     /// Creates starter gold for a backpack.
     /// </summary>
     /// <param name="containerId">Backpack serial.</param>
@@ -57,15 +66,6 @@ public interface IEntityFactoryService
         int quantity,
         StarterProfileContext profileContext
     );
-
-    /// <summary>
-    /// Creates a starter equipped item for the given layer.
-    /// </summary>
-    /// <param name="mobileId">Owner mobile serial.</param>
-    /// <param name="layer">Equipment layer.</param>
-    /// <param name="profileContext">Starter profile context.</param>
-    /// <returns>Initialized equipped item entity with allocated serial.</returns>
-    UOItemEntity CreateStarterEquipment(Serial mobileId, ItemLayerType layer, StarterProfileContext profileContext);
 
     /// <summary>
     /// Creates a backpack item for newly created characters.

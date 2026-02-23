@@ -14,6 +14,8 @@ internal static partial class BootstrapPacketHandlerRegistration
         RegisterGenerated(container);
     }
 
+    static partial void RegisterGenerated(Container container);
+
     private static void RegisterPacketHandler<T>(Container container, byte opCode) where T : IPacketListener
     {
         if (!container.IsRegistered<T>())
@@ -25,6 +27,4 @@ internal static partial class BootstrapPacketHandlerRegistration
         var packetListenerService = container.Resolve<IPacketDispatchService>();
         packetListenerService.AddPacketListener(opCode, handler);
     }
-
-    static partial void RegisterGenerated(Container container);
 }

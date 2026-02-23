@@ -11,7 +11,6 @@ using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Middlewares;
-using Moongate.UO.Data.Packets.Data;
 
 namespace Moongate.Benchmarks.Compare;
 
@@ -38,7 +37,7 @@ public sealed class BenchmarkCompareRunner
 
         _serverListPacket.Shards.Clear();
         _serverListPacket.Shards.Add(
-            new GameServerEntry
+            new()
             {
                 Index = 0,
                 ServerName = "Moongate",
@@ -46,7 +45,7 @@ public sealed class BenchmarkCompareRunner
             }
         );
         _serverListPacket.Shards.Add(
-            new GameServerEntry
+            new()
             {
                 Index = 1,
                 ServerName = "Moongate Test",
@@ -102,12 +101,82 @@ public sealed class BenchmarkCompareRunner
         }
 
         Console.WriteLine($"Iterations: {options.Iterations}");
+
         foreach (var result in results)
         {
             Console.WriteLine(
                 $"{result.Name}: {result.MeanNanoseconds:F2} ns/op, {result.AllocatedBytesPerOperation:F2} B/op"
             );
         }
+    }
+
+    private static byte[] BuildGeneralInformationPacket()
+    {
+        var packet = GeneralInformationPacket.CreateSetCursorHueSetMap(0);
+        var writer = new SpanWriter(32, true);
+
+        try
+        {
+            packet.Write(ref writer);
+
+            return writer.ToArray();
+        }
+        finally
+        {
+            writer.Dispose();
+        }
+    }
+
+    private void BuildStreamChunks()
+    {
+        var ping = new byte[] { 0x73, 0x3A };
+        var move = new byte[] { 0x02, 0x81, 0x10, 0x00, 0x00, 0x00, 0x01 };
+        var generalInfo = BuildGeneralInformationPacket();
+
+        var stream = new List<byte>(32 * 1024);
+
+        for (var i = 0; i < 256; i++)
+        {
+            stream.AddRange(ping);
+            stream.AddRange(move);
+            stream.AddRange(generalInfo);
+        }
+
+        const int chunkSize = 64;
+
+        for (var offset = 0; offset < stream.Count; offset += chunkSize)
+        {
+            var length = Math.Min(chunkSize, stream.Count - offset);
+            _streamChunks.Add(stream.GetRange(offset, length).ToArray());
+        }
+    }
+
+    private void Compress256Bytes()
+    {
+        BenchmarkSink.Value = NetworkCompression.Compress(_payload256, _compressedBuffer);
+    }
+
+    private void CompressAndDecompress1024Bytes()
+    {
+        var compressedLength = NetworkCompression.Compress(_payload1024, _compressedBuffer);
+
+        if (compressedLength <= 0)
+        {
+            BenchmarkSink.Value = 0;
+
+            return;
+        }
+
+        BenchmarkSink.Value = NetworkCompression.Decompress(
+            _compressedBuffer.AsSpan(0, compressedLength),
+            _decompressedBuffer
+        );
+    }
+
+    private void CompressionMiddlewareProcessSend1024Bytes()
+    {
+        var result = _compressionMiddleware.ProcessSendAsync(null, _payload1024).AsTask().GetAwaiter().GetResult();
+        BenchmarkSink.Value = result.Length;
     }
 
     private BenchmarkRunResult Measure(string name, int iterations, Action action)
@@ -133,49 +202,12 @@ public sealed class BenchmarkCompareRunner
         var allocated = GC.GetAllocatedBytesForCurrentThread() - startAllocated;
         var nanoseconds = elapsed * 1_000_000_000.0 / Stopwatch.Frequency;
 
-        return new BenchmarkRunResult
+        return new()
         {
             Name = name,
             MeanNanoseconds = nanoseconds / iterations,
             AllocatedBytesPerOperation = allocated / (double)iterations
         };
-    }
-
-    private void ParseLoginSeedPacket()
-    {
-        if (_packetRegistry.TryCreatePacket(0xEF, out var packet) && packet is LoginSeedPacket)
-        {
-            BenchmarkSink.Value = packet.TryParse(_loginSeedBuffer) ? 1 : 0;
-        }
-    }
-
-    private void WriteServerListPacket()
-    {
-        var writer = new SpanWriter(128, true);
-
-        try
-        {
-            _serverListPacket.Write(ref writer);
-            BenchmarkSink.Value = writer.BytesWritten;
-        }
-        finally
-        {
-            writer.Dispose();
-        }
-    }
-
-    private void ParseMixedPacketStreamInChunks()
-    {
-        _streamPendingBytes.Clear();
-        var parsed = 0;
-
-        for (var i = 0; i < _streamChunks.Count; i++)
-        {
-            _streamPendingBytes.AddRange(_streamChunks[i]);
-            parsed += ParseAvailablePackets(_streamPendingBytes);
-        }
-
-        BenchmarkSink.Value = parsed;
     }
 
     private int ParseAvailablePackets(List<byte> pendingBytes)
@@ -189,10 +221,12 @@ public sealed class BenchmarkCompareRunner
             if (!_packetRegistry.TryGetDescriptor(opCode, out var descriptor))
             {
                 pendingBytes.RemoveAt(0);
+
                 continue;
             }
 
             var expectedLength = ResolvePacketLength(pendingBytes, descriptor);
+
             if (expectedLength is null || expectedLength.Value <= 0 || pendingBytes.Count < expectedLength.Value)
             {
                 break;
@@ -209,6 +243,28 @@ public sealed class BenchmarkCompareRunner
         }
 
         return parsed;
+    }
+
+    private void ParseLoginSeedPacket()
+    {
+        if (_packetRegistry.TryCreatePacket(0xEF, out var packet) && packet is LoginSeedPacket)
+        {
+            BenchmarkSink.Value = packet.TryParse(_loginSeedBuffer) ? 1 : 0;
+        }
+    }
+
+    private void ParseMixedPacketStreamInChunks()
+    {
+        _streamPendingBytes.Clear();
+        var parsed = 0;
+
+        for (var i = 0; i < _streamChunks.Count; i++)
+        {
+            _streamPendingBytes.AddRange(_streamChunks[i]);
+            parsed += ParseAvailablePackets(_streamPendingBytes);
+        }
+
+        BenchmarkSink.Value = parsed;
     }
 
     private static int? ResolvePacketLength(List<byte> pendingBytes, PacketDescriptor descriptor)
@@ -230,63 +286,14 @@ public sealed class BenchmarkCompareRunner
         return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
     }
 
-    private void Compress256Bytes()
+    private void WriteServerListPacket()
     {
-        BenchmarkSink.Value = NetworkCompression.Compress(_payload256, _compressedBuffer);
-    }
-
-    private void CompressAndDecompress1024Bytes()
-    {
-        var compressedLength = NetworkCompression.Compress(_payload1024, _compressedBuffer);
-        if (compressedLength <= 0)
-        {
-            BenchmarkSink.Value = 0;
-            return;
-        }
-
-        BenchmarkSink.Value = NetworkCompression.Decompress(
-            _compressedBuffer.AsSpan(0, compressedLength),
-            _decompressedBuffer
-        );
-    }
-
-    private void CompressionMiddlewareProcessSend1024Bytes()
-    {
-        var result = _compressionMiddleware.ProcessSendAsync(null, _payload1024).AsTask().GetAwaiter().GetResult();
-        BenchmarkSink.Value = result.Length;
-    }
-
-    private void BuildStreamChunks()
-    {
-        var ping = new byte[] { 0x73, 0x3A };
-        var move = new byte[] { 0x02, 0x81, 0x10, 0x00, 0x00, 0x00, 0x01 };
-        var generalInfo = BuildGeneralInformationPacket();
-
-        var stream = new List<byte>(32 * 1024);
-        for (var i = 0; i < 256; i++)
-        {
-            stream.AddRange(ping);
-            stream.AddRange(move);
-            stream.AddRange(generalInfo);
-        }
-
-        const int chunkSize = 64;
-        for (var offset = 0; offset < stream.Count; offset += chunkSize)
-        {
-            var length = Math.Min(chunkSize, stream.Count - offset);
-            _streamChunks.Add(stream.GetRange(offset, length).ToArray());
-        }
-    }
-
-    private static byte[] BuildGeneralInformationPacket()
-    {
-        var packet = GeneralInformationPacket.CreateSetCursorHueSetMap(0);
-        var writer = new SpanWriter(32, true);
+        var writer = new SpanWriter(128, true);
 
         try
         {
-            packet.Write(ref writer);
-            return writer.ToArray();
+            _serverListPacket.Write(ref writer);
+            BenchmarkSink.Value = writer.BytesWritten;
         }
         finally
         {

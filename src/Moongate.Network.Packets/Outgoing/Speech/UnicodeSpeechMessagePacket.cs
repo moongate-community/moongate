@@ -31,7 +31,7 @@ public class UnicodeSpeechMessagePacket : BaseGameNetworkPacket
         : base(0xAE)
     {
         Font = SpeechHues.DefaultFont;
-        Graphic = (ushort)SpeechHues.DefaultGraphic;
+        Graphic = SpeechHues.DefaultGraphic;
         Hue = SpeechHues.Default;
         Language = "ENU";
         MessageType = ChatMessageType.Regular;

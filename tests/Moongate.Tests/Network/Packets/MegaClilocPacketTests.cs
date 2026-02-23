@@ -62,30 +62,11 @@ public class MegaClilocPacketTests
     }
 
     [Test]
-    public void ObjectPropertyList_Write_ShouldSerializeHeaderAndTerminator()
-    {
-        using var packet = new ObjectPropertyList((Serial)0x40000010);
-        packet.Add(1_000_000u, "Test");
-
-        var bytes = Write(packet);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(bytes[0], Is.EqualTo(0xD6));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(1, 2)), Is.EqualTo((ushort)bytes.Length));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(3, 2)), Is.EqualTo((ushort)0x0001));
-                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(bytes.Length - 4, 4)), Is.EqualTo(0u));
-            }
-        );
-    }
-
-    [Test]
     public void ObjectPropertyList_Write_ShouldBeParsableByMegaClilocPacket()
     {
         using var outgoing = new ObjectPropertyList((Serial)0x40000011);
         outgoing.Add(CommonClilocIds.ObjectName, "Moongate");
-        
+
         var bytes = Write(outgoing);
         var incoming = new MegaClilocPacket();
 
@@ -100,6 +81,25 @@ public class MegaClilocPacketTests
                 Assert.That(incoming.Properties.Count, Is.EqualTo(1));
                 Assert.That(incoming.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
                 Assert.That(incoming.Properties[0].Text, Is.EqualTo("Moongate"));
+            }
+        );
+    }
+
+    [Test]
+    public void ObjectPropertyList_Write_ShouldSerializeHeaderAndTerminator()
+    {
+        using var packet = new ObjectPropertyList((Serial)0x40000010);
+        packet.Add(1_000_000u, "Test");
+
+        var bytes = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(bytes[0], Is.EqualTo(0xD6));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(1, 2)), Is.EqualTo((ushort)bytes.Length));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(3, 2)), Is.EqualTo((ushort)0x0001));
+                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(bytes.Length - 4, 4)), Is.EqualTo(0u));
             }
         );
     }

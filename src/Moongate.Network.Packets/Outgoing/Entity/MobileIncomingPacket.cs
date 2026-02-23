@@ -107,7 +107,7 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
                 hairItemId |= 0x8000;
             }
 
-            writer.Write(GetVirtualHairSerial(Beheld.Id, isFacialHair: false));
+            writer.Write(GetVirtualHairSerial(Beheld.Id, false));
             writer.Write((ushort)hairItemId);
             writer.Write((byte)ItemLayerType.Hair);
 
@@ -128,7 +128,7 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
                 facialHairItemId |= 0x8000;
             }
 
-            writer.Write(GetVirtualHairSerial(Beheld.Id, isFacialHair: true));
+            writer.Write(GetVirtualHairSerial(Beheld.Id, true));
             writer.Write((ushort)facialHairItemId);
             writer.Write((byte)ItemLayerType.FacialHair);
 
@@ -146,17 +146,18 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
     protected override bool ParsePayload(ref SpanReader reader)
         => true;
 
+    private static uint GetVirtualHairSerial(Serial mobileId, bool isFacialHair)
+    {
+        // Keep virtual serials in non-item range to avoid collisions with real equipped item serials.
+        var baseValue = isFacialHair ? FacialHairVirtualSerialBase : HairVirtualSerialBase;
+
+        return baseValue | (mobileId.Value & 0x007FFFFF);
+    }
+
     private static bool IsVisibleLayer(ItemLayerType layer)
         => layer != ItemLayerType.Backpack &&
            layer != ItemLayerType.Bank &&
            layer != ItemLayerType.ShopBuy &&
            layer != ItemLayerType.ShopSell &&
            layer != ItemLayerType.ShopResale;
-
-    private static uint GetVirtualHairSerial(Serial mobileId, bool isFacialHair)
-    {
-        // Keep virtual serials in non-item range to avoid collisions with real equipped item serials.
-        var baseValue = isFacialHair ? FacialHairVirtualSerialBase : HairVirtualSerialBase;
-        return baseValue | (mobileId.Value & 0x007FFFFF);
-    }
 }

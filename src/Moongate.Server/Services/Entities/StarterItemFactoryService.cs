@@ -38,37 +38,8 @@ public sealed class StarterItemFactoryService : IStarterItemFactoryService
         backpack.ParentContainerId = Serial.Zero;
         backpack.ContainerPosition = Point2D.Zero;
         backpack.Location = Point3D.Zero;
+
         return backpack;
-    }
-
-    /// <inheritdoc />
-    public UOItemEntity CreateStarterGold(
-        Serial containerId,
-        Point2D containerPosition,
-        int quantity,
-        StarterProfileContext profileContext
-    )
-    {
-        _ = profileContext;
-        quantity = Math.Max(1, quantity);
-        var itemFromTile = TileData.ItemTable[GoldItemId];
-
-        return new()
-        {
-            Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
-            Name = itemFromTile.Name,
-            Weight = itemFromTile.Weight,
-            Amount = quantity,
-            IsStackable = true,
-            Rarity = ItemRarity.Common,
-            ItemId = GoldItemId,
-            Hue = 0,
-            Location = Point3D.Zero,
-            ParentContainerId = containerId,
-            ContainerPosition = containerPosition,
-            EquippedMobileId = Serial.Zero,
-            EquippedLayer = null
-        };
     }
 
     /// <inheritdoc />
@@ -100,6 +71,36 @@ public sealed class StarterItemFactoryService : IStarterItemFactoryService
             ContainerPosition = Point2D.Zero,
             EquippedMobileId = mobileId,
             EquippedLayer = layer
+        };
+    }
+
+    /// <inheritdoc />
+    public UOItemEntity CreateStarterGold(
+        Serial containerId,
+        Point2D containerPosition,
+        int quantity,
+        StarterProfileContext profileContext
+    )
+    {
+        _ = profileContext;
+        quantity = Math.Max(1, quantity);
+        var itemFromTile = TileData.ItemTable[GoldItemId];
+
+        return new()
+        {
+            Id = _persistenceService.UnitOfWork.AllocateNextItemId(),
+            Name = itemFromTile.Name,
+            Weight = itemFromTile.Weight,
+            Amount = quantity,
+            IsStackable = true,
+            Rarity = ItemRarity.Common,
+            ItemId = GoldItemId,
+            Hue = 0,
+            Location = Point3D.Zero,
+            ParentContainerId = containerId,
+            ContainerPosition = containerPosition,
+            EquippedMobileId = Serial.Zero,
+            EquippedLayer = null
         };
     }
 }

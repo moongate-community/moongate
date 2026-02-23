@@ -11,5 +11,5 @@ public class BookPageEntry
     public bool IsPageRequest => LineCount == ushort.MaxValue;
 
     public BookPageEntry()
-        => Lines = new List<string>();
+        => Lines = new();
 }

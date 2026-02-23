@@ -1,8 +1,8 @@
+using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
-using Moongate.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing.Speech;
 
@@ -12,14 +12,6 @@ namespace Moongate.Network.Packets.Outgoing.Speech;
 public static class SpeechMessageFactory
 {
     private const int StackallocThreshold = 512;
-
-    /// <summary>
-    /// Gets the maximum packet buffer length needed for a unicode speech message payload.
-    /// </summary>
-    /// <param name="text">Speech text.</param>
-    /// <returns>Maximum packet length in bytes.</returns>
-    public static int GetMaxMessageLength(string? text)
-        => 50 + (text?.Length ?? 0) * 2;
 
     /// <summary>
     /// Creates a speech packet emitted by a mobile speaker.
@@ -39,8 +31,7 @@ public static class SpeechMessageFactory
         string? language,
         string text
     )
-    {
-        return new()
+        => new()
         {
             Serial = speaker?.Id ?? Serial.MinusOne,
             Graphic = (ushort)(speaker?.Body.BodyID ?? SpeechHues.DefaultGraphic),
@@ -51,95 +42,6 @@ public static class SpeechMessageFactory
             Name = speaker?.Name ?? "System",
             Text = text
         };
-    }
-
-    /// <summary>
-    /// Creates a regular speech (say) packet emitted by a mobile speaker.
-    /// </summary>
-    /// <param name="speaker">Speaker mobile.</param>
-    /// <param name="text">Speech text.</param>
-    /// <param name="hue">Speech hue.</param>
-    /// <param name="font">Speech font.</param>
-    /// <param name="language">Language code.</param>
-    /// <returns>A configured unicode speech message packet.</returns>
-    public static UnicodeSpeechMessagePacket CreateSayFromSpeaker(
-        UOMobileEntity? speaker,
-        string text,
-        short hue = SpeechHues.Default,
-        short font = SpeechHues.DefaultFont,
-        string language = "ENU"
-    )
-    {
-        return CreateFromSpeaker(speaker, ChatMessageType.Regular, hue, font, language, text);
-    }
-
-    /// <summary>
-    /// Creates a whisper speech packet emitted by a mobile speaker.
-    /// </summary>
-    /// <param name="speaker">Speaker mobile.</param>
-    /// <param name="text">Speech text.</param>
-    /// <param name="hue">Speech hue.</param>
-    /// <param name="font">Speech font.</param>
-    /// <param name="language">Language code.</param>
-    /// <returns>A configured unicode speech message packet.</returns>
-    public static UnicodeSpeechMessagePacket CreateWhisperFromSpeaker(
-        UOMobileEntity? speaker,
-        string text,
-        short hue = SpeechHues.Default,
-        short font = SpeechHues.DefaultFont,
-        string language = "ENU"
-    )
-    {
-        return CreateFromSpeaker(speaker, ChatMessageType.Whisper, hue, font, language, text);
-    }
-
-    /// <summary>
-    /// Creates a yell speech packet emitted by a mobile speaker.
-    /// </summary>
-    /// <param name="speaker">Speaker mobile.</param>
-    /// <param name="text">Speech text.</param>
-    /// <param name="hue">Speech hue.</param>
-    /// <param name="font">Speech font.</param>
-    /// <param name="language">Language code.</param>
-    /// <returns>A configured unicode speech message packet.</returns>
-    public static UnicodeSpeechMessagePacket CreateYellFromSpeaker(
-        UOMobileEntity? speaker,
-        string text,
-        short hue = SpeechHues.Default,
-        short font = SpeechHues.DefaultFont,
-        string language = "ENU"
-    )
-    {
-        return CreateFromSpeaker(speaker, ChatMessageType.Yell, hue, font, language, text);
-    }
-
-    /// <summary>
-    /// Creates a system speech packet using standard system metadata.
-    /// </summary>
-    /// <param name="text">System message text.</param>
-    /// <param name="hue">System message hue.</param>
-    /// <param name="font">System message font.</param>
-    /// <param name="language">System message language code.</param>
-    /// <returns>A configured unicode speech packet marked as system message.</returns>
-    public static UnicodeSpeechMessagePacket CreateSystem(
-        string text,
-        short hue = SpeechHues.System,
-        short font = SpeechHues.DefaultFont,
-        string language = "ENU"
-    )
-    {
-        return new()
-        {
-            Serial = Serial.Zero,
-            Graphic = (ushort)SpeechHues.DefaultGraphic,
-            MessageType = ChatMessageType.System,
-            Hue = hue,
-            Font = font,
-            Language = language,
-            Name = "System",
-            Text = text
-        };
-    }
 
     /// <summary>
     /// Creates a unicode speech packet payload into the provided destination buffer.
@@ -148,8 +50,7 @@ public static class SpeechMessageFactory
     /// <param name="packet">Source packet metadata.</param>
     /// <returns>Bytes written.</returns>
     public static int CreateMessage(Span<byte> destination, UnicodeSpeechMessagePacket packet)
-    {
-        return CreateMessage(
+        => CreateMessage(
             destination,
             packet.Serial,
             packet.Graphic,
@@ -160,7 +61,6 @@ public static class SpeechMessageFactory
             packet.Name,
             packet.Text
         );
-    }
 
     /// <summary>
     /// Creates a unicode speech packet payload into the provided destination buffer.
@@ -234,4 +134,92 @@ public static class SpeechMessageFactory
 
         return heapBuffer.AsSpan(0, written).ToArray();
     }
+
+    /// <summary>
+    /// Creates a regular speech (say) packet emitted by a mobile speaker.
+    /// </summary>
+    /// <param name="speaker">Speaker mobile.</param>
+    /// <param name="text">Speech text.</param>
+    /// <param name="hue">Speech hue.</param>
+    /// <param name="font">Speech font.</param>
+    /// <param name="language">Language code.</param>
+    /// <returns>A configured unicode speech message packet.</returns>
+    public static UnicodeSpeechMessagePacket CreateSayFromSpeaker(
+        UOMobileEntity? speaker,
+        string text,
+        short hue = SpeechHues.Default,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU"
+    )
+        => CreateFromSpeaker(speaker, ChatMessageType.Regular, hue, font, language, text);
+
+    /// <summary>
+    /// Creates a system speech packet using standard system metadata.
+    /// </summary>
+    /// <param name="text">System message text.</param>
+    /// <param name="hue">System message hue.</param>
+    /// <param name="font">System message font.</param>
+    /// <param name="language">System message language code.</param>
+    /// <returns>A configured unicode speech packet marked as system message.</returns>
+    public static UnicodeSpeechMessagePacket CreateSystem(
+        string text,
+        short hue = SpeechHues.System,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU"
+    )
+        => new()
+        {
+            Serial = Serial.Zero,
+            Graphic = SpeechHues.DefaultGraphic,
+            MessageType = ChatMessageType.System,
+            Hue = hue,
+            Font = font,
+            Language = language,
+            Name = "System",
+            Text = text
+        };
+
+    /// <summary>
+    /// Creates a whisper speech packet emitted by a mobile speaker.
+    /// </summary>
+    /// <param name="speaker">Speaker mobile.</param>
+    /// <param name="text">Speech text.</param>
+    /// <param name="hue">Speech hue.</param>
+    /// <param name="font">Speech font.</param>
+    /// <param name="language">Language code.</param>
+    /// <returns>A configured unicode speech message packet.</returns>
+    public static UnicodeSpeechMessagePacket CreateWhisperFromSpeaker(
+        UOMobileEntity? speaker,
+        string text,
+        short hue = SpeechHues.Default,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU"
+    )
+        => CreateFromSpeaker(speaker, ChatMessageType.Whisper, hue, font, language, text);
+
+    /// <summary>
+    /// Creates a yell speech packet emitted by a mobile speaker.
+    /// </summary>
+    /// <param name="speaker">Speaker mobile.</param>
+    /// <param name="text">Speech text.</param>
+    /// <param name="hue">Speech hue.</param>
+    /// <param name="font">Speech font.</param>
+    /// <param name="language">Language code.</param>
+    /// <returns>A configured unicode speech message packet.</returns>
+    public static UnicodeSpeechMessagePacket CreateYellFromSpeaker(
+        UOMobileEntity? speaker,
+        string text,
+        short hue = SpeechHues.Default,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU"
+    )
+        => CreateFromSpeaker(speaker, ChatMessageType.Yell, hue, font, language, text);
+
+    /// <summary>
+    /// Gets the maximum packet buffer length needed for a unicode speech message payload.
+    /// </summary>
+    /// <param name="text">Speech text.</param>
+    /// <returns>Maximum packet length in bytes.</returns>
+    public static int GetMaxMessageLength(string? text)
+        => 50 + (text?.Length ?? 0) * 2;
 }

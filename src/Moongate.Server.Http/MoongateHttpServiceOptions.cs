@@ -53,5 +53,9 @@ public sealed class MoongateHttpServiceOptions
     /// <summary>
     /// Optional authentication callback used by the login endpoint.
     /// </summary>
-    public Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? AuthenticateUserAsync { get; init; }
+    public Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? AuthenticateUserAsync
+    {
+        get;
+        init;
+    }
 }

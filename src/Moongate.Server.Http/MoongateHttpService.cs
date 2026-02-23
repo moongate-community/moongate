@@ -3,18 +3,18 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
-using Moongate.Server.Metrics.Data;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Metrics.Data;
 using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Core;
@@ -166,8 +166,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
         sb.AppendLine();
 
         var groupedMetrics = snapshot.Metrics
-            .GroupBy(static pair => NormalizeMetricName(pair.Key))
-            .OrderBy(static g => g.Key, StringComparer.Ordinal);
+                                     .GroupBy(static pair => NormalizeMetricName(pair.Key))
+                                     .OrderBy(static g => g.Key, StringComparer.Ordinal);
 
         foreach (var metricGroup in groupedMetrics)
         {
@@ -194,7 +194,11 @@ public sealed class MoongateHttpService : IMoongateHttpService
                 {
                     sb.Append('{');
                     var firstLabel = true;
-                    foreach (var (labelKey, labelValue) in metric.Tags.OrderBy(static pair => pair.Key, StringComparer.Ordinal))
+
+                    foreach (var (labelKey, labelValue) in metric.Tags.OrderBy(
+                                 static pair => pair.Key,
+                                 StringComparer.Ordinal
+                             ))
                     {
                         if (!firstLabel)
                         {
@@ -229,12 +233,103 @@ public sealed class MoongateHttpService : IMoongateHttpService
         return sb.ToString();
     }
 
-    private static Task HandleRootAsync(HttpContext context)
+    private static void ConfigureJwt(IServiceCollection services, MoongateHttpJwtOptions options)
     {
-        context.Response.ContentType = "text/plain";
+        var keyBytes = Encoding.UTF8.GetBytes(options.SigningKey);
+        var key = new SymmetricSecurityKey(keyBytes);
 
-        return context.Response.WriteAsync("Moongate HTTP Service is running.");
+        services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(
+                jwtOptions =>
+                {
+                    jwtOptions.TokenValidationParameters = new()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = options.Issuer,
+                        ValidAudience = options.Audience,
+                        IssuerSigningKey = key,
+                        ClockSkew = TimeSpan.FromSeconds(30)
+                    };
+                }
+            );
+
+        services.AddAuthorization();
     }
+
+    private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
+        => new LoggerConfiguration()
+           .MinimumLevel
+           .Is(minimumLogLevel)
+           .Enrich
+           .FromLogContext()
+           .WriteTo
+           .File(logPath, rollingInterval: RollingInterval.Day)
+           .CreateLogger();
+
+    private static string CreateJwtToken(
+        MoongateHttpAuthenticatedUser user,
+        DateTimeOffset expiresAtUtc,
+        MoongateHttpJwtOptions options
+    )
+    {
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, user.Username),
+            new(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, user.Role),
+            new("account_id", user.AccountId)
+        };
+
+        var signingCredentials = new SigningCredentials(
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey)),
+            SecurityAlgorithms.HmacSha256
+        );
+
+        var token = new JwtSecurityToken(
+            options.Issuer,
+            options.Audience,
+            claims,
+            DateTime.UtcNow,
+            expiresAtUtc.UtcDateTime,
+            signingCredentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private static string CreateLogPath(string logDirectory)
+    {
+        Directory.CreateDirectory(logDirectory);
+
+        return Path.Combine(logDirectory, "moongate_http-.log");
+    }
+
+    private static string EscapeLabelValue(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return string.Empty;
+        }
+
+        return value
+               .Replace("\\", "\\\\")
+               .Replace("\"", "\\\"")
+               .Replace("\n", "\\n");
+    }
+
+    private static string GetPrometheusTypeName(MetricType metricType)
+        => metricType switch
+        {
+            MetricType.Counter   => "counter",
+            MetricType.Gauge     => "gauge",
+            MetricType.Histogram => "histogram",
+            _                    => "untyped"
+        };
 
     private static Task HandleHealthAsync(HttpContext context)
     {
@@ -243,40 +338,13 @@ public sealed class MoongateHttpService : IMoongateHttpService
         return context.Response.WriteAsync("ok");
     }
 
-    private async Task HandleMetricsAsync(HttpContext context)
-    {
-        if (_metricsSnapshotFactory is null)
-        {
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("metrics endpoint is not configured");
-
-            return;
-        }
-
-        var snapshot = _metricsSnapshotFactory();
-
-        if (snapshot is null)
-        {
-            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("metrics are currently unavailable");
-
-            return;
-        }
-
-        context.Response.StatusCode = StatusCodes.Status200OK;
-        context.Response.ContentType = "text/plain; version=0.0.4";
-        await context.Response.WriteAsync(BuildPrometheusPayload(snapshot));
-    }
-
     private async Task HandleLoginAsync(HttpContext context)
     {
         var cancellationToken = context.RequestAborted;
         var request = await context.Request.ReadFromJsonAsync(
-            MoongateHttpJsonContext.Default.MoongateHttpLoginRequest,
-            cancellationToken
-        );
+                          MoongateHttpJsonContext.Default.MoongateHttpLoginRequest,
+                          cancellationToken
+                      );
 
         if (
             request is null ||
@@ -322,13 +390,39 @@ public sealed class MoongateHttpService : IMoongateHttpService
         );
     }
 
-    private static string GetPrometheusTypeName(MetricType metricType) => metricType switch
+    private async Task HandleMetricsAsync(HttpContext context)
     {
-        MetricType.Counter => "counter",
-        MetricType.Gauge => "gauge",
-        MetricType.Histogram => "histogram",
-        _ => "untyped",
-    };
+        if (_metricsSnapshotFactory is null)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            context.Response.ContentType = "text/plain";
+            await context.Response.WriteAsync("metrics endpoint is not configured");
+
+            return;
+        }
+
+        var snapshot = _metricsSnapshotFactory();
+
+        if (snapshot is null)
+        {
+            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
+            context.Response.ContentType = "text/plain";
+            await context.Response.WriteAsync("metrics are currently unavailable");
+
+            return;
+        }
+
+        context.Response.StatusCode = StatusCodes.Status200OK;
+        context.Response.ContentType = "text/plain; version=0.0.4";
+        await context.Response.WriteAsync(BuildPrometheusPayload(snapshot));
+    }
+
+    private static Task HandleRootAsync(HttpContext context)
+    {
+        context.Response.ContentType = "text/plain";
+
+        return context.Response.WriteAsync("Moongate HTTP Service is running.");
+    }
 
     private static string NormalizeLabelName(string value)
     {
@@ -342,40 +436,10 @@ public sealed class MoongateHttpService : IMoongateHttpService
         for (var i = 0; i < value.Length; i++)
         {
             var c = value[i];
-            buffer[i] = (i == 0 && !char.IsLetter(c)) || (!char.IsLetterOrDigit(c) && c != '_') ? '_' : char.ToLowerInvariant(c);
+            buffer[i] = i == 0 && !char.IsLetter(c) || !char.IsLetterOrDigit(c) && c != '_' ? '_' : char.ToLowerInvariant(c);
         }
 
         return new(buffer);
-    }
-
-    private static string EscapeLabelValue(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-        {
-            return string.Empty;
-        }
-
-        return value
-            .Replace("\\", "\\\\")
-            .Replace("\"", "\\\"")
-            .Replace("\n", "\\n");
-    }
-
-    private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
-        => new LoggerConfiguration()
-           .MinimumLevel
-           .Is(minimumLogLevel)
-           .Enrich
-           .FromLogContext()
-           .WriteTo
-           .File(logPath, rollingInterval: RollingInterval.Day)
-           .CreateLogger();
-
-    private static string CreateLogPath(string logDirectory)
-    {
-        Directory.CreateDirectory(logDirectory);
-
-        return Path.Combine(logDirectory, "moongate_http-.log");
     }
 
     private static string NormalizeMetricName(string value)
@@ -424,64 +488,5 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
             services.AddSingleton(serviceType, implementationType);
         }
-    }
-
-    private static void ConfigureJwt(IServiceCollection services, MoongateHttpJwtOptions options)
-    {
-        var keyBytes = Encoding.UTF8.GetBytes(options.SigningKey);
-        var key = new SymmetricSecurityKey(keyBytes);
-
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(
-                jwtOptions =>
-                {
-                    jwtOptions.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = options.Issuer,
-                        ValidAudience = options.Audience,
-                        IssuerSigningKey = key,
-                        ClockSkew = TimeSpan.FromSeconds(30)
-                    };
-                }
-            );
-
-        services.AddAuthorization();
-    }
-
-    private static string CreateJwtToken(
-        MoongateHttpAuthenticatedUser user,
-        DateTimeOffset expiresAtUtc,
-        MoongateHttpJwtOptions options
-    )
-    {
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Username),
-            new(JwtRegisteredClaimNames.UniqueName, user.Username),
-            new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, user.Role),
-            new("account_id", user.AccountId)
-        };
-
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey)),
-            SecurityAlgorithms.HmacSha256
-        );
-
-        var token = new JwtSecurityToken(
-            issuer: options.Issuer,
-            audience: options.Audience,
-            claims: claims,
-            notBefore: DateTime.UtcNow,
-            expires: expiresAtUtc.UtcDateTime,
-            signingCredentials: signingCredentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

@@ -86,6 +86,44 @@ public class CharacterService : ICharacterService
         return character.Id;
     }
 
+    public async Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
+    {
+        ArgumentNullException.ThrowIfNull(character);
+
+        var backpackId = character.BackpackId;
+
+        if (backpackId == Serial.Zero &&
+            character.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId))
+        {
+            backpackId = equippedBackpackId;
+        }
+
+        if (backpackId == Serial.Zero)
+        {
+            return null;
+        }
+
+        var backpack = await _persistenceService.UnitOfWork.Items.GetByIdAsync(backpackId);
+
+        if (backpack is null)
+        {
+            return null;
+        }
+
+        var hydratedBackpack = CloneItem(backpack);
+        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                 item => item.ParentContainerId == backpackId,
+                                 static item => item
+                             );
+
+        foreach (var item in containedItems)
+        {
+            hydratedBackpack.AddItem(CloneItem(item), item.ContainerPosition);
+        }
+
+        return hydratedBackpack;
+    }
+
     public async Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
     {
         var character = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(characterId);
@@ -137,44 +175,6 @@ public class CharacterService : ICharacterService
         return characters;
     }
 
-    public async Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
-    {
-        ArgumentNullException.ThrowIfNull(character);
-
-        var backpackId = character.BackpackId;
-
-        if (backpackId == Serial.Zero &&
-            character.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId))
-        {
-            backpackId = equippedBackpackId;
-        }
-
-        if (backpackId == Serial.Zero)
-        {
-            return null;
-        }
-
-        var backpack = await _persistenceService.UnitOfWork.Items.GetByIdAsync(backpackId);
-
-        if (backpack is null)
-        {
-            return null;
-        }
-
-        var hydratedBackpack = CloneItem(backpack);
-        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                                 item => item.ParentContainerId == backpackId,
-                                 static item => item
-                             );
-
-        foreach (var item in containedItems)
-        {
-            hydratedBackpack.AddItem(CloneItem(item), item.ContainerPosition);
-        }
-
-        return hydratedBackpack;
-    }
-
     public async Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
     {
         var account = await _persistenceService.UnitOfWork.Accounts.GetByIdAsync(accountId);
@@ -208,6 +208,28 @@ public class CharacterService : ICharacterService
 
         return true;
     }
+
+    private static UOItemEntity CloneItem(UOItemEntity item)
+        => new()
+        {
+            Id = item.Id,
+            Location = item.Location,
+            Name = item.Name,
+            Weight = item.Weight,
+            Amount = item.Amount,
+            IsStackable = item.IsStackable,
+            Rarity = item.Rarity,
+            ItemId = item.ItemId,
+            Hue = item.Hue,
+            GumpId = item.GumpId,
+            ParentContainerId = item.ParentContainerId,
+            ContainerPosition = item.ContainerPosition,
+            EquippedMobileId = item.EquippedMobileId,
+            EquippedLayer = item.EquippedLayer
+        };
+
+    private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
+        => new(character.Profession, character.Race, character.Gender);
 
     private async Task EnsureStarterContainerItemAsync(UOMobileEntity character, UOItemEntity item)
     {
@@ -279,9 +301,6 @@ public class CharacterService : ICharacterService
         await EnsureStarterEquippedItemAsync(character, ItemLayerType.Shoes, starterProfileContext);
     }
 
-    private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
-        => new(character.Profession, character.Race, character.Gender);
-
     private async Task HydrateCharacterEquipmentRuntimeAsync(UOMobileEntity character)
     {
         ArgumentNullException.ThrowIfNull(character);
@@ -328,26 +347,5 @@ public class CharacterService : ICharacterService
         }
 
         character.HydrateEquipmentRuntime(equippedItems);
-    }
-
-    private static UOItemEntity CloneItem(UOItemEntity item)
-    {
-        return new()
-        {
-            Id = item.Id,
-            Location = item.Location,
-            Name = item.Name,
-            Weight = item.Weight,
-            Amount = item.Amount,
-            IsStackable = item.IsStackable,
-            Rarity = item.Rarity,
-            ItemId = item.ItemId,
-            Hue = item.Hue,
-            GumpId = item.GumpId,
-            ParentContainerId = item.ParentContainerId,
-            ContainerPosition = item.ContainerPosition,
-            EquippedMobileId = item.EquippedMobileId,
-            EquippedLayer = item.EquippedLayer
-        };
     }
 }

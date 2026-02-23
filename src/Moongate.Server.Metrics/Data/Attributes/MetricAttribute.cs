@@ -5,13 +5,11 @@ namespace Moongate.Server.Metrics.Data.Attributes;
 /// <summary>
 /// Declares a metric sample mapping for a snapshot property.
 /// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public sealed class MetricAttribute : Attribute
 {
     public MetricAttribute(string name)
-    {
-        Name = name;
-    }
+        => Name = name;
 
     /// <summary>
     /// Gets the metric name emitted for the annotated property.
