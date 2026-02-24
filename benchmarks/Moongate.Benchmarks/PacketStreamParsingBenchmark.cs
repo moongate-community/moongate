@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using BenchmarkDotNet.Attributes;
 using Moongate.Network.Packets.Data.Packets;
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
