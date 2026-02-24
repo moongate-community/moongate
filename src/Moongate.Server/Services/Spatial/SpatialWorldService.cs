@@ -1,6 +1,7 @@
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Internal.Spatial;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -16,7 +17,7 @@ namespace Moongate.Server.Services.Spatial;
 /// <summary>
 /// Default in-memory spatial world index based on map sectors.
 /// </summary>
-public sealed class SpatialWorldService : ISpatialWorldService
+public sealed class SpatialWorldService : ISpatialWorldService, IGameEventListener<MobilePositionChangedEvent>, IGameEventListener<PlayerCharacterLoggedInEvent>
 {
     private readonly Lock _sync = new();
     private readonly Dictionary<int, SpatialMapIndex> _mapIndices = [];
@@ -26,6 +27,8 @@ public sealed class SpatialWorldService : ISpatialWorldService
     private readonly List<JsonRegion> _regions = [];
     private readonly Dictionary<int, int> _musicByListId = [];
 
+    private readonly ICharacterService _characterService;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="SpatialWorldService"/> class.
     /// </summary>
@@ -33,11 +36,16 @@ public sealed class SpatialWorldService : ISpatialWorldService
     /// <param name="gameEventBusService">Game event bus service.</param>
     public SpatialWorldService(
         IGameNetworkSessionService gameNetworkSessionService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        ICharacterService characterService
     )
     {
         _gameNetworkSessionService = gameNetworkSessionService;
         _gameEventBusService = gameEventBusService;
+        _characterService = characterService;
+
+        _gameEventBusService.RegisterListener<MobilePositionChangedEvent>(this);
+        _gameEventBusService.RegisterListener<PlayerCharacterLoggedInEvent>(this);
     }
 
     public void AddOrUpdateMobile(UOMobileEntity mobile)
@@ -366,4 +374,21 @@ public sealed class SpatialWorldService : ISpatialWorldService
 
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
         => _gameEventBusService.PublishAsync(gameEvent).AsTask().GetAwaiter().GetResult();
+
+    public async Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session) &&
+            session.CharacterId == gameEvent.MobileId)
+        {
+            OnMobileMoved(session.Character!, gameEvent.OldLocation, gameEvent.NewLocation);
+        }
+    }
+
+    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        var character = await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+
+        AddOrUpdateMobile(character);
+
+    }
 }

@@ -21,7 +21,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var mobile = CreateMobile(0x100, 100, 100, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -36,7 +36,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var mobile = CreateMobile(0x101, 10, 10, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -54,7 +54,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var item = new UOItemEntity
         {
             Id = (Serial)0x200u,
@@ -75,7 +75,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var firstPlayer = CreateMobile(0x300, 500, 500, mapId: 0, isPlayer: true);
         var secondPlayer = CreateMobile(0x301, 502, 503, mapId: 0, isPlayer: true);
 
@@ -101,7 +101,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var mobile = CreateMobile(0x400, 1200, 1200, mapId: 0, isPlayer: false);
         var item = new UOItemEntity { Id = (Serial)0x401u, ItemId = 0x0EED, Location = new Point3D(1200, 1200, 0) };
 
@@ -123,7 +123,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var mobile = CreateMobile(0x500, 10, 10, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -137,7 +137,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var mobile = CreateMobile(0x501, 1, 1, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -159,7 +159,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
         var mobile = CreateMobile(0x502, 20, 20, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -174,7 +174,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus);
+        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
 
         service.AddRegion(
             new Moongate.UO.Data.Json.Regions.JsonRegion

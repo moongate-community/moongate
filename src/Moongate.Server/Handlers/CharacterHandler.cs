@@ -32,6 +32,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly ICharacterService _characterService;
     private readonly IEntityFactoryService _entityFactoryService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IGameEventBusService _gameEventBusService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -43,6 +44,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     {
         _characterService = characterService;
         _entityFactoryService = entityFactoryService;
+        _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         gameEventBusService.RegisterListener(this);
     }
@@ -109,6 +111,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
         Enqueue(session, new PaperdollPacket(character));
+
+        await _gameEventBusService.PublishAsync(
+            new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, characterId)
+        );
 
         return true;
     }
