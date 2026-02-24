@@ -39,7 +39,11 @@ public static class LuaDocumentationGenerator
     public static void AddClassToGenerate(Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
-        _classTypesToGenerate.Add(type);
+
+        lock (_syncLock)
+        {
+            _classTypesToGenerate.Add(type);
+        }
     }
 
     /// <summary>
@@ -153,31 +157,14 @@ public static class LuaDocumentationGenerator
 
                 sb.AppendLine("---");
                 sb.AppendLine(CultureInfo.InvariantCulture, $"---@class {moduleName}");
+                sb.AppendLine(CultureInfo.InvariantCulture, $"{moduleName} = {{}}");
+                sb.AppendLine();
 
                 // Get all methods with ScriptFunction attribute
                 var methods = module.ModuleType
                                     .GetMethods(BindingFlags.Public | BindingFlags.Instance)
                                     .Where(m => m.GetCustomAttribute<ScriptFunctionAttribute>() is not null)
                                     .ToList();
-
-                foreach (var method in methods)
-                {
-                    var scriptFunctionAttr = method.GetCustomAttribute<ScriptFunctionAttribute>();
-
-                    if (scriptFunctionAttr is null)
-                    {
-                        continue;
-                    }
-
-                    var functionName = string.IsNullOrWhiteSpace(scriptFunctionAttr.FunctionName)
-                                           ? _nameResolver(method.Name)
-                                           : scriptFunctionAttr.FunctionName;
-
-                    sb.AppendLine(CultureInfo.InvariantCulture, $"{moduleName}.{functionName} = function() end");
-                }
-
-                sb.AppendLine(CultureInfo.InvariantCulture, $"{moduleName} = {{}}");
-                sb.AppendLine();
 
                 // Now generate detailed function documentation
                 foreach (var method in methods)
@@ -700,7 +687,7 @@ public static class LuaDocumentationGenerator
         }
 
         // Generate public constructors
-        var constructors = type.GetConstructors(BindingFlags.Public)
+        var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance)
                                .Where(c => c.GetParameters().Length > 0)
                                .ToList();
 
@@ -735,7 +722,7 @@ public static class LuaDocumentationGenerator
                     }
                 }
 
-                _classesBuilder.AppendLine(CultureInfo.InvariantCulture, $"):void");
+                _classesBuilder.AppendLine(CultureInfo.InvariantCulture, $"):{className}");
             }
         }
 
@@ -787,6 +774,7 @@ public static class LuaDocumentationGenerator
             foreach (var methodGroup in methodsByName)
             {
                 var methodName = methodGroup.Key;
+                var hasAnyOverload = false;
 
                 foreach (var method in methodGroup)
                 {
@@ -795,6 +783,7 @@ public static class LuaDocumentationGenerator
                                          : ConvertToLuaType(method.ReturnType);
 
                     var parameters = method.GetParameters();
+                    hasAnyOverload = true;
 
                     _classesBuilder.Append("---@overload fun(");
 
@@ -816,6 +805,15 @@ public static class LuaDocumentationGenerator
                     }
 
                     _classesBuilder.AppendLine(CultureInfo.InvariantCulture, $"):{returnType}");
+                }
+
+                if (hasAnyOverload)
+                {
+                    var displayMethodName = isXnaType ? methodName : _nameResolver(methodName);
+                    _classesBuilder.AppendLine(
+                        CultureInfo.InvariantCulture,
+                        $"function {className}:{displayMethodName}(...) end"
+                    );
                 }
             }
         }

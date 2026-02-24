@@ -29,7 +29,12 @@ public class AccountService : IAccountService
         return exists;
     }
 
-    public async Task CreateAccountAsync(string username, string password, AccountType accountType = AccountType.Regular)
+    public async Task CreateAccountAsync(
+        string username,
+        string password,
+        string email = "",
+        AccountType accountType = AccountType.Regular
+    )
     {
         var account = new UOAccountEntity
         {
@@ -37,6 +42,7 @@ public class AccountService : IAccountService
             AccountType = accountType,
             Username = username,
             PasswordHash = HashUtils.HashPassword(password),
+            Email = email,
             IsLocked = false
         };
 

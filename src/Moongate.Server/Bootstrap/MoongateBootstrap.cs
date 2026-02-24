@@ -193,7 +193,12 @@ public sealed class MoongateBootstrap : IDisposable
             var defaultAdminUsername = Environment.GetEnvironmentVariable("MOONGATE_ADMIN_USERNAME") ?? "admin";
             var defaultAdminPassword = Environment.GetEnvironmentVariable("MOONGATE_ADMIN_PASSWORD") ?? "password";
 
-            await accountService.CreateAccountAsync(defaultAdminUsername, defaultAdminPassword, AccountType.Administrator);
+            await accountService.CreateAccountAsync(
+                defaultAdminUsername,
+                defaultAdminPassword,
+                $"{defaultAdminUsername}@localhost",
+                AccountType.Administrator
+            );
 
             _logger.Warning(
                 "No accounts found. Created default administrator account with username '{Username}' and password '{Password}'.",
@@ -376,7 +381,7 @@ public sealed class MoongateBootstrap : IDisposable
     {
         _container.RegisterInstance(
             new LuaEngineConfig(
-                _directoriesConfig[DirectoryType.Scripts],
+                Path.Combine(_directoriesConfig.Root, ".luarc"),
                 _directoriesConfig[DirectoryType.Scripts],
                 VersionUtils.Version
             )

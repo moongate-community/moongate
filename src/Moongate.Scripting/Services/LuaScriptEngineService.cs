@@ -1226,7 +1226,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             );
 
             var documentation = LuaDocumentationGenerator.GenerateDocumentation(
-                "DarkLilly",
+                "Moongate",
                 _engineConfig.EngineVersion,
                 _scriptModules,
                 new(_constants),
@@ -1275,7 +1275,11 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             },
             Workspace = new()
             {
-                Library = [_engineConfig.ScriptsDirectory]
+                Library =
+                [
+                    _engineConfig.ScriptsDirectory,
+                    _engineConfig.LuarcDirectory
+                ]
             },
             Diagnostics = new()
             {

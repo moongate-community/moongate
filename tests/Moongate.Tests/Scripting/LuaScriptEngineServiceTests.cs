@@ -1,6 +1,8 @@
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Modules;
+using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
@@ -165,6 +167,129 @@ public class LuaScriptEngineServiceTests
                 Assert.That(typeResult.Success, Is.True);
                 Assert.That(typeResult.Data, Is.EqualTo("table"));
                 Assert.That(callResult.Success, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_ShouldGenerateDefinitionsAndLuarcUnderConfiguredLuarcDirectory()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(LogModule))],
+            new Container(),
+            new LuaEngineConfig(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var definitionsPath = Path.Combine(luarcDir, "definitions.lua");
+        var luarcPath = Path.Combine(luarcDir, ".luarc.json");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(File.Exists(definitionsPath), Is.True);
+                Assert.That(File.Exists(luarcPath), Is.True);
+            }
+        );
+
+        var luarcContent = await File.ReadAllTextAsync(luarcPath);
+        Assert.That(luarcContent, Does.Contain(scriptsDir));
+        Assert.That(luarcContent, Does.Contain(luarcDir));
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldBuildLayoutFromLua()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local g = gump.create()
+                g:ResizePic(0, 0, 9200, 300, 200)
+                g:Text(80, 15, 0x480, "The Blacksmith")
+                g:Text(30, 50, 0, "What dost thou require?")
+                return g:BuildLayout()
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(
+                    result.Data,
+                    Is.EqualTo(
+                        "{ resizepic 0 0 9200 300 200 } { text 80 15 1152 0 } { text 30 50 0 1 }"
+                    )
+                );
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldExposeTextEntriesFromLua()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local g = gump.create()
+                g:Text(10, 10, 0, "First")
+                g:Text(10, 25, 0, "Second")
+                local texts = g:BuildTexts()
+                return texts[1] .. "|" .. texts[2]
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("First|Second"));
             }
         );
     }
