@@ -72,6 +72,8 @@ public class ItemHandler : BasePacketListener
 
     private async Task<bool> HandleDropItemAsync(GameSession session, DropItemPacket dropItemPacket)
     {
+
+        // Now I support online dropping in containers
         _logger.Information("Dropping item {@DropItemPacket}", dropItemPacket);
 
         var item = await _itemService.GetItemAsync(dropItemPacket.ItemSerial);
