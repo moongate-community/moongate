@@ -90,6 +90,7 @@ The project is actively in development and already includes:
 - Session split between transport (`GameNetworkSession`) and gameplay/protocol context (`GameSession`).
 - Unit tests for core server behaviors and packet infrastructure.
 - Lua scripting runtime with module/function binding and `.luarc` generation support.
+- Lua metadata files (`definitions.lua`, `.luarc.json`) generated in configured `LuaEngineConfig.LuarcDirectory` during engine startup.
 - Embedded HTTP host (`Moongate.Server.Http`) for health/admin endpoints and OpenAPI/Scalar docs.
 - Dedicated HTTP rolling logs in the shared logs directory (`moongate_http-*.log`).
 - Snapshot+journal persistence module (`Moongate.Persistence`) integrated in server lifecycle.
@@ -416,6 +417,7 @@ Built-in commands:
 - `help|?` -> Console + InGame, `Regular`
 - `lock|*` -> Console only, `Administrator`
 - `exit|shutdown` -> Console only, `Administrator`
+- `add_user` -> Console + InGame, `Administrator`
 
 ## Scripting
 
@@ -575,7 +577,7 @@ Published documentation is available at:
 ## Development Notes
 
 - Shared build/analyzer/version settings are centralized in `Directory.Build.props`.
-- Current global version baseline: `0.9.0`.
+- Current global version baseline: `0.16.1`.
 - CI validates build/tests/coverage/quality/security; release and Docker image publishing run through dedicated workflows.
 
 ## Contributing
