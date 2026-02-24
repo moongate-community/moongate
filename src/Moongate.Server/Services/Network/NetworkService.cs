@@ -22,6 +22,7 @@ using Moongate.Server.Interfaces.Services.Network;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Metrics.Data;
+using Moongate.UO.Data.Ids;
 using Serilog;
 
 namespace Moongate.Server.Services.Network;
@@ -408,7 +409,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
                 continue;
             }
 
-            var expectedLength = ResolvePacketLength(pendingBytes, descriptor);
+            var expectedLength = ResolvePacketLength(pendingBytes, descriptor, opCode);
 
             if (expectedLength is null)
             {
@@ -541,10 +542,15 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         }
     }
 
-    private static int? ResolvePacketLength(List<byte> pendingBytes, PacketDescriptor descriptor)
+    private static int? ResolvePacketLength(List<byte> pendingBytes, PacketDescriptor descriptor, byte opCode)
     {
         if (descriptor.Sizing == PacketSizing.Fixed)
         {
+            if (opCode == PacketDefinition.DropItemPacket)
+            {
+                return ResolveDropItemPacketLength(pendingBytes);
+            }
+
             return descriptor.Length;
         }
 
@@ -558,6 +564,58 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         lengthBuffer[1] = pendingBytes[2];
 
         return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
+    }
+
+    private static int? ResolveDropItemPacketLength(List<byte> pendingBytes)
+    {
+        if (pendingBytes.Count < 14)
+        {
+            return null;
+        }
+
+        if (pendingBytes.Count == 14)
+        {
+            return 14;
+        }
+
+        var destinationWithoutGrid = ReadUInt32BigEndian(pendingBytes, 10);
+        var destinationWithGrid = ReadUInt32BigEndian(pendingBytes, 11);
+        var isWithoutGridValid = IsLikelyDropDestinationSerial(destinationWithoutGrid);
+        var isWithGridValid = IsLikelyDropDestinationSerial(destinationWithGrid);
+
+        if (isWithGridValid && !isWithoutGridValid)
+        {
+            return 15;
+        }
+
+        if (isWithoutGridValid && !isWithGridValid)
+        {
+            return 14;
+        }
+
+        return 15;
+    }
+
+    private static bool IsLikelyDropDestinationSerial(uint value)
+    {
+        if (value is 0 or 0xFFFFFFFF)
+        {
+            return true;
+        }
+
+        return value is >= Serial.MobileStart and <= Serial.MaxMobileSerial ||
+               value is >= Serial.ItemOffset and <= Serial.MaxItemSerial;
+    }
+
+    private static uint ReadUInt32BigEndian(List<byte> data, int offset)
+    {
+        Span<byte> buffer = stackalloc byte[4];
+        buffer[0] = data[offset];
+        buffer[1] = data[offset + 1];
+        buffer[2] = data[offset + 2];
+        buffer[3] = data[offset + 3];
+
+        return BinaryPrimitives.ReadUInt32BigEndian(buffer);
     }
 
     private void ShowRegisteredPackets()

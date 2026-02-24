@@ -21,11 +21,11 @@ public class DropItemPacket : BaseGameNetworkPacket
     public Point3D Location { get; set; }
 
     public DropItemPacket()
-        : base(0x08, 14) { }
+        : base(0x08) { }
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        if (reader.Remaining != 13)
+        if (reader.Remaining is not (13 or 14))
         {
             return false;
         }
@@ -34,6 +34,12 @@ public class DropItemPacket : BaseGameNetworkPacket
         var x = reader.ReadInt16();
         var y = reader.ReadInt16();
         var z = reader.ReadSByte();
+
+        if (reader.Remaining == 5)
+        {
+            _ = reader.ReadByte();
+        }
+
         DestinationSerial = (Serial)reader.ReadUInt32();
         Location = new(x, y, z);
 

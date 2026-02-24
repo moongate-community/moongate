@@ -69,6 +69,8 @@ public class UOItemEntity : IItemEntity
     /// </summary>
     public IReadOnlyDictionary<Serial, ItemReference> ContainedItemReferences => _containedItemReferences;
 
+    public bool IsContainer => _items.Count > 0 || ContainedItemIds.Count > 0;
+
     public void AddItem(IItemEntity item, Point2D position)
     {
         if (item is UOItemEntity typedItem)

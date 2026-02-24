@@ -79,21 +79,21 @@ public class ItemHandler : BasePacketListener
         if (!dropItemPacket.IsGroundDrop)
         {
             var destinationContainer = await _itemService.GetItemAsync(dropItemPacket.DestinationSerial);
-
             var itemContainer = await _itemService.GetItemAsync(item.ParentContainerId);
 
-            var tryToStack = destinationContainer.Items.FirstOrDefault(s => s.ItemId == item.ItemId && s.IsStackable);
-
-            if (tryToStack != null)
+            if (!destinationContainer.IsContainer &&
+                destinationContainer.IsStackable &&
+                destinationContainer.ItemId == item.ItemId)
             {
-                item.Amount += tryToStack.Amount;
-                destinationContainer.RemoveItem(item.Id);
+                // Check if destination container is stackable with the dropped item and stack if possible.
+                destinationContainer.Amount += item.Amount;
+                await _itemService.UpsertItemAsync(destinationContainer);
             }
             else
             {
                 destinationContainer.AddItem(item, new Point2D(dropItemPacket.Location));
             }
-
+            
             await _itemService.UpsertItemAsync(destinationContainer);
 
             if (itemContainer.Id != destinationContainer.Id)
