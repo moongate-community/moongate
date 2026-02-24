@@ -1,3 +1,20 @@
+## [0.15.1](https://github.com/moongate-community/moongatev2/compare/v0.15.0...v0.15.1) (2026-02-23)
+
+### Bug Fixes
+
+* **docker:** add binutils for AOT symbol stripping and update generator paths ([b77baec](https://github.com/moongate-community/moongatev2/commit/b77baec40065afc66d6792832b6f32a848ee706d))
+
+## [0.15.0](https://github.com/moongate-community/moongatev2/compare/v0.14.0...v0.15.0) (2026-02-23)
+
+### Features
+
+* **benchmarks:** add BenchmarkDotNet suite and publish baseline results ([5ce76a2](https://github.com/moongate-community/moongatev2/commit/5ce76a2d0ab690aef62be57b6b955adadc28fa7d))
+* **benchmarks:** add jit vs nativeaot comparison runner and docs ([dc85ed1](https://github.com/moongate-community/moongatev2/commit/dc85ed1ce1b23072ce4297ec8a44f683e88e4628))
+* **benchmarks:** add parser dispatch and compression benchmark suites ([732d599](https://github.com/moongate-community/moongatev2/commit/732d599bb11bd5a3cefe6b9dffa454009c38a645))
+* **server:** add speech server events and shared event clock ([ef0eeab](https://github.com/moongate-community/moongatev2/commit/ef0eeab2595de3927a959ecf0ec7d74941687cce))
+* **server:** centralize speech handling and add server broadcast APIs ([a48280b](https://github.com/moongate-community/moongatev2/commit/a48280b792c0746c6212cdb921ff55bc16a0fa90))
+* **server:** generate script module registrations and unify game event base ([dced6f8](https://github.com/moongate-community/moongatev2/commit/dced6f8addfc3e2e95662816a339c07010dd8f11))
+
 ## [0.14.0](https://github.com/moongate-community/moongatev2/compare/v0.13.0...v0.14.0) (2026-02-23)
 
 ### Features
