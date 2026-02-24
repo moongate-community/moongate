@@ -10,7 +10,7 @@ using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Metrics.Data;
 using Serilog;
 
-namespace Moongate.Server.Services.Loop;
+namespace Moongate.Server.Services.EventLoop;
 
 /// <summary>
 /// Represents GameLoopService.

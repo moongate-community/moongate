@@ -93,7 +93,7 @@ public class ItemHandler : BasePacketListener
             {
                 destinationContainer.AddItem(item, new Point2D(dropItemPacket.Location));
             }
-            
+
             await _itemService.UpsertItemAsync(destinationContainer);
 
             if (itemContainer.Id != destinationContainer.Id)
