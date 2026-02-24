@@ -664,7 +664,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             AddConstant("engine", "Moongate");
             AddConstant("platform", Environment.OSVersion.Platform.ToString());
 
-            _ = Task.Run(() => GenerateLuaMetaFileAsync(CancellationToken.None), CancellationToken.None);
+            await GenerateLuaMetaFileAsync(CancellationToken.None);
 
             RegisterGlobalFunctions();
 
