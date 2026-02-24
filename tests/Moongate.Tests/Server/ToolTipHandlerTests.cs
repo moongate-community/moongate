@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.Tooltip;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Spans;
 using Moongate.Persistence.Interfaces.Persistence;

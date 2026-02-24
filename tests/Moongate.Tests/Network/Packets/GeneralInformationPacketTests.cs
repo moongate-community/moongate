@@ -1,5 +1,5 @@
 using System.Buffers.Binary;
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Types;
 

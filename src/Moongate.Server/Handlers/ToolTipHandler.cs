@@ -1,6 +1,6 @@
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Helpers;
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.Tooltip;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;

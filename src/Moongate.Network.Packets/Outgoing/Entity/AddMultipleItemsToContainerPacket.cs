@@ -38,7 +38,8 @@ public class AddMultipleItemsToContainerPacket : BaseGameNetworkPacket
 
         for (var i = 0; i < totalItems; i++)
         {
-            var (item, position) = items[i];
+            var item = items[i];
+            var position = item.Location;
 
             writer.Write(item.Id.Value);
             writer.Write((ushort)item.ItemId);

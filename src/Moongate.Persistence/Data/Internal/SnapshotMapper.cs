@@ -44,7 +44,8 @@ internal static class SnapshotMapper
     }
 
     public static UOItemEntity ToItemEntity(ItemSnapshot snapshot)
-        => new()
+    {
+        var entity = new UOItemEntity
         {
             Id = (Serial)snapshot.Id,
             Location = new(snapshot.X, snapshot.Y, snapshot.Z),
@@ -61,6 +62,14 @@ internal static class SnapshotMapper
             EquippedMobileId = (Serial)snapshot.EquippedMobileId,
             EquippedLayer = snapshot.EquippedLayer is null ? null : (ItemLayerType)snapshot.EquippedLayer.Value
         };
+
+        if (snapshot.ContainedItemIds.Length > 0)
+        {
+            entity.ContainedItemIds = [.. snapshot.ContainedItemIds.Select(id => (Serial)id)];
+        }
+
+        return entity;
+    }
 
     public static ItemSnapshot ToItemSnapshot(UOItemEntity entity)
         => new()
@@ -81,7 +90,8 @@ internal static class SnapshotMapper
             ContainerX = entity.ContainerPosition.X,
             ContainerY = entity.ContainerPosition.Y,
             EquippedMobileId = (uint)entity.EquippedMobileId,
-            EquippedLayer = entity.EquippedLayer is null ? null : (byte)entity.EquippedLayer.Value
+            EquippedLayer = entity.EquippedLayer is null ? null : (byte)entity.EquippedLayer.Value,
+            ContainedItemIds = [.. entity.ContainedItemIds.Select(id => (uint)id)]
         };
 
     public static UOMobileEntity ToMobileEntity(MobileSnapshot snapshot)

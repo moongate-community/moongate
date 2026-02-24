@@ -173,8 +173,8 @@ public class CharacterServiceTests
 
         Assert.That(backpack, Is.Not.Null);
         Assert.That(backpack!.Items.Count, Is.EqualTo(1));
-        Assert.That(backpack.Items[0].Item.Id, Is.EqualTo(goldId));
-        Assert.That(backpack.Items[0].Position, Is.EqualTo(new Point2D(11, 22)));
+        Assert.That(backpack.Items[0].Id, Is.EqualTo(goldId));
+        Assert.That(backpack.Items[0].Location, Is.EqualTo(new Point3D(11, 22, 0)));
     }
 
     [Test]

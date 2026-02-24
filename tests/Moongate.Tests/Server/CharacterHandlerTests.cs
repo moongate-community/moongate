@@ -28,7 +28,8 @@ public sealed class CharacterHandlerTests
             characterService,
             entityFactoryService,
             eventBus,
-            gameNetworkSessionService
+            gameNetworkSessionService,
+            new RegionDataLoaderTestSpatialWorldService()
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));

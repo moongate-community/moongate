@@ -5,7 +5,7 @@ using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
 
-namespace Moongate.Network.Packets.Incoming.System;
+namespace Moongate.Network.Packets.Incoming.Tooltip;
 
 /// <summary>
 /// Represents struct.

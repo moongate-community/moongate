@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -14,6 +15,7 @@ using Moongate.Server.Services.Accounting;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Events;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Lifecycle;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Packets;
@@ -56,6 +58,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ITimerService, TimerWheelService>(Reuse.Singleton);
         container.Register<IAccountService, AccountService>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
+        container.Register<IItemService, ItemService>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);

@@ -3,6 +3,7 @@ using Moongate.Server.Data.Internal.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Geometry;
@@ -17,7 +18,8 @@ namespace Moongate.Server.Services.Spatial;
 /// <summary>
 /// Default in-memory spatial world index based on map sectors.
 /// </summary>
-public sealed class SpatialWorldService : ISpatialWorldService, IGameEventListener<MobilePositionChangedEvent>, IGameEventListener<PlayerCharacterLoggedInEvent>
+public sealed class SpatialWorldService
+    : ISpatialWorldService, ISpatialMetricsSource, IGameEventListener<MobilePositionChangedEvent>, IGameEventListener<PlayerCharacterLoggedInEvent>
 {
     private readonly Lock _sync = new();
     private readonly Dictionary<int, SpatialMapIndex> _mapIndices = [];
@@ -251,6 +253,9 @@ public sealed class SpatialWorldService : ISpatialWorldService, IGameEventListen
             };
         }
     }
+
+    public SectorSystemStats GetMetricsSnapshot()
+        => GetStats();
 
     private bool MoveEntity(Serial serial, object entity, int mapId, Point3D oldLocation, Point3D newLocation)
     {

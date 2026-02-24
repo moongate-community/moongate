@@ -386,8 +386,8 @@ public sealed class MoongateBootstrap : IDisposable
                 VersionUtils.Version
             )
         );
-        Moongate.Scripting.Generated.ScriptModuleRegistry.Register(_container);
-        Moongate.Server.Generated.ScriptModuleRegistry.Register(_container);
+        Scripting.Generated.ScriptModuleRegistry.Register(_container);
+        Generated.ScriptModuleRegistry.Register(_container);
 
         if (!_container.IsRegistered<List<ScriptModuleData>>())
         {

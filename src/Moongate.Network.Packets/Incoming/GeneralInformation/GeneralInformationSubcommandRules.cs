@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Network.Packets.Incoming.System;
+namespace Moongate.Network.Packets.Incoming.GeneralInformation;
 
 internal static class GeneralInformationSubcommandRules
 {
