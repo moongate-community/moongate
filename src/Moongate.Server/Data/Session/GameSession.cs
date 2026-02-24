@@ -69,6 +69,11 @@ public sealed class GameSession
     public long MoveTime { get; set; }
 
     /// <summary>
+    /// Gets or sets the last emission timestamp for mobile-position-changed events.
+    /// </summary>
+    public long LastMobilePositionEventTimestamp { get; set; }
+
+    /// <summary>
     /// Gets or sets movement throttle credit in milliseconds.
     /// </summary>
     public long MoveCredit { get; set; }

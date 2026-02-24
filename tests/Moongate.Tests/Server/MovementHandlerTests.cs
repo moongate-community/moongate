@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Outgoing.Movement;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Server.Support;
@@ -17,7 +18,8 @@ public class MovementHandlerTests
     public async Task HandlePacketAsync_ShouldAckAndAdvanceSequence_WhenSequenceIsValid()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new MovementHandler(queue);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -57,7 +59,8 @@ public class MovementHandlerTests
     public async Task HandlePacketAsync_ShouldApplyFasterDelayForRunning()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new MovementHandler(queue);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var walkSession = new GameSession(new(client))
@@ -114,7 +117,8 @@ public class MovementHandlerTests
     public async Task HandlePacketAsync_ShouldDropPacket_WhenFirstSequenceIsNotZero()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new MovementHandler(queue);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -151,7 +155,8 @@ public class MovementHandlerTests
     public async Task HandlePacketAsync_ShouldOnlyTurnWithoutMoving_WhenFacingChanges()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new MovementHandler(queue);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -188,7 +193,8 @@ public class MovementHandlerTests
     public async Task HandlePacketAsync_ShouldThrottle_WhenMoveTimeIsFarAhead()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new MovementHandler(queue);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -226,5 +232,114 @@ public class MovementHandlerTests
                 Assert.That(deny.Z, Is.EqualTo(7));
             }
         );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldPublishMobilePositionChangedEvent_WhenPositionChanges()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                Location = new(100, 100, 0),
+                Direction = DirectionType.East
+            }
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+
+        var gameEvent = gameEventBus.Events.OfType<MobilePositionChangedEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gameEvent.MobileId, Is.EqualTo((Serial)0x00000001));
+                Assert.That(gameEvent.OldLocation, Is.EqualTo(new Point3D(100, 100, 0)));
+                Assert.That(gameEvent.NewLocation, Is.EqualTo(new Point3D(101, 100, 0)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldNotPublishMobilePositionChangedEvent_WhenFacingOnly()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                Location = new(400, 400, 0),
+                Direction = DirectionType.North
+            }
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+
+        Assert.That(gameEventBus.Events.OfType<MobilePositionChangedEvent>(), Is.Empty);
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldApplyAntiSpamForMobilePositionChangedEvent()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new MovementHandler(queue, gameEventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                Location = new(600, 600, 0),
+                Direction = DirectionType.East
+            }
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+        _ = queue.TryDequeue(out _);
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 1
+                }
+            );
+
+        Assert.That(gameEventBus.Events.OfType<MobilePositionChangedEvent>().ToList(), Has.Count.EqualTo(1));
     }
 }
