@@ -1,3 +1,24 @@
+## [0.16.1](https://github.com/moongate-community/moongatev2/compare/v0.16.0...v0.16.1) (2026-02-24)
+
+### Bug Fixes
+
+* update benchmark imports for general information packet namespace ([23c2912](https://github.com/moongate-community/moongatev2/commit/23c291298213f95cef04d78cce33d512d4800a3e))
+
+## [0.16.0](https://github.com/moongate-community/moongatev2/compare/v0.15.1...v0.16.0) (2026-02-24)
+
+### Features
+
+* add item interaction packets, spatial metrics, and container item location alignment ([e57c8f7](https://github.com/moongate-community/moongatev2/commit/e57c8f770f6c96eb99f794a77cbd0ad7bfd55083))
+* add movement position events with anti-spam and spatial hooks ([bac826a](https://github.com/moongate-community/moongatev2/commit/bac826a117a48a7fda6e1514b536af0fe92c71e8))
+* add player character logged in event and coverage tests ([ed97b57](https://github.com/moongate-community/moongatev2/commit/ed97b57ded93c93ec14c07534d4002ea27f21478))
+* **scripting,packets:** add gump builder/module and fix lua docs generation ([9a6f219](https://github.com/moongate-community/moongatev2/commit/9a6f219f8bea75f59cf6b144fa634d3016aa5527))
+
+### Bug Fixes
+
+* align sector constants and update wrapped regions data ([450f520](https://github.com/moongate-community/moongatev2/commit/450f520145442737fed4f889df76ac800d122926))
+* support drop item grid-byte parsing and align container item locations ([92744e3](https://github.com/moongate-community/moongatev2/commit/92744e3cde7e2fc36a742df0fb777cddc01dd13a))
+* update item drop handler for container stacking flow ([3c67b6a](https://github.com/moongate-community/moongatev2/commit/3c67b6ab2597173cbdb6dc9e368d76cc0f82648c))
+
 ## [0.15.1](https://github.com/moongate-community/moongatev2/compare/v0.15.0...v0.15.1) (2026-02-23)
 
 ### Bug Fixes
