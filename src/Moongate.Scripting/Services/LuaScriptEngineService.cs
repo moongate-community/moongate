@@ -1222,7 +1222,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             // Generate meta.lua
             var manualModulesSnapshot = _manualModuleFunctions.ToDictionary(
                 kvp => kvp.Key,
-                IReadOnlyCollection<string> (kvp) => kvp.Value.Keys.ToArray()
+                IReadOnlyCollection<string> (kvp) => [.. kvp.Value.Keys]
             );
 
             var documentation = LuaDocumentationGenerator.GenerateDocumentation(
