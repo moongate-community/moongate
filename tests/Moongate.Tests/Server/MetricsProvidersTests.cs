@@ -58,6 +58,14 @@ public class MetricsProvidersTests
         "callback.duration.avg_ms"
     ];
 
+    private static readonly string[] SpatialMetricNames =
+    [
+        "sectors.total",
+        "entities.total",
+        "entities.per_sector.max",
+        "entities.per_sector.avg"
+    ];
+
     [Test]
     public async Task GameLoopMetricsProvider_ShouldExposeExpectedMetricNames()
     {
@@ -151,5 +159,24 @@ public class MetricsProvidersTests
         var names = samples.Select(sample => sample.Name).ToArray();
 
         Assert.That(names, Is.EquivalentTo(TimerMetricNames));
+    }
+
+    [Test]
+    public async Task SpatialMetricsProvider_ShouldExposeExpectedMetricNames()
+    {
+        var provider = new SpatialMetricsProvider(
+            new MetricsProvidersTestSpatialService
+            {
+                TotalSectors = 10,
+                TotalEntities = 40,
+                MaxEntitiesPerSector = 6,
+                AverageEntitiesPerSector = 4.0
+            }
+        );
+
+        var samples = await provider.CollectAsync();
+        var names = samples.Select(sample => sample.Name).ToArray();
+
+        Assert.That(names, Is.EquivalentTo(SpatialMetricNames));
     }
 }

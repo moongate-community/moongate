@@ -3,7 +3,9 @@ using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Geometry;
@@ -25,11 +27,14 @@ public class MovementHandler : BasePacketListener
     private const int WalkMountDelayMs = 200;
     private const int RunMountDelayMs = 100;
     private const int TurnDelayMs = 100;
+    private const long PositionEventThrottleMs = 100;
 
     private readonly ILogger _logger = Log.ForContext<MovementHandler>();
+    private readonly IGameEventBusService _gameEventBusService;
 
-    public MovementHandler(IOutgoingPacketQueue outgoingPacketQueue)
-        : base(outgoingPacketQueue) { }
+    public MovementHandler(IOutgoingPacketQueue outgoingPacketQueue, IGameEventBusService gameEventBusService)
+        : base(outgoingPacketQueue)
+        => _gameEventBusService = gameEventBusService;
 
     protected override Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {
@@ -79,6 +84,8 @@ public class MovementHandler : BasePacketListener
         var requestedDirection = moveRequestPacket.WalkDirection;
         var isFacingChangeOnly = currentDirection != requestedDirection;
 
+        var previousLocation = session.Character.Location;
+
         if (isFacingChangeOnly)
         {
             session.Character.Direction = requestedDirection;
@@ -100,6 +107,8 @@ public class MovementHandler : BasePacketListener
         Enqueue(session, new MoveConfirmPacket(moveRequestPacket.Sequence, session.SelfNotoriety));
         session.MoveTime +=
             isFacingChangeOnly ? TurnDelayMs : ComputeSpeedMs(session.IsMounted, moveRequestPacket.Direction);
+
+        TryPublishMobilePositionChangedEvent(session, previousLocation, session.Character.Location);
 
         return Task.FromResult(true);
     }
@@ -138,5 +147,36 @@ public class MovementHandler : BasePacketListener
         session.MoveCredit = Math.Min(MovementThrottleThresholdMs, credit - cost);
 
         return false;
+    }
+
+    private void TryPublishMobilePositionChangedEvent(GameSession session, Point3D oldLocation, Point3D newLocation)
+    {
+        if (oldLocation == newLocation || session.Character is null)
+        {
+            return;
+        }
+
+        var now = Environment.TickCount64;
+
+        if (now - session.LastMobilePositionEventTimestamp < PositionEventThrottleMs)
+        {
+            return;
+        }
+
+        session.LastMobilePositionEventTimestamp = now;
+
+        _gameEventBusService
+            .PublishAsync(
+                new MobilePositionChangedEvent(
+                    session.SessionId,
+                    session.Character.Id,
+                    session.Character.MapId,
+                    oldLocation,
+                    newLocation
+                )
+            )
+            .AsTask()
+            .GetAwaiter()
+            .GetResult();
     }
 }

@@ -1,4 +1,4 @@
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Network.Packets.Outgoing.World;

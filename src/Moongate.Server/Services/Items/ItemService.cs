@@ -1,0 +1,362 @@
+using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
+using Serilog;
+
+namespace Moongate.Server.Services.Items;
+
+/// <summary>
+/// Provides persistence-backed operations for creating, moving and equipping items.
+/// </summary>
+public sealed class ItemService : IItemService
+{
+    private readonly ILogger _logger = Log.ForContext<ItemService>();
+    private readonly IPersistenceService _persistenceService;
+
+    public ItemService(IPersistenceService persistenceService)
+        => _persistenceService = persistenceService;
+
+    public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        var clone = new UOItemEntity
+        {
+            Id = generateNewSerial ? _persistenceService.UnitOfWork.AllocateNextItemId() : item.Id,
+            Location = item.Location,
+            Name = item.Name,
+            Weight = item.Weight,
+            Amount = item.Amount,
+            ItemId = item.ItemId,
+            Hue = item.Hue,
+            GumpId = item.GumpId,
+            IsStackable = item.IsStackable,
+            Rarity = item.Rarity,
+            ParentContainerId = item.ParentContainerId,
+            ContainerPosition = item.ContainerPosition,
+            EquippedMobileId = item.EquippedMobileId,
+            EquippedLayer = item.EquippedLayer,
+            ContainedItemIds = [.. item.ContainedItemIds]
+        };
+
+        return clone;
+    }
+
+    public async Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            return null;
+        }
+
+        return Clone(item, generateNewSerial);
+    }
+
+    public async Task<Serial> CreateItemAsync(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.Id == Serial.Zero)
+        {
+            item.Id = _persistenceService.UnitOfWork.AllocateNextItemId();
+        }
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Debug("Created item {ItemId} (ItemId=0x{TileId:X4})", item.Id, item.ItemId);
+
+        return item.Id;
+    }
+
+    public async Task<bool> DeleteItemAsync(Serial itemId)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            _logger.Warning("Cannot delete item {ItemId}: not found", itemId);
+            return false;
+        }
+
+        await DetachFromCurrentOwnerAsync(item);
+        var removed = await _persistenceService.UnitOfWork.Items.RemoveAsync(itemId);
+
+        _logger.Debug("Deleted item {ItemId} Removed={Removed}", itemId, removed);
+
+        return removed;
+    }
+
+    public async Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            _logger.Warning("Cannot equip item {ItemId}: item not found", itemId);
+            return false;
+        }
+
+        var mobile = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+
+        if (mobile is null)
+        {
+            _logger.Warning("Cannot equip item {ItemId}: mobile {MobileId} not found", itemId, mobileId);
+            return false;
+        }
+
+        await DetachFromCurrentOwnerAsync(item);
+        await TryUnequipCurrentLayerItemAsync(mobile, layer);
+
+        item.ParentContainerId = Serial.Zero;
+        item.ContainerPosition = Point2D.Zero;
+        item.EquippedMobileId = mobileId;
+        item.EquippedLayer = layer;
+
+        mobile.EquippedItemIds[layer] = itemId;
+
+        if (layer == ItemLayerType.Backpack)
+        {
+            mobile.BackpackId = itemId;
+        }
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
+
+        _logger.Debug("Equipped item {ItemId} on mobile {MobileId} at layer {Layer}", itemId, mobileId, layer);
+
+        return true;
+    }
+
+    public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+        => GetItemHydratedAsync(itemId);
+
+    public async Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+    {
+        var items = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                        item => item.ParentContainerId == containerId,
+                        static item => item
+                    );
+
+        return [.. items];
+    }
+
+    public async Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            _logger.Warning("Cannot move item {ItemId} to container {ContainerId}: item not found", itemId, containerId);
+            return false;
+        }
+
+        var container = await _persistenceService.UnitOfWork.Items.GetByIdAsync(containerId);
+
+        if (container is null)
+        {
+            _logger.Warning(
+                "Cannot move item {ItemId} to container {ContainerId}: container not found",
+                itemId,
+                containerId
+            );
+            return false;
+        }
+
+        await DetachFromCurrentOwnerAsync(item);
+        container.AddItem(item, position);
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(container);
+        _logger.Debug(
+            "Moved item {ItemId} to container {ContainerId} at {X},{Y}",
+            itemId,
+            containerId,
+            position.X,
+            position.Y
+        );
+
+        return true;
+    }
+
+    public async Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            _logger.Warning("Cannot move item {ItemId} to world: item not found", itemId);
+            return false;
+        }
+
+        await DetachFromCurrentOwnerAsync(item);
+
+        item.Location = location;
+        item.ParentContainerId = Serial.Zero;
+        item.ContainerPosition = Point2D.Zero;
+        item.EquippedMobileId = Serial.Zero;
+        item.EquippedLayer = null;
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Debug("Moved item {ItemId} to world location {Location}", itemId, location);
+
+        return true;
+    }
+
+    public async Task UpsertItemAsync(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.Id == Serial.Zero)
+        {
+            item.Id = _persistenceService.UnitOfWork.AllocateNextItemId();
+        }
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+    }
+
+    public async Task UpsertItemsAsync(params UOItemEntity[] items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        foreach (var item in items)
+        {
+            await UpsertItemAsync(item);
+        }
+    }
+
+    private async Task DetachFromCurrentOwnerAsync(UOItemEntity item)
+    {
+        if (item.ParentContainerId != Serial.Zero)
+        {
+            var parentContainer = await _persistenceService.UnitOfWork.Items.GetByIdAsync(item.ParentContainerId);
+
+            if (parentContainer is not null)
+            {
+                parentContainer.RemoveItem(item.Id);
+                await _persistenceService.UnitOfWork.Items.UpsertAsync(parentContainer);
+            }
+
+            item.ParentContainerId = Serial.Zero;
+            item.ContainerPosition = Point2D.Zero;
+        }
+
+        if (item.EquippedMobileId == Serial.Zero || item.EquippedLayer is null)
+        {
+            return;
+        }
+
+        var mobile = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(item.EquippedMobileId);
+
+        if (mobile is null)
+        {
+            item.EquippedMobileId = Serial.Zero;
+            item.EquippedLayer = null;
+            return;
+        }
+
+        var layer = item.EquippedLayer.Value;
+
+        if (mobile.EquippedItemIds.TryGetValue(layer, out var equippedItemId) && equippedItemId == item.Id)
+        {
+            mobile.EquippedItemIds.Remove(layer);
+
+            if (layer == ItemLayerType.Backpack && mobile.BackpackId == item.Id)
+            {
+                mobile.BackpackId = Serial.Zero;
+            }
+
+            await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
+        }
+
+        item.EquippedMobileId = Serial.Zero;
+        item.EquippedLayer = null;
+    }
+
+    private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
+    {
+        if (!mobile.EquippedItemIds.TryGetValue(layer, out var currentItemId) || currentItemId == Serial.Zero)
+        {
+            return;
+        }
+
+        var currentItem = await _persistenceService.UnitOfWork.Items.GetByIdAsync(currentItemId);
+
+        if (currentItem is not null)
+        {
+            currentItem.EquippedMobileId = Serial.Zero;
+            currentItem.EquippedLayer = null;
+            await _persistenceService.UnitOfWork.Items.UpsertAsync(currentItem);
+        }
+
+        mobile.EquippedItemIds.Remove(layer);
+
+        if (layer == ItemLayerType.Backpack && mobile.BackpackId == currentItemId)
+        {
+            mobile.BackpackId = Serial.Zero;
+        }
+    }
+
+    private async Task<UOItemEntity?> GetItemHydratedAsync(Serial itemId)
+    {
+        var visited = new HashSet<Serial>();
+        return await GetItemHydratedRecursiveAsync(itemId, visited);
+    }
+
+    private async Task<UOItemEntity?> GetItemHydratedRecursiveAsync(Serial itemId, HashSet<Serial> visited)
+    {
+        if (!visited.Add(itemId))
+        {
+            return null;
+        }
+
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            return null;
+        }
+
+        List<Serial> childIds;
+
+        if (item.ContainedItemIds.Count > 0)
+        {
+            childIds = [.. item.ContainedItemIds];
+        }
+        else
+        {
+            var queriedChildIds = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                      i => i.ParentContainerId == item.Id,
+                                      static i => i.Id
+                                  );
+            childIds = [.. queriedChildIds];
+        }
+
+        if (childIds.Count == 0)
+        {
+            item.HydrateContainedItemsRuntime([]);
+            return item;
+        }
+
+        var containedItems = new List<UOItemEntity>(childIds.Count);
+
+        foreach (var childId in childIds)
+        {
+            var child = await GetItemHydratedRecursiveAsync(childId, visited);
+
+            if (child is null || child.ParentContainerId != item.Id)
+            {
+                continue;
+            }
+
+            containedItems.Add(child);
+        }
+
+        item.HydrateContainedItemsRuntime(containedItems);
+
+        return item;
+    }
+}

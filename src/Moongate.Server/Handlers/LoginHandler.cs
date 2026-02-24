@@ -3,16 +3,21 @@ using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Data.Version;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
@@ -20,10 +25,11 @@ namespace Moongate.Server.Handlers;
 [RegisterPacketHandler(PacketDefinition.LoginSeedPacket), RegisterPacketHandler(PacketDefinition.AccountLoginPacket),
  RegisterPacketHandler(PacketDefinition.ServerSelectPacket), RegisterPacketHandler(PacketDefinition.GameLoginPacket),
  RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
+
 /// <summary>
 /// Represents LoginHandler.
 /// </summary>
-public class LoginHandler : BasePacketListener
+public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharacterLoggedInEvent>
 {
     private readonly ILogger _logger = Log.ForContext<LoginHandler>();
 
@@ -32,16 +38,24 @@ public class LoginHandler : BasePacketListener
     private readonly ServerListPacket _serverListPacket;
     private readonly IGameEventBusService _gameEventBusService;
 
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
+
+    private readonly MoongateConfig _serverConfig;
+
     public LoginHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
         IAccountService accountService,
         ICharacterService characterService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        MoongateConfig serverConfig,
+        IGameNetworkSessionService gameNetworkSessionService
     ) : base(outgoingPacketQueue)
     {
         _accountService = accountService;
         _characterService = characterService;
         _gameEventBusService = gameEventBusService;
+        _serverConfig = serverConfig;
+        _gameNetworkSessionService = gameNetworkSessionService;
         _serverListPacket = new();
         _serverListPacket.Shards.Add(
             new()
@@ -51,6 +65,8 @@ public class LoginHandler : BasePacketListener
                 ServerName = "Moongate"
             }
         );
+
+        _gameEventBusService.RegisterListener(this);
     }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
@@ -197,5 +213,24 @@ public class LoginHandler : BasePacketListener
         Enqueue(session, connectToServer);
 
         return true;
+    }
+
+    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        {
+            Enqueue(session, SpeechMessageFactory.CreateSystem($"Welcome to {_serverConfig.Game.ShardName} !"));
+            Enqueue(
+                session,
+                SpeechMessageFactory.CreateSystem(
+                    $"Server is Moongate v{VersionUtils.Version} codename {VersionUtils.Codename}", SpeechHues.Red, 2
+                )
+            );
+            Enqueue(session, SpeechMessageFactory.CreateSystem($"Current server time is {DateTime.UtcNow:HH:mm:ss} UTC"));
+            Enqueue(
+                session,
+                SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
+            );
+        }
     }
 }

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.FileLoaders;
+using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 
 namespace Moongate.Tests.Server;
@@ -27,7 +28,7 @@ public class JsonFileLoadersNegativeTests
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var loader = new RegionDataLoader(directories);
+        var loader = new RegionDataLoader(directories, new RegionDataLoaderTestSpatialWorldService());
 
         Assert.ThrowsAsync<DirectoryNotFoundException>(async () => await loader.LoadAsync());
     }

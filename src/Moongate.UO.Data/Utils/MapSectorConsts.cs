@@ -6,13 +6,13 @@ namespace Moongate.UO.Data.Utils;
 public class MapSectorConsts
 {
     /// <summary>
-    /// Size of each sector in tiles (64x64 is optimal for UO)
+    /// Size of each sector in tiles.
     /// </summary>
-    public const int SectorSize = 64;
+    public const int SectorSize = 16;
 
     /// <summary>
     /// Bit shift for fast division/multiplication by SectorSize
-    /// 64 = 2^6, so shift by 6 bits
+    /// 16 = 2^4, so shift by 4 bits.
     /// </summary>
     public const int SectorShift = 4;
 

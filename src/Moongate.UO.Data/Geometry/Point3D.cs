@@ -26,12 +26,9 @@ namespace Moongate.UO.Data.Geometry;
 /// </summary>
 public struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
-      IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>, INotifyPropertyChanged
+      IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
 {
-#pragma warning disable 67
-    public event PropertyChangedEventHandler? PropertyChanged;
 
-#pragma warning restore 67
 
     public int X { get; set; }
     public int Y { get; set; }

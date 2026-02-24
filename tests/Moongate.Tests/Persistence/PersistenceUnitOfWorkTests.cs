@@ -719,7 +719,8 @@ public class PersistenceUnitOfWorkTests
                 ParentContainerId = (Serial)0x40000020,
                 ContainerPosition = new(42, 84),
                 EquippedMobileId = (Serial)0x00000010,
-                EquippedLayer = ItemLayerType.Shirt
+                EquippedLayer = ItemLayerType.Shirt,
+                ContainedItemIds = [(Serial)0x40000030, (Serial)0x40000031]
             }
         );
 
@@ -786,6 +787,9 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem.Hue, Is.EqualTo(0x0481));
                 Assert.That(loadedItem.EquippedMobileId, Is.EqualTo((Serial)0x00000010));
                 Assert.That(loadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(loadedItem.ContainedItemIds, Has.Count.EqualTo(2));
+                Assert.That(loadedItem.ContainedItemIds[0], Is.EqualTo((Serial)0x40000030));
+                Assert.That(loadedItem.ContainedItemIds[1], Is.EqualTo((Serial)0x40000031));
             }
         );
     }

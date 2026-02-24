@@ -1,6 +1,6 @@
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.Login;
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Login;
@@ -14,6 +14,7 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -23,6 +24,7 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
+
 /// <summary>
 /// Represents CharacterHandler.
 /// </summary>
@@ -32,18 +34,24 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly ICharacterService _characterService;
     private readonly IEntityFactoryService _entityFactoryService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IGameEventBusService _gameEventBusService;
+
+    private readonly ISpatialWorldService _spatialWorldService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
         ICharacterService characterService,
         IEntityFactoryService entityFactoryService,
         IGameEventBusService gameEventBusService,
-        IGameNetworkSessionService gameNetworkSessionService
+        IGameNetworkSessionService gameNetworkSessionService,
+        ISpatialWorldService spatialWorldService
     ) : base(outgoingPacketQueue)
     {
         _characterService = characterService;
         _entityFactoryService = entityFactoryService;
+        _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _spatialWorldService = spatialWorldService;
         gameEventBusService.RegisterListener(this);
     }
 
@@ -109,6 +117,12 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
         Enqueue(session, new PaperdollPacket(character));
+
+        Enqueue(session, new SetMusicPacket(_spatialWorldService.GetMusic(character.Location)));
+
+        await _gameEventBusService.PublishAsync(
+            new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, character.Id)
+        );
 
         return true;
     }

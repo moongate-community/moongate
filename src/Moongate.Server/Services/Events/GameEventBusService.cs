@@ -13,6 +13,7 @@ public sealed class GameEventBusService : IGameEventBusService
     public async ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
         where TEvent : IGameEvent
     {
+        _logger.Debug("Publishing game event type {EventType} dump: {Value}", typeof(TEvent).Name, gameEvent);
         var listeners = GetListenersSnapshot<TEvent>();
 
         if (listeners.Length == 0)

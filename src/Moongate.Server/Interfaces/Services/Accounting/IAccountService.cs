@@ -21,8 +21,14 @@ public interface IAccountService
     /// </summary>
     /// <param name="username">Account username.</param>
     /// <param name="password">Plain text password to hash and store.</param>
+    /// <param name="email">Account e-mail address.</param>
     /// <param name="accountType">Account role/type.</param>
-    Task CreateAccountAsync(string username, string password, AccountType accountType = AccountType.Regular);
+    Task CreateAccountAsync(
+        string username,
+        string password,
+        string email = "",
+        AccountType accountType = AccountType.Regular
+    );
 
     /// <summary>
     /// Deletes an account by identifier.

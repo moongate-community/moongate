@@ -1,4 +1,4 @@
-using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using UOMap = Moongate.UO.Data.Maps.Map;
 
 namespace Moongate.Network.Packets.Outgoing.World;

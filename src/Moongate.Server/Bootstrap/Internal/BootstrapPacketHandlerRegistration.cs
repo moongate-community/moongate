@@ -20,7 +20,7 @@ internal static partial class BootstrapPacketHandlerRegistration
     {
         if (!container.IsRegistered<T>())
         {
-            container.Register<T>();
+            container.Register<T>(Reuse.Singleton);
         }
 
         var handler = container.Resolve<T>();

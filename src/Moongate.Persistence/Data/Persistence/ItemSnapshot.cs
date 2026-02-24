@@ -41,4 +41,6 @@ public sealed partial class ItemSnapshot
     public uint EquippedMobileId { get; set; }
 
     public byte? EquippedLayer { get; set; }
+
+    public uint[] ContainedItemIds { get; set; } = [];
 }
