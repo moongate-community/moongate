@@ -1,3 +1,9 @@
+## [0.16.1](https://github.com/moongate-community/moongatev2/compare/v0.16.0...v0.16.1) (2026-02-24)
+
+### Bug Fixes
+
+* update benchmark imports for general information packet namespace ([23c2912](https://github.com/moongate-community/moongatev2/commit/23c291298213f95cef04d78cce33d512d4800a3e))
+
 ## [0.16.0](https://github.com/moongate-community/moongatev2/compare/v0.15.1...v0.16.0) (2026-02-24)
 
 ### Features
