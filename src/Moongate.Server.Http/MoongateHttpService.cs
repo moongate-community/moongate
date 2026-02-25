@@ -1,13 +1,18 @@
 using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.DependencyInjection;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http.Data;
+using Moongate.Server.Http.Data.Results;
 using Moongate.Server.Http.Extensions;
+using Moongate.Server.Http.Interfaces.Facades;
 using Moongate.Server.Http.Internal;
+using Moongate.Server.Http.Internal.Facades;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Metrics.Data;
@@ -30,7 +35,11 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly Action<WebApplication> _configureApp;
     private readonly Func<MoongateHttpMetricsSnapshot?>? _metricsSnapshotFactory;
     private readonly MoongateHttpJwtOptions _jwtOptions;
-    private readonly Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? _authenticateUserAsync;
+    private readonly IHttpAuthFacade? _authFacade;
+    private readonly IHttpSystemFacade _systemFacade;
+    private readonly IHttpUsersFacade? _usersFacade;
+    private readonly bool _isUiEnabled;
+    private readonly string? _uiDistPath;
 
     private WebApplication? _app;
 
@@ -53,16 +62,20 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _configureApp = options.ConfigureApp ?? (_ => { });
         _metricsSnapshotFactory = options.MetricsSnapshotFactory;
         _jwtOptions = options.Jwt ?? new MoongateHttpJwtOptions();
-        _authenticateUserAsync = options.AuthenticateUserAsync;
+        _authFacade = options.AuthFacade;
+        _usersFacade = options.UsersFacade;
+        _systemFacade = options.SystemFacade ?? new DefaultHttpSystemFacade(_metricsSnapshotFactory, BuildPrometheusPayload);
+        _isUiEnabled = options.IsUiEnabled;
+        _uiDistPath = options.UiDistPath;
 
         if (_jwtOptions.IsEnabled && string.IsNullOrWhiteSpace(_jwtOptions.SigningKey))
         {
             throw new ArgumentException("JWT signing key must be configured when JWT is enabled.", nameof(options));
         }
 
-        if (_jwtOptions.IsEnabled && _authenticateUserAsync is null)
+        if (_jwtOptions.IsEnabled && _authFacade is null)
         {
-            throw new ArgumentException("AuthenticateUserAsync must be configured when JWT is enabled.", nameof(options));
+            throw new ArgumentException("AuthFacade must be configured when JWT is enabled.", nameof(options));
         }
     }
 
@@ -73,7 +86,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
             return;
         }
 
-        var builder = WebApplication.CreateSlimBuilder(Array.Empty<string>());
+        var builder = WebApplication.CreateSlimBuilder([]);
         var logPath = CreateLogPath(_directoriesConfig[DirectoryType.Logs]);
         var httpLogger = CreateHttpLogger(logPath, _minimumLogLevel);
 
@@ -100,6 +113,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         var app = builder.Build();
         app.UseSerilogRequestLogging();
+        var isUiServing = ConfigureUiHosting(app);
 
         if (_jwtOptions.IsEnabled)
         {
@@ -108,10 +122,11 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         var routeContext = new MoongateHttpRouteContext(
-            _metricsSnapshotFactory,
+            _systemFacade,
             _jwtOptions,
-            _authenticateUserAsync,
-            BuildPrometheusPayload
+            _authFacade,
+            _usersFacade,
+            isUiServing
         );
 
         app.MapMoongateHttpRoutes(routeContext);
@@ -325,5 +340,95 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
             services.AddSingleton(serviceType, implementationType);
         }
+    }
+
+    private bool ConfigureUiHosting(WebApplication app)
+    {
+        if (!_isUiEnabled)
+        {
+            return false;
+        }
+
+        var uiDistPath = ResolveUiDistPath(_uiDistPath);
+        if (uiDistPath is null)
+        {
+            Log.Debug("UI hosting enabled but no UI dist directory found. Checked common locations.");
+            return false;
+        }
+
+        var fileProvider = new PhysicalFileProvider(uiDistPath);
+        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+
+        var indexPath = Path.Combine(uiDistPath, "index.html");
+        app.MapFallback(
+            async context =>
+            {
+                if (!HttpMethods.IsGet(context.Request.Method) || ShouldSkipSpaFallback(context.Request.Path))
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+                    return;
+                }
+
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync(indexPath);
+            }
+        );
+
+        Log.Information("Serving UI static files from {UiDistPath}", uiDistPath);
+
+        return true;
+    }
+
+    private static string? ResolveUiDistPath(string? configuredPath)
+    {
+        if (!string.IsNullOrWhiteSpace(configuredPath))
+        {
+            var explicitPath = Path.GetFullPath(configuredPath);
+            if (Directory.Exists(explicitPath))
+            {
+                return explicitPath;
+            }
+        }
+
+        var envPath = Environment.GetEnvironmentVariable("MOONGATE_UI_DIST");
+        if (!string.IsNullOrWhiteSpace(envPath))
+        {
+            var resolvedEnvPath = Path.GetFullPath(envPath);
+            if (Directory.Exists(resolvedEnvPath))
+            {
+                return resolvedEnvPath;
+            }
+        }
+
+        var currentDirPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "ui", "dist"));
+        if (Directory.Exists(currentDirPath))
+        {
+            return currentDirPath;
+        }
+
+        var baseDirPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "ui", "dist"));
+        if (Directory.Exists(baseDirPath))
+        {
+            return baseDirPath;
+        }
+
+        return null;
+    }
+
+    private static bool ShouldSkipSpaFallback(PathString path)
+    {
+        if (!path.HasValue)
+        {
+            return false;
+        }
+
+        return path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/auth", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/openapi", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/scalar", StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -5,6 +5,8 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
+using Moongate.Server.Http.Data.Results;
+using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
 
 namespace Moongate.Tests.Server.Http;
@@ -32,17 +34,20 @@ public class MoongateHttpServiceJwtLoginEndpointTests
                     Audience = "moongate-tests-client",
                     ExpirationMinutes = 5
                 },
-                AuthenticateUserAsync = (username, password, _) =>
-                                            Task.FromResult<MoongateHttpAuthenticatedUser?>(
-                                                username == "admin" && password == "admin"
-                                                    ? new MoongateHttpAuthenticatedUser
-                                                    {
-                                                        AccountId = "1",
-                                                        Username = "admin",
-                                                        Role = "admin"
-                                                    }
-                                                    : null
-                                            )
+                AuthFacade = new TestHttpAuthFacade(
+                    (username, password, _) => Task.FromResult(
+                        username == "admin" && password == "admin"
+                            ? MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Ok(
+                                new MoongateHttpAuthenticatedUser
+                                {
+                                    AccountId = "1",
+                                    Username = "admin",
+                                    Role = "admin"
+                                }
+                            )
+                            : MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Unauthorized()
+                    )
+                )
             }
         );
 

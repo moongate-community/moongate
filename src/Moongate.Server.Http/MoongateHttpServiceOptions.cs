@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Moongate.Core.Data.Directories;
 using Moongate.Server.Http.Data;
+using Moongate.Server.Http.Interfaces.Facades;
 using Serilog.Events;
 
 namespace Moongate.Server.Http;
@@ -51,11 +52,28 @@ public sealed class MoongateHttpServiceOptions
     public MoongateHttpJwtOptions? Jwt { get; init; }
 
     /// <summary>
-    /// Optional authentication callback used by the login endpoint.
+    /// Optional authentication facade.
     /// </summary>
-    public Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? AuthenticateUserAsync
-    {
-        get;
-        init;
-    }
+    public IHttpAuthFacade? AuthFacade { get; init; }
+
+    /// <summary>
+    /// Optional users facade.
+    /// </summary>
+    public IHttpUsersFacade? UsersFacade { get; init; }
+
+    /// <summary>
+    /// Optional system facade.
+    /// </summary>
+    public IHttpSystemFacade? SystemFacade { get; init; }
+
+    /// <summary>
+    /// Enables serving the UI SPA from the HTTP service root path.
+    /// </summary>
+    public bool IsUiEnabled { get; init; } = true;
+
+    /// <summary>
+    /// Optional absolute or relative path to the UI dist directory.
+    /// If null, the service tries common defaults like <c>./ui/dist</c>.
+    /// </summary>
+    public string? UiDistPath { get; init; }
 }

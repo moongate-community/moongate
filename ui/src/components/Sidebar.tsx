@@ -3,6 +3,7 @@ import { useAuthStore } from '../store/authStore'
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', icon: '◈' },
+  { label: 'Users', path: '/users', icon: '⍟' },
 ]
 
 export function Sidebar() {

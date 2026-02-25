@@ -23,7 +23,7 @@ public interface IAccountService
     /// <param name="password">Plain text password to hash and store.</param>
     /// <param name="email">Account e-mail address.</param>
     /// <param name="accountType">Account role/type.</param>
-    Task CreateAccountAsync(
+    Task<UOAccountEntity?> CreateAccountAsync(
         string username,
         string password,
         string email = "",
@@ -34,7 +34,7 @@ public interface IAccountService
     /// Deletes an account by identifier.
     /// </summary>
     /// <param name="accountId">Account serial identifier.</param>
-    Task DeleteAccountAsync(Serial accountId);
+    Task<bool> DeleteAccountAsync(Serial accountId);
 
     /// <summary>
     /// Gets an account by identifier.
@@ -42,6 +42,24 @@ public interface IAccountService
     /// <param name="accountId">Account serial identifier.</param>
     /// <returns>The account when found; otherwise <see langword="null" />.</returns>
     Task<UOAccountEntity?> GetAccountAsync(Serial accountId);
+
+    /// <summary>
+    /// Gets all accounts.
+    /// </summary>
+    Task<IReadOnlyList<UOAccountEntity>> GetAccountsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Updates mutable account fields.
+    /// </summary>
+    Task<UOAccountEntity?> UpdateAccountAsync(
+        Serial accountId,
+        string? username = null,
+        string? password = null,
+        string? email = null,
+        AccountType? accountType = null,
+        bool? isLocked = null,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Attempts to authenticate an account with username and password.

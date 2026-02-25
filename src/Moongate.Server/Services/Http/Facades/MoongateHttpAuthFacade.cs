@@ -1,0 +1,48 @@
+using Moongate.Server.Http.Data;
+using Moongate.Server.Http.Data.Results;
+using Moongate.Server.Http.Interfaces.Facades;
+using Moongate.Server.Interfaces.Services.Accounting;
+
+namespace Moongate.Server.Services.Http.Facades;
+
+/// <summary>
+/// Auth facade backed by <see cref="IAccountService" />.
+/// </summary>
+public sealed class MoongateHttpAuthFacade : IHttpAuthFacade
+{
+    private readonly IAccountService _accountService;
+
+    public MoongateHttpAuthFacade(IAccountService accountService)
+        => _accountService = accountService;
+
+    public async Task<MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>> AuthenticateAsync(
+        string username,
+        string password,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            return MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.BadRequest(
+                "username and password are required"
+            );
+        }
+
+        var account = await _accountService.LoginAsync(username, password);
+        if (account is null)
+        {
+            return MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Unauthorized();
+        }
+
+        return MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Ok(
+            new()
+            {
+                AccountId = account.Id.Value.ToString(),
+                Username = account.Username,
+                Role = account.AccountType.ToString()
+            }
+        );
+    }
+}

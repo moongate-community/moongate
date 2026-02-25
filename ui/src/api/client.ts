@@ -15,7 +15,8 @@ export async function apiFetch<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
+  const url = path.startsWith('/auth') ? path : `${BASE}${path}`
+  const res = await fetch(url, {
     ...options,
     headers: getHeaders(options?.headers),
   })
@@ -39,5 +40,14 @@ export const api = {
     apiFetch<T>(path, {
       method: 'POST',
       body: JSON.stringify(body),
+    }),
+  put: <T>(path: string, body: unknown) =>
+    apiFetch<T>(path, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
+  delete: <T>(path: string) =>
+    apiFetch<T>(path, {
+      method: 'DELETE',
     }),
 }

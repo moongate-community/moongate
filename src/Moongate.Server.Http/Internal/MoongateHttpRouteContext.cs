@@ -1,4 +1,5 @@
 using Moongate.Server.Http.Data;
+using Moongate.Server.Http.Interfaces.Facades;
 
 namespace Moongate.Server.Http.Internal;
 
@@ -8,26 +9,27 @@ namespace Moongate.Server.Http.Internal;
 internal sealed class MoongateHttpRouteContext
 {
     public MoongateHttpRouteContext(
-        Func<MoongateHttpMetricsSnapshot?>? metricsSnapshotFactory,
+        IHttpSystemFacade systemFacade,
         MoongateHttpJwtOptions jwtOptions,
-        Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? authenticateUserAsync,
-        Func<MoongateHttpMetricsSnapshot, string> prometheusPayloadBuilder
+        IHttpAuthFacade? authFacade,
+        IHttpUsersFacade? usersFacade,
+        bool isUiEnabled
     )
     {
-        MetricsSnapshotFactory = metricsSnapshotFactory;
+        SystemFacade = systemFacade;
         JwtOptions = jwtOptions;
-        AuthenticateUserAsync = authenticateUserAsync;
-        PrometheusPayloadBuilder = prometheusPayloadBuilder;
+        AuthFacade = authFacade;
+        UsersFacade = usersFacade;
+        IsUiEnabled = isUiEnabled;
     }
 
-    public Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? AuthenticateUserAsync
-    {
-        get;
-    }
+    public IHttpAuthFacade? AuthFacade { get; }
 
     public MoongateHttpJwtOptions JwtOptions { get; }
 
-    public Func<MoongateHttpMetricsSnapshot?>? MetricsSnapshotFactory { get; }
+    public IHttpSystemFacade SystemFacade { get; }
 
-    public Func<MoongateHttpMetricsSnapshot, string> PrometheusPayloadBuilder { get; }
+    public IHttpUsersFacade? UsersFacade { get; }
+
+    public bool IsUiEnabled { get; }
 }
