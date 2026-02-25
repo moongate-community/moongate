@@ -4,7 +4,9 @@ using Moongate.Server.Http.Data;
 namespace Moongate.Server.Http.Json;
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase),
- JsonSerializable(typeof(MoongateHttpLoginRequest)), JsonSerializable(typeof(MoongateHttpLoginResponse))]
+ JsonSerializable(typeof(MoongateHttpLoginRequest)), JsonSerializable(typeof(MoongateHttpLoginResponse)),
+
+]
 /// <summary>
 /// Represents MoongateHttpJsonContext.
 /// </summary>

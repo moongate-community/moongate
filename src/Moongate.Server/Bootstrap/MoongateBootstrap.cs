@@ -257,6 +257,8 @@ public sealed class MoongateBootstrap : IDisposable
         var configuration = new LoggerConfiguration()
                             .MinimumLevel
                             .Is(_moongateConfig.LogLevel.ToSerilogLogLevel())
+                            .Enrich
+                            .WithDemystifiedStackTraces()
                             .WriteTo
                             .File(
                                 appLogPath,

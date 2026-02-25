@@ -42,6 +42,9 @@ public static class AddBootstrapHostedServicesExtension
         container.RegisterMoongateService<INetworkService, NetworkService>(150);
         container.RegisterMoongateService<IScriptEngineService, LuaScriptEngineService>(150);
 
+        // ALL event listeners should be registered with a priority above all services that publish events, to ensure they receive events during startup.
+        container.RegisterMoongateService<PersistenceListenerHandler>(200);
+
         return container;
     }
 }

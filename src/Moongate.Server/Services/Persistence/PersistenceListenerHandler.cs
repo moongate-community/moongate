@@ -6,12 +6,13 @@ using Moongate.Server.Interfaces.Services.Speech;
 
 namespace Moongate.Server.Services.Persistence;
 
-public class PesistenceListenerHandler : IGameEventListener<DatabaseSavingStartEvent>, IGameEventListener<DatabaseSavedEvent>, IMoongateService
+public class PersistenceListenerHandler
+    : IGameEventListener<DatabaseSavingStartEvent>, IGameEventListener<DatabaseSavedEvent>, IMoongateService
 {
     private readonly ISpeechService _speechService;
     private readonly IGameEventBusService _gameEventBusService;
 
-    public PesistenceListenerHandler(ISpeechService speechService, IGameEventBusService gameEventBusService)
+    public PersistenceListenerHandler(ISpeechService speechService, IGameEventBusService gameEventBusService)
     {
         _speechService = speechService;
         _gameEventBusService = gameEventBusService;
@@ -19,13 +20,13 @@ public class PesistenceListenerHandler : IGameEventListener<DatabaseSavingStartE
 
     public async Task HandleAsync(DatabaseSavingStartEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        await _speechService.BroadcastFromServerAsync("Saving database...");
+        await _speechService.BroadcastFromServerAsync("Saving world...");
     }
 
     public async Task HandleAsync(DatabaseSavedEvent gameEvent, CancellationToken cancellationToken = default)
     {
         await _speechService.BroadcastFromServerAsync(
-            $"Database saved in {gameEvent.ElapsedMilliseconds.Milliseconds().Seconds} seconds."
+            $"World saved in {gameEvent.ElapsedMilliseconds.Milliseconds()} seconds."
         );
     }
 
@@ -35,7 +36,6 @@ public class PesistenceListenerHandler : IGameEventListener<DatabaseSavingStartE
         _gameEventBusService.RegisterListener<DatabaseSavingStartEvent>(this);
 
         return Task.CompletedTask;
-
     }
 
     public Task StopAsync()

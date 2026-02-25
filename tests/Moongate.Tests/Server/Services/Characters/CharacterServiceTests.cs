@@ -438,7 +438,8 @@ public class CharacterServiceTests
                     WheelSize = 512
                 }
             ),
-            new()
+            new(),
+            new NetworkServiceTestGameEventBusService()
         );
         await persistence.StartAsync();
 
