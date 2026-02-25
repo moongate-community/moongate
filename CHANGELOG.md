@@ -1,3 +1,9 @@
+## [0.17.0](https://github.com/moongate-community/moongatev2/compare/v0.16.2...v0.17.0) (2026-02-25)
+
+### Features
+
+* **server:** reorganize events and add spatial lazy sector warmup with item map support ([fc69539](https://github.com/moongate-community/moongatev2/commit/fc695392a73c02a21a09c51aad232743a0f11e46))
+
 ## [0.16.2](https://github.com/moongate-community/moongatev2/compare/v0.16.1...v0.16.2) (2026-02-24)
 
 ### Bug Fixes
