@@ -1,9 +1,11 @@
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Data.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 using Serilog;
 
 namespace Moongate.Server.Services.Items;
@@ -27,6 +29,7 @@ public sealed class ItemService : IItemService
         {
             Id = generateNewSerial ? _persistenceService.UnitOfWork.AllocateNextItemId() : item.Id,
             Location = item.Location,
+            MapId = item.MapId,
             Name = item.Name,
             Weight = item.Weight,
             Amount = item.Amount,
@@ -115,6 +118,7 @@ public sealed class ItemService : IItemService
         item.ContainerPosition = Point2D.Zero;
         item.EquippedMobileId = mobileId;
         item.EquippedLayer = layer;
+        item.MapId = mobile.MapId;
 
         mobile.EquippedItemIds[layer] = itemId;
 
@@ -138,6 +142,28 @@ public sealed class ItemService : IItemService
     {
         var items = await _persistenceService.UnitOfWork.Items.QueryAsync(
                         item => item.ParentContainerId == containerId,
+                        static item => item
+                    );
+
+        return [.. items];
+    }
+
+    public async Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+    {
+        var minX = sectorX * MapSectorConsts.SectorSize;
+        var maxX = minX + MapSectorConsts.SectorSize;
+        var minY = sectorY * MapSectorConsts.SectorSize;
+        var maxY = minY + MapSectorConsts.SectorSize;
+
+        var items = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                        item =>
+                            item.MapId == mapId &&
+                            item.ParentContainerId == Serial.Zero &&
+                            item.EquippedMobileId == Serial.Zero &&
+                            item.Location.X >= minX &&
+                            item.Location.X < maxX &&
+                            item.Location.Y >= minY &&
+                            item.Location.Y < maxY,
                         static item => item
                     );
 
@@ -168,6 +194,7 @@ public sealed class ItemService : IItemService
 
         await DetachFromCurrentOwnerAsync(item);
         container.AddItem(item, position);
+        item.MapId = container.MapId;
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         await _persistenceService.UnitOfWork.Items.UpsertAsync(container);
@@ -182,7 +209,7 @@ public sealed class ItemService : IItemService
         return true;
     }
 
-    public async Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location)
+    public async Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
 
@@ -195,6 +222,7 @@ public sealed class ItemService : IItemService
         await DetachFromCurrentOwnerAsync(item);
 
         item.Location = location;
+        item.MapId = mapId;
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
         item.EquippedMobileId = Serial.Zero;
@@ -204,6 +232,28 @@ public sealed class ItemService : IItemService
         _logger.Debug("Moved item {ItemId} to world location {Location}", itemId, location);
 
         return true;
+    }
+
+    public async Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            _logger.Warning("Cannot drop item {ItemId} to ground: item not found", itemId);
+            return null;
+        }
+
+        var sourceContainerId = item.ParentContainerId;
+        var oldLocation = item.Location;
+        var moved = await MoveItemToWorldAsync(itemId, location, mapId);
+
+        if (!moved)
+        {
+            return null;
+        }
+
+        return new(itemId, sourceContainerId, oldLocation, location);
     }
 
     public async Task UpsertItemAsync(UOItemEntity item)

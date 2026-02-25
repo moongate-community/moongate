@@ -2,6 +2,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.Server.Data.Items;
 
 namespace Moongate.Server.Interfaces.Items;
 
@@ -68,6 +69,15 @@ public interface IItemService
     Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId);
 
     /// <summary>
+    /// Loads ground items persisted in the specified map sector.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="sectorX">Sector X coordinate.</param>
+    /// <param name="sectorY">Sector Y coordinate.</param>
+    /// <returns>Ground items for the sector.</returns>
+    Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY);
+
+    /// <summary>
     /// Moves an item into a container at a specific container-local position.
     /// </summary>
     /// <param name="itemId">Item serial identifier.</param>
@@ -81,8 +91,18 @@ public interface IItemService
     /// </summary>
     /// <param name="itemId">Item serial identifier.</param>
     /// <param name="location">Target world location.</param>
+    /// <param name="mapId">Target map id.</param>
     /// <returns><see langword="true" /> when operation succeeds; otherwise <see langword="false" />.</returns>
-    Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location);
+    Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId);
+
+    /// <summary>
+    /// Drops an item to ground and returns the drop context used for domain events.
+    /// </summary>
+    /// <param name="itemId">Item serial identifier.</param>
+    /// <param name="location">Target world location.</param>
+    /// <param name="mapId">Target map id.</param>
+    /// <returns>Drop context when operation succeeds; otherwise <see langword="null" />.</returns>
+    Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId);
 
     /// <summary>
     /// Inserts or updates an existing item.

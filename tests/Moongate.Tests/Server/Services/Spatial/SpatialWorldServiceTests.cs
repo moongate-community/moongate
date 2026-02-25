@@ -1,14 +1,22 @@
 using System.Net;
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.Spatial;
 
@@ -21,7 +29,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var mobile = CreateMobile(0x100, 100, 100, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -36,7 +44,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var mobile = CreateMobile(0x101, 10, 10, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -54,7 +62,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var item = new UOItemEntity
         {
             Id = (Serial)0x200u,
@@ -75,7 +83,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var firstPlayer = CreateMobile(0x300, 500, 500, mapId: 0, isPlayer: true);
         var secondPlayer = CreateMobile(0x301, 502, 503, mapId: 0, isPlayer: true);
 
@@ -97,11 +105,68 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public void GetPlayersInSector_ShouldReturnOnlyPlayersInTargetSector()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        var playerInSector = CreateMobile(0x310, 140, 150, mapId: 0, isPlayer: true);
+        var npcInSector = CreateMobile(0x311, 141, 151, mapId: 0, isPlayer: false);
+        var playerOtherSector = CreateMobile(0x312, 800, 800, mapId: 0, isPlayer: true);
+
+        service.AddOrUpdateMobile(playerInSector);
+        service.AddOrUpdateMobile(npcInSector);
+        service.AddOrUpdateMobile(playerOtherSector);
+
+        var sectorX = playerInSector.Location.X >> MapSectorConsts.SectorShift;
+        var sectorY = playerInSector.Location.Y >> MapSectorConsts.SectorShift;
+        var players = service.GetPlayersInSector(0, sectorX, sectorY);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(players.Select(static player => player.Id), Contains.Item(playerInSector.Id));
+                Assert.That(players.Select(static player => player.Id), Does.Not.Contain(npcInSector.Id));
+                Assert.That(players.Select(static player => player.Id), Does.Not.Contain(playerOtherSector.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void GetSectorByLocation_ShouldReturnMatchingSector_WhenIndexed()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var mobile = CreateMobile(0x320, 300, 400, mapId: 0, isPlayer: true);
+
+        service.AddOrUpdateMobile(mobile);
+
+        var sector = service.GetSectorByLocation(0, mobile.Location);
+
+        Assert.That(sector, Is.Not.Null);
+        Assert.That(sector!.GetPlayers().Select(static player => player.Id), Contains.Item(mobile.Id));
+    }
+
+    [Test]
+    public void GetSectorByLocation_ShouldReturnNull_WhenMapNotIndexed()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        var sector = service.GetSectorByLocation(99, new Point3D(10, 10, 0));
+
+        Assert.That(sector, Is.Null);
+    }
+
+    [Test]
     public void RemoveEntity_ShouldRemoveMobileAndItemFromQueries()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var mobile = CreateMobile(0x400, 1200, 1200, mapId: 0, isPlayer: false);
         var item = new UOItemEntity { Id = (Serial)0x401u, ItemId = 0x0EED, Location = new Point3D(1200, 1200, 0) };
 
@@ -123,7 +188,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var mobile = CreateMobile(0x500, 10, 10, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -137,7 +202,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var mobile = CreateMobile(0x501, 1, 1, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -159,7 +224,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
         var mobile = CreateMobile(0x502, 20, 20, mapId: 0, isPlayer: false);
 
         service.AddOrUpdateMobile(mobile);
@@ -174,7 +239,7 @@ public sealed class SpatialWorldServiceTests
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = new SpatialWorldService(sessions, eventBus, new MovementHandlerTestCharacterService());
+        var service = CreateService(sessions, eventBus);
 
         service.AddRegion(
             new Moongate.UO.Data.Json.Regions.JsonRegion
@@ -190,6 +255,126 @@ public sealed class SpatialWorldServiceTests
 
         Assert.That(found, Is.EqualTo(42));
         Assert.That(fallback, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void GetSectorByLocation_ShouldLazyLoadGroundItemsForMissingSector()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new SpatialWorldServiceTestItemService();
+        var service = CreateService(sessions, eventBus, itemService);
+        var location = new Point3D(130, 130, 0);
+        var expectedItem = new UOItemEntity
+        {
+            Id = (Serial)0x700u,
+            ItemId = 0x0EED,
+            Location = location
+        };
+        itemService.ItemsBySector[(0, 8, 8)] = [expectedItem];
+
+        var sector = service.GetSectorByLocation(0, location);
+
+        Assert.That(sector, Is.Not.Null);
+        Assert.That(sector!.GetItems().Select(static item => item.Id), Contains.Item(expectedItem.Id));
+        Assert.That(itemService.LoadRequests, Has.Member((0, 8, 8)));
+    }
+
+    [Test]
+    public async Task HandleAsync_PlayerCharacterLoggedIn_ShouldWarmupSectorsAroundPlayer()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new SpatialWorldServiceTestItemService();
+        var characterService = new SpatialWorldServiceTestCharacterService();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            itemService,
+            characterService,
+            new MoongateSpatialConfig { SectorWarmupRadius = 1, LazySectorItemLoadEnabled = true }
+        );
+        var character = CreateMobile(0x701, 130, 130, mapId: 0, isPlayer: true);
+        characterService.Add(character);
+
+        await service.HandleAsync(new PlayerCharacterLoggedInEvent(1, (Serial)0x01u, character.Id));
+
+        Assert.That(itemService.LoadRequests.Distinct().Count(), Is.EqualTo(9));
+        Assert.That(itemService.LoadRequests, Has.Member((0, 8, 8)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, 7, 7)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, 9, 9)));
+    }
+
+    [Test]
+    public async Task HandleAsync_DropItemToGround_ShouldUseRuntimeSessionMapAndNewLocation()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new SpatialWorldServiceTestItemService();
+        var characterService = new SpatialWorldServiceTestCharacterService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            itemService,
+            characterService,
+            new MoongateSpatialConfig { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false },
+            queue
+        );
+
+        var player = CreateMobile(0x710, 3465, 2592, mapId: 1, isPlayer: true);
+        var staleCharacter = CreateMobile(0x710, 100, 100, mapId: 1, isPlayer: true);
+        characterService.Add(staleCharacter);
+
+        service.AddOrUpdateMobile(player);
+        var session = CreateSession(player);
+        sessions.Add(session);
+
+        var droppedItem = new UOItemEntity
+        {
+            Id = (Serial)0x711u,
+            ItemId = 0x0EED,
+            Location = new Point3D(3465, 2592, 14),
+            MapId = 1
+        };
+        itemService.ItemsById[droppedItem.Id] = droppedItem;
+
+        await service.HandleAsync(
+            new DropItemToGroundEvent(
+                session.SessionId,
+                player.Id,
+                droppedItem.Id,
+                (Serial)0x40000001u,
+                new Point3D(3466, 2592, 14),
+                droppedItem.Location
+            )
+        );
+
+        Assert.That(queue.CurrentQueueDepth, Is.EqualTo(1));
+    }
+
+    private static SpatialWorldService CreateService(
+        FakeGameNetworkSessionService sessions,
+        NetworkServiceTestGameEventBusService eventBus,
+        SpatialWorldServiceTestItemService? itemService = null,
+        ICharacterService? characterService = null,
+        MoongateSpatialConfig? spatialConfig = null,
+        BasePacketListenerTestOutgoingPacketQueue? queue = null
+    )
+    {
+        var config = new MoongateConfig
+        {
+            Spatial = spatialConfig ?? new MoongateSpatialConfig()
+        };
+
+        return new(
+            sessions,
+            eventBus,
+            characterService ?? new MovementHandlerTestCharacterService(),
+            itemService ?? new SpatialWorldServiceTestItemService(),
+            queue ?? new BasePacketListenerTestOutgoingPacketQueue(),
+            config
+        );
     }
 
     [TearDown]
@@ -228,5 +413,82 @@ public sealed class SpatialWorldServiceTests
             MapId = mapId,
             IsPlayer = isPlayer
         };
+    }
+
+    private sealed class SpatialWorldServiceTestItemService : IItemService
+    {
+        public Dictionary<(int MapId, int SectorX, int SectorY), List<UOItemEntity>> ItemsBySector { get; } = [];
+        public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
+
+        public List<(int MapId, int SectorX, int SectorY)> LoadRequests { get; } = [];
+
+        public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<Serial> CreateItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task<bool> DeleteItemAsync(Serial itemId)
+            => throw new NotSupportedException();
+
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+            => Task.FromResult(ItemsById.TryGetValue(itemId, out var item) ? item : null);
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+        {
+            LoadRequests.Add((mapId, sectorX, sectorY));
+            ItemsBySector.TryGetValue((mapId, sectorX, sectorY), out var items);
+            return Task.FromResult(items ?? []);
+        }
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
+            => throw new NotSupportedException();
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+            => throw new NotSupportedException();
+
+        public Task UpsertItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task UpsertItemsAsync(params UOItemEntity[] items)
+            => throw new NotSupportedException();
+    }
+
+    private sealed class SpatialWorldServiceTestCharacterService : ICharacterService
+    {
+        private readonly Dictionary<Serial, UOMobileEntity> _characters = [];
+
+        public void Add(UOMobileEntity character)
+            => _characters[character.Id] = character;
+
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+            => throw new NotSupportedException();
+
+        public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
+            => throw new NotSupportedException();
+
+        public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
+            => throw new NotSupportedException();
+
+        public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
+            => Task.FromResult(_characters.TryGetValue(characterId, out var character) ? character : null);
+
+        public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
+            => throw new NotSupportedException();
     }
 }

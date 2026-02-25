@@ -66,6 +66,23 @@ public interface ISpatialWorldService
     List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null);
 
     /// <summary>
+    /// Returns all player mobiles currently indexed in the specified sector.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="sectorX">Sector X coordinate.</param>
+    /// <param name="sectorY">Sector Y coordinate.</param>
+    /// <returns>Players in the sector.</returns>
+    List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY);
+
+    /// <summary>
+    /// Resolves the sector containing the specified world location.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="location">World location.</param>
+    /// <returns>The sector when present in the index; otherwise <see langword="null" />.</returns>
+    MapSector? GetSectorByLocation(int mapId, Point3D location);
+
+    /// <summary>
     /// Resolves music id for a world location.
     /// </summary>
     /// <param name="location">Target location.</param>

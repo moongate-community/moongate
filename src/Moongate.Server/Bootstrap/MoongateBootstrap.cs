@@ -15,6 +15,7 @@ using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Interfaces;

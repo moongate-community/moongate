@@ -49,6 +49,10 @@ Deep dive into network protocols:
 - [Packet System](articles/networking/packets.md) - Packet registration and handling
 - [Protocol Reference](articles/networking/protocol.md) - UO protocol implementation
 
+### Development
+
+- [Code Convention](CODE_CONVENTION.md) - Project-wide coding and test structure conventions
+
 ## 🔗 Quick Links
 
 - [GitHub Repository](https://github.com/moongate-community/moongatev2)

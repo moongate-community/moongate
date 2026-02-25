@@ -1,5 +1,6 @@
 using Moongate.Network.Client;
 using Moongate.Server.Data.Session;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Interfaces.Services.Sessions;
 
@@ -45,4 +46,12 @@ public interface IGameNetworkSessionService
     /// <param name="session">Resolved session.</param>
     /// <returns><c>true</c> when session exists.</returns>
     bool TryGet(long sessionId, out GameSession session);
+
+    /// <summary>
+    /// Tries to get a session by current character identifier.
+    /// </summary>
+    /// <param name="characterId">Character identifier.</param>
+    /// <param name="session">Resolved session.</param>
+    /// <returns><c>true</c> when a matching session exists.</returns>
+    bool TryGetByCharacterId(Serial characterId, out GameSession session);
 }

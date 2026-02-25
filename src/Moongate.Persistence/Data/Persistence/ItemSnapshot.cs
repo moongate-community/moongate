@@ -16,6 +16,8 @@ public sealed partial class ItemSnapshot
 
     public int Z { get; set; }
 
+    public int MapId { get; set; }
+
     public string? Name { get; set; }
 
     public int Weight { get; set; }

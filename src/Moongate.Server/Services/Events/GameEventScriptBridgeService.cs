@@ -1,6 +1,7 @@
 using Moongate.Core.Extensions.Strings;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Interfaces.Services.Events;
 using Serilog;
 

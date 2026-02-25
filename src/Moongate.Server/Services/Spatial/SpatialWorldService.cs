@@ -1,9 +1,16 @@
-using Moongate.Server.Data.Events;
+using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Metrics;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Geometry;
@@ -19,17 +26,25 @@ namespace Moongate.Server.Services.Spatial;
 /// Default in-memory spatial world index based on map sectors.
 /// </summary>
 public sealed class SpatialWorldService
-    : ISpatialWorldService, ISpatialMetricsSource, IGameEventListener<MobilePositionChangedEvent>, IGameEventListener<PlayerCharacterLoggedInEvent>
+    : ISpatialWorldService, ISpatialMetricsSource,
+      IGameEventListener<MobilePositionChangedEvent>,
+      IGameEventListener<PlayerCharacterLoggedInEvent>,
+      IGameEventListener<DropItemToGroundEvent>
 {
     private readonly Lock _sync = new();
     private readonly Dictionary<int, SpatialMapIndex> _mapIndices = [];
     private readonly Dictionary<Serial, SpatialEntityLocation> _entityLocations = [];
+    private readonly HashSet<(int MapId, int SectorX, int SectorY)> _loadedSectors = [];
+    private readonly Dictionary<(int MapId, int SectorX, int SectorY), Task> _sectorLoadTasks = [];
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly List<JsonRegion> _regions = [];
     private readonly Dictionary<int, int> _musicByListId = [];
 
     private readonly ICharacterService _characterService;
+    private readonly IItemService _itemService;
+    private readonly MoongateSpatialConfig _spatialConfig;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpatialWorldService"/> class.
@@ -39,15 +54,22 @@ public sealed class SpatialWorldService
     public SpatialWorldService(
         IGameNetworkSessionService gameNetworkSessionService,
         IGameEventBusService gameEventBusService,
-        ICharacterService characterService
+        ICharacterService characterService,
+        IItemService itemService,
+        IOutgoingPacketQueue outgoingPacketQueue,
+        MoongateConfig moongateConfig
     )
     {
         _gameNetworkSessionService = gameNetworkSessionService;
         _gameEventBusService = gameEventBusService;
         _characterService = characterService;
+        _itemService = itemService;
+        _outgoingPacketQueue = outgoingPacketQueue;
+        _spatialConfig = moongateConfig.Spatial ?? new();
 
         _gameEventBusService.RegisterListener<MobilePositionChangedEvent>(this);
         _gameEventBusService.RegisterListener<PlayerCharacterLoggedInEvent>(this);
+        _gameEventBusService.RegisterListener<DropItemToGroundEvent>(this);
     }
 
     public void AddOrUpdateMobile(UOMobileEntity mobile)
@@ -55,6 +77,7 @@ public sealed class SpatialWorldService
         ArgumentNullException.ThrowIfNull(mobile);
         var mapId = mobile.MapId;
         var (sectorX, sectorY) = GetSectorCoordinates(mobile.Location);
+        EnsureSectorLoaded(mapId, sectorX, sectorY);
         MobileAddedInSectorEvent? gameEvent = null;
 
         lock (_sync)
@@ -81,10 +104,16 @@ public sealed class SpatialWorldService
     {
         ArgumentNullException.ThrowIfNull(item);
         var (sectorX, sectorY) = GetSectorCoordinates(item.Location);
+        EnsureSectorLoaded(mapId, sectorX, sectorY);
+        AddOrUpdateItemInternal(item, mapId, sectorX, sectorY);
+    }
 
+    private void AddOrUpdateItemInternal(UOItemEntity item, int mapId, int sectorX, int sectorY)
+    {
         lock (_sync)
         {
             RemoveEntityUnsafe(item.Id);
+            item.MapId = mapId;
             var sector = GetOrCreateSectorUnsafe(mapId, sectorX, sectorY);
             sector.AddEntity(item);
             _entityLocations[item.Id] = new SpatialEntityLocation { MapId = mapId, SectorX = sectorX, SectorY = sectorY };
@@ -116,6 +145,13 @@ public sealed class SpatialWorldService
 
     public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
     {
+        var sectors = GetSectorsInRange(location, range);
+
+        foreach (var (x, y) in sectors)
+        {
+            EnsureSectorLoaded(mapId, x, y);
+        }
+
         lock (_sync)
         {
             if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
@@ -123,7 +159,6 @@ public sealed class SpatialWorldService
                 return [];
             }
 
-            var sectors = GetSectorsInRange(location, range);
             var results = new List<UOItemEntity>();
 
             foreach (var (x, y) in sectors)
@@ -142,6 +177,13 @@ public sealed class SpatialWorldService
 
     public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
     {
+        var sectors = GetSectorsInRange(location, range);
+
+        foreach (var (x, y) in sectors)
+        {
+            EnsureSectorLoaded(mapId, x, y);
+        }
+
         lock (_sync)
         {
             if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
@@ -149,7 +191,6 @@ public sealed class SpatialWorldService
                 return [];
             }
 
-            var sectors = GetSectorsInRange(location, range);
             var results = new List<UOMobileEntity>();
 
             foreach (var (x, y) in sectors)
@@ -187,6 +228,44 @@ public sealed class SpatialWorldService
         return result;
     }
 
+    public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+    {
+        EnsureSectorLoaded(mapId, sectorX, sectorY);
+
+        lock (_sync)
+        {
+            if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
+            {
+                return [];
+            }
+
+            var sector = mapIndex.GetSector(sectorX, sectorY);
+
+            if (sector is null)
+            {
+                return [];
+            }
+
+            return [.. sector.GetPlayers()];
+        }
+    }
+
+    public MapSector? GetSectorByLocation(int mapId, Point3D location)
+    {
+        var (sectorX, sectorY) = GetSectorCoordinates(location);
+        EnsureSectorLoaded(mapId, sectorX, sectorY);
+
+        lock (_sync)
+        {
+            if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
+            {
+                return null;
+            }
+
+            return mapIndex.GetSector(sectorX, sectorY);
+        }
+    }
+
     public int GetMusic(Point3D location)
     {
         lock (_sync)
@@ -217,6 +296,11 @@ public sealed class SpatialWorldService
             var (newX, newY) = GetSectorCoordinates(newLocation);
             PublishEvent(new MobileSectorChangedEvent(mobile.Id, mapId, oldX, oldY, newX, newY));
         }
+
+
+
+
+
     }
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
@@ -358,6 +442,92 @@ public sealed class SpatialWorldService
     private static (int X, int Y) GetSectorCoordinates(Point3D location)
         => (location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
 
+    private void EnsureSectorLoaded(int mapId, int sectorX, int sectorY)
+        => EnsureSectorLoadedAsync(mapId, sectorX, sectorY, CancellationToken.None).GetAwaiter().GetResult();
+
+    private async Task EnsureSectorLoadedAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken)
+    {
+        if (!_spatialConfig.LazySectorItemLoadEnabled)
+        {
+            return;
+        }
+
+        var key = (mapId, sectorX, sectorY);
+        Task loadTask;
+
+        lock (_sync)
+        {
+            if (_loadedSectors.Contains(key))
+            {
+                return;
+            }
+
+            if (_sectorLoadTasks.TryGetValue(key, out loadTask!))
+            {
+                // Reuse in-flight load task.
+            }
+            else
+            {
+                loadTask = LoadSectorItemsAsync(mapId, sectorX, sectorY, cancellationToken);
+                _sectorLoadTasks[key] = loadTask;
+            }
+        }
+
+        try
+        {
+            await loadTask.ConfigureAwait(false);
+        }
+        finally
+        {
+            lock (_sync)
+            {
+                if (loadTask.IsCompletedSuccessfully)
+                {
+                    _loadedSectors.Add(key);
+                }
+
+                if (loadTask.IsCompleted)
+                {
+                    _sectorLoadTasks.Remove(key);
+                }
+            }
+        }
+    }
+
+    private async Task LoadSectorItemsAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var items = await _itemService.GetGroundItemsInSectorAsync(mapId, sectorX, sectorY);
+
+        foreach (var item in items)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            AddOrUpdateItemInternal(item, mapId, sectorX, sectorY);
+        }
+    }
+
+    private async Task WarmupAroundSectorAsync(
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int radius,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!_spatialConfig.LazySectorItemLoadEnabled)
+        {
+            return;
+        }
+
+        for (var x = centerSectorX - radius; x <= centerSectorX + radius; x++)
+        {
+            for (var y = centerSectorY - radius; y <= centerSectorY + radius; y++)
+            {
+                await EnsureSectorLoadedAsync(mapId, x, y, cancellationToken);
+            }
+        }
+    }
+
     private static List<(int X, int Y)> GetSectorsInRange(Point3D location, int range)
     {
         var sectors = new List<(int X, int Y)>();
@@ -386,14 +556,67 @@ public sealed class SpatialWorldService
             session.CharacterId == gameEvent.MobileId)
         {
             OnMobileMoved(session.Character!, gameEvent.OldLocation, gameEvent.NewLocation);
+
         }
     }
 
     public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
     {
         var character = await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+        var (sectorX, sectorY) = GetSectorCoordinates(character.Location);
+        var warmupRadius = Math.Max(0, _spatialConfig.SectorWarmupRadius);
+
+        await WarmupAroundSectorAsync(character.MapId, sectorX, sectorY, warmupRadius, cancellationToken);
 
         AddOrUpdateMobile(character);
+    }
 
+    public async Task HandleAsync(DropItemToGroundEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        var item = await _itemService.GetItemAsync(gameEvent.ItemId);
+
+        if (item is null)
+        {
+            return;
+        }
+
+        var mapId = 0;
+
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var runtimeSession) &&
+            runtimeSession.Character is not null &&
+            runtimeSession.CharacterId == gameEvent.MobileId)
+        {
+            mapId = runtimeSession.Character.MapId;
+        }
+        else
+        {
+            var character = await _characterService.GetCharacterAsync(gameEvent.MobileId);
+
+            if (character is null)
+            {
+                return;
+            }
+
+            mapId = character.MapId;
+        }
+
+        var sector = GetSectorByLocation(mapId, gameEvent.NewLocation);
+
+        if (sector is null)
+        {
+            return;
+        }
+
+        var players = GetPlayersInSector(mapId, sector.SectorX, sector.SectorY);
+
+        var dropPacket = new ObjectInformationPacket(item);
+
+        foreach (var player in players)
+        {
+            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
+            {
+                _outgoingPacketQueue.Enqueue(session.SessionId, dropPacket);
+            }
+        }
     }
 }

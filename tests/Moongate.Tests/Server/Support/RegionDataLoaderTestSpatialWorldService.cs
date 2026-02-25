@@ -32,6 +32,12 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
     public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
         => [];
 
+    public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+        => [];
+
+    public MapSector? GetSectorByLocation(int mapId, Point3D location)
+        => null;
+
     public int GetMusic(Point3D location)
         => 0;
 

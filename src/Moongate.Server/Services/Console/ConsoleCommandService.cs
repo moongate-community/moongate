@@ -1,5 +1,6 @@
 using System.Text;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
 using Serilog;

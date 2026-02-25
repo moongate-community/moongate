@@ -1,6 +1,8 @@
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;

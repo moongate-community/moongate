@@ -11,6 +11,8 @@ using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Server;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Internal.Network;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;

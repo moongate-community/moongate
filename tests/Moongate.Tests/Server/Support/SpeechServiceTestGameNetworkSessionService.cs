@@ -1,6 +1,7 @@
 using Moongate.Network.Client;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Server.Support;
 
@@ -26,5 +27,8 @@ public sealed class SpeechServiceTestGameNetworkSessionService : IGameNetworkSes
         => throw new NotSupportedException();
 
     public bool TryGet(long sessionId, out GameSession session)
+        => throw new NotSupportedException();
+
+    public bool TryGetByCharacterId(Serial characterId, out GameSession session)
         => throw new NotSupportedException();
 }
