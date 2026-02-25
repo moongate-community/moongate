@@ -5,33 +5,26 @@
 
 @layer base {
   :root {
-    --mg-amber: #f0a014;
-    --mg-amber-dim: rgba(240, 160, 20, 0.12);
-    --mg-amber-glow: rgba(240, 160, 20, 0.25);
-    --mg-bg: #080c14;
-    --mg-surface: #0d1220;
-    --mg-border: #1e2840;
+    --mg-bg:       #1f1c2a;
+    --mg-bg-soft:  #343455;
+    --mg-surface:  #3c4d81;
+    --mg-accent:   #6aa5da;
+    --mg-accent-2: #7675c3;
+    --mg-text:     #f9f4ed;
+    --mg-muted:    #b9bbd3;
+    --mg-border:   rgba(106, 165, 218, 0.22);
   }
 
   html {
     font-family: 'Outfit', sans-serif;
-  }
-
-  body {
-    /* subtle scanline texture */
-    background-image: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(255, 255, 255, 0.012) 2px,
-      rgba(255, 255, 255, 0.012) 4px
-    );
+    background: radial-gradient(circle at top right, #3c4d81 0%, #242130 46%, #1f1c2a 100%);
+    background-attachment: fixed;
   }
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--mg-bg); }
-  ::-webkit-scrollbar-thumb { background: var(--mg-border); border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--mg-amber); }
+  ::-webkit-scrollbar-thumb { background: rgba(106,165,218,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--mg-accent); }
 }
 
 @keyframes glow-pulse {
@@ -44,7 +37,7 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-.animate-fade-in  { animation: fade-in 0.4s ease-out forwards; }
+.animate-fade-in   { animation: fade-in 0.4s ease-out forwards; }
 .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
 .font-cinzel { font-family: 'Cinzel', serif; }
 .font-mono   { font-family: 'JetBrains Mono', monospace; }
