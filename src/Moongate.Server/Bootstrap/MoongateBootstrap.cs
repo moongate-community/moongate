@@ -342,7 +342,6 @@ public sealed class MoongateBootstrap : IDisposable
     private MoongateHttpServiceOptions CreateHttpServiceOptions()
     {
         var jwtSigningKey = ResolveHttpJwtSigningKey();
-        var accountService = ResolveAccountService();
 
         return new()
         {
@@ -360,8 +359,8 @@ public sealed class MoongateBootstrap : IDisposable
                 Audience = _moongateConfig.Http.Jwt.Audience,
                 ExpirationMinutes = _moongateConfig.Http.Jwt.ExpirationMinutes
             },
-            AuthFacade = new MoongateHttpAuthFacade(accountService),
-            UsersFacade = new MoongateHttpUsersFacade(accountService)
+            AuthFacade = new MoongateHttpAuthFacade(ResolveAccountService),
+            UsersFacade = new MoongateHttpUsersFacade(ResolveAccountService)
         };
     }
 

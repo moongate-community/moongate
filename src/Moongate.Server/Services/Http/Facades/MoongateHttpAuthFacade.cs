@@ -10,10 +10,10 @@ namespace Moongate.Server.Services.Http.Facades;
 /// </summary>
 public sealed class MoongateHttpAuthFacade : IHttpAuthFacade
 {
-    private readonly IAccountService _accountService;
+    private readonly Func<IAccountService> _accountServiceResolver;
 
-    public MoongateHttpAuthFacade(IAccountService accountService)
-        => _accountService = accountService;
+    public MoongateHttpAuthFacade(Func<IAccountService> accountServiceResolver)
+        => _accountServiceResolver = accountServiceResolver;
 
     public async Task<MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>> AuthenticateAsync(
         string username,
@@ -30,7 +30,8 @@ public sealed class MoongateHttpAuthFacade : IHttpAuthFacade
             );
         }
 
-        var account = await _accountService.LoginAsync(username, password);
+        var accountService = _accountServiceResolver();
+        var account = await accountService.LoginAsync(username, password);
         if (account is null)
         {
             return MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Unauthorized();

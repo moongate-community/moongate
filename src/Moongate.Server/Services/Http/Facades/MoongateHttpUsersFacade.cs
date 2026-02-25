@@ -13,10 +13,10 @@ namespace Moongate.Server.Services.Http.Facades;
 /// </summary>
 public sealed class MoongateHttpUsersFacade : IHttpUsersFacade
 {
-    private readonly IAccountService _accountService;
+    private readonly Func<IAccountService> _accountServiceResolver;
 
-    public MoongateHttpUsersFacade(IAccountService accountService)
-        => _accountService = accountService;
+    public MoongateHttpUsersFacade(Func<IAccountService> accountServiceResolver)
+        => _accountServiceResolver = accountServiceResolver;
 
     public async Task<MoongateHttpOperationResult<MoongateHttpUser>> CreateUserAsync(
         MoongateHttpCreateUserRequest request,
@@ -35,7 +35,8 @@ public sealed class MoongateHttpUsersFacade : IHttpUsersFacade
             return MoongateHttpOperationResult<MoongateHttpUser>.BadRequest("invalid role");
         }
 
-        var created = await _accountService.CreateAccountAsync(request.Username, request.Password, request.Email, role);
+        var accountService = _accountServiceResolver();
+        var created = await accountService.CreateAccountAsync(request.Username, request.Password, request.Email, role);
         if (created is null)
         {
             return MoongateHttpOperationResult<MoongateHttpUser>.Conflict();
@@ -58,7 +59,8 @@ public sealed class MoongateHttpUsersFacade : IHttpUsersFacade
             return MoongateHttpOperationResult<object?>.BadRequest("invalid accountId");
         }
 
-        var deleted = await _accountService.DeleteAccountAsync(parsed.Value);
+        var accountService = _accountServiceResolver();
+        var deleted = await accountService.DeleteAccountAsync(parsed.Value);
 
         return deleted
             ? MoongateHttpOperationResult<object?>.NoContent()
@@ -69,7 +71,8 @@ public sealed class MoongateHttpUsersFacade : IHttpUsersFacade
         CancellationToken cancellationToken = default
     )
     {
-        var accounts = await _accountService.GetAccountsAsync(cancellationToken);
+        var accountService = _accountServiceResolver();
+        var accounts = await accountService.GetAccountsAsync(cancellationToken);
         var users = accounts.Select(MapAccountToHttpUser).ToList();
 
         return MoongateHttpOperationResult<IReadOnlyList<MoongateHttpUser>>.Ok(users);
@@ -87,7 +90,8 @@ public sealed class MoongateHttpUsersFacade : IHttpUsersFacade
             return MoongateHttpOperationResult<MoongateHttpUser>.BadRequest("invalid accountId");
         }
 
-        var account = await _accountService.GetAccountAsync(parsed.Value);
+        var accountService = _accountServiceResolver();
+        var account = await accountService.GetAccountAsync(parsed.Value);
         if (account is null)
         {
             return MoongateHttpOperationResult<MoongateHttpUser>.NotFound();
@@ -130,7 +134,8 @@ public sealed class MoongateHttpUsersFacade : IHttpUsersFacade
             role = parsedRole;
         }
 
-        var updated = await _accountService.UpdateAccountAsync(
+        var accountService = _accountServiceResolver();
+        var updated = await accountService.UpdateAccountAsync(
                           parsed.Value,
                           request.Username,
                           request.Password,
