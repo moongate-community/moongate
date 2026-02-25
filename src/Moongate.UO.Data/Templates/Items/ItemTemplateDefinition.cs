@@ -32,55 +32,40 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public string ItemId { get; set; }
 
-    [JsonPropertyName("weightmax")]
     public int WeightMax { get; set; }
 
-    [JsonPropertyName("maxitems")]
     public int MaxItems { get; set; }
 
-    [JsonPropertyName("lodamage")]
     public int LowDamage { get; set; }
 
-    [JsonPropertyName("hidamage")]
     public int HighDamage { get; set; }
 
-    [JsonPropertyName("def")]
     public int Defense { get; set; }
 
-    [JsonPropertyName("hp")]
     public int HitPoints { get; set; }
 
-    [JsonPropertyName("spd")]
     public int Speed { get; set; }
 
-    [JsonPropertyName("str")]
     public int Strength { get; set; }
 
-    [JsonPropertyName("stradd")]
     public int StrengthAdd { get; set; }
 
-    [JsonPropertyName("dex")]
     public int Dexterity { get; set; }
 
-    [JsonPropertyName("dexadd")]
     public int DexterityAdd { get; set; }
 
-    [JsonPropertyName("int")]
     public int Intelligence { get; set; }
 
-    [JsonPropertyName("intadd")]
     public int IntelligenceAdd { get; set; }
 
-    [JsonPropertyName("ammo"), JsonConverter(typeof(Int32FlexibleJsonConverter))]
+    [JsonConverter(typeof(Int32FlexibleJsonConverter))]
     public int Ammo { get; set; }
 
-    [JsonPropertyName("ammofx"), JsonConverter(typeof(Int32FlexibleJsonConverter))]
+    [JsonConverter(typeof(Int32FlexibleJsonConverter))]
     public int AmmoFx { get; set; }
 
-    [JsonPropertyName("maxrange")]
     public int MaxRange { get; set; }
 
-    [JsonPropertyName("baserange")]
     public int BaseRange { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter<LootType>))]

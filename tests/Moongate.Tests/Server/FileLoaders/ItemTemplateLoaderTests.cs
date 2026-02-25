@@ -124,23 +124,23 @@ public class ItemTemplateLoaderTests
                 "stackable": false,
                 "tags": ["weapon"],
                 "weight": 500,
-                "weightmax": 40000,
-                "maxitems": 125,
-                "lodamage": 4,
-                "hidamage": 8,
-                "def": 12,
-                "hp": 30,
-                "spd": 35,
-                "str": 20,
-                "stradd": 2,
-                "dex": 10,
-                "dexadd": 1,
-                "int": 0,
-                "intadd": 0,
+                "weightMax": 40000,
+                "maxItems": 125,
+                "lowDamage": 4,
+                "highDamage": 8,
+                "defense": 12,
+                "hitPoints": 30,
+                "speed": 35,
+                "strength": 20,
+                "strengthAdd": 2,
+                "dexterity": 10,
+                "dexterityAdd": 1,
+                "intelligence": 0,
+                "intelligenceAdd": 0,
                 "ammo": 0,
-                "ammofx": 0,
-                "maxrange": 1,
-                "baserange": 1
+                "ammoFx": 0,
+                "maxRange": 1,
+                "baseRange": 1
               },
               {
                 "type": "item",
@@ -160,7 +160,7 @@ public class ItemTemplateLoaderTests
                 "stackable": false,
                 "tags": [],
                 "weight": 600,
-                "lodamage": 5
+                "lowDamage": 5
               }
             ]
             """
