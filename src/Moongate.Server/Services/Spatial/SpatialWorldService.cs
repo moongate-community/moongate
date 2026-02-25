@@ -296,6 +296,11 @@ public sealed class SpatialWorldService
             var (newX, newY) = GetSectorCoordinates(newLocation);
             PublishEvent(new MobileSectorChangedEvent(mobile.Id, mapId, oldX, oldY, newX, newY));
         }
+
+
+
+
+
     }
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
@@ -501,7 +506,13 @@ public sealed class SpatialWorldService
         }
     }
 
-    private async Task WarmupAroundSectorAsync(int mapId, int centerSectorX, int centerSectorY, int radius, CancellationToken cancellationToken)
+    private async Task WarmupAroundSectorAsync(
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int radius,
+        CancellationToken cancellationToken
+    )
     {
         if (!_spatialConfig.LazySectorItemLoadEnabled)
         {
@@ -545,6 +556,7 @@ public sealed class SpatialWorldService
             session.CharacterId == gameEvent.MobileId)
         {
             OnMobileMoved(session.Character!, gameEvent.OldLocation, gameEvent.NewLocation);
+
         }
     }
 
@@ -561,18 +573,41 @@ public sealed class SpatialWorldService
 
     public async Task HandleAsync(DropItemToGroundEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        var character = await _characterService.GetCharacterAsync(gameEvent.MobileId);
-
         var item = await _itemService.GetItemAsync(gameEvent.ItemId);
 
-        var sector = GetSectorByLocation(character.MapId, character.Location);
+        if (item is null)
+        {
+            return;
+        }
+
+        var mapId = 0;
+
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var runtimeSession) &&
+            runtimeSession.Character is not null &&
+            runtimeSession.CharacterId == gameEvent.MobileId)
+        {
+            mapId = runtimeSession.Character.MapId;
+        }
+        else
+        {
+            var character = await _characterService.GetCharacterAsync(gameEvent.MobileId);
+
+            if (character is null)
+            {
+                return;
+            }
+
+            mapId = character.MapId;
+        }
+
+        var sector = GetSectorByLocation(mapId, gameEvent.NewLocation);
 
         if (sector is null)
         {
             return;
         }
 
-        var players = GetPlayersInSector(character.MapId, sector.SectorX, sector.SectorY);
+        var players = GetPlayersInSector(mapId, sector.SectorX, sector.SectorY);
 
         var dropPacket = new ObjectInformationPacket(item);
 

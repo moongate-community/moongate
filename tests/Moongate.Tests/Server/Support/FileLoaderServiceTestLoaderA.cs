@@ -6,7 +6,7 @@ public sealed class FileLoaderServiceTestLoaderA : IFileLoader
 {
     public Task LoadAsync()
     {
-        FileLoaderServiceTests.ExecutionLog.Add("A");
+        Moongate.Tests.Server.Services.Files.FileLoaderServiceTests.ExecutionLog.Add("A");
 
         return Task.CompletedTask;
     }

@@ -5,6 +5,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Characters;
@@ -304,12 +305,61 @@ public sealed class SpatialWorldServiceTests
         Assert.That(itemService.LoadRequests, Has.Member((0, 9, 9)));
     }
 
+    [Test]
+    public async Task HandleAsync_DropItemToGround_ShouldUseRuntimeSessionMapAndNewLocation()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new SpatialWorldServiceTestItemService();
+        var characterService = new SpatialWorldServiceTestCharacterService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            itemService,
+            characterService,
+            new MoongateSpatialConfig { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false },
+            queue
+        );
+
+        var player = CreateMobile(0x710, 3465, 2592, mapId: 1, isPlayer: true);
+        var staleCharacter = CreateMobile(0x710, 100, 100, mapId: 1, isPlayer: true);
+        characterService.Add(staleCharacter);
+
+        service.AddOrUpdateMobile(player);
+        var session = CreateSession(player);
+        sessions.Add(session);
+
+        var droppedItem = new UOItemEntity
+        {
+            Id = (Serial)0x711u,
+            ItemId = 0x0EED,
+            Location = new Point3D(3465, 2592, 14),
+            MapId = 1
+        };
+        itemService.ItemsById[droppedItem.Id] = droppedItem;
+
+        await service.HandleAsync(
+            new DropItemToGroundEvent(
+                session.SessionId,
+                player.Id,
+                droppedItem.Id,
+                (Serial)0x40000001u,
+                new Point3D(3466, 2592, 14),
+                droppedItem.Location
+            )
+        );
+
+        Assert.That(queue.CurrentQueueDepth, Is.EqualTo(1));
+    }
+
     private static SpatialWorldService CreateService(
         FakeGameNetworkSessionService sessions,
         NetworkServiceTestGameEventBusService eventBus,
         SpatialWorldServiceTestItemService? itemService = null,
         ICharacterService? characterService = null,
-        MoongateSpatialConfig? spatialConfig = null
+        MoongateSpatialConfig? spatialConfig = null,
+        BasePacketListenerTestOutgoingPacketQueue? queue = null
     )
     {
         var config = new MoongateConfig
@@ -322,7 +372,7 @@ public sealed class SpatialWorldServiceTests
             eventBus,
             characterService ?? new MovementHandlerTestCharacterService(),
             itemService ?? new SpatialWorldServiceTestItemService(),
-            new BasePacketListenerTestOutgoingPacketQueue(),
+            queue ?? new BasePacketListenerTestOutgoingPacketQueue(),
             config
         );
     }
@@ -368,6 +418,7 @@ public sealed class SpatialWorldServiceTests
     private sealed class SpatialWorldServiceTestItemService : IItemService
     {
         public Dictionary<(int MapId, int SectorX, int SectorY), List<UOItemEntity>> ItemsBySector { get; } = [];
+        public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
 
         public List<(int MapId, int SectorX, int SectorY)> LoadRequests { get; } = [];
 
@@ -387,7 +438,7 @@ public sealed class SpatialWorldServiceTests
             => throw new NotSupportedException();
 
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
-            => throw new NotSupportedException();
+            => Task.FromResult(ItemsById.TryGetValue(itemId, out var item) ? item : null);
 
         public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
         {

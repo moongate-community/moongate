@@ -55,4 +55,5 @@ public interface ICharacterService
     /// <see langword="true" /> when the association is removed; otherwise <see langword="false" />.
     /// </returns>
     Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId);
+
 }
