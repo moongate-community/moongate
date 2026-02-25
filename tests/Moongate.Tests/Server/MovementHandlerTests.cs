@@ -3,6 +3,7 @@ using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Server.Support;

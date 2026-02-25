@@ -1,7 +1,8 @@
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.Server.Data.Events.Base;
 
-namespace Moongate.Server.Data.Events;
+namespace Moongate.Server.Data.Events.Spatial;
 
 /// <summary>
 /// Event emitted when a mobile position changes.

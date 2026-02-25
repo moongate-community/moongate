@@ -1,4 +1,6 @@
-namespace Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Base;
+
+namespace Moongate.Server.Data.Events.Connections;
 
 /// <summary>
 /// Event emitted when a new client session connects to the server.

@@ -26,4 +26,6 @@ public class MoongateConfig
     public MoongateMetricsConfig Metrics { get; set; } = new();
 
     public MoongatePersistenceConfig Persistence { get; set; } = new();
+
+    public MoongateSpatialConfig Spatial { get; set; } = new();
 }

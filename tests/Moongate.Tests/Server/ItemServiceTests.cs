@@ -26,7 +26,8 @@ public class ItemServiceTests
             ItemId = 0x0EED,
             Amount = 42,
             Name = "gold",
-            Hue = 3
+            Hue = 3,
+            MapId = 2
         };
 
         var clone = service.Clone(item);
@@ -39,6 +40,7 @@ public class ItemServiceTests
                 Assert.That(clone.Amount, Is.EqualTo(item.Amount));
                 Assert.That(clone.Name, Is.EqualTo(item.Name));
                 Assert.That(clone.Hue, Is.EqualTo(item.Hue));
+                Assert.That(clone.MapId, Is.EqualTo(item.MapId));
             }
         );
     }
@@ -204,7 +206,8 @@ public class ItemServiceTests
             new()
             {
                 Id = mobileId,
-                Name = "equip-target"
+                Name = "equip-target",
+                MapId = 3
             }
         );
 
@@ -229,6 +232,7 @@ public class ItemServiceTests
                 Assert.That(reloadedItem, Is.Not.Null);
                 Assert.That(reloadedItem!.EquippedMobileId, Is.EqualTo(mobileId));
                 Assert.That(reloadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(reloadedItem.MapId, Is.EqualTo(3));
                 Assert.That(reloadedItem.ParentContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo(itemId));
@@ -267,7 +271,7 @@ public class ItemServiceTests
             }
         );
 
-        var moved = await service.MoveItemToWorldAsync(itemId, new(1111, 2222, 7));
+        var moved = await service.MoveItemToWorldAsync(itemId, new(1111, 2222, 7), mapId: 4);
         var reloadedItem = await persistence.UnitOfWork.Items.GetByIdAsync(itemId);
         var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
 
@@ -277,12 +281,107 @@ public class ItemServiceTests
                 Assert.That(moved, Is.True);
                 Assert.That(reloadedItem, Is.Not.Null);
                 Assert.That(reloadedItem!.Location, Is.EqualTo(new Point3D(1111, 2222, 7)));
+                Assert.That(reloadedItem.MapId, Is.EqualTo(4));
                 Assert.That(reloadedItem.EquippedMobileId, Is.EqualTo(Serial.Zero));
                 Assert.That(reloadedItem.EquippedLayer, Is.Null);
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OuterTorso), Is.False);
             }
         );
+    }
+
+    [Test]
+    public async Task DropItemToGroundAsync_ShouldReturnDropContext_AndDetachFromContainer()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence);
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+        var oldLocation = new Point3D(12, 34, 0);
+        var newLocation = new Point3D(100, 200, 7);
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = containerId,
+                ItemId = 0x0E75
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = itemId,
+                ItemId = 0x0EED,
+                ParentContainerId = containerId,
+                Location = oldLocation
+            }
+        );
+
+        var result = await service.DropItemToGroundAsync(itemId, newLocation, mapId: 5);
+        var reloadedItem = await persistence.UnitOfWork.Items.GetByIdAsync(itemId);
+        var reloadedContainer = await persistence.UnitOfWork.Items.GetByIdAsync(containerId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result!.Value.ItemId, Is.EqualTo(itemId));
+                Assert.That(result.Value.SourceContainerId, Is.EqualTo(containerId));
+                Assert.That(result.Value.OldLocation, Is.EqualTo(oldLocation));
+                Assert.That(result.Value.NewLocation, Is.EqualTo(newLocation));
+                Assert.That(reloadedItem, Is.Not.Null);
+                Assert.That(reloadedItem!.ParentContainerId, Is.EqualTo(Serial.Zero));
+                Assert.That(reloadedItem.Location, Is.EqualTo(newLocation));
+                Assert.That(reloadedItem.MapId, Is.EqualTo(5));
+                Assert.That(reloadedContainer, Is.Not.Null);
+                Assert.That(reloadedContainer!.ContainedItemIds.Contains(itemId), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetGroundItemsInSectorAsync_ShouldFilterByMapAndGroundState()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence);
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = persistence.UnitOfWork.AllocateNextItemId(),
+                ItemId = 0x0EED,
+                MapId = 1,
+                Location = new Point3D(130, 130, 0)
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = persistence.UnitOfWork.AllocateNextItemId(),
+                ItemId = 0x0EED,
+                MapId = 2,
+                Location = new Point3D(130, 130, 0)
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = persistence.UnitOfWork.AllocateNextItemId(),
+                ItemId = 0x0EED,
+                MapId = 1,
+                Location = new Point3D(130, 130, 0),
+                ParentContainerId = (Serial)0x40000001u
+            }
+        );
+
+        var items = await service.GetGroundItemsInSectorAsync(mapId: 1, sectorX: 8, sectorY: 8);
+
+        Assert.That(items, Has.Count.EqualTo(1));
+        Assert.That(items[0].MapId, Is.EqualTo(1));
+        Assert.That(items[0].ParentContainerId, Is.EqualTo(Serial.Zero));
     }
 
     [Test]

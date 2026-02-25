@@ -49,6 +49,7 @@ internal static class SnapshotMapper
         {
             Id = (Serial)snapshot.Id,
             Location = new(snapshot.X, snapshot.Y, snapshot.Z),
+            MapId = snapshot.MapId,
             Name = snapshot.Name,
             Weight = snapshot.Weight,
             Amount = snapshot.Amount <= 0 ? 1 : snapshot.Amount,
@@ -78,6 +79,7 @@ internal static class SnapshotMapper
             X = entity.Location.X,
             Y = entity.Location.Y,
             Z = entity.Location.Z,
+            MapId = entity.MapId,
             Name = entity.Name,
             Weight = entity.Weight,
             Amount = entity.Amount <= 0 ? 1 : entity.Amount,

@@ -9,7 +9,7 @@ namespace Moongate.Server.Json;
      WriteIndented = true
  ), JsonSerializable(typeof(MoongateConfig)), JsonSerializable(typeof(MoongateHttpConfig)),
  JsonSerializable(typeof(MoongateGameConfig)), JsonSerializable(typeof(MoongateMetricsConfig)),
- JsonSerializable(typeof(MoongatePersistenceConfig))]
+ JsonSerializable(typeof(MoongatePersistenceConfig)), JsonSerializable(typeof(MoongateSpatialConfig))]
 /// <summary>
 /// Represents MoongateServerJsonContext.
 /// </summary>

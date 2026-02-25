@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Interfaces.Characters;

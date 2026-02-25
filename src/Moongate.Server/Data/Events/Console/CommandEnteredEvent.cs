@@ -1,7 +1,8 @@
 using Moongate.Server.Data.Session;
+using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Types.Commands;
 
-namespace Moongate.Server.Data.Events;
+namespace Moongate.Server.Data.Events.Console;
 
 /// <summary>
 /// Event emitted when a console command is submitted by an operator.

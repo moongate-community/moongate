@@ -1,6 +1,7 @@
 using Moongate.Network.Client;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Server.Services.Spatial;
 
@@ -31,6 +32,12 @@ public sealed class FakeGameNetworkSessionService : IGameNetworkSessionService
     public bool TryGet(long sessionId, out GameSession session)
     {
         session = _sessions.FirstOrDefault(item => item.SessionId == sessionId)!;
+        return session is not null;
+    }
+
+    public bool TryGetByCharacterId(Serial characterId, out GameSession session)
+    {
+        session = _sessions.FirstOrDefault(item => item.CharacterId == characterId)!;
         return session is not null;
     }
 }

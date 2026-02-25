@@ -1,4 +1,6 @@
-namespace Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Base;
+
+namespace Moongate.Server.Data.Events.Speech;
 
 /// <summary>
 /// Event emitted when the server sends a speech message to a specific session.

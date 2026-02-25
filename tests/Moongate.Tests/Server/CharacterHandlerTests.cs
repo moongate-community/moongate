@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Server.Services.Spatial;

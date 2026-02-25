@@ -1,6 +1,7 @@
 using Moongate.UO.Data.Ids;
+using Moongate.Server.Data.Events.Base;
 
-namespace Moongate.Server.Data.Events;
+namespace Moongate.Server.Data.Events.Characters;
 
 /// <summary>
 /// Event emitted when a player character has completed login initialization.

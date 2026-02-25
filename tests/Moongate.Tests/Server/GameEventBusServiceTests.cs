@@ -1,4 +1,6 @@
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Connections;
+using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Support;
 

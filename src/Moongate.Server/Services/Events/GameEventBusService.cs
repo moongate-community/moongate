@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Interfaces.Services.Events;
 using Serilog;
 

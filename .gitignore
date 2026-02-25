@@ -586,3 +586,4 @@ definitions.lua
 .worktrees
 
 dist/
+benchmarks/.compare

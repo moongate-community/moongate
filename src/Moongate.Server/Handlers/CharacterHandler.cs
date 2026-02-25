@@ -8,6 +8,7 @@ using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;

@@ -1,4 +1,4 @@
-namespace Moongate.Server.Data.Events;
+namespace Moongate.Server.Data.Events.Base;
 
 /// <summary>
 /// Base payload shared by game events.

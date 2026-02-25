@@ -451,6 +451,7 @@ Repository helper scripts in `scripts/`:
 - `scripts/run_aot.sh`: publishes and runs the server with NativeAOT settings for local AOT verification.
 - `scripts/run_benchmarks.sh`: runs BenchmarkDotNet benchmarks (`markdown` + `csv` exporters).
 - `scripts/run_benchmarks_compare.sh`: runs side-by-side `JIT vs NativeAOT` micro-benchmark comparison and writes `BenchmarkDotNet.Artifacts/results/aot-vs-jit.md`.
+- `scripts/run_benchmarks_lua.sh`: runs Lua script engine benchmarks only (JIT, MoonSharp is NativeAOT-incompatible). Accepts extra BenchmarkDotNet args.
 
 ## Benchmarks
 
@@ -475,6 +476,26 @@ Latest local snapshot (`2026-02-23`, `BenchmarkDotNet 0.14.0`, macOS `Darwin 25.
 | `QueueThroughputBenchmark.OutgoingQueueEnqueueThenDrain` | `24.309 us` | `-` |
 | `QueueThroughputBenchmark.MessageBusPublishThenDrain` | `9.725 us` | `-` |
 | `TimerWheelBenchmark.UpdateTicksDelta` | `2.893 us` | `4.05 KB` |
+
+### Lua Script Engine
+
+Run locally:
+
+```bash
+./scripts/run_benchmarks_lua.sh
+```
+
+> Note: MoonSharp relies on reflection and dynamic code generation — NativeAOT is not supported for this suite.
+
+Latest local snapshot (`2026-02-25`, `BenchmarkDotNet 0.15.8`, macOS `Darwin 25.3.0`, Apple `M4 Max`, `.NET 10.0`):
+
+| Benchmark | Mean | Allocated |
+|---|---:|---:|
+| `LuaScriptEngineBenchmark.ExecuteSimpleScriptCached` | `328.87 ns` | `800 B` |
+| `LuaScriptEngineBenchmark.ExecuteLoopScriptCached` | `5.68 us` | `19.67 KB` |
+| `LuaScriptEngineBenchmark.ExecuteSimpleScriptUncached` | `6.28 us` | `6.12 KB` |
+| `LuaScriptEngineBenchmark.CallFunctionNoArgs` | `49.22 ns` | `256 B` |
+| `LuaScriptEngineBenchmark.CallFunctionWithArgs` | `135.40 ns` | `864 B` |
 
 Generated reports are stored in:
 

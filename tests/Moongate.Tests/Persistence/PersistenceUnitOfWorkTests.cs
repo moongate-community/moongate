@@ -715,6 +715,7 @@ public class PersistenceUnitOfWorkTests
                 Rarity = ItemRarity.Rare,
                 ItemId = 0x0EED,
                 Hue = 0x0481,
+                MapId = 1,
                 Location = new(10, 20, 0),
                 ParentContainerId = (Serial)0x40000020,
                 ContainerPosition = new(42, 84),
@@ -785,6 +786,7 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem.IsStackable, Is.False);
                 Assert.That(loadedItem.Rarity, Is.EqualTo(ItemRarity.Rare));
                 Assert.That(loadedItem.Hue, Is.EqualTo(0x0481));
+                Assert.That(loadedItem.MapId, Is.EqualTo(1));
                 Assert.That(loadedItem.EquippedMobileId, Is.EqualTo((Serial)0x00000010));
                 Assert.That(loadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
                 Assert.That(loadedItem.ContainedItemIds, Has.Count.EqualTo(2));

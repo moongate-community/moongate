@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Events;
