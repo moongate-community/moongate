@@ -42,6 +42,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 
 - [Project Goals](#project-goals)
 - [Project Story](#project-story)
+- [Frontend Preview](#frontend-preview)
 - [Current Status](#current-status)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
@@ -76,6 +77,13 @@ Special thanks to the teams and contributors behind these projects, which strong
 You can read the background and motivation behind Moongate v2 here:
 
 - <https://orivega.io/moongate-v2-rewriting-a-ultima-online-server-from-scratch-because-i-wanted-to/>
+
+## Frontend Preview
+
+I hate building frontend myself, so thanks to Codex I started adding a UI layer in `ui/`.
+
+![UI Screen 1](images/ui/ui_screen1.png)
+![UI Screen 2](images/ui/ui_screen2.png)
 
 ## Current Status
 
