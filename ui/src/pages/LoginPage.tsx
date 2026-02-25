@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Button, Card, CardBody, CardHeader, Input } from '@heroui/react'
+import { Button, Input } from '@heroui/react'
 import { api } from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import type { AuthUser } from '../store/authStore'
@@ -18,26 +18,103 @@ export function LoginPage() {
     e.preventDefault()
     setError(null)
     setLoading(true)
-
     try {
       const user = await api.post<AuthUser>('/auth/login', { username, password })
       login(user)
       navigate('/dashboard', { replace: true })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(err instanceof Error ? err.message : 'Authentication failed')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="flex flex-col gap-1 px-6 pt-6">
-          <h1 className="text-2xl font-bold">Moongate</h1>
-          <p className="text-default-500 text-sm">Admin Panel</p>
-        </CardHeader>
-        <CardBody className="px-6 pb-6">
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{ background: '#080c14' }}
+    >
+      {/* background grid */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(240,160,20,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(240,160,20,0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '48px 48px',
+        }}
+      />
+
+      {/* corner decorations */}
+      <div className="absolute top-8 left-8 opacity-20">
+        <div style={{ width: 32, height: 32, borderTop: '1px solid #f0a014', borderLeft: '1px solid #f0a014' }} />
+      </div>
+      <div className="absolute top-8 right-8 opacity-20">
+        <div style={{ width: 32, height: 32, borderTop: '1px solid #f0a014', borderRight: '1px solid #f0a014' }} />
+      </div>
+      <div className="absolute bottom-8 left-8 opacity-20">
+        <div style={{ width: 32, height: 32, borderBottom: '1px solid #f0a014', borderLeft: '1px solid #f0a014' }} />
+      </div>
+      <div className="absolute bottom-8 right-8 opacity-20">
+        <div style={{ width: 32, height: 32, borderBottom: '1px solid #f0a014', borderRight: '1px solid #f0a014' }} />
+      </div>
+
+      {/* login card */}
+      <div
+        className="relative w-full max-w-sm animate-fade-in"
+        style={{
+          background: 'rgba(13,18,32,0.9)',
+          border: '1px solid #1e2840',
+          borderRadius: '12px',
+          boxShadow: '0 0 0 1px rgba(240,160,20,0.06), 0 24px 64px rgba(0,0,0,0.6)',
+          backdropFilter: 'blur(12px)',
+        }}
+      >
+        {/* top amber line */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '15%',
+            right: '15%',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, #f0a014, transparent)',
+            borderRadius: '1px',
+          }}
+        />
+
+        <div className="px-8 pt-9 pb-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <span
+                style={{
+                  fontSize: '32px',
+                  color: '#f0a014',
+                  filter: 'drop-shadow(0 0 12px rgba(240,160,20,0.6))',
+                  display: 'block',
+                  lineHeight: 1,
+                }}
+              >
+                ⬡
+              </span>
+            </div>
+            <h1
+              className="font-cinzel font-semibold tracking-widest uppercase mb-1"
+              style={{ color: '#f0a014', fontSize: '18px', letterSpacing: '0.25em' }}
+            >
+              Moongate
+            </h1>
+            <p
+              className="font-mono text-xs tracking-widest"
+              style={{ color: 'rgba(226,217,200,0.35)', letterSpacing: '0.2em' }}
+            >
+              ADMIN PANEL
+            </p>
+          </div>
+
+          {/* Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <Input
               label="Username"
@@ -45,6 +122,11 @@ export function LoginPage() {
               onValueChange={setUsername}
               autoComplete="username"
               isRequired
+              classNames={{
+                inputWrapper: 'bg-content2 border-divider data-[hover=true]:border-primary',
+                label: 'text-default-400 font-mono text-xs tracking-wider',
+                input: 'font-mono text-sm',
+              }}
             />
             <Input
               label="Password"
@@ -53,16 +135,41 @@ export function LoginPage() {
               onValueChange={setPassword}
               autoComplete="current-password"
               isRequired
+              classNames={{
+                inputWrapper: 'bg-content2 border-divider data-[hover=true]:border-primary',
+                label: 'text-default-400 font-mono text-xs tracking-wider',
+                input: 'font-mono text-sm',
+              }}
             />
+
             {error && (
-              <p className="text-danger text-sm">{error}</p>
+              <div
+                className="flex items-center gap-2 px-3 py-2 rounded-md font-mono text-xs"
+                style={{
+                  background: 'rgba(239,68,68,0.08)',
+                  border: '1px solid rgba(239,68,68,0.2)',
+                  color: '#ef4444',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                <span>⚠</span>
+                <span>{error}</span>
+              </div>
             )}
-            <Button type="submit" color="primary" isLoading={loading} fullWidth>
-              Login
+
+            <Button
+              type="submit"
+              color="primary"
+              isLoading={loading}
+              fullWidth
+              className="font-mono tracking-widest uppercase text-sm mt-2"
+              style={{ letterSpacing: '0.18em', height: '44px' }}
+            >
+              {loading ? 'Authenticating...' : 'Enter'}
             </Button>
           </form>
-        </CardBody>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

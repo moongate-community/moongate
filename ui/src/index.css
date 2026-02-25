@@ -1,3 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --mg-amber: #f0a014;
+    --mg-amber-dim: rgba(240, 160, 20, 0.12);
+    --mg-amber-glow: rgba(240, 160, 20, 0.25);
+    --mg-bg: #080c14;
+    --mg-surface: #0d1220;
+    --mg-border: #1e2840;
+  }
+
+  html {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--mg-bg);
+  }
+
+  body {
+    background-color: var(--mg-bg);
+    /* subtle scanline texture */
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.012) 2px,
+      rgba(255, 255, 255, 0.012) 4px
+    );
+  }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--mg-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--mg-border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--mg-amber); }
+}
+
+@layer utilities {
+  .font-cinzel { font-family: 'Cinzel', serif; }
+  .font-mono   { font-family: 'JetBrains Mono', monospace; }
+
+  .amber-glow {
+    box-shadow: 0 0 0 1px var(--mg-amber-glow), 0 0 20px var(--mg-amber-dim);
+  }
+
+  .amber-glow-text {
+    text-shadow: 0 0 12px rgba(240, 160, 20, 0.5);
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out forwards;
+  }
+}
