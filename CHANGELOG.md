@@ -1,3 +1,9 @@
+## [0.16.2](https://github.com/moongate-community/moongatev2/compare/v0.16.1...v0.16.2) (2026-02-24)
+
+### Bug Fixes
+
+* **scripting:** await Lua metadata generation during startup ([f0db82d](https://github.com/moongate-community/moongatev2/commit/f0db82d4aed92c5fb9304a64d49aa86a844b7753))
+
 ## [0.16.1](https://github.com/moongate-community/moongatev2/compare/v0.16.0...v0.16.1) (2026-02-24)
 
 ### Bug Fixes
