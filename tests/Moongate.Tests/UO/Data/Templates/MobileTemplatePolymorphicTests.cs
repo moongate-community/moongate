@@ -2,6 +2,7 @@ using System.Text.Json;
 using Moongate.Core.Json;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Templates.Mobiles;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.UO.Data.Templates;
 
@@ -44,9 +45,37 @@ public class MobileTemplatePolymorphicTests
                        "dexterity": 45,
                        "intelligence": 25,
                        "hits": 120,
+                       "maxHits": 135,
                        "mana": 25,
                        "stamina": 80,
+                       "minDamage": 4,
+                       "maxDamage": 10,
+                       "armorRating": 22,
+                       "fame": 800,
+                       "karma": -600,
+                       "notoriety": "Murdered",
                        "brain": "aggressive_orc",
+                       "sounds": {
+                         "StartAttack": 427,
+                         "Idle": 428,
+                         "Attack": 429,
+                         "Defend": 430,
+                         "Die": 431
+                       },
+                       "goldDrop": "dice(1d13+3)",
+                       "lootTables": ["bonearmor", "randomgems"],
+                       "skills": {
+                         "wrestling": 425,
+                         "tactics": 425
+                       },
+                       "tamingDifficulty": 0,
+                       "provocationDifficulty": 342,
+                       "pacificationDifficulty": 342,
+                       "controlSlots": 1,
+                       "canRun": true,
+                       "fleesAtHitsPercent": -1,
+                       "spellAttackType": 8,
+                       "spellAttackDelay": 3,
                        "fixedEquipment": [],
                        "randomEquipment": []
                      }
@@ -70,6 +99,14 @@ public class MobileTemplatePolymorphicTests
                 Assert.That(mobile.Body, Is.EqualTo(0x11));
                 Assert.That(mobile.SkinHue.IsRange, Is.True);
                 Assert.That(mobile.HairHue.IsRange, Is.True);
+                Assert.That(mobile.Notoriety, Is.EqualTo(Notoriety.Murdered));
+                Assert.That(mobile.GoldDrop.IsDiceExpression, Is.True);
+                Assert.That(mobile.LootTables, Is.EquivalentTo(new[] { "bonearmor", "randomgems" }));
+                Assert.That(mobile.Sounds[MobileSoundType.StartAttack], Is.EqualTo(0x1AB));
+                Assert.That(mobile.Sounds[MobileSoundType.Die], Is.EqualTo(0x1AF));
+                Assert.That(mobile.Skills["wrestling"], Is.EqualTo(425));
+                Assert.That(mobile.MinDamage, Is.EqualTo(4));
+                Assert.That(mobile.MaxDamage, Is.EqualTo(10));
                 Assert.That(mobile.Brain, Is.EqualTo("aggressive_orc"));
             }
         );

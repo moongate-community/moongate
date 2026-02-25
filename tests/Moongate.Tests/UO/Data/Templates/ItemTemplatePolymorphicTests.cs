@@ -41,6 +41,23 @@ public class ItemTemplatePolymorphicTests
                        "hue": "hue(10:80)",
                        "goldValue": "dice(2d8+12)",
                        "weight": 4,
+                       "weightmax": 40000,
+                       "maxitems": 125,
+                       "lodamage": 4,
+                       "hidamage": 8,
+                       "def": 12,
+                       "hp": 35,
+                       "spd": 30,
+                       "str": 10,
+                       "stradd": 2,
+                       "dex": 6,
+                       "dexadd": 1,
+                       "int": 3,
+                       "intadd": 0,
+                       "ammo": "0x0f3f",
+                       "ammofx": "0x1bfe",
+                       "maxrange": 8,
+                       "baserange": 2,
                        "dyeable": true,
                        "lootType": "Regular",
                        "stackable": false,
@@ -74,6 +91,15 @@ public class ItemTemplatePolymorphicTests
                 Assert.That(item.Hue.Max, Is.EqualTo(80));
                 Assert.That(item.GoldValue.IsDiceExpression, Is.True);
                 Assert.That(item.GoldValue.DiceExpression, Is.EqualTo("2d8+12"));
+                Assert.That(item.WeightMax, Is.EqualTo(40000));
+                Assert.That(item.MaxItems, Is.EqualTo(125));
+                Assert.That(item.LowDamage, Is.EqualTo(4));
+                Assert.That(item.HighDamage, Is.EqualTo(8));
+                Assert.That(item.Defense, Is.EqualTo(12));
+                Assert.That(item.Ammo, Is.EqualTo(0x0F3F));
+                Assert.That(item.AmmoFx, Is.EqualTo(0x1BFE));
+                Assert.That(item.MaxRange, Is.EqualTo(8));
+                Assert.That(item.BaseRange, Is.EqualTo(2));
             }
         );
     }
