@@ -42,6 +42,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 
 - [Project Goals](#project-goals)
 - [Project Story](#project-story)
+- [Frontend Preview](#frontend-preview)
 - [Current Status](#current-status)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
@@ -76,6 +77,13 @@ Special thanks to the teams and contributors behind these projects, which strong
 You can read the background and motivation behind Moongate v2 here:
 
 - <https://orivega.io/moongate-v2-rewriting-a-ultima-online-server-from-scratch-because-i-wanted-to/>
+
+## Frontend Preview
+
+I hate building frontend myself, so thanks to Codex I started adding a UI layer in `ui/`.
+
+![UI Screen 1](images/ui/ui_screen1.png)
+![UI Screen 2](images/ui/ui_screen2.png)
 
 ## Current Status
 
@@ -344,7 +352,7 @@ export MOONGATE_ADMIN_PASSWORD="change-me-now"
 
 7. Verify runtime:
    - Game TCP server: port `2593`
-   - HTTP endpoints (default): `http://localhost:8088/health`, `http://localhost:8088/metrics`, `http://localhost:8088/scalar`
+   - HTTP endpoints (default): `http://localhost:8088/`, `http://localhost:8088/health`, `http://localhost:8088/metrics`, `http://localhost:8088/scalar`
    - Logs: `MOONGATE_ROOT_DIRECTORY/logs`
 
 ## Quick Start
@@ -374,6 +382,12 @@ HTTP service defaults:
 - Health endpoint: `/health`
 - OpenAPI JSON: `/openapi/v1.json`
 - Scalar UI: `/scalar`
+- Users API:
+  - `GET /api/users`
+  - `GET /api/users/{accountId}`
+  - `POST /api/users`
+  - `PUT /api/users/{accountId}`
+  - `DELETE /api/users/{accountId}`
 
 ## Command System
 
@@ -546,10 +560,12 @@ docker run --rm -it \
 ```
 
 The Docker image publishes a NativeAOT binary and runs it on Alpine (`linux-musl` runtime).
+It also builds the frontend in `ui/` and serves it from `/` via the HTTP service.
 Container defaults:
 
 - `MOONGATE_ROOT_DIRECTORY=/app`
 - `MOONGATE_UO_DIRECTORY=/uo`
+- `MOONGATE_UI_DIST=/opt/moongate/ui/dist`
 
 `/path/host/uo-client` must contain required UO client files (e.g. `client.exe`).
 

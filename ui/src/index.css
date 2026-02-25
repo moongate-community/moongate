@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@plugin './hero.ts';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  :root {
+    --mg-bg:       #1f1c2a;
+    --mg-bg-soft:  #343455;
+    --mg-surface:  #3c4d81;
+    --mg-accent:   #6aa5da;
+    --mg-accent-2: #7675c3;
+    --mg-text:     #f9f4ed;
+    --mg-muted:    #b9bbd3;
+    --mg-border:   rgba(106, 165, 218, 0.22);
+  }
+
+  html {
+    font-family: 'Outfit', sans-serif;
+    background: radial-gradient(circle at top right, #3c4d81 0%, #242130 46%, #1f1c2a 100%);
+    background-attachment: fixed;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--mg-bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(106,165,218,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--mg-accent); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in   { animation: fade-in 0.4s ease-out forwards; }
+.animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.font-cinzel { font-family: 'Cinzel', serif; }
+.font-mono   { font-family: 'JetBrains Mono', monospace; }

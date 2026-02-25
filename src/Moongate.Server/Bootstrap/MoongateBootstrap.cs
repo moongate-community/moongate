@@ -12,10 +12,11 @@ using Moongate.Core.Types;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Connections;
+using Moongate.Server.Data.Version;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Interfaces;
@@ -28,10 +29,10 @@ using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
+using Moongate.Server.Services.Http.Facades;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
-using Moongate.Server.Data.Version;
 using Serilog;
 using Serilog.Filters;
 
@@ -257,6 +258,8 @@ public sealed class MoongateBootstrap : IDisposable
         var configuration = new LoggerConfiguration()
                             .MinimumLevel
                             .Is(_moongateConfig.LogLevel.ToSerilogLogLevel())
+                            .Enrich
+                            .WithDemystifiedStackTraces()
                             .WriteTo
                             .File(
                                 appLogPath,
@@ -324,54 +327,46 @@ public sealed class MoongateBootstrap : IDisposable
 
     private void RegisterHttpServer()
     {
-        if (_moongateConfig.Http.IsEnabled)
-        {
-            _container.RegisterMoongateService<IMoongateHttpService, MoongateHttpService>(200);
-            _logger.Information("HTTP Server enabled.");
-            var jwtSigningKey = ResolveHttpJwtSigningKey();
-
-            var httpServiceOptions = new MoongateHttpServiceOptions
-            {
-                DirectoriesConfig = _directoriesConfig,
-                IsOpenApiEnabled = _moongateConfig.Http.IsOpenApiEnabled,
-                Port = _moongateConfig.Http.Port,
-                ServiceMappings = null,
-                MinimumLogLevel = _moongateConfig.LogLevel.ToSerilogLogLevel(),
-                MetricsSnapshotFactory = CreateHttpMetricsSnapshot,
-                Jwt = new()
-                {
-                    IsEnabled = _moongateConfig.Http.Jwt.IsEnabled,
-                    SigningKey = jwtSigningKey,
-                    Issuer = _moongateConfig.Http.Jwt.Issuer,
-                    Audience = _moongateConfig.Http.Jwt.Audience,
-                    ExpirationMinutes = _moongateConfig.Http.Jwt.ExpirationMinutes
-                },
-                AuthenticateUserAsync = async (username, password, _) =>
-                                        {
-                                            var accountService = _container.Resolve<IAccountService>();
-                                            var account = await accountService.LoginAsync(username, password);
-
-                                            if (account is null)
-                                            {
-                                                return null;
-                                            }
-
-                                            return new()
-                                            {
-                                                AccountId = account.Id.Value.ToString(),
-                                                Username = account.Username,
-                                                Role = account.AccountType.ToString()
-                                            };
-                                        }
-            };
-
-            _container.RegisterInstance(httpServiceOptions);
-        }
-        else
+        if (!_moongateConfig.Http.IsEnabled)
         {
             _logger.Information("HTTP Server disabled.");
+
+            return;
         }
+
+        _container.RegisterMoongateService<IMoongateHttpService, MoongateHttpService>(200);
+        _logger.Information("HTTP Server enabled.");
+        _container.RegisterInstance(CreateHttpServiceOptions());
     }
+
+    private MoongateHttpServiceOptions CreateHttpServiceOptions()
+    {
+        var jwtSigningKey = ResolveHttpJwtSigningKey();
+
+        return new()
+        {
+            DirectoriesConfig = _directoriesConfig,
+            IsOpenApiEnabled = _moongateConfig.Http.IsOpenApiEnabled,
+            Port = _moongateConfig.Http.Port,
+            ServiceMappings = null,
+            MinimumLogLevel = _moongateConfig.LogLevel.ToSerilogLogLevel(),
+            MetricsSnapshotFactory = CreateHttpMetricsSnapshot,
+            Jwt = new()
+            {
+                IsEnabled = _moongateConfig.Http.Jwt.IsEnabled,
+                SigningKey = jwtSigningKey,
+                Issuer = _moongateConfig.Http.Jwt.Issuer,
+                Audience = _moongateConfig.Http.Jwt.Audience,
+                ExpirationMinutes = _moongateConfig.Http.Jwt.ExpirationMinutes
+            },
+            AuthFacade = new MoongateHttpAuthFacade(ResolveAccountService),
+            UsersFacade = new MoongateHttpUsersFacade(ResolveAccountService)
+        };
+    }
+
+    private IAccountService ResolveAccountService()
+        => _container.Resolve<IAccountService>();
+
 
     private void RegisterPacketHandlers()
     {
@@ -387,7 +382,7 @@ public sealed class MoongateBootstrap : IDisposable
                 VersionUtils.Version
             )
         );
-        Scripting.Generated.ScriptModuleRegistry.Register(_container);
+        ScriptModuleRegistry.Register(_container);
         Generated.ScriptModuleRegistry.Register(_container);
 
         if (!_container.IsRegistered<List<ScriptModuleData>>())
@@ -451,4 +446,5 @@ public sealed class MoongateBootstrap : IDisposable
             await service.StopAsync();
         }
     }
+
 }

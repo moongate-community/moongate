@@ -5,6 +5,8 @@ using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Persistence.Services.Persistence;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events.Persistence;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Timing;
@@ -23,6 +25,8 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
     private readonly Lock _metricsSync = new();
     private PersistenceMetricsSnapshot _metricsSnapshot = new(0, 0, null, 0);
 
+    private readonly IGameEventBusService _gameEventBusService;
+
     private readonly ITimerService _timerService;
     private readonly MoongatePersistenceConfig _persistenceConfig;
     private string? _dbSaveTimerId;
@@ -30,7 +34,8 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
     public PersistenceService(
         DirectoriesConfig directoriesConfig,
         ITimerService timerService,
-        MoongateConfig moongateConfig
+        MoongateConfig moongateConfig,
+        IGameEventBusService gameEventBusService
     )
     {
         ArgumentNullException.ThrowIfNull(directoriesConfig);
@@ -40,6 +45,7 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
 
         _directoriesConfig = directoriesConfig;
         _timerService = timerService;
+        _gameEventBusService = gameEventBusService;
         _persistenceConfig = moongateConfig.Persistence;
 
         var saveDirectory = directoriesConfig[DirectoryType.Save];
@@ -71,13 +77,21 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
 
     public async Task SaveAsync(CancellationToken cancellationToken = default)
     {
+        await _gameEventBusService.PublishAsync(new DatabaseSavingStartEvent(), cancellationToken);
+
         _logger.Verbose("Persistence service save requested");
+
         await SaveSnapshotWithMetricsAsync(cancellationToken);
+
         _logger.Verbose(
             "Persistence service save completed in {ElapsedMs} ms (TotalSaves={TotalSaves}, SaveErrors={SaveErrors})",
             GetMetricsSnapshot().LastSaveDurationMs,
             GetMetricsSnapshot().TotalSaves,
             GetMetricsSnapshot().SaveErrors
+        );
+        await _gameEventBusService.PublishAsync(
+            new DatabaseSavedEvent(GetMetricsSnapshot().LastSaveDurationMs),
+            cancellationToken
         );
     }
 
@@ -93,7 +107,7 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
             {
                 try
                 {
-                    SaveSnapshotWithMetricsAsync().GetAwaiter().GetResult();
+                    SaveAsync().GetAwaiter().GetResult();
                     _logger.Debug("Automatic DB save completed in {ElapsedMs} ms", GetMetricsSnapshot().LastSaveDurationMs);
                 }
                 catch (Exception ex)

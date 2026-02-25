@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Config;
+using Moongate.Tests.Server.Support;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -134,7 +135,7 @@ public class PersistenceServiceTests
             }
         };
 
-        var service = new PersistenceService(directories, timerSpy, config);
+        var service = new PersistenceService(directories, timerSpy, config, new NetworkServiceTestGameEventBusService());
         await service.StartAsync();
 
         Assert.That(timerSpy.LastInterval, Is.EqualTo(TimeSpan.FromSeconds(12)));
@@ -150,6 +151,7 @@ public class PersistenceServiceTests
                     WheelSize = 512
                 }
             ),
-            new()
+            new(),
+            new NetworkServiceTestGameEventBusService()
         );
 }

@@ -22,7 +22,7 @@ public sealed class CommandSystemTestAccountService : IAccountService
     public Task<bool> CheckAccountExistsAsync(string username)
         => Task.FromResult(AccountExists);
 
-    public Task CreateAccountAsync(
+    public Task<UOAccountEntity?> CreateAccountAsync(
         string username,
         string password,
         string email,
@@ -35,13 +35,36 @@ public sealed class CommandSystemTestAccountService : IAccountService
         CreatedEmail = email;
         CreatedAccountType = accountType;
 
-        return Task.CompletedTask;
+        return Task.FromResult<UOAccountEntity?>(
+            new UOAccountEntity
+            {
+                Id = (Serial)1,
+                Username = username,
+                PasswordHash = password,
+                Email = email,
+                AccountType = accountType
+            }
+        );
     }
 
-    public Task DeleteAccountAsync(Serial accountId)
-        => Task.CompletedTask;
+    public Task<bool> DeleteAccountAsync(Serial accountId)
+        => Task.FromResult(true);
 
     public Task<UOAccountEntity?> GetAccountAsync(Serial accountId)
+        => Task.FromResult<UOAccountEntity?>(null);
+
+    public Task<IReadOnlyList<UOAccountEntity>> GetAccountsAsync(CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<UOAccountEntity>>([]);
+
+    public Task<UOAccountEntity?> UpdateAccountAsync(
+        Serial accountId,
+        string? username = null,
+        string? password = null,
+        string? email = null,
+        AccountType? accountType = null,
+        bool? isLocked = null,
+        CancellationToken cancellationToken = default
+    )
         => Task.FromResult<UOAccountEntity?>(null);
 
     public Task<UOAccountEntity?> LoginAsync(string username, string password)

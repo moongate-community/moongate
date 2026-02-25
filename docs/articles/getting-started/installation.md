@@ -65,11 +65,16 @@ docker run --rm -it \
   moongate-server:local
 ```
 
+The Docker image builds and bundles the frontend (`ui/`) and serves it at:
+
+- `http://localhost:8088/`
+
 Recommended env vars in container:
 
 - `MOONGATE_ROOT_DIRECTORY=/app`
 - `MOONGATE_UO_DIRECTORY=/uo`
 - `MOONGATE_IS_DOCKER=true`
+- `MOONGATE_UI_DIST=/opt/moongate/ui/dist`
 
 ## Verify Startup
 

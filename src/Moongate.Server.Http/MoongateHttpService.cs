@@ -1,21 +1,21 @@
 using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http.Data;
+using Moongate.Server.Http.Data.Results;
+using Moongate.Server.Http.Extensions;
+using Moongate.Server.Http.Interfaces.Facades;
+using Moongate.Server.Http.Internal;
+using Moongate.Server.Http.Internal.Facades;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Metrics.Data;
-using Scalar.AspNetCore;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -35,7 +35,11 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly Action<WebApplication> _configureApp;
     private readonly Func<MoongateHttpMetricsSnapshot?>? _metricsSnapshotFactory;
     private readonly MoongateHttpJwtOptions _jwtOptions;
-    private readonly Func<string, string, CancellationToken, Task<MoongateHttpAuthenticatedUser?>>? _authenticateUserAsync;
+    private readonly IHttpAuthFacade? _authFacade;
+    private readonly IHttpSystemFacade _systemFacade;
+    private readonly IHttpUsersFacade? _usersFacade;
+    private readonly bool _isUiEnabled;
+    private readonly string? _uiDistPath;
 
     private WebApplication? _app;
 
@@ -58,16 +62,20 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _configureApp = options.ConfigureApp ?? (_ => { });
         _metricsSnapshotFactory = options.MetricsSnapshotFactory;
         _jwtOptions = options.Jwt ?? new MoongateHttpJwtOptions();
-        _authenticateUserAsync = options.AuthenticateUserAsync;
+        _authFacade = options.AuthFacade;
+        _usersFacade = options.UsersFacade;
+        _systemFacade = options.SystemFacade ?? new DefaultHttpSystemFacade(_metricsSnapshotFactory, BuildPrometheusPayload);
+        _isUiEnabled = options.IsUiEnabled;
+        _uiDistPath = options.UiDistPath;
 
         if (_jwtOptions.IsEnabled && string.IsNullOrWhiteSpace(_jwtOptions.SigningKey))
         {
             throw new ArgumentException("JWT signing key must be configured when JWT is enabled.", nameof(options));
         }
 
-        if (_jwtOptions.IsEnabled && _authenticateUserAsync is null)
+        if (_jwtOptions.IsEnabled && _authFacade is null)
         {
-            throw new ArgumentException("AuthenticateUserAsync must be configured when JWT is enabled.", nameof(options));
+            throw new ArgumentException("AuthFacade must be configured when JWT is enabled.", nameof(options));
         }
     }
 
@@ -78,7 +86,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
             return;
         }
 
-        var builder = WebApplication.CreateSlimBuilder(Array.Empty<string>());
+        var builder = WebApplication.CreateSlimBuilder([]);
         var logPath = CreateLogPath(_directoriesConfig[DirectoryType.Logs]);
         var httpLogger = CreateHttpLogger(logPath, _minimumLogLevel);
 
@@ -95,7 +103,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         if (_jwtOptions.IsEnabled)
         {
-            ConfigureJwt(builder.Services, _jwtOptions);
+            builder.Services.ConfigureMoongateHttpJwt(_jwtOptions);
         }
 
         if (_isOpenApiEnabled)
@@ -105,6 +113,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         var app = builder.Build();
         app.UseSerilogRequestLogging();
+        var isUiServing = ConfigureUiHosting(app);
 
         if (_jwtOptions.IsEnabled)
         {
@@ -112,24 +121,19 @@ public sealed class MoongateHttpService : IMoongateHttpService
             app.UseAuthorization();
         }
 
-        app.MapGet("/", HandleRootAsync);
-        app.MapGet("/health", HandleHealthAsync);
-        app.MapGet("/metrics", HandleMetricsAsync);
+        var routeContext = new MoongateHttpRouteContext(
+            _systemFacade,
+            _jwtOptions,
+            _authFacade,
+            _usersFacade,
+            isUiServing
+        );
 
-        if (_jwtOptions.IsEnabled)
-        {
-            app.MapPost("/auth/login", HandleLoginAsync);
-        }
+        app.MapMoongateHttpRoutes(routeContext);
 
         if (_isOpenApiEnabled)
         {
-            app.MapOpenApi();
-            app.MapScalarApiReference(
-                options =>
-                {
-                    options.Theme = ScalarTheme.BluePlanet;
-                }
-            );
+            app.MapMoongateOpenApiRoutes();
         }
 
         _configureApp(app);
@@ -233,33 +237,6 @@ public sealed class MoongateHttpService : IMoongateHttpService
         return sb.ToString();
     }
 
-    private static void ConfigureJwt(IServiceCollection services, MoongateHttpJwtOptions options)
-    {
-        var keyBytes = Encoding.UTF8.GetBytes(options.SigningKey);
-        var key = new SymmetricSecurityKey(keyBytes);
-
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(
-                jwtOptions =>
-                {
-                    jwtOptions.TokenValidationParameters = new()
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = options.Issuer,
-                        ValidAudience = options.Audience,
-                        IssuerSigningKey = key,
-                        ClockSkew = TimeSpan.FromSeconds(30)
-                    };
-                }
-            );
-
-        services.AddAuthorization();
-    }
-
     private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
         => new LoggerConfiguration()
            .MinimumLevel
@@ -269,38 +246,6 @@ public sealed class MoongateHttpService : IMoongateHttpService
            .WriteTo
            .File(logPath, rollingInterval: RollingInterval.Day)
            .CreateLogger();
-
-    private static string CreateJwtToken(
-        MoongateHttpAuthenticatedUser user,
-        DateTimeOffset expiresAtUtc,
-        MoongateHttpJwtOptions options
-    )
-    {
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Username),
-            new(JwtRegisteredClaimNames.UniqueName, user.Username),
-            new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, user.Role),
-            new("account_id", user.AccountId)
-        };
-
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey)),
-            SecurityAlgorithms.HmacSha256
-        );
-
-        var token = new JwtSecurityToken(
-            options.Issuer,
-            options.Audience,
-            claims,
-            DateTime.UtcNow,
-            expiresAtUtc.UtcDateTime,
-            signingCredentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
 
     private static string CreateLogPath(string logDirectory)
     {
@@ -330,99 +275,6 @@ public sealed class MoongateHttpService : IMoongateHttpService
             MetricType.Histogram => "histogram",
             _                    => "untyped"
         };
-
-    private static Task HandleHealthAsync(HttpContext context)
-    {
-        context.Response.ContentType = "text/plain";
-
-        return context.Response.WriteAsync("ok");
-    }
-
-    private async Task HandleLoginAsync(HttpContext context)
-    {
-        var cancellationToken = context.RequestAborted;
-        var request = await context.Request.ReadFromJsonAsync(
-                          MoongateHttpJsonContext.Default.MoongateHttpLoginRequest,
-                          cancellationToken
-                      );
-
-        if (
-            request is null ||
-            string.IsNullOrWhiteSpace(request.Username) ||
-            string.IsNullOrWhiteSpace(request.Password)
-        )
-        {
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
-            await context.Response.WriteAsync("username and password are required", cancellationToken);
-
-            return;
-        }
-
-        var user = await _authenticateUserAsync!(request.Username, request.Password, cancellationToken);
-
-        if (user is null)
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-
-            return;
-        }
-
-        var expiresAtUtc = DateTimeOffset.UtcNow.AddMinutes(_jwtOptions.ExpirationMinutes);
-        var token = CreateJwtToken(user, expiresAtUtc, _jwtOptions);
-
-        var response = new MoongateHttpLoginResponse
-        {
-            AccessToken = token,
-            TokenType = "Bearer",
-            ExpiresAtUtc = expiresAtUtc,
-            AccountId = user.AccountId,
-            Username = user.Username,
-            Role = user.Role
-        };
-
-        context.Response.StatusCode = StatusCodes.Status200OK;
-        context.Response.ContentType = "application/json; charset=utf-8";
-        await JsonSerializer.SerializeAsync(
-            context.Response.Body,
-            response,
-            MoongateHttpJsonContext.Default.MoongateHttpLoginResponse,
-            cancellationToken
-        );
-    }
-
-    private async Task HandleMetricsAsync(HttpContext context)
-    {
-        if (_metricsSnapshotFactory is null)
-        {
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("metrics endpoint is not configured");
-
-            return;
-        }
-
-        var snapshot = _metricsSnapshotFactory();
-
-        if (snapshot is null)
-        {
-            context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;
-            context.Response.ContentType = "text/plain";
-            await context.Response.WriteAsync("metrics are currently unavailable");
-
-            return;
-        }
-
-        context.Response.StatusCode = StatusCodes.Status200OK;
-        context.Response.ContentType = "text/plain; version=0.0.4";
-        await context.Response.WriteAsync(BuildPrometheusPayload(snapshot));
-    }
-
-    private static Task HandleRootAsync(HttpContext context)
-    {
-        context.Response.ContentType = "text/plain";
-
-        return context.Response.WriteAsync("Moongate HTTP Service is running.");
-    }
 
     private static string NormalizeLabelName(string value)
     {
@@ -488,5 +340,95 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
             services.AddSingleton(serviceType, implementationType);
         }
+    }
+
+    private bool ConfigureUiHosting(WebApplication app)
+    {
+        if (!_isUiEnabled)
+        {
+            return false;
+        }
+
+        var uiDistPath = ResolveUiDistPath(_uiDistPath);
+        if (uiDistPath is null)
+        {
+            Log.Debug("UI hosting enabled but no UI dist directory found. Checked common locations.");
+            return false;
+        }
+
+        var fileProvider = new PhysicalFileProvider(uiDistPath);
+        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+
+        var indexPath = Path.Combine(uiDistPath, "index.html");
+        app.MapFallback(
+            async context =>
+            {
+                if (!HttpMethods.IsGet(context.Request.Method) || ShouldSkipSpaFallback(context.Request.Path))
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+                    return;
+                }
+
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync(indexPath);
+            }
+        );
+
+        Log.Information("Serving UI static files from {UiDistPath}", uiDistPath);
+
+        return true;
+    }
+
+    private static string? ResolveUiDistPath(string? configuredPath)
+    {
+        if (!string.IsNullOrWhiteSpace(configuredPath))
+        {
+            var explicitPath = Path.GetFullPath(configuredPath);
+            if (Directory.Exists(explicitPath))
+            {
+                return explicitPath;
+            }
+        }
+
+        var envPath = Environment.GetEnvironmentVariable("MOONGATE_UI_DIST");
+        if (!string.IsNullOrWhiteSpace(envPath))
+        {
+            var resolvedEnvPath = Path.GetFullPath(envPath);
+            if (Directory.Exists(resolvedEnvPath))
+            {
+                return resolvedEnvPath;
+            }
+        }
+
+        var currentDirPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "ui", "dist"));
+        if (Directory.Exists(currentDirPath))
+        {
+            return currentDirPath;
+        }
+
+        var baseDirPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "ui", "dist"));
+        if (Directory.Exists(baseDirPath))
+        {
+            return baseDirPath;
+        }
+
+        return null;
+    }
+
+    private static bool ShouldSkipSpaFallback(PathString path)
+    {
+        if (!path.HasValue)
+        {
+            return false;
+        }
+
+        return path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/auth", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/health", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/openapi", StringComparison.OrdinalIgnoreCase) ||
+               path.StartsWithSegments("/scalar", StringComparison.OrdinalIgnoreCase);
     }
 }

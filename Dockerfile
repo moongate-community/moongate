@@ -1,5 +1,15 @@
 # syntax=docker/dockerfile:1
 
+# Build frontend (Vite React app)
+FROM node:22-alpine AS ui-build
+WORKDIR /ui
+
+COPY ui/package.json ui/package-lock.json ./
+RUN npm ci
+
+COPY ui/ ./
+RUN npm run build
+
 # Use latest .NET 10 SDK with security updates
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS publish
 ARG BUILD_CONFIGURATION=Release
@@ -68,12 +78,14 @@ WORKDIR /opt/moongate
 RUN addgroup -S moongate && adduser -S -G moongate -h /app moongate
 
 COPY --from=publish /out/ ./
+COPY --from=ui-build /ui/dist ./ui/dist
 
 RUN mkdir -p /app /app/data /app/logs /app/scripts /uo && chown -R moongate:moongate /opt/moongate /app /uo
 
 ENV MOONGATE_ROOT_DIRECTORY=/app
 ENV MOONGATE_UO_DIRECTORY=/uo
 ENV MOONGATE_IS_DOCKER=true
+ENV MOONGATE_UI_DIST=/opt/moongate/ui/dist
 EXPOSE 2593/tcp
 
 USER moongate

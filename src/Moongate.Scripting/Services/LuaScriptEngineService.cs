@@ -300,7 +300,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         }
         else
         {
-            _logger.Warning("Lua function {FunctionName} not found or is not a function", functionName);
+            _logger.Debug("Lua function {FunctionName} not found or is not a function", functionName);
         }
     }
 

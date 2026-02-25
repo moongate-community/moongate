@@ -29,13 +29,20 @@ public class AccountService : IAccountService
         return exists;
     }
 
-    public async Task CreateAccountAsync(
+    public async Task<UOAccountEntity?> CreateAccountAsync(
         string username,
         string password,
         string email = "",
         AccountType accountType = AccountType.Regular
     )
     {
+        if (await _persistenceService.UnitOfWork.Accounts.ExistsAsync(a => a.Username == username))
+        {
+            _logger.Warning("Account with username {Username} already exists", username);
+
+            return null;
+        }
+
         var account = new UOAccountEntity
         {
             Id = _persistenceService.UnitOfWork.AllocateNextAccountId(),
@@ -51,14 +58,16 @@ public class AccountService : IAccountService
         if (result)
         {
             _logger.Information("Created account with username {Username}", username);
+
+            return account;
         }
-        else
-        {
-            _logger.Error("Failed to create account with username {Username}", username);
-        }
+
+        _logger.Error("Failed to create account with username {Username}", username);
+
+        return null;
     }
 
-    public async Task DeleteAccountAsync(Serial accountId)
+    public async Task<bool> DeleteAccountAsync(Serial accountId)
     {
         var result = await _persistenceService.UnitOfWork.Accounts.RemoveAsync(accountId);
 
@@ -70,6 +79,8 @@ public class AccountService : IAccountService
         {
             _logger.Error("Failed to delete account with ID {AccountId}", accountId);
         }
+
+        return result;
     }
 
     public async Task<UOAccountEntity?> GetAccountAsync(Serial accountId)
@@ -84,6 +95,71 @@ public class AccountService : IAccountService
         {
             _logger.Warning("No account found with ID {AccountId}", accountId);
         }
+
+        return account;
+    }
+
+    public async Task<IReadOnlyList<UOAccountEntity>> GetAccountsAsync(CancellationToken cancellationToken = default)
+    {
+        var accounts = await _persistenceService.UnitOfWork.Accounts.GetAllAsync(cancellationToken);
+
+        return accounts.OrderBy(static a => a.Id.Value).ToList();
+    }
+
+    public async Task<UOAccountEntity?> UpdateAccountAsync(
+        Serial accountId,
+        string? username = null,
+        string? password = null,
+        string? email = null,
+        AccountType? accountType = null,
+        bool? isLocked = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var account = await _persistenceService.UnitOfWork.Accounts.GetByIdAsync(accountId, cancellationToken);
+        if (account is null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(username) &&
+            !username.Equals(account.Username, StringComparison.Ordinal))
+        {
+            var exists = await _persistenceService.UnitOfWork.Accounts.ExistsAsync(
+                             a => a.Username == username && a.Id != accountId,
+                             cancellationToken
+                         );
+            if (exists)
+            {
+                _logger.Warning("Cannot update account {AccountId}: username {Username} already exists", accountId, username);
+
+                return null;
+            }
+
+            account.Username = username;
+        }
+
+        if (!string.IsNullOrWhiteSpace(password))
+        {
+            account.PasswordHash = HashUtils.HashPassword(password);
+        }
+
+        if (email is not null)
+        {
+            account.Email = email;
+        }
+
+        if (accountType.HasValue)
+        {
+            account.AccountType = accountType.Value;
+        }
+
+        if (isLocked.HasValue)
+        {
+            account.IsLocked = isLocked.Value;
+        }
+
+        await _persistenceService.UnitOfWork.Accounts.UpsertAsync(account, cancellationToken);
 
         return account;
     }

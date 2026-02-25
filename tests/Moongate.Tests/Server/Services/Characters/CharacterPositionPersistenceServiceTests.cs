@@ -10,6 +10,7 @@ using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
 using Moongate.Tests.Server.Services.Spatial;
+using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -140,7 +141,8 @@ public sealed class CharacterPositionPersistenceServiceTests
                     WheelSize = 512
                 }
             ),
-            new()
+            new(),
+            new NetworkServiceTestGameEventBusService()
         );
         await persistence.StartAsync();
 

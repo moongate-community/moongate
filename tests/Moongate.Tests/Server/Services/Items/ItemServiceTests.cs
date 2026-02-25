@@ -4,6 +4,7 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
+using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -595,7 +596,8 @@ public class ItemServiceTests
                     WheelSize = 512
                 }
             ),
-            new()
+            new(),
+            new NetworkServiceTestGameEventBusService()
         );
         await persistence.StartAsync();
 
