@@ -84,6 +84,54 @@ public class LuaDocumentationGeneratorTests
     }
 
     [Test]
+    public void GenerateDocumentation_WhenSpeechModuleIsGenerated_ShouldContainSpeechFunctions()
+    {
+        LuaDocumentationGenerator.ClearCaches();
+
+        var docs = LuaDocumentationGenerator.GenerateDocumentation(
+            "Moongate",
+            "0.0.0",
+            [new(typeof(SpeechModule))],
+            [],
+            []
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(docs, Does.Contain("speech = {}"));
+                Assert.That(docs, Does.Contain("function speech.send("));
+                Assert.That(docs, Does.Contain("function speech.say("));
+                Assert.That(docs, Does.Contain("function speech.broadcast("));
+            }
+        );
+    }
+
+    [Test]
+    public void GenerateDocumentation_WhenMobileAndItemModulesAreGenerated_ShouldContainGetFunctions()
+    {
+        LuaDocumentationGenerator.ClearCaches();
+
+        var docs = LuaDocumentationGenerator.GenerateDocumentation(
+            "Moongate",
+            "0.0.0",
+            [new(typeof(MobileModule)), new(typeof(ItemModule))],
+            [],
+            []
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(docs, Does.Contain("mobile = {}"));
+                Assert.That(docs, Does.Contain("function mobile.get("));
+                Assert.That(docs, Does.Contain("item = {}"));
+                Assert.That(docs, Does.Contain("function item.get("));
+            }
+        );
+    }
+
+    [Test]
     public void GenerateDocumentation_WhenConstructorsAreGenerated_ShouldUseClassReturnType()
     {
         LuaDocumentationGenerator.ClearCaches();
