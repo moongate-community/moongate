@@ -64,6 +64,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IStartupTemplateService, StartupTemplateService>(Reuse.Singleton);
 
+
+
         return container;
     }
 }

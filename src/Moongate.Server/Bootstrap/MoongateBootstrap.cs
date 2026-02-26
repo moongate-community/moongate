@@ -9,6 +9,7 @@ using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
@@ -16,12 +17,14 @@ using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Connections;
+using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Metrics;
@@ -30,6 +33,7 @@ using Moongate.Server.Json;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.Server.Services.Http.Facades;
+using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
@@ -68,6 +72,39 @@ public sealed class MoongateBootstrap : IDisposable
         RegisterFileLoaders();
 
         RegisterPacketHandlers();
+
+        RegisterDefaultCommands();
+    }
+
+    private void RegisterDefaultCommands()
+    {
+        var commandService = _container.Resolve<ICommandSystemService>();
+
+        commandService.RegisterCommand(
+            "send_target",
+            async context =>
+            {
+                var eventBus = _container.Resolve<IGameEventBusService>();
+
+                await eventBus.PublishAsync(
+                    new TargetRequestCursorEvent(
+                        context.SessionId,
+                        TargetCursorSelectionType.SelectLocation,
+                        TargetCursorType.Helpful,
+                        callback =>
+                        {
+                            context.Print(
+                                "Target cursor callback invoked with selection: {0} ",
+                                callback.Packet.Location
+                            );
+                        }
+                    )
+                );
+            },
+            "Sends a target cursor to the specified player. Usage: send_target ",
+            CommandSourceType.InGame,
+            AccountType.Regular
+        );
     }
 
     public void Dispose()
@@ -367,7 +404,6 @@ public sealed class MoongateBootstrap : IDisposable
     private IAccountService ResolveAccountService()
         => _container.Resolve<IAccountService>();
 
-
     private void RegisterPacketHandlers()
     {
         BootstrapPacketHandlerRegistration.Register(_container);
@@ -446,5 +482,4 @@ public sealed class MoongateBootstrap : IDisposable
             await service.StopAsync();
         }
     }
-
 }

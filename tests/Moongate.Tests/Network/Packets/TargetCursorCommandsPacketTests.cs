@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Network.Spans;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Network.Packets;
@@ -14,15 +15,13 @@ public class TargetCursorCommandsPacketTests
     {
         var packet = new TargetCursorCommandsPacket(
             TargetCursorSelectionType.SelectLocation,
-            0x01020304,
+            (Serial)0x01020304u,
             TargetCursorType.Harmful
         )
         {
             ClickedOnId = (Serial)0x40000010u,
-            X = 0x1122,
-            Y = 0x3344,
+            Location = new Point3D(0x1122, 0x3344, -2),
             Unknown = 0x00,
-            Z = -2,
             Graphic = 0x5566
         };
 
@@ -71,13 +70,11 @@ public class TargetCursorCommandsPacketTests
             {
                 Assert.That(parsed, Is.True);
                 Assert.That(packet.CursorTarget, Is.EqualTo(TargetCursorSelectionType.SelectObject));
-                Assert.That(packet.CursorId, Is.EqualTo(0xAABBCCDDu));
+                Assert.That(packet.CursorId, Is.EqualTo((Serial)0xAABBCCDDu));
                 Assert.That(packet.CursorType, Is.EqualTo(TargetCursorType.Helpful));
                 Assert.That(packet.ClickedOnId, Is.EqualTo((Serial)0x40000042u));
-                Assert.That(packet.X, Is.EqualTo(0x0102));
-                Assert.That(packet.Y, Is.EqualTo(0x0304));
+                Assert.That(packet.Location, Is.EqualTo(new Point3D(0x0102, 0x0304, -2)));
                 Assert.That(packet.Unknown, Is.EqualTo(0x00));
-                Assert.That(packet.Z, Is.EqualTo(-2));
                 Assert.That(packet.Graphic, Is.EqualTo(0x0EED));
             }
         );
@@ -93,7 +90,7 @@ public class TargetCursorCommandsPacketTests
             () =>
             {
                 Assert.That(packet.CursorTarget, Is.EqualTo(TargetCursorSelectionType.SelectObject));
-                Assert.That(packet.CursorId, Is.EqualTo(0u));
+                Assert.That(packet.CursorId, Is.EqualTo((Serial)0u));
                 Assert.That(packet.CursorType, Is.EqualTo(TargetCursorType.CancelCurrentTargeting));
                 Assert.That(data, Is.EqualTo(new byte[19] { 0x6C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }));
             }

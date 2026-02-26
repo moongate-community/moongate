@@ -132,7 +132,9 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
 
         var context = new CommandSystemContext(
             commandWithArgs,
-            tokens.Skip(1).ToArray(),
+            [.. tokens.Skip(1)],
+            source,
+            session?.SessionId ?? -1,
             (message, level) => WriteCommandOutput(source, session, level, message)
         );
 

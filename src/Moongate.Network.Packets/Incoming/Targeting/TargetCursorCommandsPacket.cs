@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Network.Spans;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Network.Packets.Incoming.Targeting;
@@ -15,26 +16,22 @@ public class TargetCursorCommandsPacket : BaseGameNetworkPacket
 {
     public TargetCursorSelectionType CursorTarget { get; set; }
 
-    public uint CursorId { get; set; }
+    public Serial CursorId { get; set; }
 
     public TargetCursorType CursorType { get; set; }
 
     public Serial ClickedOnId { get; set; }
 
-    public ushort X { get; set; }
-
-    public ushort Y { get; set; }
+    public Point3D Location { get; set; }
 
     public byte Unknown { get; set; }
-
-    public sbyte Z { get; set; }
 
     public ushort Graphic { get; set; }
 
     public TargetCursorCommandsPacket()
         : base(0x6C, 19) { }
 
-    public TargetCursorCommandsPacket(TargetCursorSelectionType cursorTarget, uint cursorId, TargetCursorType cursorType)
+    public TargetCursorCommandsPacket(TargetCursorSelectionType cursorTarget, Serial cursorId, TargetCursorType cursorType)
         : this()
     {
         CursorTarget = cursorTarget;
@@ -46,19 +43,19 @@ public class TargetCursorCommandsPacket : BaseGameNetworkPacket
     /// Creates a server-side cancel cursor command.
     /// </summary>
     public static TargetCursorCommandsPacket CreateCancelCurrentTarget()
-        => new(TargetCursorSelectionType.SelectObject, 0, TargetCursorType.CancelCurrentTargeting);
+        => new(TargetCursorSelectionType.SelectObject, (Serial)0u, TargetCursorType.CancelCurrentTargeting);
 
     public override void Write(ref SpanWriter writer)
     {
         writer.Write(OpCode);
         writer.Write((byte)CursorTarget);
-        writer.Write(CursorId);
+        writer.Write((uint)CursorId);
         writer.Write((byte)CursorType);
         writer.Write((uint)ClickedOnId);
-        writer.Write(X);
-        writer.Write(Y);
+        writer.Write((ushort)Location.X);
+        writer.Write((ushort)Location.Y);
         writer.Write(Unknown);
-        writer.Write((byte)Z);
+        writer.Write((byte)Location.Z);
         writer.Write(Graphic);
     }
 
@@ -70,14 +67,15 @@ public class TargetCursorCommandsPacket : BaseGameNetworkPacket
         }
 
         CursorTarget = (TargetCursorSelectionType)reader.ReadByte();
-        CursorId = reader.ReadUInt32();
+        CursorId = (Serial)reader.ReadUInt32();
         CursorType = (TargetCursorType)reader.ReadByte();
         ClickedOnId = (Serial)reader.ReadUInt32();
-        X = reader.ReadUInt16();
-        Y = reader.ReadUInt16();
+        var x = reader.ReadUInt16();
+        var y = reader.ReadUInt16();
         Unknown = reader.ReadByte();
-        Z = unchecked((sbyte)reader.ReadByte());
+        var z = unchecked((sbyte)reader.ReadByte());
         Graphic = reader.ReadUInt16();
+        Location = new(x, y, z);
 
         return reader.Remaining == 0;
     }
