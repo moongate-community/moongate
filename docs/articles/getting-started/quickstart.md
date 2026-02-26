@@ -55,6 +55,8 @@ Built-in default commands currently include:
 - `lock` / `*` (console only, minimum `Administrator`)
 - `exit` / `shutdown` (console only, minimum `Administrator`)
 - `add_user` (console + in-game, minimum `Administrator`)
+- `send_target` (in-game only, minimum `Regular`)
+- `orion` (in-game only, minimum `Regular`, requests target cursor and spawns Orion on selected tile)
 
 Command source and authorization rules:
 

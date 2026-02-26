@@ -434,6 +434,8 @@ Built-in commands:
 - `lock|*` -> Console only, `Administrator`
 - `exit|shutdown` -> Console only, `Administrator`
 - `add_user` -> Console + InGame, `Administrator`
+- `send_target` -> InGame only, `Regular`
+- `orion` -> InGame only, `Regular` (opens target cursor and spawns Orion on selected location)
 
 ## Scripting
 
