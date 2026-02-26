@@ -1,3 +1,28 @@
+## [0.18.0](https://github.com/moongate-community/moongatev2/compare/v0.17.0...v0.18.0) (2026-02-25)
+
+### Features
+
+* **server:** add persistence events and play sound effect packet ([ffb1512](https://github.com/moongate-community/moongatev2/commit/ffb1512114d434d837a72abc2345684d60945bea))
+* **ui:** add api fetch client with auth header injection ([0dbce72](https://github.com/moongate-community/moongatev2/commit/0dbce724865e48b491444628547301b1ea6c674b))
+* **ui:** add dashboard page with health check ([581c5b5](https://github.com/moongate-community/moongatev2/commit/581c5b54f0fad167482487ca6cfec975b2731b55))
+* **ui:** add login page with jwt auth ([cc3c2ad](https://github.com/moongate-community/moongatev2/commit/cc3c2adc1eb8f1ff8b9431f4fb80c5152c32aee9))
+* **ui:** add react router with protected route ([f0a1be8](https://github.com/moongate-community/moongatev2/commit/f0a1be8d7a06dba463601d38a2571c4a6d67096b))
+* **ui:** add sidebar and app layout ([7b3939c](https://github.com/moongate-community/moongatev2/commit/7b3939cc50154242a9465b154ea8f96aa9d2721d))
+* **ui:** add vite proxy /api -> localhost:8088 ([4732a05](https://github.com/moongate-community/moongatev2/commit/4732a0535889f9694f93523bdc81c3752aff1e1b))
+* **ui:** add zustand persisted auth store ([f576f31](https://github.com/moongate-community/moongatev2/commit/f576f3116a044c1b068d1abf0808c9723e292f20))
+* **ui:** align theme to moongate docs palette (blue/purple [#6aa5da](https://github.com/moongate-community/moongatev2/issues/6aa5da), [#242130](https://github.com/moongate-community/moongatev2/issues/242130)) ([788904b](https://github.com/moongate-community/moongatev2/commit/788904b5d02058578cab59dd53a85f2cf456d6e0))
+* **ui:** apply arcane terminal design with amber theme, cinzel font, heroui dark colors ([b97c241](https://github.com/moongate-community/moongatev2/commit/b97c24186236dd4aa38637079ca05496049599eb))
+* **ui:** configure heroui with tailwind v4 and dark theme provider ([4fad917](https://github.com/moongate-community/moongatev2/commit/4fad9175a811fafac8cecb7612a796900644269a))
+* **ui:** scaffold vite react-ts project with heroui and zustand ([23ab8af](https://github.com/moongate-community/moongatev2/commit/23ab8af53a150307567de8effd9f7208688aac2e))
+
+### Bug Fixes
+
+* **http:** resolve account service lazily in facades ([c14745d](https://github.com/moongate-community/moongatev2/commit/c14745d425522650564b1188568e6940022ca60a))
+* **ui:** add missing ReactNode import in router ([cf8b249](https://github.com/moongate-community/moongatev2/commit/cf8b249924f5c3d591db1a36bde1be3dd78eb24b))
+* **ui:** downgrade to tailwind v3 for proper heroui theme support ([c880282](https://github.com/moongate-community/moongatev2/commit/c88028299ce3fd517e0e23e64598d84f38e89ec3))
+* **ui:** move dark class to html element as required by heroui v2 ([5256e56](https://github.com/moongate-community/moongatev2/commit/5256e567c48798c5f8cb214e8af42c48b082bdfe))
+* **ui:** switch to tailwind v4 per heroui docs, fix source path and plugin setup ([7d35c4d](https://github.com/moongate-community/moongatev2/commit/7d35c4da075781665ec2eb98049e83a491f863c0))
+
 ## [0.17.0](https://github.com/moongate-community/moongatev2/compare/v0.16.2...v0.17.0) (2026-02-25)
 
 ### Features
