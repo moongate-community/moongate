@@ -38,7 +38,7 @@ It contains these generators:
 
 ### Script Module Registration Generator
 
-- Input: classes in `Moongate.Scripting` decorated with `[ScriptModule(...)]`
+- Input: classes in `Moongate.Scripting` and `Moongate.Server` decorated with `[ScriptModule(...)]`
 - Output:
   - generated `Moongate.Scripting.Generated.ScriptModuleRegistry.Register(...)`
   - compile-time registration of script modules in DryIoc

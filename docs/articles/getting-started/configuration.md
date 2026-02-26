@@ -108,13 +108,12 @@ Top-level shape:
 - `save`
 - `logs`
 - `cache`
-- `database`
 
 ## HTTP Endpoints
 
 When HTTP is enabled:
 
-- `/` → plain text service banner
+- `/` → UI frontend when UI hosting is enabled (default)
 - `/health` → plain text `ok`
 - `/metrics` → Prometheus text format (if metrics factory configured)
 - `/scalar` and `/openapi/*` (if OpenAPI enabled)

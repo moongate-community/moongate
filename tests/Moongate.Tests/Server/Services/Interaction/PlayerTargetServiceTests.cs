@@ -201,7 +201,7 @@ public class PlayerTargetServiceTests
         await service.HandleAsync(sourceEvent);
 
         Assert.That(outgoingQueue.CurrentQueueDepth, Is.EqualTo(1));
-        Assert.That(eventBus.Events.Count, Is.EqualTo(1));
+        Assert.That(eventBus.Events.Count, Is.EqualTo(0));
 
         outgoingQueue.TryDequeue(out var outgoing);
         var packet = outgoing.Packet as TargetCursorCommandsPacket;

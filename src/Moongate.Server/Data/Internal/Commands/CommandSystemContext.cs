@@ -16,6 +16,10 @@ public sealed class CommandSystemContext
 
     public long SessionId { get; }
 
+    public bool IsInGame => Source == CommandSourceType.InGame;
+
+    public long? SessionIdOrNull => IsInGame ? SessionId : null;
+
     public string[] Arguments { get; }
 
     public CommandSystemContext(

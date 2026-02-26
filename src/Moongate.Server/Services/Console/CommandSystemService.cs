@@ -1,6 +1,5 @@
 using System.Text;
 using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Session;

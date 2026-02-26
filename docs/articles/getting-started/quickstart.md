@@ -54,6 +54,7 @@ Built-in default commands currently include:
 - `help` / `?` (console + in-game, minimum `Regular`)
 - `lock` / `*` (console only, minimum `Administrator`)
 - `exit` / `shutdown` (console only, minimum `Administrator`)
+- `add_user` (console + in-game, minimum `Administrator`)
 
 Command source and authorization rules:
 

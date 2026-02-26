@@ -44,9 +44,6 @@ public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameE
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameEventBusService = gameEventBusService;
         _timerService = timerService;
-
-        _logger.Error("PlayerTargetService initialized");
-
     }
 
     public Task StartAsync()
@@ -89,7 +86,18 @@ public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameE
         TargetCursorType cursorType = TargetCursorType.Neutral
     )
     {
-        if (_gameNetworkSessionService.TryGet(sessionId, out var gameNetworkSession))
+        return await SendTargetCursorInternalAsync(sessionId, callback, selectionType, cursorType, publishEvent: true);
+    }
+
+    private async Task<Serial> SendTargetCursorInternalAsync(
+        long sessionId,
+        Action<PendingCursorCallback> callback,
+        TargetCursorSelectionType selectionType,
+        TargetCursorType cursorType,
+        bool publishEvent
+    )
+    {
+        if (_gameNetworkSessionService.TryGet(sessionId, out _))
         {
             var randomCursorId = Serial.RandomSerial();
             var targetCursorPacket = new TargetCursorCommandsPacket(selectionType, randomCursorId, cursorType);
@@ -105,11 +113,12 @@ public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameE
 
             _pendingCursors.TryAdd(randomCursorId, pendingCursorObject);
 
-            _outgoingPacketQueue.Enqueue(sessionId, targetCursorPacket);
-
-            // await _gameEventBusService.PublishAsync(
-            //     new TargetRequestCursorEvent(sessionId, selectionType, cursorType, callback)
-            // );
+            if (publishEvent)
+            {
+                await _gameEventBusService.PublishAsync(
+                    new TargetRequestCursorEvent(sessionId, selectionType, cursorType, callback)
+                );
+            }
 
             return randomCursorId;
         }
@@ -135,7 +144,6 @@ public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameE
         if (packet is TargetCursorCommandsPacket targetCursorCommandsPacket)
         {
             await DispatchCursorResponseAsync(session, targetCursorCommandsPacket);
-            return true;
         }
 
         return true;
@@ -173,6 +181,12 @@ public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameE
 
     public async Task HandleAsync(TargetRequestCursorEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        await SendTargetCursorAsync(gameEvent.SessionId, gameEvent.Callback, gameEvent.SelectionType, gameEvent.CursorType);
+        await SendTargetCursorInternalAsync(
+            gameEvent.SessionId,
+            gameEvent.Callback,
+            gameEvent.SelectionType,
+            gameEvent.CursorType,
+            publishEvent: false
+        );
     }
 }

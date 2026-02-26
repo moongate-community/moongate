@@ -1,17 +1,68 @@
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Modules;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
 using Moongate.Tests.TestSupport;
+using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Scripting;
 
 public class LuaScriptEngineServiceTests
 {
+    private sealed class LuaScriptEngineServiceTestsCommandSystemService : ICommandSystemService
+    {
+        public Func<CommandSystemContext, Task>? RegisteredHandler { get; private set; }
+
+        public string? RegisteredCommandName { get; private set; }
+
+        public string? RegisteredDescription { get; private set; }
+
+        public CommandSourceType RegisteredSource { get; private set; }
+
+        public AccountType RegisteredMinimumAccountType { get; private set; }
+
+        public Task ExecuteCommandAsync(
+            string commandWithArgs,
+            CommandSourceType source = CommandSourceType.Console,
+            GameSession? session = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.CompletedTask;
+
+        public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+            => [];
+
+        public void RegisterCommand(
+            string commandName,
+            Func<CommandSystemContext, Task> handler,
+            string description = "",
+            CommandSourceType source = CommandSourceType.Console,
+            AccountType minimumAccountType = AccountType.Administrator,
+            Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
+        )
+        {
+            RegisteredCommandName = commandName;
+            RegisteredHandler = handler;
+            RegisteredDescription = description;
+            RegisteredSource = source;
+            RegisteredMinimumAccountType = minimumAccountType;
+        }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+    }
+
     [Test]
     public void AddCallback_AndExecuteCallback_ShouldInvokeCallback()
     {
@@ -290,6 +341,78 @@ public class LuaScriptEngineServiceTests
             {
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.Data, Is.EqualTo("First|Second"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithCommandModule_ShouldRegisterLuaCommand()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var commandSystemService = new LuaScriptEngineServiceTestsCommandSystemService();
+        var container = new Container();
+        container.RegisterInstance<ICommandSystemService>(commandSystemService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(CommandModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+        var registrationResult = service.ExecuteFunction(
+            """
+            (function()
+                command.register("lua_test", function(ctx)
+                    captured_command_text = ctx.command_text
+                end, {
+                    description = "lua command",
+                    source = 3,
+                    minimum_account_type = 2
+                })
+                return true
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(registrationResult.Success, Is.True);
+                Assert.That(commandSystemService.RegisteredCommandName, Is.EqualTo("lua_test"));
+                Assert.That(commandSystemService.RegisteredDescription, Is.EqualTo("lua command"));
+                Assert.That(
+                    commandSystemService.RegisteredSource,
+                    Is.EqualTo(CommandSourceType.Console | CommandSourceType.InGame)
+                );
+                Assert.That(commandSystemService.RegisteredMinimumAccountType, Is.EqualTo(AccountType.Administrator));
+                Assert.That(commandSystemService.RegisteredHandler, Is.Not.Null);
+            }
+        );
+
+        var commandContext = new CommandSystemContext(
+            "lua_test foo",
+            ["foo"],
+            CommandSourceType.InGame,
+            11,
+            (_, _) => { }
+        );
+        await commandSystemService.RegisteredHandler!(commandContext);
+
+        var callbackResult = service.ExecuteFunction("captured_command_text");
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(callbackResult.Success, Is.True);
+                Assert.That(callbackResult.Data, Is.EqualTo("lua_test foo"));
             }
         );
     }

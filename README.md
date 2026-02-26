@@ -614,7 +614,7 @@ Published documentation is available at:
 ## Development Notes
 
 - Shared build/analyzer/version settings are centralized in `Directory.Build.props`.
-- Current global version baseline: `0.16.1`.
+- Current global version baseline: `0.17.0`.
 - CI validates build/tests/coverage/quality/security; release and Docker image publishing run through dedicated workflows.
 
 ## Contributing
