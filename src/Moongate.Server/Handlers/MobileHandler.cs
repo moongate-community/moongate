@@ -77,9 +77,11 @@ public class MobileHandler
             if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
             {
                 _outgoingPacketQueue.Enqueue(session.SessionId, new MobileIncomingPacket(player, mobileEntity, true, isNew));
-                _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
+
+                //  _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
                 _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
-                _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
+
+                // _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
             }
         }
 
@@ -97,6 +99,7 @@ public class MobileHandler
         }
 
         var sectorInfo = _spatialWorldService.GetSectorByLocation(gameEvent.MapId, gameEvent.NewLocation);
+
         if (sectorInfo is null)
         {
             return;
