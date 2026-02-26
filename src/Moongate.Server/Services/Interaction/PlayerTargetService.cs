@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Interfaces;
@@ -20,7 +21,8 @@ namespace Moongate.Server.Services.Interaction;
 
 [RegisterGameEventListener]
 [RegisterPacketHandler(PacketDefinition.TargetCursorCommandsPacket)]
-public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameEventListener<TargetRequestCursorEvent>
+public class PlayerTargetService
+    : IPlayerTargetService, IPacketListener, IGameEventListener<TargetRequestCursorEvent>, IMoongateService
 {
     private readonly ILogger _logger = Log.ForContext<PlayerTargetService>();
 
