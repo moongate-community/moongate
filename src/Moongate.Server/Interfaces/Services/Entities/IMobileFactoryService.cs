@@ -17,7 +17,6 @@ public interface IMobileFactoryService
     /// <returns>Initialized mobile entity with allocated serial.</returns>
     UOMobileEntity CreateMobileFromTemplate(string mobileTemplateId, Serial? accountId = null);
 
-    /// <summary>
     /// Creates a player mobile from character creation packet data.
     /// </summary>
     /// <param name="packet">Character creation packet.</param>

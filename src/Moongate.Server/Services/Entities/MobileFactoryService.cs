@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Names;
@@ -48,6 +49,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Id = _persistenceService.UnitOfWork.AllocateNextMobileId(),
             AccountId = accountId ?? Serial.Zero,
             Name = string.IsNullOrWhiteSpace(generatedName) ? template.Name : generatedName,
+            BaseBody = (Body)template.Body,
             Location = Point3D.Zero,
             Direction = DirectionType.South,
             IsPlayer = false,
@@ -62,11 +64,18 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Hits = template.Hits,
             Mana = template.Mana,
             Stamina = template.Stamina,
+            Notoriety = template.Notoriety,
             CreatedUtc = now,
             LastLoginUtc = now
         };
 
         mobile.RecalculateMaxStats();
+
+        if (template.MaxHits > 0)
+        {
+            mobile.MaxHits = template.MaxHits;
+            mobile.Hits = Math.Min(mobile.Hits, mobile.MaxHits);
+        }
 
         return mobile;
     }
@@ -118,4 +127,5 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         return mobile;
     }
+
 }

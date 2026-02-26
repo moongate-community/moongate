@@ -27,13 +27,16 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Lifecycle;
+using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
 using Serilog;
@@ -71,7 +74,6 @@ public sealed class MoongateBootstrap : IDisposable
         RegisterFileLoaders();
 
         RegisterPacketHandlers();
-        RegisterGameEventListeners();
 
         RegisterDefaultCommands();
     }
@@ -111,9 +113,7 @@ public sealed class MoongateBootstrap : IDisposable
             async context =>
             {
                 var eventBus = _container.Resolve<IGameEventBusService>();
-
                 var mobileService = _container.Resolve<IMobileService>();
-
                 var spatialWorldService = _container.Resolve<ISpatialWorldService>();
 
                 await eventBus.PublishAsync(
@@ -129,10 +129,7 @@ public sealed class MoongateBootstrap : IDisposable
 
                             spatialWorldService.AddOrUpdateMobile(mobile);
 
-                            context.Print(
-                                "Orion the cat: {0} ",
-                                callback.Packet.Location
-                            );
+                            context.Print("Orion the cat: {0} ", callback.Packet.Location);
                         }
                     )
                 );
@@ -429,11 +426,6 @@ public sealed class MoongateBootstrap : IDisposable
     private void RegisterPacketHandlers()
     {
         BootstrapPacketHandlerRegistration.Register(_container);
-    }
-
-    private void RegisterGameEventListeners()
-    {
-        BootstrapGameEventListenerRegistration.Subscribe(_container);
     }
 
     private void RegisterScriptModules()
