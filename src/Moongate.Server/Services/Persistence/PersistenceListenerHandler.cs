@@ -9,7 +9,7 @@ namespace Moongate.Server.Services.Persistence;
 
 [RegisterGameEventListener]
 public class PersistenceListenerHandler
-    : IGameEventListener<DatabaseSavingStartEvent>, IGameEventListener<DatabaseSavedEvent>
+    : IGameEventListener<DatabaseSavingStartEvent>, IGameEventListener<DatabaseSavedEvent>, IMoongateService
 {
     private readonly ISpeechService _speechService;
 
@@ -29,4 +29,10 @@ public class PersistenceListenerHandler
             $"World saved in {gameEvent.ElapsedMilliseconds.Milliseconds()} seconds."
         );
     }
+
+    public Task StartAsync()
+        => Task.CompletedTask;
+
+    public Task StopAsync()
+        => Task.CompletedTask;
 }

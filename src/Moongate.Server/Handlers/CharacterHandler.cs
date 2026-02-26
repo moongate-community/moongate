@@ -24,8 +24,7 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
-[RegisterGameEventListener]
-[RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
+[RegisterGameEventListener,RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
 
 /// <summary>
 /// Represents CharacterHandler.
@@ -54,6 +53,8 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+
+        _gameEventBusService.RegisterListener(this);
     }
 
     public async Task HandleAsync(CharacterSelectedEvent gameEvent, CancellationToken cancellationToken = default)

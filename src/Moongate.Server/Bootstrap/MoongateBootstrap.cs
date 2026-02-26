@@ -74,6 +74,7 @@ public sealed class MoongateBootstrap : IDisposable
         RegisterFileLoaders();
 
         RegisterPacketHandlers();
+        RegisterGameEventListeners();
 
         RegisterDefaultCommands();
     }
@@ -426,6 +427,11 @@ public sealed class MoongateBootstrap : IDisposable
     private void RegisterPacketHandlers()
     {
         BootstrapPacketHandlerRegistration.Register(_container);
+    }
+
+    private void RegisterGameEventListeners()
+    {
+        BootstrapGameEventListenerRegistration.Subscribe(_container);
     }
 
     private void RegisterScriptModules()
