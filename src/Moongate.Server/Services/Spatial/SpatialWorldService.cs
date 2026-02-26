@@ -296,11 +296,6 @@ public sealed class SpatialWorldService
             var (newX, newY) = GetSectorCoordinates(newLocation);
             PublishEvent(new MobileSectorChangedEvent(mobile.Id, mapId, oldX, oldY, newX, newY));
         }
-
-
-
-
-
     }
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
@@ -550,13 +545,22 @@ public sealed class SpatialWorldService
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
         => _gameEventBusService.PublishAsync(gameEvent).AsTask().GetAwaiter().GetResult();
 
-    public async Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
+    public Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session) &&
-            session.CharacterId == gameEvent.MobileId)
+        try
         {
-            OnMobileMoved(session.Character!, gameEvent.OldLocation, gameEvent.NewLocation);
+            if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session) &&
+                session.CharacterId == gameEvent.MobileId)
+            {
+                OnMobileMoved(session.Character!, gameEvent.OldLocation, gameEvent.NewLocation);
 
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception exception)
+        {
+            return Task.FromException(exception);
         }
     }
 

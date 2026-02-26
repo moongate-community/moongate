@@ -85,6 +85,7 @@ ENV MOONGATE_UO_DIRECTORY=/uo
 ENV MOONGATE_IS_DOCKER=true
 ENV MOONGATE_UI_DIST=/opt/moongate/ui/dist
 EXPOSE 2593/tcp
+EXPOSE 8088/tcp
 
 USER moongate
 ENTRYPOINT ["/opt/moongate/Moongate.Server"]

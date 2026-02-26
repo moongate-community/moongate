@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Abstractions.Extensions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
+using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Server.Interfaces.Services.EvenLoop;
@@ -46,6 +47,7 @@ public static class AddBootstrapHostedServicesExtension
 
         // ALL event listeners should be registered with a priority above all services that publish events, to ensure they receive events during startup.
         container.RegisterMoongateService<PersistenceListenerHandler>(200);
+        container.RegisterMoongateService<MobileHandler>(200);
         container.RegisterMoongateService<PlayerTargetService>(200);
 
         return container;
