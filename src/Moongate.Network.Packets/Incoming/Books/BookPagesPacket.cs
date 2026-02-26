@@ -7,6 +7,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Books;
 
 [PacketHandler(0x66, PacketSizing.Variable, Description = "Books (Pages)")]
+
 /// <summary>
 /// Represents BookPagesPacket.
 /// </summary>

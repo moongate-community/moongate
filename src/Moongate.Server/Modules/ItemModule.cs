@@ -1,12 +1,13 @@
+using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Items;
-using Moongate.Scripting.Attributes.Scripts;
 using Moongate.UO.Data.Ids;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
 
 [ScriptModule("item", "Provides helpers to resolve items from scripts.")]
+
 /// <summary>
 /// Exposes item lookup helpers to Lua scripts.
 /// </summary>

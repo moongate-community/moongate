@@ -13,15 +13,18 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
     public List<JsonRegion> AddedRegions { get; } = [];
     public List<JsonMusic> AddedMusics { get; } = [];
 
-    public void AddOrUpdateMobile(UOMobileEntity mobile) { }
+    public void AddMusics(List<JsonMusic> musics)
+        => AddedMusics.AddRange(musics);
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
+
+    public void AddOrUpdateMobile(UOMobileEntity mobile) { }
 
     public void AddRegion(JsonRegion region)
         => AddedRegions.Add(region);
 
-    public void AddMusics(List<JsonMusic> musics)
-        => AddedMusics.AddRange(musics);
+    public int GetMusic(Point3D location)
+        => 0;
 
     public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
         => [];
@@ -38,15 +41,12 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
     public MapSector? GetSectorByLocation(int mapId, Point3D location)
         => null;
 
-    public int GetMusic(Point3D location)
-        => 0;
-
-    public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
+    public SectorSystemStats GetStats()
+        => new();
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
 
-    public void RemoveEntity(Serial serial) { }
+    public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
 
-    public SectorSystemStats GetStats()
-        => new();
+    public void RemoveEntity(Serial serial) { }
 }

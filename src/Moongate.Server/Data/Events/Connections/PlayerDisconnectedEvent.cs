@@ -21,5 +21,5 @@ public readonly record struct PlayerDisconnectedEvent(
     /// Creates a disconnected event with explicit timestamp.
     /// </summary>
     public PlayerDisconnectedEvent(long sessionId, string? remoteEndPoint, long timestamp)
-        : this(new GameEventBase(timestamp), sessionId, remoteEndPoint) { }
+        : this(new(timestamp), sessionId, remoteEndPoint) { }
 }

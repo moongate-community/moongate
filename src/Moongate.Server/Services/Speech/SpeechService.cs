@@ -1,6 +1,5 @@
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Session;
@@ -71,34 +70,6 @@ public sealed class SpeechService : ISpeechService
         return recipients;
     }
 
-    public async Task<bool> SendMessageFromServerAsync(
-        GameSession session,
-        string text,
-        short hue = SpeechHues.System,
-        short font = SpeechHues.DefaultFont,
-        string language = "ENU"
-    )
-    {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        _outgoingPacketQueue.Enqueue(session.SessionId, SpeechMessageFactory.CreateSystem(text, hue, font, language));
-        await _gameEventBusService.PublishAsync(
-            new SendMessageFromServerEvent(
-                GameEventBase.CreateNow(),
-                session.SessionId,
-                text,
-                hue,
-                font,
-                language
-            )
-        );
-
-        return true;
-    }
-
     public async Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
         GameSession session,
         UnicodeSpeechPacket speechPacket,
@@ -133,5 +104,33 @@ public sealed class SpeechService : ISpeechService
             speechPacket.Language,
             text
         );
+    }
+
+    public async Task<bool> SendMessageFromServerAsync(
+        GameSession session,
+        string text,
+        short hue = SpeechHues.System,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU"
+    )
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, SpeechMessageFactory.CreateSystem(text, hue, font, language));
+        await _gameEventBusService.PublishAsync(
+            new SendMessageFromServerEvent(
+                GameEventBase.CreateNow(),
+                session.SessionId,
+                text,
+                hue,
+                font,
+                language
+            )
+        );
+
+        return true;
     }
 }

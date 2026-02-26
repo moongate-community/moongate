@@ -57,37 +57,6 @@ public class MobileHandler
         );
     }
 
-    private Task UpdatePlayerForMobileMovedOrCreated(
-        UOMobileEntity mobileEntity,
-        int mapId,
-        int sectorX,
-        int sectorY,
-        bool isNew
-    )
-    {
-        var players = _spatialWorldService.GetPlayersInSector(mapId, sectorX, sectorY);
-
-        foreach (var player in players)
-        {
-            if (player.Id == mobileEntity.Id)
-            {
-                continue;
-            }
-
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                _outgoingPacketQueue.Enqueue(session.SessionId, new MobileIncomingPacket(player, mobileEntity, true, isNew));
-
-                //  _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
-                _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
-
-                // _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
     public async Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
@@ -123,7 +92,36 @@ public class MobileHandler
     }
 
     public Task StopAsync()
+        => Task.CompletedTask;
+
+    private Task UpdatePlayerForMobileMovedOrCreated(
+        UOMobileEntity mobileEntity,
+        int mapId,
+        int sectorX,
+        int sectorY,
+        bool isNew
+    )
     {
+        var players = _spatialWorldService.GetPlayersInSector(mapId, sectorX, sectorY);
+
+        foreach (var player in players)
+        {
+            if (player.Id == mobileEntity.Id)
+            {
+                continue;
+            }
+
+            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
+            {
+                _outgoingPacketQueue.Enqueue(session.SessionId, new MobileIncomingPacket(player, mobileEntity, true, isNew));
+
+                //  _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
+                _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
+
+                // _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
+            }
+        }
+
         return Task.CompletedTask;
     }
 }

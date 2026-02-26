@@ -13,10 +13,10 @@ namespace Moongate.Server.Interfaces.Services.Spatial;
 public interface ISpatialWorldService
 {
     /// <summary>
-    /// Adds or updates a mobile position in the spatial index.
+    /// Adds music-list definitions.
     /// </summary>
-    /// <param name="mobile">Mobile entity.</param>
-    void AddOrUpdateMobile(UOMobileEntity mobile);
+    /// <param name="musics">Music definitions.</param>
+    void AddMusics(List<JsonMusic> musics);
 
     /// <summary>
     /// Adds or updates an item position in the spatial index.
@@ -26,16 +26,23 @@ public interface ISpatialWorldService
     void AddOrUpdateItem(UOItemEntity item, int mapId);
 
     /// <summary>
+    /// Adds or updates a mobile position in the spatial index.
+    /// </summary>
+    /// <param name="mobile">Mobile entity.</param>
+    void AddOrUpdateMobile(UOMobileEntity mobile);
+
+    /// <summary>
     /// Adds a region definition used by music lookup.
     /// </summary>
     /// <param name="region">Region definition.</param>
     void AddRegion(JsonRegion region);
 
     /// <summary>
-    /// Adds music-list definitions.
+    /// Resolves music id for a world location.
     /// </summary>
-    /// <param name="musics">Music definitions.</param>
-    void AddMusics(List<JsonMusic> musics);
+    /// <param name="location">Target location.</param>
+    /// <returns>Music id, or <c>0</c> when no music mapping exists.</returns>
+    int GetMusic(Point3D location);
 
     /// <summary>
     /// Returns nearby items around a world location.
@@ -83,19 +90,10 @@ public interface ISpatialWorldService
     MapSector? GetSectorByLocation(int mapId, Point3D location);
 
     /// <summary>
-    /// Resolves music id for a world location.
+    /// Returns current spatial index statistics.
     /// </summary>
-    /// <param name="location">Target location.</param>
-    /// <returns>Music id, or <c>0</c> when no music mapping exists.</returns>
-    int GetMusic(Point3D location);
-
-    /// <summary>
-    /// Moves a mobile in the spatial index.
-    /// </summary>
-    /// <param name="mobile">Mobile entity.</param>
-    /// <param name="oldLocation">Previous location.</param>
-    /// <param name="newLocation">New location.</param>
-    void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation);
+    /// <returns>Sector stats.</returns>
+    SectorSystemStats GetStats();
 
     /// <summary>
     /// Moves an item in the spatial index.
@@ -107,14 +105,16 @@ public interface ISpatialWorldService
     void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation);
 
     /// <summary>
+    /// Moves a mobile in the spatial index.
+    /// </summary>
+    /// <param name="mobile">Mobile entity.</param>
+    /// <param name="oldLocation">Previous location.</param>
+    /// <param name="newLocation">New location.</param>
+    void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation);
+
+    /// <summary>
     /// Removes an entity from the index.
     /// </summary>
     /// <param name="serial">Entity serial.</param>
     void RemoveEntity(Serial serial);
-
-    /// <summary>
-    /// Returns current spatial index statistics.
-    /// </summary>
-    /// <returns>Sector stats.</returns>
-    SectorSystemStats GetStats();
 }

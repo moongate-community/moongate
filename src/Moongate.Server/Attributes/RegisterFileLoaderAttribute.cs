@@ -2,7 +2,7 @@ namespace Moongate.Server.Attributes;
 
 /// <summary>
 /// Marks a file loader for source-generated registration in <c>BootstrapFileLoaderRegistration</c>.
-/// The <see cref="Order"/> value controls execution sequence (lower runs first).
+/// The <see cref="Order" /> value controls execution sequence (lower runs first).
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class RegisterFileLoaderAttribute : Attribute

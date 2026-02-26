@@ -1,5 +1,4 @@
 using Moongate.Server.Data.Entities;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;

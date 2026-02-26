@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Interfaces.Services.Events;
 

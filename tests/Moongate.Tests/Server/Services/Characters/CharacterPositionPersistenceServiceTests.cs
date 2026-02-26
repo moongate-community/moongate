@@ -2,9 +2,7 @@ using System.Net.Sockets;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
-using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Persistence;
@@ -14,7 +12,6 @@ using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Tests.Server.Services.Characters;
 
@@ -25,21 +22,22 @@ public sealed class CharacterPositionPersistenceServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
+
         try
         {
             var sessions = new FakeGameNetworkSessionService();
             var bus = new GameEventBusService();
             var service = new CharacterPositionPersistenceService(bus, sessions, persistence);
-            var session = CreateSession((Serial)0x00000002u, new Point3D(100, 100, 0), mapId: 1);
+            var session = CreateSession((Serial)0x00000002u, new(100, 100, 0), 1);
             sessions.Add(session);
 
             await service.HandleAsync(
-                new MobilePositionChangedEvent(
+                new(
                     session.SessionId,
                     session.CharacterId,
                     1,
-                    new Point3D(100, 100, 0),
-                    new Point3D(101, 100, 0)
+                    new(100, 100, 0),
+                    new(101, 100, 0)
                 )
             );
 
@@ -61,42 +59,43 @@ public sealed class CharacterPositionPersistenceServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
+
         try
         {
             var sessions = new FakeGameNetworkSessionService();
             var bus = new GameEventBusService();
             var service = new CharacterPositionPersistenceService(bus, sessions, persistence);
-            var session = CreateSession((Serial)0x00000003u, new Point3D(100, 100, 0), mapId: 1);
+            var session = CreateSession((Serial)0x00000003u, new(100, 100, 0), 1);
             sessions.Add(session);
 
             await service.HandleAsync(
-                new MobilePositionChangedEvent(
+                new(
                     session.SessionId,
                     session.CharacterId,
                     1,
-                    new Point3D(100, 100, 0),
-                    new Point3D(101, 100, 0)
+                    new(100, 100, 0),
+                    new(101, 100, 0)
                 )
             );
             await service.HandleAsync(
-                new MobilePositionChangedEvent(
+                new(
                     session.SessionId,
                     session.CharacterId,
                     1,
-                    new Point3D(101, 100, 0),
-                    new Point3D(102, 100, 0)
+                    new(101, 100, 0),
+                    new(102, 100, 0)
                 )
             );
 
             var persistedAfterThrottle = await persistence.UnitOfWork.Mobiles.GetByIdAsync(session.CharacterId);
 
             await service.HandleAsync(
-                new MobilePositionChangedEvent(
+                new(
                     session.SessionId,
                     session.CharacterId,
                     1,
-                    new Point3D(15, 100, 0),
-                    new Point3D(16, 100, 0)
+                    new(15, 100, 0),
+                    new(16, 100, 0)
                 )
             );
 
@@ -112,21 +111,6 @@ public sealed class CharacterPositionPersistenceServiceTests
             await persistence.StopAsync();
             persistence.Dispose();
         }
-    }
-
-    private static GameSession CreateSession(Serial characterId, Point3D location, int mapId)
-    {
-        var client = new MoongateTCPClient(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        return new GameSession(new GameNetworkSession(client))
-        {
-            CharacterId = characterId,
-            Character = new UOMobileEntity
-            {
-                Id = characterId,
-                Location = location,
-                MapId = mapId
-            }
-        };
     }
 
     private static async Task<PersistenceService> CreatePersistenceServiceAsync(string rootDirectory)
@@ -147,5 +131,21 @@ public sealed class CharacterPositionPersistenceServiceTests
         await persistence.StartAsync();
 
         return persistence;
+    }
+
+    private static GameSession CreateSession(Serial characterId, Point3D location, int mapId)
+    {
+        var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        return new(new(client))
+        {
+            CharacterId = characterId,
+            Character = new()
+            {
+                Id = characterId,
+                Location = location,
+                MapId = mapId
+            }
+        };
     }
 }

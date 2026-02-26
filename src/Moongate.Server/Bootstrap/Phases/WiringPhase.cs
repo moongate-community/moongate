@@ -30,22 +30,6 @@ internal sealed class WiringPhase : IBootstrapPhase
         RegisterDefaultCommands(context);
     }
 
-    private static void RegisterFileLoaders(BootstrapContext context)
-    {
-        var fileLoaderService = context.Container.Resolve<IFileLoaderService>();
-        BootstrapFileLoaderRegistration.Register(fileLoaderService);
-    }
-
-    private static void RegisterPacketHandlers(BootstrapContext context)
-    {
-        BootstrapPacketHandlerRegistration.Register(context.Container);
-    }
-
-    private static void RegisterGameEventListeners(BootstrapContext context)
-    {
-        BootstrapGameEventListenerRegistration.Subscribe(context.Container);
-    }
-
     private static void RegisterDefaultCommands(BootstrapContext context)
     {
         var commandService = context.Container.Resolve<ICommandSystemService>();
@@ -106,5 +90,21 @@ internal sealed class WiringPhase : IBootstrapPhase
             CommandSourceType.InGame,
             AccountType.Regular
         );
+    }
+
+    private static void RegisterFileLoaders(BootstrapContext context)
+    {
+        var fileLoaderService = context.Container.Resolve<IFileLoaderService>();
+        BootstrapFileLoaderRegistration.Register(fileLoaderService);
+    }
+
+    private static void RegisterGameEventListeners(BootstrapContext context)
+    {
+        BootstrapGameEventListenerRegistration.Subscribe(context.Container);
+    }
+
+    private static void RegisterPacketHandlers(BootstrapContext context)
+    {
+        BootstrapPacketHandlerRegistration.Register(context.Container);
     }
 }

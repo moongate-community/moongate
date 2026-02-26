@@ -5,6 +5,9 @@ using Moongate.Core.Types;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Scripting.Data.Scripts;
+using Moongate.Scripting.Modules;
+using Moongate.Scripting.Services;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
@@ -14,17 +17,13 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
-using Moongate.Tests.Server.Services.Spatial;
-using Moongate.Scripting.Data.Config;
-using Moongate.Scripting.Data.Scripts;
-using Moongate.Scripting.Modules;
-using Moongate.Scripting.Services;
-using Moongate.Tests.TestSupport;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Types;
-using Moongate.UO.Data.Ids;
+using Moongate.Tests.Server.Services.Spatial;
+using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Scripting;
 
@@ -99,6 +98,13 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(3);
         }
 
+        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<UnicodeSpeechMessagePacket?>(null);
+
         public Task<bool> SendMessageFromServerAsync(
             GameSession session,
             string text,
@@ -113,12 +119,6 @@ public class LuaScriptEngineServiceTests
 
             return Task.FromResult(true);
         }
-
-        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
-            GameSession session,
-            UnicodeSpeechPacket speechPacket,
-            CancellationToken cancellationToken = default
-            ) => Task.FromResult<UnicodeSpeechMessagePacket?>(null);
     }
 
     private sealed class LuaScriptEngineServiceTestsCharacterService : ICharacterService
@@ -207,6 +207,15 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(true);
         }
 
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+        {
+            _ = itemId;
+            _ = location;
+            _ = mapId;
+
+            return Task.FromResult<DropItemToGroundResult?>(null);
+        }
+
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
         {
             _ = itemId;
@@ -214,6 +223,15 @@ public class LuaScriptEngineServiceTests
             _ = layer;
 
             return Task.FromResult(true);
+        }
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+        {
+            _ = mapId;
+            _ = sectorX;
+            _ = sectorY;
+
+            return Task.FromResult(new List<UOItemEntity>());
         }
 
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
@@ -226,15 +244,6 @@ public class LuaScriptEngineServiceTests
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
         {
             _ = containerId;
-
-            return Task.FromResult(new List<UOItemEntity>());
-        }
-
-        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
-        {
-            _ = mapId;
-            _ = sectorX;
-            _ = sectorY;
 
             return Task.FromResult(new List<UOItemEntity>());
         }
@@ -255,15 +264,6 @@ public class LuaScriptEngineServiceTests
             _ = mapId;
 
             return Task.FromResult(true);
-        }
-
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
-        {
-            _ = itemId;
-            _ = location;
-            _ = mapId;
-
-            return Task.FromResult<DropItemToGroundResult?>(null);
         }
 
         public Task UpsertItemAsync(UOItemEntity item)
@@ -408,39 +408,6 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
-    public async Task StartAsync_WithLogModule_ShouldKeepLogAsTable()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(LogModule))],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var typeResult = service.ExecuteFunction("type(log)");
-        var callResult = service.ExecuteFunction("log.info('hello')");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(typeResult.Success, Is.True);
-                Assert.That(typeResult.Data, Is.EqualTo("table"));
-                Assert.That(callResult.Success, Is.True);
-            }
-        );
-    }
-
-    [Test]
     public async Task StartAsync_ShouldGenerateDefinitionsAndLuarcUnderConfiguredLuarcDirectory()
     {
         using var temp = new TempDirectory();
@@ -454,7 +421,7 @@ public class LuaScriptEngineServiceTests
             dirs,
             [new(typeof(LogModule))],
             new Container(),
-            new LuaEngineConfig(luarcDir, scriptsDir, "0.1.0"),
+            new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
 
@@ -474,93 +441,6 @@ public class LuaScriptEngineServiceTests
         var luarcContent = await File.ReadAllTextAsync(luarcPath);
         Assert.That(luarcContent, Does.Contain(scriptsDir));
         Assert.That(luarcContent, Does.Contain(luarcDir));
-    }
-
-    [Test]
-    public async Task StartAsync_WithGumpModule_ShouldBuildLayoutFromLua()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(GumpModule))],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            """
-            (function()
-                local g = gump.create()
-                g:ResizePic(0, 0, 9200, 300, 200)
-                g:Text(80, 15, 0x480, "The Blacksmith")
-                g:Text(30, 50, 0, "What dost thou require?")
-                return g:BuildLayout()
-            end)()
-            """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(
-                    result.Data,
-                    Is.EqualTo(
-                        "{ resizepic 0 0 9200 300 200 } { text 80 15 1152 0 } { text 30 50 0 1 }"
-                    )
-                );
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WithGumpModule_ShouldExposeTextEntriesFromLua()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(GumpModule))],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            """
-            (function()
-                local g = gump.create()
-                g:Text(10, 10, 0, "First")
-                g:Text(10, 25, 0, "Second")
-                local texts = g:BuildTexts()
-                return texts[1] .. "|" .. texts[2]
-            end)()
-            """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo("First|Second"));
-            }
-        );
     }
 
     [Test]
@@ -636,7 +516,7 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
-    public async Task StartAsync_WithSpeechModule_ShouldInvokeSendSayBroadcast()
+    public async Task StartAsync_WithGumpModule_ShouldBuildLayoutFromLua()
     {
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
@@ -645,35 +525,24 @@ public class LuaScriptEngineServiceTests
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
-        var sessionService = new FakeGameNetworkSessionService();
-        var speechService = new LuaScriptEngineServiceTestsSpeechService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x100
-        };
-        sessionService.Add(session);
-
-        var container = new Container();
-        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
-        container.RegisterInstance<ISpeechService>(speechService);
-
         var service = new LuaScriptEngineService(
             dirs,
-            [new(typeof(SpeechModule))],
-            container,
+            [new(typeof(GumpModule))],
+            new Container(),
             new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
 
         await service.StartAsync();
+
         var result = service.ExecuteFunction(
-            $"""
+            """
             (function()
-                local ok1 = speech.send({session.SessionId}, "hello")
-                local ok2 = speech.say({(uint)session.CharacterId}, "say hello")
-                local recipients = speech.broadcast("broadcast hello")
-                return ok1 and ok2 and recipients == 3
+                local g = gump.create()
+                g:ResizePic(0, 0, 9200, 300, 200)
+                g:Text(80, 15, 0x480, "The Blacksmith")
+                g:Text(30, 50, 0, "What dost thou require?")
+                return g:BuildLayout()
             end)()
             """
         );
@@ -682,9 +551,84 @@ public class LuaScriptEngineServiceTests
             () =>
             {
                 Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo(true));
-                Assert.That(speechService.SendCalls, Is.EqualTo(2));
-                Assert.That(speechService.BroadcastCalls, Is.EqualTo(1));
+                Assert.That(
+                    result.Data,
+                    Is.EqualTo("{ resizepic 0 0 9200 300 200 } { text 80 15 1152 0 } { text 30 50 0 1 }")
+                );
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldExposeTextEntriesFromLua()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local g = gump.create()
+                g:Text(10, 10, 0, "First")
+                g:Text(10, 25, 0, "Second")
+                local texts = g:BuildTexts()
+                return texts[1] .. "|" .. texts[2]
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("First|Second"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithLogModule_ShouldKeepLogAsTable()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(LogModule))],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var typeResult = service.ExecuteFunction("type(log)");
+        var callResult = service.ExecuteFunction("log.info('hello')");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(typeResult.Success, Is.True);
+                Assert.That(typeResult.Data, Is.EqualTo("table"));
+                Assert.That(callResult.Success, Is.True);
             }
         );
     }
@@ -755,6 +699,60 @@ public class LuaScriptEngineServiceTests
                 Assert.That(result.Data, Is.EqualTo(true));
                 Assert.That(characterService.LastRequestedCharacterId, Is.EqualTo((Serial)0x999));
                 Assert.That(itemService.LastRequestedItemId, Is.EqualTo((Serial)0x998));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithSpeechModule_ShouldInvokeSendSayBroadcast()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var sessionService = new FakeGameNetworkSessionService();
+        var speechService = new LuaScriptEngineServiceTestsSpeechService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x100
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<ISpeechService>(speechService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(SpeechModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+        var result = service.ExecuteFunction(
+            $"""
+             (function()
+                 local ok1 = speech.send({session.SessionId}, "hello")
+                 local ok2 = speech.say({(uint)session.CharacterId}, "say hello")
+                 local recipients = speech.broadcast("broadcast hello")
+                 return ok1 and ok2 and recipients == 3
+             end)()
+             """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+                Assert.That(speechService.SendCalls, Is.EqualTo(2));
+                Assert.That(speechService.BroadcastCalls, Is.EqualTo(1));
             }
         );
     }

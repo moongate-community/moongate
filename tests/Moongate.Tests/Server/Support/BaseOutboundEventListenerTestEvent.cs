@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 
 namespace Moongate.Tests.Server.Support;

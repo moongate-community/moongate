@@ -3,16 +3,12 @@ using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Listeners.Base;
-using Moongate.UO.Data.Geometry;
-using Moongate.UO.Data.Ids;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
@@ -53,41 +49,35 @@ public class ItemHandler : BasePacketListener
         return true;
     }
 
-    private async Task<bool> HandlePickUpItemAsync(GameSession session, PickUpItemPacket pickUpItemPacket)
+    private async Task DropItemInContainerAsync(GameSession session, DropItemPacket dropItemPacket)
     {
-        var item = await _itemService.GetItemAsync(pickUpItemPacket.ItemSerial);
+        var item = await _itemService.GetItemAsync(dropItemPacket.ItemSerial);
 
-        if (item.Amount > pickUpItemPacket.StackAmount)
+        var destinationContainer = await _itemService.GetItemAsync(dropItemPacket.DestinationSerial);
+        var itemContainer = await _itemService.GetItemAsync(item.ParentContainerId);
+
+        if (!destinationContainer.IsContainer &&
+            destinationContainer.IsStackable &&
+            destinationContainer.ItemId == item.ItemId)
         {
-            var container = await _itemService.GetItemAsync(item.ParentContainerId);
-
-            var clonedItem = await _itemService.CloneAsync(item.Id);
-
-            item.Amount -= pickUpItemPacket.StackAmount;
-            clonedItem.Amount = pickUpItemPacket.StackAmount;
-
-            container.AddItem(clonedItem, item.ContainerPosition);
-
-            await _itemService.UpsertItemsAsync(clonedItem, item, container);
+            // Check if destination container is stackable with the dropped item and stack if possible.
+            destinationContainer.Amount += item.Amount;
+            await _itemService.UpsertItemAsync(destinationContainer);
+        }
+        else
+        {
+            destinationContainer.AddItem(item, new(dropItemPacket.Location));
         }
 
-        return true;
-    }
+        await _itemService.UpsertItemAsync(destinationContainer);
 
-    private async Task<bool> HandleDropItemAsync(GameSession session, DropItemPacket dropItemPacket)
-    {
-        _logger.Information("Dropping item {@DropItemPacket}", dropItemPacket);
-
-        if (!dropItemPacket.IsGroundDrop)
+        if (itemContainer.Id != destinationContainer.Id)
         {
-            await DropItemInContainerAsync(session, dropItemPacket);
-
-            return true;
+            itemContainer.RemoveItem(item.Id);
+            await _itemService.UpsertItemAsync(itemContainer);
         }
 
-        await DropItemOnGroundAsync(session, dropItemPacket);
-
-        return true;
+        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(destinationContainer));
     }
 
     private async Task DropItemOnGroundAsync(GameSession session, DropItemPacket dropItemPacket)
@@ -115,34 +105,40 @@ public class ItemHandler : BasePacketListener
         Enqueue(session, new DrawContainerAndAddItemCombinedPacket(sourceContainer));
     }
 
-    private async Task DropItemInContainerAsync(GameSession session, DropItemPacket dropItemPacket)
+    private async Task<bool> HandleDropItemAsync(GameSession session, DropItemPacket dropItemPacket)
     {
-        var item = await _itemService.GetItemAsync(dropItemPacket.ItemSerial);
+        _logger.Information("Dropping item {@DropItemPacket}", dropItemPacket);
 
-        var destinationContainer = await _itemService.GetItemAsync(dropItemPacket.DestinationSerial);
-        var itemContainer = await _itemService.GetItemAsync(item.ParentContainerId);
+        if (!dropItemPacket.IsGroundDrop)
+        {
+            await DropItemInContainerAsync(session, dropItemPacket);
 
-        if (!destinationContainer.IsContainer &&
-            destinationContainer.IsStackable &&
-            destinationContainer.ItemId == item.ItemId)
-        {
-            // Check if destination container is stackable with the dropped item and stack if possible.
-            destinationContainer.Amount += item.Amount;
-            await _itemService.UpsertItemAsync(destinationContainer);
-        }
-        else
-        {
-            destinationContainer.AddItem(item, new Point2D(dropItemPacket.Location));
+            return true;
         }
 
-        await _itemService.UpsertItemAsync(destinationContainer);
+        await DropItemOnGroundAsync(session, dropItemPacket);
 
-        if (itemContainer.Id != destinationContainer.Id)
+        return true;
+    }
+
+    private async Task<bool> HandlePickUpItemAsync(GameSession session, PickUpItemPacket pickUpItemPacket)
+    {
+        var item = await _itemService.GetItemAsync(pickUpItemPacket.ItemSerial);
+
+        if (item.Amount > pickUpItemPacket.StackAmount)
         {
-            itemContainer.RemoveItem(item.Id);
-            await _itemService.UpsertItemAsync(itemContainer);
+            var container = await _itemService.GetItemAsync(item.ParentContainerId);
+
+            var clonedItem = await _itemService.CloneAsync(item.Id);
+
+            item.Amount -= pickUpItemPacket.StackAmount;
+            clonedItem.Amount = pickUpItemPacket.StackAmount;
+
+            container.AddItem(clonedItem, item.ContainerPosition);
+
+            await _itemService.UpsertItemsAsync(clonedItem, item, container);
         }
 
-        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(destinationContainer));
+        return true;
     }
 }

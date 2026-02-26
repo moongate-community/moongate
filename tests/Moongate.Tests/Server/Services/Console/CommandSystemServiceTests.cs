@@ -1,7 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Console;
@@ -16,6 +15,128 @@ namespace Moongate.Tests.Server.Services.Console;
 
 public class CommandSystemServiceTests
 {
+    [Test]
+    public async Task ExecuteCommandAsync_WhenAddUserAlreadyExists_ShouldNotCreateAccount()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var accountService = new CommandSystemTestAccountService
+        {
+            AccountExists = true
+        };
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+
+        await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com");
+
+        Assert.That(accountService.CreateCalled, Is.False);
+        Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("already exists"));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenAddUserArgumentsAreMissing_ShouldPrintUsage()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var accountService = new CommandSystemTestAccountService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+
+        await service.ExecuteCommandAsync("add_user onlyusername");
+
+        Assert.That(accountService.CreateCalled, Is.False);
+        Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("Usage: add_user"));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenAddUserHasDefaultLevel_ShouldCreateRegularAccount()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var accountService = new CommandSystemTestAccountService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+
+        await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(accountService.CreateCalled, Is.True);
+                Assert.That(accountService.CreatedUsername, Is.EqualTo("testuser"));
+                Assert.That(accountService.CreatedPassword, Is.EqualTo("pass123"));
+                Assert.That(accountService.CreatedEmail, Is.EqualTo("test@example.com"));
+                Assert.That(accountService.CreatedAccountType, Is.EqualTo(AccountType.Regular));
+                Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("User 'testuser' created"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenAddUserHasExplicitLevel_ShouldCreateAccountWithLevel()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var accountService = new CommandSystemTestAccountService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+
+        await service.ExecuteCommandAsync("add_user gmuser pass123 gm@example.com GameMaster");
+
+        Assert.That(accountService.CreateCalled, Is.True);
+        Assert.That(accountService.CreatedAccountType, Is.EqualTo(AccountType.GameMaster));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenAddUserLevelIsInvalid_ShouldPrintValidationMessage()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var accountService = new CommandSystemTestAccountService();
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+
+        await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com SuperAdmin");
+
+        Assert.That(accountService.CreateCalled, Is.False);
+        Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("Invalid account level"));
+    }
+
     [Test]
     public async Task ExecuteCommandAsync_WhenCommandSourceIsNotAllowed_ShouldSendWarningInGame()
     {
@@ -490,127 +611,5 @@ public class CommandSystemServiceTests
 
         Assert.That(consoleUiService.Lines.Count, Is.GreaterThan(0));
         Assert.That(consoleUiService.Lines[^1].Message, Is.EqualTo("Unknown command: foo"));
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenAddUserHasDefaultLevel_ShouldCreateRegularAccount()
-    {
-        var gameEventBusService = new GameEventBusService();
-        var consoleUiService = new CommandSystemTestConsoleUiService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
-        var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
-
-        await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(accountService.CreateCalled, Is.True);
-                Assert.That(accountService.CreatedUsername, Is.EqualTo("testuser"));
-                Assert.That(accountService.CreatedPassword, Is.EqualTo("pass123"));
-                Assert.That(accountService.CreatedEmail, Is.EqualTo("test@example.com"));
-                Assert.That(accountService.CreatedAccountType, Is.EqualTo(AccountType.Regular));
-                Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("User 'testuser' created"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenAddUserHasExplicitLevel_ShouldCreateAccountWithLevel()
-    {
-        var gameEventBusService = new GameEventBusService();
-        var consoleUiService = new CommandSystemTestConsoleUiService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
-        var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
-
-        await service.ExecuteCommandAsync("add_user gmuser pass123 gm@example.com GameMaster");
-
-        Assert.That(accountService.CreateCalled, Is.True);
-        Assert.That(accountService.CreatedAccountType, Is.EqualTo(AccountType.GameMaster));
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenAddUserLevelIsInvalid_ShouldPrintValidationMessage()
-    {
-        var gameEventBusService = new GameEventBusService();
-        var consoleUiService = new CommandSystemTestConsoleUiService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
-        var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
-
-        await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com SuperAdmin");
-
-        Assert.That(accountService.CreateCalled, Is.False);
-        Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("Invalid account level"));
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenAddUserArgumentsAreMissing_ShouldPrintUsage()
-    {
-        var gameEventBusService = new GameEventBusService();
-        var consoleUiService = new CommandSystemTestConsoleUiService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
-        var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
-
-        await service.ExecuteCommandAsync("add_user onlyusername");
-
-        Assert.That(accountService.CreateCalled, Is.False);
-        Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("Usage: add_user"));
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenAddUserAlreadyExists_ShouldNotCreateAccount()
-    {
-        var gameEventBusService = new GameEventBusService();
-        var consoleUiService = new CommandSystemTestConsoleUiService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
-        var accountService = new CommandSystemTestAccountService
-        {
-            AccountExists = true
-        };
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
-
-        await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com");
-
-        Assert.That(accountService.CreateCalled, Is.False);
-        Assert.That(consoleUiService.Lines[^1].Message, Does.Contain("already exists"));
     }
 }

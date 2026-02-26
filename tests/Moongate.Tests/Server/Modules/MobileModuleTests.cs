@@ -1,12 +1,12 @@
+using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.Network.Packets.Incoming.Speech;
-using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Session;
 
 namespace Moongate.Tests.Server.Modules;
 
@@ -29,6 +29,19 @@ public class MobileModuleTests
             return Task.FromResult(0);
         }
 
+        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = session;
+            _ = speechPacket;
+            _ = cancellationToken;
+
+            return Task.FromResult<UnicodeSpeechMessagePacket?>(null);
+        }
+
         public Task<bool> SendMessageFromServerAsync(
             GameSession session,
             string text,
@@ -44,19 +57,6 @@ public class MobileModuleTests
             _ = language;
 
             return Task.FromResult(true);
-        }
-
-        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
-            GameSession session,
-            UnicodeSpeechPacket speechPacket,
-            CancellationToken cancellationToken = default
-        )
-        {
-            _ = session;
-            _ = speechPacket;
-            _ = cancellationToken;
-
-            return Task.FromResult<UnicodeSpeechMessagePacket?>(null);
         }
     }
 
@@ -110,6 +110,19 @@ public class MobileModuleTests
     }
 
     [Test]
+    public void Get_WhenCharacterDoesNotExist_ShouldReturnNull()
+    {
+        var characterService = new MobileModuleTestCharacterService();
+        var speechService = new MobileModuleTestSpeechService();
+        var sessionService = new FakeGameNetworkSessionService();
+        var module = new MobileModule(characterService, speechService, sessionService);
+
+        var reference = module.Get(0x201);
+
+        Assert.That(reference, Is.Null);
+    }
+
+    [Test]
     public void Get_WhenCharacterExists_ShouldReturnLuaMobileRef()
     {
         var characterService = new MobileModuleTestCharacterService
@@ -140,18 +153,5 @@ public class MobileModuleTests
                 Assert.That(reference.LocationZ, Is.EqualTo(5));
             }
         );
-    }
-
-    [Test]
-    public void Get_WhenCharacterDoesNotExist_ShouldReturnNull()
-    {
-        var characterService = new MobileModuleTestCharacterService();
-        var speechService = new MobileModuleTestSpeechService();
-        var sessionService = new FakeGameNetworkSessionService();
-        var module = new MobileModule(characterService, speechService, sessionService);
-
-        var reference = module.Get(0x201);
-
-        Assert.That(reference, Is.Null);
     }
 }

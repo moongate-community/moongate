@@ -5,7 +5,6 @@ using Moongate.Network.Client;
 using Moongate.Network.Events;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Speech;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Network;

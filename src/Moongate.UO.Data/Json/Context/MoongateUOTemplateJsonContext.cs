@@ -20,6 +20,7 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(LootTemplateDefinitionBase[])),
  JsonSerializable(typeof(LootTemplateDefinition[])),
  JsonSerializable(typeof(LootTemplateEntry[]))]
+
 /// <summary>
 /// Represents MoongateUOTemplateJsonContext.
 /// </summary>

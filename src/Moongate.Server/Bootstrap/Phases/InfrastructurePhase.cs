@@ -1,4 +1,3 @@
-using Moongate.Core.Data.Directories;
 using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Json;
@@ -31,6 +30,55 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
         EnsureDataAssets(context);
     }
 
+    private static void CheckConfig(BootstrapContext context)
+    {
+        var configPath = Path.Combine(context.DirectoriesConfig.Root, "moongate.json");
+
+        if (!File.Exists(configPath))
+        {
+            context.Logger.Warning(
+                "No moongate.json configuration file found in root directory. Using default configuration values."
+            );
+
+            JsonUtils.SerializeToFile(
+                context.Config,
+                configPath,
+                MoongateServerJsonContext.Default
+            );
+        }
+        else
+        {
+            var fileConfig = JsonUtils.DeserializeFromFile<MoongateConfig>(
+                configPath,
+                MoongateServerJsonContext.Default
+            );
+
+            context.Logger.Information("Loaded configuration from moongate.json in root directory.");
+
+            if (!string.IsNullOrWhiteSpace(fileConfig.RootDirectory))
+            {
+                context.Config.RootDirectory = fileConfig.RootDirectory;
+            }
+
+            if (!string.IsNullOrWhiteSpace(fileConfig.UODirectory))
+            {
+                context.Config.UODirectory = fileConfig.UODirectory;
+            }
+
+            if (fileConfig.LogLevel != LogLevelType.Information)
+            {
+                context.Config.LogLevel = fileConfig.LogLevel;
+            }
+
+            context.Config.LogPacketData = fileConfig.LogPacketData;
+
+            if (fileConfig.Persistence is not null)
+            {
+                context.Config.Persistence = fileConfig.Persistence;
+            }
+        }
+    }
+
     private static void CheckDirectoryConfig(BootstrapContext context)
     {
         if (string.IsNullOrWhiteSpace(context.Config.RootDirectory))
@@ -42,6 +90,25 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
         context.Config.RootDirectory = context.Config.RootDirectory.ResolvePathAndEnvs();
 
         context.DirectoriesConfig = new(context.Config.RootDirectory, Enum.GetNames<DirectoryType>());
+    }
+
+    private static void CheckUODirectory(BootstrapContext context)
+    {
+        if (string.IsNullOrWhiteSpace(context.Config.UODirectory))
+        {
+            context.Config.UODirectory = Environment.GetEnvironmentVariable("MOONGATE_UO_DIRECTORY");
+        }
+
+        if (string.IsNullOrWhiteSpace(context.Config.UODirectory))
+        {
+            context.Logger.Error("UO Directory not configured. Set --uoDirectory or MOONGATE_UO_DIRECTORY.");
+
+            throw new InvalidOperationException("UO Directory not configured.");
+        }
+
+        UoFiles.RootDir = context.Config.UODirectory.ResolvePathAndEnvs();
+        UoFiles.ReLoadDirectory();
+        context.Logger.Information("UO Directory configured in {UODirectory}", UoFiles.RootDir);
     }
 
     private static void CreateLogger(BootstrapContext context)
@@ -94,74 +161,6 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
 
         Log.Logger = configuration.CreateLogger();
         context.Logger = Log.ForContext<MoongateBootstrap>();
-    }
-
-    private static void CheckConfig(BootstrapContext context)
-    {
-        var configPath = Path.Combine(context.DirectoriesConfig.Root, "moongate.json");
-
-        if (!File.Exists(configPath))
-        {
-            context.Logger.Warning(
-                "No moongate.json configuration file found in root directory. Using default configuration values."
-            );
-
-            JsonUtils.SerializeToFile(
-                context.Config,
-                configPath,
-                MoongateServerJsonContext.Default
-            );
-        }
-        else
-        {
-            var fileConfig = JsonUtils.DeserializeFromFile<MoongateConfig>(
-                configPath,
-                MoongateServerJsonContext.Default
-            );
-
-            context.Logger.Information("Loaded configuration from moongate.json in root directory.");
-
-            if (!string.IsNullOrWhiteSpace(fileConfig.RootDirectory))
-            {
-                context.Config.RootDirectory = fileConfig.RootDirectory;
-            }
-
-            if (!string.IsNullOrWhiteSpace(fileConfig.UODirectory))
-            {
-                context.Config.UODirectory = fileConfig.UODirectory;
-            }
-
-            if (fileConfig.LogLevel != LogLevelType.Information)
-            {
-                context.Config.LogLevel = fileConfig.LogLevel;
-            }
-
-            context.Config.LogPacketData = fileConfig.LogPacketData;
-
-            if (fileConfig.Persistence is not null)
-            {
-                context.Config.Persistence = fileConfig.Persistence;
-            }
-        }
-    }
-
-    private static void CheckUODirectory(BootstrapContext context)
-    {
-        if (string.IsNullOrWhiteSpace(context.Config.UODirectory))
-        {
-            context.Config.UODirectory = Environment.GetEnvironmentVariable("MOONGATE_UO_DIRECTORY");
-        }
-
-        if (string.IsNullOrWhiteSpace(context.Config.UODirectory))
-        {
-            context.Logger.Error("UO Directory not configured. Set --uoDirectory or MOONGATE_UO_DIRECTORY.");
-
-            throw new InvalidOperationException("UO Directory not configured.");
-        }
-
-        UoFiles.RootDir = context.Config.UODirectory.ResolvePathAndEnvs();
-        UoFiles.ReLoadDirectory();
-        context.Logger.Information("UO Directory configured in {UODirectory}", UoFiles.RootDir);
     }
 
     private static void EnsureDataAssets(BootstrapContext context)

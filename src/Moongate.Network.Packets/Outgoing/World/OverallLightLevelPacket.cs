@@ -7,6 +7,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0x4F, PacketSizing.Fixed, Length = 2, Description = "Overall Light Level")]
+
 /// <summary>
 /// Represents OverallLightLevelPacket.
 /// </summary>

@@ -4,6 +4,7 @@ namespace Moongate.Server.Types.Commands;
 /// Identifies where a command was submitted from.
 /// </summary>
 [Flags]
+
 /// <summary>
 /// Represents CommandSourceType.
 /// </summary>

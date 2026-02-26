@@ -1,6 +1,6 @@
+using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Persistence;
-using Moongate.Server.Data.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -82,6 +82,7 @@ public sealed class ItemService : IItemService
         if (item is null)
         {
             _logger.Warning("Cannot delete item {ItemId}: not found", itemId);
+
             return false;
         }
 
@@ -93,6 +94,29 @@ public sealed class ItemService : IItemService
         return removed;
     }
 
+    public async Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+    {
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            _logger.Warning("Cannot drop item {ItemId} to ground: item not found", itemId);
+
+            return null;
+        }
+
+        var sourceContainerId = item.ParentContainerId;
+        var oldLocation = item.Location;
+        var moved = await MoveItemToWorldAsync(itemId, location, mapId);
+
+        if (!moved)
+        {
+            return null;
+        }
+
+        return new(itemId, sourceContainerId, oldLocation, location);
+    }
+
     public async Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
@@ -100,6 +124,7 @@ public sealed class ItemService : IItemService
         if (item is null)
         {
             _logger.Warning("Cannot equip item {ItemId}: item not found", itemId);
+
             return false;
         }
 
@@ -108,6 +133,7 @@ public sealed class ItemService : IItemService
         if (mobile is null)
         {
             _logger.Warning("Cannot equip item {ItemId}: mobile {MobileId} not found", itemId, mobileId);
+
             return false;
         }
 
@@ -135,19 +161,6 @@ public sealed class ItemService : IItemService
         return true;
     }
 
-    public Task<UOItemEntity?> GetItemAsync(Serial itemId)
-        => GetItemHydratedAsync(itemId);
-
-    public async Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
-    {
-        var items = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                        item => item.ParentContainerId == containerId,
-                        static item => item
-                    );
-
-        return [.. items];
-    }
-
     public async Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
     {
         var minX = sectorX * MapSectorConsts.SectorSize;
@@ -170,6 +183,19 @@ public sealed class ItemService : IItemService
         return [.. items];
     }
 
+    public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+        => GetItemHydratedAsync(itemId);
+
+    public async Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+    {
+        var items = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                        item => item.ParentContainerId == containerId,
+                        static item => item
+                    );
+
+        return [.. items];
+    }
+
     public async Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
@@ -177,6 +203,7 @@ public sealed class ItemService : IItemService
         if (item is null)
         {
             _logger.Warning("Cannot move item {ItemId} to container {ContainerId}: item not found", itemId, containerId);
+
             return false;
         }
 
@@ -189,6 +216,7 @@ public sealed class ItemService : IItemService
                 itemId,
                 containerId
             );
+
             return false;
         }
 
@@ -216,6 +244,7 @@ public sealed class ItemService : IItemService
         if (item is null)
         {
             _logger.Warning("Cannot move item {ItemId} to world: item not found", itemId);
+
             return false;
         }
 
@@ -232,28 +261,6 @@ public sealed class ItemService : IItemService
         _logger.Debug("Moved item {ItemId} to world location {Location}", itemId, location);
 
         return true;
-    }
-
-    public async Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
-    {
-        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
-
-        if (item is null)
-        {
-            _logger.Warning("Cannot drop item {ItemId} to ground: item not found", itemId);
-            return null;
-        }
-
-        var sourceContainerId = item.ParentContainerId;
-        var oldLocation = item.Location;
-        var moved = await MoveItemToWorldAsync(itemId, location, mapId);
-
-        if (!moved)
-        {
-            return null;
-        }
-
-        return new(itemId, sourceContainerId, oldLocation, location);
     }
 
     public async Task UpsertItemAsync(UOItemEntity item)
@@ -305,6 +312,7 @@ public sealed class ItemService : IItemService
         {
             item.EquippedMobileId = Serial.Zero;
             item.EquippedLayer = null;
+
             return;
         }
 
@@ -326,33 +334,10 @@ public sealed class ItemService : IItemService
         item.EquippedLayer = null;
     }
 
-    private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
-    {
-        if (!mobile.EquippedItemIds.TryGetValue(layer, out var currentItemId) || currentItemId == Serial.Zero)
-        {
-            return;
-        }
-
-        var currentItem = await _persistenceService.UnitOfWork.Items.GetByIdAsync(currentItemId);
-
-        if (currentItem is not null)
-        {
-            currentItem.EquippedMobileId = Serial.Zero;
-            currentItem.EquippedLayer = null;
-            await _persistenceService.UnitOfWork.Items.UpsertAsync(currentItem);
-        }
-
-        mobile.EquippedItemIds.Remove(layer);
-
-        if (layer == ItemLayerType.Backpack && mobile.BackpackId == currentItemId)
-        {
-            mobile.BackpackId = Serial.Zero;
-        }
-    }
-
     private async Task<UOItemEntity?> GetItemHydratedAsync(Serial itemId)
     {
         var visited = new HashSet<Serial>();
+
         return await GetItemHydratedRecursiveAsync(itemId, visited);
     }
 
@@ -388,6 +373,7 @@ public sealed class ItemService : IItemService
         if (childIds.Count == 0)
         {
             item.HydrateContainedItemsRuntime([]);
+
             return item;
         }
 
@@ -408,5 +394,29 @@ public sealed class ItemService : IItemService
         item.HydrateContainedItemsRuntime(containedItems);
 
         return item;
+    }
+
+    private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
+    {
+        if (!mobile.EquippedItemIds.TryGetValue(layer, out var currentItemId) || currentItemId == Serial.Zero)
+        {
+            return;
+        }
+
+        var currentItem = await _persistenceService.UnitOfWork.Items.GetByIdAsync(currentItemId);
+
+        if (currentItem is not null)
+        {
+            currentItem.EquippedMobileId = Serial.Zero;
+            currentItem.EquippedLayer = null;
+            await _persistenceService.UnitOfWork.Items.UpsertAsync(currentItem);
+        }
+
+        mobile.EquippedItemIds.Remove(layer);
+
+        if (layer == ItemLayerType.Backpack && mobile.BackpackId == currentItemId)
+        {
+            mobile.BackpackId = Serial.Zero;
+        }
     }
 }

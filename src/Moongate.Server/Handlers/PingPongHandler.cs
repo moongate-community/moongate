@@ -9,6 +9,7 @@ using Moongate.Server.Listeners.Base;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.PingMessagePacket)]
+
 /// <summary>
 /// Represents PingPongHandler.
 /// </summary>

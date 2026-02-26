@@ -10,7 +10,6 @@ using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Server;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Internal.Network;
@@ -276,6 +275,17 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         );
 
         return true;
+    }
+
+    private static bool IsLikelyDropDestinationSerial(uint value)
+    {
+        if (value is 0 or 0xFFFFFFFF)
+        {
+            return true;
+        }
+
+        return value is >= Serial.MobileStart and <= Serial.MaxMobileSerial ||
+               value is >= Serial.ItemOffset and <= Serial.MaxItemSerial;
     }
 
     private void OnClientConnected(object? sender, MoongateTCPClientEventArgs e)
@@ -544,28 +554,15 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         }
     }
 
-    private static int? ResolvePacketLength(List<byte> pendingBytes, PacketDescriptor descriptor, byte opCode)
+    private static uint ReadUInt32BigEndian(List<byte> data, int offset)
     {
-        if (descriptor.Sizing == PacketSizing.Fixed)
-        {
-            if (opCode == PacketDefinition.DropItemPacket)
-            {
-                return ResolveDropItemPacketLength(pendingBytes);
-            }
+        Span<byte> buffer = stackalloc byte[4];
+        buffer[0] = data[offset];
+        buffer[1] = data[offset + 1];
+        buffer[2] = data[offset + 2];
+        buffer[3] = data[offset + 3];
 
-            return descriptor.Length;
-        }
-
-        if (pendingBytes.Count < 3)
-        {
-            return null;
-        }
-
-        Span<byte> lengthBuffer = stackalloc byte[2];
-        lengthBuffer[0] = pendingBytes[1];
-        lengthBuffer[1] = pendingBytes[2];
-
-        return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
+        return BinaryPrimitives.ReadUInt32BigEndian(buffer);
     }
 
     private static int? ResolveDropItemPacketLength(List<byte> pendingBytes)
@@ -598,26 +595,28 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         return 15;
     }
 
-    private static bool IsLikelyDropDestinationSerial(uint value)
+    private static int? ResolvePacketLength(List<byte> pendingBytes, PacketDescriptor descriptor, byte opCode)
     {
-        if (value is 0 or 0xFFFFFFFF)
+        if (descriptor.Sizing == PacketSizing.Fixed)
         {
-            return true;
+            if (opCode == PacketDefinition.DropItemPacket)
+            {
+                return ResolveDropItemPacketLength(pendingBytes);
+            }
+
+            return descriptor.Length;
         }
 
-        return value is >= Serial.MobileStart and <= Serial.MaxMobileSerial ||
-               value is >= Serial.ItemOffset and <= Serial.MaxItemSerial;
-    }
+        if (pendingBytes.Count < 3)
+        {
+            return null;
+        }
 
-    private static uint ReadUInt32BigEndian(List<byte> data, int offset)
-    {
-        Span<byte> buffer = stackalloc byte[4];
-        buffer[0] = data[offset];
-        buffer[1] = data[offset + 1];
-        buffer[2] = data[offset + 2];
-        buffer[3] = data[offset + 3];
+        Span<byte> lengthBuffer = stackalloc byte[2];
+        lengthBuffer[0] = pendingBytes[1];
+        lengthBuffer[1] = pendingBytes[2];
 
-        return BinaryPrimitives.ReadUInt32BigEndian(buffer);
+        return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
     }
 
     private void ShowRegisteredPackets()

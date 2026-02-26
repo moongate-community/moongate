@@ -141,6 +141,25 @@ public class MetricsProvidersTests
     }
 
     [Test]
+    public async Task SpatialMetricsProvider_ShouldExposeExpectedMetricNames()
+    {
+        var provider = new SpatialMetricsProvider(
+            new MetricsProvidersTestSpatialService
+            {
+                TotalSectors = 10,
+                TotalEntities = 40,
+                MaxEntitiesPerSector = 6,
+                AverageEntitiesPerSector = 4.0
+            }
+        );
+
+        var samples = await provider.CollectAsync();
+        var names = samples.Select(sample => sample.Name).ToArray();
+
+        Assert.That(names, Is.EquivalentTo(SpatialMetricNames));
+    }
+
+    [Test]
     public async Task TimerMetricsProvider_ShouldExposeExpectedMetricNames()
     {
         var provider = new TimerMetricsProvider(
@@ -159,24 +178,5 @@ public class MetricsProvidersTests
         var names = samples.Select(sample => sample.Name).ToArray();
 
         Assert.That(names, Is.EquivalentTo(TimerMetricNames));
-    }
-
-    [Test]
-    public async Task SpatialMetricsProvider_ShouldExposeExpectedMetricNames()
-    {
-        var provider = new SpatialMetricsProvider(
-            new MetricsProvidersTestSpatialService
-            {
-                TotalSectors = 10,
-                TotalEntities = 40,
-                MaxEntitiesPerSector = 6,
-                AverageEntitiesPerSector = 4.0
-            }
-        );
-
-        var samples = await provider.CollectAsync();
-        var names = samples.Select(sample => sample.Name).ToArray();
-
-        Assert.That(names, Is.EquivalentTo(SpatialMetricNames));
     }
 }

@@ -5,9 +5,7 @@ internal sealed class ScriptModuleRegistrationModel : IEquatable<ScriptModuleReg
     public string ModuleTypeName { get; }
 
     public ScriptModuleRegistrationModel(string moduleTypeName)
-    {
-        ModuleTypeName = moduleTypeName;
-    }
+        => ModuleTypeName = moduleTypeName;
 
     public bool Equals(ScriptModuleRegistrationModel? other)
         => other is not null && string.Equals(ModuleTypeName, other.ModuleTypeName, StringComparison.Ordinal);

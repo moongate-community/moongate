@@ -25,19 +25,19 @@ public sealed class FileLoaderRegistrationGenerator : IIncrementalGenerator
         );
 
         var registrationModels = candidates
-            .Where(static model => model is not null)
-            .Collect();
+                                 .Where(static model => model is not null)
+                                 .Collect();
 
         context.RegisterSourceOutput(
             registrationModels,
             static (productionContext, models) =>
             {
                 var registrations = models
-                    .Where(static model => model is not null)
-                    .Distinct()
-                    .OrderBy(static model => model.Order)
-                    .ThenBy(static model => model.LoaderTypeName, StringComparer.Ordinal)
-                    .ToArray();
+                                    .Where(static model => model is not null)
+                                    .Distinct()
+                                    .OrderBy(static model => model.Order)
+                                    .ThenBy(static model => model.LoaderTypeName, StringComparer.Ordinal)
+                                    .ToArray();
 
                 if (registrations.Length == 0)
                 {
@@ -64,7 +64,9 @@ public sealed class FileLoaderRegistrationGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.AppendLine("internal static partial class BootstrapFileLoaderRegistration");
         sb.AppendLine("{");
-        sb.AppendLine("    static partial void RegisterGenerated(Moongate.Server.Interfaces.Services.Files.IFileLoaderService fileLoaderService)");
+        sb.AppendLine(
+            "    static partial void RegisterGenerated(Moongate.Server.Interfaces.Services.Files.IFileLoaderService fileLoaderService)"
+        );
         sb.AppendLine("    {");
 
         foreach (var registration in registrations)
@@ -120,9 +122,9 @@ public sealed class FileLoaderRegistrationGenerator : IIncrementalGenerator
 
         var fullTypeName = typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         var normalizedTypeName = fullTypeName.StartsWith("global::", StringComparison.Ordinal)
-            ? fullTypeName.Substring("global::".Length)
-            : fullTypeName;
+                                     ? fullTypeName.Substring("global::".Length)
+                                     : fullTypeName;
 
-        return new FileLoaderRegistrationModel(normalizedTypeName, order);
+        return new(normalizedTypeName, order);
     }
 }

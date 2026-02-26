@@ -5,6 +5,7 @@ using Serilog.Events;
 namespace Moongate.Scripting.Modules;
 
 [ScriptModule("log", "Provides logging functionalities to scripts.")]
+
 /// <summary>
 /// Represents LogModule.
 /// </summary>

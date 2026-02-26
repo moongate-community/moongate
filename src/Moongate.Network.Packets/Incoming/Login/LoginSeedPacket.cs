@@ -7,6 +7,7 @@ using Moongate.UO.Data.Version;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xEF, PacketSizing.Fixed, Length = 21, Description = "KR/2D Client Login/Seed")]
+
 /// <summary>
 /// Represents LoginSeedPacket.
 /// </summary>

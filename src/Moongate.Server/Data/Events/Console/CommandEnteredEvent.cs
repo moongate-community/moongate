@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Types.Commands;
 
 namespace Moongate.Server.Data.Events.Console;
@@ -34,5 +34,5 @@ public readonly record struct CommandEnteredEvent(
         CommandSourceType source = CommandSourceType.Console,
         GameSession? gameSession = null
     )
-        : this(new GameEventBase(timestamp), commandText, source, gameSession) { }
+        : this(new(timestamp), commandText, source, gameSession) { }
 }

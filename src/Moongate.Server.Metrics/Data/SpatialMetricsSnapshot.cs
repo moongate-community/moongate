@@ -7,7 +7,12 @@ namespace Moongate.Server.Metrics.Data;
 /// </summary>
 public sealed class SpatialMetricsSnapshot
 {
-    public SpatialMetricsSnapshot(int totalSectors, int totalEntities, int maxEntitiesPerSector, double averageEntitiesPerSector)
+    public SpatialMetricsSnapshot(
+        int totalSectors,
+        int totalEntities,
+        int maxEntitiesPerSector,
+        double averageEntitiesPerSector
+    )
     {
         TotalSectors = totalSectors;
         TotalEntities = totalEntities;

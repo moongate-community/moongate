@@ -7,6 +7,29 @@ namespace Moongate.Tests.Server.Data.Internal.Commands;
 public class LuaCommandContextTests
 {
     [Test]
+    public void Constructor_WhenConsoleContext_ShouldExposeNullSession()
+    {
+        var context = new CommandSystemContext(
+            "help",
+            [],
+            CommandSourceType.Console,
+            -1,
+            (_, _) => { }
+        );
+
+        var luaContext = new LuaCommandContext(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(luaContext.Source, Is.EqualTo(CommandSourceType.Console));
+                Assert.That(luaContext.IsInGame, Is.False);
+                Assert.That(luaContext.SessionId, Is.Null);
+            }
+        );
+    }
+
+    [Test]
     public void Constructor_WhenInGameContext_ShouldExposeSessionAndIsInGame()
     {
         var context = new CommandSystemContext(
@@ -27,29 +50,6 @@ public class LuaCommandContextTests
                 Assert.That(luaContext.Source, Is.EqualTo(CommandSourceType.InGame));
                 Assert.That(luaContext.IsInGame, Is.True);
                 Assert.That(luaContext.SessionId, Is.EqualTo(123));
-            }
-        );
-    }
-
-    [Test]
-    public void Constructor_WhenConsoleContext_ShouldExposeNullSession()
-    {
-        var context = new CommandSystemContext(
-            "help",
-            [],
-            CommandSourceType.Console,
-            -1,
-            (_, _) => { }
-        );
-
-        var luaContext = new LuaCommandContext(context);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(luaContext.Source, Is.EqualTo(CommandSourceType.Console));
-                Assert.That(luaContext.IsInGame, Is.False);
-                Assert.That(luaContext.SessionId, Is.Null);
             }
         );
     }

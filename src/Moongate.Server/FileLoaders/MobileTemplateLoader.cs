@@ -91,59 +91,6 @@ public sealed class MobileTemplateLoader : IFileLoader
         return Task.CompletedTask;
     }
 
-    private static void ResolveBaseMobiles(List<MobileTemplateDefinition> templates)
-    {
-        var byId = templates.ToDictionary(
-            static template => template.Id,
-            static template => template,
-            StringComparer.OrdinalIgnoreCase
-        );
-
-        var states = new Dictionary<string, ResolveState>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var template in templates)
-        {
-            ResolveTemplate(template, byId, states);
-        }
-    }
-
-    private static void ResolveTemplate(
-        MobileTemplateDefinition template,
-        Dictionary<string, MobileTemplateDefinition> byId,
-        Dictionary<string, ResolveState> states
-    )
-    {
-        if (states.TryGetValue(template.Id, out var state))
-        {
-            if (state == ResolveState.Done)
-            {
-                return;
-            }
-
-            if (state == ResolveState.Visiting)
-            {
-                throw new InvalidOperationException($"Circular base_mobile reference detected at '{template.Id}'.");
-            }
-        }
-
-        states[template.Id] = ResolveState.Visiting;
-
-        if (!string.IsNullOrWhiteSpace(template.BaseMobile))
-        {
-            if (!byId.TryGetValue(template.BaseMobile, out var parent))
-            {
-                throw new InvalidOperationException(
-                    $"Template '{template.Id}' references unknown base_mobile '{template.BaseMobile}'."
-                );
-            }
-
-            ResolveTemplate(parent, byId, states);
-            ApplyInheritance(parent, template);
-        }
-
-        states[template.Id] = ResolveState.Done;
-    }
-
     private static void ApplyInheritance(MobileTemplateDefinition parent, MobileTemplateDefinition child)
     {
         if (string.IsNullOrWhiteSpace(child.Name))
@@ -275,42 +222,99 @@ public sealed class MobileTemplateLoader : IFileLoader
         if (child.FixedEquipment.Count == 0 && parent.FixedEquipment.Count > 0)
         {
             child.FixedEquipment = parent
-                .FixedEquipment
-                .Select(static equipment => new MobileEquipmentItemTemplate
-                {
-                    ItemTemplateId = equipment.ItemTemplateId,
-                    Layer = equipment.Layer
-                })
-                .ToList();
+                                   .FixedEquipment
+                                   .Select(
+                                       static equipment => new MobileEquipmentItemTemplate
+                                       {
+                                           ItemTemplateId = equipment.ItemTemplateId,
+                                           Layer = equipment.Layer
+                                       }
+                                   )
+                                   .ToList();
         }
 
         if (child.RandomEquipment.Count == 0 && parent.RandomEquipment.Count > 0)
         {
             child.RandomEquipment = parent
-                .RandomEquipment
-                .Select(
-                    static pool => new MobileRandomEquipmentPoolTemplate
-                    {
-                        Name = pool.Name,
-                        Layer = pool.Layer,
-                        SpawnChance = pool.SpawnChance,
-                        Items = pool
-                            .Items
-                            .Select(static item => new MobileWeightedEquipmentItemTemplate
-                            {
-                                ItemTemplateId = item.ItemTemplateId,
-                                Weight = item.Weight
-                            })
-                            .ToList()
-                    }
-                )
-                .ToList();
+                                    .RandomEquipment
+                                    .Select(
+                                        static pool => new MobileRandomEquipmentPoolTemplate
+                                        {
+                                            Name = pool.Name,
+                                            Layer = pool.Layer,
+                                            SpawnChance = pool.SpawnChance,
+                                            Items = pool
+                                                    .Items
+                                                    .Select(
+                                                        static item => new MobileWeightedEquipmentItemTemplate
+                                                        {
+                                                            ItemTemplateId = item.ItemTemplateId,
+                                                            Weight = item.Weight
+                                                        }
+                                                    )
+                                                    .ToList()
+                                        }
+                                    )
+                                    .ToList();
         }
     }
+
+    private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
+        => childValue == defaultValue ? parentValue : childValue;
 
     private static int InheritInt(int childValue, int parentValue, int defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
 
-    private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
-        => childValue == defaultValue ? parentValue : childValue;
+    private static void ResolveBaseMobiles(List<MobileTemplateDefinition> templates)
+    {
+        var byId = templates.ToDictionary(
+            static template => template.Id,
+            static template => template,
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        var states = new Dictionary<string, ResolveState>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var template in templates)
+        {
+            ResolveTemplate(template, byId, states);
+        }
+    }
+
+    private static void ResolveTemplate(
+        MobileTemplateDefinition template,
+        Dictionary<string, MobileTemplateDefinition> byId,
+        Dictionary<string, ResolveState> states
+    )
+    {
+        if (states.TryGetValue(template.Id, out var state))
+        {
+            if (state == ResolveState.Done)
+            {
+                return;
+            }
+
+            if (state == ResolveState.Visiting)
+            {
+                throw new InvalidOperationException($"Circular base_mobile reference detected at '{template.Id}'.");
+            }
+        }
+
+        states[template.Id] = ResolveState.Visiting;
+
+        if (!string.IsNullOrWhiteSpace(template.BaseMobile))
+        {
+            if (!byId.TryGetValue(template.BaseMobile, out var parent))
+            {
+                throw new InvalidOperationException(
+                    $"Template '{template.Id}' references unknown base_mobile '{template.BaseMobile}'."
+                );
+            }
+
+            ResolveTemplate(parent, byId, states);
+            ApplyInheritance(parent, template);
+        }
+
+        states[template.Id] = ResolveState.Done;
+    }
 }

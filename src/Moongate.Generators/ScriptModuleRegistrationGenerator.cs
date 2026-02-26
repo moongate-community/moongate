@@ -36,10 +36,10 @@ public sealed class ScriptModuleRegistrationGenerator : IIncrementalGenerator
                 }
 
                 var registrations = payload.Left
-                                    .Where(static model => model is not null)
-                                    .Distinct()
-                                    .OrderBy(static model => model.ModuleTypeName, StringComparer.Ordinal)
-                                    .ToArray();
+                                           .Where(static model => model is not null)
+                                           .Distinct()
+                                           .OrderBy(static model => model.ModuleTypeName, StringComparer.Ordinal)
+                                           .ToArray();
 
                 var source = BuildSource(registrations, assemblyName!);
                 productionContext.AddSource(

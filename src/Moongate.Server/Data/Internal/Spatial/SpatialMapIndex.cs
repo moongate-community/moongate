@@ -15,19 +15,6 @@ public sealed class SpatialMapIndex
     public IReadOnlyCollection<MapSector> Sectors => _sectors.Values;
 
     /// <summary>
-    /// Gets a sector by coordinates.
-    /// </summary>
-    /// <param name="sectorX">Sector x.</param>
-    /// <param name="sectorY">Sector y.</param>
-    /// <returns>Sector when found; otherwise <c>null</c>.</returns>
-    public MapSector? GetSector(int sectorX, int sectorY)
-    {
-        _sectors.TryGetValue((sectorX, sectorY), out var sector);
-
-        return sector;
-    }
-
-    /// <summary>
     /// Gets an existing sector or creates a new one.
     /// </summary>
     /// <param name="mapId">Map id.</param>
@@ -45,5 +32,18 @@ public sealed class SpatialMapIndex
         _sectors[(sectorX, sectorY)] = created;
 
         return created;
+    }
+
+    /// <summary>
+    /// Gets a sector by coordinates.
+    /// </summary>
+    /// <param name="sectorX">Sector x.</param>
+    /// <param name="sectorY">Sector y.</param>
+    /// <returns>Sector when found; otherwise <c>null</c>.</returns>
+    public MapSector? GetSector(int sectorX, int sectorY)
+    {
+        _sectors.TryGetValue((sectorX, sectorY), out var sector);
+
+        return sector;
     }
 }

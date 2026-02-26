@@ -11,6 +11,7 @@ namespace Moongate.Server.Http.Json;
  JsonSerializable(typeof(MoongateHttpUser)),
  JsonSerializable(typeof(List<MoongateHttpUser>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpUser>))]
+
 /// <summary>
 /// Represents MoongateHttpJsonContext.
 /// </summary>

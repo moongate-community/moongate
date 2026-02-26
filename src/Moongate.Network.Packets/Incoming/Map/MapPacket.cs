@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Map;
 
 [PacketHandler(0x56, PacketSizing.Fixed, Length = 11, Description = "Map Packet (cartography/treasure)")]
+
 /// <summary>
 /// Represents MapPacket.
 /// </summary>

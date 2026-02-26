@@ -3,7 +3,6 @@ using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Attributes;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
@@ -16,6 +15,7 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.MoveRequestPacket)]
+
 /// <summary>
 /// Represents MovementHandler.
 /// </summary>

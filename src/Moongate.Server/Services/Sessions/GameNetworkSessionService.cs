@@ -39,11 +39,13 @@ public sealed class GameNetworkSessionService : IGameNetworkSessionService
             if (value.CharacterId == characterId)
             {
                 session = value;
+
                 return true;
             }
         }
 
         session = null!;
+
         return false;
     }
 }

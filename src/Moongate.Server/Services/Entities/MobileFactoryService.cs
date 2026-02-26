@@ -127,5 +127,4 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         return mobile;
     }
-
 }

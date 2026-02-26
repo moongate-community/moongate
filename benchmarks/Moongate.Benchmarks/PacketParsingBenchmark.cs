@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Registry;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+
 /// <summary>
 /// Represents PacketParsingBenchmark.
 /// </summary>

@@ -1,6 +1,6 @@
+using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.Scripting.Attributes.Scripts;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Modules;
@@ -24,17 +24,9 @@ public sealed class SpeechModule
         _gameNetworkSessionService = gameNetworkSessionService;
     }
 
-    [ScriptFunction("send", "Sends a server message to a specific session id.")]
-    public bool Send(long sessionId, string text)
-    {
-        if (sessionId <= 0 || string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        return _gameNetworkSessionService.TryGet(sessionId, out var session) &&
-               _speechService.SendMessageFromServerAsync(session, text).GetAwaiter().GetResult();
-    }
+    [ScriptFunction("broadcast", "Broadcasts a server message to all active sessions.")]
+    public int Broadcast(string text)
+        => string.IsNullOrWhiteSpace(text) ? 0 : _speechService.BroadcastFromServerAsync(text).GetAwaiter().GetResult();
 
     [ScriptFunction("say", "Sends a server message to a character id.")]
     public bool Say(uint characterId, string text)
@@ -52,9 +44,15 @@ public sealed class SpeechModule
         return _speechService.SendMessageFromServerAsync(session, text).GetAwaiter().GetResult();
     }
 
-    [ScriptFunction("broadcast", "Broadcasts a server message to all active sessions.")]
-    public int Broadcast(string text)
+    [ScriptFunction("send", "Sends a server message to a specific session id.")]
+    public bool Send(long sessionId, string text)
     {
-        return string.IsNullOrWhiteSpace(text) ? 0 : _speechService.BroadcastFromServerAsync(text).GetAwaiter().GetResult();
+        if (sessionId <= 0 || string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        return _gameNetworkSessionService.TryGet(sessionId, out var session) &&
+               _speechService.SendMessageFromServerAsync(session, text).GetAwaiter().GetResult();
     }
 }

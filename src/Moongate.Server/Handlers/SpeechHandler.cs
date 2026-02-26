@@ -10,6 +10,7 @@ using Moongate.Server.Listeners.Base;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket)]
+
 /// <summary>
 /// Represents SpeechHandler.
 /// </summary>

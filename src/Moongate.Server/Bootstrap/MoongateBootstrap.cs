@@ -21,9 +21,9 @@ public sealed class MoongateBootstrap : IDisposable
 {
     private readonly Container _container = new(Rules.Default.WithUseInterpretation());
 
-    private ILogger _logger;
+    private readonly ILogger _logger;
 
-    private DirectoriesConfig _directoriesConfig;
+    private readonly DirectoriesConfig _directoriesConfig;
     private readonly IConsoleUiService _consoleUiService = new ConsoleUiService();
     private readonly MoongateConfig _moongateConfig;
 
@@ -54,6 +54,12 @@ public sealed class MoongateBootstrap : IDisposable
         _logger = context.Logger;
 
         Console.WriteLine("Root Directory: " + _directoriesConfig.Root);
+    }
+
+    public void Dispose()
+    {
+        _container.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     public async Task RunAsync(CancellationToken cancellationToken)
@@ -152,11 +158,5 @@ public sealed class MoongateBootstrap : IDisposable
             _logger.Information("Stopping {ServiceTypeFullName}", service.GetType().Name);
             await service.StopAsync();
         }
-    }
-
-    public void Dispose()
-    {
-        _container.Dispose();
-        GC.SuppressFinalize(this);
     }
 }

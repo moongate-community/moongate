@@ -2,7 +2,6 @@ using BenchmarkDotNet.Attributes;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Scripting.Data.Config;
-using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Services;
 
 namespace Moongate.Benchmarks;
@@ -16,6 +15,37 @@ public class LuaScriptEngineBenchmark
     private LuaScriptEngineService _engine = null!;
     private string _tempDir = null!;
 
+    [Benchmark]
+    public void CallFunctionNoArgs()
+        => _engine.CallFunction("simple_func");
+
+    [Benchmark]
+    public void CallFunctionWithArgs()
+        => _engine.CallFunction("add_func", 10, 20);
+
+    [GlobalCleanup]
+    public void Cleanup()
+    {
+        _engine.Dispose();
+
+        if (Directory.Exists(_tempDir))
+        {
+            Directory.Delete(_tempDir, true);
+        }
+    }
+
+    [Benchmark]
+    public void ExecuteLoopScriptCached()
+        => _engine.ExecuteScript(LoopScript);
+
+    [Benchmark]
+    public void ExecuteSimpleScriptCached()
+        => _engine.ExecuteScript(SimpleScript);
+
+    [Benchmark]
+    public void ExecuteSimpleScriptUncached()
+        => _engine.ExecuteScript(SimpleScript);
+
     [GlobalSetup]
     public void Setup()
     {
@@ -28,7 +58,7 @@ public class LuaScriptEngineBenchmark
             "1.0.0"
         );
 
-        _engine = new LuaScriptEngineService(
+        _engine = new(
             dirConfig,
             [],
             new Container(),
@@ -42,34 +72,7 @@ public class LuaScriptEngineBenchmark
         _engine.ExecuteScript(LoopScript);
     }
 
-    [GlobalCleanup]
-    public void Cleanup()
-    {
-        _engine.Dispose();
-        if (Directory.Exists(_tempDir))
-            Directory.Delete(_tempDir, recursive: true);
-    }
-
-    [Benchmark]
-    public void ExecuteSimpleScriptCached()
-        => _engine.ExecuteScript(SimpleScript);
-
-    [Benchmark]
-    public void ExecuteLoopScriptCached()
-        => _engine.ExecuteScript(LoopScript);
-
     [IterationSetup(Target = nameof(ExecuteSimpleScriptUncached))]
-    public void SetupUncached() => _engine.ClearScriptCache();
-
-    [Benchmark]
-    public void ExecuteSimpleScriptUncached()
-        => _engine.ExecuteScript(SimpleScript);
-
-    [Benchmark]
-    public void CallFunctionNoArgs()
-        => _engine.CallFunction("simple_func");
-
-    [Benchmark]
-    public void CallFunctionWithArgs()
-        => _engine.CallFunction("add_func", 10, 20);
+    public void SetupUncached()
+        => _engine.ClearScriptCache();
 }

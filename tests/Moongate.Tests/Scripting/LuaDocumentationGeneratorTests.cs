@@ -1,9 +1,8 @@
 using Moongate.Core.Data.Directories;
-using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Modules;
+using Moongate.Scripting.Utils;
 using Moongate.Server.Modules;
 using Moongate.Server.Modules.Builders;
-using Moongate.Scripting.Utils;
 
 namespace Moongate.Tests.Scripting;
 
@@ -30,6 +29,76 @@ public class LuaDocumentationGeneratorTests
                 Assert.That(docs, Does.Contain("function LuaGumpBuilder:resize_pic(...) end"));
                 Assert.That(docs, Does.Contain("function LuaGumpBuilder:text(...) end"));
                 Assert.That(docs, Does.Contain("function LuaGumpBuilder:build_layout(...) end"));
+            }
+        );
+    }
+
+    [Test]
+    public void GenerateDocumentation_WhenCommandModuleIsGenerated_ShouldContainRegisterFunction()
+    {
+        LuaDocumentationGenerator.ClearCaches();
+
+        var docs = LuaDocumentationGenerator.GenerateDocumentation(
+            "Moongate",
+            "0.0.0",
+            [new(typeof(CommandModule))],
+            [],
+            []
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(docs, Does.Contain("command = {}"));
+                Assert.That(docs, Does.Contain("function command.register("));
+            }
+        );
+    }
+
+    [Test]
+    public void GenerateDocumentation_WhenConstructorsAreGenerated_ShouldUseClassReturnType()
+    {
+        LuaDocumentationGenerator.ClearCaches();
+        LuaDocumentationGenerator.AddClassToGenerate(typeof(DirectoriesConfig));
+
+        var docs = LuaDocumentationGenerator.GenerateDocumentation(
+            "Moongate",
+            "0.0.0",
+            [],
+            [],
+            []
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(docs, Does.Contain("--- Constructors:"));
+                Assert.That(docs, Does.Contain("):DirectoriesConfig"));
+                Assert.That(docs, Does.Not.Contain("):void"));
+            }
+        );
+    }
+
+    [Test]
+    public void GenerateDocumentation_WhenMobileAndItemModulesAreGenerated_ShouldContainGetFunctions()
+    {
+        LuaDocumentationGenerator.ClearCaches();
+
+        var docs = LuaDocumentationGenerator.GenerateDocumentation(
+            "Moongate",
+            "0.0.0",
+            [new(typeof(MobileModule)), new(typeof(ItemModule))],
+            [],
+            []
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(docs, Does.Contain("mobile = {}"));
+                Assert.That(docs, Does.Contain("function mobile.get("));
+                Assert.That(docs, Does.Contain("item = {}"));
+                Assert.That(docs, Does.Contain("function item.get("));
             }
         );
     }
@@ -62,28 +131,6 @@ public class LuaDocumentationGeneratorTests
     }
 
     [Test]
-    public void GenerateDocumentation_WhenCommandModuleIsGenerated_ShouldContainRegisterFunction()
-    {
-        LuaDocumentationGenerator.ClearCaches();
-
-        var docs = LuaDocumentationGenerator.GenerateDocumentation(
-            "Moongate",
-            "0.0.0",
-            [new(typeof(CommandModule))],
-            [],
-            []
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(docs, Does.Contain("command = {}"));
-                Assert.That(docs, Does.Contain("function command.register("));
-            }
-        );
-    }
-
-    [Test]
     public void GenerateDocumentation_WhenSpeechModuleIsGenerated_ShouldContainSpeechFunctions()
     {
         LuaDocumentationGenerator.ClearCaches();
@@ -103,54 +150,6 @@ public class LuaDocumentationGeneratorTests
                 Assert.That(docs, Does.Contain("function speech.send("));
                 Assert.That(docs, Does.Contain("function speech.say("));
                 Assert.That(docs, Does.Contain("function speech.broadcast("));
-            }
-        );
-    }
-
-    [Test]
-    public void GenerateDocumentation_WhenMobileAndItemModulesAreGenerated_ShouldContainGetFunctions()
-    {
-        LuaDocumentationGenerator.ClearCaches();
-
-        var docs = LuaDocumentationGenerator.GenerateDocumentation(
-            "Moongate",
-            "0.0.0",
-            [new(typeof(MobileModule)), new(typeof(ItemModule))],
-            [],
-            []
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(docs, Does.Contain("mobile = {}"));
-                Assert.That(docs, Does.Contain("function mobile.get("));
-                Assert.That(docs, Does.Contain("item = {}"));
-                Assert.That(docs, Does.Contain("function item.get("));
-            }
-        );
-    }
-
-    [Test]
-    public void GenerateDocumentation_WhenConstructorsAreGenerated_ShouldUseClassReturnType()
-    {
-        LuaDocumentationGenerator.ClearCaches();
-        LuaDocumentationGenerator.AddClassToGenerate(typeof(DirectoriesConfig));
-
-        var docs = LuaDocumentationGenerator.GenerateDocumentation(
-            "Moongate",
-            "0.0.0",
-            [],
-            [],
-            []
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(docs, Does.Contain("--- Constructors:"));
-                Assert.That(docs, Does.Contain("):DirectoriesConfig"));
-                Assert.That(docs, Does.Not.Contain("):void"));
             }
         );
     }

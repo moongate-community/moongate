@@ -1,9 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
 using DryIoc;
 using Moongate.Abstractions.Data.Internal;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Interfaces.Services.Events;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Moongate.Server.Bootstrap.Internal;
 
@@ -15,10 +14,9 @@ internal static partial class BootstrapGameEventListenerRegistration
     public static void Subscribe(Container container)
         => SubscribeGenerated(container);
 
-    static partial void SubscribeGenerated(Container container);
-
     private static void RegisterListener<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TListener,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TListener,
         TEvent
     >(Container container)
         where TListener : class, IGameEventListener<TEvent>
@@ -26,11 +24,12 @@ internal static partial class BootstrapGameEventListenerRegistration
     {
         var gameEventBusService = container.Resolve<IGameEventBusService>();
         var listener = ResolveListener<TListener>(container);
-        gameEventBusService.RegisterListener<TEvent>(listener);
+        gameEventBusService.RegisterListener(listener);
     }
 
     private static TListener ResolveListener<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)] TListener
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TListener
     >(Container container) where TListener : class
     {
         if (container.IsRegistered<TListener>())
@@ -70,8 +69,8 @@ internal static partial class BootstrapGameEventListenerRegistration
             }
         }
 
-        throw new InvalidOperationException(
-            $"Listener type '{typeof(TListener).FullName}' is not registered in DryIoc."
-        );
+        throw new InvalidOperationException($"Listener type '{typeof(TListener).FullName}' is not registered in DryIoc.");
     }
+
+    static partial void SubscribeGenerated(Container container);
 }

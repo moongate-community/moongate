@@ -1,5 +1,5 @@
-using Moongate.UO.Data.Ids;
 using Moongate.Server.Data.Events.Base;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Data.Events.Spatial;
 

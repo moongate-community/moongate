@@ -1,10 +1,10 @@
+using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Modules;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
-using Moongate.Server.Data.Items;
 
 namespace Moongate.Tests.Server.Modules;
 
@@ -43,6 +43,15 @@ public class ItemModuleTests
             return Task.FromResult(true);
         }
 
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+        {
+            _ = itemId;
+            _ = location;
+            _ = mapId;
+
+            return Task.FromResult<DropItemToGroundResult?>(null);
+        }
+
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
         {
             _ = itemId;
@@ -50,6 +59,15 @@ public class ItemModuleTests
             _ = layer;
 
             return Task.FromResult(true);
+        }
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+        {
+            _ = mapId;
+            _ = sectorX;
+            _ = sectorY;
+
+            return Task.FromResult(new List<UOItemEntity>());
         }
 
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
@@ -62,15 +80,6 @@ public class ItemModuleTests
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
         {
             _ = containerId;
-
-            return Task.FromResult(new List<UOItemEntity>());
-        }
-
-        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
-        {
-            _ = mapId;
-            _ = sectorX;
-            _ = sectorY;
 
             return Task.FromResult(new List<UOItemEntity>());
         }
@@ -93,15 +102,6 @@ public class ItemModuleTests
             return Task.FromResult(true);
         }
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
-        {
-            _ = itemId;
-            _ = location;
-            _ = mapId;
-
-            return Task.FromResult<DropItemToGroundResult?>(null);
-        }
-
         public Task UpsertItemAsync(UOItemEntity item)
         {
             _ = item;
@@ -115,6 +115,17 @@ public class ItemModuleTests
 
             return Task.CompletedTask;
         }
+    }
+
+    [Test]
+    public void Get_WhenItemDoesNotExist_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+
+        var reference = module.Get(0x301);
+
+        Assert.That(reference, Is.Null);
     }
 
     [Test]
@@ -152,16 +163,5 @@ public class ItemModuleTests
                 Assert.That(reference.Hue, Is.EqualTo(0));
             }
         );
-    }
-
-    [Test]
-    public void Get_WhenItemDoesNotExist_ShouldReturnNull()
-    {
-        var itemService = new ItemModuleTestItemService();
-        var module = new ItemModule(itemService);
-
-        var reference = module.Get(0x301);
-
-        Assert.That(reference, Is.Null);
     }
 }

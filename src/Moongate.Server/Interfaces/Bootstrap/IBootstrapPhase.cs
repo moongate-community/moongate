@@ -4,7 +4,7 @@ namespace Moongate.Server.Interfaces.Bootstrap;
 
 /// <summary>
 /// Represents a discrete phase of the server bootstrap pipeline.
-/// Phases are executed in <see cref="Order"/> sequence during initialization.
+/// Phases are executed in <see cref="Order" /> sequence during initialization.
 /// </summary>
 public interface IBootstrapPhase
 {

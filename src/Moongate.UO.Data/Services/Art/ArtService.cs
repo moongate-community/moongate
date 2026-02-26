@@ -18,7 +18,7 @@ public sealed class ArtService : IArtService
 
     public ArtService()
         : this(
-            new FileIndex(
+            new(
                 "Artidx.mul",
                 "Art.mul",
                 "artLegacyMUL.uop",
@@ -28,9 +28,7 @@ public sealed class ArtService : IArtService
                 0x13FDC,
                 false
             )
-        )
-    {
-    }
+        ) { }
 
     public ArtService(FileIndex fileIndex)
         => _fileIndex = fileIndex;
@@ -71,6 +69,16 @@ public sealed class ArtService : IArtService
 
     public bool IsValidArt(int itemId)
         => GetArt(itemId) is not null;
+
+    private static Rgba32 ConvertArgb1555ToRgba(ushort value)
+    {
+        var a = (value & 0x8000) != 0 ? (byte)255 : (byte)0;
+        var r = (byte)(((value >> 10) & 0x1F) * 255 / 31);
+        var g = (byte)(((value >> 5) & 0x1F) * 255 / 31);
+        var b = (byte)((value & 0x1F) * 255 / 31);
+
+        return new(r, g, b, a);
+    }
 
     private int GetLegalItemId(int itemId)
     {
@@ -133,7 +141,7 @@ public sealed class ArtService : IArtService
 
         for (var y = 0; y < height; y++)
         {
-            var lookupOffset = 8 + (y * 2);
+            var lookupOffset = 8 + y * 2;
 
             if (lookupOffset + 2 > source.Length)
             {
@@ -176,15 +184,5 @@ public sealed class ArtService : IArtService
         }
 
         return image;
-    }
-
-    private static Rgba32 ConvertArgb1555ToRgba(ushort value)
-    {
-        var a = (value & 0x8000) != 0 ? (byte)255 : (byte)0;
-        var r = (byte)(((value >> 10) & 0x1F) * 255 / 31);
-        var g = (byte)(((value >> 5) & 0x1F) * 255 / 31);
-        var b = (byte)((value & 0x1F) * 255 / 31);
-
-        return new(r, g, b, a);
     }
 }

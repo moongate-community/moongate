@@ -9,6 +9,7 @@ using Moongate.UO.Data.Ids;
 namespace Moongate.Network.Packets.Incoming.Targeting;
 
 [PacketHandler(0x6C, PacketSizing.Fixed, Length = 19, Description = "Target Cursor Commands")]
+
 /// <summary>
 /// Represents target cursor command packet (0x6C), sent by both server and client.
 /// </summary>

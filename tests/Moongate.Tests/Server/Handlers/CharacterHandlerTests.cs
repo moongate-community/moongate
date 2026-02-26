@@ -1,13 +1,12 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
-using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Handlers;
@@ -34,7 +33,7 @@ public sealed class CharacterHandlerTests
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new GameNetworkSession(client))
+        var session = new GameSession(new(client))
         {
             AccountId = (Serial)0x01020304,
             AccountType = AccountType.Regular
@@ -61,14 +60,14 @@ public sealed class CharacterHandlerTests
         if (Map.GetMap(0) is null)
         {
             _ = Map.RegisterMap(
-                index: 0,
-                mapID: 0,
-                fileIndex: 0,
-                width: 6144,
-                height: 4096,
-                season: SeasonType.Summer,
-                name: "Felucca",
-                rules: MapRules.FeluccaRules
+                0,
+                0,
+                0,
+                6144,
+                4096,
+                SeasonType.Summer,
+                "Felucca",
+                MapRules.FeluccaRules
             );
         }
     }

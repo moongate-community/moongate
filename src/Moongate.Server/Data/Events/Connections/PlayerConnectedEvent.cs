@@ -21,5 +21,5 @@ public readonly record struct PlayerConnectedEvent(
     /// Creates a connected event with explicit timestamp.
     /// </summary>
     public PlayerConnectedEvent(long sessionId, string? remoteEndPoint, long timestamp)
-        : this(new GameEventBase(timestamp), sessionId, remoteEndPoint) { }
+        : this(new(timestamp), sessionId, remoteEndPoint) { }
 }

@@ -20,9 +20,7 @@ public sealed class LuaCommandContext
     public long? SessionId => _context.SessionIdOrNull;
 
     public LuaCommandContext(CommandSystemContext context)
-    {
-        _context = context;
-    }
+        => _context = context;
 
     public void Print(string message, params object[] args)
         => _context.Print(message, args);

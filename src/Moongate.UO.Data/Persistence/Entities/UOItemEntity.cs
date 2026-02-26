@@ -100,6 +100,7 @@ public class UOItemEntity : IItemEntity
                 }
 
                 _items[i] = typedItem;
+
                 return;
             }
 
@@ -108,34 +109,29 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
-    /// Updates the container-local position for an item contained in this container.
+    /// Hydrates runtime contained-item references and in-memory child list from resolved entities.
     /// </summary>
-    /// <param name="item">Contained item to update.</param>
-    /// <param name="position">New container-local position.</param>
-    /// <returns><c>true</c> when the item is contained and updated; otherwise <c>false</c>.</returns>
-    public bool UpdateItemLocation(UOItemEntity item, Point2D position)
+    /// <param name="containedItems">Resolved contained items for this container.</param>
+    public void HydrateContainedItemsRuntime(IEnumerable<UOItemEntity> containedItems)
     {
-        ArgumentNullException.ThrowIfNull(item);
+        ArgumentNullException.ThrowIfNull(containedItems);
 
-        for (var i = 0; i < _items.Count; i++)
+        _items.Clear();
+        _containedItemReferences.Clear();
+        ContainedItemIds.Clear();
+
+        foreach (var item in containedItems)
         {
-            if (_items[i].Id != item.Id)
+            if (item.ParentContainerId != Id)
             {
                 continue;
             }
 
-            item.ParentContainerId = Id;
-            item.ContainerPosition = position;
-            item.Location = new(position.X, position.Y, 0);
-            item.EquippedMobileId = Serial.Zero;
-            item.EquippedLayer = null;
+            ContainedItemIds.Add(item.Id);
             _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
-            _items[i] = item;
-
-            return true;
+            item.Location = new(item.ContainerPosition.X, item.ContainerPosition.Y, 0);
+            _items.Add(item);
         }
-
-        return false;
     }
 
     /// <summary>
@@ -168,32 +164,37 @@ public class UOItemEntity : IItemEntity
         return removed;
     }
 
+    public override string ToString()
+        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
+
     /// <summary>
-    /// Hydrates runtime contained-item references and in-memory child list from resolved entities.
+    /// Updates the container-local position for an item contained in this container.
     /// </summary>
-    /// <param name="containedItems">Resolved contained items for this container.</param>
-    public void HydrateContainedItemsRuntime(IEnumerable<UOItemEntity> containedItems)
+    /// <param name="item">Contained item to update.</param>
+    /// <param name="position">New container-local position.</param>
+    /// <returns><c>true</c> when the item is contained and updated; otherwise <c>false</c>.</returns>
+    public bool UpdateItemLocation(UOItemEntity item, Point2D position)
     {
-        ArgumentNullException.ThrowIfNull(containedItems);
+        ArgumentNullException.ThrowIfNull(item);
 
-        _items.Clear();
-        _containedItemReferences.Clear();
-        ContainedItemIds.Clear();
-
-        foreach (var item in containedItems)
+        for (var i = 0; i < _items.Count; i++)
         {
-            if (item.ParentContainerId != Id)
+            if (_items[i].Id != item.Id)
             {
                 continue;
             }
 
-            ContainedItemIds.Add(item.Id);
+            item.ParentContainerId = Id;
+            item.ContainerPosition = position;
+            item.Location = new(position.X, position.Y, 0);
+            item.EquippedMobileId = Serial.Zero;
+            item.EquippedLayer = null;
             _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
-            item.Location = new(item.ContainerPosition.X, item.ContainerPosition.Y, 0);
-            _items.Add(item);
-        }
-    }
+            _items[i] = item;
 
-    public override string ToString()
-        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
+            return true;
+        }
+
+        return false;
+    }
 }

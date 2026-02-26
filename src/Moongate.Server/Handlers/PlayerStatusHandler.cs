@@ -14,6 +14,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.GetPlayerStatusPacket)]
+
 /// <summary>
 /// Represents PlayerStatusHandler.
 /// </summary>

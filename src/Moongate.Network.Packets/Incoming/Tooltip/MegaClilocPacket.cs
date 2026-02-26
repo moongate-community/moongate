@@ -35,6 +35,7 @@ public record struct MegaClilocProperty(uint ClilocId, string? Text);
 /// - BYTE[4] Serial
 /// </remarks>
 [PacketHandler(0xD6, PacketSizing.Variable, Description = "Mega Cliloc")]
+
 /// <summary>
 /// Represents MegaClilocPacket.
 /// </summary>

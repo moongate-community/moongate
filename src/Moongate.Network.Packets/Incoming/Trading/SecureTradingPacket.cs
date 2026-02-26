@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Trading;
 
 [PacketHandler(0x6F, PacketSizing.Variable, Description = "Secure Trading")]
+
 /// <summary>
 /// Represents SecureTradingPacket.
 /// </summary>

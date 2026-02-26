@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -14,12 +13,12 @@ public class DropItemToGroundEventTests
         var newLocation = new Point3D(101, 201, 0);
 
         var gameEvent = new DropItemToGroundEvent(
-            sessionId: 7,
-            mobileId: (Serial)0x00000042u,
-            itemId: (Serial)0x40000010u,
-            sourceContainerId: (Serial)0x40000022u,
-            oldLocation: oldLocation,
-            newLocation: newLocation
+            7,
+            (Serial)0x00000042u,
+            (Serial)0x40000010u,
+            (Serial)0x40000022u,
+            oldLocation,
+            newLocation
         );
 
         Assert.Multiple(

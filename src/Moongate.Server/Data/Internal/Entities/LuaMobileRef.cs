@@ -1,7 +1,5 @@
-using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Data.Internal.Entities;
@@ -47,7 +45,7 @@ public sealed class LuaMobileRef
             return false;
         }
 
-        if (!_gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out GameSession session))
+        if (!_gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session))
         {
             return false;
         }

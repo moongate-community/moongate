@@ -11,6 +11,13 @@ namespace Moongate.Server.Interfaces.Services.Interaction;
 public interface IPlayerTargetService : IMoongateService
 {
     /// <summary>
+    /// Cancels a pending target cursor for a session.
+    /// </summary>
+    /// <param name="sessionId">Target network session id.</param>
+    /// <param name="cursorId">Cursor id to cancel.</param>
+    Task SendCancelTargetCursorAsync(long sessionId, Serial cursorId);
+
+    /// <summary>
     /// Sends a target cursor request to a session and registers the callback for the next cursor response.
     /// </summary>
     /// <param name="sessionId">Target network session id.</param>
@@ -24,11 +31,4 @@ public interface IPlayerTargetService : IMoongateService
         TargetCursorSelectionType selectionType = TargetCursorSelectionType.SelectLocation,
         TargetCursorType cursorType = TargetCursorType.Neutral
     );
-
-    /// <summary>
-    /// Cancels a pending target cursor for a session.
-    /// </summary>
-    /// <param name="sessionId">Target network session id.</param>
-    /// <param name="cursorId">Cursor id to cancel.</param>
-    Task SendCancelTargetCursorAsync(long sessionId, Serial cursorId);
 }

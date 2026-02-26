@@ -3,12 +3,12 @@ using DryIoc;
 using Moongate.Abstractions.Extensions;
 using Moongate.Abstractions.Types;
 using Moongate.Core.Extensions.Logger;
+using Moongate.Core.Types;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http;
@@ -35,20 +35,6 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
         RegisterServices(context);
     }
 
-    private static void RegisterHttpServer(BootstrapContext context)
-    {
-        if (!context.Config.Http.IsEnabled)
-        {
-            context.Logger.Information("HTTP Server disabled.");
-
-            return;
-        }
-
-        context.Container.RegisterMoongateService<IMoongateHttpService, MoongateHttpService>(ServicePriority.HttpServer);
-        context.Logger.Information("HTTP Server enabled.");
-        context.Container.RegisterInstance(CreateHttpServiceOptions(context));
-    }
-
     private static MoongateHttpServiceOptions CreateHttpServiceOptions(BootstrapContext context)
     {
         var jwtSigningKey = ResolveHttpJwtSigningKey(context);
@@ -68,6 +54,55 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
                 ExpirationMinutes = context.Config.Http.Jwt.ExpirationMinutes
             }
         };
+    }
+
+    private static void RegisterHttpServer(BootstrapContext context)
+    {
+        if (!context.Config.Http.IsEnabled)
+        {
+            context.Logger.Information("HTTP Server disabled.");
+
+            return;
+        }
+
+        context.Container.RegisterMoongateService<IMoongateHttpService, MoongateHttpService>(ServicePriority.HttpServer);
+        context.Logger.Information("HTTP Server enabled.");
+        context.Container.RegisterInstance(CreateHttpServiceOptions(context));
+    }
+
+    private static void RegisterScriptModules(BootstrapContext context)
+    {
+        context.Container.RegisterInstance(
+            new LuaEngineConfig(
+                Path.Combine(context.DirectoriesConfig.Root, ".luarc"),
+                context.DirectoriesConfig[DirectoryType.Scripts],
+                VersionUtils.Version
+            )
+        );
+        ScriptModuleRegistry.Register(context.Container);
+        Generated.ScriptModuleRegistry.Register(context.Container);
+
+        if (!context.Container.IsRegistered<List<ScriptModuleData>>())
+        {
+            context.Container.RegisterInstance(new List<ScriptModuleData>());
+        }
+    }
+
+    private static void RegisterScriptUserData(BootstrapContext context)
+    {
+        context.Container.RegisterLuaUserData<PlayerConnectedEvent>();
+        context.Container.RegisterLuaUserData<PlayerDisconnectedEvent>();
+        context.Container.RegisterLuaUserData<ClientVersion>();
+    }
+
+    private static void RegisterServices(BootstrapContext context)
+    {
+        BootstrapServiceRegistration.Register(
+            context.Container,
+            context.Config,
+            context.DirectoriesConfig,
+            context.ConsoleUiService
+        );
     }
 
     private static string ResolveHttpJwtSigningKey(BootstrapContext context)
@@ -101,40 +136,5 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
         );
 
         return generated;
-    }
-
-    private static void RegisterScriptUserData(BootstrapContext context)
-    {
-        context.Container.RegisterLuaUserData<PlayerConnectedEvent>();
-        context.Container.RegisterLuaUserData<PlayerDisconnectedEvent>();
-        context.Container.RegisterLuaUserData<ClientVersion>();
-    }
-
-    private static void RegisterScriptModules(BootstrapContext context)
-    {
-        context.Container.RegisterInstance(
-            new LuaEngineConfig(
-                Path.Combine(context.DirectoriesConfig.Root, ".luarc"),
-                context.DirectoriesConfig[Moongate.Core.Types.DirectoryType.Scripts],
-                VersionUtils.Version
-            )
-        );
-        ScriptModuleRegistry.Register(context.Container);
-        Generated.ScriptModuleRegistry.Register(context.Container);
-
-        if (!context.Container.IsRegistered<List<ScriptModuleData>>())
-        {
-            context.Container.RegisterInstance(new List<ScriptModuleData>());
-        }
-    }
-
-    private static void RegisterServices(BootstrapContext context)
-    {
-        BootstrapServiceRegistration.Register(
-            context.Container,
-            context.Config,
-            context.DirectoriesConfig,
-            context.ConsoleUiService
-        );
     }
 }

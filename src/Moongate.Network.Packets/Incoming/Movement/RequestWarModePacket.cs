@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Movement;
 
 [PacketHandler(0x72, PacketSizing.Fixed, Length = 5, Description = "Request War Mode")]
+
 /// <summary>
 /// Represents RequestWarModePacket.
 /// </summary>

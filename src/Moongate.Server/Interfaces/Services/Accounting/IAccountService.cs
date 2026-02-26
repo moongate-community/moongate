@@ -49,6 +49,14 @@ public interface IAccountService
     Task<IReadOnlyList<UOAccountEntity>> GetAccountsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Attempts to authenticate an account with username and password.
+    /// </summary>
+    /// <param name="username">Account username.</param>
+    /// <param name="password">Plain text password.</param>
+    /// <returns>The account when authentication succeeds; otherwise <see langword="null" />.</returns>
+    Task<UOAccountEntity?> LoginAsync(string username, string password);
+
+    /// <summary>
     /// Updates mutable account fields.
     /// </summary>
     Task<UOAccountEntity?> UpdateAccountAsync(
@@ -60,12 +68,4 @@ public interface IAccountService
         bool? isLocked = null,
         CancellationToken cancellationToken = default
     );
-
-    /// <summary>
-    /// Attempts to authenticate an account with username and password.
-    /// </summary>
-    /// <param name="username">Account username.</param>
-    /// <param name="password">Plain text password.</param>
-    /// <returns>The account when authentication succeeds; otherwise <see langword="null" />.</returns>
-    Task<UOAccountEntity?> LoginAsync(string username, string password);
 }

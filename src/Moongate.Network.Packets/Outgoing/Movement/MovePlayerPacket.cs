@@ -7,6 +7,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Movement;
 
 [PacketHandler(0x97, PacketSizing.Fixed, Length = 2, Description = "Move Player")]
+
 /// <summary>
 /// Represents MovePlayerPacket.
 /// </summary>

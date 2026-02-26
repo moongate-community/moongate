@@ -1,10 +1,11 @@
-using Moongate.Server.Modules.Builders;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Modules.Builders;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
 
 [ScriptModule("gump", "Provides fluent gump layout building APIs.")]
+
 /// <summary>
 /// Exposes gump-building helpers to Lua scripts.
 /// </summary>

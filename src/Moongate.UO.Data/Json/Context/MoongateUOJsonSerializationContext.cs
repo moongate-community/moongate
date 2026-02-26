@@ -17,6 +17,7 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(JsonRegionWrap)),
  JsonSerializable(typeof(JsonWeatherWrap)),
  JsonSerializable(typeof(JsonProfessionsRoot))]
+
 /// <summary>
 /// Represents MoongateUOJsonSerializationContext.
 /// </summary>

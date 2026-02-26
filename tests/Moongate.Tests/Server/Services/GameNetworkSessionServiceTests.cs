@@ -10,6 +10,28 @@ public sealed class GameNetworkSessionServiceTests
 {
     private readonly List<MoongateTCPClient> _clientsToDispose = [];
 
+    [TearDown]
+    public void TearDown()
+    {
+        foreach (var client in _clientsToDispose)
+        {
+            client.Dispose();
+        }
+
+        _clientsToDispose.Clear();
+    }
+
+    [Test]
+    public void TryGetByCharacterId_ShouldReturnFalse_WhenMissing()
+    {
+        var service = new GameNetworkSessionService();
+        _ = CreateSession(service, (Serial)0x00000011u);
+
+        var found = service.TryGetByCharacterId((Serial)0x00000099u, out _);
+
+        Assert.That(found, Is.False);
+    }
+
     [Test]
     public void TryGetByCharacterId_ShouldReturnMatchingSession()
     {
@@ -25,28 +47,6 @@ public sealed class GameNetworkSessionServiceTests
                 Assert.That(resolved, Is.SameAs(session));
             }
         );
-    }
-
-    [Test]
-    public void TryGetByCharacterId_ShouldReturnFalse_WhenMissing()
-    {
-        var service = new GameNetworkSessionService();
-        _ = CreateSession(service, (Serial)0x00000011u);
-
-        var found = service.TryGetByCharacterId((Serial)0x00000099u, out _);
-
-        Assert.That(found, Is.False);
-    }
-
-    [TearDown]
-    public void TearDown()
-    {
-        foreach (var client in _clientsToDispose)
-        {
-            client.Dispose();
-        }
-
-        _clientsToDispose.Clear();
     }
 
     private GameSession CreateSession(GameNetworkSessionService service, Serial characterId)

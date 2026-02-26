@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Movement;
 
 [PacketHandler(0xF0, PacketSizing.Variable, Description = "Krrios client special")]
+
 /// <summary>
 /// Represents NewMovementRequestPacket.
 /// </summary>

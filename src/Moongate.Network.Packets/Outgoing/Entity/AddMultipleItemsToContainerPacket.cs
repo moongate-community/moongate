@@ -7,6 +7,7 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x3C, PacketSizing.Variable, Description = "Add Multiple Items To Container")]
+
 /// <summary>
 /// Represents AddMultipleItemsToContainerPacket.
 /// </summary>

@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Interaction;
 
 [PacketHandler(0x09, PacketSizing.Fixed, Length = 5, Description = "Single Click")]
+
 /// <summary>
 /// Represents SingleClickPacket.
 /// </summary>
