@@ -1,5 +1,6 @@
 using Moongate.Server.Http.Data;
-using Moongate.Server.Http.Interfaces.Facades;
+using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.Metrics;
 
 namespace Moongate.Server.Http.Internal;
 
@@ -9,27 +10,23 @@ namespace Moongate.Server.Http.Internal;
 internal sealed class MoongateHttpRouteContext
 {
     public MoongateHttpRouteContext(
-        IHttpSystemFacade systemFacade,
         MoongateHttpJwtOptions jwtOptions,
-        IHttpAuthFacade? authFacade,
-        IHttpUsersFacade? usersFacade,
+        IAccountService? accountService,
+        IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory,
         bool isUiEnabled
     )
     {
-        SystemFacade = systemFacade;
         JwtOptions = jwtOptions;
-        AuthFacade = authFacade;
-        UsersFacade = usersFacade;
+        AccountService = accountService;
+        MetricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
         IsUiEnabled = isUiEnabled;
     }
 
-    public IHttpAuthFacade? AuthFacade { get; }
+    public IAccountService? AccountService { get; }
 
     public MoongateHttpJwtOptions JwtOptions { get; }
 
-    public IHttpSystemFacade SystemFacade { get; }
-
-    public IHttpUsersFacade? UsersFacade { get; }
+    public IMetricsHttpSnapshotFactory? MetricsHttpSnapshotFactory { get; }
 
     public bool IsUiEnabled { get; }
 }

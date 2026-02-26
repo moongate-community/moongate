@@ -1,20 +1,19 @@
 using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http.Data;
-using Moongate.Server.Http.Data.Results;
 using Moongate.Server.Http.Extensions;
-using Moongate.Server.Http.Interfaces.Facades;
 using Moongate.Server.Http.Internal;
-using Moongate.Server.Http.Internal.Facades;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Metrics.Data;
 using Serilog;
 using Serilog.Core;
@@ -27,27 +26,27 @@ namespace Moongate.Server.Http;
 /// </summary>
 public sealed class MoongateHttpService : IMoongateHttpService
 {
-    private readonly IReadOnlyDictionary<Type, Type> _serviceMappings;
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly int _port;
     private readonly bool _isOpenApiEnabled;
     private readonly LogEventLevel _minimumLogLevel;
     private readonly Action<WebApplication> _configureApp;
-    private readonly Func<MoongateHttpMetricsSnapshot?>? _metricsSnapshotFactory;
     private readonly MoongateHttpJwtOptions _jwtOptions;
-    private readonly IHttpAuthFacade? _authFacade;
-    private readonly IHttpSystemFacade _systemFacade;
-    private readonly IHttpUsersFacade? _usersFacade;
+    private readonly IAccountService? _accountService;
+    private readonly IMetricsHttpSnapshotFactory? _metricsHttpSnapshotFactory;
     private readonly bool _isUiEnabled;
     private readonly string? _uiDistPath;
 
     private WebApplication? _app;
 
-    public MoongateHttpService(MoongateHttpServiceOptions options)
+    public MoongateHttpService(
+        MoongateHttpServiceOptions options,
+        IAccountService? accountService = null,
+        IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory = null
+    )
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        _serviceMappings = options.ServiceMappings ?? new Dictionary<Type, Type>();
         _directoriesConfig = options.DirectoriesConfig ??
                              throw new ArgumentException("DirectoriesConfig must be provided.", nameof(options));
 
@@ -60,11 +59,9 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _isOpenApiEnabled = options.IsOpenApiEnabled;
         _minimumLogLevel = options.MinimumLogLevel;
         _configureApp = options.ConfigureApp ?? (_ => { });
-        _metricsSnapshotFactory = options.MetricsSnapshotFactory;
         _jwtOptions = options.Jwt ?? new MoongateHttpJwtOptions();
-        _authFacade = options.AuthFacade;
-        _usersFacade = options.UsersFacade;
-        _systemFacade = options.SystemFacade ?? new DefaultHttpSystemFacade(_metricsSnapshotFactory, BuildPrometheusPayload);
+        _accountService = accountService;
+        _metricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
         _isUiEnabled = options.IsUiEnabled;
         _uiDistPath = options.UiDistPath;
 
@@ -73,9 +70,9 @@ public sealed class MoongateHttpService : IMoongateHttpService
             throw new ArgumentException("JWT signing key must be configured when JWT is enabled.", nameof(options));
         }
 
-        if (_jwtOptions.IsEnabled && _authFacade is null)
+        if (_jwtOptions.IsEnabled && _accountService is null)
         {
-            throw new ArgumentException("AuthFacade must be configured when JWT is enabled.", nameof(options));
+            throw new ArgumentException("IAccountService must be configured when JWT is enabled.", nameof(options));
         }
     }
 
@@ -93,13 +90,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
         builder.WebHost.UseUrls($"http://0.0.0.0:{_port}");
         builder.Host.UseSerilog(httpLogger, true);
         builder.Services.ConfigureHttpJsonOptions(
-            options =>
-            {
-                options.SerializerOptions.TypeInfoResolverChain.Insert(0, MoongateHttpJsonContext.Default);
-            }
+            options => { options.SerializerOptions.TypeInfoResolverChain.Insert(0, MoongateHttpJsonContext.Default); }
         );
-
-        RegisterServiceMappings(builder.Services, _serviceMappings);
 
         if (_jwtOptions.IsEnabled)
         {
@@ -122,10 +114,9 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         var routeContext = new MoongateHttpRouteContext(
-            _systemFacade,
             _jwtOptions,
-            _authFacade,
-            _usersFacade,
+            _accountService,
+            _metricsHttpSnapshotFactory,
             isUiServing
         );
 
@@ -161,7 +152,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _app = null;
     }
 
-    private static string BuildPrometheusPayload(MoongateHttpMetricsSnapshot snapshot)
+    internal static string BuildPrometheusPayload(MoongateHttpMetricsSnapshot snapshot)
     {
         var sb = new StringBuilder();
         sb.AppendLine("# generated by moongate");
@@ -189,7 +180,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
               .Append(' ')
               .AppendLine(GetPrometheusTypeName(metricType));
 
-            foreach (var (metricKey, metric) in metricGroup.OrderBy(static pair => pair.Key, StringComparer.Ordinal))
+            foreach (var (_, metric) in metricGroup.OrderBy(static pair => pair.Key, StringComparer.Ordinal))
             {
                 sb.Append("moongate_")
                   .Append(metricGroup.Key);
@@ -199,10 +190,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
                     sb.Append('{');
                     var firstLabel = true;
 
-                    foreach (var (labelKey, labelValue) in metric.Tags.OrderBy(
-                                 static pair => pair.Key,
-                                 StringComparer.Ordinal
-                             ))
+                    foreach (var (labelKey, labelValue) in metric.Tags.OrderBy(static pair => pair.Key, StringComparer.Ordinal))
                     {
                         if (!firstLabel)
                         {
@@ -310,36 +298,6 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         return new(buffer);
-    }
-
-    private static void RegisterServiceMappings(
-        IServiceCollection services,
-        IReadOnlyDictionary<Type, Type> mappings
-    )
-    {
-        foreach (var (serviceType, implementationType) in mappings)
-        {
-            if (!serviceType.IsInterface)
-            {
-                throw new InvalidOperationException($"Service type '{serviceType.FullName}' must be an interface.");
-            }
-
-            if (implementationType.IsAbstract || implementationType.IsInterface)
-            {
-                throw new InvalidOperationException(
-                    $"Implementation type '{implementationType.FullName}' must be a concrete class."
-                );
-            }
-
-            if (!serviceType.IsAssignableFrom(implementationType))
-            {
-                throw new InvalidOperationException(
-                    $"Implementation type '{implementationType.FullName}' does not implement '{serviceType.FullName}'."
-                );
-            }
-
-            services.AddSingleton(serviceType, implementationType);
-        }
     }
 
     private bool ConfigureUiHosting(WebApplication app)

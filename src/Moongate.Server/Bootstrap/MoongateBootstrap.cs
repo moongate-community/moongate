@@ -20,7 +20,6 @@ using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http;
-using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
@@ -32,7 +31,6 @@ using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
-using Moongate.Server.Services.Http.Facades;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Types;
@@ -281,13 +279,6 @@ public sealed class MoongateBootstrap : IDisposable
         _logger.Information("UO Directory configured in {UODirectory}", UoFiles.RootDir);
     }
 
-    private MoongateHttpMetricsSnapshot? CreateHttpMetricsSnapshot()
-    {
-        var snapshotFactory = _container.Resolve<IMetricsHttpSnapshotFactory>();
-
-        return snapshotFactory.CreateSnapshot();
-    }
-
     private void CreateLogger()
     {
         var appLogPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], "moongate-.log");
@@ -385,9 +376,7 @@ public sealed class MoongateBootstrap : IDisposable
             DirectoriesConfig = _directoriesConfig,
             IsOpenApiEnabled = _moongateConfig.Http.IsOpenApiEnabled,
             Port = _moongateConfig.Http.Port,
-            ServiceMappings = null,
             MinimumLogLevel = _moongateConfig.LogLevel.ToSerilogLogLevel(),
-            MetricsSnapshotFactory = CreateHttpMetricsSnapshot,
             Jwt = new()
             {
                 IsEnabled = _moongateConfig.Http.Jwt.IsEnabled,
@@ -395,14 +384,9 @@ public sealed class MoongateBootstrap : IDisposable
                 Issuer = _moongateConfig.Http.Jwt.Issuer,
                 Audience = _moongateConfig.Http.Jwt.Audience,
                 ExpirationMinutes = _moongateConfig.Http.Jwt.ExpirationMinutes
-            },
-            AuthFacade = new MoongateHttpAuthFacade(ResolveAccountService),
-            UsersFacade = new MoongateHttpUsersFacade(ResolveAccountService)
+            }
         };
     }
-
-    private IAccountService ResolveAccountService()
-        => _container.Resolve<IAccountService>();
 
     private void RegisterPacketHandlers()
     {

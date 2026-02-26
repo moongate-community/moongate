@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
 using Moongate.Server.Http.Data;
-using Moongate.Server.Http.Data.Results;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
+using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Http.Extensions;
 
@@ -26,25 +28,28 @@ internal static class MoongateHttpRouteExtensions
 
         if (!context.IsUiEnabled)
         {
-            endpoints.MapGet("/", (CancellationToken cancellationToken) => HandleRoot(context, cancellationToken))
+            endpoints.MapGet("/", HandleRoot)
                      .WithName("Root")
                      .WithSummary("Returns service availability.")
                      .Produces<string>(StatusCodes.Status200OK, "text/plain");
         }
 
-        systemGroup.MapGet("/health", (CancellationToken cancellationToken) => HandleHealth(context, cancellationToken))
+        systemGroup.MapGet("/health", HandleHealth)
                    .WithName("Health")
                    .WithSummary("Returns health probe status.")
                    .Produces<string>(StatusCodes.Status200OK, "text/plain");
 
-        systemGroup.MapGet("/metrics", (CancellationToken cancellationToken) => HandleMetrics(context, cancellationToken))
+        systemGroup.MapGet(
+                       "/metrics",
+                       (CancellationToken cancellationToken) => HandleMetrics(context, cancellationToken)
+                   )
                    .WithName("Metrics")
                    .WithSummary("Returns Prometheus metrics.")
                    .Produces<string>(StatusCodes.Status200OK, "text/plain")
                    .Produces<string>(StatusCodes.Status404NotFound, "text/plain")
                    .Produces<string>(StatusCodes.Status503ServiceUnavailable, "text/plain");
 
-        if (context.JwtOptions.IsEnabled && context.AuthFacade is not null)
+        if (context.JwtOptions.IsEnabled && context.AccountService is not null)
         {
             var authGroup = endpoints.MapGroup("/auth").WithTags("Auth");
             authGroup.MapPost(
@@ -68,7 +73,7 @@ internal static class MoongateHttpRouteExtensions
                      .WithMetadata(new ProducesResponseTypeMetadata(StatusCodes.Status401Unauthorized));
         }
 
-        if (context.UsersFacade is not null)
+        if (context.AccountService is not null)
         {
             var usersGroup = endpoints.MapGroup("/api/users").WithTags("Users");
             if (context.JwtOptions.IsEnabled)
@@ -135,15 +140,35 @@ internal static class MoongateHttpRouteExtensions
         return endpoints;
     }
 
-    private static IResult HandleHealth(MoongateHttpRouteContext context, CancellationToken cancellationToken)
-        => ToTextResult(context.SystemFacade.GetHealthAsync(cancellationToken).GetAwaiter().GetResult());
+    private static IResult HandleHealth(CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        return TypedResults.Text("ok");
+    }
 
     private static IResult HandleMetrics(MoongateHttpRouteContext context, CancellationToken cancellationToken)
-        => ToTextResult(
-            context.SystemFacade.GetMetricsAsync(cancellationToken).GetAwaiter().GetResult(),
-            StatusCodes.Status200OK,
-            "text/plain; version=0.0.4"
-        );
+    {
+        _ = cancellationToken;
+
+        if (context.MetricsHttpSnapshotFactory is null)
+        {
+            return TypedResults.Text("metrics endpoint is not configured", statusCode: StatusCodes.Status404NotFound);
+        }
+
+        var snapshot = context.MetricsHttpSnapshotFactory.CreateSnapshot();
+        if (snapshot is null)
+        {
+            return TypedResults.Text(
+                "metrics are currently unavailable",
+                statusCode: StatusCodes.Status503ServiceUnavailable
+            );
+        }
+
+        var payload = MoongateHttpService.BuildPrometheusPayload(snapshot);
+
+        return TypedResults.Text(payload, "text/plain; version=0.0.4", Encoding.UTF8, StatusCodes.Status200OK);
+    }
 
     private static IResult HandleLogin(
         MoongateHttpRouteContext context,
@@ -151,23 +176,27 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        if (
-            string.IsNullOrWhiteSpace(request.Username) ||
-            string.IsNullOrWhiteSpace(request.Password)
-        )
+        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
         {
             return TypedResults.Text("username and password are required", statusCode: StatusCodes.Status400BadRequest);
         }
 
-        var authResult = context.AuthFacade!.AuthenticateAsync(request.Username, request.Password, cancellationToken)
-                                            .GetAwaiter()
-                                            .GetResult();
-        if (authResult.Status != MoongateHttpOperationStatus.Ok || authResult.Value is null)
+        var account = context.AccountService!
+                             .LoginAsync(request.Username, request.Password)
+                             .GetAwaiter()
+                             .GetResult();
+        if (account is null)
         {
             return TypedResults.Unauthorized();
         }
 
-        var user = authResult.Value;
+        var user = new MoongateHttpAuthenticatedUser
+        {
+            AccountId = account.Id.Value.ToString(),
+            Username = account.Username,
+            Role = account.AccountType.ToString()
+        };
+
         var expiresAtUtc = DateTimeOffset.UtcNow.AddMinutes(context.JwtOptions.ExpirationMinutes);
         var token = CreateJwtToken(user, expiresAtUtc, context.JwtOptions);
 
@@ -189,9 +218,13 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        var result = context.UsersFacade!.GetUsersAsync(cancellationToken).GetAwaiter().GetResult();
+        var accounts = context.AccountService!
+                              .GetAccountsAsync(cancellationToken)
+                              .GetAwaiter()
+                              .GetResult();
+        var users = accounts.Select(MapAccountToHttpUser).ToList();
 
-        return ToJsonResult(result);
+        return TypedResults.Ok((IReadOnlyList<MoongateHttpUser>)users);
     }
 
     private static IResult HandleGetUserById(
@@ -200,9 +233,23 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        var result = context.UsersFacade!.GetUserByIdAsync(accountId, cancellationToken).GetAwaiter().GetResult();
+        _ = cancellationToken;
+        var parsedId = ParseAccountIdOrNull(accountId);
+        if (!parsedId.HasValue)
+        {
+            return TypedResults.BadRequest("invalid accountId");
+        }
 
-        return ToJsonResult(result);
+        var account = context.AccountService!
+                             .GetAccountAsync(parsedId.Value)
+                             .GetAwaiter()
+                             .GetResult();
+        if (account is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        return TypedResults.Ok(MapAccountToHttpUser(account));
     }
 
     private static IResult HandleCreateUser(
@@ -211,9 +258,29 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        var result = context.UsersFacade!.CreateUserAsync(request, cancellationToken).GetAwaiter().GetResult();
+        _ = cancellationToken;
+        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            return TypedResults.BadRequest("username and password are required");
+        }
 
-        return ToJsonResult(result);
+        if (!Enum.TryParse<AccountType>(request.Role, true, out var role))
+        {
+            return TypedResults.BadRequest("invalid role");
+        }
+
+        var created = context.AccountService!
+                             .CreateAccountAsync(request.Username, request.Password, request.Email, role)
+                             .GetAwaiter()
+                             .GetResult();
+        if (created is null)
+        {
+            return TypedResults.Conflict();
+        }
+
+        var user = MapAccountToHttpUser(created);
+
+        return TypedResults.Created($"/api/users/{user.AccountId}", user);
     }
 
     private static IResult HandleUpdateUser(
@@ -223,9 +290,50 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        var result = context.UsersFacade!.UpdateUserAsync(accountId, request, cancellationToken).GetAwaiter().GetResult();
+        var parsedId = ParseAccountIdOrNull(accountId);
+        if (!parsedId.HasValue)
+        {
+            return TypedResults.BadRequest("invalid accountId");
+        }
 
-        return ToJsonResult(result);
+        if (
+            request.Username is null &&
+            request.Password is null &&
+            request.Email is null &&
+            request.Role is null &&
+            request.IsLocked is null
+        )
+        {
+            return TypedResults.BadRequest("at least one field must be provided");
+        }
+
+        AccountType? role = null;
+        if (!string.IsNullOrWhiteSpace(request.Role))
+        {
+            if (!Enum.TryParse<AccountType>(request.Role, true, out var parsedRole))
+            {
+                return TypedResults.BadRequest("invalid role");
+            }
+
+            role = parsedRole;
+        }
+
+        var updated = context.AccountService!
+                             .UpdateAccountAsync(
+                                 parsedId.Value,
+                                 request.Username,
+                                 request.Password,
+                                 request.Email,
+                                 role,
+                                 request.IsLocked,
+                                 cancellationToken
+                             )
+                             .GetAwaiter()
+                             .GetResult();
+
+        return updated is null
+            ? TypedResults.NotFound()
+            : TypedResults.Ok(MapAccountToHttpUser(updated));
     }
 
     private static IResult HandleDeleteUser(
@@ -234,65 +342,41 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        var result = context.UsersFacade!.DeleteUserAsync(accountId, cancellationToken).GetAwaiter().GetResult();
-
-        return ToJsonResult(result);
-    }
-
-    private static IResult HandleRoot(MoongateHttpRouteContext context, CancellationToken cancellationToken)
-        => ToTextResult(context.SystemFacade.GetRootAsync(cancellationToken).GetAwaiter().GetResult());
-
-    private static IResult ToJsonResult<T>(MoongateHttpOperationResult<T> result)
-    {
-        return result.Status switch
+        _ = cancellationToken;
+        var parsedId = ParseAccountIdOrNull(accountId);
+        if (!parsedId.HasValue)
         {
-            MoongateHttpOperationStatus.Ok when result.Value is not null
-                => TypedResults.Ok(result.Value),
-            MoongateHttpOperationStatus.Created when result.Value is not null
-                => TypedResults.Created(result.Location ?? string.Empty, result.Value),
-            MoongateHttpOperationStatus.NoContent
-                => TypedResults.NoContent(),
-            MoongateHttpOperationStatus.BadRequest
-                => TypedResults.BadRequest(result.Error ?? "bad request"),
-            MoongateHttpOperationStatus.Unauthorized
-                => TypedResults.Unauthorized(),
-            MoongateHttpOperationStatus.NotFound
-                => TypedResults.NotFound(),
-            MoongateHttpOperationStatus.Conflict
-                => TypedResults.Conflict(),
-            MoongateHttpOperationStatus.ServiceUnavailable
-                => TypedResults.StatusCode(StatusCodes.Status503ServiceUnavailable),
-            _ => TypedResults.StatusCode(StatusCodes.Status500InternalServerError)
-        };
+            return TypedResults.BadRequest("invalid accountId");
+        }
+
+        var deleted = context.AccountService!
+                             .DeleteAccountAsync(parsedId.Value)
+                             .GetAwaiter()
+                             .GetResult();
+
+        return deleted
+            ? TypedResults.NoContent()
+            : TypedResults.NotFound();
     }
 
-    private static IResult ToTextResult(
-        MoongateHttpOperationResult<string> result,
-        int okStatusCode = StatusCodes.Status200OK,
-        string contentType = "text/plain"
-    )
-    {
-        return result.Status switch
+    private static IResult HandleRoot()
+        => TypedResults.Text("Moongate HTTP Service is running.");
+
+    private static MoongateHttpUser MapAccountToHttpUser(UOAccountEntity account)
+        => new()
         {
-            MoongateHttpOperationStatus.Ok => TypedResults.Text(result.Value ?? string.Empty, contentType, Encoding.UTF8, okStatusCode),
-            MoongateHttpOperationStatus.NotFound => TypedResults.Text(
-                result.Error ?? "not found",
-                "text/plain",
-                statusCode: StatusCodes.Status404NotFound
-            ),
-            MoongateHttpOperationStatus.ServiceUnavailable => TypedResults.Text(
-                result.Error ?? "service unavailable",
-                "text/plain",
-                statusCode: StatusCodes.Status503ServiceUnavailable
-            ),
-            MoongateHttpOperationStatus.BadRequest => TypedResults.Text(
-                result.Error ?? "bad request",
-                "text/plain",
-                statusCode: StatusCodes.Status400BadRequest
-            ),
-            _ => TypedResults.Text("internal error", "text/plain", statusCode: StatusCodes.Status500InternalServerError)
+            AccountId = account.Id.Value.ToString(),
+            Username = account.Username,
+            Email = account.Email,
+            Role = account.AccountType.ToString(),
+            IsLocked = account.IsLocked,
+            CreatedUtc = account.CreatedUtc,
+            LastLoginUtc = account.LastLoginUtc,
+            CharacterCount = account.CharacterIds.Count
         };
-    }
+
+    private static Serial? ParseAccountIdOrNull(string accountId)
+        => uint.TryParse(accountId, out var parsedId) ? (Serial)parsedId : null;
 
     private static string CreateJwtToken(
         MoongateHttpAuthenticatedUser user,

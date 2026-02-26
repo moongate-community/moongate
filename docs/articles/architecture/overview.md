@@ -21,7 +21,7 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
   - Incoming/outgoing packet models, packet registry, packet attributes and generated definitions.
 - `Moongate.Persistence`
   - Snapshot + journal persistence unit-of-work and repositories.
-- `Moongate.Server.Http`
+- `Moongate.Server/Http` (inside `Moongate.Server`)
   - Embedded ASP.NET Core HTTP service (`/health`, `/metrics`, `/scalar`, `/openapi/*`).
   - Serves the frontend SPA on `/` when UI hosting is enabled (default).
 - `Moongate.Server.Metrics`

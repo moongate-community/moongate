@@ -99,7 +99,7 @@ The project is actively in development and already includes:
 - Unit tests for core server behaviors and packet infrastructure.
 - Lua scripting runtime with module/function binding and `.luarc` generation support.
 - Lua metadata files (`definitions.lua`, `.luarc.json`) generated in configured `LuaEngineConfig.LuarcDirectory` during engine startup.
-- Embedded HTTP host (`Moongate.Server.Http`) for health/admin endpoints and OpenAPI/Scalar docs.
+- Embedded HTTP host (`Moongate.Server/Http`) for health/admin endpoints and OpenAPI/Scalar docs.
 - Dedicated HTTP rolling logs in the shared logs directory (`moongate_http-*.log`).
 - Snapshot+journal persistence module (`Moongate.Persistence`) integrated in server lifecycle.
 - ID-based persistence references for character equipment/container ownership.
@@ -263,7 +263,7 @@ Resolution model:
 - `src/Moongate.Core`: shared low-level utilities.
 - `src/Moongate.Network`: TCP/network primitives.
 - `src/Moongate.Scripting`: Lua engine service, script modules, script loaders, and scripting helpers.
-- `src/Moongate.Server.Http`: embedded ASP.NET Core host service used by the server bootstrap.
+- `src/Moongate.Server/Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
 - `benchmarks/Moongate.Benchmarks`: BenchmarkDotNet performance suite.
 - `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
