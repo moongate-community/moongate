@@ -1,3 +1,9 @@
+## [0.19.1](https://github.com/moongate-community/moongatev2/compare/v0.19.0...v0.19.1) (2026-02-26)
+
+### Bug Fixes
+
+* restore RegisterGameEventListener bootstrap subscription and listener startup wiring ([014bf6a](https://github.com/moongate-community/moongatev2/commit/014bf6aca3e78553a4345112fdf651a1b9982401))
+
 ## [0.19.0](https://github.com/moongate-community/moongatev2/compare/v0.18.0...v0.19.0) (2026-02-26)
 
 ### Features
