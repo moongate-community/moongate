@@ -4,9 +4,9 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
-using Moongate.Server.Http.Data.Results;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Tests.Server.Http;
 
@@ -57,6 +57,10 @@ public class MoongateHttpServiceOpenApiEndpointTests
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var port = GetRandomPort();
+        var accountService = new TestAccountService
+        {
+            LoginAsyncImpl = (_, _) => Task.FromResult<UOAccountEntity?>(null)
+        };
 
         var service = new MoongateHttpService(
             new()
@@ -71,13 +75,9 @@ public class MoongateHttpServiceOpenApiEndpointTests
                     Issuer = "moongate-tests",
                     Audience = "moongate-tests-client",
                     ExpirationMinutes = 5
-                },
-                AuthFacade = new TestHttpAuthFacade(
-                    (_, _, _) => Task.FromResult(
-                        MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Unauthorized()
-                    )
-                )
-            }
+                }
+            },
+            accountService
         );
 
         await service.StartAsync();
@@ -103,26 +103,22 @@ public class MoongateHttpServiceOpenApiEndpointTests
     }
 
     [Test]
-    public async Task OpenApiEndpoint_WhenUsersCrudFacadeConfigured_ShouldContainUsersCrudRoutes()
+    public async Task OpenApiEndpoint_WhenUsersCrudCallbacksConfigured_ShouldContainUsersCrudRoutes()
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var port = GetRandomPort();
+
+        var accountService = new TestAccountService();
 
         var service = new MoongateHttpService(
             new()
             {
                 DirectoriesConfig = directories,
                 Port = port,
-                IsOpenApiEnabled = true,
-                UsersFacade = new TestHttpUsersFacade(
-                    _ => Task.FromResult(MoongateHttpOperationResult<IReadOnlyList<MoongateHttpUser>>.Ok([])),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.NotFound()),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.Conflict()),
-                    (_, _, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.NotFound()),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<object?>.NotFound())
-                )
-            }
+                IsOpenApiEnabled = true
+            },
+            accountService
         );
 
         await service.StartAsync();

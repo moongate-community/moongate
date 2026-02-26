@@ -23,6 +23,7 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
+[RegisterGameEventListener]
 [RegisterPacketHandler(PacketDefinition.LoginSeedPacket), RegisterPacketHandler(PacketDefinition.AccountLoginPacket),
  RegisterPacketHandler(PacketDefinition.ServerSelectPacket), RegisterPacketHandler(PacketDefinition.GameLoginPacket),
  RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
@@ -67,7 +68,6 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             }
         );
 
-        _gameEventBusService.RegisterListener(this);
     }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)

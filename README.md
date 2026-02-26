@@ -99,7 +99,7 @@ The project is actively in development and already includes:
 - Unit tests for core server behaviors and packet infrastructure.
 - Lua scripting runtime with module/function binding and `.luarc` generation support.
 - Lua metadata files (`definitions.lua`, `.luarc.json`) generated in configured `LuaEngineConfig.LuarcDirectory` during engine startup.
-- Embedded HTTP host (`Moongate.Server.Http`) for health/admin endpoints and OpenAPI/Scalar docs.
+- Embedded HTTP host (`Moongate.Server/Http`) for health/admin endpoints and OpenAPI/Scalar docs.
 - Dedicated HTTP rolling logs in the shared logs directory (`moongate_http-*.log`).
 - Snapshot+journal persistence module (`Moongate.Persistence`) integrated in server lifecycle.
 - ID-based persistence references for character equipment/container ownership.
@@ -263,7 +263,7 @@ Resolution model:
 - `src/Moongate.Core`: shared low-level utilities.
 - `src/Moongate.Network`: TCP/network primitives.
 - `src/Moongate.Scripting`: Lua engine service, script modules, script loaders, and scripting helpers.
-- `src/Moongate.Server.Http`: embedded ASP.NET Core host service used by the server bootstrap.
+- `src/Moongate.Server/Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
 - `benchmarks/Moongate.Benchmarks`: BenchmarkDotNet performance suite.
 - `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
@@ -277,6 +277,7 @@ Current generator project:
 - `Moongate.Generators`
   - Generates packet table/registry wiring and `PacketDefinition` constants from packet metadata.
   - Generates bootstrap packet-listener registrations from `[RegisterPacketHandler(...)]`.
+  - Generates bootstrap game-event-listener subscriptions from `[RegisterGameEventListener]`.
   - Generates metric snapshot mappers from metric-decorated models.
   - Generates script module registries from `[ScriptModule(...)]` in `Moongate.Scripting` and `Moongate.Server`.
   - Generates `VersionUtils` metadata for server version/codename.
@@ -293,6 +294,7 @@ Moongate uses a strict separation between inbound protocol parsing and outbound 
 
 - `IPacketListener` handles inbound packets only (`Client -> Server`) and applies domain use-cases.
 - Domain services publish `IGameEvent` messages through `IGameEventBusService`.
+- Game event listeners are declared with `IGameEventListener<TEvent>` and auto-subscribed at bootstrap via `[RegisterGameEventListener]`.
 - `IOutboundEventListener<TEvent>` handles outbound side-effects from domain events (for example enqueueing packets).
 - `RegisterOutboundEventListener<TEvent, TListener>()` is the bootstrap helper to register outbound listeners as hosted services with priority.
 - `IOutgoingPacketQueue` and `IOutboundPacketSender` deliver outbound packets on the game-loop/network boundary.
@@ -432,6 +434,8 @@ Built-in commands:
 - `lock|*` -> Console only, `Administrator`
 - `exit|shutdown` -> Console only, `Administrator`
 - `add_user` -> Console + InGame, `Administrator`
+- `send_target` -> InGame only, `Regular`
+- `orion` -> InGame only, `Regular` (opens target cursor and spawns Orion on selected location)
 
 ## Scripting
 
@@ -614,7 +618,7 @@ Published documentation is available at:
 ## Development Notes
 
 - Shared build/analyzer/version settings are centralized in `Directory.Build.props`.
-- Current global version baseline: `0.16.1`.
+- Current global version baseline: `0.17.0`.
 - CI validates build/tests/coverage/quality/security; release and Docker image publishing run through dedicated workflows.
 
 ## Contributing

@@ -5,9 +5,10 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
-using Moongate.Server.Http.Data.Results;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Http;
 
@@ -19,6 +20,20 @@ public class MoongateHttpServiceJwtLoginEndpointTests
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var port = GetRandomPort();
+
+        var accountService = new TestAccountService
+        {
+            LoginAsyncImpl = (username, password) => Task.FromResult<UOAccountEntity?>(
+                username == "admin" && password == "admin"
+                    ? new UOAccountEntity
+                    {
+                        Id = (Moongate.UO.Data.Ids.Serial)1,
+                        Username = "admin",
+                        AccountType = AccountType.Administrator
+                    }
+                    : null
+            )
+        };
 
         var service = new MoongateHttpService(
             new()
@@ -33,22 +48,9 @@ public class MoongateHttpServiceJwtLoginEndpointTests
                     Issuer = "moongate-tests",
                     Audience = "moongate-tests-client",
                     ExpirationMinutes = 5
-                },
-                AuthFacade = new TestHttpAuthFacade(
-                    (username, password, _) => Task.FromResult(
-                        username == "admin" && password == "admin"
-                            ? MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Ok(
-                                new MoongateHttpAuthenticatedUser
-                                {
-                                    AccountId = "1",
-                                    Username = "admin",
-                                    Role = "admin"
-                                }
-                            )
-                            : MoongateHttpOperationResult<MoongateHttpAuthenticatedUser>.Unauthorized()
-                    )
-                )
-            }
+                }
+            },
+            accountService
         );
 
         await service.StartAsync();

@@ -9,6 +9,7 @@ using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
@@ -16,21 +17,26 @@ using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Connections;
+using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http;
-using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
-using Moongate.Server.Services.Http.Facades;
+using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Files;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Version;
 using Serilog;
@@ -68,6 +74,70 @@ public sealed class MoongateBootstrap : IDisposable
         RegisterFileLoaders();
 
         RegisterPacketHandlers();
+
+        RegisterDefaultCommands();
+    }
+
+    private void RegisterDefaultCommands()
+    {
+        var commandService = _container.Resolve<ICommandSystemService>();
+
+        commandService.RegisterCommand(
+            "send_target",
+            async context =>
+            {
+                var eventBus = _container.Resolve<IGameEventBusService>();
+
+                await eventBus.PublishAsync(
+                    new TargetRequestCursorEvent(
+                        context.SessionId,
+                        TargetCursorSelectionType.SelectLocation,
+                        TargetCursorType.Helpful,
+                        callback =>
+                        {
+                            context.Print(
+                                "Target cursor callback invoked with selection: {0} ",
+                                callback.Packet.Location
+                            );
+                        }
+                    )
+                );
+            },
+            "Sends a target cursor to the specified player. Usage: send_target ",
+            CommandSourceType.InGame,
+            AccountType.Regular
+        );
+
+        commandService.RegisterCommand(
+            "orion",
+            async context =>
+            {
+                var eventBus = _container.Resolve<IGameEventBusService>();
+                var mobileService = _container.Resolve<IMobileService>();
+                var spatialWorldService = _container.Resolve<ISpatialWorldService>();
+
+                await eventBus.PublishAsync(
+                    new TargetRequestCursorEvent(
+                        context.SessionId,
+                        TargetCursorSelectionType.SelectLocation,
+                        TargetCursorType.Helpful,
+                        callback =>
+                        {
+                            var mobile = mobileService.SpawnFromTemplateAsync("orione", callback.Packet.Location, 1)
+                                                      .GetAwaiter()
+                                                      .GetResult();
+
+                            spatialWorldService.AddOrUpdateMobile(mobile);
+
+                            context.Print("Orion the cat: {0} ", callback.Packet.Location);
+                        }
+                    )
+                );
+            },
+            "Create a cat, beautiful cat",
+            CommandSourceType.InGame,
+            AccountType.Regular
+        );
     }
 
     public void Dispose()
@@ -244,13 +314,6 @@ public sealed class MoongateBootstrap : IDisposable
         _logger.Information("UO Directory configured in {UODirectory}", UoFiles.RootDir);
     }
 
-    private MoongateHttpMetricsSnapshot? CreateHttpMetricsSnapshot()
-    {
-        var snapshotFactory = _container.Resolve<IMetricsHttpSnapshotFactory>();
-
-        return snapshotFactory.CreateSnapshot();
-    }
-
     private void CreateLogger()
     {
         var appLogPath = Path.Combine(_directoriesConfig[DirectoryType.Logs], "moongate-.log");
@@ -348,9 +411,7 @@ public sealed class MoongateBootstrap : IDisposable
             DirectoriesConfig = _directoriesConfig,
             IsOpenApiEnabled = _moongateConfig.Http.IsOpenApiEnabled,
             Port = _moongateConfig.Http.Port,
-            ServiceMappings = null,
             MinimumLogLevel = _moongateConfig.LogLevel.ToSerilogLogLevel(),
-            MetricsSnapshotFactory = CreateHttpMetricsSnapshot,
             Jwt = new()
             {
                 IsEnabled = _moongateConfig.Http.Jwt.IsEnabled,
@@ -358,15 +419,9 @@ public sealed class MoongateBootstrap : IDisposable
                 Issuer = _moongateConfig.Http.Jwt.Issuer,
                 Audience = _moongateConfig.Http.Jwt.Audience,
                 ExpirationMinutes = _moongateConfig.Http.Jwt.ExpirationMinutes
-            },
-            AuthFacade = new MoongateHttpAuthFacade(ResolveAccountService),
-            UsersFacade = new MoongateHttpUsersFacade(ResolveAccountService)
+            }
         };
     }
-
-    private IAccountService ResolveAccountService()
-        => _container.Resolve<IAccountService>();
-
 
     private void RegisterPacketHandlers()
     {
@@ -446,5 +501,4 @@ public sealed class MoongateBootstrap : IDisposable
             await service.StopAsync();
         }
     }
-
 }

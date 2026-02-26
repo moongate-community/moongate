@@ -11,7 +11,15 @@ namespace Moongate.Server.FileLoaders;
 
 public sealed class ItemTemplateLoader : IFileLoader
 {
+    private enum ResolveState
+    {
+        Unvisited = 0,
+        Visiting = 1,
+        Done = 2
+    }
+
     private readonly ILogger _logger = Log.ForContext<ItemTemplateLoader>();
+    private static readonly ItemTemplateDefinition Defaults = new();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IItemTemplateService _itemTemplateService;
 
@@ -42,8 +50,7 @@ public sealed class ItemTemplateLoader : IFileLoader
         }
 
         _itemTemplateService.Clear();
-
-        var loadedTemplateCount = 0;
+        var allItemTemplates = new List<ItemTemplateDefinition>();
 
         foreach (var templateFile in templateFiles)
         {
@@ -64,16 +71,166 @@ public sealed class ItemTemplateLoader : IFileLoader
             }
 
             var itemTemplates = templates.OfType<ItemTemplateDefinition>().ToList();
-            _itemTemplateService.UpsertRange(itemTemplates);
-            loadedTemplateCount += itemTemplates.Count;
+            allItemTemplates.AddRange(itemTemplates);
         }
+
+        ResolveBaseItems(allItemTemplates);
+        _itemTemplateService.UpsertRange(allItemTemplates);
 
         _logger.Information(
             "Loaded {TemplateCount} item templates from {FileCount} files",
-            loadedTemplateCount,
+            allItemTemplates.Count,
             templateFiles.Length
         );
 
         return Task.CompletedTask;
     }
+
+    private static void ResolveBaseItems(List<ItemTemplateDefinition> templates)
+    {
+        var byId = templates.ToDictionary(
+            static template => template.Id,
+            static template => template,
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        var states = new Dictionary<string, ResolveState>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var template in templates)
+        {
+            ResolveTemplate(template, byId, states);
+        }
+    }
+
+    private static void ResolveTemplate(
+        ItemTemplateDefinition template,
+        Dictionary<string, ItemTemplateDefinition> byId,
+        Dictionary<string, ResolveState> states
+    )
+    {
+        if (states.TryGetValue(template.Id, out var state))
+        {
+            if (state == ResolveState.Done)
+            {
+                return;
+            }
+
+            if (state == ResolveState.Visiting)
+            {
+                throw new InvalidOperationException($"Circular base_item reference detected at '{template.Id}'.");
+            }
+        }
+
+        states[template.Id] = ResolveState.Visiting;
+
+        if (!string.IsNullOrWhiteSpace(template.BaseItem))
+        {
+            if (!byId.TryGetValue(template.BaseItem, out var parent))
+            {
+                throw new InvalidOperationException(
+                    $"Template '{template.Id}' references unknown base_item '{template.BaseItem}'."
+                );
+            }
+
+            ResolveTemplate(parent, byId, states);
+            ApplyInheritance(parent, template);
+        }
+
+        states[template.Id] = ResolveState.Done;
+    }
+
+    private static void ApplyInheritance(ItemTemplateDefinition parent, ItemTemplateDefinition child)
+    {
+        if (string.IsNullOrWhiteSpace(child.Name))
+        {
+            child.Name = parent.Name;
+        }
+
+        if (string.IsNullOrWhiteSpace(child.Category))
+        {
+            child.Category = parent.Category;
+        }
+
+        if (string.IsNullOrWhiteSpace(child.Description))
+        {
+            child.Description = parent.Description;
+        }
+
+        if (string.IsNullOrWhiteSpace(child.ItemId))
+        {
+            child.ItemId = parent.ItemId;
+        }
+
+        if (string.IsNullOrWhiteSpace(child.ScriptId))
+        {
+            child.ScriptId = parent.ScriptId;
+        }
+
+        if (string.IsNullOrWhiteSpace(child.GumpId))
+        {
+            child.GumpId = parent.GumpId;
+        }
+
+        if (string.IsNullOrWhiteSpace(child.ContainerLayoutId))
+        {
+            child.ContainerLayoutId = parent.ContainerLayoutId;
+        }
+
+        if (child.Tags.Count == 0 && parent.Tags.Count > 0)
+        {
+            child.Tags = [..parent.Tags];
+        }
+
+        if (child.Container.Count == 0 && parent.Container.Count > 0)
+        {
+            child.Container = [..parent.Container];
+        }
+
+        if (child.Hue.Equals(default))
+        {
+            child.Hue = parent.Hue;
+        }
+
+        if (child.GoldValue.Equals(default))
+        {
+            child.GoldValue = parent.GoldValue;
+        }
+
+        child.Weight = InheritDecimal(child.Weight, parent.Weight, Defaults.Weight);
+        child.WeightMax = InheritInt(child.WeightMax, parent.WeightMax, Defaults.WeightMax);
+        child.MaxItems = InheritInt(child.MaxItems, parent.MaxItems, Defaults.MaxItems);
+        child.LowDamage = InheritInt(child.LowDamage, parent.LowDamage, Defaults.LowDamage);
+        child.HighDamage = InheritInt(child.HighDamage, parent.HighDamage, Defaults.HighDamage);
+        child.Defense = InheritInt(child.Defense, parent.Defense, Defaults.Defense);
+        child.HitPoints = InheritInt(child.HitPoints, parent.HitPoints, Defaults.HitPoints);
+        child.Speed = InheritInt(child.Speed, parent.Speed, Defaults.Speed);
+        child.Strength = InheritInt(child.Strength, parent.Strength, Defaults.Strength);
+        child.StrengthAdd = InheritInt(child.StrengthAdd, parent.StrengthAdd, Defaults.StrengthAdd);
+        child.Dexterity = InheritInt(child.Dexterity, parent.Dexterity, Defaults.Dexterity);
+        child.DexterityAdd = InheritInt(child.DexterityAdd, parent.DexterityAdd, Defaults.DexterityAdd);
+        child.Intelligence = InheritInt(child.Intelligence, parent.Intelligence, Defaults.Intelligence);
+        child.IntelligenceAdd = InheritInt(child.IntelligenceAdd, parent.IntelligenceAdd, Defaults.IntelligenceAdd);
+        child.Ammo = InheritInt(child.Ammo, parent.Ammo, Defaults.Ammo);
+        child.AmmoFx = InheritInt(child.AmmoFx, parent.AmmoFx, Defaults.AmmoFx);
+        child.MaxRange = InheritInt(child.MaxRange, parent.MaxRange, Defaults.MaxRange);
+        child.BaseRange = InheritInt(child.BaseRange, parent.BaseRange, Defaults.BaseRange);
+
+        child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);
+        child.IsMovable = InheritBool(child.IsMovable, parent.IsMovable, Defaults.IsMovable);
+        child.Stackable = InheritBool(child.Stackable, parent.Stackable, Defaults.Stackable);
+
+        if (child.LootType == Defaults.LootType)
+        {
+            child.LootType = parent.LootType;
+        }
+    }
+
+    private static int InheritInt(int childValue, int parentValue, int defaultValue)
+        => childValue == defaultValue ? parentValue : childValue;
+
+    private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
+        => childValue == defaultValue ? parentValue : childValue;
+
+    private static decimal InheritDecimal(decimal childValue, decimal parentValue, decimal defaultValue)
+        => childValue == defaultValue ? parentValue : childValue;
 }

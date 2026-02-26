@@ -87,9 +87,11 @@ public class EntityFactoryServiceTests
                 Dexterity = 60,
                 Intelligence = 20,
                 Hits = 70,
+                MaxHits = 120,
                 Mana = 20,
                 Stamina = 60,
-                Brain = "aggressive_orc"
+                Brain = "aggressive_orc",
+                Notoriety = Notoriety.Criminal
             }
         );
 
@@ -109,6 +111,9 @@ public class EntityFactoryServiceTests
                 Assert.That(mobile.Name, Is.EqualTo("Gor"));
                 Assert.That(mobile.Strength, Is.EqualTo(70));
                 Assert.That(mobile.Hits, Is.EqualTo(70));
+                Assert.That((int)mobile.Body, Is.EqualTo(0x11));
+                Assert.That(mobile.MaxHits, Is.EqualTo(120));
+                Assert.That(mobile.Notoriety, Is.EqualTo(Notoriety.Criminal));
                 Assert.That(mobile.IsPlayer, Is.False);
             }
         );

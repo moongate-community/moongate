@@ -1,4 +1,5 @@
 using Moongate.Abstractions.Services.Base;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Server.Interfaces.Services.Events;
@@ -13,6 +14,7 @@ namespace Moongate.Server.Services.Characters;
 /// <summary>
 /// Persists mobile runtime position changes to storage with lightweight write throttling.
 /// </summary>
+[RegisterGameEventListener]
 public sealed class CharacterPositionPersistenceService
     : BaseMoongateService, ICharacterPositionPersistenceService, IGameEventListener<MobilePositionChangedEvent>
 {
@@ -42,7 +44,8 @@ public sealed class CharacterPositionPersistenceService
     /// <inheritdoc />
     public override Task StartAsync()
     {
-        _gameEventBusService.RegisterListener<MobilePositionChangedEvent>(this);
+        _ = _gameEventBusService;
+
         return Task.CompletedTask;
     }
 

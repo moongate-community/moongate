@@ -15,7 +15,6 @@ moongatev2/
 │   ├── Moongate.Persistence
 │   ├── Moongate.Scripting
 │   ├── Moongate.Server
-│   ├── Moongate.Server.Http
 │   ├── Moongate.Server.Metrics
 │   └── Moongate.UO.Data
 ├── tests/
@@ -48,8 +47,6 @@ moongatev2/
   - Lua engine and module bridge.
 - `Moongate.Server`
   - composition root, bootstrap, runtime services and handlers.
-- `Moongate.Server.Http`
-  - HTTP service host and metric exposure endpoints.
 - `Moongate.Server.Metrics`
   - metrics provider abstractions and snapshot collection.
 - `Moongate.UO.Data`

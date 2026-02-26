@@ -9,6 +9,9 @@ namespace Moongate.UO.Data.Templates.Items;
 /// </summary>
 public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 {
+    [JsonPropertyName("base_item")]
+    public string? BaseItem { get; set; }
+
     public string? ContainerLayoutId { get; set; }
 
     public List<string> Container { get; set; } = [];
@@ -28,6 +31,42 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
     public bool IsMovable { get; set; }
 
     public string ItemId { get; set; }
+
+    public int WeightMax { get; set; }
+
+    public int MaxItems { get; set; }
+
+    public int LowDamage { get; set; }
+
+    public int HighDamage { get; set; }
+
+    public int Defense { get; set; }
+
+    public int HitPoints { get; set; }
+
+    public int Speed { get; set; }
+
+    public int Strength { get; set; }
+
+    public int StrengthAdd { get; set; }
+
+    public int Dexterity { get; set; }
+
+    public int DexterityAdd { get; set; }
+
+    public int Intelligence { get; set; }
+
+    public int IntelligenceAdd { get; set; }
+
+    [JsonConverter(typeof(Int32FlexibleJsonConverter))]
+    public int Ammo { get; set; }
+
+    [JsonConverter(typeof(Int32FlexibleJsonConverter))]
+    public int AmmoFx { get; set; }
+
+    public int MaxRange { get; set; }
+
+    public int BaseRange { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter<LootType>))]
     public LootType LootType { get; set; }

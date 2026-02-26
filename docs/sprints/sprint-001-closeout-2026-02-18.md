@@ -26,7 +26,7 @@ Sprint 001 is closed with objective achieved and scope over-delivered on archite
   - 4-byte seed path during `AwaitingSeed`.
 - Outbound pipeline extraction and logging coverage alignment.
 - Lua scripting integration baseline with bridge from game events to Lua callbacks.
-- Embedded HTTP service module (`Moongate.Server.Http`) with health/OpenAPI surface and dedicated HTTP logs.
+- Embedded HTTP service module (now under `Moongate.Server/Http`) with health/OpenAPI surface and dedicated HTTP logs.
 - Docker image build/run flow with mapped `/app` and `/uo`.
 - Expanded tests across networking, packet infrastructure, scripting, and loaders.
 

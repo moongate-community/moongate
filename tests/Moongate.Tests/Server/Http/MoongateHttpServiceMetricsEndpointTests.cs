@@ -4,6 +4,7 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
+using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
 
 namespace Moongate.Tests.Server.Http;
@@ -22,21 +23,23 @@ public class MoongateHttpServiceMetricsEndpointTests
             {
                 DirectoriesConfig = directories,
                 Port = port,
-                IsOpenApiEnabled = false,
-                MetricsSnapshotFactory = () =>
-                                             new()
-                                             {
-                                                 CollectedAt = DateTimeOffset.FromUnixTimeMilliseconds(1735689600000),
-                                                 Metrics = new Dictionary<string, MoongateHttpMetric>(StringComparer.Ordinal)
-                                                 {
-                                                     ["test.ticks.total"] = new()
-                                                     {
-                                                         Name = "ticks.total",
-                                                         Value = 12
-                                                     }
-                                                 }
-                                             }
-            }
+                IsOpenApiEnabled = false
+            },
+            metricsHttpSnapshotFactory: new TestMetricsHttpSnapshotFactory(
+                () =>
+                    new()
+                    {
+                        CollectedAt = DateTimeOffset.FromUnixTimeMilliseconds(1735689600000),
+                        Metrics = new Dictionary<string, MoongateHttpMetric>(StringComparer.Ordinal)
+                        {
+                            ["test.ticks.total"] = new()
+                            {
+                                Name = "ticks.total",
+                                Value = 12
+                            }
+                        }
+                    }
+            )
         );
 
         await service.StartAsync();

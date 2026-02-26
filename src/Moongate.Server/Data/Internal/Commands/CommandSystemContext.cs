@@ -1,3 +1,4 @@
+using Moongate.Server.Types.Commands;
 using Serilog.Events;
 
 namespace Moongate.Server.Data.Internal.Commands;
@@ -9,19 +10,41 @@ public sealed class CommandSystemContext
 {
     private readonly Action<string, LogEventLevel> _printAction;
 
+    public CommandSourceType Source { get; }
+
     public string CommandText { get; }
+
+    public long SessionId { get; }
+
+    public bool IsInGame => Source == CommandSourceType.InGame;
+
+    public long? SessionIdOrNull => IsInGame ? SessionId : null;
 
     public string[] Arguments { get; }
 
     public CommandSystemContext(
         string commandText,
         string[] arguments,
+        CommandSourceType source,
+        long sessionId,
         Action<string, LogEventLevel> printAction
     )
     {
         CommandText = commandText;
         Arguments = arguments;
+        Source = source;
         _printAction = printAction;
+        SessionId = sessionId;
+    }
+
+    protected long GetSessionId()
+    {
+        if (Source != CommandSourceType.InGame)
+        {
+            throw new InvalidOperationException("Session ID is only available for in-game commands.");
+        }
+
+        return SessionId;
     }
 
     public void Print(string message, params object[] args)

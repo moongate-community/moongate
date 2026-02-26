@@ -5,9 +5,10 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
-using Moongate.Server.Http.Data.Results;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Http;
 
@@ -20,36 +21,33 @@ public class MoongateHttpServiceUsersEndpointTests
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var port = GetRandomPort();
 
+        var accountService = new TestAccountService
+        {
+            GetAccountsAsyncImpl = _ => Task.FromResult<IReadOnlyList<UOAccountEntity>>(
+                [
+                    new UOAccountEntity
+                    {
+                        Id = (Moongate.UO.Data.Ids.Serial)1,
+                        Username = "admin",
+                        Email = "admin@moongate.local",
+                        AccountType = AccountType.Administrator,
+                        IsLocked = false,
+                        CreatedUtc = DateTime.UtcNow,
+                        LastLoginUtc = DateTime.UtcNow,
+                        CharacterIds = [(Moongate.UO.Data.Ids.Serial)2]
+                    }
+                ]
+            )
+        };
+
         var service = new MoongateHttpService(
             new()
             {
                 DirectoriesConfig = directories,
                 Port = port,
-                IsOpenApiEnabled = false,
-                UsersFacade = new TestHttpUsersFacade(
-                    _ => Task.FromResult(
-                        MoongateHttpOperationResult<IReadOnlyList<MoongateHttpUser>>.Ok(
-                            [
-                                new MoongateHttpUser
-                                {
-                                    AccountId = "1",
-                                    Username = "admin",
-                                    Email = "admin@moongate.local",
-                                    Role = "Administrator",
-                                    IsLocked = false,
-                                    CreatedUtc = DateTime.UtcNow,
-                                    LastLoginUtc = DateTime.UtcNow,
-                                    CharacterCount = 1
-                                }
-                            ]
-                        )
-                    ),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.NotFound()),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.Conflict()),
-                    (_, _, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.NotFound()),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<object?>.NotFound())
-                )
-            }
+                IsOpenApiEnabled = false
+            },
+            accountService
         );
 
         await service.StartAsync();
@@ -82,19 +80,75 @@ public class MoongateHttpServiceUsersEndpointTests
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var port = GetRandomPort();
-        var users = new Dictionary<string, MoongateHttpUser>(StringComparer.Ordinal)
+        var users = new Dictionary<string, UOAccountEntity>(StringComparer.Ordinal)
         {
-            ["10"] = new MoongateHttpUser
+            ["10"] = new UOAccountEntity
             {
-                AccountId = "10",
+                Id = (Moongate.UO.Data.Ids.Serial)10,
                 Username = "seed",
                 Email = "seed@moongate.local",
-                Role = "Regular",
+                AccountType = AccountType.Regular,
                 IsLocked = false,
                 CreatedUtc = DateTime.UtcNow,
                 LastLoginUtc = DateTime.UtcNow,
-                CharacterCount = 0
+                CharacterIds = []
             }
+        };
+
+        var accountService = new TestAccountService
+        {
+            GetAccountsAsyncImpl = _ => Task.FromResult<IReadOnlyList<UOAccountEntity>>([.. users.Values]),
+            GetAccountAsyncImpl = accountId =>
+            {
+                users.TryGetValue(accountId.Value.ToString(), out var user);
+
+                return Task.FromResult(user);
+            },
+            CreateAccountAsyncImpl = (username, _, email, role) =>
+            {
+                if (users.Values.Any(static u => u.Username.Equals("admin", StringComparison.Ordinal)))
+                {
+                    return Task.FromResult<UOAccountEntity?>(null);
+                }
+
+                var created = new UOAccountEntity
+                {
+                    Id = (Moongate.UO.Data.Ids.Serial)11,
+                    Username = username,
+                    Email = email,
+                    AccountType = role,
+                    IsLocked = false,
+                    CreatedUtc = DateTime.UtcNow,
+                    LastLoginUtc = DateTime.UtcNow,
+                    CharacterIds = []
+                };
+                users[created.Id.Value.ToString()] = created;
+
+                return Task.FromResult<UOAccountEntity?>(created);
+            },
+            UpdateAccountAsyncImpl = (accountId, username, _, email, role, isLocked, _) =>
+            {
+                if (!users.TryGetValue(accountId.Value.ToString(), out var existing))
+                {
+                    return Task.FromResult<UOAccountEntity?>(null);
+                }
+
+                var updated = new UOAccountEntity
+                {
+                    Id = existing.Id,
+                    Username = username ?? existing.Username,
+                    Email = email ?? existing.Email,
+                    AccountType = role ?? existing.AccountType,
+                    IsLocked = isLocked ?? existing.IsLocked,
+                    CreatedUtc = existing.CreatedUtc,
+                    LastLoginUtc = existing.LastLoginUtc,
+                    CharacterIds = [.. existing.CharacterIds]
+                };
+                users[accountId.Value.ToString()] = updated;
+
+                return Task.FromResult<UOAccountEntity?>(updated);
+            },
+            DeleteAccountAsyncImpl = accountId => Task.FromResult(users.Remove(accountId.Value.ToString()))
         };
 
         var service = new MoongateHttpService(
@@ -102,77 +156,9 @@ public class MoongateHttpServiceUsersEndpointTests
             {
                 DirectoriesConfig = directories,
                 Port = port,
-                IsOpenApiEnabled = false,
-                UsersFacade = new TestHttpUsersFacade(
-                    _ => Task.FromResult(
-                        MoongateHttpOperationResult<IReadOnlyList<MoongateHttpUser>>.Ok([.. users.Values])
-                    ),
-                    (accountId, _) =>
-                    {
-                        users.TryGetValue(accountId, out var user);
-
-                        return Task.FromResult(
-                            user is null
-                                ? MoongateHttpOperationResult<MoongateHttpUser>.NotFound()
-                                : MoongateHttpOperationResult<MoongateHttpUser>.Ok(user)
-                        );
-                    },
-                    (request, _) =>
-                    {
-                        if (users.Values.Any(static u => u.Username.Equals("admin", StringComparison.Ordinal)))
-                        {
-                            return Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.Conflict());
-                        }
-
-                        var created = new MoongateHttpUser
-                        {
-                            AccountId = "11",
-                            Username = request.Username,
-                            Email = request.Email,
-                            Role = request.Role,
-                            IsLocked = false,
-                            CreatedUtc = DateTime.UtcNow,
-                            LastLoginUtc = DateTime.UtcNow,
-                            CharacterCount = 0
-                        };
-                        users[created.AccountId] = created;
-
-                        return Task.FromResult(
-                            MoongateHttpOperationResult<MoongateHttpUser>.Created(
-                                created,
-                                $"/api/users/{created.AccountId}"
-                            )
-                        );
-                    },
-                    (accountId, request, _) =>
-                    {
-                        if (!users.TryGetValue(accountId, out var existing))
-                        {
-                            return Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.NotFound());
-                        }
-
-                        var updated = new MoongateHttpUser
-                        {
-                            AccountId = existing.AccountId,
-                            Username = request.Username ?? existing.Username,
-                            Email = request.Email ?? existing.Email,
-                            Role = request.Role ?? existing.Role,
-                            IsLocked = request.IsLocked ?? existing.IsLocked,
-                            CreatedUtc = existing.CreatedUtc,
-                            LastLoginUtc = existing.LastLoginUtc,
-                            CharacterCount = existing.CharacterCount
-                        };
-                        users[accountId] = updated;
-
-                        return Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.Ok(updated));
-                    },
-                    (accountId, _) => Task.FromResult(
-                        users.Remove(accountId)
-                            ? MoongateHttpOperationResult<object?>.NoContent()
-                            : MoongateHttpOperationResult<object?>.NotFound()
-                    )
-                )
-            }
+                IsOpenApiEnabled = false
+            },
+            accountService
         );
 
         await service.StartAsync();
@@ -235,36 +221,34 @@ public class MoongateHttpServiceUsersEndpointTests
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var port = GetRandomPort();
 
+        var accountService = new TestAccountService
+        {
+            GetAccountsAsyncImpl = _ => Task.FromResult<IReadOnlyList<UOAccountEntity>>([]),
+            GetAccountAsyncImpl = accountId => Task.FromResult<UOAccountEntity?>(
+                accountId.Value == 42
+                    ? new UOAccountEntity
+                    {
+                        Id = (Moongate.UO.Data.Ids.Serial)42,
+                        Username = "test",
+                        Email = "test@moongate.local",
+                        AccountType = AccountType.Regular,
+                        IsLocked = false,
+                        CreatedUtc = DateTime.UtcNow,
+                        LastLoginUtc = DateTime.UtcNow,
+                        CharacterIds = []
+                    }
+                    : null
+            )
+        };
+
         var service = new MoongateHttpService(
             new()
             {
                 DirectoriesConfig = directories,
                 Port = port,
-                IsOpenApiEnabled = false,
-                UsersFacade = new TestHttpUsersFacade(
-                    _ => Task.FromResult(MoongateHttpOperationResult<IReadOnlyList<MoongateHttpUser>>.Ok([])),
-                    (id, _) => Task.FromResult(
-                        id == "42"
-                            ? MoongateHttpOperationResult<MoongateHttpUser>.Ok(
-                                new MoongateHttpUser
-                                {
-                                    AccountId = "42",
-                                    Username = "test",
-                                    Email = "test@moongate.local",
-                                    Role = "Regular",
-                                    IsLocked = false,
-                                    CreatedUtc = DateTime.UtcNow,
-                                    LastLoginUtc = DateTime.UtcNow,
-                                    CharacterCount = 0
-                                }
-                            )
-                            : MoongateHttpOperationResult<MoongateHttpUser>.NotFound()
-                    ),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.Conflict()),
-                    (_, _, _) => Task.FromResult(MoongateHttpOperationResult<MoongateHttpUser>.NotFound()),
-                    (_, _) => Task.FromResult(MoongateHttpOperationResult<object?>.NotFound())
-                )
-            }
+                IsOpenApiEnabled = false
+            },
+            accountService
         );
 
         await service.StartAsync();
