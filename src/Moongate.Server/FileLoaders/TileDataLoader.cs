@@ -1,5 +1,6 @@
 using System.Text;
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Tiles;
@@ -11,6 +12,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents TileDataLoader.
 /// </summary>
+[RegisterFileLoader(8)]
 public class TileDataLoader : IFileLoader
 
 {

@@ -1,3 +1,4 @@
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
@@ -8,6 +9,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents MapLoader.
 /// </summary>
+[RegisterFileLoader(9)]
 public class MapLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<MapLoader>();

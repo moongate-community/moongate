@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Json.Context;
@@ -9,6 +10,7 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+[RegisterFileLoader(12)]
 public sealed class ItemTemplateLoader : IFileLoader
 {
     private enum ResolveState

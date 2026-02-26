@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Json.Weather;
@@ -11,6 +12,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents WeatherDataLoader.
 /// </summary>
+[RegisterFileLoader(17)]
 public class WeatherDataLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

@@ -2,6 +2,7 @@ using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json;
 using Moongate.UO.Data.Json.Context;
@@ -14,6 +15,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents ProfessionsLoader.
 /// </summary>
+[RegisterFileLoader(5)]
 public class ProfessionsLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<ProfessionsLoader>();

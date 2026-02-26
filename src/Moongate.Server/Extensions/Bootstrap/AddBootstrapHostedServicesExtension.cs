@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Abstractions.Extensions;
+using Moongate.Abstractions.Types;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Handlers;
@@ -34,21 +35,21 @@ public static class AddBootstrapHostedServicesExtension
     /// </summary>
     public static Container AddBootstrapHostedServices(this Container container)
     {
-        container.RegisterMoongateService<IPersistenceService, PersistenceService>(110);
-        container.RegisterMoongateService<IFileLoaderService, FileLoaderService>(120);
-        container.RegisterMoongateService<IGameLoopService, GameLoopService>(130);
-        container.RegisterMoongateService<ICharacterPositionPersistenceService, CharacterPositionPersistenceService>(130);
-        container.RegisterMoongateService<ICommandSystemService, CommandSystemService>(131);
-        container.RegisterMoongateService<IConsoleCommandService, ConsoleCommandService>(132);
-        container.RegisterMoongateService<IMetricsCollectionService, MetricsCollectionService>(135);
-        container.RegisterMoongateService<IGameEventScriptBridgeService, GameEventScriptBridgeService>(140);
-        container.RegisterMoongateService<INetworkService, NetworkService>(150);
-        container.RegisterMoongateService<IScriptEngineService, LuaScriptEngineService>(150);
+        container.RegisterMoongateService<IPersistenceService, PersistenceService>(ServicePriority.Persistence);
+        container.RegisterMoongateService<IFileLoaderService, FileLoaderService>(ServicePriority.FileLoader);
+        container.RegisterMoongateService<IGameLoopService, GameLoopService>(ServicePriority.GameLoop);
+        container.RegisterMoongateService<ICharacterPositionPersistenceService, CharacterPositionPersistenceService>(ServicePriority.CharacterPositionPersistence);
+        container.RegisterMoongateService<ICommandSystemService, CommandSystemService>(ServicePriority.CommandSystem);
+        container.RegisterMoongateService<IConsoleCommandService, ConsoleCommandService>(ServicePriority.ConsoleCommand);
+        container.RegisterMoongateService<IMetricsCollectionService, MetricsCollectionService>(ServicePriority.MetricsCollection);
+        container.RegisterMoongateService<IGameEventScriptBridgeService, GameEventScriptBridgeService>(ServicePriority.GameEventScriptBridge);
+        container.RegisterMoongateService<INetworkService, NetworkService>(ServicePriority.Network);
+        container.RegisterMoongateService<IScriptEngineService, LuaScriptEngineService>(ServicePriority.ScriptEngine);
 
         // ALL event listeners should be registered with a priority above all services that publish events, to ensure they receive events during startup.
-        container.RegisterMoongateService<PersistenceListenerHandler>(200);
-        container.RegisterMoongateService<MobileHandler>(200);
-        container.RegisterMoongateService<PlayerTargetService>(200);
+        container.RegisterMoongateService<PersistenceListenerHandler>(ServicePriority.EventListener);
+        container.RegisterMoongateService<MobileHandler>(ServicePriority.EventListener);
+        container.RegisterMoongateService<PlayerTargetService>(ServicePriority.EventListener);
 
         return container;
     }

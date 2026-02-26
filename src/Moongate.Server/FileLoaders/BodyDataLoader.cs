@@ -1,5 +1,6 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Types;
@@ -10,6 +11,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents BodyDataLoader.
 /// </summary>
+[RegisterFileLoader(4)]
 public class BodyDataLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<BodyDataLoader>();

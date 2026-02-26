@@ -2,6 +2,7 @@ using System.IO.Compression;
 using Moongate.Core.Buffers;
 using Moongate.Core.Compression;
 using Moongate.Network.Spans;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Multi;
@@ -14,6 +15,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents MultiDataLoader.
 /// </summary>
+[RegisterFileLoader(6)]
 public class MultiDataLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<MultiDataLoader>();

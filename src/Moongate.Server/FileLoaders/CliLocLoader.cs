@@ -1,4 +1,5 @@
 using System.Text;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Context;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Interfaces.FileLoaders;
@@ -11,6 +12,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents CliLocLoader.
 /// </summary>
+[RegisterFileLoader(10)]
 public class CliLocLoader : IFileLoader
 {
     private static byte[] _buffer = new byte[1024];

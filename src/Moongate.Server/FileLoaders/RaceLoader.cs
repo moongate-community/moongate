@@ -1,3 +1,4 @@
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Races;
 using Moongate.UO.Data.Races.Base;
@@ -8,6 +9,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents RaceLoader.
 /// </summary>
+[RegisterFileLoader(7)]
 public class RaceLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<RaceLoader>();

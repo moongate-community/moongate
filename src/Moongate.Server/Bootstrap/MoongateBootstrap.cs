@@ -4,6 +4,7 @@ using DryIoc;
 using Moongate.Abstractions.Data.Internal;
 using Moongate.Abstractions.Extensions;
 using Moongate.Abstractions.Interfaces.Services.Base;
+using Moongate.Abstractions.Types;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Extensions.Logger;
@@ -398,7 +399,7 @@ public sealed class MoongateBootstrap : IDisposable
             return;
         }
 
-        _container.RegisterMoongateService<IMoongateHttpService, MoongateHttpService>(200);
+        _container.RegisterMoongateService<IMoongateHttpService, MoongateHttpService>(ServicePriority.HttpServer);
         _logger.Information("HTTP Server enabled.");
         _container.RegisterInstance(CreateHttpServiceOptions());
     }

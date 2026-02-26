@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Json.Context;
@@ -12,6 +13,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Loads mobile templates from <c>templates/mobiles</c> into <see cref="IMobileTemplateService" />.
 /// </summary>
+[RegisterFileLoader(13)]
 public sealed class MobileTemplateLoader : IFileLoader
 {
     private enum ResolveState

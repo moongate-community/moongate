@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Json.Context;
@@ -12,6 +13,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents NamesLoader.
 /// </summary>
+[RegisterFileLoader(18)]
 public class NamesLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

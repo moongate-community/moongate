@@ -49,12 +49,10 @@ public sealed class MobileHandlerTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(packets, Has.Count.EqualTo(4));
+                Assert.That(packets, Has.Count.EqualTo(2));
                 Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<DrawPlayerPacket>());
-                Assert.That(packets[2].Packet, Is.TypeOf<PlayerStatusPacket>());
-                Assert.That(packets[3].Packet, Is.TypeOf<MobileDrawPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
             }
         );
     }
@@ -100,8 +98,10 @@ public sealed class MobileHandlerTests
             {
                 Assert.That(spatial.LastGetSectorMapId, Is.EqualTo(1));
                 Assert.That(spatial.LastGetSectorLocation, Is.EqualTo(new Point3D(210, 210, 0)));
-                Assert.That(packets, Has.Count.EqualTo(4));
+                Assert.That(packets, Has.Count.EqualTo(2));
                 Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
+                Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
             }
         );
     }

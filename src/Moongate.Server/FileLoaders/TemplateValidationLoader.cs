@@ -1,3 +1,4 @@
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -10,6 +11,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Validates loaded item and mobile templates and fails startup on invalid references or malformed entries.
 /// </summary>
+[RegisterFileLoader(15)]
 public sealed class TemplateValidationLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<TemplateValidationLoader>();
