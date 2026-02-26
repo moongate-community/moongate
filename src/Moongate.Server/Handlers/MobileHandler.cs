@@ -1,5 +1,6 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
@@ -10,11 +11,10 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Handlers;
 
+[RegisterGameEventListener]
 public class MobileHandler
     : IGameEventListener<MobileAddedInSectorEvent>, IGameEventListener<MobilePositionChangedEvent>, IMoongateService
 {
-    private readonly IGameEventBusService _gameEventBusService;
-
     private readonly ISpatialWorldService _spatialWorldService;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -24,14 +24,12 @@ public class MobileHandler
     private readonly ICharacterService _characterService;
 
     public MobileHandler(
-        IGameEventBusService gameEventBusService,
         ISpatialWorldService spatialWorldService,
         ICharacterService characterService,
         IGameNetworkSessionService gameNetworkSessionService,
         IOutgoingPacketQueue outgoingPacketQueue
     )
     {
-        _gameEventBusService = gameEventBusService;
         _spatialWorldService = spatialWorldService;
         _characterService = characterService;
         _gameNetworkSessionService = gameNetworkSessionService;
@@ -84,12 +82,7 @@ public class MobileHandler
     }
 
     public Task StartAsync()
-    {
-        _gameEventBusService.RegisterListener<MobileAddedInSectorEvent>(this);
-        _gameEventBusService.RegisterListener<MobilePositionChangedEvent>(this);
-
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 
     public Task StopAsync()
         => Task.CompletedTask;

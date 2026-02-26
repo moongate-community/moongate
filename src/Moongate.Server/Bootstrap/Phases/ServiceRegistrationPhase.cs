@@ -103,6 +103,7 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
             context.DirectoriesConfig,
             context.ConsoleUiService
         );
+        BootstrapGameEventListenerRegistration.RegisterServices(context.Container);
     }
 
     private static string ResolveHttpJwtSigningKey(BootstrapContext context)

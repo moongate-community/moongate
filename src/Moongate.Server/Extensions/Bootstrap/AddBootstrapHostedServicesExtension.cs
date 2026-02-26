@@ -3,7 +3,6 @@ using Moongate.Abstractions.Extensions;
 using Moongate.Abstractions.Types;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
-using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.EvenLoop;
@@ -17,7 +16,6 @@ using Moongate.Server.Services.Console;
 using Moongate.Server.Services.EventLoop;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Files;
-using Moongate.Server.Services.Interaction;
 using Moongate.Server.Services.Metrics;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Persistence;
@@ -50,11 +48,6 @@ public static class AddBootstrapHostedServicesExtension
         );
         container.RegisterMoongateService<INetworkService, NetworkService>(ServicePriority.Network);
         container.RegisterMoongateService<IScriptEngineService, LuaScriptEngineService>(ServicePriority.ScriptEngine);
-
-        // ALL event listeners should be registered with a priority above all services that publish events, to ensure they receive events during startup.
-        container.RegisterMoongateService<PersistenceListenerHandler>(ServicePriority.EventListener);
-        container.RegisterMoongateService<MobileHandler>(ServicePriority.EventListener);
-        container.RegisterMoongateService<PlayerTargetService>(ServicePriority.EventListener);
 
         return container;
     }

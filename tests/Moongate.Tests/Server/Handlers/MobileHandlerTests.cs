@@ -117,7 +117,6 @@ public sealed class MobileHandlerTests
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
         var handler = new MobileHandler(
-            new NetworkServiceTestGameEventBusService(),
             spatial,
             characterService,
             sessions,
@@ -148,7 +147,6 @@ public sealed class MobileHandlerTests
         var spatial = new MobileHandlerTestSpatialWorldService { SectorByLocation = null };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
         var handler = new MobileHandler(
-            new NetworkServiceTestGameEventBusService(),
             spatial,
             characterService,
             sessions,
@@ -185,7 +183,6 @@ public sealed class MobileHandlerTests
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
         var handler = new MobileHandler(
-            new NetworkServiceTestGameEventBusService(),
             spatial,
             characterService,
             sessions,

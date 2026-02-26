@@ -11,6 +11,9 @@ namespace Moongate.Server.Bootstrap.Internal;
 /// </summary>
 internal static partial class BootstrapGameEventListenerRegistration
 {
+    public static void RegisterServices(Container container)
+        => RegisterServicesGenerated(container);
+
     public static void Subscribe(Container container)
         => SubscribeGenerated(container);
 
@@ -71,6 +74,8 @@ internal static partial class BootstrapGameEventListenerRegistration
 
         throw new InvalidOperationException($"Listener type '{typeof(TListener).FullName}' is not registered in DryIoc.");
     }
+
+    static partial void RegisterServicesGenerated(Container container);
 
     static partial void SubscribeGenerated(Container container);
 }
