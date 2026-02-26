@@ -1,3 +1,22 @@
+## [0.19.0](https://github.com/moongate-community/moongatev2/compare/v0.18.0...v0.19.0) (2026-02-26)
+
+### Features
+
+* **converters:** add UOX3 DFN item and loot converters ([ee11847](https://github.com/moongate-community/moongatev2/commit/ee118470a15b8138a5d0278b84330066b00a5ed1))
+* **converters:** unify DFN pipeline and improve creature mapping ([d4406c8](https://github.com/moongate-community/moongatev2/commit/d4406c82db139c68a2606376fa62706852d0dff9))
+* **network:** implement target cursor commands packet (0x6C) with tests ([a505e9c](https://github.com/moongate-community/moongatev2/commit/a505e9ce331233ac9c24cecd3123029983131ac2))
+* **scripting:** add lua command module and stabilize target cursor flow ([4ba7566](https://github.com/moongate-community/moongatev2/commit/4ba7566f12b5f34039e26f573e16ea42d81f9b17))
+* **scripting:** add lua speech/mobile/item modules and tests ([e27a3f9](https://github.com/moongate-community/moongatev2/commit/e27a3f960c8e05ff2550207ce6948248a523e8cc))
+* **server:** generate game-event listener wiring and document it ([9f5d6b9](https://github.com/moongate-community/moongatev2/commit/9f5d6b9e109dcb813dd48850850082b8587fd7bc))
+* **targeting:** add player target event flow and player target service ([1556fdc](https://github.com/moongate-community/moongatev2/commit/1556fdc1587ae4b1063f6121d4761e9cc60afe55))
+* **templates:** add loot schema, base inheritance, and mobile sounds ([1f65e31](https://github.com/moongate-community/moongatev2/commit/1f65e31232678815e279d699d3fa14a97b0efc6a))
+* **uo-data:** add cross-platform item art service with ImageSharp ([c6be3f2](https://github.com/moongate-community/moongatev2/commit/c6be3f2d2a9ad92cda8db92e1f523def69aa187a))
+
+### Bug Fixes
+
+* **server:** register mobile handler and align docker http port exposure ([2879543](https://github.com/moongate-community/moongatev2/commit/2879543f2bc78fa97d1b351b8b9733357cd0f7dc))
+* **server:** restore mobile spawn service and orion target command flow ([a2ed9bc](https://github.com/moongate-community/moongatev2/commit/a2ed9bc2ca5b5913a8b9bf7f5acb2cebc6fe1bde))
+
 ## [0.18.0](https://github.com/moongate-community/moongatev2/compare/v0.17.0...v0.18.0) (2026-02-25)
 
 ### Features
