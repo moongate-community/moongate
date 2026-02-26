@@ -23,11 +23,12 @@ using Moongate.Server.Http;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Lifecycle;
-using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
@@ -70,6 +71,7 @@ public sealed class MoongateBootstrap : IDisposable
         RegisterFileLoaders();
 
         RegisterPacketHandlers();
+        RegisterGameEventListeners();
 
         RegisterDefaultCommands();
     }
@@ -100,6 +102,42 @@ public sealed class MoongateBootstrap : IDisposable
                 );
             },
             "Sends a target cursor to the specified player. Usage: send_target ",
+            CommandSourceType.InGame,
+            AccountType.Regular
+        );
+
+        commandService.RegisterCommand(
+            "orion",
+            async context =>
+            {
+                var eventBus = _container.Resolve<IGameEventBusService>();
+
+                var mobileService = _container.Resolve<IMobileService>();
+
+                var spatialWorldService = _container.Resolve<ISpatialWorldService>();
+
+                await eventBus.PublishAsync(
+                    new TargetRequestCursorEvent(
+                        context.SessionId,
+                        TargetCursorSelectionType.SelectLocation,
+                        TargetCursorType.Helpful,
+                        callback =>
+                        {
+                            var mobile = mobileService.SpawnFromTemplateAsync("orione", callback.Packet.Location, 1)
+                                                      .GetAwaiter()
+                                                      .GetResult();
+
+                            spatialWorldService.AddOrUpdateMobile(mobile);
+
+                            context.Print(
+                                "Orion the cat: {0} ",
+                                callback.Packet.Location
+                            );
+                        }
+                    )
+                );
+            },
+            "Create a cat, beautiful cat",
             CommandSourceType.InGame,
             AccountType.Regular
         );
@@ -391,6 +429,11 @@ public sealed class MoongateBootstrap : IDisposable
     private void RegisterPacketHandlers()
     {
         BootstrapPacketHandlerRegistration.Register(_container);
+    }
+
+    private void RegisterGameEventListeners()
+    {
+        BootstrapGameEventListenerRegistration.Subscribe(_container);
     }
 
     private void RegisterScriptModules()

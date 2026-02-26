@@ -45,6 +45,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IServerLifetimeService, ServerLifetimeService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+        container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
         container.Register<IPlaceholderResolverService, PlaceholderResolverService>(Reuse.Singleton);
         container.Register<IStartupCompositionService, StartupCompositionService>(Reuse.Singleton);

@@ -38,6 +38,18 @@ Base helper:
 - optional global listener: `IGameEventListener<IGameEvent>`
 - listeners are invoked sequentially per publish call
 - listener exceptions are caught and logged
+- duplicate listener registrations are ignored by the bus
+- runtime subscriptions can be generated at compile time via `[RegisterGameEventListener]`
+
+## Compile-Time Listener Registration
+
+Moongate uses source generation for event listener subscriptions.
+
+- decorate listener class with `[RegisterGameEventListener]`
+- implement one or more `IGameEventListener<TEvent>`
+- during bootstrap, generated code subscribes each event interface on `IGameEventBusService`
+
+This removes manual `RegisterListener(...)` boilerplate from most services/handlers.
 
 ## Outbound Event Listeners
 

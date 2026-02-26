@@ -1,21 +1,21 @@
 using Humanizer;
 using Moongate.Abstractions.Interfaces.Services.Base;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Persistence;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Speech;
 
 namespace Moongate.Server.Services.Persistence;
 
+[RegisterGameEventListener]
 public class PersistenceListenerHandler
-    : IGameEventListener<DatabaseSavingStartEvent>, IGameEventListener<DatabaseSavedEvent>, IMoongateService
+    : IGameEventListener<DatabaseSavingStartEvent>, IGameEventListener<DatabaseSavedEvent>
 {
     private readonly ISpeechService _speechService;
-    private readonly IGameEventBusService _gameEventBusService;
 
-    public PersistenceListenerHandler(ISpeechService speechService, IGameEventBusService gameEventBusService)
+    public PersistenceListenerHandler(ISpeechService speechService)
     {
         _speechService = speechService;
-        _gameEventBusService = gameEventBusService;
     }
 
     public async Task HandleAsync(DatabaseSavingStartEvent gameEvent, CancellationToken cancellationToken = default)
@@ -28,18 +28,5 @@ public class PersistenceListenerHandler
         await _speechService.BroadcastFromServerAsync(
             $"World saved in {gameEvent.ElapsedMilliseconds.Milliseconds()} seconds."
         );
-    }
-
-    public Task StartAsync()
-    {
-        _gameEventBusService.RegisterListener<DatabaseSavedEvent>(this);
-        _gameEventBusService.RegisterListener<DatabaseSavingStartEvent>(this);
-
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync()
-    {
-        return Task.CompletedTask;
     }
 }

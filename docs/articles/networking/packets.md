@@ -84,6 +84,13 @@ This keeps:
 - bootstrap code shorter and easier to maintain.
 - runtime startup free from reflection-based handler scanning.
 
+## Game Event Listener Registration Generation
+
+In addition to packet handler registration, Moongate also generates game-event listener subscriptions.
+
+Listener classes decorated with `[RegisterGameEventListener]` are scanned at compile time.
+For each implemented `IGameEventListener<TEvent>`, generated bootstrap code subscribes the listener on `IGameEventBusService`.
+
 ---
 
 **Previous**: [Protocol Reference](protocol.md)

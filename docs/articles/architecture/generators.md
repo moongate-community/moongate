@@ -30,6 +30,13 @@ It contains these generators:
   - generated bootstrap listener wiring (`BootstrapPacketHandlerRegistration.RegisterGenerated(...)`)
   - compile-time mapping `opcode -> RegisterPacketHandler<TListener>(...)`
 
+### Game Event Listener Registration Generator
+
+- Input: listener classes decorated with `[RegisterGameEventListener]` and implementing one or more `IGameEventListener<TEvent>`
+- Output:
+  - generated bootstrap game-event subscription wiring (`BootstrapGameEventListenerRegistration.SubscribeGenerated(...)`)
+  - compile-time mapping `listener -> RegisterListener<TEvent>(...)`
+
 ### Metrics Mapper Generator
 
 - Input: snapshot properties decorated with metric metadata
@@ -57,6 +64,7 @@ It contains these generators:
 3. At runtime:
    - packet descriptors come from generated packet table registration.
    - listener wiring comes from generated bootstrap registration.
+   - game-event listeners are subscribed from generated bootstrap registration.
    - metric snapshots are mapped through generated mappers.
    - script modules are registered through generated script module registry.
    - version/codename are read from generated `VersionUtils`.

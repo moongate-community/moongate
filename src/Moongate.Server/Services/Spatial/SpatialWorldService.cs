@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
@@ -25,6 +26,7 @@ namespace Moongate.Server.Services.Spatial;
 /// <summary>
 /// Default in-memory spatial world index based on map sectors.
 /// </summary>
+[RegisterGameEventListener]
 public sealed class SpatialWorldService
     : ISpatialWorldService, ISpatialMetricsSource,
       IGameEventListener<MobilePositionChangedEvent>,
@@ -66,10 +68,6 @@ public sealed class SpatialWorldService
         _itemService = itemService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
-
-        _gameEventBusService.RegisterListener<MobilePositionChangedEvent>(this);
-        _gameEventBusService.RegisterListener<PlayerCharacterLoggedInEvent>(this);
-        _gameEventBusService.RegisterListener<DropItemToGroundEvent>(this);
     }
 
     public void AddOrUpdateMobile(UOMobileEntity mobile)

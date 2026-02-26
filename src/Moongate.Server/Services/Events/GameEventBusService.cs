@@ -51,6 +51,11 @@ public sealed class GameEventBusService : IGameEventBusService
 
         lock (listeners)
         {
+            if (listeners.Contains(listener))
+            {
+                return;
+            }
+
             listeners.Add(listener);
         }
     }

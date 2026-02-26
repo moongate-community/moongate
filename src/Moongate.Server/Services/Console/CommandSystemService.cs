@@ -1,5 +1,6 @@
 using System.Text;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Session;
@@ -19,6 +20,7 @@ namespace Moongate.Server.Services.Console;
 /// <summary>
 /// Implements registration and execution of built-in server commands.
 /// </summary>
+[RegisterGameEventListener]
 public sealed class CommandSystemService : ICommandSystemService, IGameEventListener<CommandEnteredEvent>
 {
     private readonly ILogger _logger = Log.ForContext<CommandSystemService>();

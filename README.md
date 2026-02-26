@@ -277,6 +277,7 @@ Current generator project:
 - `Moongate.Generators`
   - Generates packet table/registry wiring and `PacketDefinition` constants from packet metadata.
   - Generates bootstrap packet-listener registrations from `[RegisterPacketHandler(...)]`.
+  - Generates bootstrap game-event-listener subscriptions from `[RegisterGameEventListener]`.
   - Generates metric snapshot mappers from metric-decorated models.
   - Generates script module registries from `[ScriptModule(...)]` in `Moongate.Scripting` and `Moongate.Server`.
   - Generates `VersionUtils` metadata for server version/codename.
@@ -293,6 +294,7 @@ Moongate uses a strict separation between inbound protocol parsing and outbound 
 
 - `IPacketListener` handles inbound packets only (`Client -> Server`) and applies domain use-cases.
 - Domain services publish `IGameEvent` messages through `IGameEventBusService`.
+- Game event listeners are declared with `IGameEventListener<TEvent>` and auto-subscribed at bootstrap via `[RegisterGameEventListener]`.
 - `IOutboundEventListener<TEvent>` handles outbound side-effects from domain events (for example enqueueing packets).
 - `RegisterOutboundEventListener<TEvent, TListener>()` is the bootstrap helper to register outbound listeners as hosted services with priority.
 - `IOutgoingPacketQueue` and `IOutboundPacketSender` deliver outbound packets on the game-loop/network boundary.

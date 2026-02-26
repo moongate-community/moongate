@@ -18,6 +18,7 @@ using Serilog;
 
 namespace Moongate.Server.Services.Interaction;
 
+[RegisterGameEventListener]
 [RegisterPacketHandler(PacketDefinition.TargetCursorCommandsPacket)]
 public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameEventListener<TargetRequestCursorEvent>
 {
@@ -48,7 +49,6 @@ public class PlayerTargetService : IPlayerTargetService, IPacketListener, IGameE
 
     public Task StartAsync()
     {
-        _gameEventBusService.RegisterListener(this);
         _timerService.RegisterTimer(
             "pending_cursor_cleanup",
             TimeSpan.FromMinutes(1),
