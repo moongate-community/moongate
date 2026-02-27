@@ -1,3 +1,10 @@
+## [0.21.0](https://github.com/moongate-community/moongatev2/compare/v0.20.0...v0.21.0) (2026-02-27)
+
+### Features
+
+* **spatial:** add polymorphic regions with typed map and music support ([1f20006](https://github.com/moongate-community/moongatev2/commit/1f20006402fef1df68ee40d730a9331a18da4edb))
+* **spatial:** resolve regions by priority and parent hierarchy ([637f131](https://github.com/moongate-community/moongatev2/commit/637f131ce10ff58affe6036e4653f4a043e737fb))
+
 ## [0.20.0](https://github.com/moongate-community/moongatev2/compare/v0.19.1...v0.20.0) (2026-02-27)
 
 ### Features
