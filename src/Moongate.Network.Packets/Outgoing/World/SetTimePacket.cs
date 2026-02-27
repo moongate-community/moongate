@@ -16,11 +16,15 @@ public class SetTimePacket : BaseGameNetworkPacket
 
     public SetTimePacket()
         : base(0x5B, 4)
-        => Time = DateTime.UtcNow;
+    {
+        Time = DateTime.UtcNow;
+    }
 
     public SetTimePacket(DateTime time)
         : this()
-        => Time = time;
+    {
+        Time = time;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

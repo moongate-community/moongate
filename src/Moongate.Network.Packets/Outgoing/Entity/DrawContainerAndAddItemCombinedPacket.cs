@@ -17,7 +17,9 @@ public class DrawContainerAndAddItemCombinedPacket : BaseGameNetworkPacket
 
     public DrawContainerAndAddItemCombinedPacket(UOItemEntity container)
         : this()
-        => Container = container;
+    {
+        Container = container;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

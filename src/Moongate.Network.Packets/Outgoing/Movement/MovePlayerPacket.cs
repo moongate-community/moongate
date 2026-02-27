@@ -20,7 +20,9 @@ public class MovePlayerPacket : BaseGameNetworkPacket
 
     public MovePlayerPacket(DirectionType direction)
         : this()
-        => Direction = direction;
+    {
+        Direction = direction;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

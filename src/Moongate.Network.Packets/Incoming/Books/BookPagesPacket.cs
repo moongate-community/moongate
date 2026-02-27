@@ -21,7 +21,9 @@ public class BookPagesPacket : BaseGameNetworkPacket
 
     public BookPagesPacket()
         : base(0x66)
-        => Pages = new();
+    {
+        Pages = new();
+    }
 
     public override void Write(ref SpanWriter writer)
     {

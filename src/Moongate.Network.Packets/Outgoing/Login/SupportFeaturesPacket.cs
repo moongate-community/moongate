@@ -21,7 +21,9 @@ public class SupportFeaturesPacket : BaseGameNetworkPacket
 
     public SupportFeaturesPacket(FeatureFlags flags)
         : base(0xB9, 5)
-        => Flags = flags;
+    {
+        Flags = flags;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

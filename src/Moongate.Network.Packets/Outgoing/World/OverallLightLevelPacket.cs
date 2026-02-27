@@ -20,7 +20,9 @@ public class OverallLightLevelPacket : BaseGameNetworkPacket
 
     public OverallLightLevelPacket(LightLevelType lightLevel)
         : this()
-        => LightLevel = lightLevel;
+    {
+        LightLevel = lightLevel;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

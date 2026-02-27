@@ -24,7 +24,9 @@ public sealed class MobileHandlerTests
         private readonly UOMobileEntity _mobile;
 
         public MobileHandlerTestCharacterService(UOMobileEntity mobile)
-            => _mobile = mobile;
+        {
+            _mobile = mobile;
+        }
 
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
             => Task.FromResult(true);

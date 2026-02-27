@@ -20,7 +20,9 @@ public class PaperdollPacket : BaseGameNetworkPacket
 
     public PaperdollPacket(UOMobileEntity mobile)
         : this()
-        => Mobile = mobile;
+    {
+        Mobile = mobile;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

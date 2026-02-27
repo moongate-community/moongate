@@ -19,7 +19,9 @@ public class PingMessagePacket : BaseGameNetworkPacket
 
     public PingMessagePacket(byte sequence)
         : this()
-        => Sequence = sequence;
+    {
+        Sequence = sequence;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

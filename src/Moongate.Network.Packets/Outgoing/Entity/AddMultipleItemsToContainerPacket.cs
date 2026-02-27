@@ -20,7 +20,9 @@ public class AddMultipleItemsToContainerPacket : BaseGameNetworkPacket
 
     public AddMultipleItemsToContainerPacket(UOItemEntity container)
         : this()
-        => Container = container;
+    {
+        Container = container;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

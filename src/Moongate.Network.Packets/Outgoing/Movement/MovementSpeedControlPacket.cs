@@ -18,7 +18,9 @@ public class MovementSpeedControlPacket : BaseGameNetworkPacket
 
     public MovementSpeedControlPacket(MovementSpeedControlType speedControl)
         : this()
-        => SpeedControl = speedControl;
+    {
+        SpeedControl = speedControl;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

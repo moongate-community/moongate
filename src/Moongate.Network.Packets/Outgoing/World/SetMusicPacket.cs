@@ -20,7 +20,9 @@ public class SetMusicPacket : BaseGameNetworkPacket
 
     public SetMusicPacket(int musicId)
         : this()
-        => MusicId = musicId;
+    {
+        MusicId = musicId;
+    }
 
     public SetMusicPacket(MusicName music)
         : this((int)music) { }

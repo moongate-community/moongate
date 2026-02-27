@@ -18,7 +18,9 @@ public class LoginDeniedPacket : BaseGameNetworkPacket
     public LoginDeniedPacket() : base(0x82, 2) { }
 
     public LoginDeniedPacket(UOLoginDeniedReason reason) : this()
-        => Reason = (byte)reason;
+    {
+        Reason = (byte)reason;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

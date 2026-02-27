@@ -31,7 +31,9 @@ public sealed class ArtService : IArtService
         ) { }
 
     public ArtService(FileIndex fileIndex)
-        => _fileIndex = fileIndex;
+    {
+        _fileIndex = fileIndex;
+    }
 
     public Image<Rgba32>? GetArt(int itemId, bool clone = true)
     {

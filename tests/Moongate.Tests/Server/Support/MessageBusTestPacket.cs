@@ -6,7 +6,9 @@ namespace Moongate.Tests.Server.Support;
 public sealed class MessageBusTestPacket : IGameNetworkPacket
 {
     public MessageBusTestPacket(byte opCode)
-        => OpCode = opCode;
+    {
+        OpCode = opCode;
+    }
 
     public byte OpCode { get; }
     public int Length => 1;
