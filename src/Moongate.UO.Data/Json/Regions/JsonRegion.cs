@@ -46,6 +46,8 @@ public sealed class JsonTownRegion : JsonRegion
 
     public JsonRegionParent? Parent { get; set; }
 
+    public bool GuardsDisabled { get; set; }
+
     public Point3D? Entrance { get; set; }
 
     public Point3D? GoLocation { get; set; }

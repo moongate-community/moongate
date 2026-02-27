@@ -7,8 +7,10 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Services.Speech;
@@ -18,22 +20,26 @@ namespace Moongate.Server.Services.Speech;
 /// </summary>
 public sealed class SpeechService : ISpeechService
 {
+    private const int DefaultNpcHearingRange = 12;
     private readonly ICommandSystemService _commandSystemService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly ISpatialWorldService _spatialWorldService;
 
     public SpeechService(
         ICommandSystemService commandSystemService,
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameNetworkSessionService gameNetworkSessionService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        ISpatialWorldService spatialWorldService
     )
     {
         _commandSystemService = commandSystemService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameNetworkSessionService = gameNetworkSessionService;
         _gameEventBusService = gameEventBusService;
+        _spatialWorldService = spatialWorldService;
     }
 
     public async Task<int> BroadcastFromServerAsync(
@@ -96,6 +102,8 @@ public sealed class SpeechService : ISpeechService
             return null;
         }
 
+        await PublishSpeechHeardEventsAsync(session, text, speechPacket.MessageType, cancellationToken);
+
         return SpeechMessageFactory.CreateFromSpeaker(
             session.Character,
             speechPacket.MessageType,
@@ -132,5 +140,45 @@ public sealed class SpeechService : ISpeechService
         );
 
         return true;
+    }
+
+    private async Task PublishSpeechHeardEventsAsync(
+        GameSession session,
+        string text,
+        ChatMessageType speechType,
+        CancellationToken cancellationToken
+    )
+    {
+        if (session.Character is null)
+        {
+            return;
+        }
+
+        var speaker = session.Character;
+        var nearbyMobiles = _spatialWorldService.GetNearbyMobiles(
+            speaker.Location,
+            DefaultNpcHearingRange,
+            speaker.MapId
+        );
+
+        foreach (var mobile in nearbyMobiles)
+        {
+            if (mobile.IsPlayer || mobile.Id == speaker.Id)
+            {
+                continue;
+            }
+
+            await _gameEventBusService.PublishAsync(
+                new SpeechHeardEvent(
+                    mobile.Id,
+                    speaker.Id,
+                    text,
+                    speechType,
+                    speaker.MapId,
+                    speaker.Location
+                ),
+                cancellationToken
+            );
+        }
     }
 }

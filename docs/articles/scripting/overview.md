@@ -162,6 +162,49 @@ function on_server_stop() end
 function on_tick() end  -- Called every game tick
 ```
 
+## NPC Brain Loop
+
+NPC templates can bind a Lua brain through `brain`:
+
+```json
+{
+  "type": "mobile",
+  "id": "orc_warrior",
+  "name": "an orc warrior",
+  "body": "0x11",
+  "brain": "orc_warrior"
+}
+```
+
+The value `brain: "orc_warrior"` resolves to `scripts/ai/orc_warrior.lua`.
+
+Minimal brain script:
+
+```lua
+function brain_loop(npc_id)
+    while true do
+        -- Next wake time in milliseconds
+        coroutine.yield(250)
+    end
+end
+
+function on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)
+    if text == nil then
+        return
+    end
+
+    if string.find(string.lower(text), "hello", 1, true) then
+        log.info("NPC " .. tostring(listener_npc_id) .. " heard hello.")
+    end
+end
+```
+
+Notes:
+
+- `brain_loop` is resumed by the server tactical runner.
+- `coroutine.yield(ms)` controls the next brain tick delay.
+- `on_speech` is called when the NPC receives a nearby speech event.
+
 ## Item `ScriptId` Hooks
 
 Moongate supports item-scoped script dispatch through `IItemScriptDispatcher`.

@@ -2,6 +2,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Ids;
 using MoonSharp.Interpreter;
@@ -15,24 +16,27 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class MobileModule
 {
-    private static bool _isLuaMobileRefTypeRegistered;
+    private static bool _isLuaMobileProxyTypeRegistered;
     private readonly ICharacterService _characterService;
     private readonly ISpeechService _speechService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly ISpatialWorldService? _spatialWorldService;
 
     public MobileModule(
         ICharacterService characterService,
         ISpeechService speechService,
-        IGameNetworkSessionService gameNetworkSessionService
+        IGameNetworkSessionService gameNetworkSessionService,
+        ISpatialWorldService? spatialWorldService = null
     )
     {
         _characterService = characterService;
         _speechService = speechService;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _spatialWorldService = spatialWorldService;
     }
 
     [ScriptFunction("get", "Gets a mobile reference by character id, or nil when not found.")]
-    public LuaMobileRef? Get(uint characterId)
+    public LuaMobileProxy? Get(uint characterId)
     {
         if (characterId == 0)
         {
@@ -42,17 +46,17 @@ public sealed class MobileModule
         RegisterLuaTypeIfNeeded();
         var mobile = _characterService.GetCharacterAsync((Serial)characterId).GetAwaiter().GetResult();
 
-        return mobile is null ? null : new(mobile, _speechService, _gameNetworkSessionService);
+        return mobile is null ? null : new(mobile, _speechService, _gameNetworkSessionService, _spatialWorldService);
     }
 
     private static void RegisterLuaTypeIfNeeded()
     {
-        if (_isLuaMobileRefTypeRegistered)
+        if (_isLuaMobileProxyTypeRegistered)
         {
             return;
         }
 
-        UserData.RegisterType<LuaMobileRef>();
-        _isLuaMobileRefTypeRegistered = true;
+        UserData.RegisterType<LuaMobileProxy>();
+        _isLuaMobileProxyTypeRegistered = true;
     }
 }

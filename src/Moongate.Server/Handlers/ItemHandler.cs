@@ -168,13 +168,17 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
             )
         );
 
+        if (dropResult.Value.SourceContainerId == Serial.Zero)
+        {
+            return;
+        }
+
         var sourceContainer = await _itemService.GetItemAsync(dropResult.Value.SourceContainerId);
         Enqueue(session, new DrawContainerAndAddItemCombinedPacket(sourceContainer));
     }
 
     private async Task<bool> HandleDropItemAsync(GameSession session, DropItemPacket dropItemPacket)
     {
-        _logger.Information("Dropping item {@DropItemPacket}", dropItemPacket);
         if (!_playerDragService.TryGet(session.SessionId, out var dragState) || dragState.ItemId != dropItemPacket.ItemSerial)
         {
             _logger.Warning(

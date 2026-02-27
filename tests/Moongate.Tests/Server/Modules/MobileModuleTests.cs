@@ -4,6 +4,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
+using Moongate.Tests.Server.Support;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -115,7 +116,8 @@ public class MobileModuleTests
         var characterService = new MobileModuleTestCharacterService();
         var speechService = new MobileModuleTestSpeechService();
         var sessionService = new FakeGameNetworkSessionService();
-        var module = new MobileModule(characterService, speechService, sessionService);
+        var spatialService = new RegionDataLoaderTestSpatialWorldService();
+        var module = new MobileModule(characterService, speechService, sessionService, spatialService);
 
         var reference = module.Get(0x201);
 
@@ -123,7 +125,7 @@ public class MobileModuleTests
     }
 
     [Test]
-    public void Get_WhenCharacterExists_ShouldReturnLuaMobileRef()
+    public void Get_WhenCharacterExists_ShouldReturnLuaMobileProxy()
     {
         var characterService = new MobileModuleTestCharacterService
         {
@@ -137,7 +139,8 @@ public class MobileModuleTests
         };
         var speechService = new MobileModuleTestSpeechService();
         var sessionService = new FakeGameNetworkSessionService();
-        var module = new MobileModule(characterService, speechService, sessionService);
+        var spatialService = new RegionDataLoaderTestSpatialWorldService();
+        var module = new MobileModule(characterService, speechService, sessionService, spatialService);
 
         var reference = module.Get(0x200);
 
