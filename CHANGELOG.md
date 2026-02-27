@@ -1,3 +1,16 @@
+## [0.20.0](https://github.com/moongate-community/moongatev2/compare/v0.19.1...v0.20.0) (2026-02-27)
+
+### Features
+
+* **items:** add template spawn and session-aware move events ([8232634](https://github.com/moongate-community/moongatev2/commit/82326343306c067f65004a57b908de3cba519458))
+* **items:** add TryToGetItemAsync to IItemService ([ac5f220](https://github.com/moongate-community/moongatev2/commit/ac5f220aa439448625f36b5250d60a15776970d2))
+* **server:** add item script dispatcher and item ScriptId flow ([a696262](https://github.com/moongate-community/moongatev2/commit/a6962628ce54cc575bc5c95214b4f14c9a63ad05))
+* **server:** generate Lua user-data bootstrap registrations ([c2cd4cc](https://github.com/moongate-community/moongatev2/commit/c2cd4cc574d08df19267124ee1244b0750f386cf))
+
+### Bug Fixes
+
+* align mobile enter-range packets with modernuo flow ([2898c5f](https://github.com/moongate-community/moongatev2/commit/2898c5faa080ef144e0e9f4d5e4ebd24829fc660))
+
 ## [0.19.1](https://github.com/moongate-community/moongatev2/compare/v0.19.0...v0.19.1) (2026-02-26)
 
 ### Bug Fixes
