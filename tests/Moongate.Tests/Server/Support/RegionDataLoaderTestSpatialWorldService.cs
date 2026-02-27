@@ -19,6 +19,9 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
     public void AddRegion(JsonRegion region)
         => AddedRegions.Add(region);
 
+    public JsonRegion? GetRegionById(int regionId)
+        => AddedRegions.FirstOrDefault(region => region.Id == regionId);
+
     public int GetMusic(int mapId, Point3D location)
         => 0;
 

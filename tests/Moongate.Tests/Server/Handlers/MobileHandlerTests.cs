@@ -63,6 +63,9 @@ public sealed class MobileHandlerTests
 
         public void AddRegion(JsonRegion region) { }
 
+        public JsonRegion? GetRegionById(int regionId)
+            => null;
+
         public int GetMusic(int mapId, Point3D location)
             => 0;
 

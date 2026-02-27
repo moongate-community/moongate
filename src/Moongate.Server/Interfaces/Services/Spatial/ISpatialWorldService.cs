@@ -32,6 +32,13 @@ public interface ISpatialWorldService
     void AddRegion(JsonRegion region);
 
     /// <summary>
+    /// Returns a region by its configured id.
+    /// </summary>
+    /// <param name="regionId">Region id.</param>
+    /// <returns>The matching region or <see langword="null" /> if not found.</returns>
+    JsonRegion? GetRegionById(int regionId);
+
+    /// <summary>
     /// Resolves music id for a world location.
     /// </summary>
     /// <param name="mapId">Target map id.</param>

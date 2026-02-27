@@ -54,6 +54,14 @@ internal sealed class SpatialRegionResolver
         return 0;
     }
 
+    public JsonRegion? GetRegionById(int regionId)
+    {
+        lock (_sync)
+        {
+            return _regions.FirstOrDefault(region => region.Id == regionId);
+        }
+    }
+
     public JsonRegion? ResolveRegion(int mapId, Point3D location)
     {
         lock (_sync)
