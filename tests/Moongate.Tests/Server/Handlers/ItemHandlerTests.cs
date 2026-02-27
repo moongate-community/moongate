@@ -6,6 +6,7 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Services.Items;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -25,7 +26,8 @@ public class ItemHandlerTests
             new BasePacketListenerTestOutgoingPacketQueue(),
             new ItemHandlerTestItemService(),
             eventBus,
-            new FakeGameNetworkSessionService()
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));
@@ -56,7 +58,8 @@ public class ItemHandlerTests
             new BasePacketListenerTestOutgoingPacketQueue(),
             new ItemHandlerTestItemService(),
             eventBus,
-            new FakeGameNetworkSessionService()
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));

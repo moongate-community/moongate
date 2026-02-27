@@ -22,16 +22,7 @@ public class Point3DList
 
     public void Add(int x, int y, int z)
     {
-        if (Count + 1 > m_List.Length)
-        {
-            var old = m_List;
-            m_List = new Point3D[old.Length * 2];
-
-            for (var i = 0; i < old.Length; ++i)
-            {
-                m_List[i] = old[i];
-            }
-        }
+        EnsureCapacity(Count + 1);
 
         m_List[Count].X = x;
         m_List[Count].Y = y;
@@ -41,16 +32,7 @@ public class Point3DList
 
     public void Add(Point3D p)
     {
-        if (Count + 1 > m_List.Length)
-        {
-            var old = m_List;
-            m_List = new Point3D[old.Length * 2];
-
-            for (var i = 0; i < old.Length; ++i)
-            {
-                m_List[i] = old[i];
-            }
-        }
+        EnsureCapacity(Count + 1);
 
         m_List[Count].X = p.X;
         m_List[Count].Y = p.Y;
@@ -80,5 +62,23 @@ public class Point3DList
         Count = 0;
 
         return list;
+    }
+
+    private void EnsureCapacity(int requiredCount)
+    {
+        if (requiredCount <= m_List.Length)
+        {
+            return;
+        }
+
+        var newSize = m_List.Length * 2;
+        while (newSize < requiredCount)
+        {
+            newSize *= 2;
+        }
+
+        var old = m_List;
+        m_List = new Point3D[newSize];
+        Array.Copy(old, m_List, old.Length);
     }
 }

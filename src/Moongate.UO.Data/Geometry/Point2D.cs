@@ -14,6 +14,7 @@
  *************************************************************************/
 
 using System.Runtime.CompilerServices;
+using System.Globalization;
 using Moongate.Core.Extensions.Strings;
 using Moongate.UO.Data.Interfaces.Geometry;
 
@@ -55,6 +56,11 @@ public struct Point2D
 
     public int CompareTo(IPoint2D other)
     {
+        if (other is null)
+        {
+            return 1;
+        }
+
         var xComparison = X.CompareTo(other.X);
 
         return xComparison != 0 ? xComparison : Y.CompareTo(other.Y);
@@ -134,14 +140,14 @@ public struct Point2D
 
         var first = s.Slice(1, comma - 1).Trim();
 
-        if (!int.TryParse(first, out var x))
+        if (!int.TryParse(first, NumberStyles.Integer, provider, out var x))
         {
             throw new FormatException($"The input string '{s}' was not in a correct format.");
         }
 
         var second = s.Slice(comma + 1, s.Length - comma - 2).Trim();
 
-        if (!int.TryParse(second, out var y))
+        if (!int.TryParse(second, NumberStyles.Integer, provider, out var y))
         {
             throw new FormatException($"The input string '{s}' was not in a correct format.");
         }
@@ -196,7 +202,7 @@ public struct Point2D
 
         var first = s.Slice(1, comma - 1).Trim();
 
-        if (!int.TryParse(first, out var x))
+        if (!int.TryParse(first, NumberStyles.Integer, provider, out var x))
         {
             result = default;
 
@@ -205,7 +211,7 @@ public struct Point2D
 
         var second = s.Slice(comma + 1, s.Length - comma - 2).Trim();
 
-        if (!int.TryParse(second, out var y))
+        if (!int.TryParse(second, NumberStyles.Integer, provider, out var y))
         {
             result = default;
 

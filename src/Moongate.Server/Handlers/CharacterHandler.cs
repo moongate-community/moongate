@@ -119,7 +119,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
         Enqueue(session, new PaperdollPacket(character));
 
-        Enqueue(session, new SetMusicPacket(_spatialWorldService.GetMusic(character.Location)));
+        Enqueue(session, new SetMusicPacket(_spatialWorldService.GetMusic(character.MapId, character.Location)));
 
         await _gameEventBusService.PublishAsync(
             new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, character.Id)

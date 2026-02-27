@@ -2,8 +2,11 @@ using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.FileLoaders;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Json.Weather;
+using Moongate.UO.Data.Weather;
 
 namespace Moongate.Tests.Server.FileLoaders;
 
@@ -38,8 +41,22 @@ public class JsonFileLoadersNegativeTests
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var loader = new WeatherDataLoader(directories);
+        var loader = new WeatherDataLoader(directories, new NullWeatherService());
 
         Assert.ThrowsAsync<DirectoryNotFoundException>(async () => await loader.LoadAsync());
+    }
+
+    private sealed class NullWeatherService : IWeatherService
+    {
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+
+        public void SetWeatherTypes(List<JsonWeather> weatherTypes) { }
+
+        public WeatherSnapshot GenerateSnapshot(JsonWeather weather, Random? random = null)
+            => default;
     }
 }

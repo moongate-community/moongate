@@ -123,7 +123,7 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
             _end.Y = r._end.Y;
         }
 
-        if (r._end.Z < _end.Z)
+        if (r._end.Z > _end.Z)
         {
             _end.Z = r._end.Z;
         }

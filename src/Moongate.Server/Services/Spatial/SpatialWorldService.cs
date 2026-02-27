@@ -19,7 +19,9 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Serilog;
 
 namespace Moongate.Server.Services.Spatial;
 
@@ -42,7 +44,6 @@ public sealed class SpatialWorldService
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly List<JsonRegion> _regions = [];
-    private readonly Dictionary<int, int> _musicByListId = [];
 
     private readonly ICharacterService _characterService;
     private readonly IItemService _itemService;
@@ -68,19 +69,7 @@ public sealed class SpatialWorldService
         _itemService = itemService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
-    }
 
-    public void AddMusics(List<JsonMusic> musics)
-    {
-        ArgumentNullException.ThrowIfNull(musics);
-
-        lock (_sync)
-        {
-            foreach (var music in musics)
-            {
-                _musicByListId[music.Id] = music.Music;
-            }
-        }
     }
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId)
@@ -132,16 +121,25 @@ public sealed class SpatialWorldService
     public SectorSystemStats GetMetricsSnapshot()
         => GetStats();
 
-    public int GetMusic(Point3D location)
+    public int GetMusic(int mapId, Point3D location)
     {
         lock (_sync)
         {
             foreach (var region in _regions)
             {
-                if (region.Coordinates.Any(coordinate => coordinate.Contains(location.X, location.Y)) &&
-                    _musicByListId.TryGetValue(region.MusicList, out var music))
+                if (region.MapId != mapId)
                 {
-                    return music;
+                    continue;
+                }
+
+                if (!region.Area.Any(coordinate => coordinate.Contains(location.X, location.Y)))
+                {
+                    continue;
+                }
+
+                if (region.Music.HasValue)
+                {
+                    return (int)region.Music.Value;
                 }
             }
         }
@@ -256,6 +254,14 @@ public sealed class SpatialWorldService
         }
     }
 
+    public List<MapSector> GetActiveSectors()
+    {
+        lock (_sync)
+        {
+            return [.. _mapIndices.Values.SelectMany(static mapIndex => mapIndex.Sectors)];
+        }
+    }
+
     public MapSector? GetSectorByLocation(int mapId, Point3D location)
     {
         var (sectorX, sectorY) = GetSectorCoordinates(location);
@@ -319,6 +325,13 @@ public sealed class SpatialWorldService
         await WarmupAroundSectorAsync(character.MapId, sectorX, sectorY, warmupRadius, cancellationToken);
 
         AddOrUpdateMobile(character);
+
+        var region = ResolveRegion(character.MapId, character.Location);
+
+        if (region is not null)
+        {
+            PublishEvent(new PlayerEnteredRegionEvent(character.Id, character.MapId, region.Id, region.Name));
+        }
     }
 
     public async Task HandleAsync(DropItemToGroundEvent gameEvent, CancellationToken cancellationToken = default)
@@ -382,6 +395,8 @@ public sealed class SpatialWorldService
         ArgumentNullException.ThrowIfNull(mobile);
         mobile.Location = newLocation;
         var mapId = mobile.MapId;
+        var oldRegion = ResolveRegion(mapId, oldLocation);
+        var newRegion = ResolveRegion(mapId, newLocation);
         var sectorChanged = MoveEntity(mobile.Id, mobile, mapId, oldLocation, newLocation);
 
         if (sectorChanged)
@@ -389,6 +404,29 @@ public sealed class SpatialWorldService
             var (oldX, oldY) = GetSectorCoordinates(oldLocation);
             var (newX, newY) = GetSectorCoordinates(newLocation);
             PublishEvent(new MobileSectorChangedEvent(mobile.Id, mapId, oldX, oldY, newX, newY));
+        }
+
+        if (!mobile.IsPlayer)
+        {
+            return;
+        }
+
+        var oldRegionId = oldRegion?.Id;
+        var newRegionId = newRegion?.Id;
+
+        if (oldRegionId == newRegionId)
+        {
+            return;
+        }
+
+        if (oldRegion is not null)
+        {
+            PublishEvent(new PlayerExitedRegionEvent(mobile.Id, mapId, oldRegion.Id, oldRegion.Name));
+        }
+
+        if (newRegion is not null)
+        {
+            PublishEvent(new PlayerEnteredRegionEvent(mobile.Id, mapId, newRegion.Id, newRegion.Name));
         }
     }
 
@@ -563,6 +601,17 @@ public sealed class SpatialWorldService
         }
 
         return true;
+    }
+
+    private JsonRegion? ResolveRegion(int mapId, Point3D location)
+    {
+        lock (_sync)
+        {
+            return _regions.FirstOrDefault(
+                region => region.MapId == mapId &&
+                          region.Area.Any(coordinate => coordinate.Contains(location.X, location.Y))
+            );
+        }
     }
 
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent

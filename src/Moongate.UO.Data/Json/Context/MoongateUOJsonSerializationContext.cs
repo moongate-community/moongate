@@ -14,7 +14,16 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(ExpansionInfo[])),
  JsonSerializable(typeof(JsonContainerSize[])),
  JsonSerializable(typeof(JsonNameDef[])),
- JsonSerializable(typeof(JsonRegionWrap)),
+ JsonSerializable(typeof(JsonRegion[])),
+ JsonSerializable(typeof(JsonRegion)),
+ JsonSerializable(typeof(JsonBaseRegion)),
+ JsonSerializable(typeof(JsonTownRegion)),
+ JsonSerializable(typeof(JsonDungeonRegion)),
+ JsonSerializable(typeof(JsonGuardedRegion)),
+ JsonSerializable(typeof(JsonNoHousingRegion)),
+ JsonSerializable(typeof(JsonGreenAcresRegion)),
+ JsonSerializable(typeof(JsonJailRegion)),
+ JsonSerializable(typeof(JsonRegionParent)),
  JsonSerializable(typeof(JsonWeatherWrap)),
  JsonSerializable(typeof(JsonProfessionsRoot))]
 

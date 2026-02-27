@@ -13,12 +13,6 @@ namespace Moongate.Server.Interfaces.Services.Spatial;
 public interface ISpatialWorldService
 {
     /// <summary>
-    /// Adds music-list definitions.
-    /// </summary>
-    /// <param name="musics">Music definitions.</param>
-    void AddMusics(List<JsonMusic> musics);
-
-    /// <summary>
     /// Adds or updates an item position in the spatial index.
     /// </summary>
     /// <param name="item">Item entity.</param>
@@ -32,7 +26,7 @@ public interface ISpatialWorldService
     void AddOrUpdateMobile(UOMobileEntity mobile);
 
     /// <summary>
-    /// Adds a region definition used by music lookup.
+    /// Adds a region definition used for spatial region lookup and music mapping.
     /// </summary>
     /// <param name="region">Region definition.</param>
     void AddRegion(JsonRegion region);
@@ -40,9 +34,10 @@ public interface ISpatialWorldService
     /// <summary>
     /// Resolves music id for a world location.
     /// </summary>
+    /// <param name="mapId">Target map id.</param>
     /// <param name="location">Target location.</param>
     /// <returns>Music id, or <c>0</c> when no music mapping exists.</returns>
-    int GetMusic(Point3D location);
+    int GetMusic(int mapId, Point3D location);
 
     /// <summary>
     /// Returns nearby items around a world location.
@@ -80,6 +75,12 @@ public interface ISpatialWorldService
     /// <param name="sectorY">Sector Y coordinate.</param>
     /// <returns>Players in the sector.</returns>
     List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY);
+
+    /// <summary>
+    /// Returns all currently active sectors loaded in the spatial index.
+    /// </summary>
+    /// <returns>Loaded sectors across all maps.</returns>
+    List<MapSector> GetActiveSectors();
 
     /// <summary>
     /// Resolves the sector containing the specified world location.

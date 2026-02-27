@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Interfaces.Geometry;
 
 namespace Moongate.Tests.UO.Data.Geometry;
 
@@ -71,5 +72,25 @@ public class Point2DTests
                 Assert.That(point.Y, Is.EqualTo(9));
             }
         );
+    }
+
+    [Test]
+    public void CompareTo_WithNullInterfacePoint_ShouldReturnGreaterThanZero()
+    {
+        var point = new Point2D(1, 1);
+        IPoint2D? other = null;
+
+        var result = point.CompareTo(other!);
+
+        Assert.That(result, Is.GreaterThan(0));
+    }
+
+    [Test]
+    public void Parse_WithProvider_ShouldUseProviderForNumbers()
+    {
+        var provider = System.Globalization.CultureInfo.InvariantCulture;
+        var point = Point2D.Parse("(10, 20)", provider);
+
+        Assert.That(point, Is.EqualTo(new Point2D(10, 20)));
     }
 }

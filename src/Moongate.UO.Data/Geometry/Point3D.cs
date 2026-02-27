@@ -14,6 +14,7 @@
  *************************************************************************/
 
 using System.Runtime.CompilerServices;
+using System.Globalization;
 using Moongate.Core.Extensions.Strings;
 using Moongate.UO.Data.Interfaces.Geometry;
 using Moongate.UO.Data.Types;
@@ -70,6 +71,11 @@ public struct Point3D
 
     public int CompareTo(IPoint3D other)
     {
+        if (other is null)
+        {
+            return 1;
+        }
+
         var xComparison = X.CompareTo(other.X);
 
         if (xComparison != 0)
@@ -441,7 +447,7 @@ public struct Point3D
 
         var first = s.Slice(1, firstComma - 1).Trim();
 
-        if (!int.TryParse(first, out var x))
+        if (!int.TryParse(first, NumberStyles.Integer, provider, out var x))
         {
             throw new FormatException($"The input string '{s}' was not in a correct format.");
         }
@@ -457,7 +463,7 @@ public struct Point3D
 
         var second = s.Slice(firstComma + 1, secondComma).Trim();
 
-        if (!int.TryParse(second, out var y))
+        if (!int.TryParse(second, NumberStyles.Integer, provider, out var y))
         {
             throw new FormatException($"The input string '{s}' was not in a correct format.");
         }
@@ -466,7 +472,7 @@ public struct Point3D
 
         var third = s.Slice(offset, s.Length - offset - 1).Trim();
 
-        if (!int.TryParse(third, out var z))
+        if (!int.TryParse(third, NumberStyles.Integer, provider, out var z))
         {
             throw new FormatException($"The input string '{s}' was not in a correct format.");
         }
@@ -529,7 +535,7 @@ public struct Point3D
 
         var first = s.Slice(1, firstComma - 1).Trim();
 
-        if (!int.TryParse(first, out var x))
+        if (!int.TryParse(first, NumberStyles.Integer, provider, out var x))
         {
             result = default;
 
@@ -549,7 +555,7 @@ public struct Point3D
 
         var second = s.Slice(firstComma + 1, secondComma).Trim();
 
-        if (!int.TryParse(second, out var y))
+        if (!int.TryParse(second, NumberStyles.Integer, provider, out var y))
         {
             result = default;
 
@@ -560,7 +566,7 @@ public struct Point3D
 
         var third = s.Slice(offset, s.Length - offset - 1).Trim();
 
-        if (!int.TryParse(third, out var z))
+        if (!int.TryParse(third, NumberStyles.Integer, provider, out var z))
         {
             result = default;
 
