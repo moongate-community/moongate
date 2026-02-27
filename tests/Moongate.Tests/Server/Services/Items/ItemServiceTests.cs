@@ -28,7 +28,8 @@ public class ItemServiceTests
             Amount = 42,
             Name = "gold",
             Hue = 3,
-            MapId = 2
+            MapId = 2,
+            ScriptId = "item.gold"
         };
 
         var clone = service.Clone(item);
@@ -42,6 +43,7 @@ public class ItemServiceTests
                 Assert.That(clone.Name, Is.EqualTo(item.Name));
                 Assert.That(clone.Hue, Is.EqualTo(item.Hue));
                 Assert.That(clone.MapId, Is.EqualTo(item.MapId));
+                Assert.That(clone.ScriptId, Is.EqualTo(item.ScriptId));
             }
         );
     }

@@ -1,6 +1,9 @@
 # Scripting API Reference
 
-Complete reference for the Moongate v2 Lua scripting API.
+Reference for the Moongate v2 Lua scripting API.
+
+> `definitions.lua` generated at startup is the source of truth for currently exported modules and signatures.
+> This page may include planned/high-level APIs in addition to runtime-available ones.
 
 ## Global Modules
 
@@ -296,6 +299,37 @@ function on_mobile_deleted(mobile)      -- Mobile deleted
 function on_item_created(item)          -- Item created
 function on_item_deleted(item)          -- Item deleted
 function on_weather_changed(weather)    -- Weather changed
+```
+
+## Item Script Dispatcher API
+
+Item templates/entities can define a `scriptId`. The server can dispatch item hooks through `IItemScriptDispatcher`.
+
+### Function Naming Convention
+
+```lua
+on_item_<script_id_normalized>_<hook_normalized>
+```
+
+Example:
+
+```lua
+-- scriptId: "items.healing-potion", hook: "on_use"
+function on_item_items_healing_potion_on_use(ctx)
+    log.info("Item hook called for " .. tostring(ctx.Item.Id))
+end
+```
+
+### ItemScriptContext
+
+```lua
+ItemScriptContext = {
+    Session: GameSession|nil,          -- Source session when available
+    Mobile: Mobile|nil,                -- Shortcut for Session.Character
+    Item: Item,                        -- Item target
+    Hook: string,                      -- Hook name (for example "on_use")
+    Metadata: table<string, any>       -- Optional hook payload
+}
 ```
 
 ## Utility Functions

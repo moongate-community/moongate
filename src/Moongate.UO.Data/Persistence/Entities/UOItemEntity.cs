@@ -36,6 +36,8 @@ public class UOItemEntity : IItemEntity
 
     public bool IsStackable { get; set; }
 
+    public string ScriptId { get; set; }
+
     public ItemRarity Rarity { get; set; }
 
     /// <summary>

@@ -162,6 +162,27 @@ function on_server_stop() end
 function on_tick() end  -- Called every game tick
 ```
 
+## Item `ScriptId` Hooks
+
+Moongate supports item-scoped script dispatch through `IItemScriptDispatcher`.
+
+- Source field: `UOItemEntity.ScriptId` (usually filled by item templates via `scriptId`)
+- Runtime input: `ItemScriptContext` (`Session`, `Mobile`, `Item`, `Hook`, `Metadata`)
+- Naming convention:
+  - `on_item_<script_id_normalized>_<hook_normalized>`
+
+Example:
+
+- `scriptId`: `items.healing-potion`
+- hook: `on_use`
+- dispatched Lua function: `on_item_items_healing_potion_on_use`
+
+```lua
+function on_item_items_healing_potion_on_use(ctx)
+    log.info("Item hook fired for serial: " .. tostring(ctx.Item.Id))
+end
+```
+
 ### Callback Parameters
 
 ```lua
