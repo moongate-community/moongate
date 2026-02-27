@@ -12,6 +12,7 @@ using Moongate.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
@@ -132,6 +133,77 @@ public sealed class SpatialWorldServiceTests
         Assert.That(found, Is.EqualTo((int)MusicName.Cove));
         Assert.That(otherMap, Is.EqualTo(0));
         Assert.That(fallback, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void GetMusic_WithOverlappingRegions_ShouldPreferHigherPriorityRegion()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddRegion(
+            new()
+            {
+                Map = "Felucca",
+                Name = "Low",
+                Priority = 10,
+                Music = MusicName.Britain1,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+        service.AddRegion(
+            new()
+            {
+                Map = "Felucca",
+                Name = "High",
+                Priority = 100,
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
+            }
+        );
+
+        var found = service.GetMusic(0, new(150, 150, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+    }
+
+    [Test]
+    public void GetMusic_WithSamePriority_ShouldPreferChildRegionByParentHierarchy()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddRegion(
+            new JsonTownRegion
+            {
+                Map = "Felucca",
+                Name = "TownParent",
+                Priority = 50,
+                Music = MusicName.Britain1,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+        service.AddRegion(
+            new JsonTownRegion
+            {
+                Map = "Felucca",
+                Name = "TownChild",
+                Priority = 50,
+                Parent = new JsonRegionParent
+                {
+                    Map = "Felucca",
+                    Name = "TownParent"
+                },
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
+            }
+        );
+
+        var found = service.GetMusic(0, new(150, 150, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
     }
 
     [Test]
