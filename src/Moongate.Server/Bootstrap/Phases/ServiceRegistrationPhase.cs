@@ -9,7 +9,6 @@ using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Scripting.Generated;
 using Moongate.Server.Bootstrap.Internal;
-using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Interfaces;
@@ -90,8 +89,7 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
 
     private static void RegisterScriptUserData(BootstrapContext context)
     {
-        context.Container.RegisterLuaUserData<PlayerConnectedEvent>();
-        context.Container.RegisterLuaUserData<PlayerDisconnectedEvent>();
+        BootstrapLuaUserDataRegistration.Register(context.Container);
         context.Container.RegisterLuaUserData<ClientVersion>();
     }
 

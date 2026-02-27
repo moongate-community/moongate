@@ -1,10 +1,12 @@
 using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Attributes;
 
 namespace Moongate.Server.Data.Events.Connections;
 
 /// <summary>
 /// Event emitted when a client session disconnects from the server.
 /// </summary>
+[RegisterLuaUserData]
 public readonly record struct PlayerDisconnectedEvent(
     GameEventBase BaseEvent,
     long SessionId,
