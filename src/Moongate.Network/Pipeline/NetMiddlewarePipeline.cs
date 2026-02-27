@@ -16,7 +16,9 @@ public sealed class NetMiddlewarePipeline
     /// </summary>
     /// <param name="middlewares">Optional initial middleware sequence.</param>
     public NetMiddlewarePipeline(IEnumerable<INetMiddleware>? middlewares = null)
-        => _middlewares = [.. middlewares ?? []];
+    {
+        _middlewares = [.. middlewares ?? []];
+    }
 
     /// <summary>
     /// Adds a middleware component at the end of the execution chain.
