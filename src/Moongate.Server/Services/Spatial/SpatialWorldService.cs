@@ -647,7 +647,7 @@ public sealed class SpatialWorldService
 
         var byName = _regions
                      .Where(static region => !string.IsNullOrWhiteSpace(region.Name))
-                     .GroupBy(static region => (region.MapId, Name: region.Name), static region => region)
+                     .GroupBy(static region => (region.MapId, region.Name), static region => region)
                      .ToDictionary(static group => group.Key, static group => group.First());
 
         foreach (var region in _regions)
