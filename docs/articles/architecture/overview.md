@@ -52,6 +52,8 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
 - Packet registration is attribute-driven (`[PacketHandler(...)]`) and materialized by `PacketTable.Register(...)`.
 - Runtime packet processing uses `IGameNetworkPacket.TryParse(...)` and `Write(ref SpanWriter)`.
 - Persistence currently stores world data in `save/world.snapshot.bin` + `save/world.journal.bin`.
+- Region subsystem is intentionally based on the ModernUO approach (selected as the strongest reference implementation): polymorphic JSON (`$type`) plus map/sector indexing.
+- Region selection for a location uses deterministic ordering: `Priority` descending, then parent-child depth (`ChildLevel`) for ties.
 
 ---
 
