@@ -11,7 +11,9 @@ public sealed class MetricsHttpSnapshotFactory : IMetricsHttpSnapshotFactory
     private readonly IMetricsCollectionService _metricsCollectionService;
 
     public MetricsHttpSnapshotFactory(IMetricsCollectionService metricsCollectionService)
-        => _metricsCollectionService = metricsCollectionService;
+    {
+        _metricsCollectionService = metricsCollectionService;
+    }
 
     public MoongateHttpMetricsSnapshot? CreateSnapshot()
     {

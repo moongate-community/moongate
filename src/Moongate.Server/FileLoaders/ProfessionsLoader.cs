@@ -22,7 +22,9 @@ public class ProfessionsLoader : IFileLoader
     private readonly DirectoriesConfig _directoriesConfig;
 
     public ProfessionsLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

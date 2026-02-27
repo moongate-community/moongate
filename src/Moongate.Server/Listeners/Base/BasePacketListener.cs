@@ -13,7 +13,9 @@ public abstract class BasePacketListener : IPacketListener
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
 
     protected BasePacketListener(IOutgoingPacketQueue outgoingPacketQueue)
-        => _outgoingPacketQueue = outgoingPacketQueue;
+    {
+        _outgoingPacketQueue = outgoingPacketQueue;
+    }
 
     /// <inheritdoc />
     public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)

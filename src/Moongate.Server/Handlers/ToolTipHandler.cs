@@ -29,7 +29,9 @@ public class ToolTipHandler : BasePacketListener
         IPersistenceService persistenceService
     )
         : base(outgoingPacketQueue)
-        => _persistenceService = persistenceService;
+    {
+        _persistenceService = persistenceService;
+    }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

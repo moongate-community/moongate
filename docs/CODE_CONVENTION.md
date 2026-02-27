@@ -50,6 +50,14 @@ Inside a type, use this order:
 8. private methods
 9. `Dispose`/finalization methods (last)
 
+### 4.3 Constructor Style
+
+- Do not use C# primary constructors.
+- Do not use expression-bodied constructors (for example `public X(...) => _dep = dep;`).
+- Constructors must always use block body style:
+  - preferred:
+    - `public X(IDep dep) { _dep = dep; }`
+
 ### 4.1 Private Readonly Naming
 
 - All `private readonly` fields must start with `_`.

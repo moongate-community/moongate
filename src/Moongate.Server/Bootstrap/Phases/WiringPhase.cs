@@ -3,12 +3,16 @@ using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Interfaces.Bootstrap;
+using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Files;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Bootstrap.Phases;
@@ -87,6 +91,36 @@ internal sealed class WiringPhase : IBootstrapPhase
                 );
             },
             "Create a cat, beautiful cat",
+            CommandSourceType.InGame,
+            AccountType.Regular
+        );
+
+        commandService.RegisterCommand(
+            "add_item",
+            (ctx =>
+             {
+                 var itemService = context.Container.Resolve<IItemService>();
+                 var gameSessionService = context.Container.Resolve<IGameNetworkSessionService>();
+                 var characterService = context.Container.Resolve<ICharacterService>();
+
+                 var item = itemService.SpawnFromTemplateAsync("brick").GetAwaiter().GetResult();
+
+                 if (gameSessionService.TryGet(ctx.SessionId, out var session))
+                 {
+                     var player = characterService.GetCharacterAsync(session.CharacterId).GetAwaiter().GetResult();
+                     itemService.MoveItemToContainerAsync(item.Id, player.BackpackId, new Point2D(1, 1), ctx.SessionId)
+                                .GetAwaiter()
+                                .GetResult();
+                     ctx.Print("Added a brick to your backpack.");
+                 }
+                 else
+                 {
+                     ctx.Print("Failed to add item: no active character found for your session.");
+                 }
+
+                 return Task.CompletedTask;
+             }),
+            "Add an item to your backpack",
             CommandSourceType.InGame,
             AccountType.Regular
         );

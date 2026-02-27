@@ -21,7 +21,9 @@ public class SkillLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<SkillLoader>();
 
     public SkillLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

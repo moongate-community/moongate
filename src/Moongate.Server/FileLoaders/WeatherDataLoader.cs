@@ -20,7 +20,9 @@ public class WeatherDataLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<WeatherDataLoader>();
 
     public WeatherDataLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

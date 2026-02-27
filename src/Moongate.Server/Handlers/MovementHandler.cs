@@ -35,7 +35,9 @@ public class MovementHandler : BasePacketListener
 
     public MovementHandler(IOutgoingPacketQueue outgoingPacketQueue, IGameEventBusService gameEventBusService)
         : base(outgoingPacketQueue)
-        => _gameEventBusService = gameEventBusService;
+    {
+        _gameEventBusService = gameEventBusService;
+    }
 
     protected override Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

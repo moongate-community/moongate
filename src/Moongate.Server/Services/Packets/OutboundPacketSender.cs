@@ -20,7 +20,9 @@ public sealed class OutboundPacketSender : IOutboundPacketSender
     private readonly ILogger _packetDataLogger = Log.ForContext<OutboundPacketSender>().ForContext("PacketData", true);
 
     public OutboundPacketSender(MoongateConfig moongateConfig)
-        => _logPacketData = moongateConfig.LogPacketData;
+    {
+        _logPacketData = moongateConfig.LogPacketData;
+    }
 
     public bool Send(MoongateTCPClient client, OutgoingGamePacket outgoingPacket)
         => SendAsync(client, outgoingPacket, CancellationToken.None).GetAwaiter().GetResult();

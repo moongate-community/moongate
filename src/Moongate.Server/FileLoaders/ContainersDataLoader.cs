@@ -20,7 +20,9 @@ public class ContainersDataLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<ContainersDataLoader>();
 
     public ContainersDataLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

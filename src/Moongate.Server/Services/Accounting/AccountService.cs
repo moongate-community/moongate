@@ -18,7 +18,9 @@ public class AccountService : IAccountService
     private readonly IPersistenceService _persistenceService;
 
     public AccountService(IPersistenceService persistenceService)
-        => _persistenceService = persistenceService;
+    {
+        _persistenceService = persistenceService;
+    }
 
     public async Task<bool> CheckAccountExistsAsync(string username)
     {

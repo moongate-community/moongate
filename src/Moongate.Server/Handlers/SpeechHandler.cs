@@ -20,7 +20,9 @@ public class SpeechHandler : BasePacketListener
 
     public SpeechHandler(IOutgoingPacketQueue outgoingPacketQueue, ISpeechService speechService)
         : base(outgoingPacketQueue)
-        => _speechService = speechService;
+    {
+        _speechService = speechService;
+    }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

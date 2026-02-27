@@ -14,7 +14,9 @@ public class PersistenceListenerHandler
     private readonly ISpeechService _speechService;
 
     public PersistenceListenerHandler(ISpeechService speechService)
-        => _speechService = speechService;
+    {
+        _speechService = speechService;
+    }
 
     public async Task HandleAsync(DatabaseSavingStartEvent gameEvent, CancellationToken cancellationToken = default)
     {

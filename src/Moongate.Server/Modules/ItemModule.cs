@@ -17,7 +17,9 @@ public sealed class ItemModule
     private readonly IItemService _itemService;
 
     public ItemModule(IItemService itemService)
-        => _itemService = itemService;
+    {
+        _itemService = itemService;
+    }
 
     [ScriptFunction("get", "Gets an item reference by item id, or nil when not found.")]
     public LuaItemRef? Get(uint itemId)

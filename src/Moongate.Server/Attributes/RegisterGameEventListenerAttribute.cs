@@ -9,5 +9,8 @@ public sealed class RegisterGameEventListenerAttribute : Attribute
 {
     public int Priority { get; }
 
-    public RegisterGameEventListenerAttribute(int priority = 200) => Priority = priority;
+    public RegisterGameEventListenerAttribute(int priority = 200)
+    {
+        Priority = priority;
+    }
 }

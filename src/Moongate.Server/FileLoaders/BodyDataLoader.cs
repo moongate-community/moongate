@@ -19,7 +19,9 @@ public class BodyDataLoader : IFileLoader
     private readonly DirectoriesConfig _directoriesConfig;
 
     public BodyDataLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

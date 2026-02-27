@@ -19,7 +19,9 @@ public class ExpansionLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<ExpansionLoader>();
 
     public ExpansionLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

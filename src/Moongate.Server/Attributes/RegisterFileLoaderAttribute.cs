@@ -17,5 +17,7 @@ public sealed class RegisterFileLoaderAttribute : Attribute
     /// </summary>
     /// <param name="order">Execution order for the annotated file loader.</param>
     public RegisterFileLoaderAttribute(int order)
-        => Order = order;
+    {
+        Order = order;
+    }
 }

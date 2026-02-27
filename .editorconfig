@@ -138,14 +138,15 @@ dotnet_style_qualification_for_property = false:suggestion
 dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggestion
 csharp_style_namespace_declarations = file_scoped:error
 csharp_style_prefer_primary_constructors = false:none
+csharp_style_expression_bodied_constructors = false:error
 dotnet_diagnostic.IDE0161.severity = error
-dotnet_diagnostic.IDE0290.severity = none
+dotnet_diagnostic.IDE0290.severity = error
 
 # ReSharper properties
 resharper_apply_auto_detected_rules = false
 resharper_braces_redundant = true
 resharper_case_block_braces = next_line_shifted_2
-resharper_constructor_or_destructor_body = expression_body
+resharper_constructor_or_destructor_body = method
 resharper_csharp_int_align_comments = true
 resharper_csharp_stick_comment = false
 resharper_csharp_wrap_after_declaration_lpar = true
@@ -263,5 +264,4 @@ end_of_line = crlf
 end_of_line = lf
 indent_size = 2
 tab_width = 2
-
 

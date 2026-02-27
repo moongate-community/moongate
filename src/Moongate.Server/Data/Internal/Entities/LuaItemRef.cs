@@ -10,7 +10,9 @@ public sealed class LuaItemRef
     private readonly UOItemEntity _item;
 
     public LuaItemRef(UOItemEntity item)
-        => _item = item;
+    {
+        _item = item;
+    }
 
     public uint Serial => (uint)_item.Id;
 
