@@ -20,5 +20,5 @@ public readonly record struct DatabaseSavedEvent(
     /// Creates the event with explicit timestamp.
     /// </summary>
     public DatabaseSavedEvent(double elapsedMilliseconds, long timestamp)
-        : this(new GameEventBase(timestamp), elapsedMilliseconds) { }
+        : this(new(timestamp), elapsedMilliseconds) { }
 }

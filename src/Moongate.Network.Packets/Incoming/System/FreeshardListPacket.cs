@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.System;
 
 [PacketHandler(0xF1, PacketSizing.Variable, Description = "Freeshard List")]
+
 /// <summary>
 /// Represents FreeshardListPacket.
 /// </summary>

@@ -11,7 +11,9 @@ public sealed class SpatialMetricsProvider : IMetricProvider
     private readonly ISpatialMetricsSource _spatialMetricsSource;
 
     public SpatialMetricsProvider(ISpatialMetricsSource spatialMetricsSource)
-        => _spatialMetricsSource = spatialMetricsSource;
+    {
+        _spatialMetricsSource = spatialMetricsSource;
+    }
 
     public string ProviderName => "spatial";
 

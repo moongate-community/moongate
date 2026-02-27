@@ -18,7 +18,9 @@ public sealed class CommandModule
     private readonly ICommandSystemService _commandSystemService;
 
     public CommandModule(ICommandSystemService commandSystemService)
-        => _commandSystemService = commandSystemService;
+    {
+        _commandSystemService = commandSystemService;
+    }
 
     private readonly record struct CommandRegistrationOptions(
         string Description,

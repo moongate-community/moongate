@@ -18,7 +18,9 @@ public class WarModePacket : BaseGameNetworkPacket
 
     public WarModePacket(UOMobileEntity mobile)
         : this()
-        => Mobile = mobile;
+    {
+        Mobile = mobile;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

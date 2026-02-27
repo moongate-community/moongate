@@ -11,7 +11,9 @@ public sealed class GameLoopMetricsProvider : IMetricProvider
     private readonly IGameLoopMetricsSource _gameLoopMetricsSource;
 
     public GameLoopMetricsProvider(IGameLoopMetricsSource gameLoopMetricsSource)
-        => _gameLoopMetricsSource = gameLoopMetricsSource;
+    {
+        _gameLoopMetricsSource = gameLoopMetricsSource;
+    }
 
     public string ProviderName => "gameloop";
 

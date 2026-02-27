@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json.Context;
@@ -12,6 +13,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents RegionDataLoader.
 /// </summary>
+[RegisterFileLoader(16)]
 public class RegionDataLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;

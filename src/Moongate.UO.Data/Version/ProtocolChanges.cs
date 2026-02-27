@@ -16,6 +16,7 @@
 namespace Moongate.UO.Data.Version;
 
 [Flags]
+
 /// <summary>
 /// Represents ProtocolChanges.
 /// </summary>

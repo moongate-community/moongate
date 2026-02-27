@@ -36,7 +36,7 @@ public sealed class CommandSystemTestAccountService : IAccountService
         CreatedAccountType = accountType;
 
         return Task.FromResult<UOAccountEntity?>(
-            new UOAccountEntity
+            new()
             {
                 Id = (Serial)1,
                 Username = username,
@@ -56,6 +56,9 @@ public sealed class CommandSystemTestAccountService : IAccountService
     public Task<IReadOnlyList<UOAccountEntity>> GetAccountsAsync(CancellationToken cancellationToken = default)
         => Task.FromResult<IReadOnlyList<UOAccountEntity>>([]);
 
+    public Task<UOAccountEntity?> LoginAsync(string username, string password)
+        => Task.FromResult<UOAccountEntity?>(null);
+
     public Task<UOAccountEntity?> UpdateAccountAsync(
         Serial accountId,
         string? username = null,
@@ -65,8 +68,5 @@ public sealed class CommandSystemTestAccountService : IAccountService
         bool? isLocked = null,
         CancellationToken cancellationToken = default
     )
-        => Task.FromResult<UOAccountEntity?>(null);
-
-    public Task<UOAccountEntity?> LoginAsync(string username, string password)
         => Task.FromResult<UOAccountEntity?>(null);
 }

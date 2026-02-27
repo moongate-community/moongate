@@ -1,5 +1,5 @@
-using Moongate.UO.Data.Ids;
 using Moongate.Server.Data.Events.Base;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Data.Events.Characters;
 
@@ -23,5 +23,5 @@ public readonly record struct CharacterCreatedEvent(
     /// Creates a character created event with explicit timestamp.
     /// </summary>
     public CharacterCreatedEvent(string characterName, Serial accountId, Serial characterId, long timestamp)
-        : this(new GameEventBase(timestamp), characterName, accountId, characterId) { }
+        : this(new(timestamp), characterName, accountId, characterId) { }
 }

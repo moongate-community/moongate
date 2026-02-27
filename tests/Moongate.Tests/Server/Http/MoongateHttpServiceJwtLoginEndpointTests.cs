@@ -7,6 +7,7 @@ using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -24,15 +25,15 @@ public class MoongateHttpServiceJwtLoginEndpointTests
         var accountService = new TestAccountService
         {
             LoginAsyncImpl = (username, password) => Task.FromResult<UOAccountEntity?>(
-                username == "admin" && password == "admin"
-                    ? new UOAccountEntity
-                    {
-                        Id = (Moongate.UO.Data.Ids.Serial)1,
-                        Username = "admin",
-                        AccountType = AccountType.Administrator
-                    }
-                    : null
-            )
+                                 username == "admin" && password == "admin"
+                                     ? new UOAccountEntity
+                                     {
+                                         Id = (Serial)1,
+                                         Username = "admin",
+                                         AccountType = AccountType.Administrator
+                                     }
+                                     : null
+                             )
         };
 
         var service = new MoongateHttpService(

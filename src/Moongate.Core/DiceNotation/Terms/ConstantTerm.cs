@@ -18,7 +18,9 @@ public class ConstantTerm : ITerm
     /// </summary>
     /// <param name="value">The numerical value this term represents.</param>
     public ConstantTerm(int value)
-        => Value = value;
+    {
+        Value = value;
+    }
 
     /// <summary>
     /// Returns the numerical constant it represents. RNG is unused.

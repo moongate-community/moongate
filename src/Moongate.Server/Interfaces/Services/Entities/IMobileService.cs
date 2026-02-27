@@ -17,20 +17,20 @@ public interface IMobileService
     Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Loads a mobile entity by serial identifier.
-    /// </summary>
-    /// <param name="id">Mobile serial identifier.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The mobile entity when found; otherwise <see langword="null" />.</returns>
-    Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Deletes a mobile entity by serial identifier.
     /// </summary>
     /// <param name="id">Mobile serial identifier.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see langword="true" /> when removed; otherwise <see langword="false" />.</returns>
     Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Loads a mobile entity by serial identifier.
+    /// </summary>
+    /// <param name="id">Mobile serial identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The mobile entity when found; otherwise <see langword="null" />.</returns>
+    Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Creates and persists a mobile from a template at a specific world position.

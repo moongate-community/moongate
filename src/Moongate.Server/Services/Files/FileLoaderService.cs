@@ -18,7 +18,9 @@ public class FileLoaderService : IFileLoaderService
     private readonly IContainer _container;
 
     public FileLoaderService(IContainer container)
-        => _container = container;
+    {
+        _container = container;
+    }
 
     public void AddFileLoader<T>() where T : IFileLoader
     {

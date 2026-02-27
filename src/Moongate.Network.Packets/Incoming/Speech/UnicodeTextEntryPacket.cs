@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Speech;
 
 [PacketHandler(0xC2, PacketSizing.Variable, Description = "Unicode TextEntry")]
+
 /// <summary>
 /// Represents UnicodeTextEntryPacket.
 /// </summary>

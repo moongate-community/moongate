@@ -17,5 +17,7 @@ public sealed class RegisterPacketHandlerAttribute : Attribute
     /// </summary>
     /// <param name="opCode">Packet opcode handled by the listener.</param>
     public RegisterPacketHandlerAttribute(byte opCode)
-        => OpCode = opCode;
+    {
+        OpCode = opCode;
+    }
 }

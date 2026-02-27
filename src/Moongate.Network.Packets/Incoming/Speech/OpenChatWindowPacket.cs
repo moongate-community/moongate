@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Speech;
 
 [PacketHandler(0xB5, PacketSizing.Fixed, Length = 64, Description = "Open Chat Window")]
+
 /// <summary>
 /// Represents OpenChatWindowPacket.
 /// </summary>

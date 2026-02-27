@@ -28,7 +28,7 @@ public sealed class CharacterPositionPersistenceService
     private readonly IPersistenceService _persistenceService;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CharacterPositionPersistenceService"/> class.
+    /// Initializes a new instance of the <see cref="CharacterPositionPersistenceService" /> class.
     /// </summary>
     public CharacterPositionPersistenceService(
         IGameEventBusService gameEventBusService,
@@ -39,14 +39,6 @@ public sealed class CharacterPositionPersistenceService
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _persistenceService = persistenceService;
-    }
-
-    /// <inheritdoc />
-    public override Task StartAsync()
-    {
-        _ = _gameEventBusService;
-
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -93,6 +85,14 @@ public sealed class CharacterPositionPersistenceService
             gameEvent.MapId,
             gameEvent.NewLocation
         );
+    }
+
+    /// <inheritdoc />
+    public override Task StartAsync()
+    {
+        _ = _gameEventBusService;
+
+        return Task.CompletedTask;
     }
 
     private static bool HasSectorChanged(Point3D oldLocation, Point3D newLocation)

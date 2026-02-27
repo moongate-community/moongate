@@ -7,6 +7,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Movement;
 
 [PacketHandler(0x21, PacketSizing.Fixed, Length = 8, Description = "Char Move Rejection")]
+
 /// <summary>
 /// Represents MoveDenyPacket.
 /// </summary>

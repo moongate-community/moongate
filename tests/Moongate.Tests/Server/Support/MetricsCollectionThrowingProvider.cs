@@ -6,7 +6,9 @@ namespace Moongate.Tests.Server.Support;
 public sealed class MetricsCollectionThrowingProvider : IMetricProvider
 {
     public MetricsCollectionThrowingProvider(string providerName)
-        => ProviderName = providerName;
+    {
+        ProviderName = providerName;
+    }
 
     public string ProviderName { get; }
 

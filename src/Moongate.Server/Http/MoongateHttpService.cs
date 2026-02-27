@@ -9,8 +9,8 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Extensions;
-using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Interfaces;
+using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Metrics;
@@ -190,7 +190,10 @@ public sealed class MoongateHttpService : IMoongateHttpService
                     sb.Append('{');
                     var firstLabel = true;
 
-                    foreach (var (labelKey, labelValue) in metric.Tags.OrderBy(static pair => pair.Key, StringComparer.Ordinal))
+                    foreach (var (labelKey, labelValue) in metric.Tags.OrderBy(
+                                 static pair => pair.Key,
+                                 StringComparer.Ordinal
+                             ))
                     {
                         if (!firstLabel)
                         {
@@ -223,6 +226,47 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         return sb.ToString();
+    }
+
+    private bool ConfigureUiHosting(WebApplication app)
+    {
+        if (!_isUiEnabled)
+        {
+            return false;
+        }
+
+        var uiDistPath = ResolveUiDistPath(_uiDistPath);
+
+        if (uiDistPath is null)
+        {
+            Log.Debug("UI hosting enabled but no UI dist directory found. Checked common locations.");
+
+            return false;
+        }
+
+        var fileProvider = new PhysicalFileProvider(uiDistPath);
+        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+
+        var indexPath = Path.Combine(uiDistPath, "index.html");
+        app.MapFallback(
+            async context =>
+            {
+                if (!HttpMethods.IsGet(context.Request.Method) || ShouldSkipSpaFallback(context.Request.Path))
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+                    return;
+                }
+
+                context.Response.ContentType = "text/html; charset=utf-8";
+                await context.Response.SendFileAsync(indexPath);
+            }
+        );
+
+        Log.Information("Serving UI static files from {UiDistPath}", uiDistPath);
+
+        return true;
     }
 
     private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
@@ -300,50 +344,12 @@ public sealed class MoongateHttpService : IMoongateHttpService
         return new(buffer);
     }
 
-    private bool ConfigureUiHosting(WebApplication app)
-    {
-        if (!_isUiEnabled)
-        {
-            return false;
-        }
-
-        var uiDistPath = ResolveUiDistPath(_uiDistPath);
-        if (uiDistPath is null)
-        {
-            Log.Debug("UI hosting enabled but no UI dist directory found. Checked common locations.");
-            return false;
-        }
-
-        var fileProvider = new PhysicalFileProvider(uiDistPath);
-        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
-        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
-
-        var indexPath = Path.Combine(uiDistPath, "index.html");
-        app.MapFallback(
-            async context =>
-            {
-                if (!HttpMethods.IsGet(context.Request.Method) || ShouldSkipSpaFallback(context.Request.Path))
-                {
-                    context.Response.StatusCode = StatusCodes.Status404NotFound;
-
-                    return;
-                }
-
-                context.Response.ContentType = "text/html; charset=utf-8";
-                await context.Response.SendFileAsync(indexPath);
-            }
-        );
-
-        Log.Information("Serving UI static files from {UiDistPath}", uiDistPath);
-
-        return true;
-    }
-
     private static string? ResolveUiDistPath(string? configuredPath)
     {
         if (!string.IsNullOrWhiteSpace(configuredPath))
         {
             var explicitPath = Path.GetFullPath(configuredPath);
+
             if (Directory.Exists(explicitPath))
             {
                 return explicitPath;
@@ -351,9 +357,11 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         var envPath = Environment.GetEnvironmentVariable("MOONGATE_UI_DIST");
+
         if (!string.IsNullOrWhiteSpace(envPath))
         {
             var resolvedEnvPath = Path.GetFullPath(envPath);
+
             if (Directory.Exists(resolvedEnvPath))
             {
                 return resolvedEnvPath;
@@ -361,12 +369,14 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         var currentDirPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "ui", "dist"));
+
         if (Directory.Exists(currentDirPath))
         {
             return currentDirPath;
         }
 
         var baseDirPath = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "ui", "dist"));
+
         if (Directory.Exists(baseDirPath))
         {
             return baseDirPath;

@@ -1,9 +1,9 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Entity;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Packets;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -19,160 +19,14 @@ namespace Moongate.Tests.Server.Handlers;
 
 public sealed class MobileHandlerTests
 {
-    [Test]
-    public async Task HandleAsync_ForMobileAddedInSector_ShouldSendPacketsToOtherPlayersOnly()
-    {
-        var mobileId = (Serial)0x00000010u;
-        var receiverId = (Serial)0x00000020u;
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new FakeGameNetworkSessionService();
-        var receiverSession = CreateSession(receiverId);
-        sessions.Add(receiverSession);
-
-        var spatial = new MobileHandlerTestSpatialWorldService
-        {
-            PlayersInSector = [CreatePlayer(mobileId), CreatePlayer(receiverId)]
-        };
-        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
-        var handler = new MobileHandler(
-            new NetworkServiceTestGameEventBusService(),
-            spatial,
-            characterService,
-            sessions,
-            queue
-        );
-
-        await handler.HandleAsync(new MobileAddedInSectorEvent(mobileId, 1, 100, 200));
-
-        var packets = DequeueAll(queue);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(packets, Has.Count.EqualTo(4));
-                Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
-                Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<DrawPlayerPacket>());
-                Assert.That(packets[2].Packet, Is.TypeOf<PlayerStatusPacket>());
-                Assert.That(packets[3].Packet, Is.TypeOf<MobileDrawPacket>());
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleAsync_ForMobilePositionChanged_ShouldResolveTargetSectorAndSendPackets()
-    {
-        var mobileId = (Serial)0x00000100u;
-        var receiverId = (Serial)0x00000200u;
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new FakeGameNetworkSessionService();
-        var receiverSession = CreateSession(receiverId);
-        sessions.Add(receiverSession);
-
-        var spatial = new MobileHandlerTestSpatialWorldService
-        {
-            SectorByLocation = new MapSector(1, 7, 8),
-            PlayersInSector = [CreatePlayer(receiverId)]
-        };
-        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
-        var handler = new MobileHandler(
-            new NetworkServiceTestGameEventBusService(),
-            spatial,
-            characterService,
-            sessions,
-            queue
-        );
-
-        await handler.HandleAsync(
-            new MobilePositionChangedEvent(
-                99,
-                mobileId,
-                1,
-                new Point3D(200, 200, 0),
-                new Point3D(210, 210, 0)
-            )
-        );
-
-        var packets = DequeueAll(queue);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(spatial.LastGetSectorMapId, Is.EqualTo(1));
-                Assert.That(spatial.LastGetSectorLocation, Is.EqualTo(new Point3D(210, 210, 0)));
-                Assert.That(packets, Has.Count.EqualTo(4));
-                Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleAsync_ForMobilePositionChanged_ShouldNotSendPackets_WhenSectorNotFound()
-    {
-        var mobileId = (Serial)0x00000300u;
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new FakeGameNetworkSessionService();
-        var spatial = new MobileHandlerTestSpatialWorldService { SectorByLocation = null };
-        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
-        var handler = new MobileHandler(
-            new NetworkServiceTestGameEventBusService(),
-            spatial,
-            characterService,
-            sessions,
-            queue
-        );
-
-        await handler.HandleAsync(
-            new MobilePositionChangedEvent(
-                1,
-                mobileId,
-                1,
-                new Point3D(0, 0, 0),
-                new Point3D(1, 1, 0)
-            )
-        );
-
-        Assert.That(queue.TryDequeue(out _), Is.False);
-    }
-
-    private static UOMobileEntity CreatePlayer(Serial id)
-        => new()
-        {
-            Id = id,
-            IsPlayer = true,
-            Name = $"player-{id.Value}",
-            Location = new Point3D(100, 100, 0),
-            MapId = 1
-        };
-
-    private static GameSession CreateSession(Serial characterId)
-    {
-        var client = new MoongateTCPClient(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        return new GameSession(new GameNetworkSession(client))
-        {
-            CharacterId = characterId
-        };
-    }
-
-    private static List<Moongate.Server.Data.Packets.OutgoingGamePacket> DequeueAll(
-        BasePacketListenerTestOutgoingPacketQueue queue
-    )
-    {
-        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
-        while (queue.TryDequeue(out var packet))
-        {
-            packets.Add(packet);
-        }
-
-        return packets;
-    }
-
     private sealed class MobileHandlerTestCharacterService : ICharacterService
     {
         private readonly UOMobileEntity _mobile;
 
         public MobileHandlerTestCharacterService(UOMobileEntity mobile)
-            => _mobile = mobile;
+        {
+            _mobile = mobile;
+        }
 
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
             => Task.FromResult(true);
@@ -203,13 +57,16 @@ public sealed class MobileHandlerTests
 
         public Point3D LastGetSectorLocation { get; private set; }
 
-        public void AddOrUpdateMobile(UOMobileEntity mobile) { }
+        public void AddMusics(List<JsonMusic> musics) { }
 
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
+        public void AddOrUpdateMobile(UOMobileEntity mobile) { }
+
         public void AddRegion(JsonRegion region) { }
 
-        public void AddMusics(List<JsonMusic> musics) { }
+        public int GetMusic(Point3D location)
+            => 0;
 
         public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
             => [];
@@ -236,16 +93,158 @@ public sealed class MobileHandlerTests
             return SectorByLocation;
         }
 
-        public int GetMusic(Point3D location)
-            => 0;
-
-        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
+        public SectorSystemStats GetStats()
+            => new();
 
         public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
 
-        public void RemoveEntity(Serial serial) { }
+        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
 
-        public SectorSystemStats GetStats()
-            => new();
+        public void RemoveEntity(Serial serial) { }
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobileAddedInSector_ShouldSendPacketsToOtherPlayersOnly()
+    {
+        var mobileId = (Serial)0x00000010u;
+        var receiverId = (Serial)0x00000020u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var receiverSession = CreateSession(receiverId);
+        sessions.Add(receiverSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            PlayersInSector = [CreatePlayer(mobileId), CreatePlayer(receiverId)]
+        };
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            sessions,
+            queue
+        );
+
+        await handler.HandleAsync(new MobileAddedInSectorEvent(mobileId, 1, 100, 200));
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
+                Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_ShouldNotSendPackets_WhenSectorNotFound()
+    {
+        var mobileId = (Serial)0x00000300u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var spatial = new MobileHandlerTestSpatialWorldService { SectorByLocation = null };
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            sessions,
+            queue
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                1,
+                mobileId,
+                1,
+                new(0, 0, 0),
+                new(1, 1, 0)
+            )
+        );
+
+        Assert.That(queue.TryDequeue(out _), Is.False);
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_ShouldResolveTargetSectorAndSendPackets()
+    {
+        var mobileId = (Serial)0x00000100u;
+        var receiverId = (Serial)0x00000200u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var receiverSession = CreateSession(receiverId);
+        sessions.Add(receiverSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(1, 7, 8),
+            PlayersInSector = [CreatePlayer(receiverId)]
+        };
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            sessions,
+            queue
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                99,
+                mobileId,
+                1,
+                new(200, 200, 0),
+                new(210, 210, 0)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.LastGetSectorMapId, Is.EqualTo(1));
+                Assert.That(spatial.LastGetSectorLocation, Is.EqualTo(new Point3D(210, 210, 0)));
+                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
+                Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
+            }
+        );
+    }
+
+    private static UOMobileEntity CreatePlayer(Serial id)
+        => new()
+        {
+            Id = id,
+            IsPlayer = true,
+            Name = $"player-{id.Value}",
+            Location = new(100, 100, 0),
+            MapId = 1
+        };
+
+    private static GameSession CreateSession(Serial characterId)
+    {
+        var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        return new(new(client))
+        {
+            CharacterId = characterId
+        };
+    }
+
+    private static List<OutgoingGamePacket> DequeueAll(BasePacketListenerTestOutgoingPacketQueue queue)
+    {
+        var packets = new List<OutgoingGamePacket>();
+
+        while (queue.TryDequeue(out var packet))
+        {
+            packets.Add(packet);
+        }
+
+        return packets;
     }
 }

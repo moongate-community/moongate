@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Json.Context;
@@ -9,6 +10,7 @@ using Serilog;
 
 namespace Moongate.Server.FileLoaders;
 
+[RegisterFileLoader(12)]
 public sealed class ItemTemplateLoader : IFileLoader
 {
     private enum ResolveState
@@ -84,59 +86,6 @@ public sealed class ItemTemplateLoader : IFileLoader
         );
 
         return Task.CompletedTask;
-    }
-
-    private static void ResolveBaseItems(List<ItemTemplateDefinition> templates)
-    {
-        var byId = templates.ToDictionary(
-            static template => template.Id,
-            static template => template,
-            StringComparer.OrdinalIgnoreCase
-        );
-
-        var states = new Dictionary<string, ResolveState>(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var template in templates)
-        {
-            ResolveTemplate(template, byId, states);
-        }
-    }
-
-    private static void ResolveTemplate(
-        ItemTemplateDefinition template,
-        Dictionary<string, ItemTemplateDefinition> byId,
-        Dictionary<string, ResolveState> states
-    )
-    {
-        if (states.TryGetValue(template.Id, out var state))
-        {
-            if (state == ResolveState.Done)
-            {
-                return;
-            }
-
-            if (state == ResolveState.Visiting)
-            {
-                throw new InvalidOperationException($"Circular base_item reference detected at '{template.Id}'.");
-            }
-        }
-
-        states[template.Id] = ResolveState.Visiting;
-
-        if (!string.IsNullOrWhiteSpace(template.BaseItem))
-        {
-            if (!byId.TryGetValue(template.BaseItem, out var parent))
-            {
-                throw new InvalidOperationException(
-                    $"Template '{template.Id}' references unknown base_item '{template.BaseItem}'."
-                );
-            }
-
-            ResolveTemplate(parent, byId, states);
-            ApplyInheritance(parent, template);
-        }
-
-        states[template.Id] = ResolveState.Done;
     }
 
     private static void ApplyInheritance(ItemTemplateDefinition parent, ItemTemplateDefinition child)
@@ -217,20 +166,71 @@ public sealed class ItemTemplateLoader : IFileLoader
 
         child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);
         child.IsMovable = InheritBool(child.IsMovable, parent.IsMovable, Defaults.IsMovable);
-        child.Stackable = InheritBool(child.Stackable, parent.Stackable, Defaults.Stackable);
-
         if (child.LootType == Defaults.LootType)
         {
             child.LootType = parent.LootType;
         }
     }
 
-    private static int InheritInt(int childValue, int parentValue, int defaultValue)
-        => childValue == defaultValue ? parentValue : childValue;
-
     private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
 
     private static decimal InheritDecimal(decimal childValue, decimal parentValue, decimal defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
+
+    private static int InheritInt(int childValue, int parentValue, int defaultValue)
+        => childValue == defaultValue ? parentValue : childValue;
+
+    private static void ResolveBaseItems(List<ItemTemplateDefinition> templates)
+    {
+        var byId = templates.ToDictionary(
+            static template => template.Id,
+            static template => template,
+            StringComparer.OrdinalIgnoreCase
+        );
+
+        var states = new Dictionary<string, ResolveState>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var template in templates)
+        {
+            ResolveTemplate(template, byId, states);
+        }
+    }
+
+    private static void ResolveTemplate(
+        ItemTemplateDefinition template,
+        Dictionary<string, ItemTemplateDefinition> byId,
+        Dictionary<string, ResolveState> states
+    )
+    {
+        if (states.TryGetValue(template.Id, out var state))
+        {
+            if (state == ResolveState.Done)
+            {
+                return;
+            }
+
+            if (state == ResolveState.Visiting)
+            {
+                throw new InvalidOperationException($"Circular base_item reference detected at '{template.Id}'.");
+            }
+        }
+
+        states[template.Id] = ResolveState.Visiting;
+
+        if (!string.IsNullOrWhiteSpace(template.BaseItem))
+        {
+            if (!byId.TryGetValue(template.BaseItem, out var parent))
+            {
+                throw new InvalidOperationException(
+                    $"Template '{template.Id}' references unknown base_item '{template.BaseItem}'."
+                );
+            }
+
+            ResolveTemplate(parent, byId, states);
+            ApplyInheritance(parent, template);
+        }
+
+        states[template.Id] = ResolveState.Done;
+    }
 }

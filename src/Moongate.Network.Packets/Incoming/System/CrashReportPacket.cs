@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.System;
 
 [PacketHandler(0xF4, PacketSizing.Variable, Description = "CrashReport")]
+
 /// <summary>
 /// Represents CrashReportPacket.
 /// </summary>

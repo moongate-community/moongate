@@ -30,7 +30,8 @@ public sealed class CharacterHandlerTestEntityFactoryService : IEntityFactorySer
         Point2D containerPosition,
         int quantity,
         StarterProfileContext profileContext
-    ) => throw new NotSupportedException();
+    )
+        => throw new NotSupportedException();
 
     public UOItemEntity GetNewBackpack()
         => throw new NotSupportedException();

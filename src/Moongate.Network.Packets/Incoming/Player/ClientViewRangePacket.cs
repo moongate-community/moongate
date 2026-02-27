@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Player;
 
 [PacketHandler(0xC8, PacketSizing.Fixed, Length = 2, Description = "Client View Range")]
+
 /// <summary>
 /// Represents ClientViewRangePacket.
 /// </summary>

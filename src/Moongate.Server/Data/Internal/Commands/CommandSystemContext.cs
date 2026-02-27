@@ -37,16 +37,6 @@ public sealed class CommandSystemContext
         SessionId = sessionId;
     }
 
-    protected long GetSessionId()
-    {
-        if (Source != CommandSourceType.InGame)
-        {
-            throw new InvalidOperationException("Session ID is only available for in-game commands.");
-        }
-
-        return SessionId;
-    }
-
     public void Print(string message, params object[] args)
     {
         var formatted = args.Length == 0 ? message : string.Format(message, args);
@@ -57,5 +47,15 @@ public sealed class CommandSystemContext
     {
         var formatted = args.Length == 0 ? message : string.Format(message, args);
         _printAction(formatted, LogEventLevel.Error);
+    }
+
+    protected long GetSessionId()
+    {
+        if (Source != CommandSourceType.InGame)
+        {
+            throw new InvalidOperationException("Session ID is only available for in-game commands.");
+        }
+
+        return SessionId;
     }
 }

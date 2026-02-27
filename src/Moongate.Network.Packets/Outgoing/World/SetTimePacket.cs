@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0x5B, PacketSizing.Fixed, Length = 4, Description = "Set Time")]
+
 /// <summary>
 /// Represents SetTimePacket.
 /// </summary>
@@ -15,11 +16,15 @@ public class SetTimePacket : BaseGameNetworkPacket
 
     public SetTimePacket()
         : base(0x5B, 4)
-        => Time = DateTime.UtcNow;
+    {
+        Time = DateTime.UtcNow;
+    }
 
     public SetTimePacket(DateTime time)
         : this()
-        => Time = time;
+    {
+        Time = time;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

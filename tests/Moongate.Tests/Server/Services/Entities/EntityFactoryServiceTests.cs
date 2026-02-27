@@ -35,7 +35,6 @@ public class EntityFactoryServiceTests
                 GoldValue = GoldValueSpec.FromValue(1),
                 LootType = LootType.Regular,
                 ScriptId = "none",
-                Stackable = true,
                 Weight = 6
             }
         );
@@ -59,6 +58,7 @@ public class EntityFactoryServiceTests
                 Assert.That(item.Rarity, Is.EqualTo(ItemRarity.Common));
                 Assert.That(item.ItemId, Is.EqualTo(0x1517));
                 Assert.That(item.Hue, Is.EqualTo(100));
+                Assert.That(item.ScriptId, Is.EqualTo("none"));
             }
         );
     }
@@ -167,7 +167,6 @@ public class EntityFactoryServiceTests
                 GoldValue = GoldValueSpec.FromValue(0),
                 LootType = LootType.Regular,
                 ScriptId = "none",
-                Stackable = false,
                 Weight = 1
             }
         );
@@ -190,6 +189,7 @@ public class EntityFactoryServiceTests
                 Assert.That(backpack.IsStackable, Is.False);
                 Assert.That(backpack.Rarity, Is.EqualTo(ItemRarity.Common));
                 Assert.That(backpack.ItemId, Is.EqualTo(0x0E75));
+                Assert.That(backpack.ScriptId, Is.EqualTo("none"));
             }
         );
     }

@@ -7,37 +7,45 @@ namespace Moongate.Tests.Network.Packets;
 public class GenericGumpPacketTests
 {
     [Test]
-    public void WriteAndParse_ShouldRoundtripGenericGumpData()
+    public void TryParse_ShouldFail_WhenCommandSectionLengthIsInvalid()
     {
-        var original = new GenericGumpPacket
+        var packet = new GenericGumpPacket
         {
-            SenderSerial = 0x00000002,
-            GumpId = 0x000001CE,
-            X = 250,
-            Y = 300,
-            Layout = "{ page 0 } { resizepic 0 0 5054 260 180 }"
+            SenderSerial = 0x00000006,
+            GumpId = 0x00000067,
+            X = 1,
+            Y = 2,
+            Layout = "{ page 0 }"
         };
-        original.TextLines.Add("first");
-        original.TextLines.Add("second");
-        original.TextLines.Add("third");
 
-        var bytes = Write(original);
+        var bytes = Write(packet);
+        BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(19, 2), ushort.MaxValue);
 
         var parsed = new GenericGumpPacket();
         var ok = parsed.TryParse(bytes);
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ok, Is.True);
-                Assert.That(parsed.SenderSerial, Is.EqualTo(original.SenderSerial));
-                Assert.That(parsed.GumpId, Is.EqualTo(original.GumpId));
-                Assert.That(parsed.X, Is.EqualTo(original.X));
-                Assert.That(parsed.Y, Is.EqualTo(original.Y));
-                Assert.That(parsed.Layout, Is.EqualTo(original.Layout));
-                Assert.That(parsed.TextLines, Is.EqualTo(original.TextLines));
-            }
-        );
+        Assert.That(ok, Is.False);
+    }
+
+    [Test]
+    public void TryParse_ShouldFail_WhenDeclaredPacketLengthDoesNotMatchBufferLength()
+    {
+        var packet = new GenericGumpPacket
+        {
+            SenderSerial = 0x00000005,
+            GumpId = 0x00000066,
+            X = 10,
+            Y = 20,
+            Layout = "{ page 0 }"
+        };
+
+        var bytes = Write(packet);
+        BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(1, 2), (ushort)(bytes.Length + 1));
+
+        var parsed = new GenericGumpPacket();
+        var ok = parsed.TryParse(bytes);
+
+        Assert.That(ok, Is.False);
     }
 
     [Test]
@@ -70,45 +78,37 @@ public class GenericGumpPacketTests
     }
 
     [Test]
-    public void TryParse_ShouldFail_WhenDeclaredPacketLengthDoesNotMatchBufferLength()
+    public void WriteAndParse_ShouldRoundtripGenericGumpData()
     {
-        var packet = new GenericGumpPacket
+        var original = new GenericGumpPacket
         {
-            SenderSerial = 0x00000005,
-            GumpId = 0x00000066,
-            X = 10,
-            Y = 20,
-            Layout = "{ page 0 }"
+            SenderSerial = 0x00000002,
+            GumpId = 0x000001CE,
+            X = 250,
+            Y = 300,
+            Layout = "{ page 0 } { resizepic 0 0 5054 260 180 }"
         };
+        original.TextLines.Add("first");
+        original.TextLines.Add("second");
+        original.TextLines.Add("third");
 
-        var bytes = Write(packet);
-        BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(1, 2), (ushort)(bytes.Length + 1));
+        var bytes = Write(original);
 
         var parsed = new GenericGumpPacket();
         var ok = parsed.TryParse(bytes);
 
-        Assert.That(ok, Is.False);
-    }
-
-    [Test]
-    public void TryParse_ShouldFail_WhenCommandSectionLengthIsInvalid()
-    {
-        var packet = new GenericGumpPacket
-        {
-            SenderSerial = 0x00000006,
-            GumpId = 0x00000067,
-            X = 1,
-            Y = 2,
-            Layout = "{ page 0 }"
-        };
-
-        var bytes = Write(packet);
-        BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(19, 2), ushort.MaxValue);
-
-        var parsed = new GenericGumpPacket();
-        var ok = parsed.TryParse(bytes);
-
-        Assert.That(ok, Is.False);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(parsed.SenderSerial, Is.EqualTo(original.SenderSerial));
+                Assert.That(parsed.GumpId, Is.EqualTo(original.GumpId));
+                Assert.That(parsed.X, Is.EqualTo(original.X));
+                Assert.That(parsed.Y, Is.EqualTo(original.Y));
+                Assert.That(parsed.Layout, Is.EqualTo(original.Layout));
+                Assert.That(parsed.TextLines, Is.EqualTo(original.TextLines));
+            }
+        );
     }
 
     private static byte[] Write(GenericGumpPacket packet)

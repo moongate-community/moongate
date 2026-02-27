@@ -11,7 +11,9 @@ public sealed class TimerMetricsProvider : IMetricProvider
     private readonly ITimerMetricsSource _timerMetricsSource;
 
     public TimerMetricsProvider(ITimerMetricsSource timerMetricsSource)
-        => _timerMetricsSource = timerMetricsSource;
+    {
+        _timerMetricsSource = timerMetricsSource;
+    }
 
     public string ProviderName => "timer";
 

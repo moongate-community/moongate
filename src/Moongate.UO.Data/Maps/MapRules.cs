@@ -1,6 +1,7 @@
 namespace Moongate.UO.Data.Maps;
 
 [Flags]
+
 /// <summary>
 /// Represents MapRules.
 /// </summary>

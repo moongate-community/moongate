@@ -9,10 +9,9 @@ using Moongate.Core.Buffers.Types;
 
 namespace Moongate.Core.Buffers;
 
-/**
- * Adaptation of the ArrayPool
- * <T>.Shared (TlsOverPerCoreLockedStacksArrayPool) for single threaded *unsafe* usage.
- */
+/// Adaptation of the ArrayPool
+/// <T>
+/// .Shared (TlsOverPerCoreLockedStacksArrayPool) for single threaded *unsafe* usage.
 /// <summary>
 /// Represents STArrayPool.
 /// </summary>

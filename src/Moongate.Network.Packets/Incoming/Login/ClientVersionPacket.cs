@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xBD, PacketSizing.Variable, Description = "Client Version")]
+
 /// <summary>
 /// Represents ClientVersionPacket.
 /// </summary>

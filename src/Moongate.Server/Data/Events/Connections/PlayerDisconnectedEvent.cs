@@ -1,10 +1,12 @@
 using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Attributes;
 
 namespace Moongate.Server.Data.Events.Connections;
 
 /// <summary>
 /// Event emitted when a client session disconnects from the server.
 /// </summary>
+[RegisterLuaUserData]
 public readonly record struct PlayerDisconnectedEvent(
     GameEventBase BaseEvent,
     long SessionId,
@@ -21,5 +23,5 @@ public readonly record struct PlayerDisconnectedEvent(
     /// Creates a disconnected event with explicit timestamp.
     /// </summary>
     public PlayerDisconnectedEvent(long sessionId, string? remoteEndPoint, long timestamp)
-        : this(new GameEventBase(timestamp), sessionId, remoteEndPoint) { }
+        : this(new(timestamp), sessionId, remoteEndPoint) { }
 }

@@ -26,6 +26,22 @@ public interface ISpeechService
     );
 
     /// <summary>
+    /// Processes an incoming Unicode speech packet for a session.
+    /// </summary>
+    /// <param name="session">Source game session.</param>
+    /// <param name="speechPacket">Incoming speech packet.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>
+    /// An outbound speech packet to enqueue when a chat message must be sent;
+    /// otherwise <c>null</c>.
+    /// </returns>
+    Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+        GameSession session,
+        UnicodeSpeechPacket speechPacket,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Enqueues a server-origin message for one specific session.
     /// </summary>
     /// <param name="session">Target session.</param>
@@ -42,21 +58,5 @@ public interface ISpeechService
         short hue = SpeechHues.System,
         short font = SpeechHues.DefaultFont,
         string language = "ENU"
-    );
-
-    /// <summary>
-    /// Processes an incoming Unicode speech packet for a session.
-    /// </summary>
-    /// <param name="session">Source game session.</param>
-    /// <param name="speechPacket">Incoming speech packet.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>
-    /// An outbound speech packet to enqueue when a chat message must be sent;
-    /// otherwise <c>null</c>.
-    /// </returns>
-    Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
-        GameSession session,
-        UnicodeSpeechPacket speechPacket,
-        CancellationToken cancellationToken = default
     );
 }

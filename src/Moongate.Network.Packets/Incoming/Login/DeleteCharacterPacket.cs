@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0x83, PacketSizing.Fixed, Length = 39, Description = "Delete Character")]
+
 /// <summary>
 /// Represents DeleteCharacterPacket.
 /// </summary>

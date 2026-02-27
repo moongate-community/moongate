@@ -57,27 +57,43 @@ public class CommandModuleTests
     }
 
     [Test]
-    public void Register_ShouldThrow_WhenNameIsEmpty()
+    public async Task Register_Handler_ShouldInvokeLuaCallback_WithLuaCommandContext()
     {
         var commandSystemService = new CommandModuleTestCommandSystemService();
         var module = new CommandModule(commandSystemService);
-        var closure = new Script().DoString("return function(_) end").Function;
+        var script = new Script();
+        var closure = script.DoString(
+                                """
+                                return function(ctx)
+                                    captured_command = ctx.command_text
+                                    captured_is_in_game = ctx.is_in_game
+                                    captured_session_id = ctx.session_id
+                                    captured_arg_count = #ctx.arguments
+                                end
+                                """
+                            )
+                            .Function;
 
-        Assert.That(
-            () => module.Register(string.Empty, closure),
-            Throws.TypeOf<ArgumentException>()
+        module.Register("lua_cmd", closure);
+
+        var context = new CommandSystemContext(
+            "lua_cmd one two",
+            ["one", "two"],
+            CommandSourceType.InGame,
+            42,
+            (_, _) => { }
         );
-    }
 
-    [Test]
-    public void Register_ShouldThrow_WhenHandlerIsNull()
-    {
-        var commandSystemService = new CommandModuleTestCommandSystemService();
-        var module = new CommandModule(commandSystemService);
+        await commandSystemService.LastHandler!(context);
 
-        Assert.That(
-            () => module.Register("test_cmd", null!),
-            Throws.TypeOf<ArgumentNullException>()
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script.Globals.Get("captured_command").CastToString(), Is.EqualTo("lua_cmd one two"));
+                Assert.That(script.Globals.Get("captured_is_in_game").CastToBool(), Is.True);
+                Assert.That(script.Globals.Get("captured_session_id").CastToNumber(), Is.EqualTo(42));
+                Assert.That(script.Globals.Get("captured_arg_count").CastToNumber(), Is.EqualTo(2));
+            }
         );
     }
 
@@ -113,42 +129,27 @@ public class CommandModuleTests
     }
 
     [Test]
-    public async Task Register_Handler_ShouldInvokeLuaCallback_WithLuaCommandContext()
+    public void Register_ShouldThrow_WhenHandlerIsNull()
     {
         var commandSystemService = new CommandModuleTestCommandSystemService();
         var module = new CommandModule(commandSystemService);
-        var script = new Script();
-        var closure = script.DoString(
-            """
-            return function(ctx)
-                captured_command = ctx.command_text
-                captured_is_in_game = ctx.is_in_game
-                captured_session_id = ctx.session_id
-                captured_arg_count = #ctx.arguments
-            end
-            """
-        ).Function;
 
-        module.Register("lua_cmd", closure);
-
-        var context = new CommandSystemContext(
-            "lua_cmd one two",
-            ["one", "two"],
-            CommandSourceType.InGame,
-            42,
-            (_, _) => { }
+        Assert.That(
+            () => module.Register("test_cmd", null!),
+            Throws.TypeOf<ArgumentNullException>()
         );
+    }
 
-        await commandSystemService.LastHandler!(context);
+    [Test]
+    public void Register_ShouldThrow_WhenNameIsEmpty()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+        var closure = new Script().DoString("return function(_) end").Function;
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(script.Globals.Get("captured_command").CastToString(), Is.EqualTo("lua_cmd one two"));
-                Assert.That(script.Globals.Get("captured_is_in_game").CastToBool(), Is.True);
-                Assert.That(script.Globals.Get("captured_session_id").CastToNumber(), Is.EqualTo(42));
-                Assert.That(script.Globals.Get("captured_arg_count").CastToNumber(), Is.EqualTo(2));
-            }
+        Assert.That(
+            () => module.Register(string.Empty, closure),
+            Throws.TypeOf<ArgumentException>()
         );
     }
 }

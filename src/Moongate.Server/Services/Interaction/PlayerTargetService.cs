@@ -19,8 +19,7 @@ using Serilog;
 
 namespace Moongate.Server.Services.Interaction;
 
-[RegisterGameEventListener]
-[RegisterPacketHandler(PacketDefinition.TargetCursorCommandsPacket)]
+[RegisterGameEventListener, RegisterPacketHandler(PacketDefinition.TargetCursorCommandsPacket)]
 public class PlayerTargetService
     : IPlayerTargetService, IPacketListener, IGameEventListener<TargetRequestCursorEvent>, IMoongateService
 {
@@ -49,6 +48,48 @@ public class PlayerTargetService
         _timerService = timerService;
     }
 
+    public async Task HandleAsync(TargetRequestCursorEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        await SendTargetCursorInternalAsync(
+            gameEvent.SessionId,
+            gameEvent.Callback,
+            gameEvent.SelectionType,
+            gameEvent.CursorType,
+            false
+        );
+    }
+
+    public async Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+    {
+        if (packet is TargetCursorCommandsPacket targetCursorCommandsPacket)
+        {
+            await DispatchCursorResponseAsync(session, targetCursorCommandsPacket);
+        }
+
+        return true;
+    }
+
+    public async Task SendCancelTargetCursorAsync(long sessionId, Serial cursorId)
+    {
+        if (_pendingCursors.TryRemove(cursorId, out _))
+        {
+            var cancelPacket = new TargetCursorCommandsPacket(
+                TargetCursorSelectionType.SelectLocation,
+                cursorId,
+                TargetCursorType.CancelCurrentTargeting
+            );
+            _outgoingPacketQueue.Enqueue(sessionId, cancelPacket);
+        }
+    }
+
+    public async Task<Serial> SendTargetCursorAsync(
+        long sessionId,
+        Action<PendingCursorCallback> callback,
+        TargetCursorSelectionType selectionType = TargetCursorSelectionType.SelectLocation,
+        TargetCursorType cursorType = TargetCursorType.Neutral
+    )
+        => await SendTargetCursorInternalAsync(sessionId, callback, selectionType, cursorType, true);
+
     public Task StartAsync()
     {
         _timerService.RegisterTimer(
@@ -58,6 +99,39 @@ public class PlayerTargetService
             TimeSpan.FromMinutes(1),
             true
         );
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+        => Task.CompletedTask;
+
+    private Task DispatchCursorResponseAsync(GameSession session, TargetCursorCommandsPacket targetCursorResponsePacket)
+    {
+        if (_pendingCursors.TryRemove(targetCursorResponsePacket.CursorId, out var pendingCursor))
+        {
+            try
+            {
+                pendingCursor.Callback(new(targetCursorResponsePacket));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(
+                    ex,
+                    "Error executing pending cursor callback for cursor id {cursorId} in session {sessionId}",
+                    targetCursorResponsePacket.CursorId,
+                    session.SessionId
+                );
+            }
+        }
+        else
+        {
+            _logger.Warning(
+                "Received target cursor response with unknown cursor id {cursorId} from session {sessionId}",
+                targetCursorResponsePacket.CursorId,
+                session.SessionId
+            );
+        }
 
         return Task.CompletedTask;
     }
@@ -74,21 +148,6 @@ public class PlayerTargetService
                 _pendingCursors.TryRemove(kvp.Key, out _);
             }
         }
-    }
-
-    public Task StopAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public async Task<Serial> SendTargetCursorAsync(
-        long sessionId,
-        Action<PendingCursorCallback> callback,
-        TargetCursorSelectionType selectionType = TargetCursorSelectionType.SelectLocation,
-        TargetCursorType cursorType = TargetCursorType.Neutral
-    )
-    {
-        return await SendTargetCursorInternalAsync(sessionId, callback, selectionType, cursorType, publishEvent: true);
     }
 
     private async Task<Serial> SendTargetCursorInternalAsync(
@@ -126,69 +185,5 @@ public class PlayerTargetService
         }
 
         return Serial.Zero;
-    }
-
-    public async Task SendCancelTargetCursorAsync(long sessionId, Serial cursorId)
-    {
-        if (_pendingCursors.TryRemove(cursorId, out _))
-        {
-            var cancelPacket = new TargetCursorCommandsPacket(
-                TargetCursorSelectionType.SelectLocation,
-                cursorId,
-                TargetCursorType.CancelCurrentTargeting
-            );
-            _outgoingPacketQueue.Enqueue(sessionId, cancelPacket);
-        }
-    }
-
-    public async Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
-    {
-        if (packet is TargetCursorCommandsPacket targetCursorCommandsPacket)
-        {
-            await DispatchCursorResponseAsync(session, targetCursorCommandsPacket);
-        }
-
-        return true;
-    }
-
-    private Task DispatchCursorResponseAsync(GameSession session, TargetCursorCommandsPacket targetCursorResponsePacket)
-    {
-        if (_pendingCursors.TryRemove(targetCursorResponsePacket.CursorId, out var pendingCursor))
-        {
-            try
-            {
-                pendingCursor.Callback(new PendingCursorCallback(targetCursorResponsePacket));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(
-                    ex,
-                    "Error executing pending cursor callback for cursor id {cursorId} in session {sessionId}",
-                    targetCursorResponsePacket.CursorId,
-                    session.SessionId
-                );
-            }
-        }
-        else
-        {
-            _logger.Warning(
-                "Received target cursor response with unknown cursor id {cursorId} from session {sessionId}",
-                targetCursorResponsePacket.CursorId,
-                session.SessionId
-            );
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public async Task HandleAsync(TargetRequestCursorEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await SendTargetCursorInternalAsync(
-            gameEvent.SessionId,
-            gameEvent.Callback,
-            gameEvent.SelectionType,
-            gameEvent.CursorType,
-            publishEvent: false
-        );
     }
 }

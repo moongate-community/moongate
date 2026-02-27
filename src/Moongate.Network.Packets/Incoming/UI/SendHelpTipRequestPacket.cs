@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.UI;
 
 [PacketHandler(0xB6, PacketSizing.Fixed, Length = 9, Description = "Send Help/Tip Request")]
+
 /// <summary>
 /// Represents SendHelpTipRequestPacket.
 /// </summary>

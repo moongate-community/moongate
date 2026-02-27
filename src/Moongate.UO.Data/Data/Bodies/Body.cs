@@ -10,7 +10,9 @@ public struct Body
     public static UOBodyType[] Types;
 
     public Body(int bodyID)
-        => BodyID = bodyID;
+    {
+        BodyID = bodyID;
+    }
 
     public UOBodyType Type
     {

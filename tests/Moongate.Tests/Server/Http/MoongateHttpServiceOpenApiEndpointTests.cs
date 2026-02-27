@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
-using Moongate.Server.Http.Data;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Persistence.Entities;

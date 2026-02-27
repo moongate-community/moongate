@@ -7,6 +7,7 @@ using Moongate.UO.Data.Ids;
 namespace Moongate.Network.Packets.Incoming.Interaction;
 
 [PacketHandler(0x07, PacketSizing.Fixed, Length = 7, Description = "Pick Up Item")]
+
 /// <summary>
 /// Represents PickUpItemPacket.
 /// </summary>

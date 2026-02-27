@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Login;

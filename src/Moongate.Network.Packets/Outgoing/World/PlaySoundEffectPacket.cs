@@ -7,6 +7,7 @@ using Moongate.UO.Data.Geometry;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0x54, PacketSizing.Fixed, Length = 12, Description = "Play Sound Effect")]
+
 /// <summary>
 /// Represents Play Sound Effect packet (0x54).
 /// </summary>

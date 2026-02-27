@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Books;
 
 [PacketHandler(0x93, PacketSizing.Fixed, Length = 99, Description = "Book Header ( Old )")]
+
 /// <summary>
 /// Represents BookHeaderOldPacket.
 /// </summary>

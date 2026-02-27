@@ -1,6 +1,5 @@
 using DryIoc;
 using Moongate.Abstractions.Data.Internal;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Extensions.Bootstrap;
 using Moongate.Server.Interfaces.Services.Events;

@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json;
@@ -12,13 +13,16 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents ContainersDataLoader.
 /// </summary>
+[RegisterFileLoader(11)]
 public class ContainersDataLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly ILogger _logger = Log.ForContext<ContainersDataLoader>();
 
     public ContainersDataLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Serilog;
@@ -10,6 +11,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Loads startup templates from <c>templates/startup</c> into <see cref="IStartupTemplateService" />.
 /// </summary>
+[RegisterFileLoader(14)]
 public sealed class StartupTemplateLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<StartupTemplateLoader>();

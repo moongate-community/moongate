@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Interaction;
 
 [PacketHandler(0x05, PacketSizing.Fixed, Length = 5, Description = "Request Attack")]
+
 /// <summary>
 /// Represents RequestAttackPacket.
 /// </summary>

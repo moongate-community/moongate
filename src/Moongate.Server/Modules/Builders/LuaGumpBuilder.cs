@@ -10,40 +10,11 @@ public sealed class LuaGumpBuilder
     private readonly StringBuilder _layout = new();
     private readonly List<string> _texts = [];
 
-    public LuaGumpBuilder ResizePic(int x, int y, int gumpId, int width, int height)
-    {
-        AppendToken($"{{ resizepic {x} {y} {gumpId} {width} {height} }}");
+    public string BuildLayout()
+        => _layout.ToString();
 
-        return this;
-    }
-
-    public LuaGumpBuilder Text(int x, int y, int hue, string text)
-    {
-        var index = _texts.Count;
-        _texts.Add(text ?? string.Empty);
-        AppendToken($"{{ text {x} {y} {hue} {index} }}");
-
-        return this;
-    }
-
-    public LuaGumpBuilder HtmlLocalized(
-        int x,
-        int y,
-        int width,
-        int height,
-        string text,
-        bool background = true,
-        bool scrollbar = false
-    )
-    {
-        var index = _texts.Count;
-        _texts.Add(text ?? string.Empty);
-        AppendToken(
-            $"{{ htmlgump {x} {y} {width} {height} {index} {(background ? 1 : 0)} {(scrollbar ? 1 : 0)} }}"
-        );
-
-        return this;
-    }
+    public List<string> BuildTexts()
+        => [.._texts];
 
     public LuaGumpBuilder Button(int x, int y, int normalId, int pressedId, int buttonId)
     {
@@ -66,6 +37,23 @@ public sealed class LuaGumpBuilder
         return this;
     }
 
+    public LuaGumpBuilder HtmlLocalized(
+        int x,
+        int y,
+        int width,
+        int height,
+        string text,
+        bool background = true,
+        bool scrollbar = false
+    )
+    {
+        var index = _texts.Count;
+        _texts.Add(text ?? string.Empty);
+        AppendToken($"{{ htmlgump {x} {y} {width} {height} {index} {(background ? 1 : 0)} {(scrollbar ? 1 : 0)} }}");
+
+        return this;
+    }
+
     public LuaGumpBuilder NoClose()
     {
         AppendToken("{ noclose }");
@@ -80,11 +68,21 @@ public sealed class LuaGumpBuilder
         return this;
     }
 
-    public string BuildLayout()
-        => _layout.ToString();
+    public LuaGumpBuilder ResizePic(int x, int y, int gumpId, int width, int height)
+    {
+        AppendToken($"{{ resizepic {x} {y} {gumpId} {width} {height} }}");
 
-    public List<string> BuildTexts()
-        => [.._texts];
+        return this;
+    }
+
+    public LuaGumpBuilder Text(int x, int y, int hue, string text)
+    {
+        var index = _texts.Count;
+        _texts.Add(text ?? string.Empty);
+        AppendToken($"{{ text {x} {y} {hue} {index} }}");
+
+        return this;
+    }
 
     private void AppendToken(string token)
     {

@@ -10,6 +10,7 @@ namespace Moongate.Server.Json;
  ), JsonSerializable(typeof(MoongateConfig)), JsonSerializable(typeof(MoongateHttpConfig)),
  JsonSerializable(typeof(MoongateGameConfig)), JsonSerializable(typeof(MoongateMetricsConfig)),
  JsonSerializable(typeof(MoongatePersistenceConfig)), JsonSerializable(typeof(MoongateSpatialConfig))]
+
 /// <summary>
 /// Represents MoongateServerJsonContext.
 /// </summary>

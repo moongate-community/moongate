@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json.Context;
@@ -11,13 +12,16 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents ExpansionLoader.
 /// </summary>
+[RegisterFileLoader(3)]
 public class ExpansionLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly ILogger _logger = Log.ForContext<ExpansionLoader>();
 
     public ExpansionLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

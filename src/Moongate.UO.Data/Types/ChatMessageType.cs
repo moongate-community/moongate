@@ -4,6 +4,7 @@ namespace Moongate.UO.Data.Types;
 /// Speech types for Unicode Speech Packet
 /// </summary>
 [Flags]
+
 /// <summary>
 /// Represents ChatMessageType.
 /// </summary>

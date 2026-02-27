@@ -8,6 +8,7 @@ using Moongate.UO.Data.Ids;
 namespace Moongate.Network.Packets.Incoming.Interaction;
 
 [PacketHandler(0x08, PacketSizing.Fixed, Length = 14, Description = "Drop Item")]
+
 /// <summary>
 /// Represents DropItemPacket.
 /// </summary>

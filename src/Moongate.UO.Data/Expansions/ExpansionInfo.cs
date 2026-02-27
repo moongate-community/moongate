@@ -22,7 +22,9 @@ public class ExpansionInfo
         int mobileStatusVersion,
         UOMapSelectionFlags mapSelectionFlags
     ) : this(id, name, supportedFeatures, charListFlags, customHousingFlag, mobileStatusVersion, mapSelectionFlags)
-        => ClientFlags = clientFlags;
+    {
+        ClientFlags = clientFlags;
+    }
 
     public ExpansionInfo(
         int id,
@@ -34,7 +36,9 @@ public class ExpansionInfo
         int mobileStatusVersion,
         UOMapSelectionFlags mapSelectionFlags
     ) : this(id, name, supportedFeatures, charListFlags, customHousingFlag, mobileStatusVersion, mapSelectionFlags)
-        => RequiredClient = requiredClient;
+    {
+        RequiredClient = requiredClient;
+    }
 
     [JsonConstructor]
     public ExpansionInfo(

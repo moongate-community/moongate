@@ -1,5 +1,4 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 
 namespace Moongate.Server.Interfaces.Services.Events;

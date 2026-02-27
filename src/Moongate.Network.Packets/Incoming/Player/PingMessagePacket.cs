@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Player;
 
 [PacketHandler(0x73, PacketSizing.Fixed, Length = 2, Description = "Ping Message")]
+
 /// <summary>
 /// Represents PingMessagePacket.
 /// </summary>
@@ -18,7 +19,9 @@ public class PingMessagePacket : BaseGameNetworkPacket
 
     public PingMessagePacket(byte sequence)
         : this()
-        => Sequence = sequence;
+    {
+        Sequence = sequence;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

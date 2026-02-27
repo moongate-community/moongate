@@ -15,6 +15,18 @@ namespace Moongate.Tests.Server.Services.Entities;
 
 public class MobileServiceTests
 {
+    private sealed class TestMobileFactoryService : IMobileFactoryService
+    {
+        public Func<string, Serial?, UOMobileEntity> CreateFromTemplateImpl { get; init; } =
+            (_, _) => new();
+
+        public UOMobileEntity CreateMobileFromTemplate(string mobileTemplateId, Serial? accountId = null)
+            => CreateFromTemplateImpl(mobileTemplateId, accountId);
+
+        public UOMobileEntity CreatePlayerMobile(CharacterCreationPacket packet, Serial accountId)
+            => throw new NotSupportedException();
+    }
+
     [Test]
     public async Task CreateOrUpdateAsync_ShouldAllocateSerial_WhenMissing()
     {
@@ -39,29 +51,6 @@ public class MobileServiceTests
                 Assert.That(saved!.Name, Is.EqualTo("spawned"));
             }
         );
-    }
-
-    [Test]
-    public async Task GetAsync_ShouldReturnPersistedMobile()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var factory = new TestMobileFactoryService();
-        IMobileService service = new MobileService(persistence, factory);
-        var id = persistence.UnitOfWork.AllocateNextMobileId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(
-            new()
-            {
-                Id = id,
-                Name = "npc-one"
-            }
-        );
-
-        var mobile = await service.GetAsync(id);
-
-        Assert.That(mobile, Is.Not.Null);
-        Assert.That(mobile!.Name, Is.EqualTo("npc-one"));
     }
 
     [Test]
@@ -94,6 +83,29 @@ public class MobileServiceTests
     }
 
     [Test]
+    public async Task GetAsync_ShouldReturnPersistedMobile()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        IMobileService service = new MobileService(persistence, factory);
+        var id = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = id,
+                Name = "npc-one"
+            }
+        );
+
+        var mobile = await service.GetAsync(id);
+
+        Assert.That(mobile, Is.Not.Null);
+        Assert.That(mobile!.Name, Is.EqualTo("npc-one"));
+    }
+
+    [Test]
     public async Task SpawnFromTemplateAsync_ShouldUseFactoryAndPersistMobile()
     {
         using var temp = new TempDirectory();
@@ -102,21 +114,21 @@ public class MobileServiceTests
         var factory = new TestMobileFactoryService
         {
             CreateFromTemplateImpl = (templateId, accountId) =>
-                new UOMobileEntity
-                {
-                    Id = expectedId,
-                    Name = $"template:{templateId}",
-                    AccountId = accountId ?? Serial.Zero
-                }
+                                         new()
+                                         {
+                                             Id = expectedId,
+                                             Name = $"template:{templateId}",
+                                             AccountId = accountId ?? Serial.Zero
+                                         }
         };
         IMobileService service = new MobileService(persistence, factory);
 
         var spawned = await service.SpawnFromTemplateAsync(
-            "orc",
-            new Point3D(100, 200, 7),
-            mapId: 1,
-            accountId: (Serial)25
-        );
+                          "orc",
+                          new(100, 200, 7),
+                          1,
+                          (Serial)25
+                      );
         var saved = await persistence.UnitOfWork.Mobiles.GetByIdAsync(expectedId);
 
         Assert.Multiple(
@@ -152,17 +164,5 @@ public class MobileServiceTests
         await persistence.StartAsync();
 
         return persistence;
-    }
-
-    private sealed class TestMobileFactoryService : IMobileFactoryService
-    {
-        public Func<string, Serial?, UOMobileEntity> CreateFromTemplateImpl { get; init; } =
-            (_, _) => new UOMobileEntity();
-
-        public UOMobileEntity CreateMobileFromTemplate(string mobileTemplateId, Serial? accountId = null)
-            => CreateFromTemplateImpl(mobileTemplateId, accountId);
-
-        public UOMobileEntity CreatePlayerMobile(CharacterCreationPacket packet, Serial accountId)
-            => throw new NotSupportedException();
     }
 }

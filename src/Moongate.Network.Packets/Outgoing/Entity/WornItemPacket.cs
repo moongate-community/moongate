@@ -8,6 +8,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x2E, PacketSizing.Fixed, Length = 15, Description = "Worn Item")]
+
 /// <summary>
 /// Represents WornItemPacket.
 /// </summary>

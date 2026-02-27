@@ -27,15 +27,36 @@ public class MoongateHttpServiceOptionsTests
     [Test]
     public void Constructor_WhenDirectoriesConfigIsMissing_ShouldThrowArgumentException()
     {
-        var ex = Assert.Throws<ArgumentException>(
-            () => _ = new MoongateHttpService(
-                      new()
-                      {
-                      }
-                  )
-        );
+        var ex = Assert.Throws<ArgumentException>(() => _ = new MoongateHttpService(new()));
 
         Assert.That(ex!.Message, Does.Contain("DirectoriesConfig"));
+    }
+
+    [Test]
+    public void Constructor_WhenOptionalServicesAreMissing_ShouldCreateInstance()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+
+        var instance = new MoongateHttpService(new() { DirectoriesConfig = directories });
+
+        Assert.That(instance, Is.Not.Null);
+    }
+
+    [Test]
+    public void Constructor_WhenOptionalServicesAreNotConfigured_ShouldCreateInstance()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+
+        var instance = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories
+            }
+        );
+
+        Assert.That(instance, Is.Not.Null);
     }
 
     [Test]
@@ -80,32 +101,5 @@ public class MoongateHttpServiceOptionsTests
         );
 
         Assert.That(ex!.Message, Does.Contain("1-65535"));
-    }
-
-    [Test]
-    public void Constructor_WhenOptionalServicesAreNotConfigured_ShouldCreateInstance()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-
-        var instance = new MoongateHttpService(
-            new()
-            {
-                DirectoriesConfig = directories
-            }
-        );
-
-        Assert.That(instance, Is.Not.Null);
-    }
-
-    [Test]
-    public void Constructor_WhenOptionalServicesAreMissing_ShouldCreateInstance()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-
-        var instance = new MoongateHttpService(new() { DirectoriesConfig = directories });
-
-        Assert.That(instance, Is.Not.Null);
     }
 }

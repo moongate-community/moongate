@@ -73,8 +73,6 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public string ScriptId { get; set; }
 
-    public bool Stackable { get; set; }
-
     public List<string> Tags { get; set; } = [];
 
     public decimal Weight { get; set; }

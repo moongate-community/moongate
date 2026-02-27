@@ -7,6 +7,7 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x3C, PacketSizing.Variable, Description = "Add Multiple Items To Container")]
+
 /// <summary>
 /// Represents AddMultipleItemsToContainerPacket.
 /// </summary>
@@ -19,7 +20,9 @@ public class AddMultipleItemsToContainerPacket : BaseGameNetworkPacket
 
     public AddMultipleItemsToContainerPacket(UOItemEntity container)
         : this()
-        => Container = container;
+    {
+        Container = container;
+    }
 
     public override void Write(ref SpanWriter writer)
     {

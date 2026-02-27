@@ -7,6 +7,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.World;
 
 [PacketHandler(0x6D, PacketSizing.Fixed, Length = 3, Description = "Set Music")]
+
 /// <summary>
 /// Represents SetMusicPacket.
 /// </summary>
@@ -19,7 +20,9 @@ public class SetMusicPacket : BaseGameNetworkPacket
 
     public SetMusicPacket(int musicId)
         : this()
-        => MusicId = musicId;
+    {
+        MusicId = musicId;
+    }
 
     public SetMusicPacket(MusicName music)
         : this((int)music) { }

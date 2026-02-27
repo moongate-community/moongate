@@ -7,6 +7,7 @@ using Moongate.Server.Services.Packets;
 namespace Moongate.Benchmarks;
 
 [MemoryDiagnoser]
+
 /// <summary>
 /// Represents QueueThroughputBenchmark.
 /// </summary>

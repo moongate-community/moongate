@@ -15,7 +15,10 @@ public class LootTemplatePolymorphicTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(LootTemplateDefinitionBase[])), Is.True);
+                Assert.That(
+                    JsonContextTypeResolver.IsTypeRegistered(context, typeof(LootTemplateDefinitionBase[])),
+                    Is.True
+                );
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(LootTemplateDefinition[])), Is.True);
             }
         );

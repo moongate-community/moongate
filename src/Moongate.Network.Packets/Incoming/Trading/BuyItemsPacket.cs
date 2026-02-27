@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Trading;
 
 [PacketHandler(0x3B, PacketSizing.Variable, Description = "Buy Item(s)")]
+
 /// <summary>
 /// Represents BuyItemsPacket.
 /// </summary>

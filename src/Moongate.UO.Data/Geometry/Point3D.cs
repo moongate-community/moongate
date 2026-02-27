@@ -13,7 +13,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
  *************************************************************************/
 
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Moongate.Core.Extensions.Strings;
 using Moongate.UO.Data.Interfaces.Geometry;
@@ -28,8 +27,6 @@ public struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
       IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
 {
-
-
     public int X { get; set; }
     public int Y { get; set; }
     public int Z { get; set; }

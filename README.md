@@ -56,6 +56,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Quick Start](#quick-start)
 - [Command System](#command-system)
 - [Scripting](#scripting)
+- [Item ScriptId Dispatch](#item-scriptid-dispatch)
 - [Scripts](#scripts)
 - [Benchmarks](#benchmarks)
 - [Docker](#docker)
@@ -278,6 +279,7 @@ Current generator project:
   - Generates packet table/registry wiring and `PacketDefinition` constants from packet metadata.
   - Generates bootstrap packet-listener registrations from `[RegisterPacketHandler(...)]`.
   - Generates bootstrap game-event-listener subscriptions from `[RegisterGameEventListener]`.
+  - Generates bootstrap file-loader registrations from `[RegisterFileLoader(order)]`.
   - Generates metric snapshot mappers from metric-decorated models.
   - Generates script module registries from `[ScriptModule(...)]` in `Moongate.Scripting` and `Moongate.Server`.
   - Generates `VersionUtils` metadata for server version/codename.
@@ -458,6 +460,41 @@ Example script callback (for example in `<root>/scripts/init.lua`):
 ```lua
 function on_player_connected(p)
  log.info("Toh! un player s'e' connesso")
+end
+```
+
+### Item `ScriptId` Dispatch
+
+Items can define `scriptId` in templates and runtime entities (`UOItemEntity.ScriptId`).
+`IItemScriptDispatcher` builds the Lua callback name from `scriptId + hook` and dispatches `ItemScriptContext`.
+
+Function naming convention:
+
+- `on_item_<script_id_normalized>_<hook_normalized>`
+
+Example:
+
+- `scriptId = "items.healing-potion"`
+- `hook = "on_use"`
+- Lua function called: `on_item_items_healing_potion_on_use`
+
+Example template:
+
+```json
+{
+  "type": "item",
+  "id": "healing_potion",
+  "name": "a healing potion",
+  "itemId": "0x0F0C",
+  "scriptId": "items.healing_potion"
+}
+```
+
+Example Lua:
+
+```lua
+function on_item_items_healing_potion_on_use(ctx)
+  log.info("Potion used by item " .. tostring(ctx.Item.Id))
 end
 ```
 

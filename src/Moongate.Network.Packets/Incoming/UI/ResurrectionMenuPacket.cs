@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.UI;
 
 [PacketHandler(0x2C, PacketSizing.Fixed, Length = 2, Description = "Resurrection Menu")]
+
 /// <summary>
 /// Represents ResurrectionMenuPacket.
 /// </summary>

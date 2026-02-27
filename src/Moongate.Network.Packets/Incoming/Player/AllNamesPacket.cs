@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Player;
 
 [PacketHandler(0x98, PacketSizing.Variable, Description = "All Names (3D Client Only)")]
+
 /// <summary>
 /// Represents AllNamesPacket.
 /// </summary>

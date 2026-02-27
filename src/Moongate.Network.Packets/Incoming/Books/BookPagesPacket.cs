@@ -7,6 +7,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Books;
 
 [PacketHandler(0x66, PacketSizing.Variable, Description = "Books (Pages)")]
+
 /// <summary>
 /// Represents BookPagesPacket.
 /// </summary>
@@ -20,7 +21,9 @@ public class BookPagesPacket : BaseGameNetworkPacket
 
     public BookPagesPacket()
         : base(0x66)
-        => Pages = new();
+    {
+        Pages = new();
+    }
 
     public override void Write(ref SpanWriter writer)
     {

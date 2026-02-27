@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.System;
 
 [PacketHandler(0xD0, PacketSizing.Variable, Description = "Configuration File")]
+
 /// <summary>
 /// Represents ConfigurationFilePacket.
 /// </summary>

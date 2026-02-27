@@ -10,6 +10,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0xF3, PacketSizing.Fixed, Length = 24, Description = "Object Information (SA)")]
+
 /// <summary>
 /// Represents Object Information (SA) packet (0xF3).
 /// </summary>
@@ -44,7 +45,12 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
     public ObjectInformationPacket()
         : base(0xF3, 24) { }
 
-    public ObjectInformationPacket(UOItemEntity item, byte facing = 0, byte layer = 0, ObjectInfoFlags flags = ObjectInfoFlags.None)
+    public ObjectInformationPacket(
+        UOItemEntity item,
+        byte facing = 0,
+        byte layer = 0,
+        ObjectInfoFlags flags = ObjectInfoFlags.None
+    )
         : this()
     {
         ArgumentNullException.ThrowIfNull(item);
@@ -109,6 +115,7 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
         }
 
         var command = reader.ReadUInt16();
+
         if (command != Command)
         {
             return false;

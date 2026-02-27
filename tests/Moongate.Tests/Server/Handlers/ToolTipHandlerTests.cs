@@ -20,7 +20,9 @@ public class ToolTipHandlerTests
     private sealed class TestPersistenceService : IPersistenceService
     {
         public TestPersistenceService()
-            => UnitOfWork = new TestPersistenceUnitOfWork();
+        {
+            UnitOfWork = new TestPersistenceUnitOfWork();
+        }
 
         public IPersistenceUnitOfWork UnitOfWork { get; }
 

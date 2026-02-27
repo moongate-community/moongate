@@ -9,7 +9,9 @@ public sealed class MiddlewarePipelineSendPrefixMiddleware : INetMiddleware
     private readonly string _prefix;
 
     public MiddlewarePipelineSendPrefixMiddleware(string prefix)
-        => _prefix = prefix;
+    {
+        _prefix = prefix;
+    }
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
         MoongateTCPClient? client,

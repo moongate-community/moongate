@@ -10,6 +10,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0xA9, PacketSizing.Variable, Description = "Characters / Starting Locations")]
+
 /// <summary>
 /// Represents CharactersStartingLocationsPacket.
 /// </summary>

@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Context;
 using Moongate.UO.Data.Files;
 using Moongate.UO.Data.Interfaces.FileLoaders;
@@ -9,6 +10,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents ClientVersionLoader.
 /// </summary>
+[RegisterFileLoader(1)]
 public class ClientVersionLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<ClientVersionLoader>();

@@ -10,6 +10,7 @@ using Moongate.Server.Listeners.Base;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket)]
+
 /// <summary>
 /// Represents SpeechHandler.
 /// </summary>
@@ -19,7 +20,9 @@ public class SpeechHandler : BasePacketListener
 
     public SpeechHandler(IOutgoingPacketQueue outgoingPacketQueue, ISpeechService speechService)
         : base(outgoingPacketQueue)
-        => _speechService = speechService;
+    {
+        _speechService = speechService;
+    }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

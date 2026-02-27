@@ -9,7 +9,9 @@ namespace Moongate.Server.Metrics.Data.Attributes;
 public sealed class MetricAttribute : Attribute
 {
     public MetricAttribute(string name)
-        => Name = name;
+    {
+        Name = name;
+    }
 
     /// <summary>
     /// Gets the metric name emitted for the annotated property.

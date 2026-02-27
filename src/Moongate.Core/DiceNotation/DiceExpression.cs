@@ -22,7 +22,9 @@ public class DiceExpression
     /// The root of the expression tree -- by evaluating this term, all others will be evaluated recursively.
     /// </param>
     public DiceExpression(ITerm rootTerm)
-        => RootTerm = rootTerm;
+    {
+        RootTerm = rootTerm;
+    }
 
     /// <summary>
     /// Returns the maximum possible result of the dice expression.

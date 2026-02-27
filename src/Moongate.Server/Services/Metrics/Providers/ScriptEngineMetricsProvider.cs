@@ -12,7 +12,9 @@ public sealed class ScriptEngineMetricsProvider : IMetricProvider
     private readonly IScriptEngineService _scriptEngineService;
 
     public ScriptEngineMetricsProvider(IScriptEngineService scriptEngineService)
-        => _scriptEngineService = scriptEngineService;
+    {
+        _scriptEngineService = scriptEngineService;
+    }
 
     public string ProviderName => "scripting";
 

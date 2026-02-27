@@ -18,7 +18,9 @@ internal sealed class Gen2GcCallback : CriticalFinalizerObject
     private GCHandle _weakTargetObj;
 
     private Gen2GcCallback(Func<bool> callback)
-        => _callback0 = callback;
+    {
+        _callback0 = callback;
+    }
 
     private Gen2GcCallback(Func<object, bool> callback, object targetObj)
     {

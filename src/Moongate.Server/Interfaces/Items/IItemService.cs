@@ -1,8 +1,8 @@
+using Moongate.Server.Data.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
-using Moongate.Server.Data.Items;
 
 namespace Moongate.Server.Interfaces.Items;
 
@@ -39,11 +39,32 @@ public interface IItemService
     Task<Serial> CreateItemAsync(UOItemEntity item);
 
     /// <summary>
+    /// Creates an item from template and persists it.
+    /// </summary>
+    /// <param name="itemTemplateId">Item template identifier.</param>
+    /// <returns>The created and persisted item entity.</returns>
+    Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId);
+
+    /// <summary>
     /// Deletes an item by serial identifier.
     /// </summary>
     /// <param name="itemId">Item serial identifier.</param>
     /// <returns><see langword="true" /> when deleted; otherwise <see langword="false" />.</returns>
     Task<bool> DeleteItemAsync(Serial itemId);
+
+    /// <summary>
+    /// Drops an item to ground and returns the drop context used for domain events.
+    /// </summary>
+    /// <param name="itemId">Item serial identifier.</param>
+    /// <param name="location">Target world location.</param>
+    /// <param name="mapId">Target map id.</param>
+    /// <returns>Drop context when operation succeeds; otherwise <see langword="null" />.</returns>
+    Task<DropItemToGroundResult?> DropItemToGroundAsync(
+        Serial itemId,
+        Point3D location,
+        int mapId,
+        long sessionId = 0
+    );
 
     /// <summary>
     /// Equips an item on a mobile at the specified layer.
@@ -55,20 +76,6 @@ public interface IItemService
     Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer);
 
     /// <summary>
-    /// Loads an item entity by serial identifier.
-    /// </summary>
-    /// <param name="itemId">Item serial identifier.</param>
-    /// <returns>The item entity when found; otherwise <see langword="null" />.</returns>
-    Task<UOItemEntity?> GetItemAsync(Serial itemId);
-
-    /// <summary>
-    /// Loads all items contained by the specified container serial.
-    /// </summary>
-    /// <param name="containerId">Container item serial identifier.</param>
-    /// <returns>List of contained item entities.</returns>
-    Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId);
-
-    /// <summary>
     /// Loads ground items persisted in the specified map sector.
     /// </summary>
     /// <param name="mapId">Map id.</param>
@@ -78,13 +85,41 @@ public interface IItemService
     Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY);
 
     /// <summary>
+    /// Loads an item entity by serial identifier.
+    /// </summary>
+    /// <param name="itemId">Item serial identifier.</param>
+    /// <returns>The item entity when found; otherwise <see langword="null" />.</returns>
+    Task<UOItemEntity?> GetItemAsync(Serial itemId);
+
+    /// <summary>
+    /// Tries to load an item entity by serial identifier.
+    /// </summary>
+    /// <param name="itemId">Item serial identifier.</param>
+    /// <returns>
+    /// Tuple result where <c>Found</c> indicates success and <c>Item</c> carries the loaded entity.
+    /// </returns>
+    Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId);
+
+    /// <summary>
+    /// Loads all items contained by the specified container serial.
+    /// </summary>
+    /// <param name="containerId">Container item serial identifier.</param>
+    /// <returns>List of contained item entities.</returns>
+    Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId);
+
+    /// <summary>
     /// Moves an item into a container at a specific container-local position.
     /// </summary>
     /// <param name="itemId">Item serial identifier.</param>
     /// <param name="containerId">Target container serial identifier.</param>
     /// <param name="position">Position inside target container.</param>
     /// <returns><see langword="true" /> when operation succeeds; otherwise <see langword="false" />.</returns>
-    Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position);
+    Task<bool> MoveItemToContainerAsync(
+        Serial itemId,
+        Serial containerId,
+        Point2D position,
+        long sessionId = 0
+    );
 
     /// <summary>
     /// Moves an item to world coordinates, detaching it from containers and equipment.
@@ -93,16 +128,12 @@ public interface IItemService
     /// <param name="location">Target world location.</param>
     /// <param name="mapId">Target map id.</param>
     /// <returns><see langword="true" /> when operation succeeds; otherwise <see langword="false" />.</returns>
-    Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId);
-
-    /// <summary>
-    /// Drops an item to ground and returns the drop context used for domain events.
-    /// </summary>
-    /// <param name="itemId">Item serial identifier.</param>
-    /// <param name="location">Target world location.</param>
-    /// <param name="mapId">Target map id.</param>
-    /// <returns>Drop context when operation succeeds; otherwise <see langword="null" />.</returns>
-    Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId);
+    Task<bool> MoveItemToWorldAsync(
+        Serial itemId,
+        Point3D location,
+        int mapId,
+        long sessionId = 0
+    );
 
     /// <summary>
     /// Inserts or updates an existing item.

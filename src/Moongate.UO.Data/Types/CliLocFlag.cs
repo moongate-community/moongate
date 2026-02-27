@@ -1,6 +1,7 @@
 namespace Moongate.UO.Data.Types;
 
 [Flags]
+
 /// <summary>
 /// Represents CliLocFlag.
 /// </summary>

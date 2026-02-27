@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Services.Events;

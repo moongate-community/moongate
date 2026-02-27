@@ -11,7 +11,9 @@ namespace Moongate.Server.Data.Session;
 public sealed class GameSession
 {
     public GameSession(GameNetworkSession networkSession)
-        => NetworkSession = networkSession;
+    {
+        NetworkSession = networkSession;
+    }
 
     /// <summary>
     /// Gets the underlying transport session.

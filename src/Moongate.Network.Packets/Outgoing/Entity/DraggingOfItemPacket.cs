@@ -8,6 +8,7 @@ using Moongate.UO.Data.Ids;
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
 [PacketHandler(0x23, PacketSizing.Fixed, Length = 26, Description = "Dragging Of Item")]
+
 /// <summary>
 /// Represents Dragging Of Item packet (0x23).
 /// This packet drives the drag animation only; it does not move item state.

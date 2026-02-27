@@ -15,6 +15,7 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.MegaClilocPacket)]
+
 /// <summary>
 /// Represents ToolTipHandler.
 /// </summary>
@@ -28,7 +29,9 @@ public class ToolTipHandler : BasePacketListener
         IPersistenceService persistenceService
     )
         : base(outgoingPacketQueue)
-        => _persistenceService = persistenceService;
+    {
+        _persistenceService = persistenceService;
+    }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.System;
 
 [PacketHandler(0xFA, PacketSizing.Fixed, Length = 1, Description = "Open UO Store")]
+
 /// <summary>
 /// Represents OpenUoStorePacket.
 /// </summary>

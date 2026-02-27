@@ -1,5 +1,5 @@
-using Moongate.UO.Data.Ids;
 using Moongate.Server.Data.Events.Base;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Data.Events.Characters;
 
@@ -23,5 +23,5 @@ public readonly record struct PlayerCharacterLoggedInEvent(
     /// Creates a player-character logged-in event with explicit timestamp.
     /// </summary>
     public PlayerCharacterLoggedInEvent(long sessionId, Serial accountId, Serial characterId, long timestamp)
-        : this(new GameEventBase(timestamp), sessionId, accountId, characterId) { }
+        : this(new(timestamp), sessionId, accountId, characterId) { }
 }

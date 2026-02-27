@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Attributes;
 using Moongate.UO.Data.Context;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json.Context;
@@ -12,6 +13,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Represents SkillLoader.
 /// </summary>
+[RegisterFileLoader(2)]
 public class SkillLoader : IFileLoader
 {
     private readonly DirectoriesConfig _directoriesConfig;
@@ -19,7 +21,9 @@ public class SkillLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<SkillLoader>();
 
     public SkillLoader(DirectoriesConfig directoriesConfig)
-        => _directoriesConfig = directoriesConfig;
+    {
+        _directoriesConfig = directoriesConfig;
+    }
 
     public async Task LoadAsync()
     {

@@ -19,7 +19,9 @@ public readonly struct Serial
     public static readonly Serial Zero = new(0);
 
     public Serial(uint serial)
-        => Value = serial;
+    {
+        Value = serial;
+    }
 
     public uint Value { get; }
 

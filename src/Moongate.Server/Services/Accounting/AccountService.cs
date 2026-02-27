@@ -18,7 +18,9 @@ public class AccountService : IAccountService
     private readonly IPersistenceService _persistenceService;
 
     public AccountService(IPersistenceService persistenceService)
-        => _persistenceService = persistenceService;
+    {
+        _persistenceService = persistenceService;
+    }
 
     public async Task<bool> CheckAccountExistsAsync(string username)
     {
@@ -106,64 +108,6 @@ public class AccountService : IAccountService
         return accounts.OrderBy(static a => a.Id.Value).ToList();
     }
 
-    public async Task<UOAccountEntity?> UpdateAccountAsync(
-        Serial accountId,
-        string? username = null,
-        string? password = null,
-        string? email = null,
-        AccountType? accountType = null,
-        bool? isLocked = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        var account = await _persistenceService.UnitOfWork.Accounts.GetByIdAsync(accountId, cancellationToken);
-        if (account is null)
-        {
-            return null;
-        }
-
-        if (!string.IsNullOrWhiteSpace(username) &&
-            !username.Equals(account.Username, StringComparison.Ordinal))
-        {
-            var exists = await _persistenceService.UnitOfWork.Accounts.ExistsAsync(
-                             a => a.Username == username && a.Id != accountId,
-                             cancellationToken
-                         );
-            if (exists)
-            {
-                _logger.Warning("Cannot update account {AccountId}: username {Username} already exists", accountId, username);
-
-                return null;
-            }
-
-            account.Username = username;
-        }
-
-        if (!string.IsNullOrWhiteSpace(password))
-        {
-            account.PasswordHash = HashUtils.HashPassword(password);
-        }
-
-        if (email is not null)
-        {
-            account.Email = email;
-        }
-
-        if (accountType.HasValue)
-        {
-            account.AccountType = accountType.Value;
-        }
-
-        if (isLocked.HasValue)
-        {
-            account.IsLocked = isLocked.Value;
-        }
-
-        await _persistenceService.UnitOfWork.Accounts.UpsertAsync(account, cancellationToken);
-
-        return account;
-    }
-
     public async Task<UOAccountEntity?> LoginAsync(string username, string password)
     {
         var account = await _persistenceService.UnitOfWork.Accounts.GetByUsernameAsync(username);
@@ -193,6 +137,70 @@ public class AccountService : IAccountService
         await _persistenceService.UnitOfWork.Accounts.UpsertAsync(account);
 
         _logger.Information("Successful login for account with username {Username}", username);
+
+        return account;
+    }
+
+    public async Task<UOAccountEntity?> UpdateAccountAsync(
+        Serial accountId,
+        string? username = null,
+        string? password = null,
+        string? email = null,
+        AccountType? accountType = null,
+        bool? isLocked = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var account = await _persistenceService.UnitOfWork.Accounts.GetByIdAsync(accountId, cancellationToken);
+
+        if (account is null)
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(username) &&
+            !username.Equals(account.Username, StringComparison.Ordinal))
+        {
+            var exists = await _persistenceService.UnitOfWork.Accounts.ExistsAsync(
+                             a => a.Username == username && a.Id != accountId,
+                             cancellationToken
+                         );
+
+            if (exists)
+            {
+                _logger.Warning(
+                    "Cannot update account {AccountId}: username {Username} already exists",
+                    accountId,
+                    username
+                );
+
+                return null;
+            }
+
+            account.Username = username;
+        }
+
+        if (!string.IsNullOrWhiteSpace(password))
+        {
+            account.PasswordHash = HashUtils.HashPassword(password);
+        }
+
+        if (email is not null)
+        {
+            account.Email = email;
+        }
+
+        if (accountType.HasValue)
+        {
+            account.AccountType = accountType.Value;
+        }
+
+        if (isLocked.HasValue)
+        {
+            account.IsLocked = isLocked.Value;
+        }
+
+        await _persistenceService.UnitOfWork.Accounts.UpsertAsync(account, cancellationToken);
 
         return account;
     }

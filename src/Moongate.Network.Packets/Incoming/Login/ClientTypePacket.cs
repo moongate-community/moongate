@@ -6,6 +6,7 @@ using Moongate.Network.Spans;
 namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xE1, PacketSizing.Variable, Description = "Client Type (KR/SA)")]
+
 /// <summary>
 /// Represents ClientTypePacket.
 /// </summary>

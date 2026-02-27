@@ -6,7 +6,6 @@ using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Version;
@@ -23,10 +22,9 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
-[RegisterGameEventListener]
-[RegisterPacketHandler(PacketDefinition.LoginSeedPacket), RegisterPacketHandler(PacketDefinition.AccountLoginPacket),
- RegisterPacketHandler(PacketDefinition.ServerSelectPacket), RegisterPacketHandler(PacketDefinition.GameLoginPacket),
- RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
+[RegisterGameEventListener, RegisterPacketHandler(PacketDefinition.LoginSeedPacket),
+ RegisterPacketHandler(PacketDefinition.AccountLoginPacket), RegisterPacketHandler(PacketDefinition.ServerSelectPacket),
+ RegisterPacketHandler(PacketDefinition.GameLoginPacket), RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
 
 /// <summary>
 /// Represents LoginHandler.
@@ -67,7 +65,27 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
                 ServerName = "Moongate"
             }
         );
+    }
 
+    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        {
+            Enqueue(session, SpeechMessageFactory.CreateSystem($"Welcome to {_serverConfig.Game.ShardName} !"));
+            Enqueue(
+                session,
+                SpeechMessageFactory.CreateSystem(
+                    $"Server is Moongate v{VersionUtils.Version} codename {VersionUtils.Codename}",
+                    SpeechHues.Red,
+                    2
+                )
+            );
+            Enqueue(session, SpeechMessageFactory.CreateSystem($"Current server time is {DateTime.UtcNow:HH:mm:ss} UTC"));
+            Enqueue(
+                session,
+                SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
+            );
+        }
     }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
@@ -214,24 +232,5 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         Enqueue(session, connectToServer);
 
         return true;
-    }
-
-    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
-        {
-            Enqueue(session, SpeechMessageFactory.CreateSystem($"Welcome to {_serverConfig.Game.ShardName} !"));
-            Enqueue(
-                session,
-                SpeechMessageFactory.CreateSystem(
-                    $"Server is Moongate v{VersionUtils.Version} codename {VersionUtils.Codename}", SpeechHues.Red, 2
-                )
-            );
-            Enqueue(session, SpeechMessageFactory.CreateSystem($"Current server time is {DateTime.UtcNow:HH:mm:ss} UTC"));
-            Enqueue(
-                session,
-                SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
-            );
-        }
     }
 }

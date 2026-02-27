@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Interfaces.Services.Events;
 
@@ -14,7 +13,9 @@ public abstract class BaseOutboundEventListener<TEvent> : IOutboundEventListener
     private readonly IGameEventBusService _gameEventBusService;
 
     protected BaseOutboundEventListener(IGameEventBusService gameEventBusService)
-        => _gameEventBusService = gameEventBusService;
+    {
+        _gameEventBusService = gameEventBusService;
+    }
 
     /// <inheritdoc />
     public Task HandleAsync(TEvent gameEvent, CancellationToken cancellationToken = default)

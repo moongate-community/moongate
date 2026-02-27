@@ -24,11 +24,7 @@ public sealed class TestAccountService : IAccountService
         (_, _) => Task.FromResult<UOAccountEntity?>(null);
 
     public Func<Serial, string?, string?, string?, AccountType?, bool?, CancellationToken, Task<UOAccountEntity?>>
-        UpdateAccountAsyncImpl
-    {
-        get;
-        init;
-    } = (_, _, _, _, _, _, _) => Task.FromResult<UOAccountEntity?>(null);
+        UpdateAccountAsyncImpl { get; init; } = (_, _, _, _, _, _, _) => Task.FromResult<UOAccountEntity?>(null);
 
     public Task<bool> CheckAccountExistsAsync(string username)
         => CheckAccountExistsAsyncImpl(username);

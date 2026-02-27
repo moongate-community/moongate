@@ -14,7 +14,9 @@ public sealed class MemoryPackSnapshotService : ISnapshotService
     private readonly string _snapshotFilePath;
 
     public MemoryPackSnapshotService(string snapshotFilePath)
-        => _snapshotFilePath = snapshotFilePath;
+    {
+        _snapshotFilePath = snapshotFilePath;
+    }
 
     public async ValueTask<WorldSnapshot?> LoadAsync(CancellationToken cancellationToken = default)
     {

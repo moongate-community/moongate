@@ -14,6 +14,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Handlers;
 
 [RegisterPacketHandler(PacketDefinition.GetPlayerStatusPacket)]
+
 /// <summary>
 /// Represents PlayerStatusHandler.
 /// </summary>
@@ -23,7 +24,9 @@ public class PlayerStatusHandler : BasePacketListener
 
     public PlayerStatusHandler(IOutgoingPacketQueue outgoingPacketQueue, ICharacterService characterService)
         : base(outgoingPacketQueue)
-        => _characterService = characterService;
+    {
+        _characterService = characterService;
+    }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

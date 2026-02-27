@@ -1,10 +1,10 @@
+using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Modules;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
-using Moongate.Server.Data.Items;
 
 namespace Moongate.Tests.Server.Modules;
 
@@ -36,11 +36,27 @@ public class ItemModuleTests
             return Task.FromResult((Serial)1u);
         }
 
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+        {
+            _ = itemTemplateId;
+
+            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
+        }
+
         public Task<bool> DeleteItemAsync(Serial itemId)
         {
             _ = itemId;
 
             return Task.FromResult(true);
+        }
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        {
+            _ = itemId;
+            _ = location;
+            _ = mapId;
+
+            return Task.FromResult<DropItemToGroundResult?>(null);
         }
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -52,20 +68,6 @@ public class ItemModuleTests
             return Task.FromResult(true);
         }
 
-        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
-        {
-            _ = itemId;
-
-            return Task.FromResult(ItemToReturn);
-        }
-
-        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
-        {
-            _ = containerId;
-
-            return Task.FromResult(new List<UOItemEntity>());
-        }
-
         public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
         {
             _ = mapId;
@@ -75,7 +77,24 @@ public class ItemModuleTests
             return Task.FromResult(new List<UOItemEntity>());
         }
 
-        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+        {
+            _ = itemId;
+
+            return Task.FromResult(ItemToReturn);
+        }
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((ItemToReturn is not null, ItemToReturn));
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+        {
+            _ = containerId;
+
+            return Task.FromResult(new List<UOItemEntity>());
+        }
+
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
         {
             _ = itemId;
             _ = containerId;
@@ -84,22 +103,13 @@ public class ItemModuleTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
         {
             _ = itemId;
             _ = location;
             _ = mapId;
 
             return Task.FromResult(true);
-        }
-
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
-        {
-            _ = itemId;
-            _ = location;
-            _ = mapId;
-
-            return Task.FromResult<DropItemToGroundResult?>(null);
         }
 
         public Task UpsertItemAsync(UOItemEntity item)
@@ -115,6 +125,17 @@ public class ItemModuleTests
 
             return Task.CompletedTask;
         }
+    }
+
+    [Test]
+    public void Get_WhenItemDoesNotExist_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+
+        var reference = module.Get(0x301);
+
+        Assert.That(reference, Is.Null);
     }
 
     [Test]
@@ -152,16 +173,5 @@ public class ItemModuleTests
                 Assert.That(reference.Hue, Is.EqualTo(0));
             }
         );
-    }
-
-    [Test]
-    public void Get_WhenItemDoesNotExist_ShouldReturnNull()
-    {
-        var itemService = new ItemModuleTestItemService();
-        var module = new ItemModule(itemService);
-
-        var reference = module.Get(0x301);
-
-        Assert.That(reference, Is.Null);
     }
 }
