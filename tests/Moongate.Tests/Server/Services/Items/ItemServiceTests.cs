@@ -406,6 +406,53 @@ public class ItemServiceTests
     }
 
     [Test]
+    public async Task TryToGetItemAsync_ShouldReturnFoundAndItem_WhenItemExists()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence);
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = itemId,
+                ItemId = 0x0EED,
+                Amount = 100
+            }
+        );
+
+        var result = await service.TryToGetItemAsync(itemId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Found, Is.True);
+                Assert.That(result.Item, Is.Not.Null);
+                Assert.That(result.Item!.Id, Is.EqualTo(itemId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryToGetItemAsync_ShouldReturnNotFoundAndNull_WhenItemMissing()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence);
+
+        var result = await service.TryToGetItemAsync((Serial)0x4000FFFFu);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Found, Is.False);
+                Assert.That(result.Item, Is.Null);
+            }
+        );
+    }
+
+    [Test]
     public async Task GetItemsInContainerAsync_ShouldReturnOnlyMatchingItems()
     {
         using var temp = new TempDirectory();

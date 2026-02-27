@@ -241,6 +241,14 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(itemId == ExistingItemId ? ItemToReturn : null);
         }
 
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+        {
+            LastRequestedItemId = itemId;
+            var item = itemId == ExistingItemId ? ItemToReturn : null;
+
+            return Task.FromResult((item is not null, item));
+        }
+
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
         {
             _ = containerId;

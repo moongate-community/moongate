@@ -77,6 +77,9 @@ public class ItemModuleTests
             return Task.FromResult(ItemToReturn);
         }
 
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((ItemToReturn is not null, ItemToReturn));
+
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
         {
             _ = containerId;

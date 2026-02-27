@@ -187,6 +187,13 @@ public sealed class ItemService : IItemService
     public Task<UOItemEntity?> GetItemAsync(Serial itemId)
         => GetItemHydratedAsync(itemId);
 
+    public async Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+    {
+        var item = await GetItemHydratedAsync(itemId);
+
+        return (item is not null, item);
+    }
+
     public async Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
     {
         var items = await _persistenceService.UnitOfWork.Items.QueryAsync(

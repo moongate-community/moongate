@@ -80,6 +80,15 @@ public interface IItemService
     Task<UOItemEntity?> GetItemAsync(Serial itemId);
 
     /// <summary>
+    /// Tries to load an item entity by serial identifier.
+    /// </summary>
+    /// <param name="itemId">Item serial identifier.</param>
+    /// <returns>
+    /// Tuple result where <c>Found</c> indicates success and <c>Item</c> carries the loaded entity.
+    /// </returns>
+    Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId);
+
+    /// <summary>
     /// Loads all items contained by the specified container serial.
     /// </summary>
     /// <param name="containerId">Container item serial identifier.</param>

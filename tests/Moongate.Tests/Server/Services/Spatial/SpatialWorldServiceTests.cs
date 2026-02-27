@@ -58,6 +58,13 @@ public sealed class SpatialWorldServiceTests
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
             => Task.FromResult(ItemsById.TryGetValue(itemId, out var item) ? item : null);
 
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+        {
+            var found = ItemsById.TryGetValue(itemId, out var item);
+
+            return Task.FromResult((found, item));
+        }
+
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => throw new NotSupportedException();
 
