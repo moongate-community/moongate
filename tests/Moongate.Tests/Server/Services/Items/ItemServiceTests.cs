@@ -605,6 +605,59 @@ public class ItemServiceTests
     }
 
     [Test]
+    public async Task MoveItemToContainerAsync_ShouldPreserveExistingContainedItems_WhenContainerReferencesAreNotHydrated()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var backpackId = persistence.UnitOfWork.AllocateNextItemId();
+        var goldId = persistence.UnitOfWork.AllocateNextItemId();
+        var pantsId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = backpackId,
+                ItemId = 0x0E75,
+                ContainedItemIds = []
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = goldId,
+                ItemId = 0x0EED,
+                Amount = 100,
+                ParentContainerId = backpackId,
+                ContainerPosition = new(20, 20)
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = pantsId,
+                ItemId = 0x152E,
+                ParentContainerId = Serial.Zero
+            }
+        );
+
+        var moved = await service.MoveItemToContainerAsync(pantsId, backpackId, new(45, 55));
+        var hydratedBackpack = await service.GetItemAsync(backpackId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moved, Is.True);
+                Assert.That(hydratedBackpack, Is.Not.Null);
+                Assert.That(hydratedBackpack!.Items.Select(item => item.Id), Contains.Item(goldId));
+                Assert.That(hydratedBackpack.Items.Select(item => item.Id), Contains.Item(pantsId));
+            }
+        );
+    }
+
+    [Test]
     public async Task MoveItemToWorldAsync_ShouldDetachAndSetLocation()
     {
         using var temp = new TempDirectory();

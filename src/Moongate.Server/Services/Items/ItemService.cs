@@ -259,7 +259,7 @@ public sealed class ItemService : IItemService
             return false;
         }
 
-        var container = await _persistenceService.UnitOfWork.Items.GetByIdAsync(containerId);
+        var container = await GetItemHydratedAsync(containerId);
 
         if (container is null)
         {
@@ -362,7 +362,7 @@ public sealed class ItemService : IItemService
     {
         if (item.ParentContainerId != Serial.Zero)
         {
-            var parentContainer = await _persistenceService.UnitOfWork.Items.GetByIdAsync(item.ParentContainerId);
+            var parentContainer = await GetItemHydratedAsync(item.ParentContainerId);
 
             if (parentContainer is not null)
             {

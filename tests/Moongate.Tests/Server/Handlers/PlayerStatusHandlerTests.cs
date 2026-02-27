@@ -12,7 +12,7 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Handlers;
 
-public class PlayerStatusHandlerTests
+public class PlayerHandlerTests
 {
     private sealed class TestCharacterService : ICharacterService
     {
@@ -70,7 +70,7 @@ public class PlayerStatusHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var characterService = new TestCharacterService();
-        var handler = new PlayerStatusHandler(queue, characterService);
+        var handler = new PlayerHandler(queue, characterService);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var mobile = new UOMobileEntity
@@ -110,7 +110,7 @@ public class PlayerStatusHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var characterService = new TestCharacterService();
-        var handler = new PlayerStatusHandler(queue, characterService);
+        var handler = new PlayerHandler(queue, characterService);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
