@@ -11,7 +11,7 @@ using Serilog;
 namespace Moongate.Server.FileLoaders;
 
 /// <summary>
-/// Represents RegionDataLoader.
+/// Loads ModernUO-style regions.json files (array of region entries).
 /// </summary>
 [RegisterFileLoader(16)]
 public class RegionDataLoader : IFileLoader
@@ -26,32 +26,36 @@ public class RegionDataLoader : IFileLoader
         _spatialWorldService = spatialWorldService;
     }
 
-    public async Task LoadAsync()
+    public Task LoadAsync()
     {
         var regionDataDirectory = Path.Combine(_directoriesConfig[DirectoryType.Data], "regions");
-
         var regionFiles = Directory.GetFiles(regionDataDirectory, "*.json");
 
         foreach (var regionFile in regionFiles)
         {
-            var regionData = JsonUtils.DeserializeFromFile<JsonRegionWrap>(
+            var regions = JsonUtils.DeserializeFromFile<JsonRegion[]>(
                 regionFile,
                 MoongateUOJsonSerializationContext.Default
             );
+            var generatedId = 1;
 
-            foreach (var dataRegion in regionData.Regions)
+            foreach (var region in regions)
             {
-                _spatialWorldService.AddRegion(dataRegion);
+                if (region.Id == 0)
+                {
+                    region.Id = generatedId++;
+                }
+
+                _spatialWorldService.AddRegion(region);
             }
 
-            _spatialWorldService.AddMusics(regionData.MusicLists);
-
             _logger.Information(
-                "Loaded {RegionCount} regions and {MusicCount} musics from file: {FilePath}",
-                regionData.Regions.Count,
-                regionData.MusicLists.Count,
+                "Loaded {RegionCount} regions from file: {FilePath}",
+                regions.Length,
                 regionFile
             );
         }
+
+        return Task.CompletedTask;
     }
 }

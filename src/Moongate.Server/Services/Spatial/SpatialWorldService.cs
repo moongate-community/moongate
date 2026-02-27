@@ -19,7 +19,9 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Serilog;
 
 namespace Moongate.Server.Services.Spatial;
 
@@ -36,13 +38,15 @@ public sealed class SpatialWorldService
     private readonly Lock _sync = new();
     private readonly Dictionary<int, SpatialMapIndex> _mapIndices = [];
     private readonly Dictionary<Serial, SpatialEntityLocation> _entityLocations = [];
+    private readonly Dictionary<(int MapId, int SectorX, int SectorY), List<JsonRegion>> _regionsBySector = [];
+    private readonly Dictionary<JsonRegion, int> _regionChildLevels = [];
+    private bool _regionIndexDirty = true;
     private readonly HashSet<(int MapId, int SectorX, int SectorY)> _loadedSectors = [];
     private readonly Dictionary<(int MapId, int SectorX, int SectorY), Task> _sectorLoadTasks = [];
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly List<JsonRegion> _regions = [];
-    private readonly Dictionary<int, int> _musicByListId = [];
 
     private readonly ICharacterService _characterService;
     private readonly IItemService _itemService;
@@ -68,19 +72,7 @@ public sealed class SpatialWorldService
         _itemService = itemService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
-    }
 
-    public void AddMusics(List<JsonMusic> musics)
-    {
-        ArgumentNullException.ThrowIfNull(musics);
-
-        lock (_sync)
-        {
-            foreach (var music in musics)
-            {
-                _musicByListId[music.Id] = music.Music;
-            }
-        }
     }
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId)
@@ -126,22 +118,34 @@ public sealed class SpatialWorldService
         lock (_sync)
         {
             _regions.Add(region);
+            _regionIndexDirty = true;
         }
     }
 
     public SectorSystemStats GetMetricsSnapshot()
         => GetStats();
 
-    public int GetMusic(Point3D location)
+    public int GetMusic(int mapId, Point3D location)
     {
         lock (_sync)
         {
-            foreach (var region in _regions)
+            var regions = GetCandidateRegionsUnsafe(mapId, location);
+
+            foreach (var region in regions)
             {
-                if (region.Coordinates.Any(coordinate => coordinate.Contains(location.X, location.Y)) &&
-                    _musicByListId.TryGetValue(region.MusicList, out var music))
+                if (region.MapId != mapId)
                 {
-                    return music;
+                    continue;
+                }
+
+                if (!region.Area.Any(coordinate => coordinate.Contains(location.X, location.Y)))
+                {
+                    continue;
+                }
+
+                if (region.Music.HasValue)
+                {
+                    return (int)region.Music.Value;
                 }
             }
         }
@@ -256,6 +260,14 @@ public sealed class SpatialWorldService
         }
     }
 
+    public List<MapSector> GetActiveSectors()
+    {
+        lock (_sync)
+        {
+            return [.. _mapIndices.Values.SelectMany(static mapIndex => mapIndex.Sectors)];
+        }
+    }
+
     public MapSector? GetSectorByLocation(int mapId, Point3D location)
     {
         var (sectorX, sectorY) = GetSectorCoordinates(location);
@@ -319,6 +331,13 @@ public sealed class SpatialWorldService
         await WarmupAroundSectorAsync(character.MapId, sectorX, sectorY, warmupRadius, cancellationToken);
 
         AddOrUpdateMobile(character);
+
+        var region = ResolveRegion(character.MapId, character.Location);
+
+        if (region is not null)
+        {
+            PublishEvent(new PlayerEnteredRegionEvent(character.Id, character.MapId, region.Id, region.Name));
+        }
     }
 
     public async Task HandleAsync(DropItemToGroundEvent gameEvent, CancellationToken cancellationToken = default)
@@ -382,6 +401,8 @@ public sealed class SpatialWorldService
         ArgumentNullException.ThrowIfNull(mobile);
         mobile.Location = newLocation;
         var mapId = mobile.MapId;
+        var oldRegion = ResolveRegion(mapId, oldLocation);
+        var newRegion = ResolveRegion(mapId, newLocation);
         var sectorChanged = MoveEntity(mobile.Id, mobile, mapId, oldLocation, newLocation);
 
         if (sectorChanged)
@@ -389,6 +410,29 @@ public sealed class SpatialWorldService
             var (oldX, oldY) = GetSectorCoordinates(oldLocation);
             var (newX, newY) = GetSectorCoordinates(newLocation);
             PublishEvent(new MobileSectorChangedEvent(mobile.Id, mapId, oldX, oldY, newX, newY));
+        }
+
+        if (!mobile.IsPlayer)
+        {
+            return;
+        }
+
+        var oldRegionId = oldRegion?.Id;
+        var newRegionId = newRegion?.Id;
+
+        if (oldRegionId == newRegionId)
+        {
+            return;
+        }
+
+        if (oldRegion is not null)
+        {
+            PublishEvent(new PlayerExitedRegionEvent(mobile.Id, mapId, oldRegion.Id, oldRegion.Name));
+        }
+
+        if (newRegion is not null)
+        {
+            PublishEvent(new PlayerEnteredRegionEvent(mobile.Id, mapId, newRegion.Id, newRegion.Name));
         }
     }
 
@@ -563,6 +607,135 @@ public sealed class SpatialWorldService
         }
 
         return true;
+    }
+
+    private JsonRegion? ResolveRegion(int mapId, Point3D location)
+    {
+        lock (_sync)
+        {
+            var regions = GetCandidateRegionsUnsafe(mapId, location);
+
+            return regions.FirstOrDefault(
+                region => region.MapId == mapId &&
+                          region.Area.Any(coordinate => coordinate.Contains(location.X, location.Y))
+            );
+        }
+    }
+
+    private List<JsonRegion> GetCandidateRegionsUnsafe(int mapId, Point3D location)
+    {
+        EnsureRegionIndexUnsafe();
+        var (sectorX, sectorY) = GetSectorCoordinates(location);
+
+        if (_regionsBySector.TryGetValue((mapId, sectorX, sectorY), out var bySector))
+        {
+            return bySector;
+        }
+
+        return _regions;
+    }
+
+    private void EnsureRegionIndexUnsafe()
+    {
+        if (!_regionIndexDirty)
+        {
+            return;
+        }
+
+        _regionsBySector.Clear();
+        _regionChildLevels.Clear();
+
+        var byName = _regions
+                     .Where(static region => !string.IsNullOrWhiteSpace(region.Name))
+                     .GroupBy(static region => (region.MapId, region.Name), static region => region)
+                     .ToDictionary(static group => group.Key, static group => group.First());
+
+        foreach (var region in _regions)
+        {
+            _ = ComputeChildLevelUnsafe(region, byName, []);
+        }
+
+        foreach (var region in _regions)
+        {
+            foreach (var coordinate in region.Area)
+            {
+                var minX = Math.Min(coordinate.X1, coordinate.X2) >> MapSectorConsts.SectorShift;
+                var maxX = Math.Max(coordinate.X1, coordinate.X2) >> MapSectorConsts.SectorShift;
+                var minY = Math.Min(coordinate.Y1, coordinate.Y2) >> MapSectorConsts.SectorShift;
+                var maxY = Math.Max(coordinate.Y1, coordinate.Y2) >> MapSectorConsts.SectorShift;
+
+                for (var sectorX = minX; sectorX <= maxX; sectorX++)
+                {
+                    for (var sectorY = minY; sectorY <= maxY; sectorY++)
+                    {
+                        var key = (region.MapId, sectorX, sectorY);
+
+                        if (!_regionsBySector.TryGetValue(key, out var list))
+                        {
+                            list = [];
+                            _regionsBySector[key] = list;
+                        }
+
+                        if (!list.Contains(region))
+                        {
+                            list.Add(region);
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach (var list in _regionsBySector.Values)
+        {
+            list.Sort(CompareRegionOrderUnsafe);
+        }
+
+        _regionIndexDirty = false;
+    }
+
+    private int ComputeChildLevelUnsafe(
+        JsonRegion region,
+        IReadOnlyDictionary<(int MapId, string Name), JsonRegion> byName,
+        HashSet<JsonRegion> visiting
+    )
+    {
+        if (_regionChildLevels.TryGetValue(region, out var cached))
+        {
+            return cached;
+        }
+
+        if (!visiting.Add(region))
+        {
+            return 0;
+        }
+
+        var level = 0;
+
+        if (region is JsonTownRegion town && town.Parent is not null &&
+            byName.TryGetValue((town.Parent.MapId, town.Parent.Name), out var parent))
+        {
+            level = ComputeChildLevelUnsafe(parent, byName, visiting) + 1;
+        }
+
+        visiting.Remove(region);
+        _regionChildLevels[region] = level;
+
+        return level;
+    }
+
+    private int CompareRegionOrderUnsafe(JsonRegion left, JsonRegion right)
+    {
+        var byPriority = right.Priority.CompareTo(left.Priority);
+
+        if (byPriority != 0)
+        {
+            return byPriority;
+        }
+
+        var leftLevel = _regionChildLevels.TryGetValue(left, out var ll) ? ll : 0;
+        var rightLevel = _regionChildLevels.TryGetValue(right, out var rl) ? rl : 0;
+
+        return rightLevel.CompareTo(leftLevel);
     }
 
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent

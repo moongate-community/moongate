@@ -57,15 +57,13 @@ public sealed class MobileHandlerTests
 
         public Point3D LastGetSectorLocation { get; private set; }
 
-        public void AddMusics(List<JsonMusic> musics) { }
-
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
         public void AddOrUpdateMobile(UOMobileEntity mobile) { }
 
         public void AddRegion(JsonRegion region) { }
 
-        public int GetMusic(Point3D location)
+        public int GetMusic(int mapId, Point3D location)
             => 0;
 
         public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
@@ -84,6 +82,9 @@ public sealed class MobileHandlerTests
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
             => PlayersInSector;
+
+        public List<MapSector> GetActiveSectors()
+            => [];
 
         public MapSector? GetSectorByLocation(int mapId, Point3D location)
         {

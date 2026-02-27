@@ -35,11 +35,6 @@ internal static partial class BootstrapGameEventListenerRegistration
         TListener
     >(Container container) where TListener : class
     {
-        if (container.IsRegistered<TListener>())
-        {
-            return container.Resolve<TListener>();
-        }
-
         if (container.IsRegistered<List<ServiceRegistrationObject>>())
         {
             var registrations = container.Resolve<List<ServiceRegistrationObject>>();
@@ -70,6 +65,11 @@ internal static partial class BootstrapGameEventListenerRegistration
             {
                 return listener;
             }
+        }
+
+        if (container.IsRegistered<TListener>())
+        {
+            return container.Resolve<TListener>();
         }
 
         throw new InvalidOperationException($"Listener type '{typeof(TListener).FullName}' is not registered in DryIoc.");

@@ -11,10 +11,6 @@ namespace Moongate.Tests.Server.Support;
 public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldService
 {
     public List<JsonRegion> AddedRegions { get; } = [];
-    public List<JsonMusic> AddedMusics { get; } = [];
-
-    public void AddMusics(List<JsonMusic> musics)
-        => AddedMusics.AddRange(musics);
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
@@ -23,7 +19,7 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
     public void AddRegion(JsonRegion region)
         => AddedRegions.Add(region);
 
-    public int GetMusic(Point3D location)
+    public int GetMusic(int mapId, Point3D location)
         => 0;
 
     public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
@@ -36,6 +32,9 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
         => [];
 
     public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+        => [];
+
+    public List<MapSector> GetActiveSectors()
         => [];
 
     public MapSector? GetSectorByLocation(int mapId, Point3D location)

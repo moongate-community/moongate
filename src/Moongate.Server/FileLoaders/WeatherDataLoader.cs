@@ -2,6 +2,7 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Json.Weather;
@@ -19,9 +20,12 @@ public class WeatherDataLoader : IFileLoader
 
     private readonly ILogger _logger = Log.ForContext<WeatherDataLoader>();
 
-    public WeatherDataLoader(DirectoriesConfig directoriesConfig)
+    private readonly IWeatherService _weatherService;
+
+    public WeatherDataLoader(DirectoriesConfig directoriesConfig, IWeatherService weatherService)
     {
         _directoriesConfig = directoriesConfig;
+        _weatherService = weatherService;
     }
 
     public async Task LoadAsync()
@@ -41,6 +45,8 @@ public class WeatherDataLoader : IFileLoader
                 weatherData.WeatherTypes.Count,
                 weatherFile
             );
+
+            _weatherService.SetWeatherTypes(weatherData.WeatherTypes);
         }
     }
 }

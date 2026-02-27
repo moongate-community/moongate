@@ -12,6 +12,7 @@ using Moongate.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
@@ -111,7 +112,7 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public void AddMusicsAndGetMusic_ShouldResolveMusicByRegionCoordinate()
+    public void GetMusic_ShouldResolveMusicByRegionCoordinate()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -120,17 +121,89 @@ public sealed class SpatialWorldServiceTests
         service.AddRegion(
             new()
             {
-                MusicList = 7,
-                Coordinates = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
             }
         );
-        service.AddMusics([new() { Id = 7, Name = "Town", Music = 42 }]);
 
-        var found = service.GetMusic(new(150, 150, 0));
-        var fallback = service.GetMusic(new(5000, 5000, 0));
+        var found = service.GetMusic(0, new(150, 150, 0));
+        var otherMap = service.GetMusic(1, new(150, 150, 0));
+        var fallback = service.GetMusic(0, new(5000, 5000, 0));
 
-        Assert.That(found, Is.EqualTo(42));
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+        Assert.That(otherMap, Is.EqualTo(0));
         Assert.That(fallback, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void GetMusic_WithOverlappingRegions_ShouldPreferHigherPriorityRegion()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddRegion(
+            new()
+            {
+                Map = "Felucca",
+                Name = "Low",
+                Priority = 10,
+                Music = MusicName.Britain1,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+        service.AddRegion(
+            new()
+            {
+                Map = "Felucca",
+                Name = "High",
+                Priority = 100,
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
+            }
+        );
+
+        var found = service.GetMusic(0, new(150, 150, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+    }
+
+    [Test]
+    public void GetMusic_WithSamePriority_ShouldPreferChildRegionByParentHierarchy()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddRegion(
+            new JsonTownRegion
+            {
+                Map = "Felucca",
+                Name = "TownParent",
+                Priority = 50,
+                Music = MusicName.Britain1,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+        service.AddRegion(
+            new JsonTownRegion
+            {
+                Map = "Felucca",
+                Name = "TownChild",
+                Priority = 50,
+                Parent = new JsonRegionParent
+                {
+                    Map = "Felucca",
+                    Name = "TownParent"
+                },
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
+            }
+        );
+
+        var found = service.GetMusic(0, new(150, 150, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
     }
 
     [Test]
@@ -234,6 +307,35 @@ public sealed class SpatialWorldServiceTests
                 Assert.That(players.Select(static player => player.Id), Contains.Item(playerInSector.Id));
                 Assert.That(players.Select(static player => player.Id), Does.Not.Contain(npcInSector.Id));
                 Assert.That(players.Select(static player => player.Id), Does.Not.Contain(playerOtherSector.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void GetActiveSectors_ShouldReturnLoadedSectorsAcrossMaps()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddOrUpdateMobile(CreateMobile(0x320, 16, 16, 0, true));
+        service.AddOrUpdateItem(
+            new UOItemEntity
+            {
+                Id = (Serial)0x900u,
+                ItemId = 0x0EED,
+                Location = new(32, 32, 0)
+            },
+            1
+        );
+
+        var sectors = service.GetActiveSectors();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sectors.Any(static sector => sector.MapIndex == 0 && sector.SectorX == 1 && sector.SectorY == 1), Is.True);
+                Assert.That(sectors.Any(static sector => sector.MapIndex == 1 && sector.SectorX == 2 && sector.SectorY == 2), Is.True);
             }
         );
     }
@@ -363,6 +465,38 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_PlayerCharacterLoggedIn_InRegion_ShouldPublishPlayerEnteredRegionEvent()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var characterService = new SpatialWorldServiceTestCharacterService();
+        var service = CreateService(sessions, eventBus, characterService: characterService);
+        var character = CreateMobile(0x702, 130, 130, 0, true);
+        characterService.Add(character);
+        service.AddRegion(
+            new()
+            {
+                Id = 200,
+                Name = "Yew",
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+
+        await service.HandleAsync(new PlayerCharacterLoggedInEvent(1, (Serial)0x01u, character.Id));
+
+        var enteredEvent = eventBus.Events.OfType<PlayerEnteredRegionEvent>().Single();
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(enteredEvent.MobileId, Is.EqualTo(character.Id));
+                Assert.That(enteredEvent.MapId, Is.EqualTo(character.MapId));
+                Assert.That(enteredEvent.RegionId, Is.EqualTo(200));
+                Assert.That(enteredEvent.RegionName, Is.EqualTo("Yew"));
+            }
+        );
+    }
+
+    [Test]
     public void OnMobileMoved_ShouldUpdateRangeQueriesAcrossSectors()
     {
         var sessions = new FakeGameNetworkSessionService();
@@ -415,6 +549,70 @@ public sealed class SpatialWorldServiceTests
         service.OnMobileMoved(mobile, new(20, 20, 0), new(25, 25, 0));
 
         Assert.That(eventBus.Events.OfType<MobileSectorChangedEvent>(), Is.Empty);
+    }
+
+    [Test]
+    public void OnMobileMoved_ForPlayer_WhenEnteringRegion_ShouldPublishPlayerEnteredRegionEvent()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var player = CreateMobile(0x601, 10, 10, 0, true);
+        service.AddRegion(
+            new()
+            {
+                Id = 100,
+                Name = "Britain",
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+
+        service.AddOrUpdateMobile(player);
+        eventBus.Events.Clear();
+        service.OnMobileMoved(player, new(10, 10, 0), new(120, 120, 0));
+
+        var enteredEvent = eventBus.Events.OfType<PlayerEnteredRegionEvent>().Single();
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(enteredEvent.MobileId, Is.EqualTo(player.Id));
+                Assert.That(enteredEvent.MapId, Is.EqualTo(player.MapId));
+                Assert.That(enteredEvent.RegionId, Is.EqualTo(100));
+                Assert.That(enteredEvent.RegionName, Is.EqualTo("Britain"));
+            }
+        );
+    }
+
+    [Test]
+    public void OnMobileMoved_ForPlayer_WhenExitingRegion_ShouldPublishPlayerExitedRegionEvent()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var player = CreateMobile(0x602, 120, 120, 0, true);
+        service.AddRegion(
+            new()
+            {
+                Id = 101,
+                Name = "Moonglow",
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+
+        service.AddOrUpdateMobile(player);
+        eventBus.Events.Clear();
+        service.OnMobileMoved(player, new(120, 120, 0), new(10, 10, 0));
+
+        var exitedEvent = eventBus.Events.OfType<PlayerExitedRegionEvent>().Single();
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(exitedEvent.MobileId, Is.EqualTo(player.Id));
+                Assert.That(exitedEvent.MapId, Is.EqualTo(player.MapId));
+                Assert.That(exitedEvent.RegionId, Is.EqualTo(101));
+                Assert.That(exitedEvent.RegionName, Is.EqualTo("Moonglow"));
+            }
+        );
     }
 
     [Test]

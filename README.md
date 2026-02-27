@@ -107,6 +107,11 @@ The project is actively in development and already includes:
 - Interactive console UI with fixed prompt (`moongate>`) and Spectre-based colored log rendering.
 - Timer wheel runtime metrics integrated in the metrics pipeline (`timer.*`).
 - Timestamp-driven game loop scheduling with timer delta updates and optional idle CPU throttling.
+- Region system adopted from ModernUO (chosen as the most robust baseline), including polymorphic JSON loading via `$type`.
+- Spatial region resolution indexed by sector with deterministic ordering:
+  - higher `Priority` first
+  - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
+- Region music mapped as typed `MusicName` and resolved by `MapId` + position.
 
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
 
