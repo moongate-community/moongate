@@ -10,7 +10,9 @@ internal sealed class STArrayPoolStack<T>
     private long _ticks;
 
     public STArrayPoolStack(int stackArraySize)
-        => _arrays = new T[]?[stackArraySize];
+    {
+        _arrays = new T[]?[stackArraySize];
+    }
 
     public void Trim(long now, STArrayPoolMemoryPressureType pressure, int bucketSize)
     {

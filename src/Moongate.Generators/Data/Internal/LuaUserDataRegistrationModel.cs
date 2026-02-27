@@ -5,7 +5,9 @@ internal sealed class LuaUserDataRegistrationModel : IEquatable<LuaUserDataRegis
     public string TypeName { get; }
 
     public LuaUserDataRegistrationModel(string typeName)
-        => TypeName = typeName;
+    {
+        TypeName = typeName;
+    }
 
     public bool Equals(LuaUserDataRegistrationModel? other)
         => other is not null && string.Equals(TypeName, other.TypeName, StringComparison.Ordinal);
