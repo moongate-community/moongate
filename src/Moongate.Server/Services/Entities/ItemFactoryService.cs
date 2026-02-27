@@ -44,7 +44,6 @@ public sealed class ItemFactoryService : IItemFactoryService
             Name = template.Name,
             Weight = (int)template.Weight,
             Amount = 1,
-            IsStackable = template.Stackable,
             Rarity = ItemRarity.Common,
             ItemId = ParseItemId(template.ItemId),
             Hue = template.Hue.Resolve(),

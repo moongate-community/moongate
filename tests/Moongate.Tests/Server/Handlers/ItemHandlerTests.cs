@@ -6,6 +6,7 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -23,7 +24,8 @@ public class ItemHandlerTests
         var handler = new ItemHandler(
             new BasePacketListenerTestOutgoingPacketQueue(),
             new ItemHandlerTestItemService(),
-            eventBus
+            eventBus,
+            new FakeGameNetworkSessionService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));
@@ -53,7 +55,8 @@ public class ItemHandlerTests
         var handler = new ItemHandler(
             new BasePacketListenerTestOutgoingPacketQueue(),
             new ItemHandlerTestItemService(),
-            eventBus
+            eventBus,
+            new FakeGameNetworkSessionService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));
@@ -87,10 +90,13 @@ public class ItemHandlerTests
         public Task<Serial> CreateItemAsync(UOItemEntity item)
             => throw new NotSupportedException();
 
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => throw new NotSupportedException();
+
         public Task<bool> DeleteItemAsync(Serial itemId)
             => throw new NotSupportedException();
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => throw new NotSupportedException();
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -108,10 +114,10 @@ public class ItemHandlerTests
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => throw new NotSupportedException();
 
-        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
             => throw new NotSupportedException();
 
-        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => throw new NotSupportedException();
 
         public Task UpsertItemAsync(UOItemEntity item)

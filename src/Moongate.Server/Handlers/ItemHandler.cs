@@ -8,30 +8,41 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Listeners.Base;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
 
-[RegisterPacketHandler(PacketDefinition.DropItemPacket),
- RegisterPacketHandler(PacketDefinition.PickUpItemPacket)
+[
+    RegisterGameEventListener,
+    RegisterPacketHandler(PacketDefinition.DropItemPacket),
+    RegisterPacketHandler(PacketDefinition.PickUpItemPacket),
+    RegisterPacketHandler(PacketDefinition.SingleClickPacket),
+    RegisterPacketHandler(PacketDefinition.DoubleClickPacket)
 ]
-public class ItemHandler : BasePacketListener
+public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent>
 {
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
     private readonly IItemService _itemService;
+
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
 
     private readonly IGameEventBusService _gameEventBusService;
 
     public ItemHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
         IItemService itemService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        IGameNetworkSessionService gameNetworkSessionService
     ) : base(outgoingPacketQueue)
     {
         _itemService = itemService;
-        _gameEventBusService = gameEventBusService;
+        _gameNetworkSessionService = gameNetworkSessionService;
+        {
+            _gameEventBusService = gameEventBusService;
+        }
     }
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
@@ -45,6 +56,40 @@ public class ItemHandler : BasePacketListener
         {
             return await HandlePickUpItemAsync(session, pickUpItemPacket);
         }
+
+        if (packet is SingleClickPacket singleClickPacket)
+        {
+            return await HandleSingleClickAsync(session, singleClickPacket);
+        }
+
+        if (packet is DoubleClickPacket doubleClickPacket)
+        {
+            return await HandleDoubleClickAsync(session, doubleClickPacket);
+        }
+
+        return true;
+    }
+
+    private async Task<bool> HandleDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
+    {
+        await _gameEventBusService.PublishAsync(
+            new ItemDoubleClickEvent(
+                session.SessionId,
+                doubleClickPacket.TargetSerial
+            )
+        );
+
+        return true;
+    }
+
+    private async Task<bool> HandleSingleClickAsync(GameSession session, SingleClickPacket singleClickPacket)
+    {
+        await _gameEventBusService.PublishAsync(
+            new ItemSingleClickEvent(
+                session.SessionId,
+                singleClickPacket.TargetSerial
+            )
+        );
 
         return true;
     }
@@ -71,6 +116,8 @@ public class ItemHandler : BasePacketListener
 
         await _itemService.UpsertItemAsync(destinationContainer);
 
+        destinationContainer = await _itemService.GetItemAsync(destinationContainer.Id);
+
         if (itemContainer.Id != destinationContainer.Id)
         {
             itemContainer.RemoveItem(item.Id);
@@ -83,7 +130,12 @@ public class ItemHandler : BasePacketListener
     private async Task DropItemOnGroundAsync(GameSession session, DropItemPacket dropItemPacket)
     {
         var mapId = session.Character?.MapId ?? 0;
-        var dropResult = await _itemService.DropItemToGroundAsync(dropItemPacket.ItemSerial, dropItemPacket.Location, mapId);
+        var dropResult = await _itemService.DropItemToGroundAsync(
+                             dropItemPacket.ItemSerial,
+                             dropItemPacket.Location,
+                             mapId,
+                             session.SessionId
+                         );
 
         if (dropResult is null)
         {
@@ -140,5 +192,22 @@ public class ItemHandler : BasePacketListener
         }
 
         return true;
+    }
+
+    public async Task HandleAsync(ItemMovedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        {
+            var item = await _itemService.GetItemAsync(gameEvent.NewContainerId);
+
+            if (item is null)
+            {
+                return;
+            }
+
+            var container = await _itemService.GetItemAsync(gameEvent.NewContainerId);
+
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
+        }
     }
 }

@@ -1,6 +1,8 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -15,12 +17,34 @@ namespace Moongate.Tests.Server.Services.Items;
 
 public class ItemServiceTests
 {
+    private sealed class ItemServiceTestsItemFactoryService : IItemFactoryService
+    {
+        public string? LastTemplateId { get; private set; }
+
+        public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
+        {
+            LastTemplateId = itemTemplateId;
+
+            return new()
+            {
+                Id = (Serial)0x40000077u,
+                Name = "Template Item",
+                ItemId = 0x1F9E,
+                Amount = 1,
+                Location = Point3D.Zero
+            };
+        }
+
+        public UOItemEntity GetNewBackpack()
+            => throw new NotSupportedException();
+    }
+
     [Test]
     public async Task Clone_ShouldGenerateNewSerial_ByDefault()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var item = new UOItemEntity
         {
             Id = persistence.UnitOfWork.AllocateNextItemId(),
@@ -53,7 +77,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var originalId = persistence.UnitOfWork.AllocateNextItemId();
         var item = new UOItemEntity
         {
@@ -71,7 +95,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
         await persistence.UnitOfWork.Items.UpsertAsync(
@@ -104,7 +128,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
 
         var clone = await service.CloneAsync((Serial)0x4000FFFFu);
 
@@ -116,7 +140,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var item = new UOItemEntity
         {
             ItemId = 0x0EED,
@@ -138,11 +162,35 @@ public class ItemServiceTests
     }
 
     [Test]
+    public async Task SpawnFromTemplateAsync_ShouldCreateAndPersistItemFromTemplate()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+
+        var item = await service.SpawnFromTemplateAsync("brick");
+        var persisted = await persistence.UnitOfWork.Items.GetByIdAsync(item.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemFactory.LastTemplateId, Is.EqualTo("brick"));
+                Assert.That(item.Id, Is.EqualTo((Serial)0x40000077u));
+                Assert.That(persisted, Is.Not.Null);
+                Assert.That(persisted!.Name, Is.EqualTo("Template Item"));
+                Assert.That(persisted.ItemId, Is.EqualTo(0x1F9E));
+            }
+        );
+    }
+
+    [Test]
     public async Task DeleteItemAsync_ShouldRemoveItem()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
         await persistence.UnitOfWork.Items.UpsertAsync(
@@ -170,7 +218,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
         var oldLocation = new Point3D(12, 34, 0);
@@ -221,7 +269,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -268,7 +316,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
 
         await persistence.UnitOfWork.Items.UpsertAsync(
             new()
@@ -311,7 +359,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
         var childId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -354,7 +402,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var rootContainerId = persistence.UnitOfWork.AllocateNextItemId();
         var nestedContainerId = persistence.UnitOfWork.AllocateNextItemId();
         var nestedItemId = persistence.UnitOfWork.AllocateNextItemId();
@@ -410,7 +458,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
         await persistence.UnitOfWork.Items.UpsertAsync(
@@ -439,7 +487,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
 
         var result = await service.TryToGetItemAsync((Serial)0x4000FFFFu);
 
@@ -457,7 +505,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
         var containedItemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -495,7 +543,8 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        IItemService service = new ItemService(persistence, gameEventBus);
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
@@ -530,9 +579,10 @@ public class ItemServiceTests
             }
         );
 
-        var moved = await service.MoveItemToContainerAsync(itemId, containerId, new(55, 77));
+        var moved = await service.MoveItemToContainerAsync(itemId, containerId, new(55, 77), 4242);
         var reloadedItem = await persistence.UnitOfWork.Items.GetByIdAsync(itemId);
         var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+        var movedEvent = gameEventBus.Events.OfType<ItemMovedEvent>().LastOrDefault();
 
         Assert.Multiple(
             () =>
@@ -545,6 +595,11 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.EquippedLayer, Is.Null);
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OneHanded), Is.False);
+                Assert.That(movedEvent.ItemId, Is.EqualTo(itemId));
+                Assert.That(movedEvent.SessionId, Is.EqualTo(4242));
+                Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));
+                Assert.That(movedEvent.NewContainerId, Is.EqualTo(containerId));
+                Assert.That(movedEvent.MapId, Is.EqualTo(reloadedItem.MapId));
             }
         );
     }
@@ -554,7 +609,8 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        IItemService service = new ItemService(persistence, gameEventBus);
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -580,9 +636,10 @@ public class ItemServiceTests
             }
         );
 
-        var moved = await service.MoveItemToWorldAsync(itemId, new(1111, 2222, 7), 4);
+        var moved = await service.MoveItemToWorldAsync(itemId, new(1111, 2222, 7), 4, 9001);
         var reloadedItem = await persistence.UnitOfWork.Items.GetByIdAsync(itemId);
         var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+        var movedEvent = gameEventBus.Events.OfType<ItemMovedEvent>().LastOrDefault();
 
         Assert.Multiple(
             () =>
@@ -595,6 +652,11 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.EquippedLayer, Is.Null);
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OuterTorso), Is.False);
+                Assert.That(movedEvent.ItemId, Is.EqualTo(itemId));
+                Assert.That(movedEvent.SessionId, Is.EqualTo(9001));
+                Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));
+                Assert.That(movedEvent.NewContainerId, Is.EqualTo(Serial.Zero));
+                Assert.That(movedEvent.MapId, Is.EqualTo(4));
             }
         );
     }
@@ -604,7 +666,7 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
         var fixedId = persistence.UnitOfWork.AllocateNextItemId();
         var first = new UOItemEntity
         {

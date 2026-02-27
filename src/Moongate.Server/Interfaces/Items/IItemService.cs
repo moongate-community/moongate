@@ -39,6 +39,13 @@ public interface IItemService
     Task<Serial> CreateItemAsync(UOItemEntity item);
 
     /// <summary>
+    /// Creates an item from template and persists it.
+    /// </summary>
+    /// <param name="itemTemplateId">Item template identifier.</param>
+    /// <returns>The created and persisted item entity.</returns>
+    Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId);
+
+    /// <summary>
     /// Deletes an item by serial identifier.
     /// </summary>
     /// <param name="itemId">Item serial identifier.</param>
@@ -52,7 +59,12 @@ public interface IItemService
     /// <param name="location">Target world location.</param>
     /// <param name="mapId">Target map id.</param>
     /// <returns>Drop context when operation succeeds; otherwise <see langword="null" />.</returns>
-    Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId);
+    Task<DropItemToGroundResult?> DropItemToGroundAsync(
+        Serial itemId,
+        Point3D location,
+        int mapId,
+        long sessionId = 0
+    );
 
     /// <summary>
     /// Equips an item on a mobile at the specified layer.
@@ -102,7 +114,12 @@ public interface IItemService
     /// <param name="containerId">Target container serial identifier.</param>
     /// <param name="position">Position inside target container.</param>
     /// <returns><see langword="true" /> when operation succeeds; otherwise <see langword="false" />.</returns>
-    Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position);
+    Task<bool> MoveItemToContainerAsync(
+        Serial itemId,
+        Serial containerId,
+        Point2D position,
+        long sessionId = 0
+    );
 
     /// <summary>
     /// Moves an item to world coordinates, detaching it from containers and equipment.
@@ -111,7 +128,12 @@ public interface IItemService
     /// <param name="location">Target world location.</param>
     /// <param name="mapId">Target map id.</param>
     /// <returns><see langword="true" /> when operation succeeds; otherwise <see langword="false" />.</returns>
-    Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId);
+    Task<bool> MoveItemToWorldAsync(
+        Serial itemId,
+        Point3D location,
+        int mapId,
+        long sessionId = 0
+    );
 
     /// <summary>
     /// Inserts or updates an existing item.

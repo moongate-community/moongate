@@ -24,10 +24,13 @@ public class ItemScriptDispatcherTests
         public Task<Serial> CreateItemAsync(UOItemEntity item)
             => throw new NotSupportedException();
 
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => throw new NotSupportedException();
+
         public Task<bool> DeleteItemAsync(Serial itemId)
             => throw new NotSupportedException();
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => throw new NotSupportedException();
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -42,10 +45,10 @@ public class ItemScriptDispatcherTests
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => throw new NotSupportedException();
 
-        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
             => throw new NotSupportedException();
 
-        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => throw new NotSupportedException();
 
         public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)

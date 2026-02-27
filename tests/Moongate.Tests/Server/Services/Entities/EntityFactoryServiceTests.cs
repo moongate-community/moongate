@@ -35,7 +35,6 @@ public class EntityFactoryServiceTests
                 GoldValue = GoldValueSpec.FromValue(1),
                 LootType = LootType.Regular,
                 ScriptId = "none",
-                Stackable = true,
                 Weight = 6
             }
         );
@@ -168,7 +167,6 @@ public class EntityFactoryServiceTests
                 GoldValue = GoldValueSpec.FromValue(0),
                 LootType = LootType.Regular,
                 ScriptId = "none",
-                Stackable = false,
                 Weight = 1
             }
         );

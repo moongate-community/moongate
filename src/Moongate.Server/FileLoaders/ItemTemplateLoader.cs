@@ -166,8 +166,6 @@ public sealed class ItemTemplateLoader : IFileLoader
 
         child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);
         child.IsMovable = InheritBool(child.IsMovable, parent.IsMovable, Defaults.IsMovable);
-        child.Stackable = InheritBool(child.Stackable, parent.Stackable, Defaults.Stackable);
-
         if (child.LootType == Defaults.LootType)
         {
             child.LootType = parent.LootType;

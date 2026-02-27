@@ -200,6 +200,13 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult((Serial)1u);
         }
 
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+        {
+            _ = itemTemplateId;
+
+            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
+        }
+
         public Task<bool> DeleteItemAsync(Serial itemId)
         {
             _ = itemId;
@@ -207,7 +214,7 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(true);
         }
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
         {
             _ = itemId;
             _ = location;
@@ -256,7 +263,7 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(new List<UOItemEntity>());
         }
 
-        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
         {
             _ = itemId;
             _ = containerId;
@@ -265,7 +272,7 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
         {
             _ = itemId;
             _ = location;

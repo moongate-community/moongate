@@ -1,5 +1,8 @@
+using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -17,9 +20,19 @@ public sealed class ItemService : IItemService
 {
     private readonly ILogger _logger = Log.ForContext<ItemService>();
     private readonly IPersistenceService _persistenceService;
+    private readonly IGameEventBusService _gameEventBusService;
+    private readonly IItemFactoryService? _itemFactoryService;
 
-    public ItemService(IPersistenceService persistenceService)
-        => _persistenceService = persistenceService;
+    public ItemService(
+        IPersistenceService persistenceService,
+        IGameEventBusService gameEventBusService,
+        IItemFactoryService? itemFactoryService = null
+    )
+    {
+        _persistenceService = persistenceService;
+        _gameEventBusService = gameEventBusService;
+        _itemFactoryService = itemFactoryService;
+    }
 
     public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
     {
@@ -76,6 +89,27 @@ public sealed class ItemService : IItemService
         return item.Id;
     }
 
+    public async Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(itemTemplateId);
+
+        if (_itemFactoryService is null)
+        {
+            throw new InvalidOperationException("Item factory service is not configured for ItemService.");
+        }
+
+        var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Debug(
+            "Spawned item {ItemId} from template {TemplateId} (ItemId=0x{TileId:X4})",
+            item.Id,
+            itemTemplateId,
+            item.ItemId
+        );
+
+        return item;
+    }
+
     public async Task<bool> DeleteItemAsync(Serial itemId)
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
@@ -95,7 +129,12 @@ public sealed class ItemService : IItemService
         return removed;
     }
 
-    public async Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId)
+    public async Task<DropItemToGroundResult?> DropItemToGroundAsync(
+        Serial itemId,
+        Point3D location,
+        int mapId,
+        long sessionId = 0
+    )
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
 
@@ -108,7 +147,7 @@ public sealed class ItemService : IItemService
 
         var sourceContainerId = item.ParentContainerId;
         var oldLocation = item.Location;
-        var moved = await MoveItemToWorldAsync(itemId, location, mapId);
+        var moved = await MoveItemToWorldAsync(itemId, location, mapId, sessionId);
 
         if (!moved)
         {
@@ -204,7 +243,12 @@ public sealed class ItemService : IItemService
         return [.. items];
     }
 
-    public async Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position)
+    public async Task<bool> MoveItemToContainerAsync(
+        Serial itemId,
+        Serial containerId,
+        Point2D position,
+        long sessionId = 0
+    )
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
 
@@ -228,12 +272,24 @@ public sealed class ItemService : IItemService
             return false;
         }
 
+        var oldContainerId = item.ParentContainerId;
+        var oldLocation = item.Location;
+
         await DetachFromCurrentOwnerAsync(item);
         container.AddItem(item, position);
         item.MapId = container.MapId;
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         await _persistenceService.UnitOfWork.Items.UpsertAsync(container);
+        await PublishItemMovedEventAsync(
+            sessionId,
+            itemId,
+            oldContainerId,
+            containerId,
+            oldLocation,
+            item.Location,
+            item.MapId
+        );
         _logger.Debug(
             "Moved item {ItemId} to container {ContainerId} at {X},{Y}",
             itemId,
@@ -245,7 +301,12 @@ public sealed class ItemService : IItemService
         return true;
     }
 
-    public async Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId)
+    public async Task<bool> MoveItemToWorldAsync(
+        Serial itemId,
+        Point3D location,
+        int mapId,
+        long sessionId = 0
+    )
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
 
@@ -255,6 +316,9 @@ public sealed class ItemService : IItemService
 
             return false;
         }
+
+        var oldContainerId = item.ParentContainerId;
+        var oldLocation = item.Location;
 
         await DetachFromCurrentOwnerAsync(item);
 
@@ -266,6 +330,7 @@ public sealed class ItemService : IItemService
         item.EquippedLayer = null;
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        await PublishItemMovedEventAsync(sessionId, itemId, oldContainerId, Serial.Zero, oldLocation, location, mapId);
         _logger.Debug("Moved item {ItemId} to world location {Location}", itemId, location);
 
         return true;
@@ -427,4 +492,17 @@ public sealed class ItemService : IItemService
             mobile.BackpackId = Serial.Zero;
         }
     }
+
+    private ValueTask PublishItemMovedEventAsync(
+        long sessionId,
+        Serial itemId,
+        Serial oldContainerId,
+        Serial newContainerId,
+        Point3D oldLocation,
+        Point3D newLocation,
+        int mapId
+    )
+        => _gameEventBusService.PublishAsync(
+            new ItemMovedEvent(sessionId, itemId, oldContainerId, newContainerId, oldLocation, newLocation, mapId)
+        );
 }
