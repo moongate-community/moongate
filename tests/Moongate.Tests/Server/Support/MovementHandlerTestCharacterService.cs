@@ -7,6 +7,14 @@ namespace Moongate.Tests.Server.Support;
 
 public sealed class MovementHandlerTestCharacterService : ICharacterService
 {
+    public Serial LastAppliedCharacterId { get; private set; } = Serial.Zero;
+
+    public short LastAppliedShirtHue { get; private set; }
+
+    public short LastAppliedPantsHue { get; private set; }
+
+    public int ApplyStarterEquipmentHuesCalls { get; private set; }
+
     public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
     {
         _ = accountId;
@@ -20,6 +28,16 @@ public sealed class MovementHandlerTestCharacterService : ICharacterService
         _ = character;
 
         return Task.FromResult((Serial)1u);
+    }
+
+    public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+    {
+        LastAppliedCharacterId = characterId;
+        LastAppliedShirtHue = shirtHue;
+        LastAppliedPantsHue = pantsHue;
+        ApplyStarterEquipmentHuesCalls++;
+
+        return Task.CompletedTask;
     }
 
     public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)

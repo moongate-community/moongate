@@ -89,6 +89,19 @@ public class CharacterService : ICharacterService
         return character.Id;
     }
 
+    public async Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+    {
+        var character = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(characterId);
+
+        if (character is null)
+        {
+            return;
+        }
+
+        await ApplyEquippedItemHueAsync(character, ItemLayerType.Shirt, shirtHue);
+        await ApplyEquippedItemHueAsync(character, ItemLayerType.Pants, pantsHue);
+    }
+
     public async Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
     {
         ArgumentNullException.ThrowIfNull(character);
@@ -234,6 +247,24 @@ public class CharacterService : ICharacterService
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);
 
+    private async Task ApplyEquippedItemHueAsync(UOMobileEntity character, ItemLayerType layer, short hue)
+    {
+        if (!character.EquippedItemIds.TryGetValue(layer, out var itemId))
+        {
+            return;
+        }
+
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            return;
+        }
+
+        item.Hue = hue;
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+    }
+
     private async Task EnsureStarterContainerItemAsync(UOMobileEntity character, UOItemEntity item)
     {
         var existing = await _persistenceService.UnitOfWork.Items.QueryAsync(
@@ -302,6 +333,7 @@ public class CharacterService : ICharacterService
         await EnsureStarterEquippedItemAsync(character, ItemLayerType.Shirt, starterProfileContext);
         await EnsureStarterEquippedItemAsync(character, ItemLayerType.Pants, starterProfileContext);
         await EnsureStarterEquippedItemAsync(character, ItemLayerType.Shoes, starterProfileContext);
+        await EnsureStarterEquippedItemAsync(character, ItemLayerType.Bank, starterProfileContext);
     }
 
     private async Task HydrateCharacterEquipmentRuntimeAsync(UOMobileEntity character)

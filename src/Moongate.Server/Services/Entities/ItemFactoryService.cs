@@ -56,6 +56,8 @@ public sealed class ItemFactoryService : IItemFactoryService
             EquippedLayer = null
         };
 
+
+
         var itemFromTile = TileData.ItemTable[item.ItemId];
 
         if (string.IsNullOrEmpty(item.Name))

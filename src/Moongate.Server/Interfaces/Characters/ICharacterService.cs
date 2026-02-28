@@ -26,6 +26,14 @@ public interface ICharacterService
     Task<Serial> CreateCharacterAsync(UOMobileEntity character);
 
     /// <summary>
+    /// Applies starter shirt and pants hues to a created character when the corresponding equipment exists.
+    /// </summary>
+    /// <param name="characterId">Character serial identifier.</param>
+    /// <param name="shirtHue">Shirt hue from character creation.</param>
+    /// <param name="pantsHue">Pants hue from character creation.</param>
+    Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue);
+
+    /// <summary>
     /// Loads the character backpack with contained items for outbound packet serialization.
     /// </summary>
     /// <param name="character">Character entity.</param>

@@ -195,6 +195,7 @@ public sealed class ItemService : IItemService
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
+        await _gameEventBusService.PublishAsync(new ItemEquippedEvent(itemId, mobileId, layer));
 
         _logger.Debug("Equipped item {ItemId} on mobile {MobileId} at layer {Layer}", itemId, mobileId, layer);
 

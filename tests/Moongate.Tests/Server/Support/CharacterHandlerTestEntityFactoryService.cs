@@ -17,7 +17,7 @@ public sealed class CharacterHandlerTestEntityFactoryService : IEntityFactorySer
         => throw new NotSupportedException();
 
     public UOMobileEntity CreatePlayerMobile(CharacterCreationPacket packet, Serial accountId)
-        => throw new NotSupportedException();
+        => packet.ToEntity(Serial.Zero, accountId);
 
     public UOItemEntity CreateStarterBackpack(Serial mobileId, StarterProfileContext profileContext)
         => throw new NotSupportedException();

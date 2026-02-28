@@ -18,6 +18,7 @@ public sealed class StarterItemFactoryService : IStarterItemFactoryService
     private const int ShirtItemId = 0x1517;
     private const int PantsItemId = 0x152E;
     private const int ShoesItemId = 0x170F;
+    private const int BankBoxItemId = 0x09A8;
 
     private readonly IItemFactoryService _itemFactoryService;
     private readonly IPersistenceService _persistenceService;
@@ -51,8 +52,10 @@ public sealed class StarterItemFactoryService : IStarterItemFactoryService
             ItemLayerType.Shirt => ShirtItemId,
             ItemLayerType.Pants => PantsItemId,
             ItemLayerType.Shoes => ShoesItemId,
+            ItemLayerType.Bank => BankBoxItemId,
             _ => throw new ArgumentOutOfRangeException(nameof(layer), layer, "Unsupported starter equipment layer.")
         };
+        var gumpId = layer == ItemLayerType.Bank ? 0x0042 : (int?)null;
 
         var itemFromTile = TileData.ItemTable[itemId];
 
@@ -66,6 +69,7 @@ public sealed class StarterItemFactoryService : IStarterItemFactoryService
             Rarity = ItemRarity.Common,
             ItemId = itemId,
             Hue = 0,
+            GumpId = gumpId,
             Location = Point3D.Zero,
             ParentContainerId = Serial.Zero,
             ContainerPosition = Point2D.Zero,

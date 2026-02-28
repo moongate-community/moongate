@@ -269,7 +269,8 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        IItemService service = new ItemService(persistence, gameEventBus);
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -295,6 +296,7 @@ public class ItemServiceTests
         var equipped = await service.EquipItemAsync(itemId, mobileId, ItemLayerType.Shirt);
         var reloadedItem = await persistence.UnitOfWork.Items.GetByIdAsync(itemId);
         var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+        var equippedEvent = gameEventBus.Events.OfType<ItemEquippedEvent>().LastOrDefault();
 
         Assert.Multiple(
             () =>
@@ -307,6 +309,10 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.ParentContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo(itemId));
+                Assert.That(equippedEvent.ItemId, Is.EqualTo(itemId));
+                Assert.That(equippedEvent.MobileId, Is.EqualTo(mobileId));
+                Assert.That(equippedEvent.Layer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(equippedEvent.BaseEvent.Timestamp, Is.GreaterThan(0));
             }
         );
     }

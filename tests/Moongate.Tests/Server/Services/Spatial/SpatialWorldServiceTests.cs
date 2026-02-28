@@ -98,6 +98,9 @@ public sealed class SpatialWorldServiceTests
         public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
             => throw new NotSupportedException();
 
+        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+            => throw new NotSupportedException();
+
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
             => throw new NotSupportedException();
 

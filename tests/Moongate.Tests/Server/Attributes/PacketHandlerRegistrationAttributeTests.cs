@@ -17,7 +17,8 @@ public class PacketHandlerRegistrationAttributeTests
             typeof(PlayerStatusHandler),
             typeof(MovementHandler),
             typeof(SpeechHandler),
-            typeof(ToolTipHandler)
+            typeof(ToolTipHandler),
+            typeof(ItemHandler)
         };
 
         var pairs = handlerTypes
@@ -54,6 +55,14 @@ public class PacketHandlerRegistrationAttributeTests
         AssertMappings(typeof(MovementHandler), PacketDefinition.MoveRequestPacket);
         AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket);
         AssertMappings(typeof(ToolTipHandler), PacketDefinition.MegaClilocPacket);
+        AssertMappings(
+            typeof(ItemHandler),
+            PacketDefinition.DropItemPacket,
+            PacketDefinition.DropWearItemPacket,
+            PacketDefinition.PickUpItemPacket,
+            PacketDefinition.SingleClickPacket,
+            PacketDefinition.DoubleClickPacket
+        );
     }
 
     private static void AssertMappings(Type handlerType, params byte[] expectedOpcodes)

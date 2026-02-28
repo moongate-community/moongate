@@ -119,11 +119,94 @@ public class CharacterServiceTests
                 Assert.That(equippedLayers, Does.Contain(ItemLayerType.Shirt));
                 Assert.That(equippedLayers, Does.Contain(ItemLayerType.Pants));
                 Assert.That(equippedLayers, Does.Contain(ItemLayerType.Shoes));
-                Assert.That(allItems.Count, Is.GreaterThanOrEqualTo(5));
+                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Bank));
+                Assert.That(allItems.Count, Is.GreaterThanOrEqualTo(6));
                 Assert.That(
                     allItems.Any(item => item.ItemId == 0x0EED && item.ParentContainerId == savedCharacter.BackpackId),
                     Is.True
                 );
+                Assert.That(
+                    allItems.Any(
+                        item => item.ItemId == 0x09A8 &&
+                                item.EquippedMobileId == savedCharacter.Id &&
+                                item.EquippedLayer == ItemLayerType.Bank
+                    ),
+                    Is.True
+                );
+                Assert.That(
+                    allItems.Any(
+                        item => item.ItemId == 0x09A8 &&
+                                item.EquippedLayer == ItemLayerType.Bank &&
+                                item.GumpId == 0x0042
+                    ),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
+    public async Task ApplyStarterEquipmentHuesAsync_ShouldUpdateShirtAndPantsHues_WhenEquippedItemsExist()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new()
+        );
+
+        var characterId = (Serial)0x00000261;
+        var shirtId = (Serial)0x40000061;
+        var pantsId = (Serial)0x40000062;
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = characterId,
+                Name = "hues-mobile",
+                IsPlayer = true,
+                EquippedItemIds =
+                {
+                    [ItemLayerType.Shirt] = shirtId,
+                    [ItemLayerType.Pants] = pantsId
+                }
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = shirtId,
+                ItemId = 0x1517,
+                Hue = 0x0000,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Shirt
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = pantsId,
+                ItemId = 0x152E,
+                Hue = 0x0000,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Pants
+            }
+        );
+
+        await service.ApplyStarterEquipmentHuesAsync(characterId, 0x0888, 0x0999);
+
+        var reloadedShirt = await persistence.UnitOfWork.Items.GetByIdAsync(shirtId);
+        var reloadedPants = await persistence.UnitOfWork.Items.GetByIdAsync(pantsId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(reloadedShirt, Is.Not.Null);
+                Assert.That(reloadedPants, Is.Not.Null);
+                Assert.That(reloadedShirt!.Hue, Is.EqualTo(0x0888));
+                Assert.That(reloadedPants!.Hue, Is.EqualTo(0x0999));
             }
         );
     }
