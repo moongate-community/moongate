@@ -5,21 +5,43 @@ using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
+using Moongate.Server.Interfaces.Services.Movement;
+using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Movement;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Json.Regions;
+using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Handlers;
 
 public class MovementHandlerTests
 {
+    private static MovementHandler CreateHandler(
+        BasePacketListenerTestOutgoingPacketQueue queue,
+        NetworkServiceTestGameEventBusService gameEventBus,
+        TestMovementTileQueryService? tileQuery = null,
+        ISpatialWorldService? spatialWorldService = null
+    )
+    {
+        var movementValidationService = new MovementValidationService(
+            tileQuery ?? new TestMovementTileQueryService(),
+            spatialWorldService ?? new TestMovementSpatialWorldService()
+        );
+
+        return new MovementHandler(queue, gameEventBus, movementValidationService);
+    }
+
     [Test]
     public async Task HandlePacketAsync_ShouldAckAndAdvanceSequence_WhenSequenceIsValid()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -60,7 +82,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -100,7 +122,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var walkSession = new GameSession(new(client))
@@ -158,7 +180,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -196,7 +218,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -226,7 +248,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -264,7 +286,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -303,7 +325,7 @@ public class MovementHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new MovementHandler(queue, gameEventBus);
+        var handler = CreateHandler(queue, gameEventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
         {
@@ -341,5 +363,140 @@ public class MovementHandlerTests
                 Assert.That(deny.Z, Is.EqualTo(7));
             }
         );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldSendDenyAndResetSequence_WhenMoveIsBlockedByMap()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var tileQuery = new TestMovementTileQueryService
+        {
+            HasMapBounds = true,
+            Width = 64,
+            Height = 64
+        };
+        var handler = CreateHandler(queue, gameEventBus, tileQuery);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            MoveSequence = 7,
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                MapId = 1,
+                Location = new(0, 0, 0),
+                Direction = DirectionType.West
+            }
+        };
+
+        var packet = new MoveRequestPacket
+        {
+            Direction = DirectionType.West,
+            Sequence = 7
+        };
+
+        _ = await handler.HandlePacketAsync(session, packet);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<MoveDenyPacket>());
+                Assert.That(session.MoveSequence, Is.EqualTo(0));
+                Assert.That(session.Character, Is.Not.Null);
+                Assert.That(session.Character!.Location, Is.EqualTo(new Point3D(0, 0, 0)));
+            }
+        );
+    }
+
+    private sealed class TestMovementTileQueryService : IMovementTileQueryService
+    {
+        public bool HasMapBounds { get; set; }
+
+        public int Width { get; set; } = 6144;
+
+        public int Height { get; set; } = 4096;
+
+        public Dictionary<(int X, int Y), LandTile> LandTiles { get; } = [];
+
+        public Dictionary<(int X, int Y), List<StaticTile>> StaticTiles { get; } = [];
+
+        public bool TryGetMapBounds(int mapId, out int width, out int height)
+        {
+            width = Width;
+            height = Height;
+
+            return HasMapBounds;
+        }
+
+        public bool TryGetLandTile(int mapId, int x, int y, out LandTile landTile)
+        {
+            if (LandTiles.TryGetValue((x, y), out var configured))
+            {
+                landTile = configured;
+
+                return true;
+            }
+
+            landTile = new LandTile(0, 0);
+
+            return true;
+        }
+
+        public IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y)
+            => StaticTiles.TryGetValue((x, y), out var configured) ? configured : Array.Empty<StaticTile>();
+    }
+
+    private sealed class TestMovementSpatialWorldService : ISpatialWorldService
+    {
+        public List<UOMobileEntity> GetNearbyMobilesResult { get; } = [];
+
+        public void AddOrUpdateItem(UOItemEntity item, int mapId)
+            => throw new NotImplementedException();
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile)
+            => throw new NotImplementedException();
+
+        public void AddRegion(JsonRegion region)
+            => throw new NotImplementedException();
+
+        public JsonRegion? GetRegionById(int regionId)
+            => throw new NotImplementedException();
+
+        public int GetMusic(int mapId, Point3D location)
+            => throw new NotImplementedException();
+
+        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
+            => throw new NotImplementedException();
+
+        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
+            => GetNearbyMobilesResult;
+
+        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+            => throw new NotImplementedException();
+
+        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+            => throw new NotImplementedException();
+
+        public List<MapSector> GetActiveSectors()
+            => throw new NotImplementedException();
+
+        public MapSector? GetSectorByLocation(int mapId, Point3D location)
+            => throw new NotImplementedException();
+
+        public SectorSystemStats GetStats()
+            => throw new NotImplementedException();
+
+        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
+            => throw new NotImplementedException();
+
+        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
+            => throw new NotImplementedException();
+
+        public void RemoveEntity(Serial serial)
+            => throw new NotImplementedException();
     }
 }

@@ -6,6 +6,7 @@ using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Geometry;
@@ -32,11 +33,17 @@ public class MovementHandler : BasePacketListener
 
     private readonly ILogger _logger = Log.ForContext<MovementHandler>();
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IMovementValidationService _movementValidationService;
 
-    public MovementHandler(IOutgoingPacketQueue outgoingPacketQueue, IGameEventBusService gameEventBusService)
+    public MovementHandler(
+        IOutgoingPacketQueue outgoingPacketQueue,
+        IGameEventBusService gameEventBusService,
+        IMovementValidationService movementValidationService
+    )
         : base(outgoingPacketQueue)
     {
         _gameEventBusService = gameEventBusService;
+        _movementValidationService = movementValidationService;
     }
 
     protected override Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
@@ -95,7 +102,28 @@ public class MovementHandler : BasePacketListener
         }
         else
         {
-            session.Character.Location += moveRequestPacket.Direction;
+            if (!_movementValidationService.TryResolveMove(
+                    session.Character,
+                    moveRequestPacket.Direction,
+                    out var newLocation
+                ))
+            {
+                session.MoveSequence = 0;
+                Enqueue(
+                    session,
+                    new MoveDenyPacket(
+                        moveRequestPacket.Sequence,
+                        (short)session.Character.Location.X,
+                        (short)session.Character.Location.Y,
+                        session.Character.Direction,
+                        (sbyte)session.Character.Location.Z
+                    )
+                );
+
+                return Task.FromResult(true);
+            }
+
+            session.Character.Location = newLocation;
             session.Character.Direction = moveRequestPacket.Direction;
         }
 
