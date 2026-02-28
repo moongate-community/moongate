@@ -5,8 +5,8 @@ using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Speech;
-using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
+using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Types;
 
@@ -27,7 +27,8 @@ public class SpeechServiceTests
             commandSystemService,
             outgoingPacketQueue,
             gameNetworkSessionService,
-            gameEventBusService
+            gameEventBusService,
+            new RegionDataLoaderTestSpatialWorldService()
         );
         using var clientA = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         using var clientB = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -86,7 +87,8 @@ public class SpeechServiceTests
             commandSystemService,
             outgoingPacketQueue,
             gameNetworkSessionService,
-            gameEventBusService
+            gameEventBusService,
+            new RegionDataLoaderTestSpatialWorldService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
@@ -131,7 +133,8 @@ public class SpeechServiceTests
             commandSystemService,
             outgoingPacketQueue,
             gameNetworkSessionService,
-            gameEventBusService
+            gameEventBusService,
+            new RegionDataLoaderTestSpatialWorldService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
@@ -181,7 +184,8 @@ public class SpeechServiceTests
             commandSystemService,
             outgoingPacketQueue,
             gameNetworkSessionService,
-            gameEventBusService
+            gameEventBusService,
+            new RegionDataLoaderTestSpatialWorldService()
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 

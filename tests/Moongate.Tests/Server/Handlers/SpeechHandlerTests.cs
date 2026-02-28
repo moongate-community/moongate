@@ -27,7 +27,8 @@ public class SpeechHandlerTests
                 new MockCommandSystemService(),
                 queue,
                 gameNetworkSessionService,
-                gameEventBusService
+                gameEventBusService,
+                new RegionDataLoaderTestSpatialWorldService()
             )
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -93,7 +94,8 @@ public class SpeechHandlerTests
                 commandSystemService,
                 queue,
                 gameNetworkSessionService,
-                gameEventBusService
+                gameEventBusService,
+                new RegionDataLoaderTestSpatialWorldService()
             )
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));

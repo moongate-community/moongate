@@ -195,6 +195,7 @@ public sealed class ItemService : IItemService
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
+        await _gameEventBusService.PublishAsync(new ItemEquippedEvent(itemId, mobileId, layer));
 
         _logger.Debug("Equipped item {ItemId} on mobile {MobileId} at layer {Layer}", itemId, mobileId, layer);
 
@@ -259,7 +260,7 @@ public sealed class ItemService : IItemService
             return false;
         }
 
-        var container = await _persistenceService.UnitOfWork.Items.GetByIdAsync(containerId);
+        var container = await GetItemHydratedAsync(containerId);
 
         if (container is null)
         {
@@ -362,7 +363,7 @@ public sealed class ItemService : IItemService
     {
         if (item.ParentContainerId != Serial.Zero)
         {
-            var parentContainer = await _persistenceService.UnitOfWork.Items.GetByIdAsync(item.ParentContainerId);
+            var parentContainer = await GetItemHydratedAsync(item.ParentContainerId);
 
             if (parentContainer is not null)
             {

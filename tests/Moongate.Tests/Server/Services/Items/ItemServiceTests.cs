@@ -269,7 +269,8 @@ public class ItemServiceTests
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        IItemService service = new ItemService(persistence, gameEventBus);
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -295,6 +296,7 @@ public class ItemServiceTests
         var equipped = await service.EquipItemAsync(itemId, mobileId, ItemLayerType.Shirt);
         var reloadedItem = await persistence.UnitOfWork.Items.GetByIdAsync(itemId);
         var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+        var equippedEvent = gameEventBus.Events.OfType<ItemEquippedEvent>().LastOrDefault();
 
         Assert.Multiple(
             () =>
@@ -307,6 +309,10 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.ParentContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo(itemId));
+                Assert.That(equippedEvent.ItemId, Is.EqualTo(itemId));
+                Assert.That(equippedEvent.MobileId, Is.EqualTo(mobileId));
+                Assert.That(equippedEvent.Layer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(equippedEvent.BaseEvent.Timestamp, Is.GreaterThan(0));
             }
         );
     }
@@ -600,6 +606,59 @@ public class ItemServiceTests
                 Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(movedEvent.NewContainerId, Is.EqualTo(containerId));
                 Assert.That(movedEvent.MapId, Is.EqualTo(reloadedItem.MapId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task MoveItemToContainerAsync_ShouldPreserveExistingContainedItems_WhenContainerReferencesAreNotHydrated()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var backpackId = persistence.UnitOfWork.AllocateNextItemId();
+        var goldId = persistence.UnitOfWork.AllocateNextItemId();
+        var pantsId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = backpackId,
+                ItemId = 0x0E75,
+                ContainedItemIds = []
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = goldId,
+                ItemId = 0x0EED,
+                Amount = 100,
+                ParentContainerId = backpackId,
+                ContainerPosition = new(20, 20)
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = pantsId,
+                ItemId = 0x152E,
+                ParentContainerId = Serial.Zero
+            }
+        );
+
+        var moved = await service.MoveItemToContainerAsync(pantsId, backpackId, new(45, 55));
+        var hydratedBackpack = await service.GetItemAsync(backpackId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moved, Is.True);
+                Assert.That(hydratedBackpack, Is.Not.Null);
+                Assert.That(hydratedBackpack!.Items.Select(item => item.Id), Contains.Item(goldId));
+                Assert.That(hydratedBackpack.Items.Select(item => item.Id), Contains.Item(pantsId));
             }
         );
     }

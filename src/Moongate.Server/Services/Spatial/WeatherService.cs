@@ -70,9 +70,9 @@ public class WeatherService : IWeatherService
     {
         _timerService.RegisterTimer(
             "weather_update",
-            TimeSpan.FromSeconds(30),
+            TimeSpan.FromMinutes(5),
             OnWeatherCallBack,
-            TimeSpan.FromSeconds(30),
+            TimeSpan.FromMinutes(5),
             true
         );
 

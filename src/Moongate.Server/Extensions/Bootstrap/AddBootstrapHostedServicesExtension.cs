@@ -11,6 +11,7 @@ using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Network;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Console;
@@ -20,6 +21,7 @@ using Moongate.Server.Services.Files;
 using Moongate.Server.Services.Metrics;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Spatial;
 
 namespace Moongate.Server.Extensions.Bootstrap;
@@ -52,6 +54,7 @@ public static class AddBootstrapHostedServicesExtension
         );
         container.RegisterMoongateService<INetworkService, NetworkService>(ServicePriority.Network);
         container.RegisterMoongateService<IScriptEngineService, LuaScriptEngineService>(ServicePriority.ScriptEngine);
+        container.RegisterMoongateService<ILuaBrainRunner, LuaBrainRunner>(ServicePriority.ScriptEngine);
 
         return container;
     }

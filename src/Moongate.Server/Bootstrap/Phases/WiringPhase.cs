@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Events.Targeting;
@@ -9,11 +10,14 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Files;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Bootstrap.Phases;
 
@@ -123,6 +127,78 @@ internal sealed class WiringPhase : IBootstrapPhase
             "Add an item to your backpack",
             CommandSourceType.InGame,
             AccountType.Regular
+        );
+
+        commandService.RegisterCommand(
+            "bank",
+            async ctx =>
+            {
+                var gameSessionService = context.Container.Resolve<IGameNetworkSessionService>();
+                var characterService = context.Container.Resolve<ICharacterService>();
+                var itemService = context.Container.Resolve<IItemService>();
+                var outgoingPacketQueue = context.Container.Resolve<IOutgoingPacketQueue>();
+
+                if (!gameSessionService.TryGet(ctx.SessionId, out var session))
+                {
+                    ctx.Print("Failed to open bank: no active session found.");
+
+                    return;
+                }
+
+                var character = await characterService.GetCharacterAsync(session.CharacterId);
+
+                if (character is null)
+                {
+                    ctx.Print("Failed to open bank: character not found.");
+
+                    return;
+                }
+
+                if (!character.EquippedItemIds.TryGetValue(ItemLayerType.Bank, out var bankId) ||
+                    bankId == Moongate.UO.Data.Ids.Serial.Zero)
+                {
+                    ctx.Print("Failed to open bank: no bank box equipped.");
+
+                    return;
+                }
+
+                var bank = await itemService.GetItemAsync(bankId);
+
+                if (bank is null)
+                {
+                    ctx.Print("Failed to open bank: bank box not found.");
+
+                    return;
+                }
+
+                outgoingPacketQueue.Enqueue(session.SessionId, new DrawContainerAndAddItemCombinedPacket(bank));
+                ctx.Print("Bank box opened.");
+            },
+            "Open your bank box.",
+            CommandSourceType.InGame,
+            AccountType.Regular
+        );
+
+        commandService.RegisterCommand(
+            "broadcast|bc",
+            async ctx =>
+            {
+                if (ctx.Arguments.Length == 0)
+                {
+                    ctx.Print("Usage: broadcast <message>");
+
+                    return;
+                }
+
+                var speechService = context.Container.Resolve<ISpeechService>();
+                var message = string.Join(' ', ctx.Arguments);
+                var recipients = await speechService.BroadcastFromServerAsync("SERVER: " + message, SpeechHues.Orange);
+
+                ctx.Print("Broadcast sent to {0} session(s).", recipients);
+            },
+            "Send a server message to all active sessions. Usage: broadcast <message>",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator
         );
     }
 

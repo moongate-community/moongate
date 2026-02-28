@@ -2,6 +2,7 @@ using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -110,6 +111,11 @@ public class MobileHandler
 
                 //  _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
                 _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
+
+                WornItemPacketHelper.EnqueueVisibleWornItems(
+                    mobileEntity,
+                    packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
+                );
 
                 // _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
             }

@@ -31,6 +31,15 @@ public class PlayerStatusHandlerTests
             return Task.FromResult((Serial)1u);
         }
 
+        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+        {
+            _ = characterId;
+            _ = shirtHue;
+            _ = pantsHue;
+
+            return Task.CompletedTask;
+        }
+
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
         {
             _ = character;

@@ -34,6 +34,9 @@ public sealed class MobileHandlerTests
         public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
             => Task.FromResult(character.Id);
 
+        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+            => Task.CompletedTask;
+
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
             => Task.FromResult<UOItemEntity?>(null);
 
@@ -62,6 +65,9 @@ public sealed class MobileHandlerTests
         public void AddOrUpdateMobile(UOMobileEntity mobile) { }
 
         public void AddRegion(JsonRegion region) { }
+
+        public JsonRegion? GetRegionById(int regionId)
+            => null;
 
         public int GetMusic(int mapId, Point3D location)
             => 0;

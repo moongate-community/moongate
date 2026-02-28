@@ -8,6 +8,7 @@ using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -102,7 +103,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         Enqueue(session, new PlayerStatusPacket(character, 1));
 
         Enqueue(session, new MobileDrawPacket(character, character, true, true));
-        EnqueueWornItems(session, character);
+        WornItemPacketHelper.EnqueueVisibleWornItems(character, packet => Enqueue(session, packet));
         await EnqueueBackpackAsync(session, character);
 
         Enqueue(session, new WarModePacket(character));
@@ -150,19 +151,6 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         Enqueue(session, new DrawContainerAndAddItemCombinedPacket(backpack));
     }
 
-    private void EnqueueWornItems(GameSession session, UOMobileEntity character)
-    {
-        foreach (var (layer, itemReference) in character.EquippedItemReferences)
-        {
-            if (layer == ItemLayerType.Backpack || layer == ItemLayerType.Bank)
-            {
-                continue;
-            }
-
-            Enqueue(session, new WornItemPacket(character, itemReference, layer));
-        }
-    }
-
     private async Task<bool> HandleCharacterCreationPacketAsync(
         GameSession session,
         CharacterCreationPacket characterCreationPacket
@@ -172,6 +160,11 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         entity.Title = "the grandmaster of moongate";
         var newCharacter = await _characterService.CreateCharacterAsync(entity);
+        await _characterService.ApplyStarterEquipmentHuesAsync(
+            newCharacter,
+            characterCreationPacket.Shirt.Hue,
+            characterCreationPacket.Pants.Hue
+        );
 
         await _characterService.AddCharacterToAccountAsync(session.AccountId, newCharacter);
 

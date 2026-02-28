@@ -538,7 +538,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
             _parsedPackets.Enqueue(gamePacket);
             _messageBusService.PublishIncomingPacket(gamePacket);
             metrics.IncrementParsedPackets();
-            _logger.Information("Received packet 0x{OpCode:X2} from session {SessionId}", opCode, session.SessionId);
+            _logger.Verbose("Received packet 0x{OpCode:X2} from session {SessionId}", opCode, session.SessionId);
         }
     }
 

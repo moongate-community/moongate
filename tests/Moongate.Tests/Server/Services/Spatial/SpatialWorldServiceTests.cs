@@ -98,6 +98,9 @@ public sealed class SpatialWorldServiceTests
         public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
             => throw new NotSupportedException();
 
+        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+            => throw new NotSupportedException();
+
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
             => throw new NotSupportedException();
 
@@ -204,6 +207,35 @@ public sealed class SpatialWorldServiceTests
         var found = service.GetMusic(0, new(150, 150, 0));
 
         Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+    }
+
+    [Test]
+    public void GetRegionById_ShouldReturnMatchingRegion()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var region = new JsonTownRegion
+        {
+            Id = 99,
+            Map = "Felucca",
+            Name = "ById",
+            Area = [new() { X1 = 100, Y1 = 100, X2 = 101, Y2 = 101 }]
+        };
+
+        service.AddRegion(region);
+
+        var found = service.GetRegionById(99);
+        var missing = service.GetRegionById(100);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.Not.Null);
+                Assert.That(found!.Name, Is.EqualTo("ById"));
+                Assert.That(missing, Is.Null);
+            }
+        );
     }
 
     [Test]

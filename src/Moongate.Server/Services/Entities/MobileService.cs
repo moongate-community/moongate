@@ -1,7 +1,9 @@
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Services.Entities;
@@ -13,11 +15,20 @@ public sealed class MobileService : IMobileService
 {
     private readonly IPersistenceService _persistenceService;
     private readonly IMobileFactoryService _mobileFactoryService;
+    private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly ILuaBrainRunner _luaBrainRunner;
 
-    public MobileService(IPersistenceService persistenceService, IMobileFactoryService mobileFactoryService)
+    public MobileService(
+        IPersistenceService persistenceService,
+        IMobileFactoryService mobileFactoryService,
+        IMobileTemplateService mobileTemplateService,
+        ILuaBrainRunner luaBrainRunner
+    )
     {
         _persistenceService = persistenceService;
         _mobileFactoryService = mobileFactoryService;
+        _mobileTemplateService = mobileTemplateService;
+        _luaBrainRunner = luaBrainRunner;
     }
 
     /// <inheritdoc />
@@ -41,7 +52,14 @@ public sealed class MobileService : IMobileService
             return false;
         }
 
-        return await _persistenceService.UnitOfWork.Mobiles.RemoveAsync(id, cancellationToken);
+        var removed = await _persistenceService.UnitOfWork.Mobiles.RemoveAsync(id, cancellationToken);
+
+        if (removed)
+        {
+            _luaBrainRunner.Unregister(id);
+        }
+
+        return removed;
     }
 
     /// <inheritdoc />
@@ -71,7 +89,28 @@ public sealed class MobileService : IMobileService
         mobile.MapId = mapId;
 
         await CreateOrUpdateAsync(mobile, cancellationToken);
+        RegisterBrainIfConfigured(templateId, mobile);
 
         return mobile;
+    }
+
+    private void RegisterBrainIfConfigured(string templateId, UOMobileEntity mobile)
+    {
+        if (!_mobileTemplateService.TryGet(templateId, out var definition) || definition is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(definition.Brain))
+        {
+            return;
+        }
+
+        if (string.Equals(definition.Brain.Trim(), "none", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        _luaBrainRunner.Register(mobile, definition.Brain.Trim());
     }
 }

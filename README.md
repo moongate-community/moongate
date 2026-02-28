@@ -468,6 +468,47 @@ function on_player_connected(p)
 end
 ```
 
+### NPC Brain Example (`brain_loop` + `on_speech`)
+
+Mobile template:
+
+```json
+{
+  "type": "mobile",
+  "id": "orc_warrior",
+  "name": "an orc warrior",
+  "body": "0x11",
+  "brain": "orc_warrior"
+}
+```
+
+Lua script (`<root>/scripts/ai/orc_warrior.lua`):
+
+```lua
+function brain_loop(npc_id)
+  while true do
+    -- tactical tick sleep in milliseconds
+    coroutine.yield(250)
+  end
+end
+
+function on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)
+  if listener_npc_id == 0 or text == nil then
+    return
+  end
+
+  if string.find(string.lower(text), "hello", 1, true) then
+    log.info("NPC " .. tostring(listener_npc_id) .. " heard hello from " .. tostring(speaker_id))
+  end
+end
+```
+
+Notes:
+
+- `brain` in the mobile template maps to `scripts/ai/<brain>.lua` (or explicit script path if configured in registry).
+- `brain_loop` is resumed by the runner and can control next wake time via `coroutine.yield(ms)`.
+- `on_speech` is invoked when the NPC hears nearby speech events.
+
 ### Item `ScriptId` Dispatch
 
 Items can define `scriptId` in templates and runtime entities (`UOItemEntity.ScriptId`).

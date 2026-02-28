@@ -1,6 +1,7 @@
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
+using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
@@ -76,7 +77,7 @@ public class UOItemEntity : IItemEntity
     /// </summary>
     public IReadOnlyDictionary<Serial, ItemReference> ContainedItemReferences => _containedItemReferences;
 
-    public bool IsContainer => _items.Count > 0 || ContainedItemIds.Count > 0;
+    public bool IsContainer => TileData.ItemTable[ItemId][UOTileFlag.Container];
 
     public void AddItem(IItemEntity item, Point2D position)
     {

@@ -33,8 +33,10 @@ public class CharacterCreationPacket : BaseGameNetworkPacket
     public HueStyle FacialHair { get; private set; } = new(0, 0);
     public CityInfo? StartingCity { get; private set; }
     public Race? Race { get; private set; }
-    public HueStyle Shirt { get; private set; } = new(0, 0);
+
     public HueStyle Skin { get; private set; } = new(0, 0);
+
+    public HueStyle Shirt { get; private set; } = new(0, 0);
     public HueStyle Pants { get; private set; } = new(0, 0);
 
     public CharacterCreationPacket()

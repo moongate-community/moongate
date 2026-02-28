@@ -297,7 +297,7 @@ public sealed class TimerWheelService
 
         try
         {
-            _logger.Debug(
+            _logger.Verbose(
                 "Executing timer callback {TimerName} ({TimerId}) [Repeat={Repeat}]",
                 entry.Name,
                 entry.Id,

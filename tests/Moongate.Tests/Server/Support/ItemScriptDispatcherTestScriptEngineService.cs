@@ -9,6 +9,8 @@ public sealed class ItemScriptDispatcherTestScriptEngineService : IScriptEngineS
 
     public object[]? LastFunctionArgs { get; private set; }
 
+    public List<(string FunctionName, object[] Args)> Calls { get; } = [];
+
 #pragma warning disable CS0067
     public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
     public event EventHandler<ScriptErrorInfo>? OnScriptError;
@@ -34,6 +36,7 @@ public sealed class ItemScriptDispatcherTestScriptEngineService : IScriptEngineS
     {
         LastFunctionName = functionName;
         LastFunctionArgs = args;
+        Calls.Add((functionName, args));
     }
 
     public void ClearScriptCache() { }
@@ -42,6 +45,7 @@ public sealed class ItemScriptDispatcherTestScriptEngineService : IScriptEngineS
     {
         LastFunctionName = name;
         LastFunctionArgs = args;
+        Calls.Add((name, args));
     }
 
     public void ExecuteEngineReady() { }
