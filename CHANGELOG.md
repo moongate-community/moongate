@@ -1,3 +1,17 @@
+## [0.22.0](https://github.com/moongate-community/moongatev2/compare/v0.21.0...v0.22.0) (2026-02-28)
+
+### Features
+
+* **items:** improve drag-drop flow and bank container handling ([2104edd](https://github.com/moongate-community/moongatev2/commit/2104edd4953a4990d5ea14906602e4260a035649))
+* **network:** add effect packets and effects factory ([d0a5f3e](https://github.com/moongate-community/moongatev2/commit/d0a5f3e5c42fd3df519e22efaaac1547bbec6379))
+* **scripting:** add lua brain runtime with npc speech dispatch ([4211266](https://github.com/moongate-community/moongatev2/commit/4211266d1573b27d70bbb14aee74f2ee236ff3a2))
+* **spatial:** expose region lookup by id in spatial world service ([319ab7a](https://github.com/moongate-community/moongatev2/commit/319ab7a094e0b21e280dafa05c0e6dfe9f32f86b))
+
+### Bug Fixes
+
+* **movement:** validate server-side movement with z resolution and collision checks ([7590695](https://github.com/moongate-community/moongatev2/commit/7590695baafd461f2ee65d67c9ec91cd95331ff7))
+* preserve existing container items when moving item into backpack ([4771ffe](https://github.com/moongate-community/moongatev2/commit/4771ffe4462c11c42862d3f96b6c75578ce56a3d))
+
 ## [0.21.0](https://github.com/moongate-community/moongatev2/compare/v0.20.0...v0.21.0) (2026-02-27)
 
 ### Features
