@@ -18,13 +18,18 @@ using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Moongate.UO.Data.Version;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
 
-[RegisterGameEventListener, RegisterPacketHandler(PacketDefinition.LoginSeedPacket),
- RegisterPacketHandler(PacketDefinition.AccountLoginPacket), RegisterPacketHandler(PacketDefinition.ServerSelectPacket),
- RegisterPacketHandler(PacketDefinition.GameLoginPacket), RegisterPacketHandler(PacketDefinition.LoginCharacterPacket)]
+[RegisterGameEventListener,
+ RegisterPacketHandler(PacketDefinition.LoginSeedPacket),
+ RegisterPacketHandler(PacketDefinition.AccountLoginPacket),
+ RegisterPacketHandler(PacketDefinition.ServerSelectPacket),
+ RegisterPacketHandler(PacketDefinition.GameLoginPacket),
+ RegisterPacketHandler(PacketDefinition.LoginCharacterPacket),
+ RegisterPacketHandler(PacketDefinition.ClientVersionPacket)]
 
 /// <summary>
 /// Represents LoginHandler.
@@ -113,6 +118,11 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         if (packet is LoginCharacterPacket loginCharacterPacket)
         {
             return await HandleLoginCharacterPacketAsync(session, loginCharacterPacket);
+        }
+
+        if (packet is ClientVersionPacket clientVersionPacket)
+        {
+            return HandleClientVersionPacketAsync(session, clientVersionPacket);
         }
 
         return true;
@@ -230,6 +240,30 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         session.NetworkSession.SetSeed((uint)sessionKey);
 
         Enqueue(session, connectToServer);
+
+        return true;
+    }
+
+    private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
+    {
+        var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
+
+        if (string.IsNullOrWhiteSpace(rawVersion))
+        {
+            _logger.Debug("Received empty ClientVersionPacket from session {SessionId}", session.SessionId);
+
+            return true;
+        }
+
+        var clientVersion = new ClientVersion(rawVersion);
+        session.SetClientVersion(clientVersion);
+
+        _logger.Information(
+            "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
+            session.SessionId,
+            clientVersion.SourceString,
+            clientVersion.Type
+        );
 
         return true;
     }

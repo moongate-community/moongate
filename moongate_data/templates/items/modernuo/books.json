@@ -1,0 +1,546 @@
+[
+  {
+    "type": "item",
+    "id": "arms_and_weapons_primer",
+    "name": "Arms And Weapons Primer",
+    "category": "Books",
+    "description": "Imported from ModernUO (ArmsAndWeaponsPrimer).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.arms_and_weapons_primer",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "birds_of_britannia",
+    "name": "Birds Of Britannia",
+    "category": "Books",
+    "description": "Imported from ModernUO (BirdsOfBritannia).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.birds_of_britannia",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_book",
+    "name": "Blue Book",
+    "category": "Books",
+    "description": "Imported from ModernUO (BlueBook).",
+    "itemId": "0x0FF2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.blue_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bold_stranger",
+    "name": "Bold Stranger",
+    "category": "Books",
+    "description": "Imported from ModernUO (BoldStranger).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bold_stranger",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "britannian_flora",
+    "name": "Britannian Flora",
+    "category": "Books",
+    "description": "Imported from ModernUO (BritannianFlora).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.britannian_flora",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "brown_book",
+    "name": "Brown Book",
+    "category": "Books",
+    "description": "Imported from ModernUO (BrownBook).",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.brown_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "burning_of_trinsic",
+    "name": "Burning Of Trinsic",
+    "category": "Books",
+    "description": "Imported from ModernUO (BurningOfTrinsic).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.burning_of_trinsic",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "call_to_anarchy",
+    "name": "Call To Anarchy",
+    "category": "Books",
+    "description": "Imported from ModernUO (CallToAnarchy).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.call_to_anarchy",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "children_tales_vol2",
+    "name": "Children Tales Vol2",
+    "category": "Books",
+    "description": "Imported from ModernUO (ChildrenTalesVol2).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.children_tales_vol2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deceit_dungeon_of_horror",
+    "name": "Deceit Dungeon Of Horror",
+    "category": "Books",
+    "description": "Imported from ModernUO (DeceitDungeonOfHorror).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deceit_dungeon_of_horror",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dimensional_travel",
+    "name": "Dimensional Travel",
+    "category": "Books",
+    "description": "Imported from ModernUO (DimensionalTravel).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dimensional_travel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "diversity_of_our_land",
+    "name": "Diversity Of Our Land",
+    "category": "Books",
+    "description": "Imported from ModernUO (DiversityOfOurLand).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.diversity_of_our_land",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ethical_hedonism",
+    "name": "Ethical Hedonism",
+    "category": "Books",
+    "description": "Imported from ModernUO (EthicalHedonism).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.ethical_hedonism",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grammar_of_orcish",
+    "name": "Grammar Of Orcish",
+    "category": "Books",
+    "description": "Imported from ModernUO (GrammarOfOrcish).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.grammar_of_orcish",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "guide_to_guilds",
+    "name": "Guide To Guilds",
+    "category": "Books",
+    "description": "Imported from ModernUO (GuideToGuilds).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.guide_to_guilds",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "life_of_a_travelling_minstrel",
+    "name": "Life Of A Travelling Minstrel",
+    "category": "Books",
+    "description": "Imported from ModernUO (LifeOfATravellingMinstrel).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.life_of_a_travelling_minstrel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "major_trade_association",
+    "name": "Major Trade Association",
+    "category": "Books",
+    "description": "Imported from ModernUO (MajorTradeAssociation).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.major_trade_association",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "my_story",
+    "name": "My Story",
+    "category": "Books",
+    "description": "Imported from ModernUO (MyStory).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.my_story",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "quest_of_virtues",
+    "name": "Quest Of Virtues",
+    "category": "Books",
+    "description": "Imported from ModernUO (QuestOfVirtues).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.quest_of_virtues",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rankings_of_trades",
+    "name": "Rankings Of Trades",
+    "category": "Books",
+    "description": "Imported from ModernUO (RankingsOfTrades).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.rankings_of_trades",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_book",
+    "name": "Red Book",
+    "category": "Books",
+    "description": "Imported from ModernUO (RedBook).",
+    "itemId": "0x0FF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.red_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "regarding_llamas",
+    "name": "Regarding Llamas",
+    "category": "Books",
+    "description": "Imported from ModernUO (RegardingLlamas).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.regarding_llamas",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "song_of_samlethe",
+    "name": "Song Of Samlethe",
+    "category": "Books",
+    "description": "Imported from ModernUO (SongOfSamlethe).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.song_of_samlethe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tale_of_three_tribes",
+    "name": "Tale Of Three Tribes",
+    "category": "Books",
+    "description": "Imported from ModernUO (TaleOfThreeTribes).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.tale_of_three_tribes",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tales_of_vesper_vol1",
+    "name": "Tales Of Vesper Vol1",
+    "category": "Books",
+    "description": "Imported from ModernUO (TalesOfVesperVol1).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.tales_of_vesper_vol1",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "talking_to_wisps",
+    "name": "Talking To Wisps",
+    "category": "Books",
+    "description": "Imported from ModernUO (TalkingToWisps).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.talking_to_wisps",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "taming_dragons",
+    "name": "Taming Dragons",
+    "category": "Books",
+    "description": "Imported from ModernUO (TamingDragons).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.taming_dragons",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tan_book",
+    "name": "Tan Book",
+    "category": "Books",
+    "description": "Imported from ModernUO (TanBook).",
+    "itemId": "0x0FF0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.tan_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "the_fight",
+    "name": "The Fight",
+    "category": "Books",
+    "description": "Imported from ModernUO (TheFight).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.the_fight",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "treatise_on_alchemy",
+    "name": "Treatise On Alchemy",
+    "category": "Books",
+    "description": "Imported from ModernUO (TreatiseOnAlchemy).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.treatise_on_alchemy",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "virtue_book",
+    "name": "Virtue Book",
+    "category": "Books",
+    "description": "Imported from ModernUO (VirtueBook).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.virtue_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wild_girl_of_the_forest",
+    "name": "Wild Girl Of The Forest",
+    "category": "Books",
+    "description": "Imported from ModernUO (WildGirlOfTheForest).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.wild_girl_of_the_forest",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  }
+]

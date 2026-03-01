@@ -1,0 +1,206 @@
+[
+  {
+    "type": "item",
+    "id": "beads",
+    "name": "Beads",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (Beads).",
+    "itemId": "0x108B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beads",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_bead_necklace",
+    "name": "Gold Bead Necklace",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (GoldBeadNecklace).",
+    "itemId": "0x1089",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.gold_bead_necklace",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_bracelet",
+    "name": "Gold Bracelet",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (GoldBracelet).",
+    "itemId": "0x1086",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.gold_bracelet",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_earrings",
+    "name": "Gold Earrings",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (GoldEarrings).",
+    "itemId": "0x1087",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.gold_earrings",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_necklace",
+    "name": "Gold Necklace",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (GoldNecklace).",
+    "itemId": "0x1088",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.gold_necklace",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_ring",
+    "name": "Gold Ring",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (GoldRing).",
+    "itemId": "0x108A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.gold_ring",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "necklace",
+    "name": "Necklace",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (Necklace).",
+    "itemId": "0x1085",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.necklace",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "silver_bead_necklace",
+    "name": "Silver Bead Necklace",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (SilverBeadNecklace).",
+    "itemId": "0x1F05",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.silver_bead_necklace",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "silver_bracelet",
+    "name": "Silver Bracelet",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (SilverBracelet).",
+    "itemId": "0x1F06",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.silver_bracelet",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "silver_earrings",
+    "name": "Silver Earrings",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (SilverEarrings).",
+    "itemId": "0x1F07",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.silver_earrings",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "silver_necklace",
+    "name": "Silver Necklace",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (SilverNecklace).",
+    "itemId": "0x1F08",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.silver_necklace",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "silver_ring",
+    "name": "Silver Ring",
+    "category": "Jewels",
+    "description": "Imported from ModernUO (SilverRing).",
+    "itemId": "0x1F09",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.silver_ring",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "jewels"
+    ]
+  }
+]

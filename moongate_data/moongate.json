@@ -1,0 +1,12 @@
+{
+  "UODirectory": "~/uo",
+  "LogLevel": "Debug",
+  "LogPacketData": false,
+  "IsDeveloperMode": false,
+  "Http": {
+    "IsEnabled": true,
+    "Port": 8088,
+    "IsOpenApiEnabled": true
+  }
+}
+

@@ -30,6 +30,19 @@ public class MobileModuleTests
             return Task.FromResult(0);
         }
 
+        public Task HandleOpenChatWindowAsync(
+            GameSession session,
+            OpenChatWindowPacket packet,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = session;
+            _ = packet;
+            _ = cancellationToken;
+
+            return Task.CompletedTask;
+        }
+
         public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
             GameSession session,
             UnicodeSpeechPacket speechPacket,

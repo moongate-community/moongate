@@ -1,0 +1,3851 @@
+[
+  {
+    "type": "item",
+    "id": "agility_scroll",
+    "name": "Agility Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (AgilityScroll).",
+    "itemId": "0x0008",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.agility_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "animate_dead_scroll",
+    "name": "Animate Dead Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (AnimateDeadScroll).",
+    "itemId": "0x0064",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.animate_dead_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "animated_weapon_scroll",
+    "name": "Animated Weapon Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (AnimatedWeaponScroll).",
+    "itemId": "0x02AB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.animated_weapon_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "anvil",
+    "name": "Anvil",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Anvil).",
+    "itemId": "0x0FAF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.anvil",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "arcane_circle_scroll",
+    "name": "Arcane Circle Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ArcaneCircleScroll).",
+    "itemId": "0x0258",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.arcane_circle_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "arcane_empowerment_scroll",
+    "name": "Arcane Empowerment Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ArcaneEmpowermentScroll).",
+    "itemId": "0x0267",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.arcane_empowerment_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "arch_cure_scroll",
+    "name": "Arch Cure Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ArchCureScroll).",
+    "itemId": "0x0018",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.arch_cure_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "arch_protection_scroll",
+    "name": "Arch Protection Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ArchProtectionScroll).",
+    "itemId": "0x0019",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.arch_protection_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "attune_weapon_scroll",
+    "name": "Attune Weapon Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (AttuneWeaponScroll).",
+    "itemId": "0x025B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.attune_weapon_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "axle",
+    "name": "Axle",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Axle).",
+    "itemId": "0x105B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.axle",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "axle_gears",
+    "name": "Axle Gears",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (AxleGears).",
+    "itemId": "0x1051",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.axle_gears",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bamboo_flute",
+    "name": "Bamboo Flute",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BambooFlute).",
+    "itemId": "0x2805",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.bamboo_flute",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bandage",
+    "name": "Bandage",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Bandage).",
+    "itemId": "0x0E21",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.bandage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bedroll",
+    "name": "Bedroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Bedroll).",
+    "itemId": "0x0A57",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.bedroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blade_spirits_scroll",
+    "name": "Blade Spirits Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BladeSpiritsScroll).",
+    "itemId": "0x0020",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.blade_spirits_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blank_scroll",
+    "name": "Blank Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BlankScroll).",
+    "itemId": "0x0EF3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.blank_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bless_scroll",
+    "name": "Bless Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BlessScroll).",
+    "itemId": "0x0010",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bless_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blood_oath_scroll",
+    "name": "Blood Oath Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BloodOathScroll).",
+    "itemId": "0x0065",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.blood_oath_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blowpipe",
+    "name": "Blowpipe",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Blowpipe).",
+    "itemId": "0x0E8A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "items.blowpipe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "board",
+    "name": "Board",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Board).",
+    "itemId": "0x1BD7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.board",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bombard_scroll",
+    "name": "Bombard Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BombardScroll).",
+    "itemId": "0x02B0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bombard_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "book_of_bushido",
+    "name": "Book Of Bushido",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BookOfBushido).",
+    "itemId": "0x238C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.book_of_bushido",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "book_of_chivalry",
+    "name": "Book Of Chivalry",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BookOfChivalry).",
+    "itemId": "0x2252",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.book_of_chivalry",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "book_of_ninjitsu",
+    "name": "Book Of Ninjitsu",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (BookOfNinjitsu).",
+    "itemId": "0x23A0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.book_of_ninjitsu",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bottle",
+    "name": "Bottle",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Bottle).",
+    "itemId": "0x0F0E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.bottle",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chain_lightning_scroll",
+    "name": "Chain Lightning Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ChainLightningScroll).",
+    "itemId": "0x0030",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.chain_lightning_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cleansing_winds_scroll",
+    "name": "Cleansing Winds Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CleansingWindsScroll).",
+    "itemId": "0x02AF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cleansing_winds_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "clock_frame",
+    "name": "Clock Frame",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ClockFrame).",
+    "itemId": "0x104D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.clock_frame",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "clock_left",
+    "name": "Clock Left",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ClockLeft).",
+    "itemId": "0x104C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.clock_left",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "clock_parts",
+    "name": "Clock Parts",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ClockParts).",
+    "itemId": "0x104F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.clock_parts",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "clumsy_scroll",
+    "name": "Clumsy Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ClumsyScroll).",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.clumsy_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "corpse_skin_scroll",
+    "name": "Corpse Skin Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CorpseSkinScroll).",
+    "itemId": "0x0066",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.corpse_skin_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "create_food_scroll",
+    "name": "Create Food Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CreateFoodScroll).",
+    "itemId": "0x0001",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.create_food_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cunning_scroll",
+    "name": "Cunning Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CunningScroll).",
+    "itemId": "0x0009",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cunning_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cure_scroll",
+    "name": "Cure Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CureScroll).",
+    "itemId": "0x000A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cure_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "curse_scroll",
+    "name": "Curse Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CurseScroll).",
+    "itemId": "0x001A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.curse_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "curse_weapon_scroll",
+    "name": "Curse Weapon Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (CurseWeaponScroll).",
+    "itemId": "0x0067",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.curse_weapon_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "disguise_kit",
+    "name": "Disguise Kit",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DisguiseKit).",
+    "itemId": "0x0E05",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.disguise_kit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dispel_field_scroll",
+    "name": "Dispel Field Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DispelFieldScroll).",
+    "itemId": "0x0021",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dispel_field_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dispel_scroll",
+    "name": "Dispel Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DispelScroll).",
+    "itemId": "0x0028",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dispel_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dovetail_saw",
+    "name": "Dovetail Saw",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DovetailSaw).",
+    "itemId": "0x1028",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.dovetail_saw",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "draw_knife",
+    "name": "Draw Knife",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DrawKnife).",
+    "itemId": "0x10E4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.draw_knife",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dressform",
+    "name": "Dressform",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Dressform).",
+    "itemId": "0x0EC6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.dressform",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "drums",
+    "name": "Drums",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Drums).",
+    "itemId": "0x0E9C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "items.drums",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dryad_allure_scroll",
+    "name": "Dryad Allure Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DryadAllureScroll).",
+    "itemId": "0x0263",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dryad_allure_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dye_tub",
+    "name": "Dye Tub",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (DyeTub).",
+    "itemId": "0x0FAB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.dye_tub",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dyes",
+    "name": "Dyes",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Dyes).",
+    "itemId": "0x0FA9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.dyes",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "eagle_strike_scroll",
+    "name": "Eagle Strike Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EagleStrikeScroll).",
+    "itemId": "0x02AA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.eagle_strike_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "earthquake_scroll",
+    "name": "Earthquake Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EarthquakeScroll).",
+    "itemId": "0x0038",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.earthquake_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "egg_bomb",
+    "name": "Egg Bomb",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EggBomb).",
+    "itemId": "0x2808",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.egg_bomb",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "enchant_scroll",
+    "name": "Enchant Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EnchantScroll).",
+    "itemId": "0x02A8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.enchant_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "energy_bolt_scroll",
+    "name": "Energy Bolt Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EnergyBoltScroll).",
+    "itemId": "0x0029",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.energy_bolt_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "energy_field_scroll",
+    "name": "Energy Field Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EnergyFieldScroll).",
+    "itemId": "0x0031",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.energy_field_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "energy_vortex_scroll",
+    "name": "Energy Vortex Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EnergyVortexScroll).",
+    "itemId": "0x0039",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.energy_vortex_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "essence_of_wind_scroll",
+    "name": "Essence Of Wind Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EssenceOfWindScroll).",
+    "itemId": "0x0262",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.essence_of_wind_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ethereal_voyage_scroll",
+    "name": "Ethereal Voyage Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EtherealVoyageScroll).",
+    "itemId": "0x0264",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.ethereal_voyage_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "evil_omen_scroll",
+    "name": "Evil Omen Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (EvilOmenScroll).",
+    "itemId": "0x0068",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.evil_omen_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "exorcism_scroll",
+    "name": "Exorcism Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ExorcismScroll).",
+    "itemId": "0x0074",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.exorcism_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "explosion_scroll",
+    "name": "Explosion Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ExplosionScroll).",
+    "itemId": "0x002A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.explosion_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "feeblemind_scroll",
+    "name": "Feeblemind Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FeeblemindScroll).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.feeblemind_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fire_field_scroll",
+    "name": "Fire Field Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FireFieldScroll).",
+    "itemId": "0x001B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.fire_field_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fire_horn",
+    "name": "Fire Horn",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FireHorn).",
+    "itemId": "0x0FC7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.fire_horn",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fireball_scroll",
+    "name": "Fireball Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FireballScroll).",
+    "itemId": "0x0011",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.fireball_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fishing_pole",
+    "name": "Fishing Pole",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FishingPole).",
+    "itemId": "0x0DC0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "items.fishing_pole",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "flamestrike_scroll",
+    "name": "Flamestrike Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FlamestrikeScroll).",
+    "itemId": "0x0032",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.flamestrike_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fletcher_tools",
+    "name": "Fletcher Tools",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FletcherTools).",
+    "itemId": "0x1022",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.fletcher_tools",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "flour_sifter",
+    "name": "Flour Sifter",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FlourSifter).",
+    "itemId": "0x103E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.flour_sifter",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "forge",
+    "name": "Forge",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Forge).",
+    "itemId": "0x0FB1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.forge",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fork",
+    "name": "Fork",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Fork).",
+    "itemId": "0x09F4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.fork",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fork_left",
+    "name": "Fork Left",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ForkLeft).",
+    "itemId": "0x09F4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.fork_left",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fork_right",
+    "name": "Fork Right",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ForkRight).",
+    "itemId": "0x09F5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.fork_right",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "froe",
+    "name": "Froe",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Froe).",
+    "itemId": "0x10E5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.froe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fukiya",
+    "name": "Fukiya",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Fukiya).",
+    "itemId": "0x27AA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.fukiya",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fukiya_darts",
+    "name": "Fukiya Darts",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (FukiyaDarts).",
+    "itemId": "0x2806",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.fukiya_darts",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gate_travel_scroll",
+    "name": "Gate Travel Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (GateTravelScroll).",
+    "itemId": "0x0033",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gate_travel_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gears",
+    "name": "Gears",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Gears).",
+    "itemId": "0x1053",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.gears",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gift_of_life_scroll",
+    "name": "Gift Of Life Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (GiftOfLifeScroll).",
+    "itemId": "0x0266",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gift_of_life_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gift_of_renewal_scroll",
+    "name": "Gift Of Renewal Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (GiftOfRenewalScroll).",
+    "itemId": "0x0259",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gift_of_renewal_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glassblowing_book",
+    "name": "Glassblowing Book",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (GlassblowingBook).",
+    "itemId": "0x0FF4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.glassblowing_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "globe",
+    "name": "Globe",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Globe).",
+    "itemId": "0x1047",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.globe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "greater_heal_scroll",
+    "name": "Greater Heal Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (GreaterHealScroll).",
+    "itemId": "0x001C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.greater_heal_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hail_storm_scroll",
+    "name": "Hail Storm Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (HailStormScroll).",
+    "itemId": "0x02B2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.hail_storm_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hammer",
+    "name": "Hammer",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Hammer).",
+    "itemId": "0x102A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.hammer",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "harm_scroll",
+    "name": "Harm Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (HarmScroll).",
+    "itemId": "0x000B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.harm_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "harp",
+    "name": "Harp",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Harp).",
+    "itemId": "0x0EB1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 35,
+    "scriptId": "items.harp",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "heal_scroll",
+    "name": "Heal Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (HealScroll).",
+    "itemId": "0x0003",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.heal_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "healing_stone_scroll",
+    "name": "Healing Stone Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (HealingStoneScroll).",
+    "itemId": "0x02A6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.healing_stone_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hinge",
+    "name": "Hinge",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Hinge).",
+    "itemId": "0x1055",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.hinge",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "horrific_beast_scroll",
+    "name": "Horrific Beast Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (HorrificBeastScroll).",
+    "itemId": "0x0069",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.horrific_beast_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "immolating_weapon_scroll",
+    "name": "Immolating Weapon Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ImmolatingWeaponScroll).",
+    "itemId": "0x025A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.immolating_weapon_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "incognito_scroll",
+    "name": "Incognito Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (IncognitoScroll).",
+    "itemId": "0x0022",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.incognito_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "inshave",
+    "name": "Inshave",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Inshave).",
+    "itemId": "0x10E6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.inshave",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "invisibility_potion",
+    "name": "Invisibility Potion",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (InvisibilityPotion).",
+    "itemId": "0x0F0A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.invisibility_potion",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "invisibility_scroll",
+    "name": "Invisibility Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (InvisibilityScroll).",
+    "itemId": "0x002B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.invisibility_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jointing_plane",
+    "name": "Jointing Plane",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (JointingPlane).",
+    "itemId": "0x1030",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.jointing_plane",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "kindling",
+    "name": "Kindling",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Kindling).",
+    "itemId": "0x0DE1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.kindling",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "knife",
+    "name": "Knife",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Knife).",
+    "itemId": "0x09F6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.knife",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "knife_left",
+    "name": "Knife Left",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (KnifeLeft).",
+    "itemId": "0x09F6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.knife_left",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "knife_right",
+    "name": "Knife Right",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (KnifeRight).",
+    "itemId": "0x09F7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.knife_right",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lap_harp",
+    "name": "Lap Harp",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (LapHarp).",
+    "itemId": "0x0EB2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.lap_harp",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_forge_east",
+    "name": "Large Forge East",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (LargeForgeEast).",
+    "itemId": "0x197A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.large_forge_east",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_forge_west",
+    "name": "Large Forge West",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (LargeForgeWest).",
+    "itemId": "0x199A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.large_forge_west",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "leather_ninja_belt",
+    "name": "Leather Ninja Belt",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (LeatherNinjaBelt).",
+    "itemId": "0x2790",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.leather_ninja_belt",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lich_form_scroll",
+    "name": "Lich Form Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (LichFormScroll).",
+    "itemId": "0x006A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lich_form_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lightning_scroll",
+    "name": "Lightning Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (LightningScroll).",
+    "itemId": "0x001D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lightning_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lockpick",
+    "name": "Lockpick",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Lockpick).",
+    "itemId": "0x14FC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lockpick",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "log",
+    "name": "Log",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Log).",
+    "itemId": "0x1BDD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.log",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lute",
+    "name": "Lute",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Lute).",
+    "itemId": "0x0EB3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.lute",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "magic_arrow_scroll",
+    "name": "Magic Arrow Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MagicArrowScroll).",
+    "itemId": "0x0004",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.magic_arrow_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "magic_lock_scroll",
+    "name": "Magic Lock Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MagicLockScroll).",
+    "itemId": "0x0012",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.magic_lock_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "magic_reflect_scroll",
+    "name": "Magic Reflect Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MagicReflectScroll).",
+    "itemId": "0x0023",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.magic_reflect_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "magic_trap_scroll",
+    "name": "Magic Trap Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MagicTrapScroll).",
+    "itemId": "0x000C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.magic_trap_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "magic_un_trap_scroll",
+    "name": "Magic Un Trap Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MagicUnTrapScroll).",
+    "itemId": "0x000D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.magic_un_trap_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mallet_and_chisel",
+    "name": "Mallet And Chisel",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MalletAndChisel).",
+    "itemId": "0x12B3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.mallet_and_chisel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mana_drain_scroll",
+    "name": "Mana Drain Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ManaDrainScroll).",
+    "itemId": "0x001E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mana_drain_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mana_vampire_scroll",
+    "name": "Mana Vampire Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ManaVampireScroll).",
+    "itemId": "0x0034",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mana_vampire_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mapmakers_pen",
+    "name": "Mapmakers Pen",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MapmakersPen).",
+    "itemId": "0x0FBF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.mapmakers_pen",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mark_scroll",
+    "name": "Mark Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MarkScroll).",
+    "itemId": "0x002C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mark_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "masonry_book",
+    "name": "Masonry Book",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MasonryBook).",
+    "itemId": "0x0FBE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.masonry_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mass_curse_scroll",
+    "name": "Mass Curse Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MassCurseScroll).",
+    "itemId": "0x002D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mass_curse_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mass_dispel_scroll",
+    "name": "Mass Dispel Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MassDispelScroll).",
+    "itemId": "0x0035",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mass_dispel_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mass_sleep_scroll",
+    "name": "Mass Sleep Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MassSleepScroll).",
+    "itemId": "0x02AE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mass_sleep_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "message_in_a_bottle",
+    "name": "Message In A Bottle",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MessageInABottle).",
+    "itemId": "0x099F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.message_in_a_bottle",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "meteor_swarm_scroll",
+    "name": "Meteor Swarm Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MeteorSwarmScroll).",
+    "itemId": "0x0036",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.meteor_swarm_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mind_blast_scroll",
+    "name": "Mind Blast Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MindBlastScroll).",
+    "itemId": "0x0024",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mind_blast_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mind_rot_scroll",
+    "name": "Mind Rot Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MindRotScroll).",
+    "itemId": "0x006B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mind_rot_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "moongate",
+    "name": "Moongate",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Moongate).",
+    "itemId": "0x0F6C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.moongate",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mortar_pestle",
+    "name": "Mortar Pestle",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MortarPestle).",
+    "itemId": "0x0E9B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.mortar_pestle",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "moulding_plane",
+    "name": "Moulding Plane",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MouldingPlane).",
+    "itemId": "0x102C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.moulding_plane",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mystic_spellbook",
+    "name": "Mystic Spellbook",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (MysticSpellbook).",
+    "itemId": "0x2D9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.mystic_spellbook",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "nails",
+    "name": "Nails",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Nails).",
+    "itemId": "0x102E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.nails",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "nature_fury_scroll",
+    "name": "Nature Fury Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (NatureFuryScroll).",
+    "itemId": "0x025D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.nature_fury_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "necromancer_spellbook",
+    "name": "Necromancer Spellbook",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (NecromancerSpellbook).",
+    "itemId": "0x2253",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.necromancer_spellbook",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "nether_bolt_scroll",
+    "name": "Nether Bolt Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (NetherBoltScroll).",
+    "itemId": "0x02A5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.nether_bolt_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "nether_cyclone_scroll",
+    "name": "Nether Cyclone Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (NetherCycloneScroll).",
+    "itemId": "0x02B3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.nether_cyclone_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "night_sight_potion",
+    "name": "Night Sight Potion",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (NightSightPotion).",
+    "itemId": "0x0F06",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.night_sight_potion",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "night_sight_scroll",
+    "name": "Night Sight Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (NightSightScroll).",
+    "itemId": "0x0005",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.night_sight_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pain_spike_scroll",
+    "name": "Pain Spike Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PainSpikeScroll).",
+    "itemId": "0x006C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.pain_spike_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "paralyze_field_scroll",
+    "name": "Paralyze Field Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ParalyzeFieldScroll).",
+    "itemId": "0x002E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.paralyze_field_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "paralyze_scroll",
+    "name": "Paralyze Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ParalyzeScroll).",
+    "itemId": "0x0025",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.paralyze_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "plate",
+    "name": "Plate",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Plate).",
+    "itemId": "0x09D7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.plate",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "poison_field_scroll",
+    "name": "Poison Field Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PoisonFieldScroll).",
+    "itemId": "0x0026",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.poison_field_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "poison_scroll",
+    "name": "Poison Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PoisonScroll).",
+    "itemId": "0x0013",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.poison_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "poison_strike_scroll",
+    "name": "Poison Strike Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PoisonStrikeScroll).",
+    "itemId": "0x006D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.poison_strike_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "polymorph_scroll",
+    "name": "Polymorph Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PolymorphScroll).",
+    "itemId": "0x0037",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.polymorph_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "potion_keg",
+    "name": "Potion Keg",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PotionKeg).",
+    "itemId": "0x1940",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 20,
+    "scriptId": "items.potion_keg",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "prospectors_tool",
+    "name": "Prospectors Tool",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ProspectorsTool).",
+    "itemId": "0x0FB4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 9,
+    "scriptId": "items.prospectors_tool",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ],
+    "lowDamage": 13,
+    "highDamage": 15,
+    "speed": 33,
+    "strength": 40
+  },
+  {
+    "type": "item",
+    "id": "protection_scroll",
+    "name": "Protection Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ProtectionScroll).",
+    "itemId": "0x000E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.protection_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "purge_magic_scroll",
+    "name": "Purge Magic Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (PurgeMagicScroll).",
+    "itemId": "0x02A7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.purge_magic_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "reactive_armor_scroll",
+    "name": "Reactive Armor Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ReactiveArmorScroll).",
+    "itemId": "0x0006",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.reactive_armor_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "reaper_form_scroll",
+    "name": "Reaper Form Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ReaperFormScroll).",
+    "itemId": "0x0260",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.reaper_form_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "recall_rune",
+    "name": "Recall Rune",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RecallRune).",
+    "itemId": "0x1F14",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.recall_rune",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "recall_scroll",
+    "name": "Recall Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RecallScroll).",
+    "itemId": "0x001F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.recall_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "recipe_scroll",
+    "name": "Recipe Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RecipeScroll).",
+    "itemId": "0x2831",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.recipe_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "repair_deed",
+    "name": "Repair Deed",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RepairDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.repair_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "resurrection_scroll",
+    "name": "Resurrection Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ResurrectionScroll).",
+    "itemId": "0x003A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.resurrection_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "reveal_scroll",
+    "name": "Reveal Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RevealScroll).",
+    "itemId": "0x002F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.reveal_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rising_colossus_scroll",
+    "name": "Rising Colossus Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RisingColossusScroll).",
+    "itemId": "0x02B4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.rising_colossus_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rolling_pin",
+    "name": "Rolling Pin",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RollingPin).",
+    "itemId": "0x1043",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.rolling_pin",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "runic_dovetail_saw",
+    "name": "Runic Dovetail Saw",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RunicDovetailSaw).",
+    "itemId": "0x1028",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.runic_dovetail_saw",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "runic_fletcher_tool",
+    "name": "Runic Fletcher Tool",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RunicFletcherTool).",
+    "itemId": "0x1022",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.runic_fletcher_tool",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "runic_hammer",
+    "name": "Runic Hammer",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RunicHammer).",
+    "itemId": "0x13E3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "items.runic_hammer",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "runic_sewing_kit",
+    "name": "Runic Sewing Kit",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (RunicSewingKit).",
+    "itemId": "0x0F9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.runic_sewing_kit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sand",
+    "name": "Sand",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Sand).",
+    "itemId": "0x11EA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.sand",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sand_mining_book",
+    "name": "Sand Mining Book",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SandMiningBook).",
+    "itemId": "0x0FF4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.sand_mining_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "saw",
+    "name": "Saw",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Saw).",
+    "itemId": "0x1034",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.saw",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "scissors",
+    "name": "Scissors",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Scissors).",
+    "itemId": "0x0F9F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.scissors",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "scorp",
+    "name": "Scorp",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Scorp).",
+    "itemId": "0x10E7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.scorp",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "scribes_pen",
+    "name": "Scribes Pen",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ScribesPen).",
+    "itemId": "0x0FBF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.scribes_pen",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sewing_kit",
+    "name": "Sewing Kit",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SewingKit).",
+    "itemId": "0x0F9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.sewing_kit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sextant",
+    "name": "Sextant",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Sextant).",
+    "itemId": "0x1058",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.sextant",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sextant_parts",
+    "name": "Sextant Parts",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SextantParts).",
+    "itemId": "0x1059",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.sextant_parts",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "shovel",
+    "name": "Shovel",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Shovel).",
+    "itemId": "0x0F39",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.shovel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "shuriken",
+    "name": "Shuriken",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Shuriken).",
+    "itemId": "0x27AC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.shuriken",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "skillet",
+    "name": "Skillet",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Skillet).",
+    "itemId": "0x097F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.skillet",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sledge_hammer",
+    "name": "Sledge Hammer",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SledgeHammer).",
+    "itemId": "0x0FB5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sledge_hammer",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sleep_scroll",
+    "name": "Sleep Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SleepScroll).",
+    "itemId": "0x02A9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sleep_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "smith_hammer",
+    "name": "Smith Hammer",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SmithHammer).",
+    "itemId": "0x13E3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "items.smith_hammer",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "smoke_bomb",
+    "name": "Smoke Bomb",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SmokeBomb).",
+    "itemId": "0x2808",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.smoke_bomb",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "smoothing_plane",
+    "name": "Smoothing Plane",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SmoothingPlane).",
+    "itemId": "0x1032",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.smoothing_plane",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sos",
+    "name": "SOS",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SOS).",
+    "itemId": "0x14EE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.sos",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "special_fishing_net",
+    "name": "Special Fishing Net",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SpecialFishingNet).",
+    "itemId": "0x0DCA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.special_fishing_net",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spell_plague_scroll",
+    "name": "Spell Plague Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SpellPlagueScroll).",
+    "itemId": "0x02B1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.spell_plague_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spell_trigger_scroll",
+    "name": "Spell Trigger Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SpellTriggerScroll).",
+    "itemId": "0x02AD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.spell_trigger_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spellweaving_book",
+    "name": "Spellweaving Book",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SpellweavingBook).",
+    "itemId": "0x2D50",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.spellweaving_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spoon",
+    "name": "Spoon",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Spoon).",
+    "itemId": "0x09F8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.spoon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spoon_left",
+    "name": "Spoon Left",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SpoonLeft).",
+    "itemId": "0x09F8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.spoon_left",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spoon_right",
+    "name": "Spoon Right",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SpoonRight).",
+    "itemId": "0x09F9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.spoon_right",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "springs",
+    "name": "Springs",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Springs).",
+    "itemId": "0x105D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.springs",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spyglass",
+    "name": "Spyglass",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Spyglass).",
+    "itemId": "0x14F5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.spyglass",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "stone_form_scroll",
+    "name": "Stone Form Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (StoneFormScroll).",
+    "itemId": "0x02AC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.stone_form_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "stone_mining_book",
+    "name": "Stone Mining Book",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (StoneMiningBook).",
+    "itemId": "0x0FBE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.stone_mining_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "strangle_scroll",
+    "name": "Strangle Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (StrangleScroll).",
+    "itemId": "0x006E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.strangle_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "strength_scroll",
+    "name": "Strength Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (StrengthScroll).",
+    "itemId": "0x000F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.strength_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sturdy_pickaxe",
+    "name": "Sturdy Pickaxe",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SturdyPickaxe).",
+    "itemId": "0x0E86",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 11,
+    "scriptId": "items.sturdy_pickaxe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ],
+    "lowDamage": 13,
+    "highDamage": 15,
+    "speed": 35,
+    "strength": 50
+  },
+  {
+    "type": "item",
+    "id": "sturdy_shovel",
+    "name": "Sturdy Shovel",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SturdyShovel).",
+    "itemId": "0x0F39",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.sturdy_shovel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_air_elemental_scroll",
+    "name": "Summon Air Elemental Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonAirElementalScroll).",
+    "itemId": "0x003B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_air_elemental_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_creature_scroll",
+    "name": "Summon Creature Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonCreatureScroll).",
+    "itemId": "0x0027",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_creature_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_daemon_scroll",
+    "name": "Summon Daemon Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonDaemonScroll).",
+    "itemId": "0x003C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_daemon_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_earth_elemental_scroll",
+    "name": "Summon Earth Elemental Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonEarthElementalScroll).",
+    "itemId": "0x003D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_earth_elemental_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_familiar_scroll",
+    "name": "Summon Familiar Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonFamiliarScroll).",
+    "itemId": "0x006F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_familiar_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_fey_scroll",
+    "name": "Summon Fey Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonFeyScroll).",
+    "itemId": "0x025E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_fey_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_fiend_scroll",
+    "name": "Summon Fiend Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonFiendScroll).",
+    "itemId": "0x025F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_fiend_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_fire_elemental_scroll",
+    "name": "Summon Fire Elemental Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonFireElementalScroll).",
+    "itemId": "0x003E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_fire_elemental_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "summon_water_elemental_scroll",
+    "name": "Summon Water Elemental Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (SummonWaterElementalScroll).",
+    "itemId": "0x003F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.summon_water_elemental_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tambourine",
+    "name": "Tambourine",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Tambourine).",
+    "itemId": "0x0E9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.tambourine",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tambourine_tassel",
+    "name": "Tambourine Tassel",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (TambourineTassel).",
+    "itemId": "0x0E9E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.tambourine_tassel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "taxidermy_kit",
+    "name": "Taxidermy Kit",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (TaxidermyKit).",
+    "itemId": "0x1EBA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.taxidermy_kit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "telekinesis_scroll",
+    "name": "Telekinesis Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (TelekinesisScroll).",
+    "itemId": "0x0014",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.telekinesis_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "teleport_scroll",
+    "name": "Teleport Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (TeleportScroll).",
+    "itemId": "0x0015",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.teleport_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "thunderstorm_scroll",
+    "name": "Thunderstorm Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (ThunderstormScroll).",
+    "itemId": "0x025C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.thunderstorm_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tinker_tools",
+    "name": "Tinker Tools",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (TinkerTools).",
+    "itemId": "0x1EB8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.tinker_tools",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tinkers_tools",
+    "name": "Tinkers Tools",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (TinkersTools).",
+    "itemId": "0x1EBC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.tinkers_tools",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tongs",
+    "name": "Tongs",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (Tongs).",
+    "itemId": "0x0FBB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.tongs",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unlock_scroll",
+    "name": "Unlock Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (UnlockScroll).",
+    "itemId": "0x0016",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.unlock_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "vampiric_embrace_scroll",
+    "name": "Vampiric Embrace Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (VampiricEmbraceScroll).",
+    "itemId": "0x0070",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.vampiric_embrace_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "vengeful_spirit_scroll",
+    "name": "Vengeful Spirit Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (VengefulSpiritScroll).",
+    "itemId": "0x0071",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.vengeful_spirit_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wall_of_stone_scroll",
+    "name": "Wall Of Stone Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (WallOfStoneScroll).",
+    "itemId": "0x0017",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.wall_of_stone_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "weaken_scroll",
+    "name": "Weaken Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (WeakenScroll).",
+    "itemId": "0x0007",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.weaken_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wildfire_scroll",
+    "name": "Wildfire Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (WildfireScroll).",
+    "itemId": "0x0261",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.wildfire_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wither_scroll",
+    "name": "Wither Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (WitherScroll).",
+    "itemId": "0x0072",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.wither_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "word_of_death_scroll",
+    "name": "Word Of Death Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (WordOfDeathScroll).",
+    "itemId": "0x0265",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.word_of_death_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wraith_form_scroll",
+    "name": "Wraith Form Scroll",
+    "category": "Skill Items",
+    "description": "Imported from ModernUO (WraithFormScroll).",
+    "itemId": "0x0073",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.wraith_form_scroll",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items"
+    ]
+  }
+]

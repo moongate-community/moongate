@@ -26,6 +26,18 @@ public interface ISpeechService
     );
 
     /// <summary>
+    /// Processes an open-chat-window request packet.
+    /// </summary>
+    /// <param name="session">Source game session.</param>
+    /// <param name="packet">Incoming open-chat-window packet.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    Task HandleOpenChatWindowAsync(
+        GameSession session,
+        OpenChatWindowPacket packet,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Processes an incoming Unicode speech packet for a session.
     /// </summary>
     /// <param name="session">Source game session.</param>

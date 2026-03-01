@@ -1,0 +1,3197 @@
+[
+  {
+    "type": "item",
+    "id": "ancient_smithy_hammer",
+    "name": "Ancient Smithy Hammer",
+    "category": "Special",
+    "description": "Imported from ModernUO (AncientSmithyHammer).",
+    "itemId": "0x13E4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "items.ancient_smithy_hammer",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bad_card",
+    "name": "Bad Card",
+    "category": "Special",
+    "description": "Imported from ModernUO (BadCard).",
+    "itemId": "0x14EF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bad_card",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bag_of_sending",
+    "name": "Bag Of Sending",
+    "category": "Special",
+    "description": "Imported from ModernUO (BagOfSending).",
+    "itemId": "0x0E76",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.bag_of_sending",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ball_of_summoning",
+    "name": "Ball Of Summoning",
+    "category": "Special",
+    "description": "Imported from ModernUO (BallOfSummoning).",
+    "itemId": "0x0E2E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.ball_of_summoning",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "banner_deed",
+    "name": "Banner Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (BannerDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.banner_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_snowflake",
+    "name": "Blue Snowflake",
+    "category": "Special",
+    "description": "Imported from ModernUO (BlueSnowflake).",
+    "itemId": "0x232E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.blue_snowflake",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_soulstone",
+    "name": "Blue Soulstone",
+    "category": "Special",
+    "description": "Imported from ModernUO (BlueSoulstone).",
+    "itemId": "0x2ADC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.blue_soulstone",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "boiling_cauldron_addon",
+    "name": "Boiling Cauldron Addon",
+    "category": "Special",
+    "description": "Imported from ModernUO (BoilingCauldronAddon).",
+    "itemId": "0x2068",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.boiling_cauldron_addon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bracelet_of_binding",
+    "name": "Bracelet Of Binding",
+    "category": "Special",
+    "description": "Imported from ModernUO (BraceletOfBinding).",
+    "itemId": "0x1086",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.bracelet_of_binding",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cards",
+    "name": "Cards",
+    "category": "Special",
+    "description": "Imported from ModernUO (Cards).",
+    "itemId": "0x0E19",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cards",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cards2",
+    "name": "Cards2",
+    "category": "Special",
+    "description": "Imported from ModernUO (Cards2).",
+    "itemId": "0x0E16",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cards2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cards3",
+    "name": "Cards3",
+    "category": "Special",
+    "description": "Imported from ModernUO (Cards3).",
+    "itemId": "0x0E15",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cards3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cards4",
+    "name": "Cards4",
+    "category": "Special",
+    "description": "Imported from ModernUO (Cards4).",
+    "itemId": "0x0E17",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cards4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "checkers",
+    "name": "Checkers",
+    "category": "Special",
+    "description": "Imported from ModernUO (Checkers).",
+    "itemId": "0x0E1A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.checkers",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "checkers2",
+    "name": "Checkers2",
+    "category": "Special",
+    "description": "Imported from ModernUO (Checkers2).",
+    "itemId": "0x0E1B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.checkers2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chessmen",
+    "name": "Chessmen",
+    "category": "Special",
+    "description": "Imported from ModernUO (Chessmen).",
+    "itemId": "0x0E13",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.chessmen",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chessmen2",
+    "name": "Chessmen2",
+    "category": "Special",
+    "description": "Imported from ModernUO (Chessmen2).",
+    "itemId": "0x0E12",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.chessmen2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chessmen3",
+    "name": "Chessmen3",
+    "category": "Special",
+    "description": "Imported from ModernUO (Chessmen3).",
+    "itemId": "0x0E14",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.chessmen3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "closed_barrel",
+    "name": "Closed Barrel",
+    "category": "Special",
+    "description": "Imported from ModernUO (ClosedBarrel).",
+    "itemId": "0x0FAE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.closed_barrel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "coal",
+    "name": "Coal",
+    "category": "Special",
+    "description": "Imported from ModernUO (Coal).",
+    "itemId": "0x19B9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.coal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "colored_anvil",
+    "name": "Colored Anvil",
+    "category": "Special",
+    "description": "Imported from ModernUO (ColoredAnvil).",
+    "itemId": "0x0FAF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 20,
+    "scriptId": "items.colored_anvil",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "commodity_deed_box",
+    "name": "Commodity Deed Box",
+    "category": "Special",
+    "description": "Imported from ModernUO (CommodityDeedBox).",
+    "itemId": "0x09AA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "items.commodity_deed_box",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "crossbow_bolts",
+    "name": "Crossbow Bolts",
+    "category": "Special",
+    "description": "Imported from ModernUO (CrossbowBolts).",
+    "itemId": "0x1BFC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.crossbow_bolts",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dawns_music_box",
+    "name": "Dawns Music Box",
+    "category": "Special",
+    "description": "Imported from ModernUO (DawnsMusicBox).",
+    "itemId": "0x2AF9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.dawns_music_box",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dawns_music_gear",
+    "name": "Dawns Music Gear",
+    "category": "Special",
+    "description": "Imported from ModernUO (DawnsMusicGear).",
+    "itemId": "0x1053",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.dawns_music_gear",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_blackmoor",
+    "name": "Deco Blackmoor",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoBlackmoor).",
+    "itemId": "0x0F79",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_blackmoor",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_bloodspawn",
+    "name": "Deco Bloodspawn",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoBloodspawn).",
+    "itemId": "0x0F7C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_bloodspawn",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_bottles_of_liquor",
+    "name": "Deco Bottles Of Liquor",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoBottlesOfLiquor).",
+    "itemId": "0x099E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_bottles_of_liquor",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_bridle",
+    "name": "Deco Bridle",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoBridle).",
+    "itemId": "0x1374",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_bridle",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_bridle2",
+    "name": "Deco Bridle2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoBridle2).",
+    "itemId": "0x1375",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_bridle2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_brimstone",
+    "name": "Deco Brimstone",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoBrimstone).",
+    "itemId": "0x0F7F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_brimstone",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_cards5",
+    "name": "Deco Cards5",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoCards5).",
+    "itemId": "0x0E18",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_cards5",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_crystal_ball",
+    "name": "Deco Crystal Ball",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoCrystalBall).",
+    "itemId": "0x0E2E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_crystal_ball",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_deck_of_tarot",
+    "name": "Deco Deck Of Tarot",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoDeckOfTarot).",
+    "itemId": "0x12AB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_deck_of_tarot",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_deck_of_tarot2",
+    "name": "Deco Deck Of Tarot2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoDeckOfTarot2).",
+    "itemId": "0x12AC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_deck_of_tarot2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_dragons_blood",
+    "name": "Deco Dragons Blood",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoDragonsBlood).",
+    "itemId": "0x4077",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_dragons_blood",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_dragons_blood2",
+    "name": "Deco Dragons Blood2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoDragonsBlood2).",
+    "itemId": "0x0F82",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_dragons_blood2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_eye_of_newt",
+    "name": "Deco Eye Of Newt",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoEyeOfNewt).",
+    "itemId": "0x0F87",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_eye_of_newt",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_flower",
+    "name": "Deco Flower",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoFlower).",
+    "itemId": "0x18DA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_flower",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_flower2",
+    "name": "Deco Flower2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoFlower2).",
+    "itemId": "0x18D9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_flower2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_full_jar",
+    "name": "Deco Full Jar",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoFullJar).",
+    "itemId": "0x1006",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_full_jar",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_full_jars3",
+    "name": "Deco Full Jars3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoFullJars3).",
+    "itemId": "0x0E4A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_full_jars3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_full_jars4",
+    "name": "Deco Full Jars4",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoFullJars4).",
+    "itemId": "0x0E4B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_full_jars4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_garlic",
+    "name": "Deco Garlic",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGarlic).",
+    "itemId": "0x18E1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_garlic",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_garlic_bulb",
+    "name": "Deco Garlic Bulb",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGarlicBulb).",
+    "itemId": "0x18E3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_garlic_bulb",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_garlic_bulb2",
+    "name": "Deco Garlic Bulb2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGarlicBulb2).",
+    "itemId": "0x18E4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_garlic_bulb2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_garlic2",
+    "name": "Deco Garlic2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGarlic2).",
+    "itemId": "0x18E2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_garlic2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_ginseng",
+    "name": "Deco Ginseng",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGinseng).",
+    "itemId": "0x18E9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_ginseng",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_ginseng_root",
+    "name": "Deco Ginseng Root",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGinsengRoot).",
+    "itemId": "0x18EB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_ginseng_root",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_ginseng_root2",
+    "name": "Deco Ginseng Root2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGinsengRoot2).",
+    "itemId": "0x18EC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_ginseng_root2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_ginseng2",
+    "name": "Deco Ginseng2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGinseng2).",
+    "itemId": "0x18EA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_ginseng2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_gold_ingot",
+    "name": "Deco Gold Ingot",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGoldIngot).",
+    "itemId": "0x1BE9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_gold_ingot",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_gold_ingot2",
+    "name": "Deco Gold Ingot2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGoldIngot2).",
+    "itemId": "0x1BEC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_gold_ingot2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_gold_ingots",
+    "name": "Deco Gold Ingots",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGoldIngots).",
+    "itemId": "0x1BEA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_gold_ingots",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_gold_ingots2",
+    "name": "Deco Gold Ingots2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGoldIngots2).",
+    "itemId": "0x1BEB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_gold_ingots2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_gold_ingots3",
+    "name": "Deco Gold Ingots3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGoldIngots3).",
+    "itemId": "0x1BED",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_gold_ingots3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_gold_ingots4",
+    "name": "Deco Gold Ingots4",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoGoldIngots4).",
+    "itemId": "0x1BEE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_gold_ingots4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_hay",
+    "name": "Deco Hay",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoHay).",
+    "itemId": "0x0F35",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_hay",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_hay2",
+    "name": "Deco Hay2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoHay2).",
+    "itemId": "0x0F34",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_hay2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_horse_dung",
+    "name": "Deco Horse Dung",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoHorseDung).",
+    "itemId": "0x0F3B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_horse_dung",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingot",
+    "name": "Deco Iron Ingot",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngot).",
+    "itemId": "0x1BEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingot",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingot2",
+    "name": "Deco Iron Ingot2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngot2).",
+    "itemId": "0x1BEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingot2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingots",
+    "name": "Deco Iron Ingots",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngots).",
+    "itemId": "0x1BF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingots",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingots2",
+    "name": "Deco Iron Ingots2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngots2).",
+    "itemId": "0x1BF0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingots2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingots3",
+    "name": "Deco Iron Ingots3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngots3).",
+    "itemId": "0x1BF0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingots3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingots4",
+    "name": "Deco Iron Ingots4",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngots4).",
+    "itemId": "0x1BF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingots4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingots5",
+    "name": "Deco Iron Ingots5",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngots5).",
+    "itemId": "0x1BF3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingots5",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_iron_ingots6",
+    "name": "Deco Iron Ingots6",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoIronIngots6).",
+    "itemId": "0x1BF4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_iron_ingots6",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_magical_crystal",
+    "name": "Deco Magical Crystal",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoMagicalCrystal).",
+    "itemId": "0x1F19",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_magical_crystal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_mandrake",
+    "name": "Deco Mandrake",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoMandrake).",
+    "itemId": "0x18DF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_mandrake",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_mandrake_root",
+    "name": "Deco Mandrake Root",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoMandrakeRoot).",
+    "itemId": "0x18DE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_mandrake_root",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_mandrake_root2",
+    "name": "Deco Mandrake Root2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoMandrakeRoot2).",
+    "itemId": "0x18DD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_mandrake_root2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_mandrake2",
+    "name": "Deco Mandrake2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoMandrake2).",
+    "itemId": "0x18E0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_mandrake2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_mandrake3",
+    "name": "Deco Mandrake3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoMandrake3).",
+    "itemId": "0x18DF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_mandrake3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_nightshade",
+    "name": "Deco Nightshade",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoNightshade).",
+    "itemId": "0x18E7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_nightshade",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_nightshade2",
+    "name": "Deco Nightshade2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoNightshade2).",
+    "itemId": "0x18E5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_nightshade2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_nightshade3",
+    "name": "Deco Nightshade3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoNightshade3).",
+    "itemId": "0x18E6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_nightshade3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_obsidian",
+    "name": "Deco Obsidian",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoObsidian).",
+    "itemId": "0x0F89",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_obsidian",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_pumice",
+    "name": "Deco Pumice",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoPumice).",
+    "itemId": "0x0F8B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_pumice",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rock",
+    "name": "Deco Rock",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRock).",
+    "itemId": "0x1778",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rock",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rock2",
+    "name": "Deco Rock2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRock2).",
+    "itemId": "0x1363",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rock2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rocks",
+    "name": "Deco Rocks",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRocks).",
+    "itemId": "0x1367",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rocks",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rocks2",
+    "name": "Deco Rocks2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRocks2).",
+    "itemId": "0x136D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rocks2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rose_of_trinsic",
+    "name": "Deco Rose Of Trinsic",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRoseOfTrinsic).",
+    "itemId": "0x234C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rose_of_trinsic",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rose_of_trinsic2",
+    "name": "Deco Rose Of Trinsic2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRoseOfTrinsic2).",
+    "itemId": "0x234D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rose_of_trinsic2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_rose_of_trinsic3",
+    "name": "Deco Rose Of Trinsic3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoRoseOfTrinsic3).",
+    "itemId": "0x234B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_rose_of_trinsic3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingot",
+    "name": "Deco Silver Ingot",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngot).",
+    "itemId": "0x1BF5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingot",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingot2",
+    "name": "Deco Silver Ingot2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngot2).",
+    "itemId": "0x1BF8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingot2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingots",
+    "name": "Deco Silver Ingots",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngots).",
+    "itemId": "0x1BFA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingots",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingots2",
+    "name": "Deco Silver Ingots2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngots2).",
+    "itemId": "0x1BF6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingots2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingots3",
+    "name": "Deco Silver Ingots3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngots3).",
+    "itemId": "0x1BF7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingots3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingots4",
+    "name": "Deco Silver Ingots4",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngots4).",
+    "itemId": "0x1BF9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingots4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_silver_ingots5",
+    "name": "Deco Silver Ingots5",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSilverIngots5).",
+    "itemId": "0x1BFA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_silver_ingots5",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_spittoon",
+    "name": "Deco Spittoon",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoSpittoon).",
+    "itemId": "0x1003",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_spittoon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot",
+    "name": "Deco Tarot",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot).",
+    "itemId": "0x12A5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot2",
+    "name": "Deco Tarot2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot2).",
+    "itemId": "0x12A6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot3",
+    "name": "Deco Tarot3",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot3).",
+    "itemId": "0x12A7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot4",
+    "name": "Deco Tarot4",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot4).",
+    "itemId": "0x12A8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot5",
+    "name": "Deco Tarot5",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot5).",
+    "itemId": "0x12A9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot5",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot6",
+    "name": "Deco Tarot6",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot6).",
+    "itemId": "0x12AA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot6",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tarot7",
+    "name": "Deco Tarot7",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTarot7).",
+    "itemId": "0x12A5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tarot7",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_tray2",
+    "name": "Deco Tray2",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoTray2).",
+    "itemId": "0x0991",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_tray2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deco_wyrms_heart",
+    "name": "Deco Wyrms Heart",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecoWyrmsHeart).",
+    "itemId": "0x0F91",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.deco_wyrms_heart",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "decorative_shield_deed",
+    "name": "Decorative Shield Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (DecorativeShieldDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.decorative_shield_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dupres_shield",
+    "name": "Dupres Shield",
+    "category": "Special",
+    "description": "Imported from ModernUO (DupresShield).",
+    "itemId": "0x2B01",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "items.dupres_shield",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "earrings_of_protection",
+    "name": "Earrings Of Protection",
+    "category": "Special",
+    "description": "Imported from ModernUO (EarringsOfProtection).",
+    "itemId": "0x1087",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.earrings_of_protection",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_jar",
+    "name": "Empty Jar",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyJar).",
+    "itemId": "0x1005",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_jar",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_jars",
+    "name": "Empty Jars",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyJars).",
+    "itemId": "0x0E44",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_jars",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_jars2",
+    "name": "Empty Jars2",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyJars2).",
+    "itemId": "0x0E45",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_jars2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_jars3",
+    "name": "Empty Jars3",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyJars3).",
+    "itemId": "0x0E46",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_jars3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_jars4",
+    "name": "Empty Jars4",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyJars4).",
+    "itemId": "0x0E47",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_jars4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_tool_kit",
+    "name": "Empty Tool Kit",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyToolKit).",
+    "itemId": "0x1EB6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_tool_kit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_tool_kit2",
+    "name": "Empty Tool Kit2",
+    "category": "Special",
+    "description": "Imported from ModernUO (EmptyToolKit2).",
+    "itemId": "0x1EB7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.empty_tool_kit2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "flaming_head_deed",
+    "name": "Flaming Head Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (FlamingHeadDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.flaming_head_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fountain_of_life",
+    "name": "Fountain Of Life",
+    "category": "Special",
+    "description": "Imported from ModernUO (FountainOfLife).",
+    "itemId": "0x2AC0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.fountain_of_life",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ],
+    "maxItems": 125
+  },
+  {
+    "type": "item",
+    "id": "gift_box",
+    "name": "Gift Box",
+    "category": "Special",
+    "description": "Imported from ModernUO (GiftBox).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.gift_box",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gift_box_angel",
+    "name": "Gift Box Angel",
+    "category": "Special",
+    "description": "Imported from ModernUO (GiftBoxAngel).",
+    "itemId": "0x46A7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gift_box_angel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gift_box_cube",
+    "name": "Gift Box Cube",
+    "category": "Special",
+    "description": "Imported from ModernUO (GiftBoxCube).",
+    "itemId": "0x46A2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gift_box_cube",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gift_box_cylinder",
+    "name": "Gift Box Cylinder",
+    "category": "Special",
+    "description": "Imported from ModernUO (GiftBoxCylinder).",
+    "itemId": "0x46A3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gift_box_cylinder",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gift_box_octogon",
+    "name": "Gift Box Octogon",
+    "category": "Special",
+    "description": "Imported from ModernUO (GiftBoxOctogon).",
+    "itemId": "0x46A4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gift_box_octogon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_stocking",
+    "name": "Green Stocking",
+    "category": "Special",
+    "description": "Imported from ModernUO (GreenStocking).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.green_stocking",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grizzled_mare_statuette",
+    "name": "Grizzled Mare Statuette",
+    "category": "Special",
+    "description": "Imported from ModernUO (GrizzledMareStatuette).",
+    "itemId": "0x2617",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.grizzled_mare_statuette",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "half_empty_jar",
+    "name": "Half Empty Jar",
+    "category": "Special",
+    "description": "Imported from ModernUO (HalfEmptyJar).",
+    "itemId": "0x1007",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.half_empty_jar",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "half_empty_jars",
+    "name": "Half Empty Jars",
+    "category": "Special",
+    "description": "Imported from ModernUO (HalfEmptyJars).",
+    "itemId": "0x0E4C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.half_empty_jars",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hanging_skeleton_deed",
+    "name": "Hanging Skeleton Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (HangingSkeletonDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.hanging_skeleton_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "heritage_token",
+    "name": "Heritage Token",
+    "category": "Special",
+    "description": "Imported from ModernUO (HeritageToken).",
+    "itemId": "0x367A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.heritage_token",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "holiday_bell",
+    "name": "Holiday Bell",
+    "category": "Special",
+    "description": "Imported from ModernUO (HolidayBell).",
+    "itemId": "0x1C12",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.holiday_bell",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "holiday_timepiece",
+    "name": "Holiday Timepiece",
+    "category": "Special",
+    "description": "Imported from ModernUO (HolidayTimepiece).",
+    "itemId": "0x1086",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.holiday_timepiece",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hooded_shroud_of_shadows",
+    "name": "Hooded Shroud Of Shadows",
+    "category": "Special",
+    "description": "Imported from ModernUO (HoodedShroudOfShadows).",
+    "itemId": "0x2684",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.hooded_shroud_of_shadows",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "house_raffle_deed",
+    "name": "House Raffle Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (HouseRaffleDeed).",
+    "itemId": "0x2830",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.house_raffle_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "house_raffle_stone",
+    "name": "House Raffle Stone",
+    "category": "Special",
+    "description": "Imported from ModernUO (HouseRaffleStone).",
+    "itemId": "0x0EDD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.house_raffle_stone",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icicle_large_east",
+    "name": "Icicle Large East",
+    "category": "Special",
+    "description": "Imported from ModernUO (IcicleLargeEast).",
+    "itemId": "0x4575",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.icicle_large_east",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icicle_large_south",
+    "name": "Icicle Large South",
+    "category": "Special",
+    "description": "Imported from ModernUO (IcicleLargeSouth).",
+    "itemId": "0x4572",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.icicle_large_south",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icicle_med_east",
+    "name": "Icicle Med East",
+    "category": "Special",
+    "description": "Imported from ModernUO (IcicleMedEast).",
+    "itemId": "0x4576",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.icicle_med_east",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icicle_med_south",
+    "name": "Icicle Med South",
+    "category": "Special",
+    "description": "Imported from ModernUO (IcicleMedSouth).",
+    "itemId": "0x4573",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.icicle_med_south",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icicle_small_east",
+    "name": "Icicle Small East",
+    "category": "Special",
+    "description": "Imported from ModernUO (IcicleSmallEast).",
+    "itemId": "0x4577",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.icicle_small_east",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icicle_small_south",
+    "name": "Icicle Small South",
+    "category": "Special",
+    "description": "Imported from ModernUO (IcicleSmallSouth).",
+    "itemId": "0x4574",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.icicle_small_south",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jars2",
+    "name": "Jars2",
+    "category": "Special",
+    "description": "Imported from ModernUO (Jars2).",
+    "itemId": "0x0E4D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.jars2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jars3",
+    "name": "Jars3",
+    "category": "Special",
+    "description": "Imported from ModernUO (Jars3).",
+    "itemId": "0x0E4E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.jars3",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jars4",
+    "name": "Jars4",
+    "category": "Special",
+    "description": "Imported from ModernUO (Jars4).",
+    "itemId": "0x0E4F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.jars4",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jester_hatof_chuckles",
+    "name": "Jester Hatof Chuckles",
+    "category": "Special",
+    "description": "Imported from ModernUO (JesterHatofChuckles).",
+    "itemId": "0x171C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.jester_hatof_chuckles",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ],
+    "hitPoints": 100
+  },
+  {
+    "type": "item",
+    "id": "leather_gloves_of_mining",
+    "name": "Leather Gloves Of Mining",
+    "category": "Special",
+    "description": "Imported from ModernUO (LeatherGlovesOfMining).",
+    "itemId": "0x13C6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.leather_gloves_of_mining",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "lucky_necklace",
+    "name": "Lucky Necklace",
+    "category": "Special",
+    "description": "Imported from ModernUO (LuckyNecklace).",
+    "itemId": "0x1088",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lucky_necklace",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "minotaur_hedge",
+    "name": "Minotaur Hedge",
+    "category": "Special",
+    "description": "Imported from ModernUO (MinotaurHedge).",
+    "itemId": "0x0004",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.minotaur_hedge",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "plague_beast_gland",
+    "name": "Plague Beast Gland",
+    "category": "Special",
+    "description": "Imported from ModernUO (PlagueBeastGland).",
+    "itemId": "0x1CEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.plague_beast_gland",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "plague_beast_mutation_core",
+    "name": "Plague Beast Mutation Core",
+    "category": "Special",
+    "description": "Imported from ModernUO (PlagueBeastMutationCore).",
+    "itemId": "0x1CF0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.plague_beast_mutation_core",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "playing_cards",
+    "name": "Playing Cards",
+    "category": "Special",
+    "description": "Imported from ModernUO (PlayingCards).",
+    "itemId": "0x0FA3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.playing_cards",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "playing_cards2",
+    "name": "Playing Cards2",
+    "category": "Special",
+    "description": "Imported from ModernUO (PlayingCards2).",
+    "itemId": "0x0FA2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.playing_cards2",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "potted_cactus_deed",
+    "name": "Potted Cactus Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (PottedCactusDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.potted_cactus_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "potted_plant_deed",
+    "name": "Potted Plant Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (PottedPlantDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.potted_plant_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "powder_of_temperament",
+    "name": "Powder Of Temperament",
+    "category": "Special",
+    "description": "Imported from ModernUO (PowderOfTemperament).",
+    "itemId": "0x1006",
+    "hue": "2419",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.powder_of_temperament",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "powder_of_translocation",
+    "name": "Powder Of Translocation",
+    "category": "Special",
+    "description": "Imported from ModernUO (PowderOfTranslocation).",
+    "itemId": "0x26B8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.powder_of_translocation",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "quiver_of_infinity",
+    "name": "Quiver Of Infinity",
+    "category": "Special",
+    "description": "Imported from ModernUO (QuiverOfInfinity).",
+    "itemId": "0x2B02",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "items.quiver_of_infinity",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_poinsettia",
+    "name": "Red Poinsettia",
+    "category": "Special",
+    "description": "Imported from ModernUO (RedPoinsettia).",
+    "itemId": "0x2330",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.red_poinsettia",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_soulstone",
+    "name": "Red Soulstone",
+    "category": "Special",
+    "description": "Imported from ModernUO (RedSoulstone).",
+    "itemId": "0x32F3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.red_soulstone",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_stocking",
+    "name": "Red Stocking",
+    "category": "Special",
+    "description": "Imported from ModernUO (RedStocking).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.red_stocking",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_velvet_gift_box",
+    "name": "Red Velvet Gift Box",
+    "category": "Special",
+    "description": "Imported from ModernUO (RedVelvetGiftBox).",
+    "itemId": "0x0E7A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.red_velvet_gift_box",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "reward_brazier_deed",
+    "name": "Reward Brazier Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (RewardBrazierDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.reward_brazier_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "reward_cake",
+    "name": "Reward Cake",
+    "category": "Special",
+    "description": "Imported from ModernUO (RewardCake).",
+    "itemId": "0x09E9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.reward_cake",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ringmail_gloves_of_mining",
+    "name": "Ringmail Gloves Of Mining",
+    "category": "Special",
+    "description": "Imported from ModernUO (RingmailGlovesOfMining).",
+    "itemId": "0x13EB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.ringmail_gloves_of_mining",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "rose_in_a_vase",
+    "name": "Rose In A Vase",
+    "category": "Special",
+    "description": "Imported from ModernUO (RoseInAVase).",
+    "itemId": "0x0EB0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.rose_in_a_vase",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rose_of_trinsic",
+    "name": "Rose Of Trinsic",
+    "category": "Special",
+    "description": "Imported from ModernUO (RoseOfTrinsic).",
+    "itemId": "0x234D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.rose_of_trinsic",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rose_of_trinsic_petal",
+    "name": "Rose Of Trinsic Petal",
+    "category": "Special",
+    "description": "Imported from ModernUO (RoseOfTrinsicPetal).",
+    "itemId": "0x1021",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.rose_of_trinsic_petal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sacrificial_altar_addon",
+    "name": "Sacrificial Altar Addon",
+    "category": "Special",
+    "description": "Imported from ModernUO (SacrificialAltarAddon).",
+    "itemId": "0x2A9B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sacrificial_altar_addon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ],
+    "weightMax": 0
+  },
+  {
+    "type": "item",
+    "id": "samurai_helm",
+    "name": "Samurai Helm",
+    "category": "Special",
+    "description": "Imported from ModernUO (SamuraiHelm).",
+    "itemId": "0x236C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.samurai_helm",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "snow_statue_deed",
+    "name": "Snow Statue Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (SnowStatueDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.snow_statue_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "snow_statue_griffon",
+    "name": "Snow Statue Griffon",
+    "category": "Special",
+    "description": "Imported from ModernUO (SnowStatueGriffon).",
+    "itemId": "0x457C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.snow_statue_griffon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "snow_statue_mermaid",
+    "name": "Snow Statue Mermaid",
+    "category": "Special",
+    "description": "Imported from ModernUO (SnowStatueMermaid).",
+    "itemId": "0x457A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.snow_statue_mermaid",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "snow_statue_pegasus",
+    "name": "Snow Statue Pegasus",
+    "category": "Special",
+    "description": "Imported from ModernUO (SnowStatuePegasus).",
+    "itemId": "0x456E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.snow_statue_pegasus",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "snow_statue_seahorse",
+    "name": "Snow Statue Seahorse",
+    "category": "Special",
+    "description": "Imported from ModernUO (SnowStatueSeahorse).",
+    "itemId": "0x4578",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.snow_statue_seahorse",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "snowman",
+    "name": "Snowman",
+    "category": "Special",
+    "description": "Imported from ModernUO (Snowman).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.snowman",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "soulstone_fragment",
+    "name": "Soulstone Fragment",
+    "category": "Special",
+    "description": "Imported from ModernUO (SoulstoneFragment).",
+    "itemId": "0x0009",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.soulstone_fragment",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spam",
+    "name": "Spam",
+    "category": "Special",
+    "description": "Imported from ModernUO (Spam).",
+    "itemId": "0x1044",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.spam",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "studded_gloves_of_mining",
+    "name": "Studded Gloves Of Mining",
+    "category": "Special",
+    "description": "Imported from ModernUO (StuddedGlovesOfMining).",
+    "itemId": "0x13D5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.studded_gloves_of_mining",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "tapestry_of_sosaria",
+    "name": "Tapestry Of Sosaria",
+    "category": "Special",
+    "description": "Imported from ModernUO (TapestryOfSosaria).",
+    "itemId": "0x234E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.tapestry_of_sosaria",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tormented_chains",
+    "name": "Tormented Chains",
+    "category": "Special",
+    "description": "Imported from ModernUO (TormentedChains).",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.tormented_chains",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unfinished_barrel",
+    "name": "Unfinished Barrel",
+    "category": "Special",
+    "description": "Imported from ModernUO (UnfinishedBarrel).",
+    "itemId": "0x1EB5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.unfinished_barrel",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "valentines_card_east",
+    "name": "Valentines Card East",
+    "category": "Special",
+    "description": "Imported from ModernUO (ValentinesCardEast).",
+    "itemId": "0x0EBE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.valentines_card_east",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "valentines_card_south",
+    "name": "Valentines Card South",
+    "category": "Special",
+    "description": "Imported from ModernUO (ValentinesCardSouth).",
+    "itemId": "0x0EBD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.valentines_card_south",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "weapon_engraving_tool",
+    "name": "Weapon Engraving Tool",
+    "category": "Special",
+    "description": "Imported from ModernUO (WeaponEngravingTool).",
+    "itemId": "0x32F8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.weapon_engraving_tool",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "white_poinsettia",
+    "name": "White Poinsettia",
+    "category": "Special",
+    "description": "Imported from ModernUO (WhitePoinsettia).",
+    "itemId": "0x2331",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.white_poinsettia",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "white_snowflake",
+    "name": "White Snowflake",
+    "category": "Special",
+    "description": "Imported from ModernUO (WhiteSnowflake).",
+    "itemId": "0x232F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.white_snowflake",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wreath_addon",
+    "name": "Wreath Addon",
+    "category": "Special",
+    "description": "Imported from ModernUO (WreathAddon).",
+    "itemId": "0x232C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.wreath_addon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wreath_deed",
+    "name": "Wreath Deed",
+    "category": "Special",
+    "description": "Imported from ModernUO (WreathDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.wreath_deed",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wrist_watch",
+    "name": "Wrist Watch",
+    "category": "Special",
+    "description": "Imported from ModernUO (WristWatch).",
+    "itemId": "0x1086",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.wrist_watch",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "zoogi_fungus",
+    "name": "Zoogi Fungus",
+    "category": "Special",
+    "description": "Imported from ModernUO (ZoogiFungus).",
+    "itemId": "0x26B7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.zoogi_fungus",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  }
+]

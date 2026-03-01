@@ -1,0 +1,9 @@
+# Runtime and local OS artifacts
+.DS_Store
+logs/
+save/
+
+# Generated Lua tooling output (optional runtime-generated)
+.luarc/
+scripts/definitions.lua
+scripts/.luarc.json

@@ -1,0 +1,10 @@
+{
+  "brains": [
+    {
+      "brainId": "orc_warrior",
+      "scriptPath": "scripts/ai/orc_warrior.lua",
+      "hearingRange": 12,
+      "tickMs": 250
+    }
+  ]
+}

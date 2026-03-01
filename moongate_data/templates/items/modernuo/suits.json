@@ -1,0 +1,138 @@
+[
+  {
+    "type": "item",
+    "id": "admin_robe",
+    "name": "Admin Robe",
+    "category": "Suits",
+    "description": "Imported from ModernUO (AdminRobe).",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.admin_robe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "counselor_robe",
+    "name": "Counselor Robe",
+    "category": "Suits",
+    "description": "Imported from ModernUO (CounselorRobe).",
+    "itemId": "0x0003",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.counselor_robe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "death_shroud",
+    "name": "Death Shroud",
+    "category": "Suits",
+    "description": "Imported from ModernUO (DeathShroud).",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.death_shroud",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dupre_suit",
+    "name": "Dupre Suit",
+    "category": "Suits",
+    "description": "Imported from ModernUO (DupreSuit).",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dupre_suit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gm_robe",
+    "name": "GM Robe",
+    "category": "Suits",
+    "description": "Imported from ModernUO (GMRobe).",
+    "itemId": "0x0026",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gm_robe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lord_blackthorne_suit",
+    "name": "Lord Blackthorne Suit",
+    "category": "Suits",
+    "description": "Imported from ModernUO (LordBlackthorneSuit).",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lord_blackthorne_suit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lord_british_suit",
+    "name": "Lord British Suit",
+    "category": "Suits",
+    "description": "Imported from ModernUO (LordBritishSuit).",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lord_british_suit",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "seer_robe",
+    "name": "Seer Robe",
+    "category": "Suits",
+    "description": "Imported from ModernUO (SeerRobe).",
+    "itemId": "0x01D3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.seer_robe",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  }
+]

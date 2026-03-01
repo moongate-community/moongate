@@ -1,0 +1,153 @@
+[
+  {
+    "type": "mobile",
+    "id": "base_human_npc",
+    "name": "a human",
+    "category": "npc",
+    "description": "Base human NPC template for derived vendor/citizen profiles.",
+    "tags": ["npc", "human", "base"],
+    "body": "0x0190",
+    "skinHue": "hue(1002:1058)",
+    "hairHue": "hue(1102:1149)",
+    "hairStyle": 8251,
+    "strength": 50,
+    "dexterity": 50,
+    "intelligence": 50,
+    "hits": 50,
+    "mana": 50,
+    "stamina": 50,
+    "notoriety": "Innocent",
+    "brain": "None",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "shoes",
+        "layer": "Shoes"
+      }
+    ],
+    "randomEquipment": []
+  },
+  {
+    "type": "mobile",
+    "id": "banker_npc",
+    "name": "a banker",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town banker NPC.",
+    "tags": ["npc", "banker", "town"],
+    "brain": "town_banker",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "fancy_shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "shoes",
+        "layer": "Shoes"
+      }
+    ],
+    "randomEquipment": []
+  },
+  {
+    "type": "mobile",
+    "id": "blacksmith_npc",
+    "name": "a blacksmith",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town blacksmith NPC.",
+    "tags": ["npc", "blacksmith", "town"],
+    "strength": 80,
+    "dexterity": 60,
+    "intelligence": 45,
+    "hits": 80,
+    "brain": "town_blacksmith",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "fancy_shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "half_apron",
+        "layer": "Waist"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "hatchet",
+        "layer": "OneHanded"
+      }
+    ],
+    "randomEquipment": []
+  },
+  {
+    "type": "mobile",
+    "id": "healer_npc",
+    "name": "a healer",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town healer NPC.",
+    "tags": ["npc", "healer", "town"],
+    "intelligence": 80,
+    "mana": 80,
+    "brain": "town_healer",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "robe",
+        "layer": "OuterTorso"
+      },
+      {
+        "itemTemplateId": "sandals",
+        "layer": "Shoes"
+      }
+    ],
+    "randomEquipment": []
+  },
+  {
+    "type": "mobile",
+    "id": "thief_npc",
+    "name": "a suspicious man",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Urban rogue NPC for guards/crime tests.",
+    "tags": ["npc", "thief", "urban"],
+    "dexterity": 75,
+    "notoriety": "Criminal",
+    "brain": "town_thief",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "doublet",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "short_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "dagger",
+        "layer": "OneHanded"
+      }
+    ],
+    "randomEquipment": []
+  }
+]

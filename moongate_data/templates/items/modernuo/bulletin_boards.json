@@ -1,0 +1,20 @@
+[
+  {
+    "type": "item",
+    "id": "bulletin_board",
+    "name": "Bulletin Board",
+    "category": "Bulletin Boards",
+    "description": "Imported from ModernUO (BulletinBoard).",
+    "itemId": "0x1E5E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bulletin_board",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "bulletin boards",
+      "flippable"
+    ]
+  }
+]
