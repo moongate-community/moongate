@@ -1,0 +1,155 @@
+[
+  {
+    "type": "item",
+    "id": "amber",
+    "name": "Amber",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Amber).",
+    "itemId": "0x0F25",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.amber",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "amethyst",
+    "name": "Amethyst",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Amethyst).",
+    "itemId": "0x0F16",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.amethyst",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "citrine",
+    "name": "Citrine",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Citrine).",
+    "itemId": "0x0F15",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.citrine",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "diamond",
+    "name": "Diamond",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Diamond).",
+    "itemId": "0x0F26",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.diamond",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "emerald",
+    "name": "Emerald",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Emerald).",
+    "itemId": "0x0F10",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.emerald",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ruby",
+    "name": "Ruby",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Ruby).",
+    "itemId": "0x0F13",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.ruby",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sapphire",
+    "name": "Sapphire",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Sapphire).",
+    "itemId": "0x0F19",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.sapphire",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "star_sapphire",
+    "name": "Star Sapphire",
+    "category": "Gems",
+    "description": "Imported from ModernUO (StarSapphire).",
+    "itemId": "0x0F21",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.star_sapphire",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tourmaline",
+    "name": "Tourmaline",
+    "category": "Gems",
+    "description": "Imported from ModernUO (Tourmaline).",
+    "itemId": "0x0F2D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.tourmaline",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "gems"
+    ]
+  }
+]

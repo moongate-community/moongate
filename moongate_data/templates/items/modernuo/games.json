@@ -1,0 +1,88 @@
+[
+  {
+    "type": "item",
+    "id": "backgammon",
+    "name": "Backgammon",
+    "category": "Games",
+    "description": "Imported from ModernUO (Backgammon).",
+    "itemId": "0x0E1C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.backgammon",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "games",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "checker_board",
+    "name": "Checker Board",
+    "category": "Games",
+    "description": "Imported from ModernUO (CheckerBoard).",
+    "itemId": "0x0FA6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.checker_board",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "games"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chessboard",
+    "name": "Chessboard",
+    "category": "Games",
+    "description": "Imported from ModernUO (Chessboard).",
+    "itemId": "0x0FA6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.chessboard",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "games"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dices",
+    "name": "Dices",
+    "category": "Games",
+    "description": "Imported from ModernUO (Dices).",
+    "itemId": "0x0FA7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.dices",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "games"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mahjong_game",
+    "name": "Mahjong Game",
+    "category": "Games",
+    "description": "Imported from ModernUO (MahjongGame).",
+    "itemId": "0x0FAA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.mahjong_game",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "games"
+    ]
+  }
+]

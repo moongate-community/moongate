@@ -1,0 +1,1311 @@
+[
+  {
+    "type": "item",
+    "id": "academic_books_artifact",
+    "name": "Academic Books Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (AcademicBooksArtifact).",
+    "itemId": "0x1E25",
+    "hue": "2413",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.academic_books_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "backpack_artifact",
+    "name": "Backpack Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BackpackArtifact).",
+    "itemId": "0x09B2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.backpack_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket1_artifact",
+    "name": "Basket1 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket1Artifact).",
+    "itemId": "0x24DD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket1_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket2_artifact",
+    "name": "Basket2 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket2Artifact).",
+    "itemId": "0x24D7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket2_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket3_north_artifact",
+    "name": "Basket3 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket3NorthArtifact).",
+    "itemId": "0x24DA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket3_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket3_west_artifact",
+    "name": "Basket3 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket3WestArtifact).",
+    "itemId": "0x24D9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket3_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket4_artifact",
+    "name": "Basket4 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket4Artifact).",
+    "itemId": "0x24D8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket4_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket5_north_artifact",
+    "name": "Basket5 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket5NorthArtifact).",
+    "itemId": "0x24DB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket5_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket5_west_artifact",
+    "name": "Basket5 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket5WestArtifact).",
+    "itemId": "0x24DC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket5_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "basket6_artifact",
+    "name": "Basket6 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Basket6Artifact).",
+    "itemId": "0x24D5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.basket6_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bloody_water_artifact",
+    "name": "Bloody Water Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BloodyWaterArtifact).",
+    "itemId": "0x0E23",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bloody_water_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "books_face_down_artifact",
+    "name": "Books Face Down Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BooksFaceDownArtifact).",
+    "itemId": "0x1E21",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.books_face_down_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "books_north_artifact",
+    "name": "Books North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BooksNorthArtifact).",
+    "itemId": "0x1E24",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.books_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "books_west_artifact",
+    "name": "Books West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BooksWestArtifact).",
+    "itemId": "0x1E25",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.books_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bottle_artifact",
+    "name": "Bottle Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BottleArtifact).",
+    "itemId": "0x0E28",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bottle_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bowl_artifact",
+    "name": "Bowl Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BowlArtifact).",
+    "itemId": "0x24DE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bowl_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bowls_horizontal_artifact",
+    "name": "Bowls Horizontal Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BowlsHorizontalArtifact).",
+    "itemId": "0x24E0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bowls_horizontal_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bowls_vertical_artifact",
+    "name": "Bowls Vertical Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BowlsVerticalArtifact).",
+    "itemId": "0x24DF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.bowls_vertical_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "brazier_artifact",
+    "name": "Brazier Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (BrazierArtifact).",
+    "itemId": "0x0E31",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.brazier_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cocoon_artifact",
+    "name": "Cocoon Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (CocoonArtifact).",
+    "itemId": "0x10DA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cocoon_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cups_artifact",
+    "name": "Cups Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (CupsArtifact).",
+    "itemId": "0x24E1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.cups_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "damaged_books_artifact",
+    "name": "Damaged Books Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (DamagedBooksArtifact).",
+    "itemId": "0x0C16",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.damaged_books_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dolphin_left_artifact",
+    "name": "Dolphin Left Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (DolphinLeftArtifact).",
+    "itemId": "0x2846",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dolphin_left_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dolphin_right_artifact",
+    "name": "Dolphin Right Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (DolphinRightArtifact).",
+    "itemId": "0x2847",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.dolphin_right_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "egg_case_artifact",
+    "name": "Egg Case Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (EggCaseArtifact).",
+    "itemId": "0x10D9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.egg_case_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fan_north_artifact",
+    "name": "Fan North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (FanNorthArtifact).",
+    "itemId": "0x2409",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.fan_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fan_west_artifact",
+    "name": "Fan West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (FanWestArtifact).",
+    "itemId": "0x240A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.fan_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "flowers_artifact",
+    "name": "Flowers Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (FlowersArtifact).",
+    "itemId": "0x284A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.flowers_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gruesome_standard_artifact",
+    "name": "Gruesome Standard Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (GruesomeStandardArtifact).",
+    "itemId": "0x0428",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.gruesome_standard_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lamp_post_artifact",
+    "name": "Lamp Post Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (LampPostArtifact).",
+    "itemId": "0x0B24",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.lamp_post_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "leather_tunic_artifact",
+    "name": "Leather Tunic Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (LeatherTunicArtifact).",
+    "itemId": "0x13CA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.leather_tunic_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "man_statuette_east_artifact",
+    "name": "Man Statuette East Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (ManStatuetteEastArtifact).",
+    "itemId": "0x2849",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.man_statuette_east_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "man_statuette_south_artifact",
+    "name": "Man Statuette South Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (ManStatuetteSouthArtifact).",
+    "itemId": "0x2848",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.man_statuette_south_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting1_north_artifact",
+    "name": "Painting1 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting1NorthArtifact).",
+    "itemId": "0x240D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting1_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting1_west_artifact",
+    "name": "Painting1 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting1WestArtifact).",
+    "itemId": "0x240E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting1_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting2_north_artifact",
+    "name": "Painting2 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting2NorthArtifact).",
+    "itemId": "0x240F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting2_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting2_west_artifact",
+    "name": "Painting2 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting2WestArtifact).",
+    "itemId": "0x2410",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting2_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting3_artifact",
+    "name": "Painting3 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting3Artifact).",
+    "itemId": "0x2411",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting3_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting4_north_artifact",
+    "name": "Painting4 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting4NorthArtifact).",
+    "itemId": "0x2411",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting4_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting4_west_artifact",
+    "name": "Painting4 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting4WestArtifact).",
+    "itemId": "0x2412",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting4_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting5_north_artifact",
+    "name": "Painting5 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting5NorthArtifact).",
+    "itemId": "0x2415",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting5_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting5_west_artifact",
+    "name": "Painting5 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting5WestArtifact).",
+    "itemId": "0x2416",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting5_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting6_north_artifact",
+    "name": "Painting6 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting6NorthArtifact).",
+    "itemId": "0x2417",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting6_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "painting6_west_artifact",
+    "name": "Painting6 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Painting6WestArtifact).",
+    "itemId": "0x2418",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.painting6_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rock_artifact",
+    "name": "Rock Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (RockArtifact).",
+    "itemId": "0x1363",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.rock_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ruined_painting_artifact",
+    "name": "Ruined Painting Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (RuinedPaintingArtifact).",
+    "itemId": "0x0C2C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.ruined_painting_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "saddle_artifact",
+    "name": "Saddle Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SaddleArtifact).",
+    "itemId": "0x0F38",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.saddle_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sake_artifact",
+    "name": "Sake Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SakeArtifact).",
+    "itemId": "0x24E2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sake_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sculpture1_artifact",
+    "name": "Sculpture1 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Sculpture1Artifact).",
+    "itemId": "0x2419",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sculpture1_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sculpture2_artifact",
+    "name": "Sculpture2 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Sculpture2Artifact).",
+    "itemId": "0x241B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sculpture2_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "skinned_deer_artifact",
+    "name": "Skinned Deer Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SkinnedDeerArtifact).",
+    "itemId": "0x1E91",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.skinned_deer_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "skinned_goat_artifact",
+    "name": "Skinned Goat Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SkinnedGoatArtifact).",
+    "itemId": "0x1E88",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.skinned_goat_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "skull_candle_artifact",
+    "name": "Skull Candle Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SkullCandleArtifact).",
+    "itemId": "0x1858",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.skull_candle_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "stretched_hide_artifact",
+    "name": "Stretched Hide Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (StretchedHideArtifact).",
+    "itemId": "0x106B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.stretched_hide_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "studded_leggings_artifact",
+    "name": "Studded Leggings Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (StuddedLeggingsArtifact).",
+    "itemId": "0x13D8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.studded_leggings_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "studded_tunic_artifact",
+    "name": "Studded Tunic Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (StuddedTunicArtifact).",
+    "itemId": "0x13D9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.studded_tunic_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display1_north_artifact",
+    "name": "Sword Display1 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay1NorthArtifact).",
+    "itemId": "0x2843",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display1_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display1_west_artifact",
+    "name": "Sword Display1 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay1WestArtifact).",
+    "itemId": "0x2842",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display1_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display2_north_artifact",
+    "name": "Sword Display2 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay2NorthArtifact).",
+    "itemId": "0x2845",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display2_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display2_west_artifact",
+    "name": "Sword Display2 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay2WestArtifact).",
+    "itemId": "0x2844",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display2_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display3_east_artifact",
+    "name": "Sword Display3 East Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay3EastArtifact).",
+    "itemId": "0x2856",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display3_east_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display3_south_artifact",
+    "name": "Sword Display3 South Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay3SouthArtifact).",
+    "itemId": "0x2855",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display3_south_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display4_north_artifact",
+    "name": "Sword Display4 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay4NorthArtifact).",
+    "itemId": "0x2854",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display4_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display4_west_artifact",
+    "name": "Sword Display4 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay4WestArtifact).",
+    "itemId": "0x2853",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display4_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display5_north_artifact",
+    "name": "Sword Display5 North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay5NorthArtifact).",
+    "itemId": "0x2852",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display5_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sword_display5_west_artifact",
+    "name": "Sword Display5 West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (SwordDisplay5WestArtifact).",
+    "itemId": "0x2851",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.sword_display5_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tarot_cards_artifact",
+    "name": "Tarot Cards Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (TarotCardsArtifact).",
+    "itemId": "0x12A5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.tarot_cards_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "teapot_north_artifact",
+    "name": "Teapot North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (TeapotNorthArtifact).",
+    "itemId": "0x24E6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.teapot_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "teapot_west_artifact",
+    "name": "Teapot West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (TeapotWestArtifact).",
+    "itemId": "0x24E7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.teapot_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tower_lantern_artifact",
+    "name": "Tower Lantern Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (TowerLanternArtifact).",
+    "itemId": "0x24C0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.tower_lantern_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "triple_fan_north_artifact",
+    "name": "Triple Fan North Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (TripleFanNorthArtifact).",
+    "itemId": "0x240B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.triple_fan_north_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "triple_fan_west_artifact",
+    "name": "Triple Fan West Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (TripleFanWestArtifact).",
+    "itemId": "0x240C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.triple_fan_west_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "urn1_artifact",
+    "name": "Urn1 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Urn1Artifact).",
+    "itemId": "0x241D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.urn1_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "urn2_artifact",
+    "name": "Urn2 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (Urn2Artifact).",
+    "itemId": "0x241E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.urn2_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "zen_rock1_artifact",
+    "name": "Zen Rock1 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (ZenRock1Artifact).",
+    "itemId": "0x24E4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.zen_rock1_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "zen_rock2_artifact",
+    "name": "Zen Rock2 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (ZenRock2Artifact).",
+    "itemId": "0x24E3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.zen_rock2_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "zen_rock3_artifact",
+    "name": "Zen Rock3 Artifact",
+    "category": "Decoration Artifacts",
+    "description": "Imported from ModernUO (ZenRock3Artifact).",
+    "itemId": "0x24E5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.zen_rock3_artifact",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "decoration artifacts"
+    ]
+  }
+]

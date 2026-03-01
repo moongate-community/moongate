@@ -1,0 +1,50 @@
+{
+  "schema": "moongate.startup.races.v1",
+  "rules": [
+    {
+      "match": {
+        "race": "human"
+      },
+      "add": {
+        "equip": [
+          {
+            "templateId": "Shoes"
+          }
+        ]
+      }
+    },
+    {
+      "match": {
+        "race": "elf"
+      },
+      "add": {
+        "equip": [
+          {
+            "templateId": "ElvenBoots"
+          },
+          {
+            "templateId": "WildStaff"
+          }
+        ]
+      }
+    },
+    {
+      "match": {
+        "race": "gargoyle"
+      },
+      "add": {
+        "equip": [
+          {
+            "templateId": "GargishDagger"
+          }
+        ]
+      },
+      "remove": {
+        "equip": [
+          "Shoes",
+          "ElvenBoots"
+        ]
+      }
+    }
+  ]
+}

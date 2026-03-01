@@ -1,0 +1,32 @@
+[
+  {
+    "type": "mobile",
+    "id": "orione",
+    "name": "Orione",
+    "category": "animals",
+    "description": "Legacy test mobile migrated from moongate v1.",
+    "tags": ["legacy", "test", "animals"],
+    "body": "0x00C9",
+    "skinHue": 779,
+    "hairHue": 0,
+    "hairStyle": 0,
+    "brain": "orion",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  },
+  {
+    "type": "mobile",
+    "id": "vega",
+    "name": "Vega",
+    "category": "animals",
+    "description": "Legacy test mobile migrated from moongate v1.",
+    "tags": ["legacy", "test", "animals"],
+    "body": "0x00C9",
+    "skinHue": 779,
+    "hairHue": 0,
+    "hairStyle": 0,
+    "brain": "vega",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "type": "item",
+    "id": "amelias_toolbox",
+    "name": "Amelias Toolbox",
+    "category": "New Haven Quest Rewards",
+    "description": "Imported from ModernUO (AmeliasToolbox).",
+    "itemId": "0x01F4",
+    "hue": "1895",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.amelias_toolbox",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "new haven quest rewards"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hallowed_spellbook",
+    "name": "Hallowed Spellbook",
+    "category": "New Haven Quest Rewards",
+    "description": "Imported from ModernUO (HallowedSpellbook).",
+    "itemId": "0x3FFFFFFFF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.hallowed_spellbook",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "new haven quest rewards"
+    ]
+  }
+]
