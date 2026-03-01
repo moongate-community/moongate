@@ -1,3 +1,12 @@
+## [0.23.0](https://github.com/moongate-community/moongatev2/compare/v0.22.0...v0.23.0) (2026-03-01)
+
+### Features
+
+* **converters:** add ModernUO items to Moongate JSON exporter ([65534bc](https://github.com/moongate-community/moongatev2/commit/65534bc3e28e75dcd71f91925594def76ad322ff))
+* **data:** add moongate_data root directory structure ([5811c0a](https://github.com/moongate-community/moongatev2/commit/5811c0a7f6defcf75f7a2ba9d3e90831432245b1))
+* **server:** add client version handling and chat/view-range protocol flows ([ecbec45](https://github.com/moongate-community/moongatev2/commit/ecbec455367aa6df9d67b150cb006191bfbb85b7))
+* **server:** handle general information subcommands 0x06 0x1A 0x2C 0x2D 0x2E ([d4375e0](https://github.com/moongate-community/moongatev2/commit/d4375e094ee0d741b2f9dd2a7344d9a53b15dc15))
+
 ## [0.22.0](https://github.com/moongate-community/moongatev2/compare/v0.21.0...v0.22.0) (2026-02-28)
 
 ### Features
