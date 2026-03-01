@@ -47,13 +47,14 @@ public class PacketHandlerRegistrationAttributeTests
             PacketDefinition.AccountLoginPacket,
             PacketDefinition.ServerSelectPacket,
             PacketDefinition.GameLoginPacket,
-            PacketDefinition.LoginCharacterPacket
+            PacketDefinition.LoginCharacterPacket,
+            PacketDefinition.ClientVersionPacket
         );
         AssertMappings(typeof(CharacterHandler), PacketDefinition.CharacterCreationPacket);
         AssertMappings(typeof(PingPongHandler), PacketDefinition.PingMessagePacket);
         AssertMappings(typeof(PlayerStatusHandler), PacketDefinition.GetPlayerStatusPacket);
         AssertMappings(typeof(MovementHandler), PacketDefinition.MoveRequestPacket);
-        AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket);
+        AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket, PacketDefinition.OpenChatWindowPacket);
         AssertMappings(typeof(ToolTipHandler), PacketDefinition.MegaClilocPacket);
         AssertMappings(
             typeof(ItemHandler),
