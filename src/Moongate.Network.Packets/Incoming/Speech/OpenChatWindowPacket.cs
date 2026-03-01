@@ -12,9 +12,23 @@ namespace Moongate.Network.Packets.Incoming.Speech;
 /// </summary>
 public class OpenChatWindowPacket : BaseGameNetworkPacket
 {
+    /// <summary>
+    /// Raw 63-byte payload sent by client.
+    /// </summary>
+    public ReadOnlyMemory<byte> Payload { get; private set; } = ReadOnlyMemory<byte>.Empty;
+
     public OpenChatWindowPacket()
         : base(0xB5, 64) { }
 
     protected override bool ParsePayload(ref SpanReader reader)
-        => true;
+    {
+        if (reader.Remaining != 63)
+        {
+            return false;
+        }
+
+        Payload = reader.ReadBytes(63).ToArray();
+
+        return reader.Remaining == 0;
+    }
 }

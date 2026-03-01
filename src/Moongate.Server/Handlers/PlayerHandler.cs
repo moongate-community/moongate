@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Spatial;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;

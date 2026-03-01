@@ -76,6 +76,29 @@ public sealed class SpeechService : ISpeechService
         return recipients;
     }
 
+    public async Task HandleOpenChatWindowAsync(
+        GameSession session,
+        OpenChatWindowPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var chatName = session.Character?.Name;
+        if (string.IsNullOrWhiteSpace(chatName))
+        {
+            chatName = $"User{session.SessionId}";
+        }
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            new ChatCommandPacket(ChatCommandType.OpenChatWindow, chatName)
+        );
+
+        await _gameEventBusService.PublishAsync(
+            new OpenChatWindowRequestedEvent(session.SessionId, packet.Payload.ToArray()),
+            cancellationToken
+        );
+    }
+
     public async Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
         GameSession session,
         UnicodeSpeechPacket speechPacket,

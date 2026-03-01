@@ -86,6 +86,11 @@ public sealed class GameSession
     public bool IsMounted { get; set; }
 
     /// <summary>
+    /// Gets or sets the requested client view range (5..18).
+    /// </summary>
+    public byte ViewRange { get; set; } = 18;
+
+    /// <summary>
     /// Stores the negotiated client version for this session.
     /// </summary>
     /// <param name="clientVersion">Client version metadata.</param>

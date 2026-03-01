@@ -12,9 +12,35 @@ namespace Moongate.Network.Packets.Incoming.Player;
 /// </summary>
 public class ClientViewRangePacket : BaseGameNetworkPacket
 {
+    public const byte MinRange = 5;
+    public const byte MaxRange = 18;
+
+    public byte Range { get; set; } = MaxRange;
+
     public ClientViewRangePacket()
         : base(0xC8, 2) { }
 
+    public ClientViewRangePacket(byte range)
+        : this()
+    {
+        Range = range;
+    }
+
+    public override void Write(ref SpanWriter writer)
+    {
+        writer.Write(OpCode);
+        writer.Write(Range);
+    }
+
     protected override bool ParsePayload(ref SpanReader reader)
-        => true;
+    {
+        if (reader.Remaining != 1)
+        {
+            return false;
+        }
+
+        Range = reader.ReadByte();
+
+        return reader.Remaining == 0;
+    }
 }
