@@ -2,10 +2,13 @@
   {
     "type": "mobile",
     "id": "base_human_npc",
-    "name": "a human",
     "category": "npc",
     "description": "Base human NPC template for derived vendor/citizen profiles.",
-    "tags": ["npc", "human", "base"],
+    "tags": [
+      "npc",
+      "human",
+      "base"
+    ],
     "body": "0x0190",
     "skinHue": "hue(1002:1058)",
     "hairHue": "hue(1102:1149)",
@@ -32,16 +35,20 @@
         "layer": "Shoes"
       }
     ],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "title": "a human"
   },
   {
     "type": "mobile",
     "id": "banker_npc",
-    "name": "a banker",
     "base_mobile": "base_human_npc",
     "category": "npc",
     "description": "Town banker NPC.",
-    "tags": ["npc", "banker", "town"],
+    "tags": [
+      "npc",
+      "banker",
+      "town"
+    ],
     "brain": "town_banker",
     "fixedEquipment": [
       {
@@ -57,16 +64,20 @@
         "layer": "Shoes"
       }
     ],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "title": "a banker"
   },
   {
     "type": "mobile",
     "id": "blacksmith_npc",
-    "name": "a blacksmith",
     "base_mobile": "base_human_npc",
     "category": "npc",
     "description": "Town blacksmith NPC.",
-    "tags": ["npc", "blacksmith", "town"],
+    "tags": [
+      "npc",
+      "blacksmith",
+      "town"
+    ],
     "strength": 80,
     "dexterity": 60,
     "intelligence": 45,
@@ -94,16 +105,20 @@
         "layer": "OneHanded"
       }
     ],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "title": "a blacksmith"
   },
   {
     "type": "mobile",
     "id": "healer_npc",
-    "name": "a healer",
     "base_mobile": "base_human_npc",
     "category": "npc",
     "description": "Town healer NPC.",
-    "tags": ["npc", "healer", "town"],
+    "tags": [
+      "npc",
+      "healer",
+      "town"
+    ],
     "intelligence": 80,
     "mana": 80,
     "brain": "town_healer",
@@ -117,16 +132,20 @@
         "layer": "Shoes"
       }
     ],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "title": "a healer"
   },
   {
     "type": "mobile",
     "id": "thief_npc",
-    "name": "a suspicious man",
     "base_mobile": "base_human_npc",
     "category": "npc",
     "description": "Urban rogue NPC for guards/crime tests.",
-    "tags": ["npc", "thief", "urban"],
+    "tags": [
+      "npc",
+      "thief",
+      "urban"
+    ],
     "dexterity": 75,
     "notoriety": "Criminal",
     "brain": "town_thief",
@@ -148,6 +167,7 @@
         "layer": "OneHanded"
       }
     ],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "title": "a suspicious man"
   }
 ]

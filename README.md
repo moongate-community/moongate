@@ -44,6 +44,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Project Story](#project-story)
 - [Frontend Preview](#frontend-preview)
 - [Current Status](#current-status)
+- [Spatial Chunk Strategy](#spatial-chunk-strategy)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
 - [Templates](#templates)
@@ -112,6 +113,23 @@ The project is actively in development and already includes:
   - higher `Priority` first
   - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
+
+## Spatial Chunk Strategy
+
+Moongate uses a sector/chunk-based world streaming strategy instead of a pure range-view scan model.
+
+- World data is indexed by sectors (`16x16`) and loaded lazily.
+- When a sector is touched, Moongate loads entities (items + mobiles) around it in a configurable sector radius.
+- Around player login and sector changes, snapshots are sent using sector radius windows.
+- Sectors are created, populated, and reused in memory; inactive areas stay unloaded until requested.
+
+Why this choice:
+
+- Predictable memory growth and lower steady-state CPU usage on large worlds.
+- Better cache locality for entity queries and network snapshot generation.
+- Simpler scalability path for high-concurrency shards.
+
+Compared to classic emulator approaches that rely mainly on repeated range-view scans, this model is intentionally closer to chunk-streaming systems (Minecraft-style): load/unload by sector boundaries with configurable warmup and sync radii.
 
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
 

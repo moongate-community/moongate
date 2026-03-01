@@ -38,9 +38,12 @@ public sealed class NameService : INameService
     }
 
     /// <inheritdoc />
-    public string GenerateName(string type)
+    public string GenerateName(string? type)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(type);
+        if (string.IsNullOrWhiteSpace(type))
+        {
+            return GenerateRandomNameFromAllPools();
+        }
 
         if (!_names.TryGetValue(type, out var pool))
         {
@@ -58,20 +61,59 @@ public sealed class NameService : INameService
     {
         ArgumentNullException.ThrowIfNull(mobileTemplate);
 
-        var fromId = GenerateName(mobileTemplate.Id);
+        var fromId = TryGenerateNameForSpecificPool(mobileTemplate.Id);
 
         if (!string.IsNullOrEmpty(fromId))
         {
             return fromId;
         }
 
-        var fromCategory = GenerateName(mobileTemplate.Category);
+        var fromCategory = TryGenerateNameForSpecificPool(mobileTemplate.Category);
 
         if (!string.IsNullOrEmpty(fromCategory))
         {
             return fromCategory;
         }
 
-        return GenerateName(mobileTemplate.Name);
+        fromCategory = TryGenerateNameForSpecificPool(mobileTemplate.Title);
+
+        if (!string.IsNullOrEmpty(fromCategory))
+        {
+            return fromCategory;
+        }
+
+        fromCategory = TryGenerateNameForSpecificPool(mobileTemplate.Name);
+
+        if (!string.IsNullOrEmpty(fromCategory))
+        {
+            return fromCategory;
+        }
+
+        return GenerateRandomNameFromAllPools();
+    }
+
+    private string GenerateRandomNameFromAllPools()
+    {
+        var availablePools = _names.Values.Where(static pool => pool.Count > 0).ToArray();
+        if (availablePools.Length == 0)
+        {
+            return string.Empty;
+        }
+
+        var selectedPool = availablePools[_random.Next(availablePools.Length)];
+        lock (selectedPool)
+        {
+            return selectedPool.Count == 0 ? string.Empty : selectedPool[_random.Next(selectedPool.Count)];
+        }
+    }
+
+    private string TryGenerateNameForSpecificPool(string? type)
+    {
+        if (string.IsNullOrWhiteSpace(type))
+        {
+            return string.Empty;
+        }
+
+        return GenerateName(type);
     }
 }

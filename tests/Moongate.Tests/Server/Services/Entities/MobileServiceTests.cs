@@ -12,6 +12,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Mobiles;
+using Moongate.UO.Data.Types;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Data.Events.Speech;
 
@@ -19,6 +20,23 @@ namespace Moongate.Tests.Server.Services.Entities;
 
 public class MobileServiceTests
 {
+    private sealed class TestItemFactoryService : IItemFactoryService
+    {
+        public Func<string, UOItemEntity> CreateItemFromTemplateImpl { get; init; } =
+            itemTemplateId => new()
+            {
+                Id = (Serial)1u,
+                Name = itemTemplateId,
+                ItemId = 1
+            };
+
+        public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
+            => CreateItemFromTemplateImpl(itemTemplateId);
+
+        public UOItemEntity GetNewBackpack()
+            => CreateItemFromTemplate("backpack");
+    }
+
     private sealed class TestMobileFactoryService : IMobileFactoryService
     {
         public Func<string, Serial?, UOMobileEntity> CreateFromTemplateImpl { get; init; } =
@@ -114,9 +132,10 @@ public class MobileServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
         var mobile = new UOMobileEntity
         {
             Id = Serial.Zero,
@@ -142,9 +161,10 @@ public class MobileServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
         var id = persistence.UnitOfWork.AllocateNextMobileId();
 
         await persistence.UnitOfWork.Mobiles.UpsertAsync(
@@ -175,9 +195,10 @@ public class MobileServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
         var id = persistence.UnitOfWork.AllocateNextMobileId();
 
         await persistence.UnitOfWork.Mobiles.UpsertAsync(
@@ -200,15 +221,33 @@ public class MobileServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var expectedId = persistence.UnitOfWork.AllocateNextMobileId();
+        var nextItemId = 1u;
         var templateService = new TestMobileTemplateService();
         templateService.Upsert(
             new()
             {
                 Id = "orc",
-                Brain = "orc_warrior"
+                Brain = "orc_warrior",
+                FixedEquipment =
+                [
+                    new()
+                    {
+                        ItemTemplateId = "shirt",
+                        Layer = ItemLayerType.Shirt
+                    }
+                ]
             }
         );
         var luaBrainRunner = new TestLuaBrainRunner();
+        var itemFactory = new TestItemFactoryService
+        {
+            CreateItemFromTemplateImpl = itemTemplateId => new()
+            {
+                Id = (Serial)nextItemId++,
+                Name = itemTemplateId,
+                ItemId = 1
+            }
+        };
         var factory = new TestMobileFactoryService
         {
             CreateFromTemplateImpl = (templateId, accountId) =>
@@ -219,7 +258,7 @@ public class MobileServiceTests
                                              AccountId = accountId ?? Serial.Zero
                                          }
         };
-        IMobileService service = new MobileService(persistence, factory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
 
         var spawned = await service.SpawnFromTemplateAsync(
                           "orc",
@@ -240,9 +279,61 @@ public class MobileServiceTests
                 Assert.That(saved!.Name, Is.EqualTo("template:orc"));
                 Assert.That(saved.Location, Is.EqualTo(new Point3D(100, 200, 7)));
                 Assert.That(saved.MapId, Is.EqualTo(1));
+                Assert.That(spawned.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
                 Assert.That(luaBrainRunner.Registered, Has.Count.EqualTo(1));
                 Assert.That(luaBrainRunner.Registered[0].Mobile.Id, Is.EqualTo(expectedId));
                 Assert.That(luaBrainRunner.Registered[0].BrainId, Is.EqualTo("orc_warrior"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateEquippedItemReferences()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var equippedItemId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(130, 130, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Shirt] = equippedItemId
+                }
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = equippedItemId,
+                ItemId = 0x1517,
+                Hue = 0x0444,
+                EquippedMobileId = mobileId,
+                EquippedLayer = ItemLayerType.Shirt
+            }
+        );
+
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, 8, 8);
+        var mobile = loaded.Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loaded, Has.Count.EqualTo(1));
+                Assert.That(mobile.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
+                Assert.That(mobile.EquippedItemReferences.ContainsKey(ItemLayerType.Shirt), Is.True);
             }
         );
     }

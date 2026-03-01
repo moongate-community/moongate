@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Spans;
 using Moongate.Server.Data.Events.Characters;
@@ -96,6 +97,50 @@ public sealed class CharacterHandlerTests
                 Assert.That(characterService.LastAppliedCharacterId, Is.EqualTo((Serial)1u));
                 Assert.That(characterService.LastAppliedShirtHue, Is.EqualTo(packet.Shirt.Hue));
                 Assert.That(characterService.LastAppliedPantsHue, Is.EqualTo(packet.Pants.Hue));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_MobileDoubleClick_ShouldPublishMobileDoubleClickEvent()
+    {
+        EnsureMapRegistered();
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var characterService = new MovementHandlerTestCharacterService();
+        var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var gameNetworkSessionService = new FakeGameNetworkSessionService();
+        var handler = new CharacterHandler(
+            queue,
+            characterService,
+            entityFactoryService,
+            eventBus,
+            gameNetworkSessionService,
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var packet = new DoubleClickPacket
+        {
+            TargetSerial = (Serial)0x00000099u
+        };
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            AccountId = (Serial)0x01020304,
+            AccountType = AccountType.Regular
+        };
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+        var gameEvent = eventBus.Events.OfType<MobileDoubleClickEvent>().SingleOrDefault();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(gameEvent.MobileSerial, Is.EqualTo((Serial)0x00000099u));
             }
         );
     }

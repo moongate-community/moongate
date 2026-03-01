@@ -2,7 +2,6 @@
   {
     "type": "mobile",
     "id": "orione",
-    "name": "Orione",
     "category": "animals",
     "description": "Legacy test mobile migrated from moongate v1.",
     "tags": ["legacy", "test", "animals"],
@@ -12,14 +11,15 @@
     "hairStyle": 0,
     "brain": "orion",
     "fixedEquipment": [],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "name": "Orione",
+    "title": "a beautiful cat"
   },
   {
     "type": "mobile",
     "id": "vega",
-    "name": "Vega",
     "category": "animals",
-    "description": "Legacy test mobile migrated from moongate v1.",
+    "description": "my cat",
     "tags": ["legacy", "test", "animals"],
     "body": "0x00C9",
     "skinHue": 779,
@@ -27,6 +27,8 @@
     "hairStyle": 0,
     "brain": "vega",
     "fixedEquipment": [],
-    "randomEquipment": []
+    "randomEquipment": [],
+    "name": "Vega",
+    "title": "a beautiful cat"
   }
 ]

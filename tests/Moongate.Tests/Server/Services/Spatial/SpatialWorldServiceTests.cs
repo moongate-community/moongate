@@ -8,6 +8,7 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -111,6 +112,44 @@ public sealed class SpatialWorldServiceTests
             => throw new NotSupportedException();
 
         public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
+            => throw new NotSupportedException();
+    }
+
+    private sealed class SpatialWorldServiceTestMobileService : IMobileService
+    {
+        public Dictionary<(int MapId, int SectorX, int SectorY), List<UOMobileEntity>> MobilesBySector { get; } = [];
+
+        public List<(int MapId, int SectorX, int SectorY)> LoadRequests { get; } = [];
+
+        public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+            int mapId,
+            int sectorX,
+            int sectorY,
+            CancellationToken cancellationToken = default
+        )
+        {
+            LoadRequests.Add((mapId, sectorX, sectorY));
+            MobilesBySector.TryGetValue((mapId, sectorX, sectorY), out var mobiles);
+
+            return Task.FromResult(mobiles ?? []);
+        }
+
+        public Task<UOMobileEntity> SpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
             => throw new NotSupportedException();
     }
 
@@ -378,7 +417,8 @@ public sealed class SpatialWorldServiceTests
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var itemService = new SpatialWorldServiceTestItemService();
-        var service = CreateService(sessions, eventBus, itemService);
+        var mobileService = new SpatialWorldServiceTestMobileService();
+        var service = CreateService(sessions, eventBus, itemService, mobileService: mobileService);
         var location = new Point3D(130, 130, 0);
         var expectedItem = new UOItemEntity
         {
@@ -393,6 +433,35 @@ public sealed class SpatialWorldServiceTests
         Assert.That(sector, Is.Not.Null);
         Assert.That(sector!.GetItems().Select(static item => item.Id), Contains.Item(expectedItem.Id));
         Assert.That(itemService.LoadRequests, Has.Member((0, 8, 8)));
+    }
+
+    [Test]
+    public void GetSectorByLocation_ShouldLazyLoadMobilesForSectorNeighborhood()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new SpatialWorldServiceTestItemService();
+        var mobileService = new SpatialWorldServiceTestMobileService();
+        var service = CreateService(sessions, eventBus, itemService, mobileService: mobileService);
+        var location = new Point3D(130, 130, 0); // sector (8,8)
+
+        var npc = CreateMobile(0x750, 9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0, false);
+        var persistedPlayer = CreateMobile(0x751, 9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0, true);
+        mobileService.MobilesBySector[(0, 9, 8)] = [npc, persistedPlayer];
+
+        var sector = service.GetSectorByLocation(0, location);
+        var nearby = service.GetNearbyMobiles(new(9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0), 2, 0);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sector, Is.Not.Null);
+                Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.GreaterThanOrEqualTo(49));
+                Assert.That(mobileService.LoadRequests, Has.Member((0, 9, 8)));
+                Assert.That(nearby.Select(static mobile => mobile.Id), Contains.Item(npc.Id));
+                Assert.That(nearby.Select(static mobile => mobile.Id), Does.Not.Contain(persistedPlayer.Id));
+            }
+        );
     }
 
     [Test]
@@ -412,7 +481,7 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public void GetSectorByLocation_ShouldReturnNull_WhenMapNotIndexed()
+    public void GetSectorByLocation_ShouldCreateEmptySector_WhenMapNotIndexed()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -420,7 +489,7 @@ public sealed class SpatialWorldServiceTests
 
         var sector = service.GetSectorByLocation(99, new(10, 10, 0));
 
-        Assert.That(sector, Is.Null);
+        Assert.That(sector, Is.Not.Null);
     }
 
     [Test]
@@ -477,23 +546,26 @@ public sealed class SpatialWorldServiceTests
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var itemService = new SpatialWorldServiceTestItemService();
+        var mobileService = new SpatialWorldServiceTestMobileService();
         var characterService = new SpatialWorldServiceTestCharacterService();
         var service = CreateService(
             sessions,
             eventBus,
             itemService,
             characterService,
-            new() { SectorWarmupRadius = 1, LazySectorItemLoadEnabled = true }
+            new() { SectorWarmupRadius = 1, LazySectorItemLoadEnabled = true, LazySectorEntityLoadRadius = 3 },
+            mobileService: mobileService
         );
         var character = CreateMobile(0x701, 130, 130, 0, true);
         characterService.Add(character);
 
         await service.HandleAsync(new PlayerCharacterLoggedInEvent(1, (Serial)0x01u, character.Id));
 
-        Assert.That(itemService.LoadRequests.Distinct().Count(), Is.EqualTo(9));
+        Assert.That(itemService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
         Assert.That(itemService.LoadRequests, Has.Member((0, 8, 8)));
         Assert.That(itemService.LoadRequests, Has.Member((0, 7, 7)));
         Assert.That(itemService.LoadRequests, Has.Member((0, 9, 9)));
+        Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
     }
 
     [Test]
@@ -696,7 +768,8 @@ public sealed class SpatialWorldServiceTests
         SpatialWorldServiceTestItemService? itemService = null,
         ICharacterService? characterService = null,
         MoongateSpatialConfig? spatialConfig = null,
-        BasePacketListenerTestOutgoingPacketQueue? queue = null
+        BasePacketListenerTestOutgoingPacketQueue? queue = null,
+        SpatialWorldServiceTestMobileService? mobileService = null
     )
     {
         var config = new MoongateConfig
@@ -709,6 +782,7 @@ public sealed class SpatialWorldServiceTests
             eventBus,
             characterService ?? new MovementHandlerTestCharacterService(),
             itemService ?? new SpatialWorldServiceTestItemService(),
+            mobileService ?? new SpatialWorldServiceTestMobileService(),
             queue ?? new BasePacketListenerTestOutgoingPacketQueue(),
             config
         );

@@ -42,13 +42,23 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         var now = DateTime.UtcNow;
-        var generatedName = _nameService.GenerateName(template);
+        var resolvedName = template.Name;
+        if (string.IsNullOrWhiteSpace(resolvedName))
+        {
+            resolvedName = _nameService.GenerateName(template);
+        }
+
+        if (string.IsNullOrWhiteSpace(resolvedName))
+        {
+            resolvedName = template.Title;
+        }
 
         var mobile = new UOMobileEntity
         {
             Id = _persistenceService.UnitOfWork.AllocateNextMobileId(),
             AccountId = accountId ?? Serial.Zero,
-            Name = string.IsNullOrWhiteSpace(generatedName) ? template.Name : generatedName,
+            Name = resolvedName,
+            Title = template.Title,
             BaseBody = (Body)template.Body,
             Location = Point3D.Zero,
             Direction = DirectionType.South,

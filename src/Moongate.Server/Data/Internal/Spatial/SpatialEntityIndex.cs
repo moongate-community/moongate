@@ -1,5 +1,6 @@
 using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
@@ -9,7 +10,7 @@ using Moongate.UO.Data.Utils;
 namespace Moongate.Server.Data.Internal.Spatial;
 
 /// <summary>
-/// Maintains the spatial entity index and lazy sector loading for items.
+/// Maintains the spatial entity index and lazy sector loading for entities.
 /// </summary>
 internal sealed class SpatialEntityIndex
 {
@@ -19,11 +20,17 @@ internal sealed class SpatialEntityIndex
     private readonly HashSet<(int MapId, int SectorX, int SectorY)> _loadedSectors = [];
     private readonly Dictionary<(int MapId, int SectorX, int SectorY), Task> _sectorLoadTasks = [];
     private readonly IItemService _itemService;
+    private readonly IMobileService _mobileService;
     private readonly MoongateSpatialConfig _spatialConfig;
 
-    public SpatialEntityIndex(IItemService itemService, MoongateSpatialConfig spatialConfig)
+    public SpatialEntityIndex(
+        IItemService itemService,
+        IMobileService mobileService,
+        MoongateSpatialConfig spatialConfig
+    )
     {
         _itemService = itemService;
+        _mobileService = mobileService;
         _spatialConfig = spatialConfig;
     }
 
@@ -38,6 +45,7 @@ internal sealed class SpatialEntityIndex
         {
             var isNew = !_entityLocations.ContainsKey(mobile.Id);
             RemoveEntityUnsafe(mobile.Id);
+            mobile.MapId = mapId;
             var sector = GetOrCreateSectorUnsafe(mapId, sectorX, sectorY);
             sector.AddEntity(mobile);
             _entityLocations[mobile.Id] = new() { MapId = mapId, SectorX = sectorX, SectorY = sectorY };
@@ -252,6 +260,18 @@ internal sealed class SpatialEntityIndex
         }
     }
 
+    private void AddOrUpdateMobileInternal(UOMobileEntity mobile, int mapId, int sectorX, int sectorY)
+    {
+        lock (_sync)
+        {
+            RemoveEntityUnsafe(mobile.Id);
+            mobile.MapId = mapId;
+            var sector = GetOrCreateSectorUnsafe(mapId, sectorX, sectorY);
+            sector.AddEntity(mobile);
+            _entityLocations[mobile.Id] = new() { MapId = mapId, SectorX = sectorX, SectorY = sectorY };
+        }
+    }
+
     private bool MoveEntity(Serial serial, object entity, int mapId, Point3D oldLocation, Point3D newLocation)
     {
         var (oldX, oldY) = GetSectorCoordinates(oldLocation);
@@ -329,6 +349,27 @@ internal sealed class SpatialEntityIndex
             return;
         }
 
+        var radius = Math.Max(0, _spatialConfig.LazySectorEntityLoadRadius);
+        var loadTasks = new List<Task>();
+
+        for (var x = sectorX - radius; x <= sectorX + radius; x++)
+        {
+            for (var y = sectorY - radius; y <= sectorY + radius; y++)
+            {
+                loadTasks.Add(EnsureSingleSectorLoadedAsync(mapId, x, y, cancellationToken));
+            }
+        }
+
+        await Task.WhenAll(loadTasks).ConfigureAwait(false);
+    }
+
+    private async Task EnsureSingleSectorLoadedAsync(
+        int mapId,
+        int sectorX,
+        int sectorY,
+        CancellationToken cancellationToken
+    )
+    {
         var key = (mapId, sectorX, sectorY);
         Task loadTask;
 
@@ -345,7 +386,7 @@ internal sealed class SpatialEntityIndex
             }
             else
             {
-                loadTask = LoadSectorItemsAsync(mapId, sectorX, sectorY, cancellationToken);
+                loadTask = LoadSectorEntitiesAsync(mapId, sectorX, sectorY, cancellationToken);
                 _sectorLoadTasks[key] = loadTask;
             }
         }
@@ -360,6 +401,7 @@ internal sealed class SpatialEntityIndex
             {
                 if (loadTask.IsCompletedSuccessfully)
                 {
+                    GetOrCreateSectorUnsafe(mapId, sectorX, sectorY);
                     _loadedSectors.Add(key);
                 }
 
@@ -371,9 +413,29 @@ internal sealed class SpatialEntityIndex
         }
     }
 
-    private async Task LoadSectorItemsAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken)
+    private async Task LoadSectorEntitiesAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
+        var mobiles = await _mobileService.GetPersistentMobilesInSectorAsync(
+            mapId,
+            sectorX,
+            sectorY,
+            cancellationToken
+        );
+
+        foreach (var mobile in mobiles)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (mobile.IsPlayer)
+            {
+                continue;
+            }
+
+            var (mobileSectorX, mobileSectorY) = GetSectorCoordinates(mobile.Location);
+            AddOrUpdateMobileInternal(mobile, mapId, mobileSectorX, mobileSectorY);
+        }
+
         var items = await _itemService.GetGroundItemsInSectorAsync(mapId, sectorX, sectorY);
 
         foreach (var item in items)

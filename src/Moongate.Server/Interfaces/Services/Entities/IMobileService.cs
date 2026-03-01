@@ -33,6 +33,21 @@ public interface IMobileService
     Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Loads persisted world mobiles (non-player) that belong to a specific sector.
+    /// </summary>
+    /// <param name="mapId">Map identifier.</param>
+    /// <param name="sectorX">Sector X coordinate.</param>
+    /// <param name="sectorY">Sector Y coordinate.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Mobiles persisted in that sector.</returns>
+    Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+        int mapId,
+        int sectorX,
+        int sectorY,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     /// Creates and persists a mobile from a template at a specific world position.
     /// </summary>
     /// <param name="templateId">Mobile template identifier.</param>
