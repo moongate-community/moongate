@@ -26,15 +26,30 @@ On repeated violations, session is disconnected.
 - `0xA0` Server Select (`Length=3`, fixed)
 - `0x91` Game Login (`Length=65`, fixed)
 - `0x5D` Login Character (`Length=73`, fixed)
+- `0xBD` Client Version (`variable`)
 - `0xF8` Character Creation (`Length=106`, fixed)
 - `0x02` Move Request (`Length=7`, fixed)
+- `0xC8` Client View Range (`Length=2`, fixed)
 - `0x07` Pick Up (`Length=7`, fixed)
 - `0x08` Drop Item (`Length=14`, fixed)
+- `0x13` Drop -> Wear (`Length=10`, fixed)
+- `0x09` Single Click (`Length=5`, fixed)
+- `0x06` Double Click (`Length=5`, fixed)
 - `0x34` Get Player Status (`Length=10`, fixed)
-- `0x72` Request War Mode (`Length=5`, fixed)
 - `0x73` Ping Message (`Length=2`, fixed)
 - `0xAD` Unicode Speech (`variable`)
+- `0xB5` Open Chat Window (`Length=64`, fixed)
+- `0x6C` Target Cursor Commands (`Length=19`, fixed)
 - `0xBF` General Information (`variable`)
+- `0xD6` Mega Cliloc (`variable`)
+
+## Wired `0xBF` Subcommands
+
+- `0x06` Party System
+- `0x1A` Stat Lock Change
+- `0x2C` Use Targeted Item
+- `0x2D` Cast Targeted Spell
+- `0x2E` Use Targeted Skill
 
 ## Selected Outbound Packets
 
@@ -44,10 +59,31 @@ On repeated violations, session is disconnected.
 - `0xA9` Character / Starting Locations (variable)
 - `0xB9` Support Features (`Length=5`, fixed)
 - `0x55` Login Complete (`Length=1`, fixed)
+- `0x22` Move Confirm (`Length=3`, fixed)
+- `0x21` Move Deny (`Length=8`, fixed)
+- `0x5B` Set Time (`Length=4`, fixed)
+- `0xF2` Time Sync Response (`Length=13`, fixed)
 - `0x78` Mobile Incoming (variable)
+- `0x20` Draw Player (`Length=19`, fixed)
+- `0x2E` Worn Item (`Length=15`, fixed)
+- `0x24` Draw Container (`Length=9`, fixed)
+- `0x3C` Add Multiple Items To Container (variable)
 - `0x88` Paperdoll (`Length=66`, fixed)
-- `0x11` Player Status (`Length=43`, fixed)
+- `0x11` Player Status (variable)
+- `0xF3` Object Information (`Length=24`, fixed)
+- `0x23` Dragging Of Item (`Length=26`, fixed)
+- `0xBC` Season (`Length=3`, fixed)
+- `0x4F` Overall Light Level (`Length=2`, fixed)
+- `0x4E` Personal Light Level (`Length=6`, fixed)
+- `0x6D` Set Music (`Length=3`, fixed)
+- `0x65` Set Weather (`Length=4`, fixed)
+- `0x54` Play Sound Effect (`Length=12`, fixed)
+- `0x70` Graphical Effect (`Length=28`, fixed)
+- `0xC0` Hued Effect (`Length=36`, fixed)
+- `0xC7` Particle Effect (`Length=49`, fixed)
 - `0xAE` Unicode Speech Message (variable)
+- `0xB0` Generic Gump (variable)
+- `0xDD` Compressed Gump (variable)
 
 ## Opcode Constants
 
@@ -56,7 +92,7 @@ On repeated violations, session is disconnected.
 ## Notes
 
 - Length/source metadata is defined in packet attributes and registration.
-- Runtime listener availability is independent from packet registration: a packet can be parseable but have no listener yet.
+- Runtime listener availability is independent from packet registration: a packet can be parseable but still not be wired to gameplay flow.
 
 ---
 
