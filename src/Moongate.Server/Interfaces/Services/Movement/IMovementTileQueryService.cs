@@ -21,4 +21,13 @@ public interface IMovementTileQueryService
     /// Returns static tiles at world coordinates.
     /// </summary>
     IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y);
+
+    /// <summary>
+    /// Returns whether an entity can fit at the specified location.
+    /// </summary>
+    /// <remarks>
+    /// Default implementation returns <see langword="true" /> for compatibility with tests/fakes.
+    /// </remarks>
+    bool CanFit(int mapId, int x, int y, int z, int height = 16)
+        => true;
 }

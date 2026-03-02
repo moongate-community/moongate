@@ -13,6 +13,7 @@ using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Accounting;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Entities;
@@ -27,6 +28,7 @@ using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
+using Moongate.Server.Services.World;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Services.Names;
@@ -73,6 +75,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IStartupTemplateService, StartupTemplateService>(Reuse.Singleton);
+        container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
+        container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);
 
         return container;
     }

@@ -45,6 +45,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Frontend Preview](#frontend-preview)
 - [Current Status](#current-status)
 - [Spatial Chunk Strategy](#spatial-chunk-strategy)
+- [World Generation Pipeline](#world-generation-pipeline)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
 - [Templates](#templates)
@@ -132,6 +133,24 @@ Why this choice:
 Compared to classic emulator approaches that rely mainly on repeated range-view scans, this model is intentionally closer to chunk-streaming systems (Minecraft-style): load/unload by sector boundaries with configurable warmup and sync radii.
 
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
+
+## World Generation Pipeline
+
+Moongate uses a world-generation pipeline based on `IWorldGenerator`.
+
+- Each generator is a named unit (`Name`), orchestrated by `IWorldGeneratorBuilderService`.
+- The builder supports:
+  - full execution (`GenerateAsync()`),
+  - targeted execution by name (`GenerateAsync("doors")`),
+  - optional progress callback (`Action<string>`) for logs/progress output.
+- Door generation is implemented as `DoorGeneratorBuilder` (`Name = "doors"`), with hardcoded scan regions (ModernUO-style) and `CanFit` filtering before accepting candidate placements.
+- Current output is a generated placement record list (`MapId`, `Location`, `Facing`) used for debug/integration; item instantiation is intentionally decoupled.
+
+Manual trigger:
+
+- Command: `.spawn_doors`
+- Scope: console + in-game admin command
+- Behavior: runs only the `doors` generator and streams progress lines to command output.
 
 ## UO Feature Support (Current)
 

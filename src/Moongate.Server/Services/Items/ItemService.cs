@@ -49,6 +49,7 @@ public sealed class ItemService : IItemService
             ItemId = item.ItemId,
             Hue = item.Hue,
             GumpId = item.GumpId,
+            Direction = item.Direction,
             ScriptId = item.ScriptId,
             IsStackable = item.IsStackable,
             Rarity = item.Rarity,

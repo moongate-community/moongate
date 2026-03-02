@@ -35,6 +35,11 @@ public class UOItemEntity : IItemEntity
 
     public int? GumpId { get; set; }
 
+    /// <summary>
+    /// Gets or sets item world-facing direction used by item packets that expose orientation.
+    /// </summary>
+    public DirectionType Direction { get; set; }
+
     public bool IsStackable { get; set; }
 
     public string ScriptId { get; set; }

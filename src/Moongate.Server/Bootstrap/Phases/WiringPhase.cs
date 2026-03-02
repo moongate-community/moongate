@@ -14,6 +14,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -281,6 +282,33 @@ internal sealed class WiringPhase : IBootstrapPhase
                 ctx.Print("Broadcast sent to {0} session(s).", recipients);
             },
             "Send a server message to all active sessions. Usage: broadcast <message>",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator
+        );
+
+        commandService.RegisterCommand(
+            "spawn_doors|.spawn_doors",
+            async ctx =>
+            {
+                if (ctx.Arguments.Length > 0)
+                {
+                    ctx.Print("Usage: .spawn_doors");
+
+                    return;
+                }
+
+                try
+                {
+                    var worldGeneratorBuilderService = context.Container.Resolve<IWorldGeneratorBuilderService>();
+                    await worldGeneratorBuilderService.GenerateAsync("doors", message => ctx.Print("{0}", message));
+                    ctx.Print("Door generation finished.");
+                }
+                catch (Exception ex)
+                {
+                    ctx.Print("Door generation failed: {0}", ex.Message);
+                }
+            },
+            "Run door world generation immediately. Usage: .spawn_doors",
             CommandSourceType.Console | CommandSourceType.InGame,
             AccountType.Administrator
         );
