@@ -500,7 +500,7 @@ function on_player_connected(p)
 end
 ```
 
-### NPC Brain Example (`brain_loop` + `on_speech`)
+### NPC Brain Example (`brain_loop` + `on_event`)
 
 Mobile template:
 
@@ -524,13 +524,19 @@ function brain_loop(npc_id)
   end
 end
 
-function on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)
-  if listener_npc_id == 0 or text == nil then
+function on_event(event_type, from_serial, event_obj)
+  if event_type ~= "speech_heard" or event_obj == nil then
+    return
+  end
+
+  local listener_npc_id = event_obj.listener_npc_id
+  local text = event_obj.text
+  if listener_npc_id == nil or text == nil then
     return
   end
 
   if string.find(string.lower(text), "hello", 1, true) then
-    log.info("NPC " .. tostring(listener_npc_id) .. " heard hello from " .. tostring(speaker_id))
+    log.info("NPC " .. tostring(listener_npc_id) .. " heard hello from " .. tostring(from_serial))
   end
 end
 ```
@@ -539,7 +545,10 @@ Notes:
 
 - `brain` in the mobile template maps to `scripts/ai/<brain>.lua` (or explicit script path if configured in registry).
 - `brain_loop` is resumed by the runner and can control next wake time via `coroutine.yield(ms)`.
-- `on_speech` is invoked when the NPC hears nearby speech events.
+- `on_event` is invoked with `(eventType, fromSerial, eventObject)`.
+- Current event type emitted by the brain runner: `speech_heard`.
+- `eventObject` contains: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, and `location` (`x`, `y`, `z`).
+- Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
 
 ### Item `ScriptId` Dispatch
 

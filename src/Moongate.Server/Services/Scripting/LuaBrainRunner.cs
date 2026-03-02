@@ -253,6 +253,8 @@ public sealed class LuaBrainRunner
 
         var onSpeechFunction = ResolveScriptFunction("on_speech", "OnSpeech");
         state.OnSpeechFunction = onSpeechFunction?.Type == DataType.Function ? onSpeechFunction : null;
+        var onEventFunction = ResolveScriptFunction("on_event", "OnEvent");
+        state.OnEventFunction = onEventFunction?.Type == DataType.Function ? onEventFunction : null;
 
         var brainLoop = ResolveScriptFunction("brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
 
@@ -314,6 +316,13 @@ public sealed class LuaBrainRunner
         {
             var speech = state.PendingSpeech.Dequeue();
             _scriptEngineService.CallFunction(
+                "on_event",
+                "speech_heard",
+                (uint)speech.SpeakerId,
+                BuildSpeechEventPayload(speech)
+            );
+
+            _scriptEngineService.CallFunction(
                 "on_speech",
                 (uint)speech.ListenerNpcId,
                 (uint)speech.SpeakerId,
@@ -331,7 +340,7 @@ public sealed class LuaBrainRunner
 
     private void DispatchPendingSpeech(LuaBrainRuntimeState state)
     {
-        if (_luaScript is null || state.OnSpeechFunction is null)
+        if (_luaScript is null)
         {
             state.PendingSpeech.Clear();
 
@@ -341,6 +350,23 @@ public sealed class LuaBrainRunner
         while (state.PendingSpeech.Count > 0)
         {
             var speech = state.PendingSpeech.Dequeue();
+            if (state.OnEventFunction is not null)
+            {
+                _luaScript.Call(
+                    state.OnEventFunction,
+                    "speech_heard",
+                    (uint)speech.SpeakerId,
+                    BuildSpeechEventPayload(speech)
+                );
+
+                continue;
+            }
+
+            if (state.OnSpeechFunction is null)
+            {
+                continue;
+            }
+
             _luaScript.Call(
                 state.OnSpeechFunction,
                 (uint)speech.ListenerNpcId,
@@ -353,6 +379,24 @@ public sealed class LuaBrainRunner
                 speech.Location.Z
             );
         }
+    }
+
+    private static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
+    {
+        return new()
+        {
+            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
+            ["speaker_id"] = (uint)speech.SpeakerId,
+            ["text"] = speech.Text,
+            ["speech_type"] = (byte)speech.SpeechType,
+            ["map_id"] = speech.MapId,
+            ["location"] = new Dictionary<string, int>
+            {
+                ["x"] = speech.Location.X,
+                ["y"] = speech.Location.Y,
+                ["z"] = speech.Location.Z
+            }
+        };
     }
 
     private int ParseYieldDelay(DynValue yielded)

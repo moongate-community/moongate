@@ -33,6 +33,8 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnSpeechFunction { get; set; }
 
+    public DynValue? OnEventFunction { get; set; }
+
     public Serial MobileId => Mobile.Id;
 
     public Queue<SpeechHeardEvent> PendingSpeech => _pendingSpeech;
