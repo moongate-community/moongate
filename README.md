@@ -610,6 +610,40 @@ Latest local snapshot (`2026-02-23`, `BenchmarkDotNet 0.14.0`, macOS `Darwin 25.
 | `QueueThroughputBenchmark.MessageBusPublishThenDrain` | `9.725 us` | `-` |
 | `TimerWheelBenchmark.UpdateTicksDelta` | `2.893 us` | `4.05 KB` |
 
+### Gameplay Hot-Path Benchmarks
+
+Run only the new gameplay-focused suites:
+
+```bash
+dotnet run -c Release --project benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj -- \
+  --filter '*SpatialWorldServiceBenchmark*' '*ItemServiceBenchmark*' '*PacketGameplayHotPathBenchmark*'
+```
+
+Latest quick snapshot (`2026-03-02`, `BenchmarkDotNet 0.15.8`, macOS `Darwin 25.3.0`, Apple `M4 Max`, `.NET 10.0.3`, quick config `Launch=1/Warmup=1/Iteration=1`):
+
+| Benchmark | Mean | Allocated |
+|---|---:|---:|
+| `SpatialWorldServiceBenchmark.AddOrUpdateMobiles (500)` | `75.939 us` | `74.56 KB` |
+| `SpatialWorldServiceBenchmark.MoveMobilesAcrossSectors (500)` | `27.548 us` | `117.53 KB` |
+| `SpatialWorldServiceBenchmark.GetPlayersInHotSector (500)` | `1.769 us` | `6.16 KB` |
+| `SpatialWorldServiceBenchmark.AddOrUpdateMobiles (2000)` | `325.353 us` | `297.27 KB` |
+| `SpatialWorldServiceBenchmark.MoveMobilesAcrossSectors (2000)` | `105.423 us` | `469.15 KB` |
+| `SpatialWorldServiceBenchmark.GetPlayersInHotSector (2000)` | `1.745 us` | `6.16 KB` |
+| `ItemServiceBenchmark.MoveItemBetweenContainers` | `359.772 ns` | `1.85 KB` |
+| `ItemServiceBenchmark.DropItemToGroundFromContainer` | `489.566 ns` | `2.25 KB` |
+| `PacketGameplayHotPathBenchmark.ParseMoveRequestPacket` | `8.930 ns` | `32 B` |
+| `PacketGameplayHotPathBenchmark.ParsePickUpItemPacket` | `8.620 ns` | `32 B` |
+| `PacketGameplayHotPathBenchmark.ParseDropItemPacket` | `11.192 ns` | `48 B` |
+| `PacketGameplayHotPathBenchmark.ParseDropWearItemPacket` | `8.955 ns` | `32 B` |
+| `PacketGameplayHotPathBenchmark.ParseMixedGameplayPacketBurst` | `10.956 ns` | `36 B` |
+| `PacketGameplayHotPathBenchmark.WriteObjectInformationPacket` | `63.047 ns` | `-` |
+| `PacketGameplayHotPathBenchmark.WriteDraggingOfItemPacket` | `51.664 ns` | `-` |
+
+Notes:
+
+- This snapshot is intended for fast regression checks, not for publication-grade comparisons.
+- Use default/full BenchmarkDotNet settings for release notes and long-term trend baselines.
+
 ### Lua Script Engine
 
 Run locally:
