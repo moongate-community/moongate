@@ -91,7 +91,7 @@ export function UsersPage() {
           role: formData.role
         })
       } else if (modalMode === 'edit' && selectedUser) {
-        const payload: any = {}
+        const payload: Record<string, unknown> = {}
         if (formData.username !== selectedUser.username) payload.username = formData.username
         if (formData.email !== selectedUser.email) payload.email = formData.email || null
         if (formData.password) payload.password = formData.password
@@ -115,7 +115,7 @@ export function UsersPage() {
     try {
       await api.put(`/users/${user.accountId}`, { isLocked: !user.isLocked })
       fetchUsers()
-    } catch (err) {
+    } catch {
       alert('Failed to update lock status')
     }
   }
@@ -125,7 +125,7 @@ export function UsersPage() {
     try {
       await api.delete(`/users/${user.accountId}`)
       fetchUsers()
-    } catch (err) {
+    } catch {
       alert('Failed to delete user')
     }
   }

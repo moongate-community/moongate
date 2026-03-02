@@ -15,6 +15,20 @@ export async function apiFetch<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
+  const res = await rawApiFetch(path, options)
+
+  const contentType = res.headers.get('content-type') ?? ''
+  if (contentType.includes('application/json')) {
+    return res.json() as Promise<T>
+  }
+
+  return res.text() as unknown as Promise<T>
+}
+
+export async function rawApiFetch(
+  path: string,
+  options?: RequestInit,
+): Promise<Response> {
   const url = path.startsWith('/auth') ? path : `${BASE}${path}`
   const res = await fetch(url, {
     ...options,
@@ -26,16 +40,15 @@ export async function apiFetch<T>(
     throw new Error(text || `HTTP ${res.status}`)
   }
 
-  const contentType = res.headers.get('content-type') ?? ''
-  if (contentType.includes('application/json')) {
-    return res.json() as Promise<T>
-  }
-
-  return res.text() as unknown as Promise<T>
+  return res
 }
 
 export const api = {
   get: <T>(path: string) => apiFetch<T>(path),
+  getBlob: async (path: string) => {
+    const response = await rawApiFetch(path)
+    return response.blob()
+  },
   post: <T>(path: string, body: unknown) =>
     apiFetch<T>(path, {
       method: 'POST',
