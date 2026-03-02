@@ -6,6 +6,8 @@ using Moongate.Server.Http;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.Items;
 
 namespace Moongate.Tests.Server.Http;
 
@@ -137,6 +139,58 @@ public class MoongateHttpServiceOpenApiEndpointTests
                     Assert.That(payload, Does.Contain("\"/api/users/{accountId}\""));
                     Assert.That(payload, Does.Contain("\"put\""));
                     Assert.That(payload, Does.Contain("\"delete\""));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task OpenApiEndpoint_WhenItemTemplatesConfigured_ShouldContainItemTemplateRoutes()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var itemTemplateService = new ItemTemplateService();
+        itemTemplateService.Upsert(
+            new ItemTemplateDefinition
+            {
+                Id = "test_item",
+                Name = "Test",
+                Category = "test",
+                ItemId = "0x1F9E"
+            }
+        );
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = true
+            },
+            itemTemplateService: itemTemplateService,
+            artService: new TestArtService()
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = new HttpClient();
+            var response = await http.GetAsync($"http://127.0.0.1:{port}/openapi/v1.json");
+            var payload = await response.Content.ReadAsStringAsync();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(payload, Does.Contain("\"/api/item-templates\""));
+                    Assert.That(payload, Does.Contain("\"/api/item-templates/{id}\""));
+                    Assert.That(payload, Does.Contain("\"/api/item-templates/by-item-id/{itemId}/image\""));
                 }
             );
         }
