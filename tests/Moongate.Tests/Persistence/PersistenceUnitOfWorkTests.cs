@@ -726,6 +726,13 @@ public class PersistenceUnitOfWorkTests
                 ContainedItemIds = [(Serial)0x40000030, (Serial)0x40000031]
             }
         );
+        var persistedItem = await unitOfWork.Items.GetByIdAsync((Serial)0x40000010);
+        Assert.That(persistedItem, Is.Not.Null);
+        persistedItem!.SetCustomInteger("charges", 7);
+        persistedItem.SetCustomBoolean("blessed", true);
+        persistedItem.SetCustomDouble("power_scale", 1.5d);
+        persistedItem.SetCustomString("sign_text", "Tommy's home");
+        await unitOfWork.Items.UpsertAsync(persistedItem);
 
         await unitOfWork.SaveSnapshotAsync();
 
@@ -796,6 +803,14 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem.ContainedItemIds, Has.Count.EqualTo(2));
                 Assert.That(loadedItem.ContainedItemIds[0], Is.EqualTo((Serial)0x40000030));
                 Assert.That(loadedItem.ContainedItemIds[1], Is.EqualTo((Serial)0x40000031));
+                Assert.That(loadedItem.TryGetCustomInteger("charges", out var charges), Is.True);
+                Assert.That(charges, Is.EqualTo(7));
+                Assert.That(loadedItem.TryGetCustomBoolean("blessed", out var blessed), Is.True);
+                Assert.That(blessed, Is.True);
+                Assert.That(loadedItem.TryGetCustomDouble("power_scale", out var powerScale), Is.True);
+                Assert.That(powerScale, Is.EqualTo(1.5d));
+                Assert.That(loadedItem.TryGetCustomString("sign_text", out var signText), Is.True);
+                Assert.That(signText, Is.EqualTo("Tommy's home"));
             }
         );
     }

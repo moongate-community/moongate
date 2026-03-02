@@ -49,4 +49,6 @@ public sealed partial class ItemSnapshot
     public byte? EquippedLayer { get; set; }
 
     public uint[] ContainedItemIds { get; set; } = [];
+
+    public ItemCustomPropertySnapshot[] CustomProperties { get; set; } = [];
 }
