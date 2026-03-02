@@ -36,8 +36,8 @@ public class FileIndex
 
         if (UoFiles.MulPath.Count > 0)
         {
-            idxPath = UoFiles.MulPath[idxFile.ToLowerInvariant()];
-            MulPath = UoFiles.MulPath[mulFile.ToLowerInvariant()];
+            UoFiles.MulPath.TryGetValue(idxFile.ToLowerInvariant(), out idxPath);
+            UoFiles.MulPath.TryGetValue(mulFile.ToLowerInvariant(), out MulPath);
 
             if (!string.IsNullOrEmpty(uopFile) && UoFiles.MulPath.ContainsKey(uopFile.ToLowerInvariant()))
             {
@@ -254,8 +254,8 @@ public class FileIndex
 
         if (UoFiles.MulPath.Count > 0)
         {
-            idxPath = UoFiles.MulPath[idxFile.ToLowerInvariant()];
-            MulPath = UoFiles.MulPath[mulFile.ToLowerInvariant()];
+            UoFiles.MulPath.TryGetValue(idxFile.ToLowerInvariant(), out idxPath);
+            UoFiles.MulPath.TryGetValue(mulFile.ToLowerInvariant(), out MulPath);
 
             if (string.IsNullOrEmpty(idxPath))
             {

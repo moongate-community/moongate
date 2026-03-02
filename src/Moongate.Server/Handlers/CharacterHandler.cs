@@ -166,7 +166,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
                 return true;
             }
 
-            Enqueue(session, new PaperdollPacket(mobile));
+            if (mobile.Body is { IsAnimal: false, IsMonster: false })
+            {
+                Enqueue(session, new PaperdollPacket(mobile));
+            }
         }
 
         return true;
@@ -191,7 +194,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     {
         var entity = _entityFactoryService.CreatePlayerMobile(characterCreationPacket, session.AccountId);
 
-        entity.Title = "the grandmaster of moongate";
+        entity.Title = "The creator of moongate";
         var newCharacter = await _characterService.CreateCharacterAsync(entity);
         await _characterService.ApplyStarterEquipmentHuesAsync(
             newCharacter,

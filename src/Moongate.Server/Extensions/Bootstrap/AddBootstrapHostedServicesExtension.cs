@@ -44,7 +44,10 @@ public static class AddBootstrapHostedServicesExtension
         container.RegisterMoongateService<ICharacterPositionPersistenceService, CharacterPositionPersistenceService>(
             ServicePriority.CharacterPositionPersistence
         );
-        container.RegisterMoongateService<ICommandSystemService, CommandSystemService>(ServicePriority.CommandSystem);
+        container.RegisterDelegate<ICommandSystemService>(
+            resolver => resolver.Resolve<CommandSystemService>(),
+            Reuse.Singleton
+        );
         container.RegisterMoongateService<IConsoleCommandService, ConsoleCommandService>(ServicePriority.ConsoleCommand);
         container.RegisterMoongateService<IMetricsCollectionService, MetricsCollectionService>(
             ServicePriority.MetricsCollection
