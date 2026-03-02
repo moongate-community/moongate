@@ -2,6 +2,8 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Incoming.Movement;
+using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Network.Spans;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
@@ -141,6 +143,54 @@ public sealed class CharacterHandlerTests
                 Assert.That(handled, Is.True);
                 Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(gameEvent.MobileSerial, Is.EqualTo((Serial)0x00000099u));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_RequestWarMode_ShouldUpdateCharacterAndEnqueueWarModePacket()
+    {
+        EnsureMapRegistered();
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var characterService = new MovementHandlerTestCharacterService();
+        var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var gameNetworkSessionService = new FakeGameNetworkSessionService();
+        var handler = new CharacterHandler(
+            queue,
+            characterService,
+            entityFactoryService,
+            eventBus,
+            gameNetworkSessionService,
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            AccountId = (Serial)0x01020304,
+            AccountType = AccountType.Regular,
+            Character = new()
+            {
+                Id = (Serial)0x00000042,
+                IsWarMode = false
+            }
+        };
+
+        var packet = new RequestWarModePacket();
+        var parsed = packet.TryParse(new byte[] { 0x72, 0x01, 0x00, 0x32, 0x00 });
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(parsed, Is.True);
+                Assert.That(handled, Is.True);
+                Assert.That(session.Character.IsWarMode, Is.True);
+                Assert.That(queue.TryDequeue(out var queued), Is.True);
+                Assert.That(queued.Packet, Is.TypeOf<WarModePacket>());
             }
         );
     }

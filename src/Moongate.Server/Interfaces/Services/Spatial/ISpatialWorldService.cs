@@ -1,4 +1,5 @@
 using Moongate.Server.Data.Session;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -12,6 +13,26 @@ namespace Moongate.Server.Interfaces.Services.Spatial;
 /// </summary>
 public interface ISpatialWorldService
 {
+    /// <summary>
+    /// Broadcasts a packet to player sessions within range on a map.
+    /// </summary>
+    /// <param name="packet">Packet to enqueue.</param>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="location">Center location.</param>
+    /// <param name="range">
+    /// Optional tile range. When <see langword="null" />, the service uses
+    /// <c>MoongateSpatialConfig.SectorEnterSyncRadius</c>.
+    /// </param>
+    /// <param name="excludeSessionId">Optional session id to exclude.</param>
+    /// <returns>Number of recipient sessions.</returns>
+    Task<int> BroadcastToPlayersAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        int? range = null,
+        long? excludeSessionId = null
+    );
+
     /// <summary>
     /// Adds or updates an item position in the spatial index.
     /// </summary>
@@ -82,6 +103,18 @@ public interface ISpatialWorldService
     /// <param name="sectorY">Sector Y coordinate.</param>
     /// <returns>Players in the sector.</returns>
     List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY);
+
+    /// <summary>
+    /// Returns all mobiles currently indexed in a square sector range around a center sector.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="centerSectorX">Center sector X coordinate.</param>
+    /// <param name="centerSectorY">Center sector Y coordinate.</param>
+    /// <param name="radius">
+    /// Sector radius (0 = only center sector). Default is <c>2</c>, aligned to player default view range (18 tiles).
+    /// </param>
+    /// <returns>Mobiles in the sector range.</returns>
+    List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2);
 
     /// <summary>
     /// Returns all currently active sectors loaded in the spatial index.

@@ -12,9 +12,23 @@ namespace Moongate.Network.Packets.Incoming.Movement;
 /// </summary>
 public class RequestWarModePacket : BaseGameNetworkPacket
 {
+    public bool IsWarMode { get; private set; }
+
     public RequestWarModePacket()
         : base(0x72, 5) { }
 
     protected override bool ParsePayload(ref SpanReader reader)
-        => true;
+    {
+        if (reader.Remaining != 4)
+        {
+            return false;
+        }
+
+        IsWarMode = reader.ReadByte() != 0;
+        _ = reader.ReadByte();
+        _ = reader.ReadByte();
+        _ = reader.ReadByte();
+
+        return true;
+    }
 }

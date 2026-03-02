@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Session;
@@ -73,6 +74,23 @@ public sealed class SpeechServiceNpcDispatchTests
     {
         public List<UOMobileEntity> NearbyMobiles { get; } = [];
 
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+        {
+            _ = packet;
+            _ = mapId;
+            _ = location;
+            _ = range;
+            _ = excludeSessionId;
+
+            return Task.FromResult(0);
+        }
+
         public void AddOrUpdateItem(UOItemEntity item, int mapId)
         {
             _ = item;
@@ -133,6 +151,16 @@ public sealed class SpeechServiceNpcDispatchTests
             _ = mapId;
             _ = sectorX;
             _ = sectorY;
+
+            return [];
+        }
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
+        {
+            _ = mapId;
+            _ = centerSectorX;
+            _ = centerSectorY;
+            _ = radius;
 
             return [];
         }

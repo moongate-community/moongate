@@ -660,7 +660,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         {
             await RegisterScriptModulesAsync(CancellationToken.None);
 
-            AddConstant("version", "0.0.1");
+            AddConstant("version", _engineConfig.EngineVersion);
             AddConstant("engine", "Moongate");
             AddConstant("platform", Environment.OSVersion.Platform.ToString());
 

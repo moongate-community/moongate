@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Login;
@@ -27,7 +28,8 @@ namespace Moongate.Server.Handlers;
 
 [RegisterGameEventListener,
  RegisterPacketHandler(PacketDefinition.CharacterCreationPacket),
- RegisterPacketHandler(PacketDefinition.DoubleClickPacket)
+ RegisterPacketHandler(PacketDefinition.DoubleClickPacket),
+ RegisterPacketHandler(PacketDefinition.RequestWarModePacket)
 ]
 
 /// <summary>
@@ -144,6 +146,24 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         {
             return await HandleMobileDoubleClickAsync(session, doubleClickPacket);
         }
+
+        if (packet is RequestWarModePacket requestWarModePacket)
+        {
+            return HandleRequestWarModeAsync(session, requestWarModePacket);
+        }
+
+        return true;
+    }
+
+    private bool HandleRequestWarModeAsync(GameSession session, RequestWarModePacket requestWarModePacket)
+    {
+        if (session.Character is null)
+        {
+            return true;
+        }
+
+        session.Character.IsWarMode = requestWarModePacket.IsWarMode;
+        Enqueue(session, new WarModePacket(session.Character));
 
         return true;
     }

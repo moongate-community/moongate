@@ -53,7 +53,8 @@ public class PacketHandlerRegistrationAttributeTests
         AssertMappings(
             typeof(CharacterHandler),
             PacketDefinition.CharacterCreationPacket,
-            PacketDefinition.DoubleClickPacket
+            PacketDefinition.DoubleClickPacket,
+            PacketDefinition.RequestWarModePacket
         );
         AssertMappings(typeof(PingPongHandler), PacketDefinition.PingMessagePacket);
         AssertMappings(typeof(PlayerStatusHandler), PacketDefinition.GetPlayerStatusPacket);
