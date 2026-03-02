@@ -1,3 +1,10 @@
+## [0.24.0](https://github.com/moongate-community/moongatev2/compare/v0.23.0...v0.24.0) (2026-03-02)
+
+### Features
+
+* **spatial:** adopt lazy chunk-style sector streaming for entities ([4d48854](https://github.com/moongate-community/moongatev2/commit/4d488543ce07cff4b486eba7d19932ff004ce897))
+* **world:** add generator pipeline and door scan workflow ([6d1151d](https://github.com/moongate-community/moongatev2/commit/6d1151d5961767f2efb75917f233c90888417780))
+
 ## [0.23.0](https://github.com/moongate-community/moongatev2/compare/v0.22.0...v0.23.0) (2026-03-01)
 
 ### Features
