@@ -17,9 +17,11 @@ public interface INameService
     /// <summary>
     /// Generates a random name from the specified pool.
     /// </summary>
-    /// <param name="type">Name pool key.</param>
+    /// <param name="type">
+    /// Name pool key. When null or empty, an entry is picked from all available pools.
+    /// </param>
     /// <returns>A generated name, or empty string when no names exist for the type.</returns>
-    string GenerateName(string type);
+    string GenerateName(string? type);
 
     /// <summary>
     /// Generates a random name for a mobile template.

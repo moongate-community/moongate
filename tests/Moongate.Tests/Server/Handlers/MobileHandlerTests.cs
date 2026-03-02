@@ -1,6 +1,8 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
@@ -55,6 +57,8 @@ public sealed class MobileHandlerTests
         public List<UOMobileEntity> PlayersInSector { get; set; } = [];
 
         public MapSector? SectorByLocation { get; set; }
+        public Func<int, Point3D, MapSector?>? SectorByLocationResolver { get; set; }
+        public Dictionary<(int MapId, int SectorX, int SectorY), MapSector> SectorsByCoordinate { get; set; } = new();
 
         public int LastGetSectorMapId { get; private set; }
 
@@ -97,6 +101,17 @@ public sealed class MobileHandlerTests
             LastGetSectorMapId = mapId;
             LastGetSectorLocation = location;
 
+            if (SectorByLocationResolver is not null)
+            {
+                return SectorByLocationResolver(mapId, location);
+            }
+
+            var key = (mapId, location.X >> 4, location.Y >> 4);
+            if (SectorsByCoordinate.TryGetValue(key, out var sector))
+            {
+                return sector;
+            }
+
             return SectorByLocation;
         }
 
@@ -129,7 +144,8 @@ public sealed class MobileHandlerTests
             spatial,
             characterService,
             sessions,
-            queue
+            queue,
+            new MoongateConfig()
         );
 
         await handler.HandleAsync(new MobileAddedInSectorEvent(mobileId, 1, 100, 200));
@@ -159,7 +175,8 @@ public sealed class MobileHandlerTests
             spatial,
             characterService,
             sessions,
-            queue
+            queue,
+            new MoongateConfig()
         );
 
         await handler.HandleAsync(
@@ -195,7 +212,8 @@ public sealed class MobileHandlerTests
             spatial,
             characterService,
             sessions,
-            queue
+            queue,
+            new MoongateConfig()
         );
 
         await handler.HandleAsync(
@@ -219,6 +237,234 @@ public sealed class MobileHandlerTests
                 Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
                 Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenEnteringNewSector_ShouldSendSectorItemsAndMobilesToEnteringPlayer()
+    {
+        var movingPlayerId = (Serial)0x00001000u;
+        var npcId = (Serial)0x00002000u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(100, 100, 0);
+        var newLocation = new Point3D(132, 132, 0);
+        var oldSector = new MapSector(1, 6, 6);
+        var newSector = new MapSector(1, 8, 8);
+
+        newSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000010u,
+                Name = "Ground Item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = newLocation,
+                MapId = 1
+            }
+        );
+        newSector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = npcId,
+                IsPlayer = false,
+                Name = "npc",
+                Location = newLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            PlayersInSector = [],
+            SectorByLocationResolver = (_, location) => location == oldLocation ? oldSector : newSector
+        };
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            sessions,
+            queue,
+            new MoongateConfig()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenEnteringNewSector_ShouldSendSnapshotForNeighborSectorsWithinRadius()
+    {
+        var movingPlayerId = (Serial)0x00003000u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(100, 100, 0);
+        var newLocation = new Point3D(132, 132, 0); // sector (8,8)
+        var centerSector = new MapSector(1, 8, 8);
+        var neighborSector = new MapSector(1, 9, 8);
+
+        centerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000020u,
+                Name = "center-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = new(8 << 4, 8 << 4, 0),
+                MapId = 1
+            }
+        );
+
+        neighborSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000021u,
+                Name = "neighbor-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = new(9 << 4, 8 << 4, 0),
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, 8, 8)] = centerSector;
+        spatial.SectorsByCoordinate[(1, 9, 8)] = neighborSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+        {
+            if (location == oldLocation)
+            {
+                return new MapSector(1, 6, 6);
+            }
+
+            if (location == newLocation)
+            {
+                return centerSector;
+            }
+
+            var key = (1, location.X >> 4, location.Y >> 4);
+            return spatial.SectorsByCoordinate.TryGetValue(key, out var sector) ? sector : null;
+        };
+
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            sessions,
+            queue,
+            new MoongateConfig
+            {
+                Spatial = new MoongateSpatialConfig
+                {
+                    SectorEnterSyncRadius = 1
+                }
+            }
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+        var objectPackets = packets.Count(packet => packet.Packet is ObjectInformationPacket);
+
+        Assert.That(objectPackets, Is.GreaterThanOrEqualTo(2));
+    }
+
+    [Test]
+    public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldSendSectorSnapshotToEnteringPlayer()
+    {
+        var movingPlayerId = (Serial)0x00004000u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var spawnLocation = new Point3D(132, 132, 0);
+        var centerSector = new MapSector(1, 8, 8);
+        centerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000031u,
+                Name = "spawn-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = spawnLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, 8, 8)] = centerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+        {
+            var key = (1, location.X >> 4, location.Y >> 4);
+            return spatial.SectorsByCoordinate.TryGetValue(key, out var sector) ? sector : null;
+        };
+
+        var character = CreatePlayer(movingPlayerId);
+        character.Location = spawnLocation;
+        character.MapId = 1;
+        var characterService = new MobileHandlerTestCharacterService(character);
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            sessions,
+            queue,
+            new MoongateConfig()
+        );
+
+        await handler.HandleAsync(
+            new PlayerCharacterLoggedInEvent(
+                movingSession.SessionId,
+                (Serial)0x01u,
+                movingPlayerId
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
             }
         );
     }

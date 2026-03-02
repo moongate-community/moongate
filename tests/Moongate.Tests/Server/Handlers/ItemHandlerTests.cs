@@ -608,6 +608,21 @@ public class ItemHandlerTests
             return Task.FromResult(Mobile ?? new UOMobileEntity { Id = id, MapId = 0 });
         }
 
+        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+            int mapId,
+            int sectorX,
+            int sectorY,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = mapId;
+            _ = sectorX;
+            _ = sectorY;
+            _ = cancellationToken;
+
+            return Task.FromResult<List<UOMobileEntity>>([]);
+        }
+
         public Task<UOMobileEntity> SpawnFromTemplateAsync(
             string templateId,
             Point3D location,

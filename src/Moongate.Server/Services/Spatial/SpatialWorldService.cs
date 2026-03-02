@@ -9,6 +9,7 @@ using Moongate.Server.Data.Internal.Spatial;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -38,6 +39,7 @@ public sealed class SpatialWorldService
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly ICharacterService _characterService;
     private readonly IItemService _itemService;
+    private readonly IMobileService _mobileService;
     private readonly MoongateSpatialConfig _spatialConfig;
     private readonly SpatialEntityIndex _entityIndex;
     private readonly SpatialRegionResolver _regionResolver;
@@ -47,6 +49,7 @@ public sealed class SpatialWorldService
         IGameEventBusService gameEventBusService,
         ICharacterService characterService,
         IItemService itemService,
+        IMobileService mobileService,
         IOutgoingPacketQueue outgoingPacketQueue,
         MoongateConfig moongateConfig
     )
@@ -55,9 +58,10 @@ public sealed class SpatialWorldService
         _gameEventBusService = gameEventBusService;
         _characterService = characterService;
         _itemService = itemService;
+        _mobileService = mobileService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
-        _entityIndex = new(itemService, _spatialConfig);
+        _entityIndex = new(itemService, mobileService, _spatialConfig);
         _regionResolver = new();
     }
 

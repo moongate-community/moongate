@@ -44,6 +44,8 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [Project Story](#project-story)
 - [Frontend Preview](#frontend-preview)
 - [Current Status](#current-status)
+- [Spatial Chunk Strategy](#spatial-chunk-strategy)
+- [World Generation Pipeline](#world-generation-pipeline)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
 - [Templates](#templates)
@@ -113,7 +115,42 @@ The project is actively in development and already includes:
   - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
 
+## Spatial Chunk Strategy
+
+Moongate uses a sector/chunk-based world streaming strategy instead of a pure range-view scan model.
+
+- World data is indexed by sectors (`16x16`) and loaded lazily.
+- When a sector is touched, Moongate loads entities (items + mobiles) around it in a configurable sector radius.
+- Around player login and sector changes, snapshots are sent using sector radius windows.
+- Sectors are created, populated, and reused in memory; inactive areas stay unloaded until requested.
+
+Why this choice:
+
+- Predictable memory growth and lower steady-state CPU usage on large worlds.
+- Better cache locality for entity queries and network snapshot generation.
+- Simpler scalability path for high-concurrency shards.
+
+Compared to classic emulator approaches that rely mainly on repeated range-view scans, this model is intentionally closer to chunk-streaming systems (Minecraft-style): load/unload by sector boundaries with configurable warmup and sync radii.
+
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
+
+## World Generation Pipeline
+
+Moongate uses a world-generation pipeline based on `IWorldGenerator`.
+
+- Each generator is a named unit (`Name`), orchestrated by `IWorldGeneratorBuilderService`.
+- The builder supports:
+  - full execution (`GenerateAsync()`),
+  - targeted execution by name (`GenerateAsync("doors")`),
+  - optional progress callback (`Action<string>`) for logs/progress output.
+- Door generation is implemented as `DoorGeneratorBuilder` (`Name = "doors"`), with hardcoded scan regions (ModernUO-style) and `CanFit` filtering before accepting candidate placements.
+- Current output is a generated placement record list (`MapId`, `Location`, `Facing`) used for debug/integration; item instantiation is intentionally decoupled.
+
+Manual trigger:
+
+- Command: `.spawn_doors`
+- Scope: console + in-game admin command
+- Behavior: runs only the `doors` generator and streams progress lines to command output.
 
 ## UO Feature Support (Current)
 
@@ -121,51 +158,46 @@ This section reflects the current server-side implementation status.
 
 ### Supported now
 
-- Login/auth handshake:
-  - `0xEF` Login Seed
-  - `0x80` Account Login
-  - `0xA0` Server Select
-  - `0x91` Game Login
-  - `0x5D` Login Character
-  - denial flow with `LoginDeniedPacket` when credentials are invalid.
-- Character lifecycle:
-  - character creation (`0x00`) and persistence.
-  - account -> character linkage and character selection.
-- After-login world bootstrap:
-  - login confirm / support features / draw player.
-  - mobile draw + worn items + backpack container draw.
-  - warmode, light, season, login complete, time, paperdoll.
-- Movement:
-  - move request (`0x02`) with sequence/throttle checks.
-  - move confirm / move deny responses.
-- Player status:
-  - get player status (`0x34`, basic status path) -> status response (`0x11`).
-- Speech:
-  - Unicode speech inbound (`0xAD`).
-  - local echo response and in-game command dispatch for messages starting with `.`.
-- Ping:
-  - ping message (`0x73`) request/response.
-- Tooltips (MegaCliloc):
-  - inbound request (`0xD6`) for item/mobile serials.
-  - outbound object property list (`0xD6`) response.
+- Active inbound packet handlers:
+  - Login/auth: `0xEF`, `0x80`, `0xA0`, `0x91`, `0x5D`, `0xBD`
+  - Character: `0x00`
+  - Movement: `0x02`, `0xC8`
+  - Item interaction: `0x07`, `0x08`, `0x09`, `0x13`, `0x06`
+  - Speech/chat: `0xAD`, `0xB5`
+  - Targeting: `0x6C`
+  - General info multiplexer: `0xBF`
+  - Player status: `0x34`
+  - Ping: `0x73`
+  - Tooltip: `0xD6`
+- `0xBF` subcommands currently wired in runtime:
+  - `0x06` Party System
+  - `0x1A` Stat Lock Change
+  - `0x2C` Use Targeted Item
+  - `0x2D` Cast Targeted Spell
+  - `0x2E` Use Targeted Skill
+- Active outbound gameplay packets include:
+  - Login/session: `0x8C`, `0xA8`, `0xA9`, `0x1B`, `0x55`, `0x82`, `0xB9`
+  - World/entity sync: `0x78`, `0x20`, `0x2E`, `0x24`, `0x3C`, `0x11`, `0x88`, `0xF3`, `0x23`
+  - Movement/time: `0x22`, `0x21`, `0x5B`, `0xF2`
+  - Environment/effects: `0xBC`, `0x4F`, `0x4E`, `0x6D`, `0x65`, `0x54`, `0x70`, `0xC0`, `0xC7`
+  - UI/speech: `0xAE`, `0xB0`, `0xDD`
 
 ### Partially implemented
 
-- Packet model coverage is broader than runtime listener coverage.
-  - Many packets exist in `Moongate.Network.Packets` and can parse/write.
-  - Only packets bound to active listeners are currently used by gameplay flow.
-- HTTP administration/metrics/OpenAPI are available, but gameplay admin features are still minimal.
-- Lua scripting runtime is integrated, but gameplay script surface is still growing.
+- Protocol model coverage is broader than runtime gameplay wiring:
+  - many packet contracts exist in `Moongate.Network.Packets`,
+  - only the opcodes listed above are currently connected to live handlers/flows.
+- Item pipeline is functional for pickup/drop/equip/container refresh, but advanced cases (full trade/vendor/economy semantics) are still expanding.
+- Lua runtime is integrated (commands, speech, targeting, gump builder), but high-level game systems are still script-surface growth areas.
 
 ### Not yet implemented (major areas)
 
 - Full combat loop (swing/spell damage pipeline, notoriety-driven combat rules).
 - Skill system execution and progression.
-- Item interaction core (pickup/drop/use/equip transaction flow across all cases).
 - NPC AI, vendors, loot systems, pathfinding, spawn regions.
 - World simulation breadth (housing, boats, advanced map interactions, seasons/weather effects gameplay-side).
-- Economy systems, trading, banking behavior completeness.
-- Full UO protocol coverage in listeners (many opcodes still intentionally unhandled).
+- Economy systems and complete trading/vendor behavior.
+- Full UO protocol listener coverage (many opcodes intentionally unhandled yet).
 
 ## Persistence
 

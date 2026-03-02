@@ -137,11 +137,6 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add("Mobile template has empty id.");
             }
 
-            if (string.IsNullOrWhiteSpace(mobile.Name))
-            {
-                errors.Add($"Mobile template '{mobile.Id}' has empty name.");
-            }
-
             if (mobile.Body < 0)
             {
                 errors.Add($"Mobile template '{mobile.Id}' has invalid body: {mobile.Body}.");

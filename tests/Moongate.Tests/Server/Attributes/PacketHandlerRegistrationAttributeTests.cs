@@ -50,7 +50,11 @@ public class PacketHandlerRegistrationAttributeTests
             PacketDefinition.LoginCharacterPacket,
             PacketDefinition.ClientVersionPacket
         );
-        AssertMappings(typeof(CharacterHandler), PacketDefinition.CharacterCreationPacket);
+        AssertMappings(
+            typeof(CharacterHandler),
+            PacketDefinition.CharacterCreationPacket,
+            PacketDefinition.DoubleClickPacket
+        );
         AssertMappings(typeof(PingPongHandler), PacketDefinition.PingMessagePacket);
         AssertMappings(typeof(PlayerStatusHandler), PacketDefinition.GetPlayerStatusPacket);
         AssertMappings(typeof(MovementHandler), PacketDefinition.MoveRequestPacket);

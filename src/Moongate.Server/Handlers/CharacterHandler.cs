@@ -1,5 +1,6 @@
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
+using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
@@ -24,7 +25,10 @@ using Serilog;
 
 namespace Moongate.Server.Handlers;
 
-[RegisterGameEventListener, RegisterPacketHandler(PacketDefinition.CharacterCreationPacket)]
+[RegisterGameEventListener,
+ RegisterPacketHandler(PacketDefinition.CharacterCreationPacket),
+ RegisterPacketHandler(PacketDefinition.DoubleClickPacket)
+]
 
 /// <summary>
 /// Represents CharacterHandler.
@@ -134,6 +138,35 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         if (packet is CharacterCreationPacket characterCreationPacket)
         {
             return await HandleCharacterCreationPacketAsync(session, characterCreationPacket);
+        }
+
+        if (packet is DoubleClickPacket doubleClickPacket)
+        {
+            return await HandleMobileDoubleClickAsync(session, doubleClickPacket);
+        }
+
+        return true;
+    }
+
+    private async Task<bool> HandleMobileDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
+    {
+        if (doubleClickPacket.TargetSerial.IsMobile)
+        {
+            await _gameEventBusService.PublishAsync(
+                new MobileDoubleClickEvent(
+                    session.SessionId,
+                    doubleClickPacket.TargetSerial
+                )
+            );
+
+            var mobile = await _characterService.GetCharacterAsync(doubleClickPacket.TargetSerial);
+
+            if (mobile is null)
+            {
+                return true;
+            }
+
+            Enqueue(session, new PaperdollPacket(mobile));
         }
 
         return true;

@@ -138,12 +138,19 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
 
     private async Task<bool> HandleDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
     {
+        if (doubleClickPacket.TargetSerial.IsMobile)
+        {
+            return true;
+        }
+
         await _gameEventBusService.PublishAsync(
             new ItemDoubleClickEvent(
                 session.SessionId,
                 doubleClickPacket.TargetSerial
             )
         );
+
+
 
         var item = await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
 

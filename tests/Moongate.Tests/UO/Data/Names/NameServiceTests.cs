@@ -8,7 +8,7 @@ public class NameServiceTests
     private NameService _service = null!;
 
     [Test]
-    public void GenerateName_ForTemplate_ShouldUseIdThenCategoryThenName()
+    public void GenerateName_ForTemplate_ShouldUseIdThenCategoryThenTitleThenName()
     {
         _service.AddNames("orc_warrior", "Gor");
 
@@ -22,6 +22,18 @@ public class NameServiceTests
         var name = _service.GenerateName(template);
 
         Assert.That(name, Is.EqualTo("Gor"));
+    }
+
+    [Test]
+    public void GenerateName_WhenTypeIsEmpty_ShouldReturnRandomFromAnyPool()
+    {
+        _service.AddNames("tokuno male", "Dosyaku");
+        _service.AddNames("human", "John");
+
+        var name = _service.GenerateName(string.Empty);
+
+        Assert.That(name, Is.Not.Empty);
+        Assert.That(name, Is.AnyOf("Dosyaku", "John"));
     }
 
     [Test]

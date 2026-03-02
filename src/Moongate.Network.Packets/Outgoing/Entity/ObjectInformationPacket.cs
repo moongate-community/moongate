@@ -47,7 +47,7 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
 
     public ObjectInformationPacket(
         UOItemEntity item,
-        byte facing = 0,
+        byte? facing = null,
         byte layer = 0,
         ObjectInfoFlags flags = ObjectInfoFlags.None
     )
@@ -58,7 +58,7 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
         DataType = 0x00;
         Serial = item.Id;
         Graphic = unchecked((ushort)item.ItemId);
-        Facing = facing;
+        Facing = facing ?? (byte)item.Direction;
 
         var amount = (ushort)Math.Clamp(item.Amount, 1, ushort.MaxValue);
         AmountFirst = amount;

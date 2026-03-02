@@ -5,6 +5,10 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Mobiles;
+using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
+using Serilog;
 
 namespace Moongate.Server.Services.Entities;
 
@@ -13,20 +17,24 @@ namespace Moongate.Server.Services.Entities;
 /// </summary>
 public sealed class MobileService : IMobileService
 {
+    private readonly ILogger _logger = Log.ForContext<MobileService>();
     private readonly IPersistenceService _persistenceService;
     private readonly IMobileFactoryService _mobileFactoryService;
+    private readonly IItemFactoryService _itemFactoryService;
     private readonly IMobileTemplateService _mobileTemplateService;
     private readonly ILuaBrainRunner _luaBrainRunner;
 
     public MobileService(
         IPersistenceService persistenceService,
         IMobileFactoryService mobileFactoryService,
+        IItemFactoryService itemFactoryService,
         IMobileTemplateService mobileTemplateService,
         ILuaBrainRunner luaBrainRunner
     )
     {
         _persistenceService = persistenceService;
         _mobileFactoryService = mobileFactoryService;
+        _itemFactoryService = itemFactoryService;
         _mobileTemplateService = mobileTemplateService;
         _luaBrainRunner = luaBrainRunner;
     }
@@ -74,6 +82,40 @@ public sealed class MobileService : IMobileService
     }
 
     /// <inheritdoc />
+    public async Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+        int mapId,
+        int sectorX,
+        int sectorY,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var minX = sectorX * MapSectorConsts.SectorSize;
+        var maxX = minX + MapSectorConsts.SectorSize;
+        var minY = sectorY * MapSectorConsts.SectorSize;
+        var maxY = minY + MapSectorConsts.SectorSize;
+
+        var mobiles = await _persistenceService.UnitOfWork.Mobiles.QueryAsync(
+            mobile => !mobile.IsPlayer &&
+                      mobile.MapId == mapId &&
+                      mobile.Location.X >= minX &&
+                      mobile.Location.X < maxX &&
+                      mobile.Location.Y >= minY &&
+                      mobile.Location.Y < maxY,
+            static mobile => mobile,
+            cancellationToken
+        );
+
+        var result = mobiles.ToList();
+
+        foreach (var mobile in result)
+        {
+            await HydrateMobileEquipmentRuntimeAsync(mobile, cancellationToken);
+        }
+
+        return result;
+    }
+
+    /// <inheritdoc />
     public async Task<UOMobileEntity> SpawnFromTemplateAsync(
         string templateId,
         Point3D location,
@@ -89,9 +131,111 @@ public sealed class MobileService : IMobileService
         mobile.MapId = mapId;
 
         await CreateOrUpdateAsync(mobile, cancellationToken);
+        await ApplyTemplateEquipmentAsync(templateId, mobile, cancellationToken);
         RegisterBrainIfConfigured(templateId, mobile);
 
         return mobile;
+    }
+
+    private async Task ApplyTemplateEquipmentAsync(
+        string templateId,
+        UOMobileEntity mobile,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!_mobileTemplateService.TryGet(templateId, out var definition) || definition is null)
+        {
+            return;
+        }
+
+        foreach (var fixedEquipment in definition.FixedEquipment)
+        {
+            await TryEquipTemplateItemAsync(mobile, fixedEquipment.Layer, fixedEquipment.ItemTemplateId, cancellationToken);
+        }
+
+        foreach (var randomPool in definition.RandomEquipment)
+        {
+            if (randomPool.SpawnChance < 1.0f && Random.Shared.NextDouble() > randomPool.SpawnChance)
+            {
+                continue;
+            }
+
+            var selected = SelectRandomEquipment(randomPool);
+            if (selected is null)
+            {
+                continue;
+            }
+
+            await TryEquipTemplateItemAsync(mobile, randomPool.Layer, selected.ItemTemplateId, cancellationToken);
+        }
+
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile, cancellationToken);
+    }
+
+    private async Task TryEquipTemplateItemAsync(
+        UOMobileEntity mobile,
+        ItemLayerType layer,
+        string itemTemplateId,
+        CancellationToken cancellationToken
+    )
+    {
+        if (string.IsNullOrWhiteSpace(itemTemplateId))
+        {
+            return;
+        }
+
+        try
+        {
+            var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
+            item.MapId = mobile.MapId;
+            mobile.AddEquippedItem(layer, item);
+
+            if (layer == ItemLayerType.Backpack)
+            {
+                mobile.BackpackId = item.Id;
+            }
+
+            await _persistenceService.UnitOfWork.Items.UpsertAsync(item, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(
+                ex,
+                "Failed to equip template item {ItemTemplateId} on mobile {MobileId} (layer={Layer})",
+                itemTemplateId,
+                mobile.Id,
+                layer
+            );
+        }
+    }
+
+    private static MobileWeightedEquipmentItemTemplate? SelectRandomEquipment(MobileRandomEquipmentPoolTemplate pool)
+    {
+        if (pool.Items.Count == 0)
+        {
+            return null;
+        }
+
+        var validItems = pool.Items.Where(static item => item.Weight > 0).ToArray();
+        if (validItems.Length == 0)
+        {
+            return null;
+        }
+
+        var totalWeight = validItems.Sum(static item => item.Weight);
+        var roll = Random.Shared.Next(1, totalWeight + 1);
+        var accumulator = 0;
+
+        foreach (var item in validItems)
+        {
+            accumulator += item.Weight;
+            if (roll <= accumulator)
+            {
+                return item;
+            }
+        }
+
+        return validItems[^1];
     }
 
     private void RegisterBrainIfConfigured(string templateId, UOMobileEntity mobile)
@@ -112,5 +256,57 @@ public sealed class MobileService : IMobileService
         }
 
         _luaBrainRunner.Register(mobile, definition.Brain.Trim());
+    }
+
+    private async Task HydrateMobileEquipmentRuntimeAsync(
+        UOMobileEntity mobile,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        if (mobile.EquippedItemIds.Count == 0)
+        {
+            mobile.HydrateEquipmentRuntime([]);
+
+            return;
+        }
+
+        var equippedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                item => item.EquippedMobileId == mobile.Id && item.EquippedLayer is not null,
+                                static item => item,
+                                cancellationToken
+                            );
+
+        var hydratedItems = equippedItems.ToDictionary(static item => item.Id, static item => item);
+        var inferredItems = new List<UOItemEntity>(mobile.EquippedItemIds.Count);
+
+        foreach (var (layer, itemId) in mobile.EquippedItemIds)
+        {
+            if (hydratedItems.ContainsKey(itemId))
+            {
+                continue;
+            }
+
+            var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId, cancellationToken);
+
+            if (item is null)
+            {
+                continue;
+            }
+
+            item.EquippedMobileId = mobile.Id;
+            item.EquippedLayer = layer;
+            inferredItems.Add(item);
+        }
+
+        if (inferredItems.Count > 0)
+        {
+            mobile.HydrateEquipmentRuntime([.. equippedItems, .. inferredItems]);
+
+            return;
+        }
+
+        mobile.HydrateEquipmentRuntime(equippedItems);
     }
 }

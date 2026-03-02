@@ -108,7 +108,7 @@ public class EntityFactoryServiceTests
             () =>
             {
                 Assert.That(mobile.Id.IsMobile, Is.True);
-                Assert.That(mobile.Name, Is.EqualTo("Gor"));
+                Assert.That(mobile.Name, Is.EqualTo("Orc Warrior"));
                 Assert.That(mobile.Strength, Is.EqualTo(70));
                 Assert.That(mobile.Hits, Is.EqualTo(70));
                 Assert.That((int)mobile.Body, Is.EqualTo(0x11));

@@ -14,8 +14,10 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
@@ -66,6 +68,89 @@ internal sealed class WiringPhase : IBootstrapPhase
             "Sends a target cursor to the specified player. Usage: send_target ",
             CommandSourceType.InGame,
             AccountType.Regular
+        );
+
+        commandService.RegisterCommand(
+            "add_npc|.add_npc",
+            async commandContext =>
+            {
+                if (commandContext.Arguments.Length != 1)
+                {
+                    commandContext.Print("Usage: .add_npc <templateId>");
+
+                    return;
+                }
+
+                var templateId = commandContext.Arguments[0];
+                var eventBus = context.Container.Resolve<IGameEventBusService>();
+                var mobileService = context.Container.Resolve<IMobileService>();
+                var mobileTemplateService = context.Container.Resolve<IMobileTemplateService>();
+                var spatialWorldService = context.Container.Resolve<ISpatialWorldService>();
+                var gameSessionService = context.Container.Resolve<IGameNetworkSessionService>();
+                var characterService = context.Container.Resolve<ICharacterService>();
+
+                if (!mobileTemplateService.TryGet(templateId, out _))
+                {
+                    commandContext.PrintError("Unknown mobile template: {0}", templateId);
+
+                    return;
+                }
+
+                await eventBus.PublishAsync(
+                    new TargetRequestCursorEvent(
+                        commandContext.SessionId,
+                        TargetCursorSelectionType.SelectLocation,
+                        TargetCursorType.Helpful,
+                        callback =>
+                        {
+                            try
+                            {
+                                if (!gameSessionService.TryGet(commandContext.SessionId, out var session))
+                                {
+                                    commandContext.PrintError("Cannot spawn NPC: session not found.");
+
+                                    return;
+                                }
+
+                                var mapId = session.Character?.MapId ??
+                                            characterService.GetCharacterAsync(session.CharacterId).GetAwaiter().GetResult()?.MapId ??
+                                            1;
+
+                                var mobile = mobileService
+                                            .SpawnFromTemplateAsync(templateId, callback.Packet.Location, mapId)
+                                            .GetAwaiter()
+                                            .GetResult();
+
+                                spatialWorldService.AddOrUpdateMobile(mobile);
+                                commandContext.Print(
+                                    "NPC '{0}' spawned at {1} (Map={2}, Serial={3}).",
+                                    templateId,
+                                    callback.Packet.Location,
+                                    mapId,
+                                    mobile.Id
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                commandContext.PrintError("Failed to spawn NPC '{0}': {1}", templateId, ex.Message);
+                            }
+                        }
+                    )
+                );
+            },
+            "Spawn an NPC from template at target location. Usage: .add_npc <templateId>",
+            CommandSourceType.InGame,
+            AccountType.Regular,
+            _ =>
+            {
+                var mobileTemplateService = context.Container.Resolve<IMobileTemplateService>();
+
+                return mobileTemplateService.GetAll()
+                                            .Select(static template => template.Id)
+                                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                                            .OrderBy(static id => id, StringComparer.OrdinalIgnoreCase)
+                                            .ToArray();
+            }
         );
 
         commandService.RegisterCommand(
@@ -197,6 +282,33 @@ internal sealed class WiringPhase : IBootstrapPhase
                 ctx.Print("Broadcast sent to {0} session(s).", recipients);
             },
             "Send a server message to all active sessions. Usage: broadcast <message>",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator
+        );
+
+        commandService.RegisterCommand(
+            "spawn_doors|.spawn_doors",
+            async ctx =>
+            {
+                if (ctx.Arguments.Length > 0)
+                {
+                    ctx.Print("Usage: .spawn_doors");
+
+                    return;
+                }
+
+                try
+                {
+                    var worldGeneratorBuilderService = context.Container.Resolve<IWorldGeneratorBuilderService>();
+                    await worldGeneratorBuilderService.GenerateAsync("doors", message => ctx.Print("{0}", message));
+                    ctx.Print("Door generation finished.");
+                }
+                catch (Exception ex)
+                {
+                    ctx.Print("Door generation failed: {0}", ex.Message);
+                }
+            },
+            "Run door world generation immediately. Usage: .spawn_doors",
             CommandSourceType.Console | CommandSourceType.InGame,
             AccountType.Administrator
         );

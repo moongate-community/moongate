@@ -34,6 +34,8 @@ public sealed partial class ItemSnapshot
 
     public int? GumpId { get; set; }
 
+    public byte Direction { get; set; }
+
     public string ScriptId { get; set; }
 
     public uint ParentContainerId { get; set; }

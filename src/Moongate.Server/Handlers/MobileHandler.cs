@@ -1,6 +1,8 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Interfaces.Characters;
@@ -8,13 +10,19 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Handlers;
 
 [RegisterGameEventListener]
 public class MobileHandler
-    : IGameEventListener<MobileAddedInSectorEvent>, IGameEventListener<MobilePositionChangedEvent>, IMoongateService
+    : IGameEventListener<MobileAddedInSectorEvent>,
+      IGameEventListener<MobilePositionChangedEvent>,
+      IGameEventListener<PlayerCharacterLoggedInEvent>,
+      IMoongateService
 {
     private readonly ISpatialWorldService _spatialWorldService;
 
@@ -23,18 +31,21 @@ public class MobileHandler
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
 
     private readonly ICharacterService _characterService;
+    private readonly int _sectorEnterSyncRadius;
 
     public MobileHandler(
         ISpatialWorldService spatialWorldService,
         ICharacterService characterService,
         IGameNetworkSessionService gameNetworkSessionService,
-        IOutgoingPacketQueue outgoingPacketQueue
+        IOutgoingPacketQueue outgoingPacketQueue,
+        MoongateConfig moongateConfig
     )
     {
         _spatialWorldService = spatialWorldService;
         _characterService = characterService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _outgoingPacketQueue = outgoingPacketQueue;
+        _sectorEnterSyncRadius = Math.Max(0, moongateConfig.Spatial.SectorEnterSyncRadius);
     }
 
     public async Task HandleAsync(MobileAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
@@ -80,6 +91,30 @@ public class MobileHandler
             sectorInfo.SectorY,
             false
         );
+
+        await SyncSectorSnapshotForEnteringPlayerAsync(
+            mobileEntity,
+            gameEvent.MapId,
+            gameEvent.OldLocation,
+            gameEvent.NewLocation
+        );
+    }
+
+    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+        var mobileEntity = await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+
+        if (mobileEntity is null)
+        {
+            return;
+        }
+
+        await SyncSectorSnapshotForPlayerAsync(
+            mobileEntity,
+            mobileEntity.MapId,
+            mobileEntity.Location
+        );
     }
 
     public Task StartAsync()
@@ -118,6 +153,115 @@ public class MobileHandler
                 );
 
                 // _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private Task SyncSectorSnapshotForEnteringPlayerAsync(
+        UOMobileEntity mobileEntity,
+        int mapId,
+        Point3D oldLocation,
+        Point3D newLocation
+    )
+    {
+        if (!mobileEntity.IsPlayer)
+        {
+            return Task.CompletedTask;
+        }
+
+        var oldSector = _spatialWorldService.GetSectorByLocation(mapId, oldLocation);
+        var newSector = _spatialWorldService.GetSectorByLocation(mapId, newLocation);
+
+        if (newSector is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (oldSector is not null &&
+            oldSector.SectorX == newSector.SectorX &&
+            oldSector.SectorY == newSector.SectorY)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
+        {
+            return Task.CompletedTask;
+        }
+
+        return SyncSectorSnapshotForPlayerAsync(mobileEntity, mapId, newLocation);
+    }
+
+    private Task SyncSectorSnapshotForPlayerAsync(
+        UOMobileEntity mobileEntity,
+        int mapId,
+        Point3D centerLocation
+    )
+    {
+        if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
+        {
+            return Task.CompletedTask;
+        }
+
+        var centerSector = _spatialWorldService.GetSectorByLocation(mapId, centerLocation);
+
+        if (centerSector is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        for (var sectorX = centerSector.SectorX - _sectorEnterSyncRadius;
+             sectorX <= centerSector.SectorX + _sectorEnterSyncRadius;
+             sectorX++)
+        {
+            for (var sectorY = centerSector.SectorY - _sectorEnterSyncRadius;
+                 sectorY <= centerSector.SectorY + _sectorEnterSyncRadius;
+                 sectorY++)
+            {
+                var targetSector = _spatialWorldService.GetSectorByLocation(
+                    mapId,
+                    new Point3D(
+                        sectorX << MapSectorConsts.SectorShift,
+                        sectorY << MapSectorConsts.SectorShift,
+                        centerLocation.Z
+                    )
+                );
+
+                if (targetSector is null)
+                {
+                    continue;
+                }
+
+                foreach (var item in targetSector.GetItems())
+                {
+                    if (item.ParentContainerId != Serial.Zero ||
+                        item.EquippedMobileId != Serial.Zero)
+                    {
+                        continue;
+                    }
+
+                    _outgoingPacketQueue.Enqueue(session.SessionId, new ObjectInformationPacket(item));
+                }
+
+                foreach (var otherMobile in targetSector.GetMobiles())
+                {
+                    if (otherMobile.Id == mobileEntity.Id)
+                    {
+                        continue;
+                    }
+
+                    _outgoingPacketQueue.Enqueue(
+                        session.SessionId,
+                        new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+                    );
+                    _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
+                    WornItemPacketHelper.EnqueueVisibleWornItems(
+                        otherMobile,
+                        packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
+                    );
+                }
             }
         }
 

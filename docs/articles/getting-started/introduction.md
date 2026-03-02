@@ -93,17 +93,22 @@ Moongate v2 is **actively in development**. The following features are implement
 - [x] Interactive console UI
 - [x] Timer wheel metrics
 - [x] Unit tests for core systems
+- [x] Login handshake + character selection + character creation
+- [x] Movement request validation (`0x02`) with ACK/Deny flow
+- [x] Item interaction baseline (`0x07`, `0x08`, `0x13`, `0x09`, `0x06`)
+- [x] Target cursor request/response pipeline (`0x6C`)
+- [x] General Information (`0xBF`) core subcommands (`0x06`, `0x1A`, `0x2C`, `0x2D`, `0x2E`)
+- [x] Sector-based world sync and lazy sector loading strategy
 
 ### Planned
 
-- [ ] Character creation flow
-- [ ] Full movement system
 - [ ] Combat mechanics
 - [ ] Skill system
 - [ ] NPC AI
-- [ ] Item system completion
+- [ ] Item system completion (vendor/trade/economy semantics)
 - [ ] House/shelter system
 - [ ] Guild system
+- [ ] Broader UO protocol listener coverage
 
 ## Who Is This For?
 

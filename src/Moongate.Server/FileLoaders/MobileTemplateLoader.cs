@@ -76,6 +76,10 @@ public sealed class MobileTemplateLoader : IFileLoader
             }
 
             var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
+            foreach (var mobileTemplate in mobileTemplates)
+            {
+                NormalizeTitleAndName(mobileTemplate);
+            }
             allMobileTemplates.AddRange(mobileTemplates);
         }
 
@@ -93,6 +97,11 @@ public sealed class MobileTemplateLoader : IFileLoader
 
     private static void ApplyInheritance(MobileTemplateDefinition parent, MobileTemplateDefinition child)
     {
+        if (string.IsNullOrWhiteSpace(child.Title))
+        {
+            child.Title = parent.Title;
+        }
+
         if (string.IsNullOrWhiteSpace(child.Name))
         {
             child.Name = parent.Name;
@@ -264,6 +273,14 @@ public sealed class MobileTemplateLoader : IFileLoader
 
     private static int InheritInt(int childValue, int parentValue, int defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
+
+    private static void NormalizeTitleAndName(MobileTemplateDefinition template)
+    {
+        if (string.IsNullOrWhiteSpace(template.Title) && !string.IsNullOrWhiteSpace(template.Name))
+        {
+            template.Title = template.Name;
+        }
+    }
 
     private static void ResolveBaseMobiles(List<MobileTemplateDefinition> templates)
     {

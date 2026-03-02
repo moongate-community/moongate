@@ -51,15 +51,11 @@ public class ObjectInformationPacketTests
             ItemId = 0x0EED,
             Amount = 0x14,
             Location = new(1234, 2345, 10),
-            Hue = 0x0456
+            Hue = 0x0456,
+            Direction = DirectionType.SouthWest
         };
 
-        var packet = new ObjectInformationPacket(
-            item,
-            0x03,
-            0x01,
-            ObjectInfoFlags.Hidden | ObjectInfoFlags.Movable
-        );
+        var packet = new ObjectInformationPacket(item, layer: 0x01, flags: ObjectInfoFlags.Hidden | ObjectInfoFlags.Movable);
 
         var data = Write(packet);
 
@@ -72,7 +68,7 @@ public class ObjectInformationPacketTests
                 Assert.That(data[3], Is.EqualTo(0x00));
                 Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(4, 4)), Is.EqualTo(0x40000033u));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(8, 2)), Is.EqualTo(0x0EED));
-                Assert.That(data[10], Is.EqualTo(0x03));
+                Assert.That(data[10], Is.EqualTo((byte)DirectionType.SouthWest));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(11, 2)), Is.EqualTo(0x0014));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(13, 2)), Is.EqualTo(0x0014));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(15, 2)), Is.EqualTo(1234));
