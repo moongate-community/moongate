@@ -1,4 +1,5 @@
 using System.Text;
+using Moongate.Abstractions.Types;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Console;
@@ -20,7 +21,7 @@ namespace Moongate.Server.Services.Console;
 /// <summary>
 /// Implements registration and execution of built-in server commands.
 /// </summary>
-[RegisterGameEventListener]
+[RegisterGameEventListener(ServicePriority.CommandSystem)]
 public sealed class CommandSystemService : ICommandSystemService, IGameEventListener<CommandEnteredEvent>
 {
     private readonly ILogger _logger = Log.ForContext<CommandSystemService>();
@@ -54,6 +55,49 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         CancellationToken cancellationToken = default
     )
     {
+        await ExecuteInternalAsync(
+            commandWithArgs,
+            source,
+            session,
+            (_, level, message, args) => WriteCommandOutput(source, session, level, message, args),
+            cancellationToken
+        );
+    }
+
+    public async Task<IReadOnlyList<string>> ExecuteCommandWithOutputAsync(
+        string commandWithArgs,
+        CommandSourceType source = CommandSourceType.Console,
+        GameSession? session = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var outputLines = new List<string>();
+
+        await ExecuteInternalAsync(
+            commandWithArgs,
+            source,
+            session,
+            (_, _, message, args) =>
+            {
+                var formatted = args.Length == 0 ? message : string.Format(message, args);
+                outputLines.AddRange(
+                    formatted.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                );
+            },
+            cancellationToken
+        );
+
+        return outputLines;
+    }
+
+    private async Task ExecuteInternalAsync(
+        string commandWithArgs,
+        CommandSourceType source,
+        GameSession? session,
+        Action<CommandSourceType, LogEventLevel, string, object[]> writeOutput,
+        CancellationToken cancellationToken
+    )
+    {
         _logger.Verbose("Received command input '{CommandInput}' from source {Source}", commandWithArgs, source);
 
         if (string.IsNullOrWhiteSpace(commandWithArgs))
@@ -84,7 +128,7 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         if (!_commands.TryGetValue(command, out var commandDefinition))
         {
             _logger.Verbose("Command '{Command}' is not registered", command);
-            WriteCommandOutput(source, session, LogEventLevel.Warning, "Unknown command: {0}", commandWithArgs);
+            writeOutput(source, LogEventLevel.Warning, "Unknown command: {0}", [commandWithArgs]);
 
             return;
         }
@@ -97,13 +141,11 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
                 source,
                 commandDefinition.Source
             );
-            WriteCommandOutput(
+            writeOutput(
                 source,
-                session,
                 LogEventLevel.Warning,
                 "Command '{0}' is not available from source '{1}'.",
-                command,
-                source
+                [command, source]
             );
 
             return;
@@ -119,13 +161,11 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
                 commandDefinition.MinimumAccountType,
                 invokerAccountType
             );
-            WriteCommandOutput(
+            writeOutput(
                 source,
-                session,
                 LogEventLevel.Warning,
                 "Command '{0}' requires account type '{1}'.",
-                command,
-                commandDefinition.MinimumAccountType
+                [command, commandDefinition.MinimumAccountType]
             );
 
             return;
@@ -136,7 +176,7 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             [.. tokens.Skip(1)],
             source,
             session?.SessionId ?? -1,
-            (message, level) => WriteCommandOutput(source, session, level, message)
+            (message, level) => writeOutput(source, level, message, [])
         );
 
         _logger.Verbose("Executing command handler for '{Command}'", command);
@@ -149,12 +189,11 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         catch (Exception ex)
         {
             _logger.Error(ex, "Command '{Command}' execution failed", command);
-            WriteCommandOutput(
+            writeOutput(
                 source,
-                session,
                 LogEventLevel.Error,
                 "Command '{0}' failed. Check logs for details.",
-                command
+                [command]
             );
         }
     }

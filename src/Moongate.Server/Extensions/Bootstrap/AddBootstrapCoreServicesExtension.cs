@@ -30,7 +30,9 @@ using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.World;
 using Moongate.UO.Data.Interfaces.Names;
+using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Templates;
+using Moongate.UO.Data.Services.Art;
 using Moongate.UO.Data.Services.Names;
 using Moongate.UO.Data.Services.Templates;
 
@@ -72,11 +74,13 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
+        container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IStartupTemplateService, StartupTemplateService>(Reuse.Singleton);
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);
+        container.Register<IWorldGenerator, ItemsImageBuilder>(Reuse.Singleton);
 
         return container;
     }

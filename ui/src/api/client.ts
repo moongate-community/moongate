@@ -2,6 +2,21 @@ import { useAuthStore } from '../store/authStore'
 
 const BASE = '/api'
 
+function resolveApiUrl(path: string): string {
+  if (
+    path.startsWith('/api/') ||
+    path.startsWith('/auth') ||
+    path.startsWith('/health') ||
+    path.startsWith('/metrics') ||
+    path.startsWith('/openapi') ||
+    path.startsWith('/scalar')
+  ) {
+    return path
+  }
+
+  return `${BASE}${path}`
+}
+
 function getHeaders(extra?: HeadersInit): HeadersInit {
   const token = useAuthStore.getState().user?.accessToken
   return {
@@ -15,7 +30,21 @@ export async function apiFetch<T>(
   path: string,
   options?: RequestInit,
 ): Promise<T> {
-  const url = path.startsWith('/auth') ? path : `${BASE}${path}`
+  const res = await rawApiFetch(path, options)
+
+  const contentType = res.headers.get('content-type') ?? ''
+  if (contentType.includes('application/json')) {
+    return res.json() as Promise<T>
+  }
+
+  return res.text() as unknown as Promise<T>
+}
+
+export async function rawApiFetch(
+  path: string,
+  options?: RequestInit,
+): Promise<Response> {
+  const url = resolveApiUrl(path)
   const res = await fetch(url, {
     ...options,
     headers: getHeaders(options?.headers),
@@ -26,16 +55,15 @@ export async function apiFetch<T>(
     throw new Error(text || `HTTP ${res.status}`)
   }
 
-  const contentType = res.headers.get('content-type') ?? ''
-  if (contentType.includes('application/json')) {
-    return res.json() as Promise<T>
-  }
-
-  return res.text() as unknown as Promise<T>
+  return res
 }
 
 export const api = {
   get: <T>(path: string) => apiFetch<T>(path),
+  getBlob: async (path: string) => {
+    const response = await rawApiFetch(path)
+    return response.blob()
+  },
   post: <T>(path: string, body: unknown) =>
     apiFetch<T>(path, {
       method: 'POST',

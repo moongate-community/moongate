@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Globalization;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
@@ -8,9 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
+using SixLabors.ImageSharp.Formats.Png;
 
 namespace Moongate.Server.Http.Extensions;
 
@@ -136,6 +141,106 @@ internal static class MoongateHttpRouteExtensions
                       .WithSummary("Deletes a user by account id.")
                       .Produces(StatusCodes.Status204NoContent)
                       .Produces(StatusCodes.Status404NotFound);
+        }
+
+        if (context.GameNetworkSessionService is not null)
+        {
+            var sessionsGroup = endpoints.MapGroup("/api/sessions").WithTags("Sessions");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                sessionsGroup.RequireAuthorization();
+            }
+
+            sessionsGroup.MapGet(
+                            "/active",
+                            (CancellationToken cancellationToken) => HandleGetActiveSessions(context, cancellationToken)
+                        )
+                        .WithName("SessionsGetActive")
+                        .WithSummary("Returns currently active in-game sessions.")
+                        .Produces<IReadOnlyList<MoongateHttpActiveSession>>();
+        }
+
+        if (context.CommandSystemService is not null)
+        {
+            var commandsGroup = endpoints.MapGroup("/api/commands").WithTags("Commands");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                commandsGroup.RequireAuthorization();
+            }
+
+            commandsGroup.MapPost(
+                            "/execute",
+                            (
+                                MoongateHttpExecuteCommandRequest request,
+                                CancellationToken cancellationToken
+                            ) => HandleExecuteCommand(context, request, cancellationToken)
+                        )
+                        .WithName("CommandsExecute")
+                        .WithSummary("Executes a console command and returns final output lines.")
+                        .Accepts<MoongateHttpExecuteCommandRequest>("application/json")
+                        .Produces<MoongateHttpExecuteCommandResponse>()
+                        .Produces(StatusCodes.Status400BadRequest);
+        }
+
+        if (context.ItemTemplateService is not null || context.ArtService is not null)
+        {
+            var itemTemplatesGroup = endpoints.MapGroup("/api/item-templates").WithTags("ItemTemplates");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                itemTemplatesGroup.RequireAuthorization();
+            }
+
+            if (context.ItemTemplateService is not null)
+            {
+                itemTemplatesGroup.MapGet(
+                                      "/",
+                                      (
+                                          int page,
+                                          int pageSize,
+                                          string? name,
+                                          string? tag,
+                                          CancellationToken cancellationToken
+                                      ) => HandleGetItemTemplates(
+                                          context,
+                                          page,
+                                          pageSize,
+                                          name,
+                                          tag,
+                                          cancellationToken
+                                      )
+                                  )
+                                  .WithName("ItemTemplatesGetPaged")
+                                  .WithSummary("Returns paged item templates.")
+                                  .Produces<MoongateHttpItemTemplatePage>()
+                                  .Produces(StatusCodes.Status400BadRequest);
+
+                itemTemplatesGroup.MapGet(
+                                      "/{id}",
+                                      (string id, CancellationToken cancellationToken) =>
+                                          HandleGetItemTemplateById(context, id, cancellationToken)
+                                  )
+                                  .WithName("ItemTemplatesGetById")
+                                  .WithSummary("Returns an item template by id.")
+                                  .Produces<ItemTemplateDefinition>()
+                                  .Produces(StatusCodes.Status404NotFound);
+            }
+
+            if (context.ArtService is not null)
+            {
+                itemTemplatesGroup.MapGet(
+                                      "/by-item-id/{itemId}/image",
+                                      (string itemId, CancellationToken cancellationToken) =>
+                                          HandleGetItemTemplateImageByItemId(context, itemId, cancellationToken)
+                                  )
+                                  .WithName("ItemTemplatesGetImageByItemId")
+                                  .WithSummary("Returns item art image by item graphic id (0x....).")
+                                  .Produces(StatusCodes.Status200OK, contentType: "image/png")
+                                  .Produces(StatusCodes.Status400BadRequest)
+                                  .Produces(StatusCodes.Status404NotFound);
+            }
         }
 
         return endpoints;
@@ -278,6 +383,196 @@ internal static class MoongateHttpRouteExtensions
         return TypedResults.Text("ok");
     }
 
+    private static IResult HandleGetActiveSessions(MoongateHttpRouteContext context, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        var sessions = context.GameNetworkSessionService!.GetAll()
+                             .Where(session => session.AccountId.Value != 0 && session.CharacterId.Value != 0)
+                             .OrderBy(session => session.SessionId)
+                             .Select(
+                                 session =>
+                                 {
+                                     var account = context.AccountService?
+                                                          .GetAccountAsync(session.AccountId)
+                                                          .GetAwaiter()
+                                                          .GetResult();
+
+                                     return new MoongateHttpActiveSession
+                                     {
+                                         SessionId = session.SessionId,
+                                         AccountId = session.AccountId.Value.ToString(),
+                                         Username = account?.Username ?? string.Empty,
+                                         AccountType = session.AccountType.ToString(),
+                                         CharacterId = session.CharacterId.Value.ToString(),
+                                         CharacterName = session.Character?.Name ?? string.Empty
+                                     };
+                                 }
+                             )
+                             .ToList();
+
+        return TypedResults.Ok((IReadOnlyList<MoongateHttpActiveSession>)sessions);
+    }
+
+    private static IResult HandleExecuteCommand(
+        MoongateHttpRouteContext context,
+        MoongateHttpExecuteCommandRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        if (string.IsNullOrWhiteSpace(request.Command))
+        {
+            return TypedResults.BadRequest("command is required");
+        }
+
+        var lines = context.CommandSystemService!
+                           .ExecuteCommandWithOutputAsync(
+                               request.Command.Trim(),
+                               CommandSourceType.Console,
+                               null,
+                               cancellationToken
+                           )
+                           .GetAwaiter()
+                           .GetResult();
+
+        var response = new MoongateHttpExecuteCommandResponse
+        {
+            Success = true,
+            Command = request.Command.Trim(),
+            OutputLines = lines,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpExecuteCommandResponse);
+    }
+
+    private static IResult HandleGetItemTemplateById(
+        MoongateHttpRouteContext context,
+        string id,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        if (string.IsNullOrWhiteSpace(id))
+        {
+            return TypedResults.BadRequest("id is required");
+        }
+
+        if (!context.ItemTemplateService!.TryGet(id, out var template) || template is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        return Results.Json(template, MoongateHttpJsonContext.Default.ItemTemplateDefinition);
+    }
+
+    private static IResult HandleGetItemTemplateImageByItemId(
+        MoongateHttpRouteContext context,
+        string itemIdText,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        if (context.ArtService is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        if (!TryParseHexItemId(itemIdText, out var itemId))
+        {
+            return TypedResults.BadRequest("itemId must be in 0x... format");
+        }
+
+        var itemsImageDirectory = Path.Combine(context.DirectoriesConfig[Moongate.Core.Types.DirectoryType.Images], "items");
+        Directory.CreateDirectory(itemsImageDirectory);
+
+        var normalizedHex = itemId.ToString("X4", CultureInfo.InvariantCulture);
+        var cachePath = Path.Combine(itemsImageDirectory, $"0x{normalizedHex}.png");
+
+        if (File.Exists(cachePath))
+        {
+            return Results.File(cachePath, "image/png");
+        }
+
+        var legacyPath = Directory.EnumerateFiles(itemsImageDirectory, $"*_{normalizedHex}.png")
+                                  .FirstOrDefault();
+
+        if (legacyPath is not null)
+        {
+            return Results.File(legacyPath, "image/png");
+        }
+
+        using var image = context.ArtService.GetArt(itemId);
+
+        if (image is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        using (var stream = File.Create(cachePath))
+        {
+            image.Save(stream, new PngEncoder());
+        }
+
+        return Results.File(cachePath, "image/png");
+    }
+
+    private static IResult HandleGetItemTemplates(
+        MoongateHttpRouteContext context,
+        int page,
+        int pageSize,
+        string? name,
+        string? tag,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        var safePage = Math.Max(page, 1);
+        var safePageSize = Math.Clamp(pageSize <= 0 ? 50 : pageSize, 1, 200);
+        IEnumerable<ItemTemplateDefinition> templates = context.ItemTemplateService!.GetAll();
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            var nameTerm = name.Trim();
+            templates = templates.Where(
+                template => !string.IsNullOrWhiteSpace(template.Name) &&
+                            template.Name.Contains(nameTerm, StringComparison.OrdinalIgnoreCase)
+            );
+        }
+
+        if (!string.IsNullOrWhiteSpace(tag))
+        {
+            var tagTerm = tag.Trim();
+            templates = templates.Where(
+                template => template.Tags.Any(
+                    existingTag => !string.IsNullOrWhiteSpace(existingTag) &&
+                                   existingTag.Contains(tagTerm, StringComparison.OrdinalIgnoreCase)
+                )
+            );
+        }
+
+        var filteredTemplates = templates.ToList();
+        var totalCount = filteredTemplates.Count;
+        var skip = (safePage - 1) * safePageSize;
+        var items = filteredTemplates.Skip(skip)
+                                     .Take(safePageSize)
+                                     .Select(MapItemTemplateToHttpSummary)
+                                     .ToList();
+
+        var response = new MoongateHttpItemTemplatePage
+        {
+            Page = safePage,
+            PageSize = safePageSize,
+            TotalCount = totalCount,
+            Items = items
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpItemTemplatePage);
+    }
+
     private static IResult HandleLogin(
         MoongateHttpRouteContext context,
         MoongateHttpLoginRequest request,
@@ -417,6 +712,39 @@ internal static class MoongateHttpRouteExtensions
             CharacterCount = account.CharacterIds.Count
         };
 
+    private static MoongateHttpItemTemplateSummary MapItemTemplateToHttpSummary(ItemTemplateDefinition template)
+        => new()
+        {
+            Id = template.Id,
+            Name = template.Name,
+            Category = template.Category,
+            ItemId = template.ItemId
+        };
+
     private static Serial? ParseAccountIdOrNull(string accountId)
         => uint.TryParse(accountId, out var parsedId) ? (Serial)parsedId : null;
+
+    private static bool TryParseHexItemId(string itemIdText, out int itemId)
+    {
+        itemId = 0;
+
+        if (string.IsNullOrWhiteSpace(itemIdText))
+        {
+            return false;
+        }
+
+        var value = itemIdText.Trim();
+
+        if (!value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return int.TryParse(
+            value.AsSpan(2),
+            NumberStyles.AllowHexSpecifier,
+            CultureInfo.InvariantCulture,
+            out itemId
+        );
+    }
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Table, TableHeader, TableColumn, TableBody, TableRow, TableCell,
   Chip, Button, Spinner, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem,
@@ -17,15 +18,15 @@ interface User {
   characterCount: number
 }
 
-const ROLES = ['Admin', 'Moderator', 'Player', 'Guest']
+const ROLES = ['Regular', 'GameMaster', 'Administrator']
 
 export function UsersPage() {
+  const navigate = useNavigate()
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
 
   // Modal State
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [modalMode, setModalMode] = useState<'create' | 'edit'>('create')
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
 
   // Form State
@@ -55,15 +56,7 @@ export function UsersPage() {
     }
   }
 
-  function openCreateModal() {
-    setModalMode('create')
-    setFormData({ username: '', email: '', password: '', role: 'Player', isLocked: false })
-    setError(null)
-    onOpen()
-  }
-
   function openEditModal(user: User) {
-    setModalMode('edit')
     setSelectedUser(user)
     setFormData({ 
       username: user.username, 
@@ -80,18 +73,8 @@ export function UsersPage() {
     setError(null)
     setIsSubmitting(true)
     try {
-      if (modalMode === 'create') {
-        if (!formData.username || !formData.password) {
-          throw new Error('Username and Password are required.')
-        }
-        await api.post('/users', {
-          username: formData.username,
-          password: formData.password,
-          email: formData.email || undefined,
-          role: formData.role
-        })
-      } else if (modalMode === 'edit' && selectedUser) {
-        const payload: any = {}
+      if (selectedUser) {
+        const payload: Record<string, unknown> = {}
         if (formData.username !== selectedUser.username) payload.username = formData.username
         if (formData.email !== selectedUser.email) payload.email = formData.email || null
         if (formData.password) payload.password = formData.password
@@ -99,10 +82,9 @@ export function UsersPage() {
         if (formData.isLocked !== selectedUser.isLocked) payload.isLocked = formData.isLocked
         
         await api.put(`/users/${selectedUser.accountId}`, payload)
-      }
-      
-      await fetchUsers()
-      onClose()
+        await fetchUsers()
+        onClose()
+      }      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during save.')
     } finally {
@@ -115,7 +97,7 @@ export function UsersPage() {
     try {
       await api.put(`/users/${user.accountId}`, { isLocked: !user.isLocked })
       fetchUsers()
-    } catch (err) {
+    } catch {
       alert('Failed to update lock status')
     }
   }
@@ -125,16 +107,15 @@ export function UsersPage() {
     try {
       await api.delete(`/users/${user.accountId}`)
       fetchUsers()
-    } catch (err) {
+    } catch {
       alert('Failed to delete user')
     }
   }
 
   const roleColorMap: Record<string, "default" | "primary" | "secondary" | "success" | "warning" | "danger"> = {
-    admin: "danger",
-    moderator: "warning",
-    player: "primary",
-    guest: "default"
+    regular: "primary",
+    gamemaster: "warning",
+    administrator: "danger"
   }
 
   return (
@@ -160,7 +141,7 @@ export function UsersPage() {
           </p>
         </div>
 
-        <Button color="primary" variant="flat" onPress={openCreateModal} className="font-mono text-xs uppercase tracking-wider">
+        <Button color="primary" variant="flat" onPress={() => navigate('/users/add')} className="font-mono text-xs uppercase tracking-wider">
           + Add User
         </Button>
       </div>
@@ -251,7 +232,7 @@ export function UsersPage() {
             <>
               <ModalHeader className="flex flex-col gap-1">
                 <h2 className="font-cinzel tracking-wider text-[#6aa5da]">
-                  {modalMode === 'create' ? 'Create New User' : 'Edit User'}
+                  Edit User
                 </h2>
               </ModalHeader>
               <ModalBody className="py-6">
@@ -299,11 +280,10 @@ export function UsersPage() {
                   </Select>
 
                   <Input 
-                    label={modalMode === 'create' ? "Password" : "New Password (Optional)"} 
+                    label="New Password (Optional)" 
                     type="password"
                     value={formData.password}
                     onValueChange={(val) => setFormData({...formData, password: val})}
-                    isRequired={modalMode === 'create'}
                     classNames={{
                       inputWrapper: 'bg-[#1f1c2a] border-[rgba(106,165,218,0.2)] data-[hover=true]:border-[#6aa5da]',
                       label: 'text-[rgba(185,187,211,0.6)] font-mono text-xs tracking-wider',
@@ -323,7 +303,7 @@ export function UsersPage() {
                   Cancel
                 </Button>
                 <Button color="primary" isLoading={isSubmitting} onPress={() => handleSubmit(onClose)} className="font-mono text-xs uppercase tracking-wider">
-                  {modalMode === 'create' ? 'Create' : 'Save Changes'}
+                  Save Changes
                 </Button>
               </ModalFooter>
             </>

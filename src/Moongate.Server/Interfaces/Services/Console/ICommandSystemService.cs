@@ -26,6 +26,22 @@ public interface ICommandSystemService : IMoongateService
     );
 
     /// <summary>
+    /// Executes a command and collects output lines produced by the command context.
+    /// </summary>
+    /// <param name="commandWithArgs">Raw command text including arguments.</param>
+    /// <param name="source">Command source.</param>
+    /// <param name="session">If command comes from in-game, associated session context.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Collected command output lines.</returns>
+    Task<IReadOnlyList<string>> ExecuteCommandWithOutputAsync(
+        string commandWithArgs,
+        CommandSourceType source = CommandSourceType.Console,
+        GameSession? session = null,
+        CancellationToken cancellationToken = default
+    )
+        => throw new NotSupportedException("Command output capture is not supported by this implementation.");
+
+    /// <summary>
     /// Gets autocomplete suggestions for the current command line.
     /// </summary>
     /// <param name="commandWithArgs">Current command line.</param>

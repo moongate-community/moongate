@@ -9,6 +9,7 @@ public enum DirectoryType
     Templates,
     Scripts,
     Save,
+    Images,
     Logs,
     Cache
 }

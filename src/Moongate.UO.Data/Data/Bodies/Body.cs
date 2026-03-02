@@ -18,7 +18,7 @@ public struct Body
     {
         get
         {
-            if (BodyID >= 0 && BodyID < Types.Length)
+            if (Types is not null && BodyID >= 0 && BodyID < Types.Length)
             {
                 return Types[BodyID];
             }
@@ -31,7 +31,8 @@ public struct Body
     {
         get
         {
-            return BodyID >= 0 &&
+            return Types is not null &&
+                   BodyID >= 0 &&
                    BodyID < Types.Length &&
                    Types[BodyID] == UOBodyType.Human &&
                    BodyID != 402 &&
@@ -129,15 +130,35 @@ public struct Body
         }
     }
 
-    public bool IsMonster => BodyID >= 0 && BodyID < Types.Length && Types[BodyID] == UOBodyType.Monster;
+    public bool IsMonster =>
+        Types is not null &&
+        BodyID >= 0 &&
+        BodyID < Types.Length &&
+        Types[BodyID] == UOBodyType.Monster;
 
-    public bool IsAnimal => BodyID >= 0 && BodyID < Types.Length && Types[BodyID] == UOBodyType.Animal;
+    public bool IsAnimal =>
+        Types is not null &&
+        BodyID >= 0 &&
+        BodyID < Types.Length &&
+        Types[BodyID] == UOBodyType.Animal;
 
-    public bool IsEmpty => BodyID >= 0 && BodyID < Types.Length && Types[BodyID] == UOBodyType.Empty;
+    public bool IsEmpty =>
+        Types is not null &&
+        BodyID >= 0 &&
+        BodyID < Types.Length &&
+        Types[BodyID] == UOBodyType.Empty;
 
-    public bool IsSea => BodyID >= 0 && BodyID < Types.Length && Types[BodyID] == UOBodyType.Sea;
+    public bool IsSea =>
+        Types is not null &&
+        BodyID >= 0 &&
+        BodyID < Types.Length &&
+        Types[BodyID] == UOBodyType.Sea;
 
-    public bool IsEquipment => BodyID >= 0 && BodyID < Types.Length && Types[BodyID] == UOBodyType.Equipment;
+    public bool IsEquipment =>
+        Types is not null &&
+        BodyID >= 0 &&
+        BodyID < Types.Length &&
+        Types[BodyID] == UOBodyType.Equipment;
 
 #region Stygian Abyss
 

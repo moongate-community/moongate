@@ -312,6 +312,33 @@ internal sealed class WiringPhase : IBootstrapPhase
             CommandSourceType.Console | CommandSourceType.InGame,
             AccountType.Administrator
         );
+
+        commandService.RegisterCommand(
+            "build_item_images|.build_item_images",
+            async ctx =>
+            {
+                if (ctx.Arguments.Length > 0)
+                {
+                    ctx.Print("Usage: .build_item_images");
+
+                    return;
+                }
+
+                try
+                {
+                    var worldGeneratorBuilderService = context.Container.Resolve<IWorldGeneratorBuilderService>();
+                    await worldGeneratorBuilderService.GenerateAsync("items_images", message => ctx.Print("{0}", message));
+                    ctx.Print("Items image generation finished.");
+                }
+                catch (Exception ex)
+                {
+                    ctx.Print("Items image generation failed: {0}", ex.Message);
+                }
+            },
+            "Generate item art images into images/items. Usage: .build_item_images",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator
+        );
     }
 
     private static void RegisterFileLoaders(BootstrapContext context)

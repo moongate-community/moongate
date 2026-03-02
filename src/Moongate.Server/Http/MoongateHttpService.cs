@@ -13,8 +13,12 @@ using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Metrics;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Metrics.Data;
+using Moongate.UO.Data.Interfaces.Art;
+using Moongate.UO.Data.Interfaces.Templates;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -34,6 +38,10 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly MoongateHttpJwtOptions _jwtOptions;
     private readonly IAccountService? _accountService;
     private readonly IMetricsHttpSnapshotFactory? _metricsHttpSnapshotFactory;
+    private readonly IItemTemplateService? _itemTemplateService;
+    private readonly IArtService? _artService;
+    private readonly IGameNetworkSessionService? _gameNetworkSessionService;
+    private readonly ICommandSystemService? _commandSystemService;
     private readonly bool _isUiEnabled;
     private readonly string? _uiDistPath;
 
@@ -42,7 +50,11 @@ public sealed class MoongateHttpService : IMoongateHttpService
     public MoongateHttpService(
         MoongateHttpServiceOptions options,
         IAccountService? accountService = null,
-        IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory = null
+        IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory = null,
+        IItemTemplateService? itemTemplateService = null,
+        IArtService? artService = null,
+        IGameNetworkSessionService? gameNetworkSessionService = null,
+        ICommandSystemService? commandSystemService = null
     )
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -62,6 +74,10 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _jwtOptions = options.Jwt ?? new MoongateHttpJwtOptions();
         _accountService = accountService;
         _metricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
+        _itemTemplateService = itemTemplateService;
+        _artService = artService;
+        _gameNetworkSessionService = gameNetworkSessionService;
+        _commandSystemService = commandSystemService;
         _isUiEnabled = options.IsUiEnabled;
         _uiDistPath = options.UiDistPath;
 
@@ -117,7 +133,12 @@ public sealed class MoongateHttpService : IMoongateHttpService
             _jwtOptions,
             _accountService,
             _metricsHttpSnapshotFactory,
-            isUiServing
+            isUiServing,
+            _directoriesConfig,
+            _itemTemplateService,
+            _artService,
+            _gameNetworkSessionService,
+            _commandSystemService
         );
 
         app.MapMoongateHttpRoutes(routeContext);

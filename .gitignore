@@ -218,6 +218,7 @@ csx/
 
 # Microsoft Azure Emulator
 ecf/
+moongate_data/images/
 rcf/
 
 # Windows Store app package directories and files
