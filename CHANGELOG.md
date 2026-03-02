@@ -1,3 +1,16 @@
+## [0.25.0](https://github.com/moongate-community/moongatev2/compare/v0.24.0...v0.25.0) (2026-03-02)
+
+### Features
+
+* **http,ui:** extend admin APIs and ship shell-like console UX ([4a518ec](https://github.com/moongate-community/moongatev2/commit/4a518ec7c09ecb6955ba14e15d31576c35e3a2a1))
+* **http:** expose paged item templates and lazy item image endpoint ([da5a257](https://github.com/moongate-community/moongatev2/commit/da5a25735eae69c2234cb006ae95c26e43506014))
+* **ui:** add item templates page with paginated preview gallery ([b0e1eb9](https://github.com/moongate-community/moongatev2/commit/b0e1eb940e3fff06da1314cf3480e3bf18e78c98))
+* **world:** add items image generator pipeline and UO art export ([df9180b](https://github.com/moongate-community/moongatev2/commit/df9180b9d5240726e6f1aee8852518f450487840))
+
+### Bug Fixes
+
+* **commands:** prevent duplicate console command event handling ([df3c8f1](https://github.com/moongate-community/moongatev2/commit/df3c8f1c1cdbfec8bd917ebe7db65aa0ad2971ef))
+
 ## [0.24.0](https://github.com/moongate-community/moongatev2/compare/v0.23.0...v0.24.0) (2026-03-02)
 
 ### Features
