@@ -2,6 +2,21 @@ import { useAuthStore } from '../store/authStore'
 
 const BASE = '/api'
 
+function resolveApiUrl(path: string): string {
+  if (
+    path.startsWith('/api/') ||
+    path.startsWith('/auth') ||
+    path.startsWith('/health') ||
+    path.startsWith('/metrics') ||
+    path.startsWith('/openapi') ||
+    path.startsWith('/scalar')
+  ) {
+    return path
+  }
+
+  return `${BASE}${path}`
+}
+
 function getHeaders(extra?: HeadersInit): HeadersInit {
   const token = useAuthStore.getState().user?.accessToken
   return {
@@ -29,7 +44,7 @@ export async function rawApiFetch(
   path: string,
   options?: RequestInit,
 ): Promise<Response> {
-  const url = path.startsWith('/auth') ? path : `${BASE}${path}`
+  const url = resolveApiUrl(path)
   const res = await fetch(url, {
     ...options,
     headers: getHeaders(options?.headers),

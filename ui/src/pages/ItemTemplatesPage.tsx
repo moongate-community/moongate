@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   Button,
   Chip,
+  Input,
   Select,
   SelectItem,
   Spinner,
@@ -13,6 +15,7 @@ import {
   TableRow,
 } from '@heroui/react'
 import { api } from '../api/client'
+import { ItemTemplatePreview } from '../components/ItemTemplatePreview'
 
 interface ItemTemplateSummary {
   id: string
@@ -30,70 +33,15 @@ interface ItemTemplatePage {
 
 const PAGE_SIZES = [12, 24, 48, 96]
 
-function ItemTemplatePreview({ itemId }: { itemId: string }) {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [status, setStatus] = useState<'loading' | 'ok' | 'error'>('loading')
-
-  useEffect(() => {
-    let objectUrl: string | null = null
-    let disposed = false
-
-    async function loadPreview() {
-      setStatus('loading')
-      setPreviewUrl(null)
-
-      try {
-        const blob = await api.getBlob(`/item-templates/by-item-id/${encodeURIComponent(itemId)}/image`)
-        if (disposed) {
-          return
-        }
-
-        objectUrl = URL.createObjectURL(blob)
-        setPreviewUrl(objectUrl)
-        setStatus('ok')
-      } catch {
-        if (!disposed) {
-          setStatus('error')
-        }
-      }
-    }
-
-    loadPreview()
-
-    return () => {
-      disposed = true
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-      }
-    }
-  }, [itemId])
-
-  if (status === 'loading') {
-    return (
-      <div className="w-11 h-11 rounded-lg border border-[rgba(106,165,218,0.15)] bg-[rgba(31,28,42,0.75)] flex items-center justify-center">
-        <Spinner size="sm" color="primary" />
-      </div>
-    )
-  }
-
-  if (status === 'error' || !previewUrl) {
-    return (
-      <div className="w-11 h-11 rounded-lg border border-[rgba(106,165,218,0.15)] bg-[rgba(31,28,42,0.75)] flex items-center justify-center">
-        <span className="font-mono text-[10px] tracking-wider text-[rgba(185,187,211,0.6)]">N/A</span>
-      </div>
-    )
-  }
-
-  return (
-    <div className="w-11 h-11 rounded-lg border border-[rgba(106,165,218,0.18)] bg-[rgba(31,28,42,0.75)] overflow-hidden">
-      <img src={previewUrl} alt={itemId} className="w-full h-full object-contain p-1" loading="lazy" />
-    </div>
-  )
-}
-
 export function ItemTemplatesPage() {
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(24)
+  const [nameFilter, setNameFilter] = useState(() => searchParams.get('name') ?? '')
+  const [tagFilter, setTagFilter] = useState(() => searchParams.get('tag') ?? '')
+  const [appliedNameFilter, setAppliedNameFilter] = useState(() => searchParams.get('name') ?? '')
+  const [appliedTagFilter, setAppliedTagFilter] = useState(() => searchParams.get('tag') ?? '')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<ItemTemplatePage>({
@@ -111,7 +59,17 @@ export function ItemTemplatesPage() {
       setError(null)
 
       try {
-        const payload = await api.get<ItemTemplatePage>(`/item-templates?page=${page}&pageSize=${pageSize}`)
+        const query = new URLSearchParams()
+        query.set('page', String(page))
+        query.set('pageSize', String(pageSize))
+        if (appliedNameFilter.trim().length > 0) {
+          query.set('name', appliedNameFilter.trim())
+        }
+        if (appliedTagFilter.trim().length > 0) {
+          query.set('tag', appliedTagFilter.trim())
+        }
+
+        const payload = await api.get<ItemTemplatePage>(`/item-templates?${query.toString()}`)
         if (mounted) {
           setResult(payload)
         }
@@ -130,7 +88,18 @@ export function ItemTemplatesPage() {
     return () => {
       mounted = false
     }
-  }, [page, pageSize])
+  }, [page, pageSize, appliedNameFilter, appliedTagFilter])
+
+  useEffect(() => {
+    const queryName = searchParams.get('name') ?? ''
+    const queryTag = searchParams.get('tag') ?? ''
+
+    setNameFilter(queryName)
+    setTagFilter(queryTag)
+    setAppliedNameFilter(queryName)
+    setAppliedTagFilter(queryTag)
+    setPage(1)
+  }, [searchParams])
 
   const totalPages = useMemo(() => Math.max(1, Math.ceil(result.totalCount / result.pageSize)), [result])
 
@@ -140,6 +109,22 @@ export function ItemTemplatesPage() {
 
   function goNextPage() {
     setPage((currentPage) => Math.min(totalPages, currentPage + 1))
+  }
+
+  function applyFilters() {
+    const nextSearchParams = new URLSearchParams()
+    if (nameFilter.trim().length > 0) {
+      nextSearchParams.set('name', nameFilter.trim())
+    }
+    if (tagFilter.trim().length > 0) {
+      nextSearchParams.set('tag', tagFilter.trim())
+    }
+
+    setSearchParams(nextSearchParams)
+  }
+
+  function clearFilters() {
+    setSearchParams(new URLSearchParams())
   }
 
   return (
@@ -213,6 +198,56 @@ export function ItemTemplatesPage() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto_auto] gap-3 rounded-xl border border-[rgba(106,165,218,0.15)] bg-[rgba(36,33,48,0.5)] backdrop-blur-md p-3">
+        <Input
+          label="Search by Name"
+          placeholder="e.g. longsword"
+          value={nameFilter}
+          onValueChange={setNameFilter}
+          classNames={{
+            inputWrapper: 'bg-[rgba(31,28,42,0.85)] border-[rgba(106,165,218,0.2)] data-[hover=true]:border-[#6aa5da]',
+            label: 'text-[rgba(185,187,211,0.6)] font-mono text-xs tracking-wider',
+            input: 'font-mono text-sm text-[#f9f4ed]',
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              applyFilters()
+            }
+          }}
+        />
+        <Input
+          label="Search by Tag"
+          placeholder="e.g. weapon"
+          value={tagFilter}
+          onValueChange={setTagFilter}
+          classNames={{
+            inputWrapper: 'bg-[rgba(31,28,42,0.85)] border-[rgba(106,165,218,0.2)] data-[hover=true]:border-[#6aa5da]',
+            label: 'text-[rgba(185,187,211,0.6)] font-mono text-xs tracking-wider',
+            input: 'font-mono text-sm text-[#f9f4ed]',
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              applyFilters()
+            }
+          }}
+        />
+        <Button
+          color="primary"
+          variant="flat"
+          className="font-mono text-xs uppercase tracking-wider self-end"
+          onPress={applyFilters}
+        >
+          Search
+        </Button>
+        <Button
+          variant="bordered"
+          className="font-mono text-xs uppercase tracking-wider border-[rgba(106,165,218,0.25)] text-[rgba(185,187,211,0.8)] self-end"
+          onPress={clearFilters}
+        >
+          Reset
+        </Button>
+      </div>
+
       {error && (
         <div className="rounded-lg border border-[rgba(239,68,68,0.28)] bg-[rgba(239,68,68,0.1)] px-4 py-3">
           <p className="font-mono text-xs uppercase tracking-wider text-[#ef4444]">Error: {error}</p>
@@ -242,7 +277,11 @@ export function ItemTemplatesPage() {
             emptyContent={error ? 'Unable to load templates.' : 'No item templates found.'}
           >
             {(item) => (
-              <TableRow key={item.id}>
+              <TableRow
+                key={item.id}
+                className="cursor-pointer"
+                onClick={() => navigate(`/item-templates/${encodeURIComponent(item.id)}`)}
+              >
                 <TableCell>
                   <ItemTemplatePreview itemId={item.itemId} />
                 </TableCell>

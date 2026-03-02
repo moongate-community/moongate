@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -142,6 +143,47 @@ internal static class MoongateHttpRouteExtensions
                       .Produces(StatusCodes.Status404NotFound);
         }
 
+        if (context.GameNetworkSessionService is not null)
+        {
+            var sessionsGroup = endpoints.MapGroup("/api/sessions").WithTags("Sessions");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                sessionsGroup.RequireAuthorization();
+            }
+
+            sessionsGroup.MapGet(
+                            "/active",
+                            (CancellationToken cancellationToken) => HandleGetActiveSessions(context, cancellationToken)
+                        )
+                        .WithName("SessionsGetActive")
+                        .WithSummary("Returns currently active in-game sessions.")
+                        .Produces<IReadOnlyList<MoongateHttpActiveSession>>();
+        }
+
+        if (context.CommandSystemService is not null)
+        {
+            var commandsGroup = endpoints.MapGroup("/api/commands").WithTags("Commands");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                commandsGroup.RequireAuthorization();
+            }
+
+            commandsGroup.MapPost(
+                            "/execute",
+                            (
+                                MoongateHttpExecuteCommandRequest request,
+                                CancellationToken cancellationToken
+                            ) => HandleExecuteCommand(context, request, cancellationToken)
+                        )
+                        .WithName("CommandsExecute")
+                        .WithSummary("Executes a console command and returns final output lines.")
+                        .Accepts<MoongateHttpExecuteCommandRequest>("application/json")
+                        .Produces<MoongateHttpExecuteCommandResponse>()
+                        .Produces(StatusCodes.Status400BadRequest);
+        }
+
         if (context.ItemTemplateService is not null || context.ArtService is not null)
         {
             var itemTemplatesGroup = endpoints.MapGroup("/api/item-templates").WithTags("ItemTemplates");
@@ -158,8 +200,17 @@ internal static class MoongateHttpRouteExtensions
                                       (
                                           int page,
                                           int pageSize,
+                                          string? name,
+                                          string? tag,
                                           CancellationToken cancellationToken
-                                      ) => HandleGetItemTemplates(context, page, pageSize, cancellationToken)
+                                      ) => HandleGetItemTemplates(
+                                          context,
+                                          page,
+                                          pageSize,
+                                          name,
+                                          tag,
+                                          cancellationToken
+                                      )
                                   )
                                   .WithName("ItemTemplatesGetPaged")
                                   .WithSummary("Returns paged item templates.")
@@ -332,6 +383,69 @@ internal static class MoongateHttpRouteExtensions
         return TypedResults.Text("ok");
     }
 
+    private static IResult HandleGetActiveSessions(MoongateHttpRouteContext context, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        var sessions = context.GameNetworkSessionService!.GetAll()
+                             .Where(session => session.AccountId.Value != 0 && session.CharacterId.Value != 0)
+                             .OrderBy(session => session.SessionId)
+                             .Select(
+                                 session =>
+                                 {
+                                     var account = context.AccountService?
+                                                          .GetAccountAsync(session.AccountId)
+                                                          .GetAwaiter()
+                                                          .GetResult();
+
+                                     return new MoongateHttpActiveSession
+                                     {
+                                         SessionId = session.SessionId,
+                                         AccountId = session.AccountId.Value.ToString(),
+                                         Username = account?.Username ?? string.Empty,
+                                         AccountType = session.AccountType.ToString(),
+                                         CharacterId = session.CharacterId.Value.ToString(),
+                                         CharacterName = session.Character?.Name ?? string.Empty
+                                     };
+                                 }
+                             )
+                             .ToList();
+
+        return TypedResults.Ok((IReadOnlyList<MoongateHttpActiveSession>)sessions);
+    }
+
+    private static IResult HandleExecuteCommand(
+        MoongateHttpRouteContext context,
+        MoongateHttpExecuteCommandRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        if (string.IsNullOrWhiteSpace(request.Command))
+        {
+            return TypedResults.BadRequest("command is required");
+        }
+
+        var lines = context.CommandSystemService!
+                           .ExecuteCommandWithOutputAsync(
+                               request.Command.Trim(),
+                               CommandSourceType.Console,
+                               null,
+                               cancellationToken
+                           )
+                           .GetAwaiter()
+                           .GetResult();
+
+        var response = new MoongateHttpExecuteCommandResponse
+        {
+            Success = true,
+            Command = request.Command.Trim(),
+            OutputLines = lines,
+            Timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpExecuteCommandResponse);
+    }
+
     private static IResult HandleGetItemTemplateById(
         MoongateHttpRouteContext context,
         string id,
@@ -409,6 +523,8 @@ internal static class MoongateHttpRouteExtensions
         MoongateHttpRouteContext context,
         int page,
         int pageSize,
+        string? name,
+        string? tag,
         CancellationToken cancellationToken
     )
     {
@@ -416,13 +532,35 @@ internal static class MoongateHttpRouteExtensions
 
         var safePage = Math.Max(page, 1);
         var safePageSize = Math.Clamp(pageSize <= 0 ? 50 : pageSize, 1, 200);
-        var templates = context.ItemTemplateService!.GetAll();
-        var totalCount = templates.Count;
+        IEnumerable<ItemTemplateDefinition> templates = context.ItemTemplateService!.GetAll();
+
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            var nameTerm = name.Trim();
+            templates = templates.Where(
+                template => !string.IsNullOrWhiteSpace(template.Name) &&
+                            template.Name.Contains(nameTerm, StringComparison.OrdinalIgnoreCase)
+            );
+        }
+
+        if (!string.IsNullOrWhiteSpace(tag))
+        {
+            var tagTerm = tag.Trim();
+            templates = templates.Where(
+                template => template.Tags.Any(
+                    existingTag => !string.IsNullOrWhiteSpace(existingTag) &&
+                                   existingTag.Contains(tagTerm, StringComparison.OrdinalIgnoreCase)
+                )
+            );
+        }
+
+        var filteredTemplates = templates.ToList();
+        var totalCount = filteredTemplates.Count;
         var skip = (safePage - 1) * safePageSize;
-        var items = templates.Skip(skip)
-                             .Take(safePageSize)
-                             .Select(MapItemTemplateToHttpSummary)
-                             .ToList();
+        var items = filteredTemplates.Skip(skip)
+                                     .Take(safePageSize)
+                                     .Select(MapItemTemplateToHttpSummary)
+                                     .ToList();
 
         var response = new MoongateHttpItemTemplatePage
         {

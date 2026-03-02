@@ -1,6 +1,8 @@
 using Moongate.Server.Http.Data;
 using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Metrics;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Core.Data.Directories;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -19,7 +21,9 @@ internal sealed class MoongateHttpRouteContext
         bool isUiEnabled,
         DirectoriesConfig directoriesConfig,
         IItemTemplateService? itemTemplateService,
-        IArtService? artService
+        IArtService? artService,
+        IGameNetworkSessionService? gameNetworkSessionService,
+        ICommandSystemService? commandSystemService
     )
     {
         JwtOptions = jwtOptions;
@@ -29,6 +33,8 @@ internal sealed class MoongateHttpRouteContext
         DirectoriesConfig = directoriesConfig;
         ItemTemplateService = itemTemplateService;
         ArtService = artService;
+        GameNetworkSessionService = gameNetworkSessionService;
+        CommandSystemService = commandSystemService;
     }
 
     public IAccountService? AccountService { get; }
@@ -44,4 +50,8 @@ internal sealed class MoongateHttpRouteContext
     public IItemTemplateService? ItemTemplateService { get; }
 
     public IArtService? ArtService { get; }
+
+    public IGameNetworkSessionService? GameNetworkSessionService { get; }
+
+    public ICommandSystemService? CommandSystemService { get; }
 }

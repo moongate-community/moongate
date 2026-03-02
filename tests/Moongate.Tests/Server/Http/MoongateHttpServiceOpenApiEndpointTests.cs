@@ -8,6 +8,7 @@ using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Items;
+using Moongate.Server.Services.Sessions;
 
 namespace Moongate.Tests.Server.Http;
 
@@ -191,6 +192,46 @@ public class MoongateHttpServiceOpenApiEndpointTests
                     Assert.That(payload, Does.Contain("\"/api/item-templates\""));
                     Assert.That(payload, Does.Contain("\"/api/item-templates/{id}\""));
                     Assert.That(payload, Does.Contain("\"/api/item-templates/by-item-id/{itemId}/image\""));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task OpenApiEndpoint_WhenActiveSessionsConfigured_ShouldContainActiveSessionsRoute()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var sessionsService = new GameNetworkSessionService();
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = true
+            },
+            gameNetworkSessionService: sessionsService
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = new HttpClient();
+            var response = await http.GetAsync($"http://127.0.0.1:{port}/openapi/v1.json");
+            var payload = await response.Content.ReadAsStringAsync();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(payload, Does.Contain("\"/api/sessions/active\""));
                 }
             );
         }

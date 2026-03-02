@@ -68,6 +68,102 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
     }
 
     [Test]
+    public async Task ItemTemplatesEndpoint_WhenFilteringByNameAndTag_ShouldReturnMatchingTemplatesOnly()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var itemTemplateService = new ItemTemplateService();
+        itemTemplateService.UpsertRange(
+        [
+            new ItemTemplateDefinition
+            {
+                Id = "longsword",
+                Name = "Longsword",
+                Category = "weapons",
+                ItemId = "0x0F60",
+                Tags = ["weapon", "melee"]
+            },
+            new ItemTemplateDefinition
+            {
+                Id = "katana",
+                Name = "Katana",
+                Category = "weapons",
+                ItemId = "0x13FF",
+                Tags = ["weapon", "samurai"]
+            },
+            new ItemTemplateDefinition
+            {
+                Id = "red_potion",
+                Name = "Greater Heal Potion",
+                Category = "consumables",
+                ItemId = "0x0F0C",
+                Tags = ["potion", "healing"]
+            }
+        ]
+        );
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false
+            },
+            itemTemplateService: itemTemplateService
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = new HttpClient();
+            var byNameResponse =
+                await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates?page=1&pageSize=10&name=kata");
+            var byTagResponse =
+                await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates?page=1&pageSize=10&tag=healing");
+            var byNameAndTagResponse = await http.GetAsync(
+                                           $"http://127.0.0.1:{port}/api/item-templates?page=1&pageSize=10&name=long&tag=melee"
+                                       );
+
+            using var byNameDoc = JsonDocument.Parse(await byNameResponse.Content.ReadAsStringAsync());
+            using var byTagDoc = JsonDocument.Parse(await byTagResponse.Content.ReadAsStringAsync());
+            using var byNameAndTagDoc = JsonDocument.Parse(await byNameAndTagResponse.Content.ReadAsStringAsync());
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(byNameResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(byTagResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(byNameAndTagResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+
+                    Assert.That(byNameDoc.RootElement.GetProperty("totalCount").GetInt32(), Is.EqualTo(1));
+                    Assert.That(
+                        byNameDoc.RootElement.GetProperty("items")[0].GetProperty("id").GetString(),
+                        Is.EqualTo("katana")
+                    );
+
+                    Assert.That(byTagDoc.RootElement.GetProperty("totalCount").GetInt32(), Is.EqualTo(1));
+                    Assert.That(
+                        byTagDoc.RootElement.GetProperty("items")[0].GetProperty("id").GetString(),
+                        Is.EqualTo("red_potion")
+                    );
+
+                    Assert.That(byNameAndTagDoc.RootElement.GetProperty("totalCount").GetInt32(), Is.EqualTo(1));
+                    Assert.That(
+                        byNameAndTagDoc.RootElement.GetProperty("items")[0].GetProperty("id").GetString(),
+                        Is.EqualTo("longsword")
+                    );
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
     public async Task ItemTemplateByIdEndpoint_WhenConfigured_ShouldReturnTemplateOrNotFound()
     {
         using var temp = new TempDirectory();

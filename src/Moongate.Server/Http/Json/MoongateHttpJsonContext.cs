@@ -15,6 +15,11 @@ namespace Moongate.Server.Http.Json;
  JsonSerializable(typeof(MoongateHttpItemTemplateSummary)),
  JsonSerializable(typeof(List<MoongateHttpItemTemplateSummary>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpItemTemplateSummary>)),
+ JsonSerializable(typeof(MoongateHttpActiveSession)),
+ JsonSerializable(typeof(List<MoongateHttpActiveSession>)),
+ JsonSerializable(typeof(IReadOnlyList<MoongateHttpActiveSession>)),
+ JsonSerializable(typeof(MoongateHttpExecuteCommandRequest)),
+ JsonSerializable(typeof(MoongateHttpExecuteCommandResponse)),
  JsonSerializable(typeof(MoongateHttpItemTemplatePage)),
  JsonSerializable(typeof(ItemTemplateDefinition))]
 
