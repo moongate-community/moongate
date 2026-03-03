@@ -28,6 +28,24 @@ public interface IMovementTileQueryService
     /// <remarks>
     /// Default implementation returns <see langword="true" /> for compatibility with tests/fakes.
     /// </remarks>
-    bool CanFit(int mapId, int x, int y, int z, int height = 16)
+    bool CanFit(
+        int mapId,
+        int x,
+        int y,
+        int z,
+        int height = 16,
+        bool checkBlocksFit = false,
+        bool checkMobiles = true,
+        bool requireSurface = true
+    )
+        => true;
+
+    /// <summary>
+    /// Returns whether an item can fit at the specified location.
+    /// </summary>
+    /// <remarks>
+    /// Item placement differs from movement fit for some surface combinations.
+    /// </remarks>
+    bool CanFitItem(int mapId, int x, int y, int z, int height = 16)
         => true;
 }

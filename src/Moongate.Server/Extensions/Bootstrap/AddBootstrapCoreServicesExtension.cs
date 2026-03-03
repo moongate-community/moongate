@@ -88,6 +88,9 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);
         container.Register<IWorldGenerator, ItemsImageBuilder>(Reuse.Singleton);
+        container.Register<ILocationCatalogService, LocationCatalogService>(Reuse.Singleton);
+        container.Register<IDecorationDataService, DecorationDataService>(Reuse.Singleton);
+        container.Register<ISignDataService, SignDataService>(Reuse.Singleton);
         container.RegisterDelegate(
             resolver =>
             {

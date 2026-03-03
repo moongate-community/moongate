@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Data.Session;
@@ -111,7 +112,7 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
-    public void PlaySound_ShouldBroadcastPlaySoundEffectPacketUsingMobilePositionAndMap()
+    public void PlaySound_ShouldPublishMobilePlaySoundEvent()
     {
         var mobile = new UOMobileEntity
         {
@@ -122,24 +123,28 @@ public sealed class LuaMobileProxyTests
         var speechService = new LuaMobileProxyTestSpeechService();
         var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
         var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
-        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService: null,
+            gameEventBusService
+        );
 
         proxy.PlaySound(0x0210);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(spatialWorldService.BroadcastCallCount, Is.EqualTo(1));
-                Assert.That(spatialWorldService.LastMapId, Is.EqualTo(1));
-                Assert.That(spatialWorldService.LastLocation, Is.EqualTo(new Point3D(100, 200, 5)));
-                Assert.That(spatialWorldService.LastRange, Is.Null);
-                Assert.That(spatialWorldService.LastPacket, Is.TypeOf<PlaySoundEffectPacket>());
-
-                var packet = (PlaySoundEffectPacket)spatialWorldService.LastPacket!;
-                Assert.That(packet.Mode, Is.EqualTo(0x01));
-                Assert.That(packet.SoundModel, Is.EqualTo(0x0210));
-                Assert.That(packet.Unknown3, Is.EqualTo(0));
-                Assert.That(packet.Location, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.MobileId, Is.EqualTo((Serial)0x1234u));
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.MapId, Is.EqualTo(1));
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.Location, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.Mode, Is.EqualTo(0x01));
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.SoundModel, Is.EqualTo(0x0210));
+                Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.Unknown3, Is.EqualTo(0));
             }
         );
     }
@@ -446,6 +451,7 @@ public sealed class LuaMobileProxyTests
     private sealed class LuaMobileProxyTestGameEventBusService : IGameEventBusService
     {
         public MobilePositionChangedEvent? LastMobilePositionChangedEvent { get; private set; }
+        public MobilePlaySoundEvent? LastMobilePlaySoundEvent { get; private set; }
 
         public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
             where TEvent : IGameEvent
@@ -455,6 +461,10 @@ public sealed class LuaMobileProxyTests
             if (gameEvent is MobilePositionChangedEvent mobilePositionChangedEvent)
             {
                 LastMobilePositionChangedEvent = mobilePositionChangedEvent;
+            }
+            else if (gameEvent is MobilePlaySoundEvent mobilePlaySoundEvent)
+            {
+                LastMobilePlaySoundEvent = mobilePlaySoundEvent;
             }
 
             return ValueTask.CompletedTask;

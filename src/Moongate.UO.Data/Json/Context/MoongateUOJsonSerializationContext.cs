@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Json.Names;
+using Moongate.UO.Data.Json.Locations;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Skills;
@@ -14,6 +15,9 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(ExpansionInfo[])),
  JsonSerializable(typeof(JsonContainerSize[])),
  JsonSerializable(typeof(JsonNameDef[])),
+ JsonSerializable(typeof(JsonMapLocations)),
+ JsonSerializable(typeof(JsonLocationCategory)),
+ JsonSerializable(typeof(JsonLocationDefinition)),
  JsonSerializable(typeof(JsonRegion[])),
  JsonSerializable(typeof(JsonRegion)),
  JsonSerializable(typeof(JsonBaseRegion)),

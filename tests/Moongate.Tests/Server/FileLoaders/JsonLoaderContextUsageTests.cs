@@ -41,6 +41,7 @@ public class JsonLoaderContextUsageTests
             "src/Moongate.Server/FileLoaders/ContainersDataLoader.cs",
             "src/Moongate.Server/FileLoaders/ExpansionLoader.cs",
             "src/Moongate.Server/FileLoaders/NamesLoader.cs",
+            "src/Moongate.Server/FileLoaders/LocationsDataLoader.cs",
             "src/Moongate.Server/FileLoaders/ProfessionsLoader.cs",
             "src/Moongate.Server/FileLoaders/RegionDataLoader.cs",
             "src/Moongate.Server/FileLoaders/SkillLoader.cs",

@@ -6,7 +6,49 @@
   "Http": {
     "IsEnabled": true,
     "Port": 8088,
-    "IsOpenApiEnabled": true
+    "WebsiteUrl": "http://localhost",
+    "IsOpenApiEnabled": true,
+    "Jwt": {
+      "IsEnabled": true,
+      "SigningKey": null,
+      "Issuer": "moongate-http",
+      "Audience": "moongate-http-client",
+      "ExpirationMinutes": 60
+    }
+  },
+  "Game": {
+    "ShardName": "Moongate Shard",
+    "TimerTickMilliseconds": 250,
+    "TimerWheelSize": 512,
+    "IdleCpuEnabled": true,
+    "IdleSleepMilliseconds": 1
+  },
+  "Metrics": {
+    "Enabled": true,
+    "IntervalMilliseconds": 1000,
+    "LogEnabled": true,
+    "LogToConsole": false,
+    "LogLevel": "Trace"
+  },
+  "Persistence": {
+    "SaveIntervalSeconds": 30
+  },
+  "Spatial": {
+    "LazySectorItemLoadEnabled": true,
+    "SectorWarmupRadius": 1,
+    "SectorEnterSyncRadius": 3,
+    "LazySectorEntityLoadRadius": 3
+  },
+  "Email": {
+    "IsEnabled": false,
+    "FromAddress": "no-reply@moongate.local",
+    "FallbackLocale": "en",
+    "Smtp": {
+      "Host": null,
+      "Port": 587,
+      "UseSsl": true,
+      "Username": null,
+      "Password": null
+    }
   }
 }
-

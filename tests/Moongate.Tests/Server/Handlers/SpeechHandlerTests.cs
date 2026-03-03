@@ -31,7 +31,7 @@ public class SpeechHandlerTests
                 gameNetworkSessionService,
                 gameEventBusService,
                 spatialWorldService,
-                new DispatchEventsService(spatialWorldService, queue)
+                new DispatchEventsService(spatialWorldService, queue, gameNetworkSessionService)
             )
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -100,7 +100,7 @@ public class SpeechHandlerTests
                 gameNetworkSessionService,
                 gameEventBusService,
                 spatialWorldService,
-                new DispatchEventsService(spatialWorldService, queue)
+                new DispatchEventsService(spatialWorldService, queue, gameNetworkSessionService)
             )
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -144,16 +144,17 @@ public class SpeechHandlerTests
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameEventBusService = new NetworkServiceTestGameEventBusService();
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
         var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
         var handler = new SpeechHandler(
             queue,
             new SpeechService(
                 new MockCommandSystemService(),
                 queue,
-                new SpeechServiceTestGameNetworkSessionService(),
+                gameNetworkSessionService,
                 gameEventBusService,
                 spatialWorldService,
-                new DispatchEventsService(spatialWorldService, queue)
+                new DispatchEventsService(spatialWorldService, queue, gameNetworkSessionService)
             )
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));

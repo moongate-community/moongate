@@ -29,7 +29,7 @@
         </PackageReference>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.12.52" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.12.54" />
         <PackageReference Include="Serilog" Version="4.3.1"/>
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
         <PackageReference Include="Serilog.Enrichers.Demystifier" Version="1.0.3"/>

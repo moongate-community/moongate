@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using Humanizer;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Console;
@@ -36,8 +38,12 @@ public sealed class SpawnDoorsCommand : ICommandExecutor
 
         try
         {
+            var startTime = Stopwatch.GetTimestamp();
+            context.Print("Starting door generation...");
+            await Task.Delay(1000);
             await _worldGeneratorBuilderService.GenerateAsync("doors", message => context.Print("{0}", message));
-            context.Print("Door generation finished.");
+            var endTime = Stopwatch.GetElapsedTime(startTime);
+            context.Print($"Door generation finished in {endTime.TotalMilliseconds.Milliseconds().Humanize()}");
         }
         catch (Exception ex)
         {

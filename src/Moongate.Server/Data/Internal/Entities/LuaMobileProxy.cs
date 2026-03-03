@@ -3,8 +3,8 @@ using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Events;
-using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Events.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -223,25 +223,21 @@ public sealed class LuaMobileProxy
 
     public void PlaySound(int soundId)
     {
-        if (_spatialWorldService is null || soundId < 0)
+        if (_gameEventBusService is null || soundId < 0)
         {
             return;
         }
 
-        var packet = new PlaySoundEffectPacket(
-            mode: 0x01,
-            soundModel: (ushort)Math.Min(soundId, ushort.MaxValue),
-            unknown3: 0,
-            location: _mobile.Location
-        );
-
-        _ = _spatialWorldService.BroadcastToPlayersAsync(
-                                    packet,
-                                    _mobile.MapId,
-                                    _mobile.Location
-                                )
-                                .GetAwaiter()
-                                .GetResult();
+        _gameEventBusService.PublishAsync(
+            new MobilePlaySoundEvent(
+                _mobile.Id,
+                _mobile.MapId,
+                _mobile.Location,
+                (ushort)Math.Min(soundId, ushort.MaxValue),
+                0x01,
+                0
+            )
+        ).AsTask().GetAwaiter().GetResult();
     }
 
     public void PlayAnimation(int animId)

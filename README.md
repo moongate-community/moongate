@@ -38,6 +38,14 @@ Special thanks to the teams and contributors behind these projects, which strong
 - POLServer: <https://github.com/polserver/polserver>
 - ModernUO: <https://github.com/modernuo/modernuo>
 
+Data credits:
+
+- World decoration datasets (`Assets/data/decoration/**`) are imported from the ModernUO Distribution data pack.
+- World location datasets (`Assets/data/locations/**`) are imported/adapted from the ModernUO Distribution data pack.
+- Sign datasets (`Assets/data/signs/signs.cfg`) are imported/adapted from ModernUO data format and content.
+
+Thanks to the ModernUO team for making these resources available.
+
 ## Index
 
 - [Project Goals](#project-goals)

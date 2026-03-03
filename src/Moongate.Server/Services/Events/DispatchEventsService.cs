@@ -1,9 +1,15 @@
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
@@ -13,21 +19,28 @@ namespace Moongate.Server.Services.Events;
 /// <summary>
 /// Default outbound gameplay dispatcher for mobile updates and speech.
 /// </summary>
-public sealed class DispatchEventsService : IDispatchEventsService
+[RegisterGameEventListener]
+public sealed class DispatchEventsService
+    : IDispatchEventsService,
+      IGameEventListener<MobilePlaySoundEvent>,
+      IGameEventListener<PlaySoundToPlayerEvent>
 {
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DispatchEventsService" /> class.
     /// </summary>
     public DispatchEventsService(
         ISpatialWorldService spatialWorldService,
-        IOutgoingPacketQueue outgoingPacketQueue
+        IOutgoingPacketQueue outgoingPacketQueue,
+        IGameNetworkSessionService gameNetworkSessionService
     )
     {
         _spatialWorldService = spatialWorldService;
         _outgoingPacketQueue = outgoingPacketQueue;
+        _gameNetworkSessionService = gameNetworkSessionService;
     }
 
     /// <inheritdoc />
@@ -117,4 +130,69 @@ public sealed class DispatchEventsService : IDispatchEventsService
 
         return Task.FromResult(recipients.Count);
     }
+
+    /// <inheritdoc />
+    public Task<int> DispatchMobileSoundAsync(
+        int mapId,
+        Point3D location,
+        ushort soundModel,
+        byte mode = 0x01,
+        ushort unknown3 = 0,
+        int? range = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+        var packet = new PlaySoundEffectPacket(mode, soundModel, unknown3, location);
+
+        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
+    }
+
+    /// <inheritdoc />
+    public Task HandleAsync(MobilePlaySoundEvent gameEvent, CancellationToken cancellationToken = default)
+        => DispatchMobileSoundAsync(
+            gameEvent.MapId,
+            gameEvent.Location,
+            gameEvent.SoundModel,
+            gameEvent.Mode,
+            gameEvent.Unknown3,
+            null,
+            cancellationToken
+        );
+
+    /// <inheritdoc />
+    public Task<bool> DispatchSoundToPlayerAsync(
+        Serial characterId,
+        Point3D location,
+        ushort soundModel,
+        byte mode = 0x01,
+        ushort unknown3 = 0,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(characterId, out var session))
+        {
+            return Task.FromResult(false);
+        }
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            new PlaySoundEffectPacket(mode, soundModel, unknown3, location)
+        );
+
+        return Task.FromResult(true);
+    }
+
+    /// <inheritdoc />
+    public Task HandleAsync(PlaySoundToPlayerEvent gameEvent, CancellationToken cancellationToken = default)
+        => DispatchSoundToPlayerAsync(
+            gameEvent.CharacterId,
+            gameEvent.Location,
+            gameEvent.SoundModel,
+            gameEvent.Mode,
+            gameEvent.Unknown3,
+            cancellationToken
+        );
 }

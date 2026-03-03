@@ -165,7 +165,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
-            new DispatchEventsService(spatial, queue),
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -197,7 +197,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
-            new DispatchEventsService(spatial, queue),
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -235,7 +235,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
-            new DispatchEventsService(spatial, queue),
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -312,7 +312,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
-            new DispatchEventsService(spatial, queue),
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -404,7 +404,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
-            new DispatchEventsService(spatial, queue),
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig
@@ -471,7 +471,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
-            new DispatchEventsService(spatial, queue),
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
