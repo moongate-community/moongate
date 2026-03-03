@@ -1,9 +1,9 @@
 using Moongate.Abstractions.Services.Base;
 using Moongate.Core.Data.Directories;
-using Moongate.Core.Types;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Events;
@@ -21,17 +21,15 @@ namespace Moongate.Server.Services.Scripting;
 /// </summary>
 [RegisterGameEventListener]
 public sealed class LuaBrainRunner
-    : BaseMoongateService, ILuaBrainRunner, IGameEventListener<SpeechHeardEvent>
+    : BaseMoongateService, ILuaBrainRunner, IGameEventListener<SpeechHeardEvent>, IGameEventListener<MobileAddedInWorldEvent>
 {
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
     private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
-    private readonly HashSet<string> _loadedScriptPaths = new(StringComparer.OrdinalIgnoreCase);
     private readonly Lock _syncRoot = new();
     private readonly ITimerService _timerService;
     private readonly IScriptEngineService _scriptEngineService;
     private readonly ILuaBrainRegistry _luaBrainRegistry;
-    private readonly DirectoriesConfig _directoriesConfig;
     private readonly ILogger _logger = Log.ForContext<LuaBrainRunner>();
     private readonly Script? _luaScript;
     private readonly bool _supportsMoonSharpRuntime;
@@ -48,7 +46,7 @@ public sealed class LuaBrainRunner
         _timerService = timerService;
         _scriptEngineService = scriptEngineService;
         _luaBrainRegistry = luaBrainRegistry;
-        _directoriesConfig = directoriesConfig;
+        _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
         _supportsMoonSharpRuntime = _luaScript is not null;
     }
@@ -83,7 +81,6 @@ public sealed class LuaBrainRunner
         lock (_syncRoot)
         {
             _states.Clear();
-            _loadedScriptPaths.Clear();
         }
 
         return Task.CompletedTask;
@@ -107,27 +104,16 @@ public sealed class LuaBrainRunner
             return;
         }
 
-        var scriptPath = ResolveScriptPath(brainId.Trim());
-
-        if (scriptPath is null)
-        {
-            _logger.Warning(
-                "Cannot register lua brain {BrainId} for mobile {MobileId}: script path cannot be resolved.",
-                brainId,
-                mobile.Id
-            );
-            Unregister(mobile.Id);
-
-            return;
-        }
+        var normalizedBrainId = brainId.Trim();
+        var brainTableName = ResolveBrainTableName(normalizedBrainId);
 
         lock (_syncRoot)
         {
             if (_states.TryGetValue(mobile.Id, out var state))
             {
                 state.Mobile = mobile;
-                state.BrainId = brainId.Trim();
-                state.ScriptPath = scriptPath;
+                state.BrainId = normalizedBrainId;
+                state.BrainTableName = brainTableName;
                 state.AiNextWakeTime = 0;
                 state.IsFaulted = false;
                 state.PendingSpeech.Clear();
@@ -136,7 +122,7 @@ public sealed class LuaBrainRunner
                 return;
             }
 
-            var runtimeState = new LuaBrainRuntimeState(mobile, brainId.Trim(), scriptPath);
+            var runtimeState = new LuaBrainRuntimeState(mobile, normalizedBrainId, brainTableName);
             InitializeRuntimeState(runtimeState);
             _states[mobile.Id] = runtimeState;
         }
@@ -173,6 +159,33 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
+    public Task HandleAsync(MobileAddedInWorldEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        if (gameEvent.Mobile.IsPlayer)
+        {
+            return Task.CompletedTask;
+        }
+
+        var resolvedBrainId = gameEvent.BrainId;
+
+        if (string.IsNullOrWhiteSpace(resolvedBrainId))
+        {
+            resolvedBrainId = gameEvent.Mobile.BrainId;
+        }
+
+        if (string.IsNullOrWhiteSpace(resolvedBrainId))
+        {
+            return Task.CompletedTask;
+        }
+
+        Register(gameEvent.Mobile, resolvedBrainId);
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
     public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
@@ -180,10 +193,12 @@ public sealed class LuaBrainRunner
 
         lock (_syncRoot)
         {
-            dueStates = _states.Values
-                              .Where(state => nowMilliseconds >= state.AiNextWakeTime)
-                              .Select(static state => state)
-                              .ToList();
+            dueStates =
+            [
+                .. _states.Values
+                          .Where(state => nowMilliseconds >= state.AiNextWakeTime)
+                          .Select(static state => state)
+            ];
         }
 
         foreach (var state in dueStates)
@@ -231,37 +246,40 @@ public sealed class LuaBrainRunner
         TickAllAsync(nowMilliseconds).AsTask().GetAwaiter().GetResult();
     }
 
-    private void EnsureScriptLoaded(string scriptPath)
-    {
-        if (_loadedScriptPaths.Contains(scriptPath))
-        {
-            return;
-        }
-
-        _scriptEngineService.ExecuteScriptFile(scriptPath);
-        _loadedScriptPaths.Add(scriptPath);
-    }
-
     private void InitializeRuntimeState(LuaBrainRuntimeState state)
     {
-        EnsureScriptLoaded(state.ScriptPath);
-
         if (!_supportsMoonSharpRuntime || _luaScript is null)
         {
             return;
         }
 
-        var onSpeechFunction = ResolveScriptFunction("on_speech", "OnSpeech");
-        state.OnSpeechFunction = onSpeechFunction?.Type == DataType.Function ? onSpeechFunction : null;
-        var onEventFunction = ResolveScriptFunction("on_event", "OnEvent");
-        state.OnEventFunction = onEventFunction?.Type == DataType.Function ? onEventFunction : null;
+        var brainTable = ResolveBrainTable(state.BrainTableName);
 
-        var brainLoop = ResolveScriptFunction("brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
+        if (brainTable is null)
+        {
+            _logger.Warning(
+                "Lua brain table {BrainTable} not found for mobile {MobileId}.",
+                state.BrainTableName,
+                state.MobileId
+            );
+            state.BrainCoroutine = null;
+            state.OnEventFunction = null;
+            state.OnSpeechFunction = null;
+            state.IsFaulted = true;
+
+            return;
+        }
+
+        state.OnSpeechFunction = ResolveTableFunction(brainTable, "on_speech", "OnSpeech");
+        state.OnEventFunction = ResolveTableFunction(brainTable, "on_event", "OnEvent");
+
+        var brainLoop = ResolveTableFunction(brainTable, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
 
         if (brainLoop is null || brainLoop.Type != DataType.Function)
         {
             _logger.Warning(
-                "Brain script for mobile {MobileId} does not expose brain loop function. Expected brain_loop/BrainLoop.",
+                "Lua brain table {BrainTable} for mobile {MobileId} does not expose brain_loop.",
+                state.BrainTableName,
                 state.MobileId
             );
 
@@ -298,8 +316,8 @@ public sealed class LuaBrainRunner
         }
 
         var result = state.BrainCoroutine.State == CoroutineState.NotStarted
-            ? state.BrainCoroutine.Resume((uint)state.MobileId)
-            : state.BrainCoroutine.Resume();
+                         ? state.BrainCoroutine.Resume((uint)state.MobileId)
+                         : state.BrainCoroutine.Resume();
         var delay = ParseYieldDelay(result);
 
         if (state.BrainCoroutine.State == CoroutineState.Dead)
@@ -350,6 +368,7 @@ public sealed class LuaBrainRunner
         while (state.PendingSpeech.Count > 0)
         {
             var speech = state.PendingSpeech.Dequeue();
+
             if (state.OnEventFunction is not null)
             {
                 _luaScript.Call(
@@ -411,16 +430,26 @@ public sealed class LuaBrainRunner
         return DefaultTickMilliseconds;
     }
 
-    private DynValue? ResolveScriptFunction(params string[] functionNames)
+    private DynValue? ResolveBrainTable(string brainTableName)
     {
         if (_luaScript is null)
         {
             return null;
         }
 
+        return _luaScript.Globals.Get(brainTableName) is { Type: DataType.Table } table ? table : null;
+    }
+
+    private static DynValue? ResolveTableFunction(DynValue table, params string[] functionNames)
+    {
+        if (table.Type != DataType.Table || table.Table is null)
+        {
+            return null;
+        }
+
         foreach (var functionName in functionNames)
         {
-            var function = _luaScript.Globals.Get(functionName);
+            var function = table.Table.Get(functionName);
 
             if (function.Type == DataType.Function)
             {
@@ -431,51 +460,13 @@ public sealed class LuaBrainRunner
         return null;
     }
 
-    private string? ResolveScriptPath(string brainId)
+    private string ResolveBrainTableName(string brainId)
     {
         if (_luaBrainRegistry.TryGet(brainId, out var definition) && definition is not null)
         {
-            return ResolveScriptPathCore(definition.ScriptPath);
+            return definition.BrainId.Trim();
         }
 
-        return ResolveScriptPathCore(brainId);
-    }
-
-    private string? ResolveScriptPathCore(string scriptPathOrBrainId)
-    {
-        if (string.IsNullOrWhiteSpace(scriptPathOrBrainId))
-        {
-            return null;
-        }
-
-        var resolvedPath = scriptPathOrBrainId.Trim();
-
-        if (!resolvedPath.Contains('/') && !resolvedPath.Contains('\\') && !resolvedPath.EndsWith(".lua", StringComparison.OrdinalIgnoreCase))
-        {
-            resolvedPath = $"ai/{resolvedPath}.lua";
-        }
-        else if (!resolvedPath.EndsWith(".lua", StringComparison.OrdinalIgnoreCase))
-        {
-            resolvedPath = $"{resolvedPath}.lua";
-        }
-
-        if (resolvedPath.StartsWith("scripts/", StringComparison.OrdinalIgnoreCase))
-        {
-            resolvedPath = resolvedPath["scripts/".Length..];
-        }
-
-        if (!Path.IsPathRooted(resolvedPath))
-        {
-            resolvedPath = Path.Combine(_directoriesConfig[DirectoryType.Scripts], resolvedPath);
-        }
-
-        if (!File.Exists(resolvedPath))
-        {
-            _logger.Warning("Lua brain script not found at {ScriptPath}", resolvedPath);
-
-            return null;
-        }
-
-        return resolvedPath;
+        return brainId;
     }
 }

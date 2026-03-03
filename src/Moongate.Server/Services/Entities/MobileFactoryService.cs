@@ -59,6 +59,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             AccountId = accountId ?? Serial.Zero,
             Name = resolvedName,
             Title = template.Title,
+            BrainId = template.Brain,
             BaseBody = (Body)template.Body,
             Location = Point3D.Zero,
             Direction = DirectionType.South,

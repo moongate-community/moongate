@@ -1,4 +1,5 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.UO.Data.Ids;
@@ -9,7 +10,7 @@ namespace Moongate.Server.Interfaces.Services.Scripting;
 /// <summary>
 /// Coordinates Lua brain execution and speech event delivery for NPCs.
 /// </summary>
-public interface ILuaBrainRunner : IMoongateService, IGameEventListener<SpeechHeardEvent>
+public interface ILuaBrainRunner : IMoongateService, IGameEventListener<SpeechHeardEvent>, IGameEventListener<MobileAddedInWorldEvent>
 {
     /// <summary>
     /// Registers or updates a mobile brain runtime binding.

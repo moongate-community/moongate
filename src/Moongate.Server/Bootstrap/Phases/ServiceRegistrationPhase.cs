@@ -73,7 +73,7 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
     {
         context.Container.RegisterInstance(
             new LuaEngineConfig(
-                Path.Combine(context.DirectoriesConfig.Root, ".luarc"),
+                context.DirectoriesConfig[DirectoryType.Scripts],
                 context.DirectoriesConfig[DirectoryType.Scripts],
                 VersionUtils.Version
             )

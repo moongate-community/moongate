@@ -9,7 +9,7 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Tests.Server.Support;
 
-public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldService
+public class RegionDataLoaderTestSpatialWorldService : ISpatialWorldService
 {
     public List<JsonRegion> AddedRegions { get; } = [];
 
@@ -41,7 +41,12 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
     public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
         => [];
 
-    public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+    public virtual List<GameSession> GetPlayersInRange(
+        Point3D location,
+        int range,
+        int mapId,
+        GameSession? excludeSession = null
+    )
         => [];
 
     public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)

@@ -24,6 +24,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Scripting;
 
@@ -131,6 +132,30 @@ public class LuaScriptEngineServiceTests
             LastText = text;
 
             return Task.FromResult(true);
+        }
+
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            ChatMessageType messageType = ChatMessageType.Regular,
+            short hue = SpeechHues.Default,
+            short font = SpeechHues.DefaultFont,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = speaker;
+            _ = range;
+            _ = messageType;
+            _ = hue;
+            _ = font;
+            _ = language;
+            _ = cancellationToken;
+            SendCalls++;
+            LastText = text;
+
+            return Task.FromResult(1);
         }
     }
 
@@ -450,7 +475,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -486,7 +511,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -558,7 +583,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -602,7 +627,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -643,7 +668,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -676,7 +701,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -746,7 +771,7 @@ public class LuaScriptEngineServiceTests
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(temp.Path, ".luarc");
+        var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
@@ -809,7 +834,7 @@ public class LuaScriptEngineServiceTests
     {
         var dirs = new DirectoriesConfig(rootPath, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = Path.Combine(rootPath, ".luarc");
+        var luarcDir = rootPath;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 

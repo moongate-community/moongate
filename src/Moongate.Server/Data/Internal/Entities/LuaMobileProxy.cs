@@ -1,8 +1,13 @@
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Interfaces.Services.Movement;
+using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Data.Internal.Entities;
 
@@ -15,6 +20,8 @@ public sealed class LuaMobileProxy
     private readonly ISpeechService _speechService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpatialWorldService? _spatialWorldService;
+    private readonly IMovementValidationService? _movementValidationService;
+    private readonly IGameEventBusService? _gameEventBusService;
 
     private LuaMobileProxy? _target;
 
@@ -22,13 +29,17 @@ public sealed class LuaMobileProxy
         UOMobileEntity mobile,
         ISpeechService speechService,
         IGameNetworkSessionService gameNetworkSessionService,
-        ISpatialWorldService? spatialWorldService = null
+        ISpatialWorldService? spatialWorldService = null,
+        IMovementValidationService? movementValidationService = null,
+        IGameEventBusService? gameEventBusService = null
     )
     {
         _mobile = mobile;
         _speechService = speechService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _movementValidationService = movementValidationService;
+        _gameEventBusService = gameEventBusService;
     }
 
     public uint Serial => (uint)_mobile.Id;
@@ -72,7 +83,7 @@ public sealed class LuaMobileProxy
         }
 
         var mobile = _spatialWorldService.GetNearbyMobiles(_mobile.Location, range, _mobile.MapId)
-                                        .FirstOrDefault(entity => entity.Id != _mobile.Id && entity.IsPlayer);
+                                         .FirstOrDefault(entity => entity.Id != _mobile.Id && entity.IsPlayer);
 
         if (mobile is null)
         {
@@ -90,7 +101,7 @@ public sealed class LuaMobileProxy
         }
 
         var mobile = _spatialWorldService.GetNearbyMobiles(_mobile.Location, range, _mobile.MapId)
-                                        .FirstOrDefault(entity => entity.Id != _mobile.Id && !entity.IsPlayer);
+                                         .FirstOrDefault(entity => entity.Id != _mobile.Id && !entity.IsPlayer);
 
         if (mobile is null)
         {
@@ -117,18 +128,60 @@ public sealed class LuaMobileProxy
             return int.MaxValue;
         }
 
-        return (int)Math.Round(_mobile.Location.GetDistance(new Point3D(target.LocationX, target.LocationY, target.LocationZ)));
+        return (int)Math.Round(
+            _mobile.Location.GetDistance(new Point3D(target.LocationX, target.LocationY, target.LocationZ))
+        );
     }
 
     public void MoveTowards(LuaMobileProxy? target)
+
         // TODO: Implement navigation/pathfinding primitive for brain point 5.
         => _ = target;
 
+    public bool Move(DirectionType direction)
+    {
+        if (_movementValidationService is null)
+        {
+            return false;
+        }
+
+        var oldLocation = _mobile.Location;
+
+        if (!_movementValidationService.TryResolveMove(_mobile, direction, out var newLocation))
+        {
+            return false;
+        }
+
+        _mobile.Location = newLocation;
+        _mobile.Direction = direction;
+
+        if (_gameEventBusService is not null && oldLocation != newLocation)
+        {
+            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
+                                ? session.SessionId
+                                : -1;
+
+            _gameEventBusService.PublishAsync(
+                new MobilePositionChangedEvent(
+                    sessionId,
+                    _mobile.Id,
+                    _mobile.MapId,
+                    oldLocation,
+                    newLocation
+                )
+            ).AsTask().GetAwaiter().GetResult();
+        }
+
+        return true;
+    }
+
     public void Wander(int radius)
+
         // TODO: Implement wandering movement primitive for brain point 5.
         => _ = radius;
 
     public void Flee(LuaMobileProxy? from)
+
         // TODO: Implement flee movement primitive for brain point 5.
         => _ = from;
 
@@ -141,6 +194,7 @@ public sealed class LuaMobileProxy
     public void StopMoving() { }
 
     public void Swing(LuaMobileProxy? target)
+
         // TODO: Implement melee combat primitive for brain point 5.
         => _ = target;
 
@@ -151,6 +205,7 @@ public sealed class LuaMobileProxy
         => _target = null;
 
     public void CastSpell(int spellId)
+
         // TODO: Implement spell casting primitive for brain point 5.
         => _ = spellId;
 
@@ -161,23 +216,41 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        if (!_gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session))
-        {
-            return false;
-        }
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
 
-        return _speechService.SendMessageFromServerAsync(session, text).GetAwaiter().GetResult();
+        return recipients > 0;
     }
 
     public void PlaySound(int soundId)
-        // TODO: Implement sound effect primitive for brain point 5.
-        => _ = soundId;
+    {
+        if (_spatialWorldService is null || soundId < 0)
+        {
+            return;
+        }
+
+        var packet = new PlaySoundEffectPacket(
+            mode: 0x01,
+            soundModel: (ushort)Math.Min(soundId, ushort.MaxValue),
+            unknown3: 0,
+            location: _mobile.Location
+        );
+
+        _ = _spatialWorldService.BroadcastToPlayersAsync(
+                                    packet,
+                                    _mobile.MapId,
+                                    _mobile.Location
+                                )
+                                .GetAwaiter()
+                                .GetResult();
+    }
 
     public void PlayAnimation(int animId)
+
         // TODO: Implement animation primitive for brain point 5.
         => _ = animId;
 
     public void SummonUndead(int count)
+
         // TODO: Implement summon primitive for brain point 5.
         => _ = count;
 }

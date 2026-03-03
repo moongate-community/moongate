@@ -4,7 +4,10 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Interfaces.Services.Movement;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
@@ -21,18 +24,24 @@ public sealed class MobileModule
     private readonly ISpeechService _speechService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpatialWorldService? _spatialWorldService;
+    private readonly IMovementValidationService? _movementValidationService;
+    private readonly IGameEventBusService? _gameEventBusService;
 
     public MobileModule(
         ICharacterService characterService,
         ISpeechService speechService,
         IGameNetworkSessionService gameNetworkSessionService,
-        ISpatialWorldService? spatialWorldService = null
+        ISpatialWorldService? spatialWorldService = null,
+        IMovementValidationService? movementValidationService = null,
+        IGameEventBusService? gameEventBusService = null
     )
     {
         _characterService = characterService;
         _speechService = speechService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _movementValidationService = movementValidationService;
+        _gameEventBusService = gameEventBusService;
     }
 
     [ScriptFunction("get", "Gets a mobile reference by character id, or nil when not found.")]
@@ -44,9 +53,40 @@ public sealed class MobileModule
         }
 
         RegisterLuaTypeIfNeeded();
-        var mobile = _characterService.GetCharacterAsync((Serial)characterId).GetAwaiter().GetResult();
+        var mobileId = (Serial)characterId;
+        var mobile = TryResolveRuntimeMobile(mobileId) ??
+                     _characterService.GetCharacterAsync(mobileId).GetAwaiter().GetResult();
 
-        return mobile is null ? null : new(mobile, _speechService, _gameNetworkSessionService, _spatialWorldService);
+        return mobile is null
+                   ? null
+                   : new(
+                       mobile,
+                       _speechService,
+                       _gameNetworkSessionService,
+                       _spatialWorldService,
+                       _movementValidationService,
+                       _gameEventBusService
+                   );
+    }
+
+    private UOMobileEntity? TryResolveRuntimeMobile(Serial mobileId)
+    {
+        if (_spatialWorldService is null)
+        {
+            return null;
+        }
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            var runtimeMobile = sector.GetEntity<UOMobileEntity>(mobileId);
+
+            if (runtimeMobile is not null)
+            {
+                return runtimeMobile;
+            }
+        }
+
+        return null;
     }
 
     private static void RegisterLuaTypeIfNeeded()

@@ -12,18 +12,18 @@ public sealed class LuaBrainRuntimeState
 {
     private readonly Queue<SpeechHeardEvent> _pendingSpeech = new();
 
-    public LuaBrainRuntimeState(UOMobileEntity mobile, string brainId, string scriptPath)
+    public LuaBrainRuntimeState(UOMobileEntity mobile, string brainId, string brainTableName)
     {
         Mobile = mobile;
         BrainId = brainId;
-        ScriptPath = scriptPath;
+        BrainTableName = brainTableName;
     }
 
     public UOMobileEntity Mobile { get; set; }
 
     public string BrainId { get; set; }
 
-    public string ScriptPath { get; set; }
+    public string BrainTableName { get; set; }
 
     public long AiNextWakeTime { get; set; }
 

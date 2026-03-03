@@ -312,7 +312,9 @@ public sealed class SpatialWorldServiceTests
         service.AddOrUpdateMobile(mobile);
 
         var gameEvent = eventBus.Events.OfType<MobileAddedInSectorEvent>().Single();
+        var worldEvent = eventBus.Events.OfType<MobileAddedInWorldEvent>().Single();
         Assert.That(gameEvent.MobileId, Is.EqualTo(mobile.Id));
+        Assert.That(worldEvent.Mobile.Id, Is.EqualTo(mobile.Id));
     }
 
     [Test]
@@ -607,6 +609,10 @@ public sealed class SpatialWorldServiceTests
                 Assert.That(mobileService.LoadRequests, Has.Member((0, 9, 8)));
                 Assert.That(nearby.Select(static mobile => mobile.Id), Contains.Item(npc.Id));
                 Assert.That(nearby.Select(static mobile => mobile.Id), Does.Not.Contain(persistedPlayer.Id));
+                Assert.That(
+                    eventBus.Events.OfType<MobileAddedInWorldEvent>().Any(gameEvent => gameEvent.Mobile.Id == npc.Id),
+                    Is.True
+                );
             }
         );
     }

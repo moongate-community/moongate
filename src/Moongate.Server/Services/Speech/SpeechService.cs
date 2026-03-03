@@ -10,6 +10,7 @@ using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
@@ -163,6 +164,58 @@ public sealed class SpeechService : ISpeechService
         );
 
         return true;
+    }
+
+    public async Task<int> SpeakAsMobileAsync(
+        UOMobileEntity speaker,
+        string text,
+        int range = 12,
+        ChatMessageType messageType = ChatMessageType.Regular,
+        short hue = SpeechHues.Default,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU",
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(speaker);
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return 0;
+        }
+
+        var normalizedRange = Math.Max(0, range);
+        var packet = SpeechMessageFactory.CreateFromSpeaker(
+            speaker,
+            messageType,
+            hue,
+            font,
+            language,
+            text
+        );
+        var recipients = _spatialWorldService.GetPlayersInRange(speaker.Location, normalizedRange, speaker.MapId);
+
+        foreach (var session in recipients)
+        {
+            _outgoingPacketQueue.Enqueue(session.SessionId, packet);
+        }
+
+        await _gameEventBusService.PublishAsync(
+            new MobileSpokeEvent(
+                speaker.Id,
+                speaker.MapId,
+                text,
+                messageType,
+                packet.Hue,
+                packet.Font,
+                packet.Language,
+                normalizedRange,
+                recipients.Count
+            ),
+            cancellationToken
+        );
+
+        return recipients.Count;
     }
 
     private async Task PublishSpeechHeardEventsAsync(

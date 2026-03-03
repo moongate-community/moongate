@@ -191,7 +191,6 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
         await SpawnGeneratedDoorsAsync(placements);
 
-        // TODO: Persist generated scripted door items when door runtime behavior is implemented in Lua.
 
     }
 

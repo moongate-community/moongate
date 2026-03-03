@@ -56,6 +56,7 @@ public sealed class MobileHandlerTests
     private sealed class MobileHandlerTestSpatialWorldService : ISpatialWorldService
     {
         public List<UOMobileEntity> PlayersInSector { get; set; } = [];
+        public List<GameSession> SessionsInRange { get; set; } = [];
 
         public MapSector? SectorByLocation { get; set; }
         public Func<int, Point3D, MapSector?>? SectorByLocationResolver { get; set; }
@@ -98,7 +99,14 @@ public sealed class MobileHandlerTests
             int mapId,
             GameSession? excludeSession = null
         )
-            => [];
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+            return excludeSession is null
+                       ? [.. SessionsInRange]
+                       : [.. SessionsInRange.Where(session => session != excludeSession)];
+        }
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
             => PlayersInSector;
@@ -150,7 +158,7 @@ public sealed class MobileHandlerTests
 
         var spatial = new MobileHandlerTestSpatialWorldService
         {
-            PlayersInSector = [CreatePlayer(mobileId), CreatePlayer(receiverId)]
+            SessionsInRange = [receiverSession]
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
         var handler = new MobileHandler(
@@ -218,7 +226,7 @@ public sealed class MobileHandlerTests
         var spatial = new MobileHandlerTestSpatialWorldService
         {
             SectorByLocation = new(1, 7, 8),
-            PlayersInSector = [CreatePlayer(receiverId)]
+            SessionsInRange = [receiverSession]
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
         var handler = new MobileHandler(
@@ -246,10 +254,9 @@ public sealed class MobileHandlerTests
             {
                 Assert.That(spatial.LastGetSectorMapId, Is.EqualTo(1));
                 Assert.That(spatial.LastGetSectorLocation, Is.EqualTo(new Point3D(210, 210, 0)));
-                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets, Has.Count.EqualTo(1));
                 Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
-                Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
+                Assert.That(packets[0].Packet, Is.TypeOf<MobileMovingPacket>());
             }
         );
     }
@@ -498,7 +505,11 @@ public sealed class MobileHandlerTests
 
         return new(new(client))
         {
-            CharacterId = characterId
+            CharacterId = characterId,
+            Character = new()
+            {
+                Id = characterId
+            }
         };
     }
 

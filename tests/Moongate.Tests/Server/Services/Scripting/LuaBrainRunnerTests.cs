@@ -1,5 +1,6 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.Scripting;
@@ -160,5 +161,32 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(timerService.Unregistered, Is.True);
             }
         );
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenMobileAddedInWorldWithBrain_ShouldRegisterAndTick()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x60,
+            Name = "orion",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new Point3D(100, 100, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var tickCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_brain_tick");
+
+        Assert.That(tickCall.FunctionName, Is.EqualTo("on_brain_tick"));
+        Assert.That(tickCall.Args.Length, Is.EqualTo(1));
+        Assert.That(tickCall.Args[0], Is.EqualTo((uint)npc.Id));
     }
 }
