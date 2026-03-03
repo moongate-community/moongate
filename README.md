@@ -48,6 +48,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [World Generation Pipeline](#world-generation-pipeline)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
+- [Email Delivery (Minimal SMTP)](#email-delivery-minimal-smtp)
 - [Templates](#templates)
 - [Solution Structure](#solution-structure)
 - [Source Generators (AOT)](#source-generators-aot)
@@ -114,6 +115,7 @@ The project is actively in development and already includes:
   - higher `Priority` first
   - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
+- Minimal email stack with Scriban templates and SMTP sender (`Moongate.Email`), wired through `IEmailService`.
 
 ## Spatial Chunk Strategy
 
@@ -228,6 +230,41 @@ Query support:
 
 - `IAccountRepository`, `IMobileRepository`, and `IItemRepository` expose `QueryAsync(...)`.
 - Queries are evaluated on immutable snapshots with ZLinq-backed projection/filtering.
+
+## Email Delivery (Minimal SMTP)
+
+Moongate includes a minimal email pipeline:
+
+- `IEmailService`: orchestration entrypoint.
+- `IEmailTemplateService`: template rendering via Scriban (`Moongate.Email`).
+- `IEmailSender`: transport abstraction with SMTP implementation (`SmtpEmailSender`).
+- `NoOpEmailSender`: selected automatically when email is disabled.
+
+Default templates are loaded from:
+
+- `moongate_data/email/templates/registration_ok/*`
+- `moongate_data/email/templates/recover_password/*`
+
+Runtime directory mapping uses `DirectoryType.EmailTemplates`.
+
+Minimal config shape:
+
+```json
+{
+  "email": {
+    "isEnabled": false,
+    "fromAddress": "noreply@localhost",
+    "fallbackLocale": "en",
+    "smtp": {
+      "host": "localhost",
+      "port": 25,
+      "useSsl": false,
+      "username": null,
+      "password": null
+    }
+  }
+}
+```
 
 ## Templates
 
