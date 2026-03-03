@@ -27,13 +27,15 @@ public sealed class SpeechService : ISpeechService
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly IDispatchEventsService _dispatchEventsService;
 
     public SpeechService(
         ICommandSystemService commandSystemService,
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameNetworkSessionService gameNetworkSessionService,
         IGameEventBusService gameEventBusService,
-        ISpatialWorldService spatialWorldService
+        ISpatialWorldService spatialWorldService,
+        IDispatchEventsService dispatchEventsService
     )
     {
         _commandSystemService = commandSystemService;
@@ -41,6 +43,7 @@ public sealed class SpeechService : ISpeechService
         _gameNetworkSessionService = gameNetworkSessionService;
         _gameEventBusService = gameEventBusService;
         _spatialWorldService = spatialWorldService;
+        _dispatchEventsService = dispatchEventsService;
     }
 
     public async Task<int> BroadcastFromServerAsync(
@@ -185,6 +188,16 @@ public sealed class SpeechService : ISpeechService
         }
 
         var normalizedRange = Math.Max(0, range);
+        var recipients = await _dispatchEventsService.DispatchMobileSpeechAsync(
+                             speaker,
+                             text,
+                             normalizedRange,
+                             messageType,
+                             hue,
+                             font,
+                             language,
+                             cancellationToken
+                         );
         var packet = SpeechMessageFactory.CreateFromSpeaker(
             speaker,
             messageType,
@@ -193,12 +206,6 @@ public sealed class SpeechService : ISpeechService
             language,
             text
         );
-        var recipients = _spatialWorldService.GetPlayersInRange(speaker.Location, normalizedRange, speaker.MapId);
-
-        foreach (var session in recipients)
-        {
-            _outgoingPacketQueue.Enqueue(session.SessionId, packet);
-        }
 
         await _gameEventBusService.PublishAsync(
             new MobileSpokeEvent(
@@ -210,12 +217,12 @@ public sealed class SpeechService : ISpeechService
                 packet.Font,
                 packet.Language,
                 normalizedRange,
-                recipients.Count
+                recipients
             ),
             cancellationToken
         );
 
-        return recipients.Count;
+        return recipients;
     }
 
     private async Task PublishSpeechHeardEventsAsync(

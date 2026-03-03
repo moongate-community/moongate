@@ -34,10 +34,12 @@ public class MobileHandler
     private readonly ICharacterService _characterService;
     private readonly int _sectorEnterSyncRadius;
     private readonly int _mobileSyncRange;
+    private readonly IDispatchEventsService _dispatchEventsService;
 
     public MobileHandler(
         ISpatialWorldService spatialWorldService,
         ICharacterService characterService,
+        IDispatchEventsService dispatchEventsService,
         IGameNetworkSessionService gameNetworkSessionService,
         IOutgoingPacketQueue outgoingPacketQueue,
         MoongateConfig moongateConfig
@@ -45,6 +47,7 @@ public class MobileHandler
     {
         _spatialWorldService = spatialWorldService;
         _characterService = characterService;
+        _dispatchEventsService = dispatchEventsService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _sectorEnterSyncRadius = Math.Max(0, moongateConfig.Spatial.SectorEnterSyncRadius);
@@ -128,41 +131,7 @@ public class MobileHandler
         int mapId,
         bool isNew
     )
-    {
-        var players = _spatialWorldService.GetPlayersInRange(mobileEntity.Location, _mobileSyncRange, mapId);
-
-        foreach (var playerSession in players)
-        {
-            if (playerSession.CharacterId == mobileEntity.Id)
-            {
-                continue;
-            }
-
-            if (playerSession.Character is null)
-            {
-                continue;
-            }
-
-            if (isNew)
-            {
-                _outgoingPacketQueue.Enqueue(
-                    playerSession.SessionId,
-                    new MobileIncomingPacket(playerSession.Character, mobileEntity, true, true)
-                );
-                _outgoingPacketQueue.Enqueue(playerSession.SessionId, new PlayerStatusPacket(mobileEntity, 1));
-                WornItemPacketHelper.EnqueueVisibleWornItems(
-                    mobileEntity,
-                    packet => _outgoingPacketQueue.Enqueue(playerSession.SessionId, packet)
-                );
-            }
-            else
-            {
-                _outgoingPacketQueue.Enqueue(playerSession.SessionId, new MobileMovingPacket(mobileEntity, true));
-            }
-        }
-
-        return Task.CompletedTask;
-    }
+        => _dispatchEventsService.DispatchMobileUpdateAsync(mobileEntity, mapId, _mobileSyncRange, isNew);
 
     private Task SyncSectorSnapshotForEnteringPlayerAsync(
         UOMobileEntity mobileEntity,

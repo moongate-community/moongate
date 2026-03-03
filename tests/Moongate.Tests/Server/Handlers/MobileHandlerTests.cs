@@ -10,6 +10,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -164,6 +165,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
+            new DispatchEventsService(spatial, queue),
             sessions,
             queue,
             new MoongateConfig()
@@ -195,6 +197,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
+            new DispatchEventsService(spatial, queue),
             sessions,
             queue,
             new MoongateConfig()
@@ -232,6 +235,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
+            new DispatchEventsService(spatial, queue),
             sessions,
             queue,
             new MoongateConfig()
@@ -308,6 +312,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
+            new DispatchEventsService(spatial, queue),
             sessions,
             queue,
             new MoongateConfig()
@@ -399,6 +404,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
+            new DispatchEventsService(spatial, queue),
             sessions,
             queue,
             new MoongateConfig
@@ -465,6 +471,7 @@ public sealed class MobileHandlerTests
         var handler = new MobileHandler(
             spatial,
             characterService,
+            new DispatchEventsService(spatial, queue),
             sessions,
             queue,
             new MoongateConfig()

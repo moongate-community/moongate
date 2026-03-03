@@ -238,7 +238,8 @@ public sealed class SpeechServiceNpcDispatchTests
             outgoingPacketQueue,
             sessionService,
             eventBus,
-            spatial
+            spatial,
+            new DispatchEventsService(spatial, outgoingPacketQueue)
         );
 
         var session = new GameSession(null)
