@@ -1,3 +1,17 @@
+## [0.26.0](https://github.com/moongate-community/moongatev2/compare/v0.25.0...v0.26.0) (2026-03-03)
+
+### Features
+
+* **benchmarks:** add gameplay hot-path benchmark suites ([bc4eff8](https://github.com/moongate-community/moongatev2/commit/bc4eff8d4d402b1e58a7cf7d7cf534854462eb0a))
+* **commands:** refactor command system with source-generated executor registration ([bc47b04](https://github.com/moongate-community/moongatev2/commit/bc47b044e2c9d8c57438f38de484f392fb1536dc))
+* **config:** add http website url for email templates ([2e8b842](https://github.com/moongate-community/moongatev2/commit/2e8b842e5c0133e97e2fadf6ecf6bd29d986c45a))
+* **email:** add minimal smtp email pipeline ([7d24e08](https://github.com/moongate-community/moongatev2/commit/7d24e085cd0ef4e2f851ba941428e552722bbc73))
+* **persistence:** add typed custom properties for item entities ([337e75f](https://github.com/moongate-community/moongatev2/commit/337e75f97cf5074be393066628c7973dab396913))
+* **scripting:** add lua brain on_event speech callback ([6e42eac](https://github.com/moongate-community/moongatev2/commit/6e42eacfbfcef2f1eac66098f23891dc5843cc9e))
+* **spatial:** add range broadcast API and war mode handling ([ed58614](https://github.com/moongate-community/moongatev2/commit/ed586147da16a7dc1d302ac532d2b48b4025294d))
+* **ui,http:** add public server version endpoint and theme switcher ([748210f](https://github.com/moongate-community/moongatev2/commit/748210f43b3ad443c51a0fa4cdbb93d803b5c3ec))
+* **world:** add player-local door spawn and item sector sync ([0059f84](https://github.com/moongate-community/moongatev2/commit/0059f84c980fd9ceafabe4c519c37b9d58c42563))
+
 ## [0.25.0](https://github.com/moongate-community/moongatev2/compare/v0.24.0...v0.25.0) (2026-03-02)
 
 ### Features
