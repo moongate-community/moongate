@@ -432,13 +432,13 @@ HTTP service defaults:
 
 ## Command System
 
-Commands are registered through `ICommandSystemService.RegisterCommand(...)` with:
+Commands now use a hybrid model:
 
-- `commandName`: one command or aliases separated by `|`
-- `handler`: async callback with `CommandSystemContext`
-- `description`: text shown in `help`
-- `source`: allowed source (`Console`, `InGame`, or both)
-- `minimumAccountType`: minimum role required (`Regular`, `GameMaster`, `Administrator`)
+- **Primary path (C# built-ins)**: `ICommandExecutor` + `[RegisterConsoleCommand(...)]`
+  - Discovered and registered at compile-time by `ConsoleCommandRegistrationGenerator`
+  - Executors are registered as DryIoc singletons
+- **Secondary path (dynamic/Lua/future)**: manual `ICommandSystemService.RegisterCommand(...)`
+  - Kept intentionally for runtime registration scenarios
 
 Authorization behavior:
 
@@ -446,17 +446,41 @@ Authorization behavior:
 - In-game source is evaluated using `GameSession.AccountType` (set during login).
 - If source is valid but role is too low, command execution is rejected with warning output.
 
-Example registration:
+Example C# command registration (source-generated):
 
 ```csharp
-commandSystemService.RegisterCommand(
+using Moongate.Server.Attributes;
+using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
+
+[RegisterConsoleCommand(
     "whoami|me",
-    context =>
+    "Shows basic identity information.",
+    CommandSourceType.Console | CommandSourceType.InGame,
+    AccountType.Regular
+)]
+public sealed class WhoAmICommand : ICommandExecutor
+{
+    public Task ExecuteCommandAsync(CommandSystemContext context)
     {
         context.Print("You are connected.");
         return Task.CompletedTask;
+    }
+}
+```
+
+Example dynamic/manual registration (runtime, e.g. Lua bridge):
+
+```csharp
+commandSystemService.RegisterCommand(
+    "lua_ping",
+    context =>
+    {
+        context.Print("pong");
+        return Task.CompletedTask;
     },
-    description: "Shows basic identity information.",
     source: CommandSourceType.Console | CommandSourceType.InGame,
     minimumAccountType: AccountType.Regular
 );

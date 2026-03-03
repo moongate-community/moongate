@@ -1,8 +1,13 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Server.Commands;
 using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Lifecycle;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Types.Commands;
@@ -15,6 +20,64 @@ namespace Moongate.Tests.Server.Services.Console;
 
 public class CommandSystemServiceTests
 {
+    private static CommandSystemService CreateService(
+        IConsoleUiService consoleUiService,
+        GameEventBusService gameEventBusService,
+        IOutgoingPacketQueue outgoingPacketQueue,
+        IServerLifetimeService serverLifetimeService,
+        IAccountService accountService
+    )
+    {
+        var service = new CommandSystemService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+
+        RegisterDefaultCommands(service, consoleUiService, serverLifetimeService, accountService);
+
+        return service;
+    }
+
+    private static void RegisterDefaultCommands(
+        ICommandSystemService commandSystemService,
+        IConsoleUiService consoleUiService,
+        IServerLifetimeService serverLifetimeService,
+        IAccountService accountService
+    )
+    {
+        var addUserCommand = new AddUserCommand(accountService);
+        var exitCommand = new ExitCommand(serverLifetimeService);
+        var lockCommand = new LockCommand(consoleUiService);
+        var helpCommand = new HelpCommand(commandSystemService);
+
+        commandSystemService.RegisterCommand(
+            "add_user",
+            addUserCommand.ExecuteCommandAsync,
+            "Creates a new account: add_user <username> <password> <email> [level].",
+            CommandSourceType.Console | CommandSourceType.InGame
+        );
+        commandSystemService.RegisterCommand(
+            "exit|shutdown",
+            exitCommand.ExecuteCommandAsync,
+            "Requests server shutdown."
+        );
+        commandSystemService.RegisterCommand(
+            "lock|*",
+            lockCommand.ExecuteCommandAsync,
+            "Locks console input. Press '*' to unlock."
+        );
+        commandSystemService.RegisterCommand(
+            "help|?",
+            helpCommand.ExecuteCommandAsync,
+            "Displays available commands.",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Regular
+        );
+    }
+
     [Test]
     public async Task ExecuteCommandAsync_WhenAddUserAlreadyExists_ShouldNotCreateAccount()
     {
@@ -26,13 +89,7 @@ public class CommandSystemServiceTests
         {
             AccountExists = true
         };
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com");
 
@@ -48,13 +105,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         await service.ExecuteCommandAsync("add_user onlyusername");
 
@@ -70,13 +121,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com");
 
@@ -101,13 +146,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         await service.ExecuteCommandAsync("add_user gmuser pass123 gm@example.com GameMaster");
 
@@ -123,13 +162,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         await service.ExecuteCommandAsync("add_user testuser pass123 test@example.com SuperAdmin");
 
@@ -145,13 +178,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         service.RegisterCommand(
             "consoleonly",
@@ -179,13 +206,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         service.RegisterCommand(
             "broken",
@@ -214,13 +235,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         service.RegisterCommand(
             "adminonly",
@@ -251,13 +266,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));
@@ -280,13 +289,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         service.RegisterCommand(
             "multiline",
@@ -326,13 +329,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         var executed = false;
         service.RegisterCommand(
@@ -360,13 +357,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
@@ -410,13 +401,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         service.RegisterCommand(
             "tp",
@@ -439,13 +424,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
 
         var suggestions = service.GetAutocompleteSuggestions("he");
 
@@ -460,13 +439,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("exit"));
@@ -482,13 +455,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("help"));
@@ -506,13 +473,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("help lock"));
@@ -529,13 +490,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("help doesnotexist"));
@@ -552,13 +507,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("lock"));
@@ -575,13 +524,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("?"));
@@ -598,13 +541,7 @@ public class CommandSystemServiceTests
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var serverLifetimeService = new CommandSystemTestServerLifetimeService();
         var accountService = new CommandSystemTestAccountService();
-        var service = new CommandSystemService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
+        var service = CreateService(consoleUiService, gameEventBusService, outgoingPacketQueue, serverLifetimeService, accountService);
         await service.StartAsync();
 
         await gameEventBusService.PublishAsync(new CommandEnteredEvent("foo"));

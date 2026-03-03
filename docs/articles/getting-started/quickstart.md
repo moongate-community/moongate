@@ -64,6 +64,36 @@ Command source and authorization rules:
 - In-game commands use the authenticated `GameSession.AccountType`.
 - In-game command input is triggered by Unicode speech starting with `.` (example: `.help`).
 
+### Register a New C# Command
+
+Built-in commands are now registered with `ICommandExecutor` + `[RegisterConsoleCommand]`.
+The registration is source-generated at build time (no manual bootstrap wiring required).
+
+```csharp
+using Moongate.Server.Attributes;
+using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
+
+[RegisterConsoleCommand(
+    "whoami|me",
+    "Shows basic identity information.",
+    CommandSourceType.Console | CommandSourceType.InGame,
+    AccountType.Regular
+)]
+public sealed class WhoAmICommand : ICommandExecutor
+{
+    public Task ExecuteCommandAsync(CommandSystemContext context)
+    {
+        context.Print("You are connected.");
+        return Task.CompletedTask;
+    }
+}
+```
+
+`ICommandSystemService.RegisterCommand(...)` is still available for dynamic/runtime scenarios (for example Lua-driven command registration).
+
 ## 6. Docker (optional)
 
 Build image:

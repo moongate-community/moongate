@@ -1,14 +1,11 @@
-using System.Text;
 using Moongate.Abstractions.Types;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
-using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Types;
@@ -29,23 +26,18 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
     private readonly IConsoleUiService _consoleUiService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
-    private readonly IServerLifetimeService _serverLifetimeService;
-    private readonly IAccountService _accountService;
 
     public CommandSystemService(
         IConsoleUiService consoleUiService,
         IGameEventBusService gameEventBusService,
         IOutgoingPacketQueue outgoingPacketQueue,
-        IServerLifetimeService serverLifetimeService,
-        IAccountService accountService
+        Moongate.Server.Interfaces.Services.Lifecycle.IServerLifetimeService? _ = null,
+        Moongate.Server.Interfaces.Services.Accounting.IAccountService? __ = null
     )
     {
         _consoleUiService = consoleUiService;
         _gameEventBusService = gameEventBusService;
         _outgoingPacketQueue = outgoingPacketQueue;
-        _serverLifetimeService = serverLifetimeService;
-        _accountService = accountService;
-        RegisterDefaultCommands();
     }
 
     public async Task ExecuteCommandAsync(
@@ -324,6 +316,12 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         }
     }
 
+    public IReadOnlyList<CommandDefinition> GetRegisteredCommands()
+        => _commands.Values
+                    .Distinct()
+                    .OrderBy(static definition => definition.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
     public Task StartAsync()
     {
         _gameEventBusService.RegisterListener(this);
@@ -343,132 +341,6 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         }
 
         return $"{commandToken} {string.Join(' ', stableArgs)} {suggestion}";
-    }
-
-    private async Task OnAddUserCommand(CommandSystemContext context)
-    {
-        if (context.Arguments.Length is < 3 or > 4)
-        {
-            context.Print("Usage: add_user <username> <password> <email> [level]");
-
-            return;
-        }
-
-        var username = context.Arguments[0];
-        var password = context.Arguments[1];
-        var email = context.Arguments[2];
-        var level = AccountType.Regular;
-
-        if (context.Arguments.Length == 4 &&
-            !Enum.TryParse(context.Arguments[3], true, out level))
-        {
-            var validLevels = string.Join(", ", Enum.GetNames<AccountType>());
-            context.Print("Invalid account level '{0}'. Valid levels: {1}.", context.Arguments[3], validLevels);
-
-            return;
-        }
-
-        if (await _accountService.CheckAccountExistsAsync(username))
-        {
-            context.Print("User '{0}' already exists.", username);
-
-            return;
-        }
-
-        await _accountService.CreateAccountAsync(username, password, email, level);
-        context.Print("User '{0}' created with level '{1}'.", username, level);
-    }
-
-    private Task OnExitCommand(CommandSystemContext context)
-    {
-        context.Print("Shutdown requested by console command.");
-        _serverLifetimeService.RequestShutdown();
-
-        return Task.CompletedTask;
-    }
-
-    private Task OnHelpCommand(CommandSystemContext context)
-    {
-        if (context.Arguments.Length > 0)
-        {
-            var requestedCommand = context.Arguments[0];
-
-            if (!_commands.TryGetValue(requestedCommand, out var requestedDefinition))
-            {
-                context.Print("No help found for: {0}", requestedCommand);
-
-                return Task.CompletedTask;
-            }
-
-            context.Print("{0}: {1}", requestedDefinition.Name, requestedDefinition.Description);
-
-            return Task.CompletedTask;
-        }
-
-        var uniqueCommands = _commands
-                             .Values
-                             .Distinct()
-                             .OrderBy(command => command.Name, StringComparer.OrdinalIgnoreCase)
-                             .ToArray();
-
-        var builder = new StringBuilder();
-        builder.AppendLine("Available commands:");
-
-        foreach (var command in uniqueCommands)
-        {
-            builder.Append("- ");
-            builder.Append(command.Name);
-
-            if (!string.IsNullOrWhiteSpace(command.Description))
-            {
-                builder.Append(": ");
-                builder.Append(command.Description);
-            }
-
-            builder.AppendLine();
-        }
-
-        context.Print(builder.ToString().TrimEnd());
-
-        return Task.CompletedTask;
-    }
-
-    private Task OnLockCommand(CommandSystemContext context)
-    {
-        _consoleUiService.LockInput();
-        context.Print(
-            "Console input is locked. Press '{0}' to unlock.",
-            _consoleUiService.UnlockCharacter
-        );
-
-        return Task.CompletedTask;
-    }
-
-    private void RegisterDefaultCommands()
-    {
-        RegisterCommand(
-            "help|?",
-            OnHelpCommand,
-            "Displays available commands.",
-            CommandSourceType.Console | CommandSourceType.InGame,
-            AccountType.Regular
-        );
-        RegisterCommand(
-            "lock|*",
-            OnLockCommand,
-            "Locks console input. Press '*' to unlock."
-        );
-        RegisterCommand(
-            "exit|shutdown",
-            OnExitCommand,
-            "Requests server shutdown."
-        );
-        RegisterCommand(
-            "add_user",
-            OnAddUserCommand,
-            "Creates a new account: add_user <username> <password> <email> [level].",
-            CommandSourceType.Console | CommandSourceType.InGame
-        );
     }
 
     private static AccountType ResolveInvokerAccountType(CommandSourceType source, GameSession? session)
