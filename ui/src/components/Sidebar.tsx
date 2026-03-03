@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import { ThemeToggle } from './ThemeToggle'
 
 const navItems = [
   { label: 'Dashboard', path: '/dashboard', icon: '◈' },
@@ -23,8 +24,8 @@ export function Sidebar() {
     <aside
       className="flex flex-col w-56 min-h-screen shrink-0 relative"
       style={{
-        background: 'rgba(36, 33, 48, 0.85)',
-        borderRight: '1px solid rgba(106, 165, 218, 0.18)',
+        background: 'var(--mg-panel)',
+        borderRight: '1px solid var(--mg-border)',
         backdropFilter: 'blur(12px)',
       }}
     >
@@ -38,7 +39,7 @@ export function Sidebar() {
       <div className="px-5 pt-7 pb-5">
         <div className="flex items-center gap-2.5 mb-1">
           <span style={{
-            color: '#6aa5da',
+            color: 'var(--mg-accent)',
             fontSize: '18px',
             filter: 'drop-shadow(0 0 8px rgba(106,165,218,0.7))',
             animation: 'glow-pulse 3s ease-in-out infinite',
@@ -46,17 +47,17 @@ export function Sidebar() {
             🌙
           </span>
           <span className="font-cinzel font-semibold tracking-widest text-sm uppercase"
-            style={{ color: '#6aa5da', letterSpacing: '0.22em' }}>
+            style={{ color: 'var(--mg-accent)', letterSpacing: '0.22em' }}>
             Moongate
           </span>
         </div>
         <p className="font-mono text-xs pl-8"
-          style={{ color: 'rgba(185,187,211,0.4)', letterSpacing: '0.18em' }}>
+          style={{ color: 'var(--mg-muted)', letterSpacing: '0.18em' }}>
           ADMIN
         </p>
       </div>
 
-      <div style={{ height: '1px', background: 'rgba(106,165,218,0.15)', margin: '0 12px' }} />
+      <div style={{ height: '1px', background: 'var(--mg-border)', margin: '0 12px' }} />
 
       {/* Nav */}
       <nav className="flex flex-col gap-0.5 px-3 py-4 flex-1">
@@ -67,23 +68,23 @@ export function Sidebar() {
                 className="flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 cursor-pointer"
                 style={isActive ? {
                   background: 'rgba(106,165,218,0.1)',
-                  boxShadow: 'inset 0 0 0 1px rgba(106,165,218,0.2)',
+                  boxShadow: 'inset 0 0 0 1px var(--mg-border)',
                 } : {}}
               >
                 <span className="font-mono text-sm"
-                  style={{ color: isActive ? '#6aa5da' : 'rgba(185,187,211,0.35)' }}>
+                  style={{ color: isActive ? 'var(--mg-accent)' : 'var(--mg-muted)' }}>
                   {item.icon}
                 </span>
                 <span className="text-sm font-medium tracking-wide"
                   style={{
-                    color: isActive ? '#f9f4ed' : 'rgba(185,187,211,0.5)',
+                    color: isActive ? 'var(--mg-text)' : 'var(--mg-muted)',
                     fontFamily: 'Outfit, sans-serif',
                   }}>
                   {item.label}
                 </span>
                 {isActive && (
                   <div className="ml-auto w-1 h-1 rounded-full"
-                    style={{ background: '#6aa5da', boxShadow: '0 0 5px #6aa5da' }} />
+                    style={{ background: 'var(--mg-accent)', boxShadow: '0 0 5px var(--mg-accent)' }} />
                 )}
               </div>
             )}
@@ -91,7 +92,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <div style={{ height: '1px', background: 'rgba(106,165,218,0.15)', margin: '0 12px' }} />
+      <div style={{ height: '1px', background: 'var(--mg-border)', margin: '0 12px' }} />
 
       {/* User + logout */}
       <div className="px-4 py-4 flex flex-col gap-3">
@@ -103,7 +104,7 @@ export function Sidebar() {
                 background: '#22c55e', boxShadow: '0 0 6px #22c55e', flexShrink: 0,
               }} />
               <span className="font-mono text-xs truncate"
-                style={{ color: 'rgba(249,244,237,0.65)' }}>
+                style={{ color: 'var(--mg-text)' }}>
                 {user.username}
               </span>
             </div>
@@ -111,8 +112,8 @@ export function Sidebar() {
               <span className="font-mono text-xs px-2 py-0.5 rounded"
                 style={{
                   background: 'rgba(106,165,218,0.1)',
-                  border: '1px solid rgba(106,165,218,0.2)',
-                  color: '#6aa5da',
+                  border: '1px solid var(--mg-border)',
+                  color: 'var(--mg-accent)',
                   letterSpacing: '0.12em',
                 }}>
                 {user.role.toUpperCase()}
@@ -121,11 +122,13 @@ export function Sidebar() {
           </div>
         )}
 
+        <ThemeToggle className="w-full px-3 py-2" />
+
         <button
           onClick={handleLogout}
           className="w-full flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-all duration-200"
           style={{
-            color: 'rgba(185,187,211,0.4)',
+            color: 'var(--mg-muted)',
             background: 'transparent',
             border: '1px solid transparent',
             fontFamily: 'Outfit, sans-serif',
@@ -136,7 +139,7 @@ export function Sidebar() {
             e.currentTarget.style.background = 'rgba(239,68,68,0.06)'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.color = 'rgba(185,187,211,0.4)'
+            e.currentTarget.style.color = 'var(--mg-muted)'
             e.currentTarget.style.borderColor = 'transparent'
             e.currentTarget.style.background = 'transparent'
           }}
@@ -148,7 +151,7 @@ export function Sidebar() {
 
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0, height: '1px',
-        background: 'linear-gradient(90deg, transparent, rgba(106,165,218,0.25), transparent)',
+        background: 'linear-gradient(90deg, transparent, var(--mg-border), transparent)',
       }} />
     </aside>
   )

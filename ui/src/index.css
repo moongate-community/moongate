@@ -5,7 +5,10 @@
 
 @layer base {
   :root {
+    --mg-radius-control: 2px;
     --mg-bg:       #1f1c2a;
+    --mg-panel:    rgba(36, 33, 48, 0.85);
+    --mg-panel-soft: rgba(36, 33, 48, 0.65);
     --mg-bg-soft:  #343455;
     --mg-surface:  #3c4d81;
     --mg-accent:   #6aa5da;
@@ -15,16 +18,85 @@
     --mg-border:   rgba(106, 165, 218, 0.22);
   }
 
+  html.light {
+    --mg-bg:       #eef2f8;
+    --mg-panel:    rgba(255, 255, 255, 0.86);
+    --mg-panel-soft: rgba(255, 255, 255, 0.78);
+    --mg-bg-soft:  #d7e1f1;
+    --mg-surface:  #c5d4ec;
+    --mg-accent:   #2f6fb0;
+    --mg-accent-2: #5d7fb0;
+    --mg-text:     #1d283a;
+    --mg-muted:    #4f647f;
+    --mg-border:   rgba(47, 111, 176, 0.25);
+  }
+
   html {
     font-family: 'Outfit', sans-serif;
-    background: radial-gradient(circle at top right, #3c4d81 0%, #242130 46%, #1f1c2a 100%);
+    min-height: 100%;
+    background: #1f1c2a;
+  }
+
+  body,
+  #root {
+    min-height: 100vh;
+  }
+
+  body {
+    background-color: var(--mg-bg);
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(106, 165, 218, 0.24) 0%, rgba(106, 165, 218, 0.00) 38%),
+      radial-gradient(circle at 86% 12%, rgba(118, 117, 195, 0.22) 0%, rgba(118, 117, 195, 0.00) 34%),
+      radial-gradient(circle at 52% 100%, rgba(249, 244, 237, 0.08) 0%, rgba(249, 244, 237, 0.00) 48%),
+      linear-gradient(160deg, #1f1c2a 0%, #242130 44%, #11151f 100%),
+      linear-gradient(rgba(106, 165, 218, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(106, 165, 218, 0.035) 1px, transparent 1px);
+    background-size:
+      auto,
+      auto,
+      auto,
+      auto,
+      56px 56px,
+      56px 56px;
+    background-position:
+      center,
+      center,
+      center,
+      center,
+      center,
+      center;
     background-attachment: fixed;
+    color: var(--mg-text);
+  }
+
+  html.light body {
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(47, 111, 176, 0.18) 0%, rgba(47, 111, 176, 0.00) 38%),
+      radial-gradient(circle at 86% 12%, rgba(93, 127, 176, 0.17) 0%, rgba(93, 127, 176, 0.00) 34%),
+      radial-gradient(circle at 52% 100%, rgba(29, 40, 58, 0.08) 0%, rgba(29, 40, 58, 0.00) 48%),
+      linear-gradient(160deg, #eef2f8 0%, #e2e9f5 44%, #d7e1f1 100%),
+      linear-gradient(rgba(47, 111, 176, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(47, 111, 176, 0.05) 1px, transparent 1px);
   }
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--mg-bg); }
   ::-webkit-scrollbar-thumb { background: rgba(106,165,218,0.3); border-radius: 2px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--mg-accent); }
+
+  /* Global control shape policy: keep controls sharp (max 2px radius). */
+  button,
+  input,
+  select,
+  textarea,
+  [data-slot="input-wrapper"],
+  [data-slot="trigger"],
+  [data-slot="base"] button,
+  [data-slot="base"] input,
+  [data-slot="base"] select,
+  [role="button"]:not(.rounded-full):not([class*="rounded-full"]) {
+    border-radius: var(--mg-radius-control) !important;
+  }
 }
 
 @keyframes glow-pulse {
