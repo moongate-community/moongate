@@ -131,8 +131,7 @@ public sealed class GameModule
 
 ```csharp
 [ScriptFunction("name")]  // Expose function with custom name
-[ScriptFunction("name", IsAsync = true)]  // Async function
-[ScriptFunction("name", RequirePlayer = true)]  // Auto-inject player
+[ScriptFunction("name", "Help text shown in generated docs")]  // Optional help text
 ```
 
 ### ScriptConstant Attributes
