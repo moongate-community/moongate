@@ -88,6 +88,9 @@ I hate building frontend myself, so thanks to Codex I started adding a UI layer 
 
 ![UI Screen 1](images/ui/ui_screen1.png)
 ![UI Screen 2](images/ui/ui_screen2.png)
+![UI Screen 3](images/ui/ui_screen_3.png)
+
+The UI now also includes Item Templates search with image previews.
 
 ## Current Status
 
