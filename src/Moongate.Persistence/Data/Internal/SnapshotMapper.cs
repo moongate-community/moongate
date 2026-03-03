@@ -21,6 +21,8 @@ internal static class SnapshotMapper
             Email = snapshot.Email,
             AccountType = (AccountType)snapshot.AccountType,
             IsLocked = snapshot.IsLocked,
+            ActivationId = snapshot.ActivationId,
+            RecoveryCode = snapshot.RecoveryCode,
             CreatedUtc = new(snapshot.CreatedUtcTicks, DateTimeKind.Utc),
             LastLoginUtc = new(snapshot.LastLoginUtcTicks, DateTimeKind.Utc),
             CharacterIds = [.. snapshot.CharacterIds.Select(id => (Serial)id)]
@@ -37,6 +39,8 @@ internal static class SnapshotMapper
             Email = entity.Email,
             AccountType = (byte)entity.AccountType,
             IsLocked = entity.IsLocked,
+            ActivationId = entity.ActivationId,
+            RecoveryCode = entity.RecoveryCode,
             CreatedUtcTicks = entity.CreatedUtc.Ticks,
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks,
             CharacterIds = [.. entity.CharacterIds.Select(serial => (uint)serial)]
@@ -66,9 +70,27 @@ internal static class SnapshotMapper
             EquippedLayer = snapshot.EquippedLayer is null ? null : (ItemLayerType)snapshot.EquippedLayer.Value
         };
 
-        if (snapshot.ContainedItemIds.Length > 0)
+        if (snapshot.ContainedItemIds is { Length: > 0 })
         {
             entity.ContainedItemIds = [.. snapshot.ContainedItemIds.Select(id => (Serial)id)];
+        }
+
+        if (snapshot.CustomProperties is { Length: > 0 })
+        {
+            foreach (var customProperty in snapshot.CustomProperties)
+            {
+                entity.SetCustomProperty(
+                    customProperty.Key,
+                    new()
+                    {
+                        Type = (ItemCustomPropertyType)customProperty.Type,
+                        IntegerValue = customProperty.IntegerValue,
+                        BooleanValue = customProperty.BooleanValue,
+                        DoubleValue = customProperty.DoubleValue,
+                        StringValue = customProperty.StringValue
+                    }
+                );
+            }
         }
 
         return entity;
@@ -97,7 +119,21 @@ internal static class SnapshotMapper
             ContainerY = entity.ContainerPosition.Y,
             EquippedMobileId = (uint)entity.EquippedMobileId,
             EquippedLayer = entity.EquippedLayer is null ? null : (byte)entity.EquippedLayer.Value,
-            ContainedItemIds = [.. entity.ContainedItemIds.Select(id => (uint)id)]
+            ContainedItemIds = [.. entity.ContainedItemIds.Select(id => (uint)id)],
+            CustomProperties =
+            [
+                .. entity.CustomProperties.Select(
+                    static pair => new ItemCustomPropertySnapshot
+                    {
+                        Key = pair.Key,
+                        Type = (byte)pair.Value.Type,
+                        IntegerValue = pair.Value.IntegerValue,
+                        BooleanValue = pair.Value.BooleanValue,
+                        DoubleValue = pair.Value.DoubleValue,
+                        StringValue = pair.Value.StringValue
+                    }
+                )
+            ]
         };
 
     public static UOMobileEntity ToMobileEntity(MobileSnapshot snapshot)

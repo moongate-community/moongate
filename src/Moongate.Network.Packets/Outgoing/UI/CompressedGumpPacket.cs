@@ -12,7 +12,7 @@ public sealed class CompressedGumpPacket : BaseGameNetworkPacket
 {
     public uint GumpId { get; set; }
 
-    public string Layout { get; set; } = string.Empty;
+    public string Layout { get; set; }
 
     public uint SenderSerial { get; set; }
 

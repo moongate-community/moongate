@@ -21,7 +21,7 @@ public class MobileFactoryServiceTests
 {
     private sealed class TestNameService : INameService
     {
-        public string NextGeneratedName { get; set; } = string.Empty;
+        public string NextGeneratedName { get; set; }
 
         public void AddNames(string type, params string[] names)
         {

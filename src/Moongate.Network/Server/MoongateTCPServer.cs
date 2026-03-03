@@ -208,7 +208,7 @@ public sealed class MoongateTCPServer : IAsyncDisposable, IDisposable
                               };
         client.OnDataReceived += (_, args) =>
                                  {
-                                     _logger.Debug(
+                                     _logger.Verbose(
                                          "OnDataReceived. SessionId={SessionId}, Bytes={Bytes}",
                                          args.Client.SessionId,
                                          args.Data.Length

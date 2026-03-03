@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Interaction;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Items;
@@ -639,6 +640,23 @@ public class ItemHandlerTests
 
         public List<UOMobileEntity> Players { get; } = [];
 
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+        {
+            _ = packet;
+            _ = mapId;
+            _ = location;
+            _ = range;
+            _ = excludeSessionId;
+
+            return Task.FromResult(0);
+        }
+
         public void AddOrUpdateItem(UOItemEntity item, int mapId)
         {
             _ = item;
@@ -706,6 +724,16 @@ public class ItemHandlerTests
             _ = sectorY;
 
             return Players;
+        }
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
+        {
+            _ = mapId;
+            _ = centerSectorX;
+            _ = centerSectorY;
+            _ = radius;
+
+            return [];
         }
 
         public List<MapSector> GetActiveSectors()

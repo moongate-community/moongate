@@ -22,7 +22,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
     private CancellationTokenSource _lifetimeCts = new();
     private Task _inputLoopTask = Task.CompletedTask;
     private int _commandHistoryIndex = -1;
-    private string _autocompleteSeed = string.Empty;
+    private string _autocompleteSeed = "";
     private int _autocompleteIndex = -1;
 
     public ConsoleCommandService(
@@ -250,7 +250,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
 
     private void ResetAutocompleteState()
     {
-        _autocompleteSeed = string.Empty;
+        _autocompleteSeed = "";
         _autocompleteIndex = -1;
         _autocompleteCandidates.Clear();
     }

@@ -101,6 +101,7 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
             context.DirectoriesConfig,
             context.ConsoleUiService
         );
+        BootstrapConsoleCommandRegistration.RegisterServices(context.Container);
         BootstrapGameEventListenerRegistration.RegisterServices(context.Container);
     }
 

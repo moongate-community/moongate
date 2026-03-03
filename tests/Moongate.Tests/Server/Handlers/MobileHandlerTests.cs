@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
@@ -64,6 +65,15 @@ public sealed class MobileHandlerTests
 
         public Point3D LastGetSectorLocation { get; private set; }
 
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+            => Task.FromResult(0);
+
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
         public void AddOrUpdateMobile(UOMobileEntity mobile) { }
@@ -92,6 +102,9 @@ public sealed class MobileHandlerTests
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
             => PlayersInSector;
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
+            => [];
 
         public List<MapSector> GetActiveSectors()
             => [];

@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
@@ -21,6 +22,8 @@ using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
+using Serilog;
+using Serilog.Core;
 
 namespace Moongate.Server.Services.Spatial;
 
@@ -39,7 +42,6 @@ public sealed class SpatialWorldService
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly ICharacterService _characterService;
     private readonly IItemService _itemService;
-    private readonly IMobileService _mobileService;
     private readonly MoongateSpatialConfig _spatialConfig;
     private readonly SpatialEntityIndex _entityIndex;
     private readonly SpatialRegionResolver _regionResolver;
@@ -58,15 +60,52 @@ public sealed class SpatialWorldService
         _gameEventBusService = gameEventBusService;
         _characterService = characterService;
         _itemService = itemService;
-        _mobileService = mobileService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
         _entityIndex = new(itemService, mobileService, _spatialConfig);
         _regionResolver = new();
+
+    }
+
+    public Task<int> BroadcastToPlayersAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        int? range = null,
+        long? excludeSessionId = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(packet);
+        var resolvedRange = Math.Max(0, range ?? _spatialConfig.SectorEnterSyncRadius);
+        GameSession? excludedSession = null;
+
+        if (excludeSessionId.HasValue &&
+            _gameNetworkSessionService.TryGet(excludeSessionId.Value, out var session))
+        {
+            excludedSession = session;
+        }
+
+        var recipients = GetPlayersInRange(location, resolvedRange, mapId, excludedSession);
+
+        foreach (var recipient in recipients)
+        {
+            _outgoingPacketQueue.Enqueue(recipient.SessionId, packet);
+        }
+
+        return Task.FromResult(recipients.Count);
     }
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId)
-        => _entityIndex.AddOrUpdateItem(item, mapId);
+    {
+        _entityIndex.AddOrUpdateItem(item, mapId);
+
+        var sectorX = item.Location.X >> MapSectorConsts.SectorShift;
+        var sectorY = item.Location.Y >> MapSectorConsts.SectorShift;
+
+        PublishEvent(new ItemAddedInSectorEvent(item.Id, mapId, sectorX, sectorY));
+    }
+
+
 
     public void AddOrUpdateMobile(UOMobileEntity mobile)
     {
@@ -120,6 +159,9 @@ public sealed class SpatialWorldService
 
     public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
         => _entityIndex.GetPlayersInSector(mapId, sectorX, sectorY);
+
+    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
+        => _entityIndex.GetMobilesInSectorRange(mapId, centerSectorX, centerSectorY, radius);
 
     public List<MapSector> GetActiveSectors()
         => _entityIndex.GetActiveSectors();

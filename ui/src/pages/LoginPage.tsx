@@ -1,9 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Input } from '@heroui/react'
 import { api } from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import type { AuthUser } from '../store/authStore'
+import { ThemeToggle } from '../components/ThemeToggle'
+
+interface ServerVersion {
+  version: string
+  codename: string
+}
 
 export function LoginPage() {
   const navigate = useNavigate()
@@ -13,6 +19,27 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [serverVersion, setServerVersion] = useState<ServerVersion | null>(null)
+
+  useEffect(() => {
+    let isCancelled = false
+
+    api.get<ServerVersion>('/version')
+      .then((value) => {
+        if (!isCancelled) {
+          setServerVersion(value)
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setServerVersion(null)
+        }
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -31,15 +58,6 @@ export function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      {/* background grid */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: `
-          linear-gradient(rgba(106,165,218,0.04) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(106,165,218,0.04) 1px, transparent 1px)
-        `,
-        backgroundSize: '48px 48px',
-      }} />
-
       {/* corner decorations */}
       {[
         'top-8 left-8 border-t border-l',
@@ -50,6 +68,10 @@ export function LoginPage() {
         <div key={cls} className={`absolute ${cls} opacity-20`}
           style={{ width: 28, height: 28, borderColor: '#6aa5da' }} />
       ))}
+
+      <div className="fixed top-4 right-4 z-10">
+        <ThemeToggle className="px-3 py-2" />
+      </div>
 
       {/* card */}
       <div className="relative w-full max-w-sm animate-fade-in" style={{
@@ -69,11 +91,15 @@ export function LoginPage() {
         <div className="px-8 pt-9 pb-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <span style={{
-                fontSize: '32px',
-                filter: 'drop-shadow(0 0 12px rgba(106,165,218,0.6))',
-                display: 'block', lineHeight: 1,
-              }}>🌙</span>
+              <img
+                src="/images/moongate_logo.png"
+                alt="Moongate Logo"
+                style={{
+                  width: '128px',
+                  height: 'auto',
+                  filter: 'drop-shadow(0 0 14px rgba(106,165,218,0.35))',
+                }}
+              />
             </div>
             <h1 className="font-cinzel font-semibold tracking-widest uppercase mb-1"
               style={{ color: '#6aa5da', fontSize: '18px', letterSpacing: '0.25em' }}>
@@ -136,6 +162,20 @@ export function LoginPage() {
           </form>
         </div>
       </div>
+
+      {serverVersion && (
+        <div
+          className="fixed bottom-4 right-4 px-3 py-2 rounded-md font-mono text-xs"
+          style={{
+            color: 'rgba(185,187,211,0.85)',
+            background: 'rgba(12, 17, 24, 0.75)',
+            border: '1px solid rgba(106,165,218,0.22)',
+            letterSpacing: '0.04em',
+          }}
+        >
+          v{serverVersion.version} · {serverVersion.codename}
+        </div>
+      )}
     </div>
   )
 }

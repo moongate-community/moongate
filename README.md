@@ -48,6 +48,7 @@ Special thanks to the teams and contributors behind these projects, which strong
 - [World Generation Pipeline](#world-generation-pipeline)
 - [UO Feature Support (Current)](#uo-feature-support-current)
 - [Persistence](#persistence)
+- [Email Delivery (Minimal SMTP)](#email-delivery-minimal-smtp)
 - [Templates](#templates)
 - [Solution Structure](#solution-structure)
 - [Source Generators (AOT)](#source-generators-aot)
@@ -87,6 +88,9 @@ I hate building frontend myself, so thanks to Codex I started adding a UI layer 
 
 ![UI Screen 1](images/ui/ui_screen1.png)
 ![UI Screen 2](images/ui/ui_screen2.png)
+![UI Screen 3](images/ui/ui_screen_3.png)
+
+The UI now also includes Item Templates search with image previews.
 
 ## Current Status
 
@@ -114,6 +118,7 @@ The project is actively in development and already includes:
   - higher `Priority` first
   - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
+- Minimal email stack with Scriban templates and SMTP sender (`Moongate.Email`), wired through `IEmailService`.
 
 ## Spatial Chunk Strategy
 
@@ -228,6 +233,42 @@ Query support:
 
 - `IAccountRepository`, `IMobileRepository`, and `IItemRepository` expose `QueryAsync(...)`.
 - Queries are evaluated on immutable snapshots with ZLinq-backed projection/filtering.
+
+## Email Delivery (Minimal SMTP)
+
+Moongate includes a minimal email pipeline:
+
+- `IEmailService`: orchestration entrypoint.
+- `IEmailTemplateService`: template rendering via Scriban (`Moongate.Email`).
+- `IEmailSender`: transport abstraction with SMTP implementation (`SmtpEmailSender`).
+- `NoOpEmailSender`: selected automatically when email is disabled.
+- `websiteUrl`: global Scriban variable injected from `Http.WebsiteUrl`.
+
+Default templates are loaded from:
+
+- `moongate_data/email/templates/registration_ok/*`
+- `moongate_data/email/templates/recover_password/*`
+
+Runtime directory mapping uses `DirectoryType.EmailTemplates`.
+
+Minimal config shape:
+
+```json
+{
+  "email": {
+    "isEnabled": false,
+    "fromAddress": "noreply@localhost",
+    "fallbackLocale": "en",
+    "smtp": {
+      "host": "localhost",
+      "port": 25,
+      "useSsl": false,
+      "username": null,
+      "password": null
+    }
+  }
+}
+```
 
 ## Templates
 
@@ -418,6 +459,7 @@ HTTP service defaults:
 
 - `Http.IsEnabled = true`
 - `Http.Port = 8088`
+- `Http.WebsiteUrl = "http://localhost"`
 - `Http.IsOpenApiEnabled = true`
 - Base endpoint: `/`
 - Health endpoint: `/health`
@@ -432,13 +474,13 @@ HTTP service defaults:
 
 ## Command System
 
-Commands are registered through `ICommandSystemService.RegisterCommand(...)` with:
+Commands now use a hybrid model:
 
-- `commandName`: one command or aliases separated by `|`
-- `handler`: async callback with `CommandSystemContext`
-- `description`: text shown in `help`
-- `source`: allowed source (`Console`, `InGame`, or both)
-- `minimumAccountType`: minimum role required (`Regular`, `GameMaster`, `Administrator`)
+- **Primary path (C# built-ins)**: `ICommandExecutor` + `[RegisterConsoleCommand(...)]`
+  - Discovered and registered at compile-time by `ConsoleCommandRegistrationGenerator`
+  - Executors are registered as DryIoc singletons
+- **Secondary path (dynamic/Lua/future)**: manual `ICommandSystemService.RegisterCommand(...)`
+  - Kept intentionally for runtime registration scenarios
 
 Authorization behavior:
 
@@ -446,17 +488,41 @@ Authorization behavior:
 - In-game source is evaluated using `GameSession.AccountType` (set during login).
 - If source is valid but role is too low, command execution is rejected with warning output.
 
-Example registration:
+Example C# command registration (source-generated):
 
 ```csharp
-commandSystemService.RegisterCommand(
+using Moongate.Server.Attributes;
+using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Types;
+
+[RegisterConsoleCommand(
     "whoami|me",
-    context =>
+    "Shows basic identity information.",
+    CommandSourceType.Console | CommandSourceType.InGame,
+    AccountType.Regular
+)]
+public sealed class WhoAmICommand : ICommandExecutor
+{
+    public Task ExecuteCommandAsync(CommandSystemContext context)
     {
         context.Print("You are connected.");
         return Task.CompletedTask;
+    }
+}
+```
+
+Example dynamic/manual registration (runtime, e.g. Lua bridge):
+
+```csharp
+commandSystemService.RegisterCommand(
+    "lua_ping",
+    context =>
+    {
+        context.Print("pong");
+        return Task.CompletedTask;
     },
-    description: "Shows basic identity information.",
     source: CommandSourceType.Console | CommandSourceType.InGame,
     minimumAccountType: AccountType.Regular
 );
@@ -500,7 +566,7 @@ function on_player_connected(p)
 end
 ```
 
-### NPC Brain Example (`brain_loop` + `on_speech`)
+### NPC Brain Example (`brain_loop` + `on_event`)
 
 Mobile template:
 
@@ -524,13 +590,19 @@ function brain_loop(npc_id)
   end
 end
 
-function on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)
-  if listener_npc_id == 0 or text == nil then
+function on_event(event_type, from_serial, event_obj)
+  if event_type ~= "speech_heard" or event_obj == nil then
+    return
+  end
+
+  local listener_npc_id = event_obj.listener_npc_id
+  local text = event_obj.text
+  if listener_npc_id == nil or text == nil then
     return
   end
 
   if string.find(string.lower(text), "hello", 1, true) then
-    log.info("NPC " .. tostring(listener_npc_id) .. " heard hello from " .. tostring(speaker_id))
+    log.info("NPC " .. tostring(listener_npc_id) .. " heard hello from " .. tostring(from_serial))
   end
 end
 ```
@@ -539,7 +611,10 @@ Notes:
 
 - `brain` in the mobile template maps to `scripts/ai/<brain>.lua` (or explicit script path if configured in registry).
 - `brain_loop` is resumed by the runner and can control next wake time via `coroutine.yield(ms)`.
-- `on_speech` is invoked when the NPC hears nearby speech events.
+- `on_event` is invoked with `(eventType, fromSerial, eventObject)`.
+- Current event type emitted by the brain runner: `speech_heard`.
+- `eventObject` contains: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, and `location` (`x`, `y`, `z`).
+- Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
 
 ### Item `ScriptId` Dispatch
 
@@ -609,6 +684,40 @@ Latest local snapshot (`2026-02-23`, `BenchmarkDotNet 0.14.0`, macOS `Darwin 25.
 | `QueueThroughputBenchmark.OutgoingQueueEnqueueThenDrain` | `24.309 us` | `-` |
 | `QueueThroughputBenchmark.MessageBusPublishThenDrain` | `9.725 us` | `-` |
 | `TimerWheelBenchmark.UpdateTicksDelta` | `2.893 us` | `4.05 KB` |
+
+### Gameplay Hot-Path Benchmarks
+
+Run only the new gameplay-focused suites:
+
+```bash
+dotnet run -c Release --project benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj -- \
+  --filter '*SpatialWorldServiceBenchmark*' '*ItemServiceBenchmark*' '*PacketGameplayHotPathBenchmark*'
+```
+
+Latest quick snapshot (`2026-03-02`, `BenchmarkDotNet 0.15.8`, macOS `Darwin 25.3.0`, Apple `M4 Max`, `.NET 10.0.3`, quick config `Launch=1/Warmup=1/Iteration=1`):
+
+| Benchmark | Mean | Allocated |
+|---|---:|---:|
+| `SpatialWorldServiceBenchmark.AddOrUpdateMobiles (500)` | `75.939 us` | `74.56 KB` |
+| `SpatialWorldServiceBenchmark.MoveMobilesAcrossSectors (500)` | `27.548 us` | `117.53 KB` |
+| `SpatialWorldServiceBenchmark.GetPlayersInHotSector (500)` | `1.769 us` | `6.16 KB` |
+| `SpatialWorldServiceBenchmark.AddOrUpdateMobiles (2000)` | `325.353 us` | `297.27 KB` |
+| `SpatialWorldServiceBenchmark.MoveMobilesAcrossSectors (2000)` | `105.423 us` | `469.15 KB` |
+| `SpatialWorldServiceBenchmark.GetPlayersInHotSector (2000)` | `1.745 us` | `6.16 KB` |
+| `ItemServiceBenchmark.MoveItemBetweenContainers` | `359.772 ns` | `1.85 KB` |
+| `ItemServiceBenchmark.DropItemToGroundFromContainer` | `489.566 ns` | `2.25 KB` |
+| `PacketGameplayHotPathBenchmark.ParseMoveRequestPacket` | `8.930 ns` | `32 B` |
+| `PacketGameplayHotPathBenchmark.ParsePickUpItemPacket` | `8.620 ns` | `32 B` |
+| `PacketGameplayHotPathBenchmark.ParseDropItemPacket` | `11.192 ns` | `48 B` |
+| `PacketGameplayHotPathBenchmark.ParseDropWearItemPacket` | `8.955 ns` | `32 B` |
+| `PacketGameplayHotPathBenchmark.ParseMixedGameplayPacketBurst` | `10.956 ns` | `36 B` |
+| `PacketGameplayHotPathBenchmark.WriteObjectInformationPacket` | `63.047 ns` | `-` |
+| `PacketGameplayHotPathBenchmark.WriteDraggingOfItemPacket` | `51.664 ns` | `-` |
+
+Notes:
+
+- This snapshot is intended for fast regression checks, not for publication-grade comparisons.
+- Use default/full BenchmarkDotNet settings for release notes and long-term trend baselines.
 
 ### Lua Script Engine
 

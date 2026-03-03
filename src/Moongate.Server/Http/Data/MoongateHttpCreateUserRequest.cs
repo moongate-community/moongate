@@ -9,7 +9,7 @@ public sealed class MoongateHttpCreateUserRequest
 
     public required string Password { get; init; }
 
-    public string Email { get; init; } = string.Empty;
+    public string Email { get; init; }
 
     public string Role { get; init; } = "Regular";
 }

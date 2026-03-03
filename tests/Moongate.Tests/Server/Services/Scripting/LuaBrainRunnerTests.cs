@@ -90,7 +90,7 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
-    public async Task TickAllAsync_WhenSpeechIsQueued_ShouldInvokeOnSpeechCallback()
+    public async Task TickAllAsync_WhenSpeechIsQueued_ShouldInvokeOnEventCallback()
     {
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
@@ -98,7 +98,7 @@ public sealed class LuaBrainRunnerTests
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptPath = Path.Combine(directories[DirectoryType.Scripts], "ai", "orc_warrior.lua");
         Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
-        await File.WriteAllTextAsync(scriptPath, "function on_speech() end");
+        await File.WriteAllTextAsync(scriptPath, "function on_event() end");
         var registry = new LuaBrainRegistryStub();
         registry.Register(new() { BrainId = "orc_warrior", ScriptPath = scriptPath });
         var runner = new LuaBrainRunner(timerService, scriptEngine, registry, directories);
@@ -124,11 +124,17 @@ public sealed class LuaBrainRunnerTests
 
         await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
+        var eventCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_event");
         var speechCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_speech");
 
         Assert.Multiple(
             () =>
             {
+                Assert.That(eventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(eventCall.Args.Length, Is.EqualTo(3));
+                Assert.That(eventCall.Args[0], Is.EqualTo("speech_heard"));
+                Assert.That(eventCall.Args[1], Is.EqualTo((uint)0x02));
+                Assert.That(eventCall.Args[2], Is.TypeOf<Dictionary<string, object>>());
                 Assert.That(speechCall.FunctionName, Is.EqualTo("on_speech"));
                 Assert.That(speechCall.Args.Length, Is.GreaterThanOrEqualTo(8));
             }

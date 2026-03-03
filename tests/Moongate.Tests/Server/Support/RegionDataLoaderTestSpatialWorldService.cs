@@ -1,4 +1,5 @@
 using Moongate.Server.Data.Session;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -11,6 +12,15 @@ namespace Moongate.Tests.Server.Support;
 public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldService
 {
     public List<JsonRegion> AddedRegions { get; } = [];
+
+    public Task<int> BroadcastToPlayersAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        int? range = null,
+        long? excludeSessionId = null
+    )
+        => Task.FromResult(0);
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
@@ -35,6 +45,9 @@ public sealed class RegionDataLoaderTestSpatialWorldService : ISpatialWorldServi
         => [];
 
     public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+        => [];
+
+    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
         => [];
 
     public List<MapSector> GetActiveSectors()

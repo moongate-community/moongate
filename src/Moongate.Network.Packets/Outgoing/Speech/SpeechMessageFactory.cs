@@ -88,8 +88,8 @@ public static class SpeechMessageFactory
     )
     {
         language ??= "ENU";
-        name ??= string.Empty;
-        text ??= string.Empty;
+        name ??= "";
+        text ??= "";
 
         if (hue == 0)
         {

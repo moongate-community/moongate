@@ -76,6 +76,7 @@ Top-level shape:
   "http": {
     "isEnabled": true,
     "port": 8088,
+    "websiteUrl": "http://localhost",
     "isOpenApiEnabled": true
   },
   "game": {
@@ -91,6 +92,18 @@ Top-level shape:
     "logEnabled": true,
     "logToConsole": false,
     "logLevel": "Trace"
+  },
+  "email": {
+    "isEnabled": false,
+    "fromAddress": "noreply@localhost",
+    "fallbackLocale": "en",
+    "smtp": {
+      "host": "localhost",
+      "port": 25,
+      "useSsl": false,
+      "username": null,
+      "password": null
+    }
   },
   "persistence": {
     "saveIntervalSeconds": 30
@@ -108,6 +121,22 @@ Top-level shape:
 - `save`
 - `logs`
 - `cache`
+- `email/templates`
+
+## Email Templates
+
+Email templates are resolved from:
+
+- `DirectoriesConfig[DirectoryType.EmailTemplates]`
+
+Default bundled templates:
+
+- `registration_ok` (`en.subject.sbn`, `en.text.sbn`, `en.html.sbn`)
+- `recover_password` (`en.subject.sbn`, `en.text.sbn`, `en.html.sbn`)
+
+Scriban templates receive a global `websiteUrl` value from `Http.WebsiteUrl`.
+
+When `Email.IsEnabled = false`, the runtime uses a no-op sender and does not perform SMTP delivery.
 
 ## HTTP Endpoints
 

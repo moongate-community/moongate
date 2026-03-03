@@ -9,6 +9,7 @@ moongatev2/
 ├── src/
 │   ├── Moongate.Abstractions
 │   ├── Moongate.Core
+│   ├── Moongate.Email
 │   ├── Moongate.Network
 │   ├── Moongate.Network.Packets
 │   ├── Moongate.Generators
@@ -30,6 +31,8 @@ moongatev2/
   - base service abstractions shared across modules.
 - `Moongate.Core`
   - shared types (`Serial`, geometry, json helpers, utility classes).
+- `Moongate.Email`
+  - email pipeline: Scriban template rendering and SMTP/no-op senders.
 - `Moongate.Network`
   - TCP transport, spans, network middleware pipeline.
 - `Moongate.Network.Packets`

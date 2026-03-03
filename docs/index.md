@@ -87,7 +87,8 @@ Moongate v2 is **actively in development**. Current capabilities include:
 - ✅ Embedded HTTP server with OpenAPI/Scalar documentation
 - ✅ Snapshot + Journal persistence system
 - ✅ Interactive console UI with colored logging
-- ✅ Command system with source + AccountType authorization
+- ✅ Command system with source-generated registration (`ICommandExecutor` + `[RegisterConsoleCommand]`)
+- ✅ Command authorization by source + `AccountType`
 - ✅ Console `Tab` / `Shift+Tab` autocomplete (commands + argument providers)
 - ✅ Contextual `help <command>` output
 - ✅ Custom DocFX Moongate theme with moon branding and Fira Code

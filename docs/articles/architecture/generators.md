@@ -37,6 +37,14 @@ It contains these generators:
   - generated bootstrap game-event subscription wiring (`BootstrapGameEventListenerRegistration.SubscribeGenerated(...)`)
   - compile-time mapping `listener -> RegisterListener<TEvent>(...)`
 
+### Console Command Registration Generator
+
+- Input: command classes decorated with `[RegisterConsoleCommand(...)]` and implementing `ICommandExecutor`
+- Output:
+  - generated DI singleton registrations (`BootstrapConsoleCommandRegistration.RegisterServicesGenerated(...)`)
+  - generated command bindings (`BootstrapConsoleCommandRegistration.RegisterCommandsGenerated(...)`)
+  - compile-time mapping `attribute metadata -> ICommandSystemService.RegisterCommand(...)`
+
 ### Metrics Mapper Generator
 
 - Input: snapshot properties decorated with metric metadata
@@ -65,6 +73,7 @@ It contains these generators:
    - packet descriptors come from generated packet table registration.
    - listener wiring comes from generated bootstrap registration.
    - game-event listeners are subscribed from generated bootstrap registration.
+   - command executors are registered and bound from generated console command registration.
    - metric snapshots are mapped through generated mappers.
    - script modules are registered through generated script module registry.
    - version/codename are read from generated `VersionUtils`.

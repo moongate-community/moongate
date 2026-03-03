@@ -5,7 +5,7 @@ namespace Moongate.Tests.Server.Support;
 
 public sealed class ConsoleUiSerilogSinkTestConsoleUiService : IConsoleUiService
 {
-    public string LastLine { get; private set; } = string.Empty;
+    public string LastLine { get; private set; }
 
     public LogEventLevel LastLevel { get; private set; }
 

@@ -131,4 +131,41 @@ public class UOItemEntityTests
             }
         );
     }
+
+    [Test]
+    public void CustomProperties_ShouldStoreTypedValues()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000310,
+            ItemId = 0x0EED
+        };
+
+        item.SetCustomInteger("uses_left", 12);
+        item.SetCustomBoolean("blessed", true);
+        item.SetCustomDouble("scale", 1.25d);
+        item.SetCustomString("sign_text", "Tommy's home");
+
+        var hasInteger = item.TryGetCustomInteger("uses_left", out var integerValue);
+        var hasBoolean = item.TryGetCustomBoolean("blessed", out var booleanValue);
+        var hasDouble = item.TryGetCustomDouble("scale", out var doubleValue);
+        var hasString = item.TryGetCustomString("sign_text", out var stringValue);
+        var wrongType = item.TryGetCustomInteger("sign_text", out _);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasInteger, Is.True);
+                Assert.That(integerValue, Is.EqualTo(12));
+                Assert.That(hasBoolean, Is.True);
+                Assert.That(booleanValue, Is.True);
+                Assert.That(hasDouble, Is.True);
+                Assert.That(doubleValue, Is.EqualTo(1.25d));
+                Assert.That(hasString, Is.True);
+                Assert.That(stringValue, Is.EqualTo("Tommy's home"));
+                Assert.That(wrongType, Is.False);
+                Assert.That(item.CustomProperties, Has.Count.EqualTo(4));
+            }
+        );
+    }
 }

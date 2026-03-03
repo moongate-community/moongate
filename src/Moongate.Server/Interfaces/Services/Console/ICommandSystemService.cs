@@ -49,6 +49,13 @@ public interface ICommandSystemService : IMoongateService
     IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs);
 
     /// <summary>
+    /// Gets registered command definitions.
+    /// </summary>
+    /// <returns>Registered command definitions.</returns>
+    IReadOnlyList<CommandDefinition> GetRegisteredCommands()
+        => throw new NotSupportedException("Command definition listing is not supported by this implementation.");
+
+    /// <summary>
     /// Registers one command or multiple aliases separated by <c>|</c>.
     /// </summary>
     /// <param name="commandName">Primary command name or aliases list.</param>

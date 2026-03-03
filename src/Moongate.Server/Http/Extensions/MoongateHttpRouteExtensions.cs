@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
+using Moongate.Server.Data.Version;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
@@ -53,6 +54,11 @@ internal static class MoongateHttpRouteExtensions
                    .Produces<string>(StatusCodes.Status200OK, "text/plain")
                    .Produces<string>(StatusCodes.Status404NotFound, "text/plain")
                    .Produces<string>(StatusCodes.Status503ServiceUnavailable, "text/plain");
+
+        systemGroup.MapGet("/api/version", HandleServerVersion)
+                   .WithName("ServerVersion")
+                   .WithSummary("Returns running server version metadata.")
+                   .Produces<MoongateHttpServerVersion>(StatusCodes.Status200OK, "application/json");
 
         if (context.JwtOptions.IsEnabled && context.AccountService is not null)
         {
@@ -374,6 +380,19 @@ internal static class MoongateHttpRouteExtensions
         var users = accounts.Select(MapAccountToHttpUser).ToList();
 
         return TypedResults.Ok((IReadOnlyList<MoongateHttpUser>)users);
+    }
+
+    private static IResult HandleServerVersion(CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        var response = new MoongateHttpServerVersion
+        {
+            Version = VersionUtils.Version,
+            Codename = VersionUtils.Codename
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpServerVersion);
     }
 
     private static IResult HandleHealth(CancellationToken cancellationToken)

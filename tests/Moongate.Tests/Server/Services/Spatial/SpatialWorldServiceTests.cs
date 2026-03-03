@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.Player;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
@@ -293,9 +294,11 @@ public sealed class SpatialWorldServiceTests
         service.AddOrUpdateItem(item, 1);
         var foundSameMap = service.GetNearbyItems(new(250, 260, 0), 3, 1);
         var foundOtherMap = service.GetNearbyItems(new(250, 260, 0), 3, 0);
+        var gameEvent = eventBus.Events.OfType<ItemAddedInSectorEvent>().Single();
 
         Assert.That(foundSameMap.Select(static value => value.Id), Contains.Item(item.Id));
         Assert.That(foundOtherMap, Is.Empty);
+        Assert.That(gameEvent.ItemId, Is.EqualTo(item.Id));
     }
 
     [Test]
@@ -354,6 +357,99 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public async Task BroadcastToPlayersAsync_ShouldEnqueuePacketForPlayersInRange()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = CreateService(sessions, eventBus, queue: queue);
+        var firstPlayer = CreateMobile(0x330, 500, 500, 0, true);
+        var secondPlayer = CreateMobile(0x331, 502, 503, 0, true);
+        var farPlayer = CreateMobile(0x332, 2000, 2000, 0, true);
+
+        service.AddOrUpdateMobile(firstPlayer);
+        service.AddOrUpdateMobile(secondPlayer);
+        service.AddOrUpdateMobile(farPlayer);
+
+        var firstSession = CreateSession(firstPlayer);
+        var secondSession = CreateSession(secondPlayer);
+        var farSession = CreateSession(farPlayer);
+        sessions.Add(firstSession);
+        sessions.Add(secondSession);
+        sessions.Add(farSession);
+
+        var recipients = await service.BroadcastToPlayersAsync(
+                             new ClientViewRangePacket(12),
+                             0,
+                             new(500, 500, 0),
+                             8,
+                             firstSession.SessionId
+                         );
+
+        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
+        while (queue.TryDequeue(out var queued))
+        {
+            packets.Add(queued);
+        }
+        var sessionIds = packets.Select(static packet => packet.SessionId).ToArray();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(recipients, Is.EqualTo(1));
+                Assert.That(sessionIds, Does.Contain(secondSession.SessionId));
+                Assert.That(sessionIds, Does.Not.Contain(firstSession.SessionId));
+                Assert.That(sessionIds, Does.Not.Contain(farSession.SessionId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task BroadcastToPlayersAsync_WithoutRange_ShouldUseSectorEnterSyncRadius()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            spatialConfig: new MoongateSpatialConfig { SectorEnterSyncRadius = 1 },
+            queue: queue
+        );
+        var nearPlayer = CreateMobile(0x333, 500, 500, 0, true);
+        var farPlayer = CreateMobile(0x334, 530, 500, 0, true);
+
+        service.AddOrUpdateMobile(nearPlayer);
+        service.AddOrUpdateMobile(farPlayer);
+
+        var nearSession = CreateSession(nearPlayer);
+        var farSession = CreateSession(farPlayer);
+        sessions.Add(nearSession);
+        sessions.Add(farSession);
+
+        var recipients = await service.BroadcastToPlayersAsync(
+                             new ClientViewRangePacket(12),
+                             0,
+                             new(500, 500, 0)
+                         );
+
+        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
+        while (queue.TryDequeue(out var queued))
+        {
+            packets.Add(queued);
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(recipients, Is.EqualTo(1));
+                Assert.That(packets.Select(static packet => packet.SessionId), Contains.Item(nearSession.SessionId));
+                Assert.That(packets.Select(static packet => packet.SessionId), Does.Not.Contain(farSession.SessionId));
+            }
+        );
+    }
+
+    [Test]
     public void GetPlayersInSector_ShouldReturnOnlyPlayersInTargetSector()
     {
         var sessions = new FakeGameNetworkSessionService();
@@ -378,6 +474,57 @@ public sealed class SpatialWorldServiceTests
                 Assert.That(players.Select(static player => player.Id), Contains.Item(playerInSector.Id));
                 Assert.That(players.Select(static player => player.Id), Does.Not.Contain(npcInSector.Id));
                 Assert.That(players.Select(static player => player.Id), Does.Not.Contain(playerOtherSector.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void GetMobilesInSectorRange_ShouldReturnAllMobilesInSectorRadius()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        var center = CreateMobile(0x320, 128, 128, 0, true); // sector (8,8)
+        var nearbyNpc = CreateMobile(0x321, 144, 128, 0, false); // sector (9,8)
+        var outside = CreateMobile(0x322, 176, 128, 0, false); // sector (11,8)
+
+        service.AddOrUpdateMobile(center);
+        service.AddOrUpdateMobile(nearbyNpc);
+        service.AddOrUpdateMobile(outside);
+
+        var result = service.GetMobilesInSectorRange(0, 8, 8, 1);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Select(static mobile => mobile.Id), Contains.Item(center.Id));
+                Assert.That(result.Select(static mobile => mobile.Id), Contains.Item(nearbyNpc.Id));
+                Assert.That(result.Select(static mobile => mobile.Id), Does.Not.Contain(outside.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void GetMobilesInSectorRange_WithoutRadius_ShouldUsePlayerDefaultRadius()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        var includedAtRadiusTwo = CreateMobile(0x323, 160, 128, 0, false); // sector (10,8), delta 2
+        var outsideRadiusTwo = CreateMobile(0x324, 176, 128, 0, false); // sector (11,8), delta 3
+
+        service.AddOrUpdateMobile(includedAtRadiusTwo);
+        service.AddOrUpdateMobile(outsideRadiusTwo);
+
+        var result = service.GetMobilesInSectorRange(0, 8, 8);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Select(static mobile => mobile.Id), Contains.Item(includedAtRadiusTwo.Id));
+                Assert.That(result.Select(static mobile => mobile.Id), Does.Not.Contain(outsideRadiusTwo.Id));
             }
         );
     }

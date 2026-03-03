@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Movement;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Session;
@@ -454,6 +455,15 @@ public class MovementHandlerTests
     {
         public List<UOMobileEntity> GetNearbyMobilesResult { get; } = [];
 
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+            => throw new NotImplementedException();
+
         public void AddOrUpdateItem(UOItemEntity item, int mapId)
             => throw new NotImplementedException();
 
@@ -479,6 +489,9 @@ public class MovementHandlerTests
             => throw new NotImplementedException();
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+            => throw new NotImplementedException();
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
             => throw new NotImplementedException();
 
         public List<MapSector> GetActiveSectors()

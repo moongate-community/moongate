@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
@@ -29,7 +30,7 @@ namespace Moongate.Server.Handlers;
     RegisterPacketHandler(PacketDefinition.SingleClickPacket),
     RegisterPacketHandler(PacketDefinition.DoubleClickPacket)
 ]
-public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent>
+public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent>, IGameEventListener<ItemAddedInSectorEvent>
 {
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
@@ -150,8 +151,6 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
             )
         );
 
-
-
         var item = await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
 
         if (item is null)
@@ -168,7 +167,6 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
                 Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
             }
         }
-
 
         return true;
     }
@@ -211,6 +209,7 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
             destinationContainer.Amount += item.Amount;
             await _itemService.UpsertItemAsync(destinationContainer);
             await _itemService.DeleteItemAsync(item.Id);
+
             if (destinationContainer.ParentContainerId != Serial.Zero)
             {
                 containerToRefreshId = destinationContainer.ParentContainerId;
@@ -470,4 +469,24 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
 
     private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
         => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => Enqueue(sessionId, packet));
+
+    public async Task HandleAsync(ItemAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        var players = _spatialWorldService.GetPlayersInSector(gameEvent.MapId, gameEvent.SectorX, gameEvent.SectorY);
+
+        foreach (var player in players)
+        {
+            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
+            {
+                var item = await _itemService.GetItemAsync(gameEvent.ItemId);
+
+                if (item is null)
+                {
+                    continue;
+                }
+
+                Enqueue(session, new ObjectInformationPacket(item));
+            }
+        }
+    }
 }

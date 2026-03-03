@@ -1,4 +1,6 @@
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.UO.Data.Geometry;
 using Serilog;
@@ -10,10 +12,45 @@ namespace Moongate.Server.Services.World;
 /// </summary>
 public sealed class DoorGeneratorBuilder : IWorldGenerator
 {
-    private static readonly HashSet<int> EastFrames = [0x0007, 0x000A, 0x001A, 0x001C, 0x001E, 0x0037, 0x0058];
-    private static readonly HashSet<int> NorthFrames = [0x0006, 0x0008, 0x000D, 0x001A, 0x001B, 0x0020, 0x003A];
-    private static readonly HashSet<int> SouthFrames = [0x0006, 0x0008, 0x000B, 0x001A, 0x001B, 0x001F, 0x0038];
-    private static readonly HashSet<int> WestFrames = [0x0007, 0x000C, 0x001A, 0x001C, 0x0021, 0x0039, 0x0058];
+    private static readonly HashSet<int> EastFrames =
+    [
+        0x0007, 0x000A, 0x001A, 0x001C, 0x001E, 0x0037, 0x0058, 0x0059, 0x005C, 0x005E, 0x0080, 0x0081, 0x0082,
+        0x0084, 0x0090, 0x0092, 0x0095, 0x0097, 0x0098, 0x00A6, 0x00A8, 0x00AB, 0x00AE, 0x00AF, 0x00B2, 0x00C7,
+        0x00C8, 0x00EA, 0x00F8, 0x00F9, 0x00FC, 0x00FE, 0x00FF, 0x0102, 0x0104, 0x0105, 0x0108, 0x0127, 0x0128,
+        0x012B, 0x012C, 0x012E, 0x0130, 0x0132, 0x0133, 0x0135, 0x0136, 0x0138, 0x013A, 0x014C, 0x014D, 0x014F,
+        0x0150, 0x0152, 0x0154, 0x0156, 0x0158, 0x0159, 0x015C, 0x015E, 0x0160, 0x0163, 0x01CF, 0x01D0, 0x01D3,
+        0x01FF, 0x0203, 0x0205, 0x0207, 0x0209
+    ];
+
+    private static readonly HashSet<int> NorthFrames =
+    [
+        0x0006, 0x0008, 0x000D, 0x001A, 0x001B, 0x0020, 0x003A, 0x0057, 0x0059, 0x005B, 0x005D, 0x0080, 0x0081,
+        0x0082, 0x0084, 0x0090, 0x0091, 0x0094, 0x0096, 0x0099, 0x00A6, 0x00A7, 0x00AC, 0x00AE, 0x00B0, 0x00C7,
+        0x00C9, 0x00F8, 0x00FA, 0x00FD, 0x00FE, 0x0100, 0x0103, 0x0104, 0x0106, 0x0109, 0x0127, 0x0129, 0x012B,
+        0x012D, 0x012F, 0x0131, 0x0132, 0x0134, 0x0135, 0x0137, 0x0139, 0x013B, 0x014C, 0x014E, 0x014F, 0x0151,
+        0x0153, 0x0155, 0x0157, 0x0158, 0x015A, 0x015D, 0x015E, 0x015F, 0x0162, 0x01CF, 0x01D1, 0x01D4, 0x01FF,
+        0x0201, 0x0204, 0x0208, 0x020A
+    ];
+
+    private static readonly HashSet<int> SouthFrames =
+    [
+        0x0006, 0x0008, 0x000B, 0x001A, 0x001B, 0x001F, 0x0038, 0x0057, 0x0059, 0x005B, 0x005D, 0x0080, 0x0081,
+        0x0082, 0x0084, 0x0090, 0x0091, 0x0094, 0x0096, 0x0099, 0x00A6, 0x00A7, 0x00AA, 0x00AE, 0x00B0, 0x00B3,
+        0x00C7, 0x00C9, 0x00F8, 0x00FA, 0x00FD, 0x00FE, 0x0100, 0x0103, 0x0104, 0x0106, 0x0109, 0x0127, 0x0129,
+        0x012B, 0x012D, 0x012F, 0x0131, 0x0132, 0x0134, 0x0135, 0x0137, 0x0139, 0x013B, 0x014C, 0x014E, 0x014F,
+        0x0151, 0x0153, 0x0155, 0x0157, 0x0158, 0x015A, 0x015D, 0x015E, 0x015F, 0x0162, 0x01CF, 0x01D1, 0x01D4,
+        0x01FF, 0x0204, 0x0206, 0x0208, 0x020A
+    ];
+
+    private static readonly HashSet<int> WestFrames =
+    [
+        0x0007, 0x000C, 0x001A, 0x001C, 0x0021, 0x0039, 0x0058, 0x0059, 0x005C, 0x005E, 0x0080, 0x0081, 0x0082,
+        0x0084, 0x0090, 0x0092, 0x0095, 0x0097, 0x0098, 0x00A6, 0x00A8, 0x00AD, 0x00AE, 0x00AF, 0x00B5, 0x00C7,
+        0x00C8, 0x00EA, 0x00F8, 0x00F9, 0x00FC, 0x00FE, 0x00FF, 0x0102, 0x0104, 0x0105, 0x0108, 0x0127, 0x0128,
+        0x012C, 0x012E, 0x0130, 0x0132, 0x0133, 0x0135, 0x0136, 0x0138, 0x013A, 0x014C, 0x014D, 0x014F, 0x0150,
+        0x0152, 0x0154, 0x0156, 0x0158, 0x0159, 0x015C, 0x015E, 0x0160, 0x0163, 0x01CF, 0x01D0, 0x01D3, 0x01FF,
+        0x0200, 0x0203, 0x0207, 0x0209
+    ];
 
     private static readonly IReadOnlyList<DoorGenerationMapSpec> DefaultMapSpecs =
     [
@@ -66,15 +103,30 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     private readonly ILogger _logger = Log.ForContext<DoorGeneratorBuilder>();
     private readonly IReadOnlyList<DoorGenerationMapSpec> _mapSpecs;
     private readonly IMovementTileQueryService _tileQueryService;
+    private readonly ISpatialWorldService? _spatialWorldService;
+    private readonly IItemService? _itemService;
 
     public DoorGeneratorBuilder(
         IMovementTileQueryService tileQueryService,
+        ISpatialWorldService spatialWorldService,
+        IItemService itemService,
         IReadOnlyList<DoorGenerationMapSpec>? mapSpecs = null
     )
     {
         _tileQueryService = tileQueryService;
-        _mapSpecs = mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
+        _spatialWorldService = spatialWorldService;
+        _itemService = itemService;
+        _mapSpecs = mapSpecs is null || mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
     }
+
+    // public DoorGeneratorBuilder(
+    //     IMovementTileQueryService tileQueryService,
+    //     IReadOnlyList<DoorGenerationMapSpec>? mapSpecs
+    // )
+    // {
+    //     _tileQueryService = tileQueryService;
+    //     _mapSpecs = mapSpecs is null || mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
+    // }
 
     public string Name => "doors";
 
@@ -86,7 +138,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         Array.Empty<DoorGenerationPlacementRecord>();
 
     /// <inheritdoc />
-    public Task GenerateAsync(Action<string>? logCallback = null, CancellationToken cancellationToken = default)
+    public async Task GenerateAsync(Action<string>? logCallback = null, CancellationToken cancellationToken = default)
     {
         logCallback?.Invoke("Door generation started.");
         var mapCounts = new Dictionary<int, int>();
@@ -131,9 +183,74 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
         _logger.Information("Door generation analysis completed. Total candidates: {DoorCount}", total);
         logCallback?.Invoke($"Door generation completed. Total candidates: {total}.");
+
+        if (_itemService is null || _spatialWorldService is null)
+        {
+            return;
+        }
+
+        await SpawnGeneratedDoorsAsync(placements);
+
         // TODO: Persist generated scripted door items when door runtime behavior is implemented in Lua.
 
-        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Generates and spawns door candidates around a center point within a square radius.
+    /// </summary>
+    /// <param name="mapId">Target map id.</param>
+    /// <param name="center">Center location.</param>
+    /// <param name="radius">Radius in tiles.</param>
+    /// <param name="logCallback">Optional progress callback.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Number of spawned door candidates.</returns>
+    public async Task<int> GenerateAroundAsync(
+        int mapId,
+        Point3D center,
+        int radius,
+        Action<string>? logCallback = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
+        {
+            logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
+
+            return 0;
+        }
+
+        var clampedRadius = Math.Max(1, radius);
+        var startX = Math.Max(0, center.X - clampedRadius);
+        var startY = Math.Max(0, center.Y - clampedRadius);
+        var endX = Math.Min(width, center.X + clampedRadius + 1);
+        var endY = Math.Min(height, center.Y + clampedRadius + 1);
+
+        var region = new Rectangle2D(new Point2D(startX, startY), new Point2D(endX, endY));
+        var placements = new List<DoorGenerationPlacementRecord>();
+        var occupiedDoorTiles = new HashSet<(int X, int Y, int Z)>();
+
+        logCallback?.Invoke(
+            $"Scanning doors around player on map {mapId} in area [{startX},{startY}] -> [{endX - 1},{endY - 1}] (radius={clampedRadius})."
+        );
+
+        var generated = AnalyzeRegion(
+            mapId,
+            region,
+            width,
+            height,
+            occupiedDoorTiles,
+            placements,
+            cancellationToken
+        );
+
+        LastGeneratedDoorCount = generated;
+        LastGeneratedPerMap = new Dictionary<int, int> { [mapId] = generated };
+        LastGeneratedDoors = placements;
+
+        await SpawnGeneratedDoorsAsync(placements);
+        logCallback?.Invoke($"Door generation around player completed. Candidates: {generated}.");
+
+        return generated;
     }
 
     private int AnalyzeRegion(
@@ -184,7 +301,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
                         }
                         else if (TryFindFrameAt(mapId, x + 3, y, z, mapWidth, mapHeight, EastFrames, out newZ))
                         {
-                            generated += TryAddCandidate(
+                            generated += TryAddPairCandidates(
                                 mapId,
                                 mapWidth,
                                 mapHeight,
@@ -193,14 +310,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
                                 x + 1,
                                 y,
                                 Math.Min(z, newZ),
-                                DoorGenerationFacing.WestCW
-                            );
-                            generated += TryAddCandidate(
-                                mapId,
-                                mapWidth,
-                                mapHeight,
-                                occupiedDoorTiles,
-                                placements,
+                                DoorGenerationFacing.WestCW,
                                 x + 2,
                                 y,
                                 Math.Min(z, newZ),
@@ -226,7 +336,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
                         }
                         else if (TryFindFrameAt(mapId, x, y + 3, z, mapWidth, mapHeight, SouthFrames, out newZ))
                         {
-                            generated += TryAddCandidate(
+                            generated += TryAddPairCandidates(
                                 mapId,
                                 mapWidth,
                                 mapHeight,
@@ -235,14 +345,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
                                 x,
                                 y + 1,
                                 Math.Min(z, newZ),
-                                DoorGenerationFacing.NorthCCW
-                            );
-                            generated += TryAddCandidate(
-                                mapId,
-                                mapWidth,
-                                mapHeight,
-                                occupiedDoorTiles,
-                                placements,
+                                DoorGenerationFacing.NorthCCW,
                                 x,
                                 y + 2,
                                 Math.Min(z, newZ),
@@ -298,6 +401,27 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     private static bool IsInsideMap(int x, int y, int mapWidth, int mapHeight)
         => x >= 0 && y >= 0 && x < mapWidth && y < mapHeight;
 
+    private async Task SpawnGeneratedDoorsAsync(IReadOnlyList<DoorGenerationPlacementRecord> placements)
+    {
+        if (_itemService is null || _spatialWorldService is null)
+        {
+            return;
+        }
+
+        foreach (var placement in placements)
+        {
+            var generatedDoor = await _itemService.SpawnFromTemplateAsync("door");
+
+            generatedDoor.Location = placement.Location;
+            generatedDoor.MapId = placement.MapId;
+            generatedDoor.Direction = placement.Facing.ToDirectionType();
+            generatedDoor.ItemId = placement.Facing.ToItemId(generatedDoor.ItemId);
+            await _itemService.UpsertItemAsync(generatedDoor);
+
+            _spatialWorldService.AddOrUpdateItem(generatedDoor, placement.MapId);
+        }
+    }
+
     private int TryAddCandidate(
         int mapId,
         int mapWidth,
@@ -310,19 +434,100 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         DoorGenerationFacing facing
     )
     {
-        if (!_tileQueryService.CanFit(mapId, x, y, z))
+        if (!CanAddCandidate(mapId, mapWidth, mapHeight, occupiedDoorTiles, x, y, z))
         {
             return 0;
         }
 
-        if (!occupiedDoorTiles.Add((x, y, z)))
-        {
-            return 0;
-        }
-
+        occupiedDoorTiles.Add((x, y, z));
         placements.Add(new(mapId, new(x, y, z), facing));
 
         return 1;
+    }
+
+    private int TryAddPairCandidates(
+        int mapId,
+        int mapWidth,
+        int mapHeight,
+        HashSet<(int X, int Y, int Z)> occupiedDoorTiles,
+        List<DoorGenerationPlacementRecord> placements,
+        int firstX,
+        int firstY,
+        int firstZ,
+        DoorGenerationFacing firstFacing,
+        int secondX,
+        int secondY,
+        int secondZ,
+        DoorGenerationFacing secondFacing
+    )
+    {
+        if (!CanAddCandidate(mapId, mapWidth, mapHeight, occupiedDoorTiles, firstX, firstY, firstZ) ||
+            !CanAddCandidate(mapId, mapWidth, mapHeight, occupiedDoorTiles, secondX, secondY, secondZ))
+        {
+            return 0;
+        }
+
+        occupiedDoorTiles.Add((firstX, firstY, firstZ));
+        placements.Add(new(mapId, new(firstX, firstY, firstZ), firstFacing));
+
+        occupiedDoorTiles.Add((secondX, secondY, secondZ));
+        placements.Add(new(mapId, new(secondX, secondY, secondZ), secondFacing));
+
+        return 2;
+    }
+
+    private bool CanAddCandidate(
+        int mapId,
+        int mapWidth,
+        int mapHeight,
+        HashSet<(int X, int Y, int Z)> occupiedDoorTiles,
+        int x,
+        int y,
+        int z
+    )
+    {
+        if (!IsInsideMap(x, y, mapWidth, mapHeight) ||
+            IsExcludedDoorLocation(mapId, x, y) ||
+            !_tileQueryService.CanFit(mapId, x, y, z) ||
+            occupiedDoorTiles.Contains((x, y, z)))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool IsExcludedDoorLocation(int mapId, int x, int y)
+    {
+        if (y == 1743 && x is >= 1343 and <= 1344)
+        {
+            return true;
+        }
+
+        if (y == 1679 && x is >= 1392 and <= 1393)
+        {
+            return true;
+        }
+
+        if (x == 1320 && y is >= 1618 and <= 1640)
+        {
+            return true;
+        }
+
+        if (x == 1383 && y is >= 1642 and <= 1643)
+        {
+            return true;
+        }
+
+        // Ilshenar ruins exclusion from ModernUO.
+        if (mapId == 2 &&
+            ((x is >= 644 and <= 670 && y is >= 925 and <= 941) ||
+             (x == 985 && y == 994)))
+        {
+            return true;
+        }
+
+        return false;
     }
 }
 

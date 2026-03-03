@@ -11,5 +11,6 @@ public enum DirectoryType
     Save,
     Images,
     Logs,
-    Cache
+    Cache,
+    EmailTemplates
 }

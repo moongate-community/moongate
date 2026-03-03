@@ -6,6 +6,7 @@
     <Folder Name="/src/">
         <Project Path="src/Moongate.Abstractions/Moongate.Abstractions.csproj"/>
         <Project Path="src/Moongate.Core/Moongate.Core.csproj"/>
+        <Project Path="src/Moongate.Email/Moongate.Email.csproj"/>
         <Project Path="src/Moongate.Generators/Moongate.Generators.csproj"/>
         <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj"/>
         <Project Path="src/Moongate.Network/Moongate.Network.csproj"/>

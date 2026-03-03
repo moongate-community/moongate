@@ -1,6 +1,11 @@
+using Moongate.Server.Data.Items;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Services.World;
+using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 
@@ -113,12 +118,74 @@ public class DoorGeneratorBuilderTests
     )
     {
         var tileQuery = new FakeMovementTileQueryService(staticTiles, width, height);
+        var spatial = new RegionDataLoaderTestSpatialWorldService();
+        var itemService = new FakeDoorGeneratorItemService();
         var specs = new List<DoorGenerationMapSpec>
         {
             new(1, [new Rectangle2D(0, 0, 4, 4)])
         };
 
-        return new(tileQuery, specs);
+        return new(tileQuery, spatial, itemService, specs);
+    }
+
+    private sealed class FakeDoorGeneratorItemService : IItemService
+    {
+        public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<Serial> CreateItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => Task.FromResult(
+                new UOItemEntity
+                {
+                    Id = (Serial)0x40000001,
+                    ItemId = 0x0675,
+                    Location = Point3D.Zero
+                }
+            );
+
+        public Task<bool> DeleteItemAsync(Serial itemId)
+            => throw new NotSupportedException();
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
+            => throw new NotSupportedException();
+
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
+            => throw new NotSupportedException();
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+            => throw new NotSupportedException();
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => throw new NotSupportedException();
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task UpsertItemAsync(UOItemEntity item)
+            => Task.CompletedTask;
+
+        public Task UpsertItemsAsync(params UOItemEntity[] items)
+            => Task.CompletedTask;
     }
 
     private sealed class FakeMovementTileQueryService : IMovementTileQueryService

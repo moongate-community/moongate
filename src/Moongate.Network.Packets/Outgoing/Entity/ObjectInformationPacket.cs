@@ -9,10 +9,10 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
-[PacketHandler(0xF3, PacketSizing.Fixed, Length = 24, Description = "Object Information (SA)")]
+[PacketHandler(0xF3, PacketSizing.Fixed, Length = 26, Description = "Object Information (SA/HS)")]
 
 /// <summary>
-/// Represents Object Information (SA) packet (0xF3).
+/// Represents Object Information (SA/HS) packet (0xF3).
 /// </summary>
 public class ObjectInformationPacket : BaseGameNetworkPacket
 {
@@ -42,8 +42,13 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
 
     public ObjectInfoFlags Flags { get; set; }
 
+    /// <summary>
+    /// High Seas trailing value (sent as 0x0000).
+    /// </summary>
+    public ushort UnknownHs { get; set; }
+
     public ObjectInformationPacket()
-        : base(0xF3, 24) { }
+        : base(0xF3, 26) { }
 
     public ObjectInformationPacket(
         UOItemEntity item,
@@ -105,11 +110,12 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
         writer.Write(Layer);
         writer.Write(Color);
         writer.Write((byte)Flags);
+        writer.Write(UnknownHs);
     }
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        if (reader.Remaining != 23)
+        if (reader.Remaining is not (23 or 25))
         {
             return false;
         }
@@ -133,6 +139,7 @@ public class ObjectInformationPacket : BaseGameNetworkPacket
         Layer = reader.ReadByte();
         Color = reader.ReadUInt16();
         Flags = (ObjectInfoFlags)reader.ReadByte();
+        UnknownHs = reader.Remaining >= 2 ? reader.ReadUInt16() : (ushort)0;
 
         return reader.Remaining == 0;
     }

@@ -22,6 +22,7 @@ public static class AddBootstrapInstancesExtension
     )
     {
         container.RegisterInstance(config);
+        container.RegisterInstance(config.Email);
         container.RegisterInstance(config.Metrics);
         container.RegisterInstance(directoriesConfig);
         container.RegisterInstance(timerServiceConfig);

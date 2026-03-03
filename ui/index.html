@@ -1,8 +1,29 @@
 <!doctype html>
 <html lang="en" class="dark">
   <head>
+    <script>
+      (function() {
+        var theme = 'dark';
+        try {
+          var persisted = localStorage.getItem('moongate-theme');
+          if (persisted) {
+            var parsed = JSON.parse(persisted);
+            if (parsed && parsed.state && parsed.state.theme === 'light') {
+              theme = 'light';
+            }
+          }
+        } catch (_) {}
+        document.documentElement.classList.remove('dark', 'light');
+        document.documentElement.classList.add(theme);
+      })();
+    </script>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" href="/images/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+    <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png" />
+    <link rel="manifest" href="/images/site.webmanifest" />
+    <meta name="theme-color" content="#0c1118" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moongate Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />

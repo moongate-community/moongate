@@ -174,6 +174,48 @@ internal sealed class SpatialEntityIndex
         }
     }
 
+    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
+    {
+        var clampedRadius = Math.Max(0, radius);
+        var sectors = GetSectorCoordinatesInRadius(centerSectorX, centerSectorY, clampedRadius);
+
+        foreach (var (x, y) in sectors)
+        {
+            EnsureSectorLoaded(mapId, x, y);
+        }
+
+        lock (_sync)
+        {
+            if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
+            {
+                return [];
+            }
+
+            var results = new List<UOMobileEntity>();
+            var seen = new HashSet<Serial>();
+
+            foreach (var (x, y) in sectors)
+            {
+                var sector = mapIndex.GetSector(x, y);
+
+                if (sector is null)
+                {
+                    continue;
+                }
+
+                foreach (var mobile in sector.GetMobiles())
+                {
+                    if (seen.Add(mobile.Id))
+                    {
+                        results.Add(mobile);
+                    }
+                }
+            }
+
+            return results;
+        }
+    }
+
     public MapSector? GetSectorByLocation(int mapId, Point3D location)
     {
         var (sectorX, sectorY) = GetSectorCoordinates(location);
@@ -418,15 +460,16 @@ internal sealed class SpatialEntityIndex
         cancellationToken.ThrowIfCancellationRequested();
 
         var mobiles = await _mobileService.GetPersistentMobilesInSectorAsync(
-            mapId,
-            sectorX,
-            sectorY,
-            cancellationToken
-        );
+                          mapId,
+                          sectorX,
+                          sectorY,
+                          cancellationToken
+                      );
 
         foreach (var mobile in mobiles)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             if (mobile.IsPlayer)
             {
                 continue;
@@ -490,6 +533,21 @@ internal sealed class SpatialEntityIndex
         for (var x = minX; x <= maxX; x++)
         {
             for (var y = minY; y <= maxY; y++)
+            {
+                sectors.Add((x, y));
+            }
+        }
+
+        return sectors;
+    }
+
+    private static List<(int X, int Y)> GetSectorCoordinatesInRadius(int centerSectorX, int centerSectorY, int radius)
+    {
+        var sectors = new List<(int X, int Y)>();
+
+        for (var x = centerSectorX - radius; x <= centerSectorX + radius; x++)
+        {
+            for (var y = centerSectorY - radius; y <= centerSectorY + radius; y++)
             {
                 sectors.Add((x, y));
             }
