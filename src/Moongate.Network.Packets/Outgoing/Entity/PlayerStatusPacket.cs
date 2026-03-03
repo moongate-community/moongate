@@ -23,7 +23,7 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
 
     public UOMobileEntity? Mobile { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     public Serial Serial { get; set; }
 

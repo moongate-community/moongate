@@ -108,7 +108,7 @@ public class BookPagesPacket : BaseGameNetworkPacket
 
     private static bool TryReadUtf8NullTerminated(ref SpanReader reader, out string value)
     {
-        value = string.Empty;
+        value = "";
 
         if (reader.Remaining <= 0)
         {

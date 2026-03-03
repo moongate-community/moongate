@@ -30,7 +30,7 @@ public class UnicodeSpeechPacket : BaseGameNetworkPacket
     {
         Keywords = Array.Empty<int>();
         Language = "ENU";
-        Text = string.Empty;
+        Text = "";
     }
 
     protected override bool ParsePayload(ref SpanReader reader)
@@ -54,7 +54,7 @@ public class UnicodeSpeechPacket : BaseGameNetworkPacket
             Hue = 0;
             Font = 0;
             Language = "ENU";
-            Text = string.Empty;
+            Text = "";
 
             return true;
         }
@@ -99,7 +99,7 @@ public class UnicodeSpeechPacket : BaseGameNetworkPacket
 
     private static bool TryReadEncodedSpeech(ref SpanReader reader, out string text, out int[] keywords)
     {
-        text = string.Empty;
+        text = "";
         keywords = Array.Empty<int>();
 
         if (reader.Remaining < 2)

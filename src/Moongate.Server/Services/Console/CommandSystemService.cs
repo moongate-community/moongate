@@ -248,7 +248,7 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             return [];
         }
 
-        var prefix = string.Empty;
+        var prefix = "";
         var stableArgs = arguments;
 
         if (!endsWithWhitespace && arguments.Length > 0)

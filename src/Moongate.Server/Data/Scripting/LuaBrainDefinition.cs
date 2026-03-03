@@ -8,10 +8,10 @@ public sealed class LuaBrainDefinition
     /// <summary>
     /// Logical brain id referenced by mobile templates.
     /// </summary>
-    public string BrainId { get; set; } = string.Empty;
+    public string BrainId { get; set; }
 
     /// <summary>
     /// Script file path, for example <c>scripts/ai/orc_warrior.lua</c>.
     /// </summary>
-    public string ScriptPath { get; set; } = string.Empty;
+    public string ScriptPath { get; set; }
 }

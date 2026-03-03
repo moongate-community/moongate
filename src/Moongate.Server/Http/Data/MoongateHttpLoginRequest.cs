@@ -5,7 +5,7 @@ namespace Moongate.Server.Http.Data;
 /// </summary>
 public sealed class MoongateHttpLoginRequest
 {
-    public string Username { get; init; } = string.Empty;
+    public string Username { get; init; }
 
-    public string Password { get; init; } = string.Empty;
+    public string Password { get; init; }
 }

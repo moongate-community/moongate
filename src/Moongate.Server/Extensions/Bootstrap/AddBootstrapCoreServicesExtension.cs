@@ -1,6 +1,8 @@
 using DryIoc;
+using Moongate.Abstractions.Interfaces.Services.Email;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -29,6 +31,10 @@ using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.World;
+using Moongate.Email.Data;
+using Moongate.Email.Services;
+using Moongate.Core.Data.Directories;
+using Moongate.Core.Types;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -81,6 +87,48 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);
         container.Register<IWorldGenerator, ItemsImageBuilder>(Reuse.Singleton);
+        container.RegisterDelegate(
+            resolver =>
+            {
+                var config = resolver.Resolve<MoongateConfig>();
+                var directoriesConfig = resolver.Resolve<DirectoriesConfig>();
+                var templatesPath = directoriesConfig[DirectoryType.EmailTemplates];
+
+                return new EmailTemplateOptions
+                {
+                    TemplatesRootPath = templatesPath,
+                    FallbackLocale = string.IsNullOrWhiteSpace(config.Email.FallbackLocale)
+                                         ? "en"
+                                         : config.Email.FallbackLocale
+                };
+            },
+            Reuse.Singleton
+        );
+        container.Register<IEmailTemplateService, ScribanEmailTemplateService>(Reuse.Singleton);
+        container.RegisterDelegate<IEmailSender>(
+            resolver =>
+            {
+                var config = resolver.Resolve<MoongateConfig>();
+
+                if (!config.Email.IsEnabled)
+                {
+                    return new NoOpEmailSender();
+                }
+
+                var smtpOptions = new SmtpEmailSenderOptions
+                {
+                    Host = config.Email.Smtp.Host,
+                    Port = config.Email.Smtp.Port,
+                    UseSsl = config.Email.Smtp.UseSsl,
+                    Username = config.Email.Smtp.Username,
+                    Password = config.Email.Smtp.Password
+                };
+
+                return new SmtpEmailSender(smtpOptions);
+            },
+            Reuse.Singleton
+        );
+        container.Register<IEmailService, EmailService>(Reuse.Singleton);
 
         return container;
     }

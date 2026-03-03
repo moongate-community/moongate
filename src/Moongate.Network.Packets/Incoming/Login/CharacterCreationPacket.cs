@@ -18,7 +18,7 @@ namespace Moongate.Network.Packets.Incoming.Login;
 public class CharacterCreationPacket : BaseGameNetworkPacket
 {
     public int Slot { get; private set; }
-    public string CharacterName { get; private set; } = string.Empty;
+    public string CharacterName { get; private set; }
     public ClientFlags ClientFlags { get; private set; }
     public int ProfessionId { get; private set; }
     public ProfessionInfo Profession { get; private set; } = new();

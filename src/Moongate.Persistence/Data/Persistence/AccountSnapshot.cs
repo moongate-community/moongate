@@ -20,6 +20,10 @@ public sealed partial class AccountSnapshot
 
     public bool IsLocked { get; set; }
 
+    public string? ActivationId { get; set; }
+
+    public string? RecoveryCode { get; set; }
+
     public long CreatedUtcTicks { get; set; }
 
     public long LastLoginUtcTicks { get; set; }

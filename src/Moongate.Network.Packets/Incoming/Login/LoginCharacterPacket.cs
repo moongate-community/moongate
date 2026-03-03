@@ -13,7 +13,7 @@ namespace Moongate.Network.Packets.Incoming.Login;
 /// </summary>
 public class LoginCharacterPacket : BaseGameNetworkPacket
 {
-    public string CharacterName { get; set; } = string.Empty;
+    public string CharacterName { get; set; }
 
     public uint ClientIp { get; set; }
 

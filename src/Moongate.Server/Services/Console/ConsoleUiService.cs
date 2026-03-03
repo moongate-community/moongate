@@ -17,7 +17,7 @@ public sealed class ConsoleUiService : IConsoleUiService
 
     private readonly Lock _sync = new();
 
-    private string _input = string.Empty;
+    private string _input = "";
 
     public ConsoleUiService()
     {
@@ -41,7 +41,7 @@ public sealed class ConsoleUiService : IConsoleUiService
         lock (_sync)
         {
             IsInputLocked = true;
-            _input = string.Empty;
+            _input = "";
             RenderPromptUnsafe();
         }
     }

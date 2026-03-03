@@ -28,8 +28,8 @@ public class BookHeaderNewPacket : BaseGameNetworkPacket
     public BookHeaderNewPacket()
         : base(0xD4)
     {
-        Title = string.Empty;
-        Author = string.Empty;
+        Title = "";
+        Author = "";
     }
 
     public override void Write(ref SpanWriter writer)
@@ -102,7 +102,7 @@ public class BookHeaderNewPacket : BaseGameNetworkPacket
 
     private static bool TryReadStringField(ref SpanReader reader, out string value)
     {
-        value = string.Empty;
+        value = "";
 
         if (reader.Remaining < 2)
         {

@@ -20,7 +20,7 @@ public sealed class GenericGumpPacket : BaseGameNetworkPacket
 
     public uint Y { get; set; }
 
-    public string Layout { get; set; } = string.Empty;
+    public string Layout { get; set; }
 
     public List<string> TextLines { get; } = [];
 

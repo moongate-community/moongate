@@ -28,4 +28,6 @@ public class MoongateConfig
     public MoongatePersistenceConfig Persistence { get; set; } = new();
 
     public MoongateSpatialConfig Spatial { get; set; } = new();
+
+    public MoongateEmailConfig Email { get; set; } = new();
 }

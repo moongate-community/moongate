@@ -7,7 +7,7 @@ public sealed class MoongateHttpJwtOptions
 {
     public bool IsEnabled { get; init; } = false;
 
-    public string SigningKey { get; init; } = string.Empty;
+    public string SigningKey { get; init; }
 
     public string Issuer { get; init; } = "moongate-http";
 

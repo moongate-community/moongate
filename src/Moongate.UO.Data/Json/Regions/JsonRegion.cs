@@ -16,14 +16,14 @@ public class JsonRegion
     public int Id { get; set; }
 
     [JsonPropertyName("$type")]
-    public string Type { get; set; } = string.Empty;
+    public string Type { get; set; }
 
-    public string Map { get; set; } = string.Empty;
+    public string Map { get; set; }
 
     [JsonIgnore]
     public int MapId => RegionMapIdResolver.Resolve(Map);
 
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
     public int Priority { get; set; }
 
@@ -91,9 +91,9 @@ public sealed class JsonJailRegion : JsonRegion { }
 /// </summary>
 public sealed class JsonRegionParent
 {
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; }
 
-    public string Map { get; set; } = string.Empty;
+    public string Map { get; set; }
 
     [JsonIgnore]
     public int MapId => RegionMapIdResolver.Resolve(Map);

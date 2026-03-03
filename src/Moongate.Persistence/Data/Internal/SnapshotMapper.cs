@@ -21,6 +21,8 @@ internal static class SnapshotMapper
             Email = snapshot.Email,
             AccountType = (AccountType)snapshot.AccountType,
             IsLocked = snapshot.IsLocked,
+            ActivationId = snapshot.ActivationId,
+            RecoveryCode = snapshot.RecoveryCode,
             CreatedUtc = new(snapshot.CreatedUtcTicks, DateTimeKind.Utc),
             LastLoginUtc = new(snapshot.LastLoginUtcTicks, DateTimeKind.Utc),
             CharacterIds = [.. snapshot.CharacterIds.Select(id => (Serial)id)]
@@ -37,6 +39,8 @@ internal static class SnapshotMapper
             Email = entity.Email,
             AccountType = (byte)entity.AccountType,
             IsLocked = entity.IsLocked,
+            ActivationId = entity.ActivationId,
+            RecoveryCode = entity.RecoveryCode,
             CreatedUtcTicks = entity.CreatedUtc.Ticks,
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks,
             CharacterIds = [.. entity.CharacterIds.Select(serial => (uint)serial)]

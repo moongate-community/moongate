@@ -39,9 +39,9 @@ public class UnicodeSpeechMessagePacket : BaseGameNetworkPacket
         Hue = SpeechHues.Default;
         Language = "ENU";
         MessageType = ChatMessageType.Regular;
-        Name = string.Empty;
+        Name = "";
         Serial = Serial.MinusOne;
-        Text = string.Empty;
+        Text = "";
     }
 
     public override void Write(ref SpanWriter writer)

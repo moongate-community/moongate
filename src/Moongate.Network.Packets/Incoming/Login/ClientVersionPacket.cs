@@ -12,7 +12,7 @@ namespace Moongate.Network.Packets.Incoming.Login;
 /// </summary>
 public class ClientVersionPacket : BaseGameNetworkPacket
 {
-    public string Version { get; set; } = string.Empty;
+    public string Version { get; set; }
 
     public ClientVersionPacket()
         : base(0xBD) { }

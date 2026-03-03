@@ -33,6 +33,7 @@ COPY src/Moongate.Network.Packets/Moongate.Network.Packets.csproj src/Moongate.N
 COPY src/Moongate.Generators/Moongate.Generators.csproj src/Moongate.Generators/
 COPY src/Moongate.Persistence/Moongate.Persistence.csproj src/Moongate.Persistence/
 COPY src/Moongate.Scripting/Moongate.Scripting.csproj src/Moongate.Scripting/
+COPY src/Moongate.Email/Moongate.Email.csproj src/Moongate.Email/
 COPY src/Moongate.Server.Metrics/Moongate.Server.Metrics.csproj src/Moongate.Server.Metrics/
 COPY src/Moongate.UO.Data/Moongate.UO.Data.csproj src/Moongate.UO.Data/
 COPY src/Moongate.Server/Moongate.Server.csproj src/Moongate.Server/
@@ -47,6 +48,7 @@ COPY src/Moongate.Network.Packets/ src/Moongate.Network.Packets/
 COPY src/Moongate.Generators/ src/Moongate.Generators/
 COPY src/Moongate.Persistence/ src/Moongate.Persistence/
 COPY src/Moongate.Scripting/ src/Moongate.Scripting/
+COPY src/Moongate.Email/ src/Moongate.Email/
 COPY src/Moongate.Server.Metrics/ src/Moongate.Server.Metrics/
 COPY src/Moongate.UO.Data/ src/Moongate.UO.Data/
 COPY src/Moongate.Server/ src/Moongate.Server/

@@ -1,0 +1,10 @@
+Recover your password
+
+Hello {{ username }},
+
+We received a request to reset your password.
+Use this code to continue: {{ recovery_code }}
+This code expires in {{ expires_minutes }} minutes.
+
+If you did not request a password recovery, ignore this email.
+Security note: never share this code with anyone.
