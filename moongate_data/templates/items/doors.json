@@ -1,0 +1,20 @@
+[
+  {
+    "type": "item",
+    "id": "door",
+    "name": "Door",
+    "category": "Structure",
+    "description": "Generic door template (ModernUO base door id range starts at 0x0675).",
+    "tags": [
+      "door",
+      "modernuo",
+      "worldgen"
+    ],
+    "itemId": "0x0675",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.door",
+    "isMovable": false
+  }
+]

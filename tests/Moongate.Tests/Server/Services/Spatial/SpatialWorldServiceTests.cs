@@ -294,9 +294,11 @@ public sealed class SpatialWorldServiceTests
         service.AddOrUpdateItem(item, 1);
         var foundSameMap = service.GetNearbyItems(new(250, 260, 0), 3, 1);
         var foundOtherMap = service.GetNearbyItems(new(250, 260, 0), 3, 0);
+        var gameEvent = eventBus.Events.OfType<ItemAddedInSectorEvent>().Single();
 
         Assert.That(foundSameMap.Select(static value => value.Id), Contains.Item(item.Id));
         Assert.That(foundOtherMap, Is.Empty);
+        Assert.That(gameEvent.ItemId, Is.EqualTo(item.Id));
     }
 
     [Test]

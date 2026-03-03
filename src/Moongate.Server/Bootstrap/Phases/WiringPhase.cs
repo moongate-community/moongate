@@ -1,4 +1,5 @@
 using DryIoc;
+using System.Linq;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Bootstrap.Internal;
@@ -15,6 +16,7 @@ using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -310,6 +312,82 @@ internal sealed class WiringPhase : IBootstrapPhase
             },
             "Run door world generation immediately. Usage: .spawn_doors",
             CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator
+        );
+
+        commandService.RegisterCommand(
+            "spawn_door_player|.spawn_door_player",
+            async ctx =>
+            {
+                if (ctx.Arguments.Length > 1)
+                {
+                    ctx.Print("Usage: .spawn_door_player [radius]");
+
+                    return;
+                }
+
+                var radius = 64;
+
+                if (ctx.Arguments.Length == 1 &&
+                    (!int.TryParse(ctx.Arguments[0], out radius) || radius <= 0))
+                {
+                    ctx.Print("Invalid radius '{0}'.", ctx.Arguments[0]);
+
+                    return;
+                }
+
+                var gameSessionService = context.Container.Resolve<IGameNetworkSessionService>();
+                var characterService = context.Container.Resolve<ICharacterService>();
+                var worldGenerators = context.Container.Resolve<IEnumerable<IWorldGenerator>>();
+                var doorGenerator = worldGenerators.OfType<DoorGeneratorBuilder>().FirstOrDefault();
+
+                if (doorGenerator is null)
+                {
+                    ctx.Print("Door generator is not registered.");
+
+                    return;
+                }
+
+                if (!gameSessionService.TryGet(ctx.SessionId, out var session))
+                {
+                    ctx.Print("Unable to resolve current session.");
+
+                    return;
+                }
+
+                var character = session.Character ??
+                                await characterService.GetCharacterAsync(session.CharacterId);
+
+                if (character is null)
+                {
+                    ctx.Print("Unable to resolve player character.");
+
+                    return;
+                }
+
+                try
+                {
+                    var generated = await doorGenerator.GenerateAroundAsync(
+                                        character.MapId,
+                                        character.Location,
+                                        radius,
+                                        message => ctx.Print("{0}", message)
+                                    );
+                    ctx.Print(
+                        "Door generation around player completed. Map={0}, Location={1}, Radius={2}, Generated={3}.",
+                        character.MapId,
+                        character.Location,
+                        radius,
+                        generated
+                    );
+                }
+                catch (Exception ex)
+                {
+                    ctx.Print("Door generation around player failed: {0}", ex.Message);
+                }
+            },
+            "Generate door candidates around your current position. Usage: .spawn_door_player [radius]",
+            CommandSourceType.InGame,
             AccountType.Administrator
         );
 

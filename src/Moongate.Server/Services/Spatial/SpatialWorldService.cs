@@ -22,6 +22,8 @@ using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
+using Serilog;
+using Serilog.Core;
 
 namespace Moongate.Server.Services.Spatial;
 
@@ -40,7 +42,6 @@ public sealed class SpatialWorldService
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly ICharacterService _characterService;
     private readonly IItemService _itemService;
-    private readonly IMobileService _mobileService;
     private readonly MoongateSpatialConfig _spatialConfig;
     private readonly SpatialEntityIndex _entityIndex;
     private readonly SpatialRegionResolver _regionResolver;
@@ -59,15 +60,12 @@ public sealed class SpatialWorldService
         _gameEventBusService = gameEventBusService;
         _characterService = characterService;
         _itemService = itemService;
-        _mobileService = mobileService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
         _entityIndex = new(itemService, mobileService, _spatialConfig);
         _regionResolver = new();
-    }
 
-    public void AddOrUpdateItem(UOItemEntity item, int mapId)
-        => _entityIndex.AddOrUpdateItem(item, mapId);
+    }
 
     public Task<int> BroadcastToPlayersAsync(
         IGameNetworkPacket packet,
@@ -96,6 +94,18 @@ public sealed class SpatialWorldService
 
         return Task.FromResult(recipients.Count);
     }
+
+    public void AddOrUpdateItem(UOItemEntity item, int mapId)
+    {
+        _entityIndex.AddOrUpdateItem(item, mapId);
+
+        var sectorX = item.Location.X >> MapSectorConsts.SectorShift;
+        var sectorY = item.Location.Y >> MapSectorConsts.SectorShift;
+
+        PublishEvent(new ItemAddedInSectorEvent(item.Id, mapId, sectorX, sectorY));
+    }
+
+
 
     public void AddOrUpdateMobile(UOMobileEntity mobile)
     {

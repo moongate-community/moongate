@@ -460,15 +460,16 @@ internal sealed class SpatialEntityIndex
         cancellationToken.ThrowIfCancellationRequested();
 
         var mobiles = await _mobileService.GetPersistentMobilesInSectorAsync(
-            mapId,
-            sectorX,
-            sectorY,
-            cancellationToken
-        );
+                          mapId,
+                          sectorX,
+                          sectorY,
+                          cancellationToken
+                      );
 
         foreach (var mobile in mobiles)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             if (mobile.IsPlayer)
             {
                 continue;

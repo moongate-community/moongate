@@ -23,7 +23,7 @@ public class ObjectInformationPacketTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(data.Length, Is.EqualTo(24));
+                Assert.That(data.Length, Is.EqualTo(26));
                 Assert.That(data[0], Is.EqualTo(0xF3));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo(0x0001));
                 Assert.That(data[3], Is.EqualTo(0x02));
@@ -38,6 +38,7 @@ public class ObjectInformationPacketTests
                 Assert.That(data[20], Is.EqualTo(0x00));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(21, 2)), Is.EqualTo(0x0000));
                 Assert.That(data[23], Is.EqualTo(0x00));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(24, 2)), Is.EqualTo(0x0000));
             }
         );
     }
@@ -62,7 +63,7 @@ public class ObjectInformationPacketTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(data.Length, Is.EqualTo(24));
+                Assert.That(data.Length, Is.EqualTo(26));
                 Assert.That(data[0], Is.EqualTo(0xF3));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo(0x0001));
                 Assert.That(data[3], Is.EqualTo(0x00));
@@ -77,13 +78,14 @@ public class ObjectInformationPacketTests
                 Assert.That(data[20], Is.EqualTo(0x01));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(21, 2)), Is.EqualTo(0x0456));
                 Assert.That(data[23], Is.EqualTo((byte)(ObjectInfoFlags.Hidden | ObjectInfoFlags.Movable)));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(24, 2)), Is.EqualTo(0x0000));
             }
         );
     }
 
     private static byte[] Write(ObjectInformationPacket packet)
     {
-        var writer = new SpanWriter(24, true);
+        var writer = new SpanWriter(26, true);
         packet.Write(ref writer);
         var data = writer.ToArray();
         writer.Dispose();
