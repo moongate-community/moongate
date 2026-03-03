@@ -76,6 +76,7 @@ Top-level shape:
   "http": {
     "isEnabled": true,
     "port": 8088,
+    "websiteUrl": "http://localhost",
     "isOpenApiEnabled": true
   },
   "game": {
@@ -132,6 +133,8 @@ Default bundled templates:
 
 - `registration_ok` (`en.subject.sbn`, `en.text.sbn`, `en.html.sbn`)
 - `recover_password` (`en.subject.sbn`, `en.text.sbn`, `en.html.sbn`)
+
+Scriban templates receive a global `websiteUrl` value from `Http.WebsiteUrl`.
 
 When `Email.IsEnabled = false`, the runtime uses a no-op sender and does not perform SMTP delivery.
 

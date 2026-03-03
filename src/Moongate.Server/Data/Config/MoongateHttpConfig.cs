@@ -9,6 +9,8 @@ public class MoongateHttpConfig
 
     public int Port { get; set; } = 8088;
 
+    public string WebsiteUrl { get; set; } = "http://localhost";
+
     public bool IsOpenApiEnabled { get; set; } = true;
 
     public MoongateHttpJwtConfig Jwt { get; set; } = new();

@@ -39,9 +39,24 @@ public sealed class ScribanEmailTemplateService : BaseMoongateService, IEmailTem
 
         var result = new EmailTemplateRenderResult
         {
-            Subject = await RenderTemplateFileAsync(subjectPath, request.Model, cancellationToken),
-            HtmlBody = await RenderTemplateFileAsync(htmlPath, request.Model, cancellationToken),
-            TextBody = await RenderTemplateFileAsync(textPath, request.Model, cancellationToken)
+            Subject = await RenderTemplateFileAsync(
+                          subjectPath,
+                          request.Model,
+                          _options.WebsiteUrl,
+                          cancellationToken
+                      ),
+            HtmlBody = await RenderTemplateFileAsync(
+                           htmlPath,
+                           request.Model,
+                           _options.WebsiteUrl,
+                           cancellationToken
+                       ),
+            TextBody = await RenderTemplateFileAsync(
+                           textPath,
+                           request.Model,
+                           _options.WebsiteUrl,
+                           cancellationToken
+                       )
         };
 
         return result;
@@ -77,6 +92,7 @@ public sealed class ScribanEmailTemplateService : BaseMoongateService, IEmailTem
     private static async Task<string> RenderTemplateFileAsync(
         string path,
         IReadOnlyDictionary<string, object?> model,
+        string websiteUrl,
         CancellationToken cancellationToken
     )
     {
@@ -92,6 +108,8 @@ public sealed class ScribanEmailTemplateService : BaseMoongateService, IEmailTem
         }
 
         var scriptObject = new ScriptObject();
+        scriptObject["websiteUrl"] = websiteUrl;
+
         foreach (var (key, value) in model)
         {
             scriptObject[key] = value;

@@ -77,6 +77,11 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
                 context.Config.Persistence = fileConfig.Persistence;
             }
 
+            if (fileConfig.Http is not null)
+            {
+                context.Config.Http = fileConfig.Http;
+            }
+
             if (fileConfig.Email is not null)
             {
                 context.Config.Email = fileConfig.Email;

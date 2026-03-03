@@ -239,6 +239,7 @@ Moongate includes a minimal email pipeline:
 - `IEmailTemplateService`: template rendering via Scriban (`Moongate.Email`).
 - `IEmailSender`: transport abstraction with SMTP implementation (`SmtpEmailSender`).
 - `NoOpEmailSender`: selected automatically when email is disabled.
+- `websiteUrl`: global Scriban variable injected from `Http.WebsiteUrl`.
 
 Default templates are loaded from:
 
@@ -455,6 +456,7 @@ HTTP service defaults:
 
 - `Http.IsEnabled = true`
 - `Http.Port = 8088`
+- `Http.WebsiteUrl = "http://localhost"`
 - `Http.IsOpenApiEnabled = true`
 - Base endpoint: `/`
 - Health endpoint: `/health`

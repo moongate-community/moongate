@@ -99,7 +99,10 @@ public static class AddBootstrapCoreServicesExtension
                     TemplatesRootPath = templatesPath,
                     FallbackLocale = string.IsNullOrWhiteSpace(config.Email.FallbackLocale)
                                          ? "en"
-                                         : config.Email.FallbackLocale
+                                         : config.Email.FallbackLocale,
+                    WebsiteUrl = string.IsNullOrWhiteSpace(config.Http.WebsiteUrl)
+                                     ? "http://localhost"
+                                     : config.Http.WebsiteUrl
                 };
             },
             Reuse.Singleton
