@@ -1,3 +1,9 @@
+## [0.28.0](https://github.com/moongate-community/moongatev2/compare/v0.27.0...v0.28.0) (2026-03-04)
+
+### Features
+
+* **scripting:** add Lua gump callbacks and item script fallback conventions ([5576974](https://github.com/moongate-community/moongatev2/commit/5576974c69849bb404967fc8e8718b9a8f91ca60))
+
 ## [0.27.0](https://github.com/moongate-community/moongatev2/compare/v0.26.0...v0.27.0) (2026-03-04)
 
 ### Features
