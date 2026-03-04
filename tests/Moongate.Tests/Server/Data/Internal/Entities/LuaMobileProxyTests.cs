@@ -48,6 +48,7 @@ public sealed class LuaMobileProxyTests
             gameNetworkSessionService,
             spatialWorldService,
             movementValidationService,
+            pathfindingService: null,
             gameEventBusService
         );
 
@@ -96,6 +97,7 @@ public sealed class LuaMobileProxyTests
             gameNetworkSessionService,
             spatialWorldService,
             movementValidationService,
+            pathfindingService: null,
             gameEventBusService
         );
 
@@ -130,6 +132,7 @@ public sealed class LuaMobileProxyTests
             gameNetworkSessionService,
             spatialWorldService,
             movementValidationService: null,
+            pathfindingService: null,
             gameEventBusService
         );
 
@@ -145,6 +148,51 @@ public sealed class LuaMobileProxyTests
                 Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.Mode, Is.EqualTo(0x01));
                 Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.SoundModel, Is.EqualTo(0x0210));
                 Assert.That(gameEventBusService.LastMobilePlaySoundEvent!.Value.Unknown3, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public void Teleport_ShouldUpdateMapAndLocationAndPublishPositionEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService();
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService: null,
+            pathfindingService: null,
+            gameEventBusService
+        );
+
+        var teleported = proxy.Teleport(2, 4500, 1300, 20);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(2));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(4500, 1300, 20)));
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.MapId, Is.EqualTo(2));
+                Assert.That(
+                    gameEventBusService.LastMobilePositionChangedEvent!.Value.OldLocation,
+                    Is.EqualTo(new Point3D(100, 200, 5))
+                );
+                Assert.That(
+                    gameEventBusService.LastMobilePositionChangedEvent!.Value.NewLocation,
+                    Is.EqualTo(new Point3D(4500, 1300, 20))
+                );
             }
         );
     }
@@ -172,6 +220,59 @@ public sealed class LuaMobileProxyTests
                 Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
                 Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
                 Assert.That(speechService.LastSpokenText, Is.EqualTo("miaow"));
+            }
+        );
+    }
+
+    [Test]
+    public void MoveTowards_WhenPathExists_ShouldMoveOneStepAlongPath()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5)
+        };
+        var targetMobile = new UOMobileEntity
+        {
+            Id = (Serial)0x5678u,
+            MapId = 1,
+            Location = new Point3D(101, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService();
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var movementValidationService = new LuaMobileProxyTestMovementValidationService
+        {
+            ShouldSucceed = true,
+            NewLocation = new Point3D(101, 200, 5)
+        };
+        var pathfindingService = new LuaMobileProxyTestPathfindingService
+        {
+            ShouldReturnPath = true,
+            PathToReturn = [DirectionType.East]
+        };
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService,
+            pathfindingService,
+            gameEventBusService
+        );
+        var targetProxy = new LuaMobileProxy(targetMobile, speechService, gameNetworkSessionService, spatialWorldService);
+
+        proxy.MoveTowards(targetProxy);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(pathfindingService.Calls, Is.EqualTo(1));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(101, 200, 5)));
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.NewLocation, Is.EqualTo(new Point3D(101, 200, 5)));
             }
         );
     }
@@ -472,5 +573,29 @@ public sealed class LuaMobileProxyTests
 
         public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
             => _ = listener;
+    }
+
+    private sealed class LuaMobileProxyTestPathfindingService : IPathfindingService
+    {
+        public bool ShouldReturnPath { get; set; }
+
+        public int Calls { get; private set; }
+
+        public IReadOnlyList<DirectionType> PathToReturn { get; set; } = [];
+
+        public bool TryFindPath(
+            UOMobileEntity mobile,
+            Point3D targetLocation,
+            out IReadOnlyList<DirectionType> path,
+            int maxVisitedNodes = 1024
+        )
+        {
+            _ = mobile;
+            _ = targetLocation;
+            _ = maxVisitedNodes;
+            Calls++;
+            path = PathToReturn;
+            return ShouldReturnPath;
+        }
     }
 }

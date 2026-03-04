@@ -25,6 +25,7 @@ public sealed class MobileModule
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpatialWorldService? _spatialWorldService;
     private readonly IMovementValidationService? _movementValidationService;
+    private readonly IPathfindingService? _pathfindingService;
     private readonly IGameEventBusService? _gameEventBusService;
 
     public MobileModule(
@@ -33,6 +34,7 @@ public sealed class MobileModule
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService? spatialWorldService = null,
         IMovementValidationService? movementValidationService = null,
+        IPathfindingService? pathfindingService = null,
         IGameEventBusService? gameEventBusService = null
     )
     {
@@ -41,6 +43,7 @@ public sealed class MobileModule
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
         _movementValidationService = movementValidationService;
+        _pathfindingService = pathfindingService;
         _gameEventBusService = gameEventBusService;
     }
 
@@ -65,6 +68,7 @@ public sealed class MobileModule
                        _gameNetworkSessionService,
                        _spatialWorldService,
                        _movementValidationService,
+                       _pathfindingService,
                        _gameEventBusService
                    );
     }

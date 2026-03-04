@@ -1,7 +1,9 @@
+using System.Collections.Concurrent;
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Helpers;
 using Moongate.Network.Packets.Incoming.Tooltip;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Packets.Outgoing.System;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -22,8 +24,10 @@ namespace Moongate.Server.Handlers;
 /// </summary>
 public class ToolTipHandler : BasePacketListener
 {
+    private readonly ConcurrentDictionary<Serial, CachedItemTooltip> _itemTooltipCache = [];
     private readonly ILogger _logger = Log.ForContext<ToolTipHandler>();
     private readonly IPersistenceService _persistenceService;
+    private readonly record struct CachedItemTooltip(int ItemHashCode, ObjectPropertyList Packet);
 
     public ToolTipHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -82,8 +86,17 @@ public class ToolTipHandler : BasePacketListener
             if (item is null)
             {
                 _logger.Debug("MegaCliloc request ignored. Unknown item serial {Serial}.", serial);
+                _itemTooltipCache.TryRemove(serial, out _);
 
                 return null;
+            }
+
+            var itemHashCode = item.GetHashCode();
+
+            if (_itemTooltipCache.TryGetValue(serial, out var cachedTooltip) &&
+                cachedTooltip.ItemHashCode == itemHashCode)
+            {
+                return cachedTooltip.Packet;
             }
 
             var propertyList = MegaClilocBuilder.CreateItemTooltip(
@@ -98,6 +111,14 @@ public class ToolTipHandler : BasePacketListener
             {
                 propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
             }
+
+            if (item.TryGetCustomString("label_number", out var value) &&
+                uint.TryParse(value, out var clilocId))
+            {
+                propertyList.Replace(CommonClilocIds.ObjectName, clilocId);
+            }
+
+            _itemTooltipCache[serial] = new(itemHashCode, propertyList);
 
             return propertyList;
         }

@@ -63,6 +63,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IServerLifetimeService, ServerLifetimeService>(Reuse.Singleton);
         container.Register<IMovementTileQueryService, MovementTileQueryService>(Reuse.Singleton);
         container.Register<IMovementValidationService, MovementValidationService>(Reuse.Singleton);
+        container.Register<IPathfindingService, AStarPathfindingService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);

@@ -181,6 +181,46 @@ public class UOItemEntity : IItemEntity
     public override string ToString()
         => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
 
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+
+        hash.Add(Id);
+        hash.Add(Location);
+        hash.Add(MapId);
+        hash.Add(Name, StringComparer.Ordinal);
+        hash.Add(Weight);
+        hash.Add(Amount);
+        hash.Add(ItemId);
+        hash.Add(Hue);
+        hash.Add(GumpId);
+        hash.Add(Direction);
+        hash.Add(IsStackable);
+        hash.Add(ScriptId, StringComparer.Ordinal);
+        hash.Add(Rarity);
+        hash.Add(ParentContainerId);
+        hash.Add(ContainerPosition);
+        hash.Add(EquippedMobileId);
+        hash.Add(EquippedLayer);
+
+        foreach (var containedItemId in ContainedItemIds)
+        {
+            hash.Add(containedItemId);
+        }
+
+        foreach (var customProperty in _customProperties.OrderBy(static pair => pair.Key, StringComparer.Ordinal))
+        {
+            hash.Add(customProperty.Key, StringComparer.Ordinal);
+            hash.Add(customProperty.Value.Type);
+            hash.Add(customProperty.Value.IntegerValue);
+            hash.Add(customProperty.Value.BooleanValue);
+            hash.Add(customProperty.Value.DoubleValue);
+            hash.Add(customProperty.Value.StringValue, StringComparer.Ordinal);
+        }
+
+        return hash.ToHashCode();
+    }
+
     /// <summary>
     /// Updates the container-local position for an item contained in this container.
     /// </summary>

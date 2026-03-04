@@ -1,6 +1,8 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Ids;
 using MoonSharp.Interpreter;
 
@@ -13,16 +15,24 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class ItemModule
 {
-    private static bool _isLuaItemRefTypeRegistered;
+    private static bool _isLuaItemProxyTypeRegistered;
     private readonly IItemService _itemService;
+    private readonly ISpatialWorldService? _spatialWorldService;
+    private readonly ISpeechService? _speechService;
 
-    public ItemModule(IItemService itemService)
+    public ItemModule(
+        IItemService itemService,
+        ISpatialWorldService? spatialWorldService = null,
+        ISpeechService? speechService = null
+    )
     {
         _itemService = itemService;
+        _spatialWorldService = spatialWorldService;
+        _speechService = speechService;
     }
 
     [ScriptFunction("get", "Gets an item reference by item id, or nil when not found.")]
-    public LuaItemRef? Get(uint itemId)
+    public LuaItemProxy? Get(uint itemId)
     {
         if (itemId == 0)
         {
@@ -32,17 +42,17 @@ public sealed class ItemModule
         RegisterLuaTypeIfNeeded();
         var item = _itemService.GetItemAsync((Serial)itemId).GetAwaiter().GetResult();
 
-        return item is null ? null : new(item);
+        return item is null ? null : new(item, _itemService, _spatialWorldService, _speechService);
     }
 
     private static void RegisterLuaTypeIfNeeded()
     {
-        if (_isLuaItemRefTypeRegistered)
+        if (_isLuaItemProxyTypeRegistered)
         {
             return;
         }
 
-        UserData.RegisterType<LuaItemRef>();
-        _isLuaItemRefTypeRegistered = true;
+        UserData.RegisterType<LuaItemProxy>();
+        _isLuaItemProxyTypeRegistered = true;
     }
 }

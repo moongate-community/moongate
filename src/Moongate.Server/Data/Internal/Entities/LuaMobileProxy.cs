@@ -21,6 +21,7 @@ public sealed class LuaMobileProxy
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpatialWorldService? _spatialWorldService;
     private readonly IMovementValidationService? _movementValidationService;
+    private readonly IPathfindingService? _pathfindingService;
     private readonly IGameEventBusService? _gameEventBusService;
 
     private LuaMobileProxy? _target;
@@ -31,6 +32,7 @@ public sealed class LuaMobileProxy
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService? spatialWorldService = null,
         IMovementValidationService? movementValidationService = null,
+        IPathfindingService? pathfindingService = null,
         IGameEventBusService? gameEventBusService = null
     )
     {
@@ -39,6 +41,7 @@ public sealed class LuaMobileProxy
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
         _movementValidationService = movementValidationService;
+        _pathfindingService = pathfindingService;
         _gameEventBusService = gameEventBusService;
     }
 
@@ -90,7 +93,15 @@ public sealed class LuaMobileProxy
             return null;
         }
 
-        return new(mobile, _speechService, _gameNetworkSessionService, _spatialWorldService);
+        return new(
+            mobile,
+            _speechService,
+            _gameNetworkSessionService,
+            _spatialWorldService,
+            _movementValidationService,
+            _pathfindingService,
+            _gameEventBusService
+        );
     }
 
     public LuaMobileProxy? FindFriend(int range)
@@ -108,7 +119,15 @@ public sealed class LuaMobileProxy
             return null;
         }
 
-        return new(mobile, _speechService, _gameNetworkSessionService, _spatialWorldService);
+        return new(
+            mobile,
+            _speechService,
+            _gameNetworkSessionService,
+            _spatialWorldService,
+            _movementValidationService,
+            _pathfindingService,
+            _gameEventBusService
+        );
     }
 
     public bool IsInRange(LuaMobileProxy? target, int range)
@@ -134,9 +153,26 @@ public sealed class LuaMobileProxy
     }
 
     public void MoveTowards(LuaMobileProxy? target)
+    {
+        if (target is null || _movementValidationService is null || _pathfindingService is null)
+        {
+            return;
+        }
 
-        // TODO: Implement navigation/pathfinding primitive for brain point 5.
-        => _ = target;
+        if (target.MapId != _mobile.MapId)
+        {
+            return;
+        }
+
+        var targetLocation = new Point3D(target.LocationX, target.LocationY, target.LocationZ);
+
+        if (!_pathfindingService.TryFindPath(_mobile, targetLocation, out var path) || path.Count == 0)
+        {
+            return;
+        }
+
+        Move(path[0]);
+    }
 
     public bool Move(DirectionType direction)
     {
@@ -154,6 +190,39 @@ public sealed class LuaMobileProxy
 
         _mobile.Location = newLocation;
         _mobile.Direction = direction;
+
+        if (_gameEventBusService is not null && oldLocation != newLocation)
+        {
+            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
+                                ? session.SessionId
+                                : -1;
+
+            _gameEventBusService.PublishAsync(
+                new MobilePositionChangedEvent(
+                    sessionId,
+                    _mobile.Id,
+                    _mobile.MapId,
+                    oldLocation,
+                    newLocation
+                )
+            ).AsTask().GetAwaiter().GetResult();
+        }
+
+        return true;
+    }
+
+    public bool Teleport(int mapId, int x, int y, int z)
+    {
+        if (mapId < 0)
+        {
+            return false;
+        }
+
+        var oldLocation = _mobile.Location;
+        var newLocation = new Point3D(x, y, z);
+
+        _mobile.MapId = mapId;
+        _mobile.Location = newLocation;
 
         if (_gameEventBusService is not null && oldLocation != newLocation)
         {
