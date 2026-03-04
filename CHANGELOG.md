@@ -1,3 +1,18 @@
+## [0.27.0](https://github.com/moongate-community/moongatev2/compare/v0.26.0...v0.27.0) (2026-03-04)
+
+### Features
+
+* evolve persistence locking and gameplay/world tooling ([deb76da](https://github.com/moongate-community/moongatev2/commit/deb76da7f349828ce0da7642b8880f8c90100898))
+* **server,scripting,network:** add pathfinding and enrich Lua item/mobile scripting ([0c60e29](https://github.com/moongate-community/moongatev2/commit/0c60e293eb8fd5d39d20d373b1abb3d1850a780e))
+* **server:** add background job service and seed-data facade ([5e43e28](https://github.com/moongate-community/moongatev2/commit/5e43e2874c7c4167ace97743e6c43f200a15e87b))
+* **server:** add server-change teleport flow and lua visual effects ([d6fb4b8](https://github.com/moongate-community/moongatev2/commit/d6fb4b86934b7766ff8b486f076da41ff18883ab))
+* **server:** improve npc runtime brain, movement and speech pipelines ([3630b82](https://github.com/moongate-community/moongatev2/commit/3630b820e2c6af11ca8f19cd4e5e5d6b7311f875))
+* **world:** import ModernUO datasets and add world data loaders ([86b36c6](https://github.com/moongate-community/moongatev2/commit/86b36c6843c3574b0c13cf7187a3ee818ae0378c))
+
+### Bug Fixes
+
+* **worldgen:** restore door candidate generation flow ([49a874d](https://github.com/moongate-community/moongatev2/commit/49a874d0edd5a375071dc20e799334ba97f9df22))
+
 ## [0.26.0](https://github.com/moongate-community/moongatev2/compare/v0.25.0...v0.26.0) (2026-03-03)
 
 ### Features
