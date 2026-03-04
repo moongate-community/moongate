@@ -76,4 +76,6 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
     public List<string> Tags { get; set; } = [];
 
     public decimal Weight { get; set; }
+
+    public ItemRarity Rarity { get; set; } = ItemRarity.None;
 }

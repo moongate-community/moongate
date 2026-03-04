@@ -17,6 +17,7 @@ public class PacketHandlerRegistrationAttributeTests
             typeof(PlayerStatusHandler),
             typeof(MovementHandler),
             typeof(SpeechHandler),
+            typeof(GumpHandler),
             typeof(ToolTipHandler),
             typeof(ItemHandler)
         };
@@ -60,6 +61,7 @@ public class PacketHandlerRegistrationAttributeTests
         AssertMappings(typeof(PlayerStatusHandler), PacketDefinition.GetPlayerStatusPacket);
         AssertMappings(typeof(MovementHandler), PacketDefinition.MoveRequestPacket);
         AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket, PacketDefinition.OpenChatWindowPacket);
+        AssertMappings(typeof(GumpHandler), PacketDefinition.GumpMenuSelectionPacket);
         AssertMappings(typeof(ToolTipHandler), PacketDefinition.MegaClilocPacket);
         AssertMappings(
             typeof(ItemHandler),

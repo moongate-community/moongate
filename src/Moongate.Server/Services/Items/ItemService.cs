@@ -122,8 +122,25 @@ public sealed class ItemService : IItemService
             return false;
         }
 
+        var oldContainerId = item.ParentContainerId;
+        var oldLocation = item.Location;
+        var mapId = item.MapId;
+
         await DetachFromCurrentOwnerAsync(item);
         var removed = await _persistenceService.UnitOfWork.Items.RemoveAsync(itemId);
+
+        if (removed)
+        {
+            await _gameEventBusService.PublishAsync(
+                new ItemDeletedEvent(
+                    sessionId: 0,
+                    itemId,
+                    oldContainerId,
+                    oldLocation,
+                    mapId
+                )
+            );
+        }
 
         _logger.Debug("Deleted item {ItemId} Removed={Removed}", itemId, removed);
 

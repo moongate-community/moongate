@@ -674,7 +674,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             _isInitialized = true;
             _logger.Information("Lua engine initialized successfully");
 
-            if (_watcher == null)
+            if (_engineConfig.EnableFileWatcher && _watcher == null)
             {
                 _watcher = new(_engineConfig.ScriptsDirectory, "*.lua")
                 {
@@ -684,6 +684,11 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                 };
 
                 _watcher.Changed += OnLuaFilesChanged;
+            }
+
+            if (!_engineConfig.EnableFileWatcher)
+            {
+                _logger.Information("Lua file watcher disabled by configuration.");
             }
         }
         catch (Exception ex)

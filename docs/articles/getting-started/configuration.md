@@ -95,6 +95,9 @@ Top-level shape:
     "logToConsole": false,
     "logLevel": "Trace"
   },
+  "scripting": {
+    "enableFileWatcher": true
+  },
   "email": {
     "isEnabled": false,
     "fromAddress": "noreply@localhost",
@@ -124,6 +127,14 @@ Top-level shape:
 - `logs`
 - `cache`
 - `email/templates`
+
+## Scripting
+
+Current scripting runtime option:
+
+- `Scripting.EnableFileWatcher` (`bool`, default `true`)
+  - `true`: enables `FileSystemWatcher` on `scripts/**/*.lua` for live reload notifications
+  - `false`: disables watcher creation entirely
 
 ## Email Templates
 

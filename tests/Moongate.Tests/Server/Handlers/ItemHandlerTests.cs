@@ -471,6 +471,66 @@ public class ItemHandlerTests
         );
     }
 
+    [Test]
+    public async Task HandleAsync_WhenItemDeletedFromBackpack_ShouldRefreshBackpackContainer()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+
+        var backpackId = (Serial)0x40000001u;
+        itemService.ItemsById[backpackId] = new()
+        {
+            Id = backpackId,
+            ItemId = 0x0E75,
+            GumpId = 0x0042
+        };
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000002u,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u,
+                BackpackId = backpackId
+            }
+        };
+        sessionService.Add(session);
+
+        await handler.HandleAsync(
+            new ItemDeletedEvent(
+                sessionId: 0,
+                itemId: (Serial)0x40000099u,
+                oldContainerId: backpackId,
+                oldLocation: new Point3D(10, 10, 0),
+                mapId: 0
+            )
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<DrawContainerAndAddItemCombinedPacket>());
+                var draw = (DrawContainerAndAddItemCombinedPacket)outbound.Packet;
+                Assert.That(draw.Container, Is.Not.Null);
+                Assert.That(draw.Container!.Id, Is.EqualTo(backpackId));
+            }
+        );
+    }
+
     private sealed class ItemHandlerTestItemService : IItemService
     {
         public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];

@@ -440,9 +440,47 @@ public class ToolTipHandlerTests
             {
                 Assert.That(firstDequeued, Is.True);
                 Assert.That(secondDequeued, Is.True);
-                Assert.That(ReferenceEquals(firstOutbound.Packet, secondOutbound.Packet), Is.True);
+                Assert.That(ReferenceEquals(firstOutbound.Packet, secondOutbound.Packet), Is.False);
             }
         );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldKeepCacheUsable_AfterSentPacketIsDisposed()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000033u;
+        await persistenceService.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = itemSerial,
+                Name = "Dispose Cache Test",
+                ItemId = 0x0EED,
+                Amount = 10,
+                Hue = 0x0021
+            }
+        );
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        await handler.HandlePacketAsync(session, request);
+        var firstDequeued = queue.TryDequeue(out var firstOutbound);
+        Assert.That(firstDequeued, Is.True);
+
+        if (firstOutbound.Packet is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+
+        await handler.HandlePacketAsync(session, request);
+        var secondDequeued = queue.TryDequeue(out var secondOutbound);
+        Assert.That(secondDequeued, Is.True);
+
+        Assert.DoesNotThrow(() => _ = DeserializeResponse(secondOutbound.Packet));
     }
 
     [Test]

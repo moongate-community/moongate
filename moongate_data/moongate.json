@@ -39,6 +39,9 @@
     "SectorEnterSyncRadius": 3,
     "LazySectorEntityLoadRadius": 3
   },
+  "Scripting": {
+    "EnableFileWatcher": true
+  },
   "Email": {
     "IsEnabled": false,
     "FromAddress": "no-reply@moongate.local",

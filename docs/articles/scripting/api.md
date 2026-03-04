@@ -318,30 +318,87 @@ function on_weather_changed(weather)    -- Weather changed
 
 Item templates/entities can define a `scriptId`. The server can dispatch item hooks through `IItemScriptDispatcher`.
 
-### Function Naming Convention
+### Dispatch Convention
 
 ```lua
-on_item_<script_id_normalized>_<hook_normalized>
+<script_id_normalized>.<hook_name>(ctx)
 ```
 
 Example:
 
 ```lua
--- scriptId: "items.healing-potion", hook: "on_use"
-function on_item_items_healing_potion_on_use(ctx)
-    log.info("Item hook called for " .. tostring(ctx.Item.Id))
-end
+-- scriptId: "items.healing-potion" => table "items_healing_potion"
+items_healing_potion = {
+    on_click = function(ctx)
+        log.info("Item hook called for " .. tostring(ctx.item.serial))
+    end,
+    on_double_click = function(ctx)
+        log.info("Double click from session " .. tostring(ctx.session_id))
+    end
+}
 ```
 
-### ItemScriptContext
+Fallback naming when `scriptId == "none"`:
+
+```lua
+-- item name "Brick" -> "brick" (first) then "items_brick" (second)
+brick = {
+    on_double_click = function(ctx)
+        log.info("Brick used by session " .. tostring(ctx.session_id))
+    end
+}
+```
+
+Hook aliases:
+
+- `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
+- `double_click` -> `on_double_click`, `OnDoubleClick`
+
+### Gump API
+
+```lua
+local builder = gump.create()
+builder:ResizePic(0, 0, 9200, 280, 150)
+builder:Text(20, 20, 1152, "First gump")
+builder:Button(20, 95, 4005, 4007, 1)
+gump.send(session_id, builder, character_id, 0xB10C, 120, 80)
+
+gump.on(0xB10C, 1, function(ctx)
+    local second = gump.create()
+    second:ResizePic(0, 0, 9200, 260, 120)
+    second:Text(20, 20, 1152, "Second gump")
+    gump.send(ctx.session_id, second, ctx.character_id or 0, 0xB10D, 140, 90)
+end)
+```
+
+`gump.on(...)` callback `ctx` fields:
+
+- `session_id`
+- `character_id`
+- `gump_id`
+- `button_id`
+- `serial`
+- `switches`
+- `text_entries`
+
+### ItemScriptContext (`ctx` payload)
 
 ```lua
 ItemScriptContext = {
-    Session: GameSession|nil,          -- Source session when available
-    Mobile: Mobile|nil,                -- Shortcut for Session.Character
-    Item: Item,                        -- Item target
-    Hook: string,                      -- Hook name (for example "on_use")
-    Metadata: table<string, any>       -- Optional hook payload
+    hook: string,
+    session_id: number|nil,
+    mobile_id: number|nil,
+    metadata: table<string, any>|nil,
+    item: {
+        serial: number,
+        script_id: string|nil,
+        name: string|nil,
+        map_id: number,
+        item_id: number,
+        amount: number,
+        hue: number,
+        location: { x: number, y: number, z: number }
+    }
 }
 ```
 

@@ -83,6 +83,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemService, ItemService>(Reuse.Singleton);
         container.Register<IPlayerDragService, PlayerDragService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
+        container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);
