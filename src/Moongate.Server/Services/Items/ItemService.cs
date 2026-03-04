@@ -346,7 +346,6 @@ public sealed class ItemService : IItemService
         {
             item.Id = _persistenceService.UnitOfWork.AllocateNextItemId();
         }
-
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
     }
 

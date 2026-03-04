@@ -31,7 +31,7 @@
     "LogLevel": "Trace"
   },
   "Persistence": {
-    "SaveIntervalSeconds": 30
+    "SaveIntervalSeconds": 300
   },
   "Spatial": {
     "LazySectorItemLoadEnabled": true,

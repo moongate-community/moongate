@@ -14,6 +14,7 @@ namespace Moongate.Server.Services.World;
 public sealed class DoorGeneratorBuilder : IWorldGenerator
 {
     private const string DoorLinkSerialCustomFieldKey = "door_link_serial";
+
     private static readonly HashSet<int> EastFrames =
     [
         0x0007, 0x000A, 0x001A, 0x001C, 0x001E, 0x0037, 0x0058, 0x0059, 0x005C, 0x005E, 0x0080, 0x0081, 0x0082,
@@ -105,7 +106,6 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     private readonly ILogger _logger = Log.ForContext<DoorGeneratorBuilder>();
     private readonly IReadOnlyList<DoorGenerationMapSpec> _mapSpecs;
     private readonly IMovementTileQueryService _tileQueryService;
-    private readonly ISpatialWorldService? _spatialWorldService;
     private readonly IItemService? _itemService;
     private int _nextDoorPairGroupId;
 
@@ -117,7 +117,6 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     )
     {
         _tileQueryService = tileQueryService;
-        _spatialWorldService = spatialWorldService;
         _itemService = itemService;
         _mapSpecs = mapSpecs is null || mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
     }
@@ -156,6 +155,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
             if (!_tileQueryService.TryGetMapBounds(mapSpec.MapId, out var width, out var height))
             {
                 logCallback?.Invoke($"Skipping map {mapSpec.MapId}: bounds unavailable.");
+
                 continue;
             }
 
@@ -188,14 +188,12 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         _logger.Information("Door generation analysis completed. Total candidates: {DoorCount}", total);
         logCallback?.Invoke($"Door generation completed. Total candidates: {total}.");
 
-        if (_itemService is null || _spatialWorldService is null)
+        if (_itemService is null )
         {
             return;
         }
 
         await SpawnGeneratedDoorsAsync(placements);
-
-
     }
 
     /// <summary>
@@ -216,6 +214,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     )
     {
         _nextDoorPairGroupId = 1;
+
         if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
         {
             logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
@@ -407,7 +406,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     private async Task SpawnGeneratedDoorsAsync(IReadOnlyList<DoorGenerationPlacementRecord> placements)
     {
-        if (_itemService is null || _spatialWorldService is null)
+        if (_itemService is null )
         {
             return;
         }
@@ -441,7 +440,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
             await _itemService.UpsertItemAsync(generatedDoor);
 
-            _spatialWorldService.AddOrUpdateItem(generatedDoor, placement.MapId);
+            // _spatialWorldService.AddOrUpdateItem(generatedDoor, placement.MapId);
         }
     }
 

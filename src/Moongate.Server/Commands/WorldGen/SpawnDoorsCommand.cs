@@ -14,7 +14,7 @@ namespace Moongate.Server.Commands.WorldGen;
 /// Runs world door generation.
 /// </summary>
 [RegisterConsoleCommand(
-    "spawn_doors|.spawn_doors",
+    "spawn_doors",
     "Run door world generation immediately. Usage: .spawn_doors",
     CommandSourceType.Console | CommandSourceType.InGame,
     AccountType.Administrator
@@ -38,19 +38,24 @@ public sealed class SpawnDoorsCommand : ICommandExecutor
     {
         if (context.Arguments.Length > 0)
         {
-            context.Print("Usage: .spawn_doors");
+            context.Print("Usage: spawn_doors");
 
             return;
         }
 
         try
         {
-            var startTime = Stopwatch.GetTimestamp();
-            context.Print("Starting door generation...");
-            await Task.Delay(1000);
-            await _worldGeneratorBuilderService.GenerateAsync("doors", message => context.Print("{0}", message));
-            var endTime = Stopwatch.GetElapsedTime(startTime);
-            context.Print($"Door generation finished in {endTime.TotalMilliseconds.Milliseconds().Humanize()}");
+            _backgroundJobService.EnqueueBackground(
+                async () =>
+                {
+                    var startTime = Stopwatch.GetTimestamp();
+                    context.Print("Starting door generation...");
+                    await Task.Delay(1000);
+                    await _worldGeneratorBuilderService.GenerateAsync("doors", message => context.Print("{0}", message));
+                    var endTime = Stopwatch.GetElapsedTime(startTime);
+                    context.Print($"Door generation finished in {endTime.TotalMilliseconds.Milliseconds().Humanize()}");
+                }
+            );
         }
         catch (Exception ex)
         {
