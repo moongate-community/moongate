@@ -11,17 +11,51 @@ namespace Moongate.Persistence.Services.Persistence;
 /// <summary>
 /// Stores append-only journal entries in a binary file with checksum validation.
 /// </summary>
-public sealed class BinaryJournalService : IJournalService
+public sealed class BinaryJournalService : IJournalService, IDisposable
 {
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> IoLocks = new(StringComparer.OrdinalIgnoreCase);
+    private static readonly ConcurrentDictionary<string, byte> LockedPaths = new(StringComparer.OrdinalIgnoreCase);
     private readonly ILogger _logger = Log.ForContext<BinaryJournalService>();
     private readonly string _journalFilePath;
+    private readonly FileStream _journalStream;
     private readonly SemaphoreSlim _ioLock;
+    private readonly bool _fileLockEnabled;
 
-    public BinaryJournalService(string journalFilePath)
+    public BinaryJournalService(string journalFilePath, bool enableFileLock = true)
     {
         _journalFilePath = Path.GetFullPath(journalFilePath);
         _ioLock = IoLocks.GetOrAdd(_journalFilePath, _ => new(1, 1));
+        _fileLockEnabled = enableFileLock;
+        var directoryPath = Path.GetDirectoryName(_journalFilePath);
+
+        if (!string.IsNullOrWhiteSpace(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+        }
+
+        if (_fileLockEnabled && !LockedPaths.TryAdd(_journalFilePath, 0))
+        {
+            throw new IOException($"Journal file is already locked by this process: {_journalFilePath}");
+        }
+
+        try
+        {
+            _journalStream = new(
+                _journalFilePath,
+                FileMode.OpenOrCreate,
+                FileAccess.ReadWrite,
+                enableFileLock ? FileShare.Read : FileShare.ReadWrite
+            );
+        }
+        catch
+        {
+            if (_fileLockEnabled)
+            {
+                LockedPaths.TryRemove(_journalFilePath, out _);
+            }
+
+            throw;
+        }
     }
 
     public async ValueTask AppendAsync(JournalEntry entry, CancellationToken cancellationToken = default)
@@ -52,11 +86,11 @@ public sealed class BinaryJournalService : IJournalService
 
         try
         {
-            await using var stream = new FileStream(_journalFilePath, FileMode.Append, FileAccess.Write, FileShare.Read);
-            await stream.WriteAsync(lengthBuffer, cancellationToken);
-            await stream.WriteAsync(payload, cancellationToken);
-            await stream.WriteAsync(checksumBuffer, cancellationToken);
-            await stream.FlushAsync(cancellationToken);
+            _journalStream.Position = _journalStream.Length;
+            await _journalStream.WriteAsync(lengthBuffer, cancellationToken);
+            await _journalStream.WriteAsync(payload, cancellationToken);
+            await _journalStream.WriteAsync(checksumBuffer, cancellationToken);
+            await _journalStream.FlushAsync(cancellationToken);
         }
         finally
         {
@@ -74,26 +108,26 @@ public sealed class BinaryJournalService : IJournalService
     {
         _logger.Verbose("Journal read-all requested Path={JournalPath}", _journalFilePath);
 
-        if (!File.Exists(_journalFilePath))
-        {
-            _logger.Verbose("Journal file not found Path={JournalPath}", _journalFilePath);
-
-            return [];
-        }
-
         var entries = new List<JournalEntry>();
 
         await _ioLock.WaitAsync(cancellationToken);
 
         try
         {
-            await using var stream = new FileStream(_journalFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (_journalStream.Length == 0)
+            {
+                _logger.Verbose("Journal file is empty Path={JournalPath}", _journalFilePath);
+
+                return [];
+            }
+
+            _journalStream.Position = 0;
             var lengthBuffer = new byte[4];
             var checksumBuffer = new byte[4];
 
             while (true)
             {
-                var lengthBytesRead = await stream.ReadAsync(lengthBuffer, cancellationToken);
+                var lengthBytesRead = await _journalStream.ReadAsync(lengthBuffer, cancellationToken);
 
                 if (lengthBytesRead == 0)
                 {
@@ -121,7 +155,7 @@ public sealed class BinaryJournalService : IJournalService
                 }
 
                 var payload = new byte[payloadLength];
-                var payloadBytesRead = await stream.ReadAsync(payload, cancellationToken);
+                var payloadBytesRead = await _journalStream.ReadAsync(payload, cancellationToken);
 
                 if (payloadBytesRead != payloadLength)
                 {
@@ -134,7 +168,7 @@ public sealed class BinaryJournalService : IJournalService
                     break;
                 }
 
-                var checksumBytesRead = await stream.ReadAsync(checksumBuffer, cancellationToken);
+                var checksumBytesRead = await _journalStream.ReadAsync(checksumBuffer, cancellationToken);
 
                 if (checksumBytesRead != 4)
                 {
@@ -182,15 +216,9 @@ public sealed class BinaryJournalService : IJournalService
 
         try
         {
-            var directoryPath = Path.GetDirectoryName(_journalFilePath);
-
-            if (!string.IsNullOrWhiteSpace(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-
-            await using var stream = new FileStream(_journalFilePath, FileMode.Create, FileAccess.Write, FileShare.Read);
-            await stream.FlushAsync(cancellationToken);
+            _journalStream.SetLength(0);
+            _journalStream.Position = 0;
+            await _journalStream.FlushAsync(cancellationToken);
         }
         finally
         {
@@ -198,5 +226,15 @@ public sealed class BinaryJournalService : IJournalService
         }
 
         _logger.Verbose("Journal reset completed Path={JournalPath}", _journalFilePath);
+    }
+
+    public void Dispose()
+    {
+        _journalStream.Dispose();
+
+        if (_fileLockEnabled)
+        {
+            LockedPaths.TryRemove(_journalFilePath, out _);
+        }
     }
 }

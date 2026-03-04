@@ -1,9 +1,13 @@
+using DryIoc;
+using Moongate.Core.Data.Directories;
+using Moongate.Core.Types;
+using Moongate.Scripting.Services;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Services.Items;
-using Moongate.Server.Types.Items;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
+using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -62,9 +66,28 @@ public class ItemScriptDispatcherTests
     }
 
     [Test]
-    public async Task DispatchAsync_ShouldCallNormalizedLuaFunction_WhenScriptAndHookAreValid()
+    public async Task DispatchAsync_ShouldResolveTableAndInvokeOnClick_ForSingleClick()
     {
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            """
+            items_healing_potion = {
+              on_click = function(ctx)
+                _item_dispatch_called = "single"
+              end
+            }
+            """
+        );
         var dispatcher = new ItemScriptDispatcher(
             scriptEngine,
             new ItemScriptDispatcherTestItemService(),
@@ -76,26 +99,45 @@ public class ItemScriptDispatcherTests
             {
                 ScriptId = "items.healing-potion"
             },
-            ItemScriptHooks.OnUse
+            "single_click"
         );
 
         var dispatched = await dispatcher.DispatchAsync(context);
+        var result = scriptEngine.ExecuteFunction("(function() return _item_dispatch_called end)()");
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(dispatched, Is.True);
-                Assert.That(scriptEngine.LastFunctionName, Is.EqualTo("on_item_items_healing_potion_on_use"));
-                Assert.That(scriptEngine.LastFunctionArgs, Has.Length.EqualTo(1));
-                Assert.That(scriptEngine.LastFunctionArgs![0], Is.EqualTo(context));
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("single"));
             }
         );
     }
 
     [Test]
-    public async Task DispatchAsync_ShouldReturnFalse_WhenScriptIdIsMissing()
+    public async Task DispatchAsync_ShouldResolveTableAndInvokeOnDoubleClick_ForDoubleClick()
     {
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            """
+            items_healing_potion = {
+              on_double_click = function(ctx)
+                _item_dispatch_called = "double"
+              end
+            }
+            """
+        );
         var dispatcher = new ItemScriptDispatcher(
             scriptEngine,
             new ItemScriptDispatcherTestItemService(),
@@ -105,18 +147,20 @@ public class ItemScriptDispatcherTests
             null,
             new UOItemEntity
             {
-                ScriptId = string.Empty
+                ScriptId = "items.healing_potion"
             },
-            ItemScriptHooks.OnUse
+            "double_click"
         );
 
         var dispatched = await dispatcher.DispatchAsync(context);
+        var result = scriptEngine.ExecuteFunction("(function() return _item_dispatch_called end)()");
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(dispatched, Is.False);
-                Assert.That(scriptEngine.LastFunctionName, Is.Null);
+                Assert.That(dispatched, Is.True);
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("double"));
             }
         );
     }
@@ -145,8 +189,41 @@ public class ItemScriptDispatcherTests
             () =>
             {
                 Assert.That(dispatched, Is.False);
-                Assert.That(scriptEngine.LastFunctionName, Is.Null);
             }
         );
+    }
+
+    [Test]
+    public async Task DispatchAsync_ShouldReturnFalse_WhenHookFunctionIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript("items_healing_potion = { }");
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+        var context = new ItemScriptContext(
+            null,
+            new UOItemEntity
+            {
+                ScriptId = "items.healing_potion"
+            },
+            "double_click"
+        );
+
+        var dispatched = await dispatcher.DispatchAsync(context);
+
+        Assert.That(dispatched, Is.False);
     }
 }

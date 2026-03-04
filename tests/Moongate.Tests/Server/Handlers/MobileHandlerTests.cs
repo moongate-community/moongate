@@ -1,7 +1,11 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
@@ -9,7 +13,9 @@ using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -17,11 +23,58 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Handlers;
 
 public sealed class MobileHandlerTests
 {
+    private sealed class MobileHandlerTestSpeechService : ISpeechService
+    {
+        public List<string> DirectMessages { get; } = [];
+
+        public Task<int> BroadcastFromServerAsync(string text, short hue = 946, short font = 3, string language = "ENU")
+            => Task.FromResult(0);
+
+        public Task HandleOpenChatWindowAsync(GameSession session, OpenChatWindowPacket packet, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+
+        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<UnicodeSpeechMessagePacket?>(null);
+
+        public Task<bool> SendMessageFromServerAsync(
+            GameSession session,
+            string text,
+            short hue = 946,
+            short font = 3,
+            string language = "ENU"
+        )
+        {
+            _ = session;
+            _ = hue;
+            _ = font;
+            _ = language;
+            DirectMessages.Add(text);
+            return Task.FromResult(true);
+        }
+
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            ChatMessageType messageType = ChatMessageType.Regular,
+            short hue = 0x3B2,
+            short font = 3,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(0);
+    }
+
     private sealed class MobileHandlerTestCharacterService : ICharacterService
     {
         private readonly UOMobileEntity _mobile;
@@ -56,6 +109,7 @@ public sealed class MobileHandlerTests
     private sealed class MobileHandlerTestSpatialWorldService : ISpatialWorldService
     {
         public List<UOMobileEntity> PlayersInSector { get; set; } = [];
+        public List<GameSession> SessionsInRange { get; set; } = [];
 
         public MapSector? SectorByLocation { get; set; }
         public Func<int, Point3D, MapSector?>? SectorByLocationResolver { get; set; }
@@ -98,7 +152,14 @@ public sealed class MobileHandlerTests
             int mapId,
             GameSession? excludeSession = null
         )
-            => [];
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+            return excludeSession is null
+                       ? [.. SessionsInRange]
+                       : [.. SessionsInRange.Where(session => session != excludeSession)];
+        }
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
             => PlayersInSector;
@@ -150,12 +211,15 @@ public sealed class MobileHandlerTests
 
         var spatial = new MobileHandlerTestSpatialWorldService
         {
-            PlayersInSector = [CreatePlayer(mobileId), CreatePlayer(receiverId)]
+            SessionsInRange = [receiverSession]
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -184,9 +248,12 @@ public sealed class MobileHandlerTests
         var sessions = new FakeGameNetworkSessionService();
         var spatial = new MobileHandlerTestSpatialWorldService { SectorByLocation = null };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -196,6 +263,7 @@ public sealed class MobileHandlerTests
             new MobilePositionChangedEvent(
                 1,
                 mobileId,
+                1,
                 1,
                 new(0, 0, 0),
                 new(1, 1, 0)
@@ -218,12 +286,15 @@ public sealed class MobileHandlerTests
         var spatial = new MobileHandlerTestSpatialWorldService
         {
             SectorByLocation = new(1, 7, 8),
-            PlayersInSector = [CreatePlayer(receiverId)]
+            SessionsInRange = [receiverSession]
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -233,6 +304,7 @@ public sealed class MobileHandlerTests
             new MobilePositionChangedEvent(
                 99,
                 mobileId,
+                1,
                 1,
                 new(200, 200, 0),
                 new(210, 210, 0)
@@ -246,10 +318,61 @@ public sealed class MobileHandlerTests
             {
                 Assert.That(spatial.LastGetSectorMapId, Is.EqualTo(1));
                 Assert.That(spatial.LastGetSectorLocation, Is.EqualTo(new Point3D(210, 210, 0)));
-                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets, Has.Count.EqualTo(1));
                 Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
-                Assert.That(packets[0].Packet, Is.TypeOf<MobileIncomingPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
+                Assert.That(packets[0].Packet, Is.TypeOf<MobileMovingPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldSendMapChangeToMovingPlayer()
+    {
+        var movingPlayerId = (Serial)0x00000999u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(1, 7, 8),
+            SessionsInRange = []
+        };
+        var character = CreatePlayer(movingPlayerId);
+        character.MapId = 1;
+        var characterService = new MobileHandlerTestCharacterService(character);
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new MoongateConfig()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                0,
+                1,
+                new(200, 200, 0),
+                new(210, 210, 0)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
+                Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<ServerChangePacket>());
             }
         );
     }
@@ -298,9 +421,12 @@ public sealed class MobileHandlerTests
             SectorByLocationResolver = (_, location) => location == oldLocation ? oldSector : newSector
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -310,6 +436,7 @@ public sealed class MobileHandlerTests
             new MobilePositionChangedEvent(
                 movingSession.SessionId,
                 movingPlayerId,
+                1,
                 1,
                 oldLocation,
                 newLocation
@@ -325,6 +452,8 @@ public sealed class MobileHandlerTests
                 Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
                 Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.True);
                 Assert.That(packets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+                Assert.That(speechService.DirectMessages, Has.Count.EqualTo(1));
+                Assert.That(speechService.DirectMessages[0], Is.EqualTo("Items: 1 e Mobiles: 1"));
             }
         );
     }
@@ -389,9 +518,12 @@ public sealed class MobileHandlerTests
         };
 
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig
@@ -407,6 +539,7 @@ public sealed class MobileHandlerTests
             new MobilePositionChangedEvent(
                 movingSession.SessionId,
                 movingPlayerId,
+                1,
                 1,
                 oldLocation,
                 newLocation
@@ -455,9 +588,12 @@ public sealed class MobileHandlerTests
         character.Location = spawnLocation;
         character.MapId = 1;
         var characterService = new MobileHandlerTestCharacterService(character);
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
             new MoongateConfig()
@@ -498,7 +634,11 @@ public sealed class MobileHandlerTests
 
         return new(new(client))
         {
-            CharacterId = characterId
+            CharacterId = characterId,
+            Character = new()
+            {
+                Id = characterId
+            }
         };
     }
 

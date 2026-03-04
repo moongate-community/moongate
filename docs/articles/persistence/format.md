@@ -16,13 +16,13 @@ Path:
 
 Write behavior:
 
-1. Serialize `WorldSnapshot` to `world.snapshot.bin.tmp`
-2. Flush stream
-3. Replace target file with atomic move
+1. Truncate snapshot stream (`SetLength(0)`)
+2. Serialize `WorldSnapshot` directly into `world.snapshot.bin`
+3. Flush stream
 
 Read behavior:
 
-- If snapshot file does not exist: returns `null`
+- If snapshot stream is empty: returns `null`
 - Otherwise: deserializes `WorldSnapshot` with MemoryPack
 
 There is no trailing checksum block in the snapshot file.
@@ -67,10 +67,11 @@ Replay stops at first invalid/truncated record.
 
 ## Persistence Options
 
-`PersistenceOptions` currently includes exactly:
+`PersistenceOptions` currently includes:
 
 - `SnapshotFilePath`
 - `JournalFilePath`
+- `EnableFileLock` (default: `true`)
 
 No extra sidecar/checksum/history paths are currently configured.
 

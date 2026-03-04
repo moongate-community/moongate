@@ -1,4 +1,5 @@
 using Moongate.Server.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.World;

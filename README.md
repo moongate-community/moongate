@@ -38,6 +38,14 @@ Special thanks to the teams and contributors behind these projects, which strong
 - POLServer: <https://github.com/polserver/polserver>
 - ModernUO: <https://github.com/modernuo/modernuo>
 
+Data credits:
+
+- World decoration datasets (`Assets/data/decoration/**`) are imported from the ModernUO Distribution data pack.
+- World location datasets (`Assets/data/locations/**`) are imported/adapted from the ModernUO Distribution data pack.
+- Sign datasets (`Assets/data/signs/signs.cfg`) are imported/adapted from ModernUO data format and content.
+
+Thanks to the ModernUO team for making these resources available.
+
 ## Index
 
 - [Project Goals](#project-goals)
@@ -119,6 +127,7 @@ The project is actively in development and already includes:
   - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
 - Minimal email stack with Scriban templates and SMTP sender (`Moongate.Email`), wired through `IEmailService`.
+- Basic/timid A* pathfinding service is available (`IPathfindingService` / `AStarPathfindingService`) and already used by Lua mobile movement primitives (`MoveTowards`).
 
 ## Spatial Chunk Strategy
 
@@ -182,7 +191,7 @@ This section reflects the current server-side implementation status.
   - `0x2E` Use Targeted Skill
 - Active outbound gameplay packets include:
   - Login/session: `0x8C`, `0xA8`, `0xA9`, `0x1B`, `0x55`, `0x82`, `0xB9`
-  - World/entity sync: `0x78`, `0x20`, `0x2E`, `0x24`, `0x3C`, `0x11`, `0x88`, `0xF3`, `0x23`
+  - World/entity sync: `0x78`, `0x20`, `0x2E`, `0x24`, `0x3C`, `0x11`, `0x88`, `0xF3`, `0x23`, `0x76`
   - Movement/time: `0x22`, `0x21`, `0x5B`, `0xF2`
   - Environment/effects: `0xBC`, `0x4F`, `0x4E`, `0x6D`, `0x65`, `0x54`, `0x70`, `0xC0`, `0xC7`
   - UI/speech: `0xAE`, `0xB0`, `0xDD`
@@ -199,7 +208,7 @@ This section reflects the current server-side implementation status.
 
 - Full combat loop (swing/spell damage pipeline, notoriety-driven combat rules).
 - Skill system execution and progression.
-- NPC AI, vendors, loot systems, pathfinding, spawn regions.
+- NPC AI, vendors, loot systems, and spawn regions are still evolving; pathfinding currently exists in a basic form and is not yet a full navigation stack.
 - World simulation breadth (housing, boats, advanced map interactions, seasons/weather effects gameplay-side).
 - Economy systems and complete trading/vendor behavior.
 - Full UO protocol listener coverage (many opcodes intentionally unhandled yet).
@@ -212,6 +221,7 @@ Moongate uses a lightweight file-based persistence model implemented in `src/Moo
 - Append-only journal (`world.journal.bin`) for incremental operations between snapshots.
 - MemoryPack binary serialization for compact and fast read/write.
 - Per-operation checksums in journal entries to detect truncated/corrupted tails.
+- Runtime file-lock mode for snapshot/journal handles (`PersistenceOptions.EnableFileLock`, default: enabled).
 - Thread-safe repositories for accounts, mobiles, and items.
 - Mobile/item relations are persisted by serial references:
   - `UOMobileEntity.BackpackId`
@@ -224,6 +234,7 @@ Runtime behavior:
 - On startup, `IPersistenceService.StartAsync()` loads snapshot (if present) and replays journal.
 - During runtime, repositories append operations to journal.
 - On save/stop, `SaveSnapshotAsync()` writes a new snapshot and resets the journal.
+- With file-lock mode enabled, snapshot/journal handles remain open for process lifetime and prevent concurrent writers.
 
 Storage location:
 
@@ -388,6 +399,50 @@ The server loop is timestamp-driven (monotonic `Stopwatch`) rather than fixed-sl
 - This keeps timer semantics stable while adapting to real runtime load.
 - Optional idle throttling (`Game.IdleCpuEnabled`, `Game.IdleSleepMilliseconds`) sleeps briefly when no work was processed.
 
+### Background Jobs And Main-Thread Dispatch
+
+Moongate provides `IBackgroundJobService` to run non-gameplay work in parallel and safely marshal results back to the game loop thread.
+
+Use it for:
+
+- file parsing/import tasks
+- image generation and offline processors
+- CPU/I/O work that does not directly mutate world state
+
+Do not mutate gameplay state directly inside background workers.  
+Post results back to game loop callbacks instead.
+
+Example:
+
+```csharp
+public sealed class SeedImportService
+{
+    private readonly IBackgroundJobService _backgroundJobService;
+
+    public SeedImportService(IBackgroundJobService backgroundJobService)
+    {
+        _backgroundJobService = backgroundJobService;
+    }
+
+    public void ImportAsync()
+    {
+        _backgroundJobService.RunBackgroundAndPostResultAsync(
+            async () => await LoadSeedStatsAsync(),
+            result =>
+            {
+                // This callback executes on game-loop thread.
+                ApplyStatsToRuntime(result);
+            },
+            ex =>
+            {
+                // Also marshaled on game-loop thread.
+                Log.Error(ex, "Seed import failed.");
+            }
+        );
+    }
+}
+```
+
 ## Requirements
 
 - .NET SDK 10.0.x
@@ -541,6 +596,8 @@ Built-in commands:
 - `add_user` -> Console + InGame, `Administrator`
 - `send_target` -> InGame only, `Regular`
 - `orion` -> InGame only, `Regular` (opens target cursor and spawns Orion on selected location)
+- `teleport|tp` -> InGame only, `GameMaster` (usage: `.teleport <mapId> <x> <y> <z>`)
+- `add_item_backpack|.add_item_backpack` -> InGame only, `GameMaster` (usage: `.add_item_backpack <templateId>`)
 
 ## Scripting
 
@@ -615,6 +672,28 @@ Notes:
 - Current event type emitted by the brain runner: `speech_heard`.
 - `eventObject` contains: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, and `location` (`x`, `y`, `z`).
 - Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
+
+### Visual Effects From Lua
+
+Moongate now exposes visual effect helpers both on mobile proxies and as a global module:
+
+```lua
+local npc = mobile.get(0x00000030)
+if npc then
+  npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
+end
+
+-- broadcast location effect
+effect.send(1, 3613, 2585, 0, 0x3728, 10, 10, 0, 0, 2023)
+
+-- single target effect
+effect.send_to_player(0x00000022, 3613, 2585, 0, 0x3728, 10, 10, 0, 0, 5023)
+```
+
+Related runtime events:
+
+- `MobilePlayEffectEvent` (broadcast in range)
+- `PlayEffectToPlayerEvent` (single session via character id)
 
 ### Item `ScriptId` Dispatch
 

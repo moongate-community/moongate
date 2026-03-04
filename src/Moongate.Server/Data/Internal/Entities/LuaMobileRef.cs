@@ -45,11 +45,8 @@ public sealed class LuaMobileRef
             return false;
         }
 
-        if (!_gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session))
-        {
-            return false;
-        }
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
 
-        return _speechService.SendMessageFromServerAsync(session, text).GetAwaiter().GetResult();
+        return recipients > 0;
     }
 }

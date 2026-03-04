@@ -95,15 +95,15 @@ public sealed class MobileService : IMobileService
         var maxY = minY + MapSectorConsts.SectorSize;
 
         var mobiles = await _persistenceService.UnitOfWork.Mobiles.QueryAsync(
-            mobile => !mobile.IsPlayer &&
-                      mobile.MapId == mapId &&
-                      mobile.Location.X >= minX &&
-                      mobile.Location.X < maxX &&
-                      mobile.Location.Y >= minY &&
-                      mobile.Location.Y < maxY,
-            static mobile => mobile,
-            cancellationToken
-        );
+                          mobile => !mobile.IsPlayer &&
+                                    mobile.MapId == mapId &&
+                                    mobile.Location.X >= minX &&
+                                    mobile.Location.X < maxX &&
+                                    mobile.Location.Y >= minY &&
+                                    mobile.Location.Y < maxY,
+                          static mobile => mobile,
+                          cancellationToken
+                      );
 
         var result = mobiles.ToList();
 
@@ -129,10 +129,10 @@ public sealed class MobileService : IMobileService
         var mobile = _mobileFactoryService.CreateMobileFromTemplate(templateId, accountId);
         mobile.Location = location;
         mobile.MapId = mapId;
+        RegisterBrainIfConfigured(templateId, mobile);
 
         await CreateOrUpdateAsync(mobile, cancellationToken);
         await ApplyTemplateEquipmentAsync(templateId, mobile, cancellationToken);
-        RegisterBrainIfConfigured(templateId, mobile);
 
         return mobile;
     }
@@ -161,6 +161,7 @@ public sealed class MobileService : IMobileService
             }
 
             var selected = SelectRandomEquipment(randomPool);
+
             if (selected is null)
             {
                 continue;
@@ -217,6 +218,7 @@ public sealed class MobileService : IMobileService
         }
 
         var validItems = pool.Items.Where(static item => item.Weight > 0).ToArray();
+
         if (validItems.Length == 0)
         {
             return null;
@@ -229,6 +231,7 @@ public sealed class MobileService : IMobileService
         foreach (var item in validItems)
         {
             accumulator += item.Weight;
+
             if (roll <= accumulator)
             {
                 return item;
@@ -247,15 +250,19 @@ public sealed class MobileService : IMobileService
 
         if (string.IsNullOrWhiteSpace(definition.Brain))
         {
+            mobile.BrainId = null;
             return;
         }
 
-        if (string.Equals(definition.Brain.Trim(), "none", StringComparison.OrdinalIgnoreCase))
+        var resolvedBrainId = definition.Brain.Trim();
+
+        if (string.Equals(resolvedBrainId, "none", StringComparison.OrdinalIgnoreCase))
         {
+            mobile.BrainId = null;
             return;
         }
 
-        _luaBrainRunner.Register(mobile, definition.Brain.Trim());
+        mobile.BrainId = resolvedBrainId;
     }
 
     private async Task HydrateMobileEquipmentRuntimeAsync(

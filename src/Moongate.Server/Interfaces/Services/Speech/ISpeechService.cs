@@ -1,6 +1,8 @@
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Interfaces.Services.Speech;
@@ -70,5 +72,28 @@ public interface ISpeechService
         short hue = SpeechHues.System,
         short font = SpeechHues.DefaultFont,
         string language = "ENU"
+    );
+
+    /// <summary>
+    /// Broadcasts a speech line spoken by a mobile to nearby players in range.
+    /// </summary>
+    /// <param name="speaker">Speaker mobile.</param>
+    /// <param name="text">Speech text.</param>
+    /// <param name="range">Hearing range in tiles.</param>
+    /// <param name="messageType">Speech message type.</param>
+    /// <param name="hue">Speech hue.</param>
+    /// <param name="font">Speech font.</param>
+    /// <param name="language">Language code.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Number of recipients that received the message.</returns>
+    Task<int> SpeakAsMobileAsync(
+        UOMobileEntity speaker,
+        string text,
+        int range = 12,
+        ChatMessageType messageType = ChatMessageType.Regular,
+        short hue = SpeechHues.Default,
+        short font = SpeechHues.DefaultFont,
+        string language = "ENU",
+        CancellationToken cancellationToken = default
     );
 }

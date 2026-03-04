@@ -278,6 +278,7 @@ public class ToolTipHandlerTests
             new()
             {
                 Id = itemSerial,
+                Name = "Gold Coins",
                 ItemId = 0x0EED,
                 Hue = 0x0021
             }
@@ -403,6 +404,82 @@ public class ToolTipHandlerTests
             {
                 Assert.That(rarityProperty.ClilocId, Is.EqualTo(CommonClilocIds.ItemRarity));
                 Assert.That(rarityProperty.Text, Is.EqualTo(ItemRarity.Legendary.ToString()));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldReuseCachedItemTooltip_WhenItemHashIsUnchanged()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000031u;
+        await persistenceService.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = itemSerial,
+                Name = "Cached Item",
+                ItemId = 0x0EED,
+                Amount = 10,
+                Hue = 0x0021
+            }
+        );
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        await handler.HandlePacketAsync(session, request);
+        var firstDequeued = queue.TryDequeue(out var firstOutbound);
+        await handler.HandlePacketAsync(session, request);
+        var secondDequeued = queue.TryDequeue(out var secondOutbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(firstDequeued, Is.True);
+                Assert.That(secondDequeued, Is.True);
+                Assert.That(ReferenceEquals(firstOutbound.Packet, secondOutbound.Packet), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldRebuildItemTooltip_WhenItemHashChanges()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000032u;
+        var item = new UOItemEntity
+        {
+            Id = itemSerial,
+            Name = "Cache Change",
+            ItemId = 0x0EED,
+            Amount = 10,
+            Hue = 0x0021
+        };
+        await persistenceService.UnitOfWork.Items.UpsertAsync(item);
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        await handler.HandlePacketAsync(session, request);
+        var firstDequeued = queue.TryDequeue(out var firstOutbound);
+
+        item.Amount = 99;
+        await persistenceService.UnitOfWork.Items.UpsertAsync(item);
+
+        await handler.HandlePacketAsync(session, request);
+        var secondDequeued = queue.TryDequeue(out var secondOutbound);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(firstDequeued, Is.True);
+                Assert.That(secondDequeued, Is.True);
+                Assert.That(ReferenceEquals(firstOutbound.Packet, secondOutbound.Packet), Is.False);
             }
         );
     }

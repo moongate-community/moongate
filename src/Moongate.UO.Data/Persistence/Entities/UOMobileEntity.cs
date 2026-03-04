@@ -24,6 +24,8 @@ public class UOMobileEntity : IMobileEntity
 
     public string? Title { get; set; }
 
+    public string? BrainId { get; set; }
+
     public Point3D Location { get; set; }
 
     public int MapId { get; set; }

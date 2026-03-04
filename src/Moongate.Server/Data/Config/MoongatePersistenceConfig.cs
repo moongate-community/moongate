@@ -8,5 +8,5 @@ public class MoongatePersistenceConfig
     /// <summary>
     /// Gets or sets snapshot autosave interval in seconds.
     /// </summary>
-    public int SaveIntervalSeconds { get; set; } = 30;
+    public int SaveIntervalSeconds { get; set; } = 300;
 }

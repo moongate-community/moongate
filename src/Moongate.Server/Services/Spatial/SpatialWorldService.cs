@@ -62,7 +62,7 @@ public sealed class SpatialWorldService
         _itemService = itemService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _spatialConfig = moongateConfig.Spatial ?? new();
-        _entityIndex = new(itemService, mobileService, _spatialConfig);
+        _entityIndex = new(itemService, mobileService, _spatialConfig, OnMobileAddedToWorld);
         _regionResolver = new();
 
     }
@@ -119,6 +119,7 @@ public sealed class SpatialWorldService
         var sectorX = mobile.Location.X >> MapSectorConsts.SectorShift;
         var sectorY = mobile.Location.Y >> MapSectorConsts.SectorShift;
         PublishEvent(new MobileAddedInSectorEvent(mobile.Id, mobile.MapId, sectorX, sectorY));
+        OnMobileAddedToWorld(mobile);
     }
 
     public void AddRegion(JsonRegion region)
@@ -183,9 +184,11 @@ public sealed class SpatialWorldService
                 session.CharacterId == gameEvent.MobileId)
             {
                 OnMobileMoved(session.Character!, gameEvent.OldLocation, gameEvent.NewLocation);
+
+                return Task.CompletedTask;
             }
 
-            return Task.CompletedTask;
+            return HandleNpcPositionChangedAsync(gameEvent, cancellationToken);
         }
         catch (Exception exception)
         {
@@ -309,6 +312,45 @@ public sealed class SpatialWorldService
 
     public void RemoveEntity(Serial serial)
         => _entityIndex.RemoveEntity(serial);
+
+    private void OnMobileAddedToWorld(UOMobileEntity mobile)
+        => PublishEvent(new MobileAddedInWorldEvent(mobile, mobile.BrainId));
+
+    private async Task HandleNpcPositionChangedAsync(
+        MobilePositionChangedEvent gameEvent,
+        CancellationToken cancellationToken
+    )
+    {
+        var mobile = TryResolveMobileFromSpatial(gameEvent.MobileId);
+
+        if (mobile is null)
+        {
+            mobile = await _characterService.GetCharacterAsync(gameEvent.MobileId);
+        }
+
+        if (mobile is null)
+        {
+            return;
+        }
+
+        mobile.MapId = gameEvent.MapId;
+        OnMobileMoved(mobile, gameEvent.OldLocation, gameEvent.NewLocation);
+    }
+
+    private UOMobileEntity? TryResolveMobileFromSpatial(Serial mobileId)
+    {
+        foreach (var sector in _entityIndex.GetActiveSectors())
+        {
+            var mobile = sector.GetEntity<UOMobileEntity>(mobileId);
+
+            if (mobile is not null)
+            {
+                return mobile;
+            }
+        }
+
+        return null;
+    }
 
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
         => _gameEventBusService.PublishAsync(gameEvent).AsTask().GetAwaiter().GetResult();

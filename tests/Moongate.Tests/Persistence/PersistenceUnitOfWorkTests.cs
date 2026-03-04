@@ -297,6 +297,23 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
+    public async Task InitializeAsync_WhenFileLockEnabled_ShouldPreventSecondUnitOfWorkFromOpeningSameSaveFiles()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, enableFileLock: true);
+        await firstUnitOfWork.InitializeAsync();
+
+        Assert.That(
+            async () =>
+            {
+                using var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, enableFileLock: true);
+                await secondUnitOfWork.InitializeAsync();
+            },
+            Throws.TypeOf<IOException>()
+        );
+    }
+
+    [Test]
     public async Task CountAsync_OnRepositories_ShouldReturnExpectedValues()
     {
         using var tempDirectory = new TempDirectory();
@@ -815,11 +832,12 @@ public class PersistenceUnitOfWorkTests
         );
     }
 
-    private static PersistenceUnitOfWork CreateUnitOfWork(string directory)
+    private static PersistenceUnitOfWork CreateUnitOfWork(string directory, bool enableFileLock = false)
     {
         var options = new PersistenceOptions(
             Path.Combine(directory, "world.snapshot.bin"),
-            Path.Combine(directory, "world.journal.bin")
+            Path.Combine(directory, "world.journal.bin"),
+            enableFileLock
         );
 
         return new(options);

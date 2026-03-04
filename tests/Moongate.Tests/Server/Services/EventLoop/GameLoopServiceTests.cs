@@ -21,6 +21,7 @@ public class GameLoopServiceTests
         _service = new(
             new PacketDispatchService(),
             new MessageBusService(),
+            new BackgroundJobService(),
             new OutgoingPacketQueue(),
             new GameNetworkSessionService(),
             CreateTimerService(),
@@ -66,6 +67,7 @@ public class GameLoopServiceTests
         _service = new(
             new PacketDispatchService(),
             new MessageBusService(),
+            new BackgroundJobService(),
             new OutgoingPacketQueue(),
             new GameNetworkSessionService(),
             CreateTimerService(),
@@ -107,6 +109,7 @@ public class GameLoopServiceTests
         _service = new(
             packetDispatch,
             messageBus,
+            new BackgroundJobService(),
             new OutgoingPacketQueue(),
             new GameNetworkSessionService(),
             CreateTimerService(),
@@ -140,6 +143,7 @@ public class GameLoopServiceTests
         _service = new(
             packetDispatch,
             messageBus,
+            new BackgroundJobService(),
             outgoingQueue,
             sessions,
             CreateTimerService(),
@@ -176,6 +180,7 @@ public class GameLoopServiceTests
         _service = new(
             new PacketDispatchService(),
             new MessageBusService(),
+            new BackgroundJobService(),
             new OutgoingPacketQueue(),
             new GameNetworkSessionService(),
             timerService,
@@ -187,6 +192,34 @@ public class GameLoopServiceTests
         var timerFired = await WaitUntilAsync(() => Volatile.Read(ref fired) > 0, TimeSpan.FromSeconds(2));
 
         Assert.That(timerFired, Is.True, "Timer callback was not executed by game loop processing.");
+    }
+
+    [Test]
+    public async Task StartAsync_ShouldExecutePostedGameLoopCallbacks()
+    {
+        var backgroundJobService = new BackgroundJobService();
+        var executed = 0;
+
+        _service = new(
+            new PacketDispatchService(),
+            new MessageBusService(),
+            backgroundJobService,
+            new OutgoingPacketQueue(),
+            new GameNetworkSessionService(),
+            CreateTimerService(),
+            new GameLoopTestOutboundPacketSender()
+        );
+
+        backgroundJobService.PostToGameLoop(() => Interlocked.Increment(ref executed));
+
+        await _service.StartAsync();
+
+        var callbackExecuted = await WaitUntilAsync(
+                                   () => Volatile.Read(ref executed) == 1,
+                                   TimeSpan.FromSeconds(2)
+                               );
+
+        Assert.That(callbackExecuted, Is.True, "Posted game-loop callback was not executed.");
     }
 
     [Test]
@@ -205,6 +238,7 @@ public class GameLoopServiceTests
         _service = new(
             packetDispatch,
             messageBus,
+            new BackgroundJobService(),
             new OutgoingPacketQueue(),
             new GameNetworkSessionService(),
             CreateTimerService(),
@@ -229,6 +263,7 @@ public class GameLoopServiceTests
         _service = new(
             new PacketDispatchService(),
             new MessageBusService(),
+            new BackgroundJobService(),
             new OutgoingPacketQueue(),
             new GameNetworkSessionService(),
             CreateTimerService(),

@@ -1,5 +1,6 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
@@ -9,9 +10,11 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
 
@@ -24,6 +27,7 @@ public class MobileHandler
       IGameEventListener<PlayerCharacterLoggedInEvent>,
       IMoongateService
 {
+    private const int DefaultMobileSyncRange = 18;
     private readonly ISpatialWorldService _spatialWorldService;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -31,11 +35,16 @@ public class MobileHandler
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
 
     private readonly ICharacterService _characterService;
+    private readonly ISpeechService _speechService;
     private readonly int _sectorEnterSyncRadius;
+    private readonly int _mobileSyncRange;
+    private readonly IDispatchEventsService _dispatchEventsService;
 
     public MobileHandler(
         ISpatialWorldService spatialWorldService,
         ICharacterService characterService,
+        ISpeechService speechService,
+        IDispatchEventsService dispatchEventsService,
         IGameNetworkSessionService gameNetworkSessionService,
         IOutgoingPacketQueue outgoingPacketQueue,
         MoongateConfig moongateConfig
@@ -43,9 +52,12 @@ public class MobileHandler
     {
         _spatialWorldService = spatialWorldService;
         _characterService = characterService;
+        _speechService = speechService;
+        _dispatchEventsService = dispatchEventsService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _sectorEnterSyncRadius = Math.Max(0, moongateConfig.Spatial.SectorEnterSyncRadius);
+        _mobileSyncRange = DefaultMobileSyncRange;
     }
 
     public async Task HandleAsync(MobileAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
@@ -61,8 +73,6 @@ public class MobileHandler
         await UpdatePlayerForMobileMovedOrCreated(
             mobileEntity,
             gameEvent.MapId,
-            gameEvent.SectorX,
-            gameEvent.SectorY,
             true
         );
     }
@@ -70,7 +80,8 @@ public class MobileHandler
     public async Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
-        var mobileEntity = await _characterService.GetCharacterAsync(gameEvent.MobileId);
+        var mobileEntity = TryResolveMobileFromSpatial(gameEvent) ??
+                           await _characterService.GetCharacterAsync(gameEvent.MobileId);
 
         if (mobileEntity is null)
         {
@@ -84,11 +95,11 @@ public class MobileHandler
             return;
         }
 
+        TrySendMapChangeIfNeeded(mobileEntity, gameEvent);
+
         await UpdatePlayerForMobileMovedOrCreated(
             mobileEntity,
             gameEvent.MapId,
-            sectorInfo.SectorX,
-            sectorInfo.SectorY,
             false
         );
 
@@ -126,40 +137,11 @@ public class MobileHandler
     private Task UpdatePlayerForMobileMovedOrCreated(
         UOMobileEntity mobileEntity,
         int mapId,
-        int sectorX,
-        int sectorY,
         bool isNew
     )
-    {
-        var players = _spatialWorldService.GetPlayersInSector(mapId, sectorX, sectorY);
+        => _dispatchEventsService.DispatchMobileUpdateAsync(mobileEntity, mapId, _mobileSyncRange, isNew);
 
-        foreach (var player in players)
-        {
-            if (player.Id == mobileEntity.Id)
-            {
-                continue;
-            }
-
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                _outgoingPacketQueue.Enqueue(session.SessionId, new MobileIncomingPacket(player, mobileEntity, true, isNew));
-
-                //  _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
-                _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
-
-                WornItemPacketHelper.EnqueueVisibleWornItems(
-                    mobileEntity,
-                    packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
-                );
-
-                // _outgoingPacketQueue.Enqueue(session.SessionId, new MobileDrawPacket(player, mobileEntity, true, isNew));
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private Task SyncSectorSnapshotForEnteringPlayerAsync(
+    private async Task SyncSectorSnapshotForEnteringPlayerAsync(
         UOMobileEntity mobileEntity,
         int mapId,
         Point3D oldLocation,
@@ -168,7 +150,7 @@ public class MobileHandler
     {
         if (!mobileEntity.IsPlayer)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         var oldSector = _spatialWorldService.GetSectorByLocation(mapId, oldLocation);
@@ -176,22 +158,29 @@ public class MobileHandler
 
         if (newSector is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if (oldSector is not null &&
             oldSector.SectorX == newSector.SectorX &&
             oldSector.SectorY == newSector.SectorY)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        return SyncSectorSnapshotForPlayerAsync(mobileEntity, mapId, newLocation);
+        var itemCount = newSector.GetItems()
+                                 .Count(item => item.ParentContainerId == Serial.Zero &&
+                                                item.EquippedMobileId == Serial.Zero);
+        var mobileCount = newSector.GetMobiles()
+                                   .Count(mobile => mobile.Id != mobileEntity.Id);
+
+        await _speechService.SendMessageFromServerAsync(session, $"Items: {itemCount} e Mobiles: {mobileCount}");
+        await SyncSectorSnapshotForPlayerAsync(mobileEntity, mapId, newLocation);
     }
 
     private Task SyncSectorSnapshotForPlayerAsync(
@@ -266,5 +255,38 @@ public class MobileHandler
         }
 
         return Task.CompletedTask;
+    }
+
+    private UOMobileEntity? TryResolveMobileFromSpatial(MobilePositionChangedEvent gameEvent)
+    {
+        var nearby = _spatialWorldService.GetNearbyMobiles(gameEvent.NewLocation, 2, gameEvent.MapId);
+        return nearby.FirstOrDefault(mobile => mobile.Id == gameEvent.MobileId);
+    }
+
+    private void TrySendMapChangeIfNeeded(UOMobileEntity mobileEntity, MobilePositionChangedEvent gameEvent)
+    {
+        if (!mobileEntity.IsPlayer || gameEvent.OldMapId == gameEvent.MapId)
+        {
+            return;
+        }
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
+        {
+            return;
+        }
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            GeneralInformationFactory.CreateSetCursorHueSetMap((byte)gameEvent.MapId)
+        );
+
+        var map = Map.GetMap(gameEvent.MapId);
+        var mapWidth = (ushort)Math.Clamp(map?.Width ?? 0, ushort.MinValue, ushort.MaxValue);
+        var mapHeight = (ushort)Math.Clamp(map?.Height ?? 0, ushort.MinValue, ushort.MaxValue);
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
+        );
     }
 }

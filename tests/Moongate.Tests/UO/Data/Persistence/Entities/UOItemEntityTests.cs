@@ -168,4 +168,40 @@ public class UOItemEntityTests
             }
         );
     }
+
+    [Test]
+    public void GetHashCode_ShouldChange_WhenRelevantStateChanges()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000400,
+            ItemId = 0x0EED,
+            Name = "Gold",
+            Amount = 10,
+            Hue = 0
+        };
+
+        var firstHash = item.GetHashCode();
+        item.Amount = 20;
+        var secondHash = item.GetHashCode();
+
+        Assert.That(secondHash, Is.Not.EqualTo(firstHash));
+    }
+
+    [Test]
+    public void GetHashCode_ShouldChange_WhenCustomPropertyChanges()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000401,
+            ItemId = 0x0EED
+        };
+
+        item.SetCustomString("label_number", "1000");
+        var firstHash = item.GetHashCode();
+        item.SetCustomString("label_number", "1001");
+        var secondHash = item.GetHashCode();
+
+        Assert.That(secondHash, Is.Not.EqualTo(firstHash));
+    }
 }

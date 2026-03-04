@@ -2,6 +2,7 @@ using Moongate.Core.Json;
 using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Json;
 using Moongate.UO.Data.Json.Context;
+using Moongate.UO.Data.Json.Locations;
 using Moongate.UO.Data.Json.Names;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
@@ -24,6 +25,7 @@ public class MoongateUOJsonSerializationContextTests
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(ExpansionInfo[])), Is.True);
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(JsonContainerSize[])), Is.True);
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(JsonNameDef[])), Is.True);
+                Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(JsonMapLocations)), Is.True);
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(JsonRegion[])), Is.True);
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(JsonWeatherWrap)), Is.True);
                 Assert.That(JsonContextTypeResolver.IsTypeRegistered(context, typeof(JsonProfessionsRoot)), Is.True);
@@ -37,6 +39,7 @@ public class MoongateUOJsonSerializationContextTests
         var dataRoot = GetAssetsDataRoot();
         var containersFile = Path.Combine(dataRoot, "containers", "default_containers.json");
         var namesFile = Path.Combine(dataRoot, "names", "modernuo_names.json");
+        var locationsFile = Path.Combine(dataRoot, "locations", "felucca.json");
         var regionsFile = Path.Combine(dataRoot, "regions", "regions.json");
         var weatherFile = Path.Combine(dataRoot, "weather", "weather.json");
         var expansionsFile = Path.Combine(dataRoot, "expansions.json");
@@ -46,6 +49,7 @@ public class MoongateUOJsonSerializationContextTests
         var context = MoongateUOJsonSerializationContext.Default;
         var containers = JsonUtils.DeserializeFromFile<JsonContainerSize[]>(containersFile, context);
         var names = JsonUtils.DeserializeFromFile<JsonNameDef[]>(namesFile, context);
+        var locations = JsonUtils.DeserializeFromFile<JsonMapLocations>(locationsFile, context);
         var regions = JsonUtils.DeserializeFromFile<JsonRegion[]>(regionsFile, context);
         var weather = JsonUtils.DeserializeFromFile<JsonWeatherWrap>(weatherFile, context);
         var expansions = JsonUtils.DeserializeFromFile<ExpansionInfo[]>(expansionsFile, context);
@@ -60,6 +64,8 @@ public class MoongateUOJsonSerializationContextTests
                 Assert.That(containers.All(static container => !string.IsNullOrWhiteSpace(container.Id)), Is.True);
                 Assert.That(names, Is.Not.Null);
                 Assert.That(names.Length, Is.GreaterThan(0));
+                Assert.That(locations, Is.Not.Null);
+                Assert.That(locations.Categories.Count, Is.GreaterThan(0));
                 Assert.That(regions, Is.Not.Null);
                 Assert.That(regions.Length, Is.GreaterThan(0));
                 Assert.That(weather, Is.Not.Null);

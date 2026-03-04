@@ -46,6 +46,122 @@ public class ItemFactoryServiceTests
     }
 
     [Test]
+    public async Task TryGetItemTemplate_ShouldReturnTrue_WhenTemplateExists()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "test_item",
+                Name = "Test Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x1517"
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var found = service.TryGetItemTemplate("test_item", out var template);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.True);
+                Assert.That(template, Is.Not.Null);
+                Assert.That(template!.Id, Is.EqualTo("test_item"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryGetItemTemplate_ShouldReturnFalse_WhenTemplateMissing()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var found = service.TryGetItemTemplate("missing_template", out var template);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.False);
+                Assert.That(template, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryGetItemTemplate_ShouldResolveSnakeCaseFallback_FromPascalCase()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "barred_metal_door",
+                Name = "Barred Metal Door",
+                Category = "structure",
+                Description = "test",
+                ItemId = "0x0685"
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var found = service.TryGetItemTemplate("BarredMetalDoor", out var template);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.True);
+                Assert.That(template, Is.Not.Null);
+                Assert.That(template!.Id, Is.EqualTo("barred_metal_door"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldResolveSnakeCaseFallback_FromPascalCase()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "barred_metal_door",
+                Name = "Barred Metal Door",
+                Category = "structure",
+                Description = "test",
+                ItemId = "0x0685",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.door",
+                Weight = 5
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var item = service.CreateItemFromTemplate("BarredMetalDoor");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.Name, Is.EqualTo("Barred Metal Door"));
+                Assert.That(item.ItemId, Is.EqualTo(0x0685));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateItemFromTemplate_ShouldMapTemplateFieldsAndAllocateItemSerial()
     {
         using var temp = new TempDirectory();

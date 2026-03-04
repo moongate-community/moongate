@@ -44,34 +44,109 @@ public sealed partial class ItemScriptDispatcher
             return Task.FromResult(false);
         }
 
-        var functionName = BuildFunctionName(context.Item.ScriptId, context.Hook);
+        var tableName = NormalizeToken(context.Item.ScriptId);
+        var contextGlobalName = "__item_script_dispatch_context";
+        _scriptEngineService.RegisterGlobal(contextGlobalName, BuildLuaContextPayload(context));
 
         try
         {
-            _scriptEngineService.CallFunction(functionName, context);
+            foreach (var hook in ResolveHookCandidates(context.Hook))
+            {
+                var command = BuildTableDispatchCommand(tableName, hook, contextGlobalName);
+                var result = _scriptEngineService.ExecuteFunction(command);
 
-            return Task.FromResult(true);
+                if (result.Success && result.Data is bool dispatched && dispatched)
+                {
+                    return Task.FromResult(true);
+                }
+            }
+
+            return Task.FromResult(false);
         }
         catch (Exception ex)
         {
             _logger.Error(
                 ex,
-                "Failed to dispatch item script hook '{Hook}' for script '{ScriptId}' using function '{FunctionName}'",
+                "Failed to dispatch item script hook '{Hook}' for script '{ScriptId}' table '{TableName}'",
                 context.Hook,
                 context.Item.ScriptId,
-                functionName
+                tableName
             );
 
             return Task.FromResult(false);
         }
+        finally
+        {
+            _scriptEngineService.UnregisterGlobal(contextGlobalName);
+        }
     }
 
-    private static string BuildFunctionName(string scriptId, string hook)
+    private static IEnumerable<string> ResolveHookCandidates(string hook)
     {
-        var normalizedScriptId = NormalizeToken(scriptId);
         var normalizedHook = NormalizeToken(hook);
 
-        return $"on_item_{normalizedScriptId}_{normalizedHook}";
+        if (normalizedHook == "single_click")
+        {
+            return ["on_click", "OnClick", "on_single_click", "OnSingleClick"];
+        }
+
+        if (normalizedHook == "double_click")
+        {
+            return ["on_double_click", "OnDoubleClick"];
+        }
+
+        var pascal = ToPascalCase(normalizedHook);
+        if (normalizedHook.StartsWith("on_", StringComparison.Ordinal))
+        {
+            return [normalizedHook, pascal];
+        }
+
+        return [$"on_{normalizedHook}", $"On{pascal}", normalizedHook];
+    }
+
+    private static string BuildTableDispatchCommand(string tableName, string hook, string contextGlobalName)
+    {
+        return $"""
+                (function()
+                    local t = {tableName}
+                    if type(t) ~= "table" then
+                        return false
+                    end
+                    local f = t["{hook}"]
+                    if type(f) ~= "function" then
+                        return false
+                    end
+                    f({contextGlobalName})
+                    return true
+                end)()
+                """;
+    }
+
+    private static Dictionary<string, object?> BuildLuaContextPayload(ItemScriptContext context)
+    {
+        return new()
+        {
+            ["hook"] = context.Hook,
+            ["session_id"] = context.Session?.SessionId,
+            ["mobile_id"] = context.Mobile is null ? null : (uint)context.Mobile.Id,
+            ["metadata"] = context.Metadata,
+            ["item"] = new Dictionary<string, object?>
+            {
+                ["serial"] = (uint)context.Item.Id,
+                ["script_id"] = context.Item.ScriptId,
+                ["name"] = context.Item.Name,
+                ["map_id"] = context.Item.MapId,
+                ["item_id"] = context.Item.ItemId,
+                ["amount"] = context.Item.Amount,
+                ["hue"] = context.Item.Hue,
+                ["location"] = new Dictionary<string, int>
+                {
+                    ["x"] = context.Item.Location.X,
+                    ["y"] = context.Item.Location.Y,
+                    ["z"] = context.Item.Location.Z
+                }
+            }
+        };
     }
 
     private static string NormalizeToken(string token)
@@ -86,6 +161,27 @@ public sealed partial class ItemScriptDispatcher
 
     [GeneratedRegex("[^a-zA-Z0-9]+", RegexOptions.Compiled)]
     private static partial Regex NonAlphaNumericRegex();
+
+    private static string ToPascalCase(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return "Unknown";
+        }
+
+        var parts = token.Split('_', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (parts.Length == 0)
+        {
+            return "Unknown";
+        }
+
+        return string.Concat(parts.Select(
+            static part => part.Length == 1
+                               ? part.ToUpperInvariant()
+                               : char.ToUpperInvariant(part[0]) + part[1..].ToLowerInvariant()
+        ));
+    }
 
     public async Task HandleAsync(ItemSingleClickEvent gameEvent, CancellationToken cancellationToken = default)
     {

@@ -11,9 +11,11 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 
 namespace Moongate.Tests.Server.Services.Entities;
@@ -32,6 +34,13 @@ public class MobileServiceTests
 
         public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
             => CreateItemFromTemplateImpl(itemTemplateId);
+
+        public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
+        {
+            template = null;
+
+            return false;
+        }
 
         public UOItemEntity GetNewBackpack()
             => CreateItemFromTemplate("backpack");
@@ -98,6 +107,14 @@ public class MobileServiceTests
             => _ = gameEvent;
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
+        {
+            _ = gameEvent;
+            _ = cancellationToken;
+
+            return Task.CompletedTask;
+        }
+
+        public Task HandleAsync(MobileAddedInWorldEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = gameEvent;
             _ = cancellationToken;
@@ -280,9 +297,9 @@ public class MobileServiceTests
                 Assert.That(saved.Location, Is.EqualTo(new Point3D(100, 200, 7)));
                 Assert.That(saved.MapId, Is.EqualTo(1));
                 Assert.That(spawned.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
-                Assert.That(luaBrainRunner.Registered, Has.Count.EqualTo(1));
-                Assert.That(luaBrainRunner.Registered[0].Mobile.Id, Is.EqualTo(expectedId));
-                Assert.That(luaBrainRunner.Registered[0].BrainId, Is.EqualTo("orc_warrior"));
+                Assert.That(spawned.BrainId, Is.EqualTo("orc_warrior"));
+                Assert.That(saved.BrainId, Is.EqualTo("orc_warrior"));
+                Assert.That(luaBrainRunner.Registered, Is.Empty);
             }
         );
     }

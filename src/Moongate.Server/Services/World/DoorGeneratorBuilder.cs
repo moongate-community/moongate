@@ -2,7 +2,9 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
 
 namespace Moongate.Server.Services.World;
@@ -12,6 +14,8 @@ namespace Moongate.Server.Services.World;
 /// </summary>
 public sealed class DoorGeneratorBuilder : IWorldGenerator
 {
+    private const string DoorLinkSerialCustomFieldKey = "door_link_serial";
+
     private static readonly HashSet<int> EastFrames =
     [
         0x0007, 0x000A, 0x001A, 0x001C, 0x001E, 0x0037, 0x0058, 0x0059, 0x005C, 0x005E, 0x0080, 0x0081, 0x0082,
@@ -103,8 +107,8 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     private readonly ILogger _logger = Log.ForContext<DoorGeneratorBuilder>();
     private readonly IReadOnlyList<DoorGenerationMapSpec> _mapSpecs;
     private readonly IMovementTileQueryService _tileQueryService;
-    private readonly ISpatialWorldService? _spatialWorldService;
     private readonly IItemService? _itemService;
+    private int _nextDoorPairGroupId;
 
     public DoorGeneratorBuilder(
         IMovementTileQueryService tileQueryService,
@@ -114,7 +118,6 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     )
     {
         _tileQueryService = tileQueryService;
-        _spatialWorldService = spatialWorldService;
         _itemService = itemService;
         _mapSpecs = mapSpecs is null || mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
     }
@@ -140,6 +143,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     /// <inheritdoc />
     public async Task GenerateAsync(Action<string>? logCallback = null, CancellationToken cancellationToken = default)
     {
+        _nextDoorPairGroupId = 1;
         logCallback?.Invoke("Door generation started.");
         var mapCounts = new Dictionary<int, int>();
         var placements = new List<DoorGenerationPlacementRecord>();
@@ -152,6 +156,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
             if (!_tileQueryService.TryGetMapBounds(mapSpec.MapId, out var width, out var height))
             {
                 logCallback?.Invoke($"Skipping map {mapSpec.MapId}: bounds unavailable.");
+
                 continue;
             }
 
@@ -184,15 +189,12 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         _logger.Information("Door generation analysis completed. Total candidates: {DoorCount}", total);
         logCallback?.Invoke($"Door generation completed. Total candidates: {total}.");
 
-        if (_itemService is null || _spatialWorldService is null)
+        if (_itemService is null )
         {
             return;
         }
 
         await SpawnGeneratedDoorsAsync(placements);
-
-        // TODO: Persist generated scripted door items when door runtime behavior is implemented in Lua.
-
     }
 
     /// <summary>
@@ -212,6 +214,8 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         CancellationToken cancellationToken = default
     )
     {
+        _nextDoorPairGroupId = 1;
+
         if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
         {
             logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
@@ -403,10 +407,12 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     private async Task SpawnGeneratedDoorsAsync(IReadOnlyList<DoorGenerationPlacementRecord> placements)
     {
-        if (_itemService is null || _spatialWorldService is null)
+        if (_itemService is null )
         {
             return;
         }
+
+        var spawnedByPairGroup = new Dictionary<int, UOItemEntity>();
 
         foreach (var placement in placements)
         {
@@ -416,9 +422,26 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
             generatedDoor.MapId = placement.MapId;
             generatedDoor.Direction = placement.Facing.ToDirectionType();
             generatedDoor.ItemId = placement.Facing.ToItemId(generatedDoor.ItemId);
+
+            if (placement.PairGroupId.HasValue)
+            {
+                var pairGroupId = placement.PairGroupId.Value;
+
+                if (spawnedByPairGroup.TryGetValue(pairGroupId, out var linkedDoor))
+                {
+                    generatedDoor.SetCustomInteger(DoorLinkSerialCustomFieldKey, linkedDoor.Id.Value);
+                    linkedDoor.SetCustomInteger(DoorLinkSerialCustomFieldKey, generatedDoor.Id.Value);
+                    await _itemService.UpsertItemAsync(linkedDoor);
+                }
+                else
+                {
+                    spawnedByPairGroup[pairGroupId] = generatedDoor;
+                }
+            }
+
             await _itemService.UpsertItemAsync(generatedDoor);
 
-            _spatialWorldService.AddOrUpdateItem(generatedDoor, placement.MapId);
+            // _spatialWorldService.AddOrUpdateItem(generatedDoor, placement.MapId);
         }
     }
 
@@ -467,11 +490,13 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
             return 0;
         }
 
+        var pairGroupId = _nextDoorPairGroupId++;
+
         occupiedDoorTiles.Add((firstX, firstY, firstZ));
-        placements.Add(new(mapId, new(firstX, firstY, firstZ), firstFacing));
+        placements.Add(new(mapId, new(firstX, firstY, firstZ), firstFacing, pairGroupId));
 
         occupiedDoorTiles.Add((secondX, secondY, secondZ));
-        placements.Add(new(mapId, new(secondX, secondY, secondZ), secondFacing));
+        placements.Add(new(mapId, new(secondX, secondY, secondZ), secondFacing, pairGroupId));
 
         return 2;
     }
@@ -488,7 +513,16 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     {
         if (!IsInsideMap(x, y, mapWidth, mapHeight) ||
             IsExcludedDoorLocation(mapId, x, y) ||
-            !_tileQueryService.CanFit(mapId, x, y, z) ||
+            !_tileQueryService.CanFit(
+                mapId,
+                x,
+                y,
+                z,
+                16,
+                checkBlocksFit: false,
+                checkMobiles: false,
+                requireSurface: true
+            ) ||
             occupiedDoorTiles.Contains((x, y, z)))
         {
             return false;
@@ -539,13 +573,6 @@ public readonly record struct DoorGenerationMapSpec(
 public readonly record struct DoorGenerationPlacementRecord(
     int MapId,
     Point3D Location,
-    DoorGenerationFacing Facing
+    DoorGenerationFacing Facing,
+    int? PairGroupId = null
 );
-
-public enum DoorGenerationFacing
-{
-    WestCW = 0,
-    EastCCW = 1,
-    SouthCW = 2,
-    NorthCCW = 3
-}

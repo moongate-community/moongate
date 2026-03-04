@@ -2,6 +2,7 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -83,8 +84,45 @@ public class DoorGeneratorBuilderTests
             {
                 Assert.That(service.LastGeneratedDoors[0].Location, Is.EqualTo(new Point3D(1, 0, 0)));
                 Assert.That(service.LastGeneratedDoors[0].Facing, Is.EqualTo(DoorGenerationFacing.WestCW));
+                Assert.That(service.LastGeneratedDoors[0].PairGroupId, Is.Not.Null);
                 Assert.That(service.LastGeneratedDoors[1].Location, Is.EqualTo(new Point3D(2, 0, 0)));
                 Assert.That(service.LastGeneratedDoors[1].Facing, Is.EqualTo(DoorGenerationFacing.EastCCW));
+                Assert.That(service.LastGeneratedDoors[1].PairGroupId, Is.EqualTo(service.LastGeneratedDoors[0].PairGroupId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task GenerateAsync_ShouldLinkDoubleDoorSerials_ViaCustomField()
+    {
+        var staticTiles = new Dictionary<(int X, int Y), List<StaticTile>>
+        {
+            [(0, 0)] = [new(0x000C, 0)],
+            [(3, 0)] = [new(0x000A, 0)]
+        };
+        var itemService = new FakeDoorGeneratorItemService();
+        var service = CreateService(staticTiles, 16, 16, itemService);
+
+        await service.GenerateAsync();
+
+        var linkedDoors = itemService.UpsertedItems
+                                    .GroupBy(static item => item.Id)
+                                    .Select(static group => group.Last())
+                                    .Where(static item => item.CustomProperties.ContainsKey("door_link_serial"))
+                                    .ToList();
+
+        Assert.That(linkedDoors, Has.Count.EqualTo(2));
+
+        var first = linkedDoors[0];
+        var second = linkedDoors[1];
+        var firstLink = first.CustomProperties["door_link_serial"].IntegerValue;
+        var secondLink = second.CustomProperties["door_link_serial"].IntegerValue;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(firstLink, Is.EqualTo(second.Id.Value));
+                Assert.That(secondLink, Is.EqualTo(first.Id.Value));
             }
         );
     }
@@ -114,12 +152,13 @@ public class DoorGeneratorBuilderTests
     private static DoorGeneratorBuilder CreateService(
         Dictionary<(int X, int Y), List<StaticTile>> staticTiles,
         int width,
-        int height
+        int height,
+        FakeDoorGeneratorItemService? itemService = null
     )
     {
         var tileQuery = new FakeMovementTileQueryService(staticTiles, width, height);
         var spatial = new RegionDataLoaderTestSpatialWorldService();
-        var itemService = new FakeDoorGeneratorItemService();
+        itemService ??= new FakeDoorGeneratorItemService();
         var specs = new List<DoorGenerationMapSpec>
         {
             new(1, [new Rectangle2D(0, 0, 4, 4)])
@@ -130,6 +169,10 @@ public class DoorGeneratorBuilderTests
 
     private sealed class FakeDoorGeneratorItemService : IItemService
     {
+        private uint _nextSerial = 0x40001000;
+
+        public List<UOItemEntity> UpsertedItems { get; } = [];
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => throw new NotSupportedException();
 
@@ -143,7 +186,7 @@ public class DoorGeneratorBuilderTests
             => Task.FromResult(
                 new UOItemEntity
                 {
-                    Id = (Serial)0x40000001,
+                    Id = (Serial)_nextSerial++,
                     ItemId = 0x0675,
                     Location = Point3D.Zero
                 }
@@ -182,7 +225,11 @@ public class DoorGeneratorBuilderTests
             => throw new NotSupportedException();
 
         public Task UpsertItemAsync(UOItemEntity item)
-            => Task.CompletedTask;
+        {
+            UpsertedItems.Add(item);
+
+            return Task.CompletedTask;
+        }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
@@ -223,8 +270,20 @@ public class DoorGeneratorBuilderTests
         public IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y)
             => _staticTiles.TryGetValue((x, y), out var tiles) ? tiles : Array.Empty<StaticTile>();
 
-        public bool CanFit(int mapId, int x, int y, int z, int height = 16)
+        public bool CanFit(
+            int mapId,
+            int x,
+            int y,
+            int z,
+            int height = 16,
+            bool checkBlocksFit = false,
+            bool checkMobiles = true,
+            bool requireSurface = true
+        )
             => !_staticTiles.TryGetValue((x, y), out var tiles) ||
                tiles.All(static tile => tile.ID != 0x2000);
+
+        public bool CanFitItem(int mapId, int x, int y, int z, int height = 16)
+            => CanFit(mapId, x, y, z, height);
     }
 }

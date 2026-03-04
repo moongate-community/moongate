@@ -24,7 +24,7 @@ Notes:
 
 - There is currently **no** separate `world.journal.bin.checksum` file.
 - There is currently **no** snapshot rotation folder (`save/snapshots/*`).
-- Snapshot writes are atomic (`.tmp` then move/replace).
+- File lock mode is supported via `PersistenceOptions.EnableFileLock` (default enabled).
 
 ## Runtime Flow
 
@@ -32,6 +32,7 @@ Notes:
 2. Then it replays valid entries from `world.journal.bin` in sequence order.
 3. During runtime, repository mutations append operations to the journal.
 4. On autosave/shutdown, a fresh snapshot is written and journal is reset.
+5. With file lock mode enabled, snapshot/journal handles remain open for process lifetime.
 
 ## Snapshot
 
@@ -41,7 +42,7 @@ Implemented behavior:
 
 - Written by `MemoryPackSnapshotService`
 - Uses `MemoryPackSerializer.SerializeAsync`
-- Saved atomically via temp file + `File.Move(..., overwrite: true)`
+- Saved by rewriting the snapshot file on a lock-held stream.
 
 ## Journal
 

@@ -1,0 +1,16 @@
+[
+  {
+    "type": "item",
+    "id": "static",
+    "name": "Static",
+    "category": "World",
+    "description": "Generic world static item template used for decoration imports.",
+    "tags": ["static", "worldgen", "decoration"],
+    "itemId": "0x0001",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": false
+  }
+]

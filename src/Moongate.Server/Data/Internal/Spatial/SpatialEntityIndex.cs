@@ -22,16 +22,19 @@ internal sealed class SpatialEntityIndex
     private readonly IItemService _itemService;
     private readonly IMobileService _mobileService;
     private readonly MoongateSpatialConfig _spatialConfig;
+    private readonly Action<UOMobileEntity>? _onMobileAddedToWorld;
 
     public SpatialEntityIndex(
         IItemService itemService,
         IMobileService mobileService,
-        MoongateSpatialConfig spatialConfig
+        MoongateSpatialConfig spatialConfig,
+        Action<UOMobileEntity>? onMobileAddedToWorld = null
     )
     {
         _itemService = itemService;
         _mobileService = mobileService;
         _spatialConfig = spatialConfig;
+        _onMobileAddedToWorld = onMobileAddedToWorld;
     }
 
     public bool AddOrUpdateMobile(UOMobileEntity mobile)
@@ -302,15 +305,18 @@ internal sealed class SpatialEntityIndex
         }
     }
 
-    private void AddOrUpdateMobileInternal(UOMobileEntity mobile, int mapId, int sectorX, int sectorY)
+    private bool AddOrUpdateMobileInternal(UOMobileEntity mobile, int mapId, int sectorX, int sectorY)
     {
         lock (_sync)
         {
+            var isNew = !_entityLocations.ContainsKey(mobile.Id);
             RemoveEntityUnsafe(mobile.Id);
             mobile.MapId = mapId;
             var sector = GetOrCreateSectorUnsafe(mapId, sectorX, sectorY);
             sector.AddEntity(mobile);
             _entityLocations[mobile.Id] = new() { MapId = mapId, SectorX = sectorX, SectorY = sectorY };
+
+            return isNew;
         }
     }
 
@@ -476,7 +482,12 @@ internal sealed class SpatialEntityIndex
             }
 
             var (mobileSectorX, mobileSectorY) = GetSectorCoordinates(mobile.Location);
-            AddOrUpdateMobileInternal(mobile, mapId, mobileSectorX, mobileSectorY);
+            var isNew = AddOrUpdateMobileInternal(mobile, mapId, mobileSectorX, mobileSectorY);
+
+            if (isNew)
+            {
+                _onMobileAddedToWorld?.Invoke(mobile);
+            }
         }
 
         var items = await _itemService.GetGroundItemsInSectorAsync(mapId, sectorX, sectorY);

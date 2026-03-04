@@ -10,7 +10,7 @@ namespace Moongate.Persistence.Services.Persistence;
 /// <summary>
 /// Coordinates repositories plus snapshot/journal load-save lifecycle.
 /// </summary>
-public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork
+public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 {
     private readonly BinaryJournalService _journalService;
     private readonly ILogger _logger = Log.ForContext<PersistenceUnitOfWork>();
@@ -19,8 +19,8 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork
 
     public PersistenceUnitOfWork(PersistenceOptions options)
     {
-        _snapshotService = new(options.SnapshotFilePath);
-        _journalService = new(options.JournalFilePath);
+        _snapshotService = new(options.SnapshotFilePath, options.EnableFileLock);
+        _journalService = new(options.JournalFilePath, options.EnableFileLock);
 
         Accounts = new AccountRepository(_stateStore, _journalService);
         Mobiles = new MobileRepository(_stateStore, _journalService);
@@ -151,6 +151,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork
         await _snapshotService.SaveAsync(snapshot, cancellationToken);
         await _journalService.ResetAsync(cancellationToken);
         _logger.Verbose("Persistence snapshot-save completed LastSequenceId={LastSequenceId}", snapshot.LastSequenceId);
+    }
+
+    public void Dispose()
+    {
+        _journalService.Dispose();
+        _snapshotService.Dispose();
     }
 
     private void ApplyEntry(JournalEntry entry)

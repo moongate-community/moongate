@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 
 namespace Moongate.Server.Interfaces.Services.Entities;
 
@@ -7,6 +8,14 @@ namespace Moongate.Server.Interfaces.Services.Entities;
 /// </summary>
 public interface IItemFactoryService
 {
+    /// <summary>
+    /// Tries to resolve an item template by id.
+    /// </summary>
+    /// <param name="itemTemplateId">Item template identifier.</param>
+    /// <param name="definition">Resolved template when found.</param>
+    /// <returns><see langword="true" /> when template exists; otherwise <see langword="false" />.</returns>
+    bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition);
+
     /// <summary>
     /// Creates an item entity from an item template id.
     /// </summary>

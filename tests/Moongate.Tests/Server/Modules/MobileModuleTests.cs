@@ -8,6 +8,8 @@ using Moongate.Tests.Server.Support;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Modules;
 
@@ -71,6 +73,29 @@ public class MobileModuleTests
             _ = language;
 
             return Task.FromResult(true);
+        }
+
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            ChatMessageType messageType = ChatMessageType.Regular,
+            short hue = SpeechHues.Default,
+            short font = SpeechHues.DefaultFont,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = speaker;
+            _ = text;
+            _ = range;
+            _ = messageType;
+            _ = hue;
+            _ = font;
+            _ = language;
+            _ = cancellationToken;
+
+            return Task.FromResult(0);
         }
     }
 

@@ -1,5 +1,6 @@
 using Moongate.Core.Random;
 using ShaiRandom.Generators;
+using System.Globalization;
 
 namespace Moongate.UO.Data.Templates.Items;
 
@@ -20,6 +21,48 @@ public readonly record struct HueSpec
     public int Max { get; }
 
     public bool IsRange { get; }
+
+    public static HueSpec ParseFromString(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new FormatException("HueSpec string cannot be null or empty.");
+        }
+
+        var trimmed = value.Trim();
+
+        if (trimmed.StartsWith("hue(", StringComparison.OrdinalIgnoreCase) && trimmed.EndsWith(')'))
+        {
+            var content = trimmed[4..^1];
+            var parts = content.Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length != 2 ||
+                !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var min) ||
+                !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var max))
+            {
+                throw new FormatException($"Invalid hue range format: {value}");
+            }
+
+            return FromRange(min, max);
+        }
+
+        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!int.TryParse(trimmed[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hexValue))
+            {
+                throw new FormatException($"Invalid hexadecimal hue value: {value}");
+            }
+
+            return FromValue(hexValue);
+        }
+
+        if (int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numericValue))
+        {
+            return FromValue(numericValue);
+        }
+
+        throw new FormatException($"Invalid hue value: {value}");
+    }
 
     public static HueSpec FromRange(int min, int max)
     {

@@ -36,6 +36,7 @@ public sealed class CharacterPositionPersistenceServiceTests
                     session.SessionId,
                     session.CharacterId,
                     1,
+                    1,
                     new(100, 100, 0),
                     new(101, 100, 0)
                 )
@@ -73,6 +74,7 @@ public sealed class CharacterPositionPersistenceServiceTests
                     session.SessionId,
                     session.CharacterId,
                     1,
+                    1,
                     new(100, 100, 0),
                     new(101, 100, 0)
                 )
@@ -81,6 +83,7 @@ public sealed class CharacterPositionPersistenceServiceTests
                 new(
                     session.SessionId,
                     session.CharacterId,
+                    1,
                     1,
                     new(101, 100, 0),
                     new(102, 100, 0)
@@ -93,6 +96,7 @@ public sealed class CharacterPositionPersistenceServiceTests
                 new(
                     session.SessionId,
                     session.CharacterId,
+                    1,
                     1,
                     new(15, 100, 0),
                     new(16, 100, 0)

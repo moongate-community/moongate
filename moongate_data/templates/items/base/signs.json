@@ -1,0 +1,16 @@
+[
+  {
+    "type": "item",
+    "id": "sign",
+    "name": "Sign",
+    "category": "Structure",
+    "description": "Generic sign template.",
+    "tags": ["sign", "worldgen"],
+    "itemId": "0x0C03",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": false
+  }
+]

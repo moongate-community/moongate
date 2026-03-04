@@ -52,7 +52,7 @@ public class RegionDataLoader : IFileLoader
             _logger.Information(
                 "Loaded {RegionCount} regions from file: {FilePath}",
                 regions.Length,
-                regionFile
+                new FileInfo(regionFile).Name
             );
         }
 

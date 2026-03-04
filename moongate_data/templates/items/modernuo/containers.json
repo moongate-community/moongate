@@ -11,11 +11,7 @@
     "weight": 1,
     "scriptId": "items.armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -29,10 +25,7 @@
     "weight": 3,
     "scriptId": "items.backpack",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -46,27 +39,7 @@
     "weight": 2,
     "scriptId": "items.bag",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "barrel",
-    "name": "Barrel",
-    "category": "Containers",
-    "description": "Imported from ModernUO (Barrel).",
-    "itemId": "0x0E77",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 25,
-    "scriptId": "items.barrel",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -80,10 +53,7 @@
     "weight": 1,
     "scriptId": "items.basket",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -97,11 +67,7 @@
     "weight": 1,
     "scriptId": "items.cherry_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -115,11 +81,7 @@
     "weight": 0,
     "scriptId": "items.decorative_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -133,11 +95,7 @@
     "weight": 1,
     "scriptId": "items.drawer",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -151,11 +109,7 @@
     "weight": 1,
     "scriptId": "items.elegant_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -169,11 +123,7 @@
     "weight": 0,
     "scriptId": "items.empty_bookcase",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -187,11 +137,7 @@
     "weight": 1,
     "scriptId": "items.fancy_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -205,11 +151,7 @@
     "weight": 1,
     "scriptId": "items.fancy_drawer",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -223,11 +165,7 @@
     "weight": 1,
     "scriptId": "items.fancy_elven_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -241,11 +179,7 @@
     "weight": 0,
     "scriptId": "items.fillable_barrel",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -259,11 +193,7 @@
     "weight": 0,
     "scriptId": "items.fillable_large_crate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -277,11 +207,7 @@
     "weight": 0,
     "scriptId": "items.fillable_metal_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -295,11 +221,7 @@
     "weight": 0,
     "scriptId": "items.fillable_metal_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -313,11 +235,7 @@
     "weight": 0,
     "scriptId": "items.fillable_metal_golden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -331,11 +249,7 @@
     "weight": 0,
     "scriptId": "items.fillable_small_crate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -349,11 +263,7 @@
     "weight": 0,
     "scriptId": "items.fillable_wooden_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -367,11 +277,7 @@
     "weight": 0,
     "scriptId": "items.fillable_wooden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -385,11 +291,7 @@
     "weight": 0,
     "scriptId": "items.finished_wooden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -403,11 +305,7 @@
     "weight": 1,
     "scriptId": "items.full_bookcase",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -421,11 +319,7 @@
     "weight": 0,
     "scriptId": "items.gilded_wooden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -439,10 +333,7 @@
     "weight": 15,
     "scriptId": "items.keg",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -456,10 +347,7 @@
     "weight": 0,
     "scriptId": "items.large_bag_ball",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -473,11 +361,7 @@
     "weight": 1,
     "scriptId": "items.large_crate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -491,11 +375,7 @@
     "weight": 0,
     "scriptId": "items.library_bookcase",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -509,11 +389,7 @@
     "weight": 1,
     "scriptId": "items.maple_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -527,11 +403,7 @@
     "weight": 2,
     "scriptId": "items.medium_crate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -545,11 +417,7 @@
     "weight": 0,
     "scriptId": "items.metal_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -563,11 +431,7 @@
     "weight": 0,
     "scriptId": "items.metal_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -581,11 +445,7 @@
     "weight": 0,
     "scriptId": "items.metal_golden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -599,11 +459,7 @@
     "weight": 0,
     "scriptId": "items.metal_golden_treasure_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -617,11 +473,7 @@
     "weight": 0,
     "scriptId": "items.metal_treasure_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -635,11 +487,7 @@
     "weight": 0,
     "scriptId": "items.ornate_wooden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -653,10 +501,7 @@
     "weight": 2,
     "scriptId": "items.picnic_basket",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -670,11 +515,7 @@
     "weight": 0,
     "scriptId": "items.plain_wooden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -688,10 +529,7 @@
     "weight": 1,
     "scriptId": "items.pouch",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -705,11 +543,7 @@
     "weight": 0,
     "scriptId": "items.rarewood_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -723,11 +557,7 @@
     "weight": 1,
     "scriptId": "items.red_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -741,11 +571,7 @@
     "weight": 1,
     "scriptId": "items.short_cabinet",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -759,11 +585,7 @@
     "weight": 1,
     "scriptId": "items.simple_elven_armoire",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -777,10 +599,7 @@
     "weight": 0,
     "scriptId": "items.small_bag_ball",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -794,11 +613,7 @@
     "weight": 2,
     "scriptId": "items.small_crate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -812,11 +627,7 @@
     "weight": 1,
     "scriptId": "items.tall_cabinet",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -830,10 +641,7 @@
     "weight": 0,
     "scriptId": "items.treasure_map_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
+    "tags": ["modernuo", "containers"]
   },
   {
     "type": "item",
@@ -847,11 +655,7 @@
     "weight": 4,
     "scriptId": "items.wooden_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -865,11 +669,7 @@
     "weight": 2,
     "scriptId": "items.wooden_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -883,11 +683,7 @@
     "weight": 0,
     "scriptId": "items.wooden_foot_locker",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   },
   {
     "type": "item",
@@ -901,10 +697,6 @@
     "weight": 0,
     "scriptId": "items.wooden_treasure_chest",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    "tags": ["modernuo", "containers", "flippable"]
   }
 ]

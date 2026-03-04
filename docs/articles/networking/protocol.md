@@ -72,6 +72,7 @@ On repeated violations, session is disconnected.
 - `0x11` Player Status (variable)
 - `0xF3` Object Information (`Length=24`, fixed)
 - `0x23` Dragging Of Item (`Length=26`, fixed)
+- `0x76` Server Change (`Length=16`, fixed)
 - `0xBC` Season (`Length=3`, fixed)
 - `0x4F` Overall Light Level (`Length=2`, fixed)
 - `0x4E` Personal Light Level (`Length=6`, fixed)
@@ -84,6 +85,11 @@ On repeated violations, session is disconnected.
 - `0xAE` Unicode Speech Message (variable)
 - `0xB0` Generic Gump (variable)
 - `0xDD` Compressed Gump (variable)
+
+Map transition notes:
+
+- Map hue/map selection uses `0xBF` subcommand `0x08` (Set Cursor Hue / Set Map).
+- On map changes, Moongate also sends `0x76` (Server Change) with target location + map dimensions.
 
 ## Opcode Constants
 

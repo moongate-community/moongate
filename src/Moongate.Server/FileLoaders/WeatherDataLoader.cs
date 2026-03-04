@@ -43,7 +43,7 @@ public class WeatherDataLoader : IFileLoader
             _logger.Information(
                 "Loaded {WeatherType} weather from file: {FilePath}",
                 weatherData.WeatherTypes.Count,
-                weatherFile
+                new FileInfo(weatherFile).Name
             );
 
             _weatherService.SetWeatherTypes(weatherData.WeatherTypes);

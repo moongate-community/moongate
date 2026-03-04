@@ -26,9 +26,9 @@ public class GameEventScriptBridgeService : IGameEventScriptBridgeService, IGame
 
     public async Task HandleAsync(IGameEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        _logger.Debug("Received game event: {EventType}", gameEvent.GetType().Name);
+        _logger.Verbose("Received game event: {EventType}", gameEvent.GetType().Name);
         var scriptFunctionName = GetScriptFunctionNameForEvent(gameEvent);
-        _logger.Debug("Looking for script function: {FunctionName}", scriptFunctionName);
+        _logger.Verbose("Looking for script function: {FunctionName}", scriptFunctionName);
         _scriptEngineService.CallFunction(scriptFunctionName, gameEvent);
     }
 

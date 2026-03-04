@@ -139,7 +139,7 @@ public class ItemModuleTests
     }
 
     [Test]
-    public void Get_WhenItemExists_ShouldReturnLuaItemRef()
+    public void Get_WhenItemExists_ShouldReturnLuaItemProxy()
     {
         var itemService = new ItemModuleTestItemService
         {
@@ -151,7 +151,10 @@ public class ItemModuleTests
                 Location = new(120, 210, 0),
                 Amount = 100,
                 ItemId = 0x0EED,
-                Hue = 0
+                Hue = 0,
+                ScriptId = "items.gold",
+                ParentContainerId = (Serial)0x400,
+                ContainerPosition = new(11, 22)
             }
         };
         var module = new ItemModule(itemService);
@@ -171,6 +174,10 @@ public class ItemModuleTests
                 Assert.That(reference.Amount, Is.EqualTo(100));
                 Assert.That(reference.ItemId, Is.EqualTo(0x0EED));
                 Assert.That(reference.Hue, Is.EqualTo(0));
+                Assert.That(reference.ScriptId, Is.EqualTo("items.gold"));
+                Assert.That(reference.ParentContainerId, Is.EqualTo(0x400));
+                Assert.That(reference.ContainerX, Is.EqualTo(11));
+                Assert.That(reference.ContainerY, Is.EqualTo(22));
             }
         );
     }

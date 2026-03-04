@@ -50,17 +50,19 @@ Location:
 
 If missing, bootstrap creates one with default values.
 
-### Important Current Limitation
+### Current Merge Behavior
 
-At the moment, bootstrap explicitly applies these fields from file:
+At startup, bootstrap explicitly applies these sections from file:
 
 - `RootDirectory`
 - `UODirectory`
 - `LogLevel`
 - `LogPacketData`
+- `Http`
 - `Persistence`
+- `Email`
 
-Other sections exist in the config model (`Http`, `Game`, `Metrics`), but are not explicitly merged in `CheckConfig()` yet.
+Other sections can exist in the config model, but are not explicitly merged in `CheckConfig()` unless listed above.
 
 ## Config Model
 

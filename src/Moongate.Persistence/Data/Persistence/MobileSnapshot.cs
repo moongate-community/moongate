@@ -16,6 +16,8 @@ public sealed partial class MobileSnapshot
 
     public string? Title { get; set; }
 
+    public string? BrainId { get; set; }
+
     public int X { get; set; }
 
     public int Y { get; set; }
