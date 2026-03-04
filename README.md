@@ -127,6 +127,7 @@ The project is actively in development and already includes:
   - then deeper parent/child hierarchy (`ChildLevel`) when priority ties.
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
 - Minimal email stack with Scriban templates and SMTP sender (`Moongate.Email`), wired through `IEmailService`.
+- Basic/timid A* pathfinding service is available (`IPathfindingService` / `AStarPathfindingService`) and already used by Lua mobile movement primitives (`MoveTowards`).
 
 ## Spatial Chunk Strategy
 
@@ -190,7 +191,7 @@ This section reflects the current server-side implementation status.
   - `0x2E` Use Targeted Skill
 - Active outbound gameplay packets include:
   - Login/session: `0x8C`, `0xA8`, `0xA9`, `0x1B`, `0x55`, `0x82`, `0xB9`
-  - World/entity sync: `0x78`, `0x20`, `0x2E`, `0x24`, `0x3C`, `0x11`, `0x88`, `0xF3`, `0x23`
+  - World/entity sync: `0x78`, `0x20`, `0x2E`, `0x24`, `0x3C`, `0x11`, `0x88`, `0xF3`, `0x23`, `0x76`
   - Movement/time: `0x22`, `0x21`, `0x5B`, `0xF2`
   - Environment/effects: `0xBC`, `0x4F`, `0x4E`, `0x6D`, `0x65`, `0x54`, `0x70`, `0xC0`, `0xC7`
   - UI/speech: `0xAE`, `0xB0`, `0xDD`
@@ -207,7 +208,7 @@ This section reflects the current server-side implementation status.
 
 - Full combat loop (swing/spell damage pipeline, notoriety-driven combat rules).
 - Skill system execution and progression.
-- NPC AI, vendors, loot systems, pathfinding, spawn regions.
+- NPC AI, vendors, loot systems, and spawn regions are still evolving; pathfinding currently exists in a basic form and is not yet a full navigation stack.
 - World simulation breadth (housing, boats, advanced map interactions, seasons/weather effects gameplay-side).
 - Economy systems and complete trading/vendor behavior.
 - Full UO protocol listener coverage (many opcodes intentionally unhandled yet).
@@ -596,6 +597,7 @@ Built-in commands:
 - `send_target` -> InGame only, `Regular`
 - `orion` -> InGame only, `Regular` (opens target cursor and spawns Orion on selected location)
 - `teleport|tp` -> InGame only, `GameMaster` (usage: `.teleport <mapId> <x> <y> <z>`)
+- `add_item_backpack|.add_item_backpack` -> InGame only, `GameMaster` (usage: `.add_item_backpack <templateId>`)
 
 ## Scripting
 
@@ -670,6 +672,28 @@ Notes:
 - Current event type emitted by the brain runner: `speech_heard`.
 - `eventObject` contains: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, and `location` (`x`, `y`, `z`).
 - Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
+
+### Visual Effects From Lua
+
+Moongate now exposes visual effect helpers both on mobile proxies and as a global module:
+
+```lua
+local npc = mobile.get(0x00000030)
+if npc then
+  npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
+end
+
+-- broadcast location effect
+effect.send(1, 3613, 2585, 0, 0x3728, 10, 10, 0, 0, 2023)
+
+-- single target effect
+effect.send_to_player(0x00000022, 3613, 2585, 0, 0x3728, 10, 10, 0, 0, 5023)
+```
+
+Related runtime events:
+
+- `MobilePlayEffectEvent` (broadcast in range)
+- `PlayEffectToPlayerEvent` (single session via character id)
 
 ### Item `ScriptId` Dispatch
 

@@ -5,6 +5,19 @@ Reference for the Moongate v2 Lua scripting API.
 > `definitions.lua` generated at startup is the source of truth for currently exported modules and signatures.
 > This page may include planned/high-level APIs in addition to runtime-available ones.
 
+## Runtime Notes
+
+Current runtime includes visual effect APIs:
+
+```lua
+-- global module
+effect.send(mapId, x, y, z, itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
+effect.send_to_player(characterId, x, y, z, itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
+
+-- mobile proxy
+mobile.get(serial):SetEffect(itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
+```
+
 ## Global Modules
 
 ### log - Logging Module

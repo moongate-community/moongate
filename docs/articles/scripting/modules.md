@@ -6,6 +6,37 @@ Creating custom script modules in Moongate v2.
 
 Script modules allow you to expose .NET functionality to Lua scripts. This enables powerful customization without recompiling the server.
 
+## Built-In Runtime Modules (Current)
+
+The following modules are available in the default server runtime:
+
+- `log`
+- `command`
+- `speech`
+- `mobile`
+- `item`
+- `random`
+- `dice`
+- `time`
+- `gump`
+- `effect`
+
+Effect module runtime helpers:
+
+```lua
+effect.send(mapId, x, y, z, itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
+effect.send_to_player(characterId, x, y, z, itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
+```
+
+`mobile` runtime helper also supports:
+
+```lua
+local npc = mobile.get(serial)
+if npc then
+  npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
+end
+```
+
 ## Creating a Module
 
 ### Basic Module
