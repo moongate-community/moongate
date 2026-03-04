@@ -1,8 +1,10 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
@@ -262,6 +264,7 @@ public sealed class MobileHandlerTests
                 1,
                 mobileId,
                 1,
+                1,
                 new(0, 0, 0),
                 new(1, 1, 0)
             )
@@ -302,6 +305,7 @@ public sealed class MobileHandlerTests
                 99,
                 mobileId,
                 1,
+                1,
                 new(200, 200, 0),
                 new(210, 210, 0)
             )
@@ -317,6 +321,58 @@ public sealed class MobileHandlerTests
                 Assert.That(packets, Has.Count.EqualTo(1));
                 Assert.That(packets.All(packet => packet.SessionId == receiverSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<MobileMovingPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldSendMapChangeToMovingPlayer()
+    {
+        var movingPlayerId = (Serial)0x00000999u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(1, 7, 8),
+            SessionsInRange = []
+        };
+        var character = CreatePlayer(movingPlayerId);
+        character.MapId = 1;
+        var characterService = new MobileHandlerTestCharacterService(character);
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new MoongateConfig()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                0,
+                1,
+                new(200, 200, 0),
+                new(210, 210, 0)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
+                Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<ServerChangePacket>());
             }
         );
     }
@@ -380,6 +436,7 @@ public sealed class MobileHandlerTests
             new MobilePositionChangedEvent(
                 movingSession.SessionId,
                 movingPlayerId,
+                1,
                 1,
                 oldLocation,
                 newLocation
@@ -482,6 +539,7 @@ public sealed class MobileHandlerTests
             new MobilePositionChangedEvent(
                 movingSession.SessionId,
                 movingPlayerId,
+                1,
                 1,
                 oldLocation,
                 newLocation

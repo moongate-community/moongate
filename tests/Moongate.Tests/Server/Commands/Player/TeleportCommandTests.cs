@@ -1,6 +1,5 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Commands.Player;
 using Moongate.Server.Data.Events.Base;
@@ -71,8 +70,8 @@ public sealed class TeleportCommandTests
         var command = new TeleportCommand(sessionService, gameEventBusService, outgoingPacketQueue);
         var output = new List<string>();
         var context = new CommandSystemContext(
-            "teleport 1 3613 2585 0",
-            ["1", "3613", "2585", "0"],
+            "teleport 2 3613 2585 0",
+            ["2", "3613", "2585", "0"],
             CommandSourceType.InGame,
             session.SessionId,
             (message, _) => output.Add(message)
@@ -83,18 +82,17 @@ public sealed class TeleportCommandTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(character.MapId, Is.EqualTo(1));
+                Assert.That(character.MapId, Is.EqualTo(2));
                 Assert.That(character.Location, Is.EqualTo(new Point3D(3613, 2585, 0)));
                 Assert.That(gameEventBusService.PublishedEvents, Has.Count.EqualTo(1));
                 Assert.That(gameEventBusService.PublishedEvents[0], Is.TypeOf<MobilePositionChangedEvent>());
-                Assert.That(output[^1], Is.EqualTo("Teleported to map 1 at (3613, 2585, 0)."));
+                Assert.That(output[^1], Is.EqualTo("Teleported to map 2 at (3613, 2585, 0)."));
             }
         );
 
         Assert.That(outgoingPacketQueue.TryDequeue(out var first), Is.True);
-        Assert.That(first.Packet, Is.TypeOf<GeneralInformationPacket>());
-        Assert.That(outgoingPacketQueue.TryDequeue(out var second), Is.True);
-        Assert.That(second.Packet, Is.TypeOf<DrawPlayerPacket>());
+        Assert.That(first.Packet, Is.TypeOf<DrawPlayerPacket>());
+        Assert.That(outgoingPacketQueue.TryDequeue(out _), Is.False);
     }
 
     private sealed class TeleportTestGameEventBusService : IGameEventBusService

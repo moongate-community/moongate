@@ -93,6 +93,97 @@ public sealed class DispatchEventsServiceTests
         );
     }
 
+    [Test]
+    public async Task HandleAsync_ForMobilePlayEffectEvent_ShouldBroadcastParticleEffectPacket()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var gameEvent = new MobilePlayEffectEvent(
+            mobileId: (Serial)0x00000002u,
+            mapId: 1,
+            location: new Point3D(111, 222, 7),
+            itemId: 0x3728,
+            speed: 10,
+            duration: 10,
+            effect: 2023
+        );
+
+        await service.HandleAsync(gameEvent);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
+                Assert.That(spatial.LastMapId, Is.EqualTo(1));
+                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(spatial.LastPacket, Is.TypeOf<ParticleEffectPacket>());
+            }
+        );
+
+        var packet = (ParticleEffectPacket)spatial.LastPacket!;
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.ItemId, Is.EqualTo(0x3728));
+                Assert.That(packet.SourceLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(packet.TargetLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(packet.Speed, Is.EqualTo(10));
+                Assert.That(packet.Duration, Is.EqualTo(10));
+                Assert.That(packet.Effect, Is.EqualTo(2023));
+                Assert.That(packet.Layer, Is.EqualTo(0xFF));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForPlayEffectToPlayerEvent_ShouldEnqueuePacketOnlyForTargetCharacterSession()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var targetCharacterId = (Serial)0x00000022u;
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        sessions.Map[targetCharacterId] = new GameSession(new(client))
+        {
+            CharacterId = targetCharacterId
+        };
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var gameEvent = new PlayEffectToPlayerEvent(
+            targetCharacterId,
+            new Point3D(10, 20, 3),
+            itemId: 0x3728,
+            speed: 8,
+            duration: 12,
+            effect: 5023
+        );
+
+        await service.HandleAsync(gameEvent);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(sessions.Map[targetCharacterId].SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<ParticleEffectPacket>());
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(0));
+            }
+        );
+
+        var packet = (ParticleEffectPacket)outbound.Packet;
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.ItemId, Is.EqualTo(0x3728));
+                Assert.That(packet.Effect, Is.EqualTo(5023));
+                Assert.That(packet.Speed, Is.EqualTo(8));
+                Assert.That(packet.Duration, Is.EqualTo(12));
+            }
+        );
+    }
+
     private sealed class DispatchEventsTestSpatialWorldService : ISpatialWorldService
     {
         public int BroadcastCallCount { get; private set; }

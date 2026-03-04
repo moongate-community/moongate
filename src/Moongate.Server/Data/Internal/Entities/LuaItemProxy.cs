@@ -2,7 +2,6 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -136,14 +135,14 @@ public sealed class LuaItemProxy
         => _item.IsContainer;
 
     public bool IsInWorld()
-        => _item.ParentContainerId == Moongate.UO.Data.Ids.Serial.Zero &&
-           _item.EquippedMobileId == Moongate.UO.Data.Ids.Serial.Zero;
+        => _item.ParentContainerId == UO.Data.Ids.Serial.Zero &&
+           _item.EquippedMobileId == UO.Data.Ids.Serial.Zero;
 
     public bool IsInContainer()
-        => _item.ParentContainerId != Moongate.UO.Data.Ids.Serial.Zero;
+        => _item.ParentContainerId != UO.Data.Ids.Serial.Zero;
 
     public bool IsEquipped()
-        => _item.EquippedMobileId != Moongate.UO.Data.Ids.Serial.Zero;
+        => _item.EquippedMobileId != UO.Data.Ids.Serial.Zero;
 
     public bool MoveToWorld(int mapId, int x, int y, int z)
     {
@@ -161,8 +160,8 @@ public sealed class LuaItemProxy
 
         _item.MapId = mapId;
         _item.Location = new(x, y, z);
-        _item.ParentContainerId = Moongate.UO.Data.Ids.Serial.Zero;
-        _item.EquippedMobileId = Moongate.UO.Data.Ids.Serial.Zero;
+        _item.ParentContainerId = UO.Data.Ids.Serial.Zero;
+        _item.EquippedMobileId = UO.Data.Ids.Serial.Zero;
         _item.EquippedLayer = null;
 
         return true;
@@ -186,7 +185,7 @@ public sealed class LuaItemProxy
 
         _item.ParentContainerId = (Serial)containerSerial;
         _item.ContainerPosition = new(x, y);
-        _item.EquippedMobileId = Moongate.UO.Data.Ids.Serial.Zero;
+        _item.EquippedMobileId = UO.Data.Ids.Serial.Zero;
         _item.EquippedLayer = null;
 
         return true;
@@ -214,7 +213,7 @@ public sealed class LuaItemProxy
 
         _item.EquippedMobileId = (Serial)mobileSerial;
         _item.EquippedLayer = equipLayer;
-        _item.ParentContainerId = Moongate.UO.Data.Ids.Serial.Zero;
+        _item.ParentContainerId = UO.Data.Ids.Serial.Zero;
 
         return true;
     }

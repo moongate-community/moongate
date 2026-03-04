@@ -153,6 +153,46 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
+    public void SetEffect_ShouldPublishMobilePlayEffectEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService();
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService: null,
+            pathfindingService: null,
+            gameEventBusService
+        );
+
+        proxy.SetEffect(0x3728, speed: 10, duration: 10, effect: 2023);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.MobileId, Is.EqualTo((Serial)0x1234u));
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.MapId, Is.EqualTo(1));
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Location, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.ItemId, Is.EqualTo(0x3728));
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Speed, Is.EqualTo(10));
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Duration, Is.EqualTo(10));
+                Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Effect, Is.EqualTo(2023));
+            }
+        );
+    }
+
+    [Test]
     public void Teleport_ShouldUpdateMapAndLocationAndPublishPositionEvent()
     {
         var mobile = new UOMobileEntity
@@ -553,6 +593,7 @@ public sealed class LuaMobileProxyTests
     {
         public MobilePositionChangedEvent? LastMobilePositionChangedEvent { get; private set; }
         public MobilePlaySoundEvent? LastMobilePlaySoundEvent { get; private set; }
+        public MobilePlayEffectEvent? LastMobilePlayEffectEvent { get; private set; }
 
         public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
             where TEvent : IGameEvent
@@ -566,6 +607,10 @@ public sealed class LuaMobileProxyTests
             else if (gameEvent is MobilePlaySoundEvent mobilePlaySoundEvent)
             {
                 LastMobilePlaySoundEvent = mobilePlaySoundEvent;
+            }
+            else if (gameEvent is MobilePlayEffectEvent mobilePlayEffectEvent)
+            {
+                LastMobilePlayEffectEvent = mobilePlayEffectEvent;
             }
 
             return ValueTask.CompletedTask;

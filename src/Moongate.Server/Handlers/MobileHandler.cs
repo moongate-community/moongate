@@ -1,5 +1,6 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
@@ -13,6 +14,7 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
 
@@ -92,6 +94,8 @@ public class MobileHandler
         {
             return;
         }
+
+        TrySendMapChangeIfNeeded(mobileEntity, gameEvent);
 
         await UpdatePlayerForMobileMovedOrCreated(
             mobileEntity,
@@ -257,5 +261,32 @@ public class MobileHandler
     {
         var nearby = _spatialWorldService.GetNearbyMobiles(gameEvent.NewLocation, 2, gameEvent.MapId);
         return nearby.FirstOrDefault(mobile => mobile.Id == gameEvent.MobileId);
+    }
+
+    private void TrySendMapChangeIfNeeded(UOMobileEntity mobileEntity, MobilePositionChangedEvent gameEvent)
+    {
+        if (!mobileEntity.IsPlayer || gameEvent.OldMapId == gameEvent.MapId)
+        {
+            return;
+        }
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
+        {
+            return;
+        }
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            GeneralInformationFactory.CreateSetCursorHueSetMap((byte)gameEvent.MapId)
+        );
+
+        var map = Map.GetMap(gameEvent.MapId);
+        var mapWidth = (ushort)Math.Clamp(map?.Width ?? 0, ushort.MinValue, ushort.MaxValue);
+        var mapHeight = (ushort)Math.Clamp(map?.Height ?? 0, ushort.MinValue, ushort.MaxValue);
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
+        );
     }
 }

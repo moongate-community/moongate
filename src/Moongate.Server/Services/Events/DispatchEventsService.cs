@@ -23,7 +23,9 @@ namespace Moongate.Server.Services.Events;
 public sealed class DispatchEventsService
     : IDispatchEventsService,
       IGameEventListener<MobilePlaySoundEvent>,
-      IGameEventListener<PlaySoundToPlayerEvent>
+      IGameEventListener<PlaySoundToPlayerEvent>,
+      IGameEventListener<MobilePlayEffectEvent>,
+      IGameEventListener<PlayEffectToPlayerEvent>
 {
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
@@ -192,6 +194,134 @@ public sealed class DispatchEventsService
             gameEvent.Location,
             gameEvent.SoundModel,
             gameEvent.Mode,
+            gameEvent.Unknown3,
+            cancellationToken
+        );
+
+    public Task<int> DispatchMobileEffectAsync(
+        int mapId,
+        Point3D location,
+        ushort itemId,
+        byte speed = 10,
+        byte duration = 10,
+        int hue = 0,
+        int renderMode = 0,
+        ushort effect = 0,
+        ushort explodeEffect = 0,
+        ushort explodeSound = 0,
+        byte layer = 0xFF,
+        ushort unknown3 = 0,
+        int? range = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        var packet = EffectsFactory.CreateParticle(
+            directionType: EffectDirectionType.StayAtLocation,
+            itemId: itemId,
+            sourceId: Serial.Zero,
+            targetId: Serial.Zero,
+            sourceLocation: location,
+            targetLocation: location,
+            speed: speed,
+            duration: duration,
+            fixedDirection: true,
+            explode: false,
+            hue: hue,
+            renderMode: renderMode,
+            effect: effect,
+            explodeEffect: explodeEffect,
+            explodeSound: explodeSound,
+            effectSerial: Serial.Zero,
+            layer: layer,
+            unknown3: unknown3
+        );
+
+        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
+    }
+
+    public Task HandleAsync(MobilePlayEffectEvent gameEvent, CancellationToken cancellationToken = default)
+        => DispatchMobileEffectAsync(
+            gameEvent.MapId,
+            gameEvent.Location,
+            gameEvent.ItemId,
+            gameEvent.Speed,
+            gameEvent.Duration,
+            gameEvent.Hue,
+            gameEvent.RenderMode,
+            gameEvent.Effect,
+            gameEvent.ExplodeEffect,
+            gameEvent.ExplodeSound,
+            gameEvent.Layer,
+            gameEvent.Unknown3,
+            null,
+            cancellationToken
+        );
+
+    public Task<bool> DispatchEffectToPlayerAsync(
+        Serial characterId,
+        Point3D location,
+        ushort itemId,
+        byte speed = 10,
+        byte duration = 10,
+        int hue = 0,
+        int renderMode = 0,
+        ushort effect = 0,
+        ushort explodeEffect = 0,
+        ushort explodeSound = 0,
+        byte layer = 0xFF,
+        ushort unknown3 = 0,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(characterId, out var session))
+        {
+            return Task.FromResult(false);
+        }
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            EffectsFactory.CreateParticle(
+                directionType: EffectDirectionType.StayAtLocation,
+                itemId: itemId,
+                sourceId: Serial.Zero,
+                targetId: Serial.Zero,
+                sourceLocation: location,
+                targetLocation: location,
+                speed: speed,
+                duration: duration,
+                fixedDirection: true,
+                explode: false,
+                hue: hue,
+                renderMode: renderMode,
+                effect: effect,
+                explodeEffect: explodeEffect,
+                explodeSound: explodeSound,
+                effectSerial: Serial.Zero,
+                layer: layer,
+                unknown3: unknown3
+            )
+        );
+
+        return Task.FromResult(true);
+    }
+
+    public Task HandleAsync(PlayEffectToPlayerEvent gameEvent, CancellationToken cancellationToken = default)
+        => DispatchEffectToPlayerAsync(
+            gameEvent.CharacterId,
+            gameEvent.Location,
+            gameEvent.ItemId,
+            gameEvent.Speed,
+            gameEvent.Duration,
+            gameEvent.Hue,
+            gameEvent.RenderMode,
+            gameEvent.Effect,
+            gameEvent.ExplodeEffect,
+            gameEvent.ExplodeSound,
+            gameEvent.Layer,
             gameEvent.Unknown3,
             cancellationToken
         );

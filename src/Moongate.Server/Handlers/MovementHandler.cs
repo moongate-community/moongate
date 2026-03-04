@@ -202,6 +202,7 @@ public class MovementHandler : BasePacketListener
                     session.SessionId,
                     session.Character.Id,
                     session.Character.MapId,
+                    session.Character.MapId,
                     oldLocation,
                     newLocation
                 )

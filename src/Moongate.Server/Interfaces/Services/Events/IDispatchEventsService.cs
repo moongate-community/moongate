@@ -94,4 +94,37 @@ public interface IDispatchEventsService
         ushort unknown3 = 0,
         CancellationToken cancellationToken = default
     );
+
+    Task<int> DispatchMobileEffectAsync(
+        int mapId,
+        Point3D location,
+        ushort itemId,
+        byte speed = 10,
+        byte duration = 10,
+        int hue = 0,
+        int renderMode = 0,
+        ushort effect = 0,
+        ushort explodeEffect = 0,
+        ushort explodeSound = 0,
+        byte layer = 0xFF,
+        ushort unknown3 = 0,
+        int? range = null,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<bool> DispatchEffectToPlayerAsync(
+        Serial characterId,
+        Point3D location,
+        ushort itemId,
+        byte speed = 10,
+        byte duration = 10,
+        int hue = 0,
+        int renderMode = 0,
+        ushort effect = 0,
+        ushort explodeEffect = 0,
+        ushort explodeSound = 0,
+        byte layer = 0xFF,
+        ushort unknown3 = 0,
+        CancellationToken cancellationToken = default
+    );
 }

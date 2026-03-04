@@ -11,6 +11,7 @@ public readonly record struct MobilePositionChangedEvent(
     GameEventBase BaseEvent,
     long SessionId,
     Serial MobileId,
+    int OldMapId,
     int MapId,
     Point3D OldLocation,
     Point3D NewLocation
@@ -22,9 +23,10 @@ public readonly record struct MobilePositionChangedEvent(
     public MobilePositionChangedEvent(
         long sessionId,
         Serial mobileId,
+        int oldMapId,
         int mapId,
         Point3D oldLocation,
         Point3D newLocation
     )
-        : this(GameEventBase.CreateNow(), sessionId, mobileId, mapId, oldLocation, newLocation) { }
+        : this(GameEventBase.CreateNow(), sessionId, mobileId, oldMapId, mapId, oldLocation, newLocation) { }
 }

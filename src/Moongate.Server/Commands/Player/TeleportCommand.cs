@@ -1,5 +1,4 @@
 using Moongate.Network.Packets.Outgoing.Entity;
-using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Commands;
@@ -66,20 +65,18 @@ public sealed class TeleportCommand : ICommandExecutor
         }
 
         var character = session.Character;
+        var oldMapId = character.MapId;
         var oldLocation = character.Location;
         character.MapId = mapId;
         character.Location = targetLocation;
 
-        _outgoingPacketQueue.Enqueue(
-            session.SessionId,
-            GeneralInformationFactory.CreateSetCursorHueSetMap((byte)mapId)
-        );
         _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(character));
 
         await _gameEventBusService.PublishAsync(
             new MobilePositionChangedEvent(
                 session.SessionId,
                 character.Id,
+                oldMapId,
                 mapId,
                 oldLocation,
                 targetLocation

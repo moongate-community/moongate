@@ -196,11 +196,13 @@ public sealed class LuaMobileProxy
             var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
                                 ? session.SessionId
                                 : -1;
+            var oldMapId = _mobile.MapId;
 
             _gameEventBusService.PublishAsync(
                 new MobilePositionChangedEvent(
                     sessionId,
                     _mobile.Id,
+                    oldMapId,
                     _mobile.MapId,
                     oldLocation,
                     newLocation
@@ -219,6 +221,7 @@ public sealed class LuaMobileProxy
         }
 
         var oldLocation = _mobile.Location;
+        var oldMapId = _mobile.MapId;
         var newLocation = new Point3D(x, y, z);
 
         _mobile.MapId = mapId;
@@ -234,6 +237,7 @@ public sealed class LuaMobileProxy
                 new MobilePositionChangedEvent(
                     sessionId,
                     _mobile.Id,
+                    oldMapId,
                     _mobile.MapId,
                     oldLocation,
                     newLocation
@@ -305,6 +309,43 @@ public sealed class LuaMobileProxy
                 (ushort)Math.Min(soundId, ushort.MaxValue),
                 0x01,
                 0
+            )
+        ).AsTask().GetAwaiter().GetResult();
+    }
+
+    public void SetEffect(
+        int itemId,
+        int speed = 10,
+        int duration = 10,
+        int hue = 0,
+        int renderMode = 0,
+        int effect = 0,
+        int explodeEffect = 0,
+        int explodeSound = 0,
+        int layer = 0xFF,
+        int unknown3 = 0
+    )
+    {
+        if (_gameEventBusService is null || itemId < 0)
+        {
+            return;
+        }
+
+        _gameEventBusService.PublishAsync(
+            new MobilePlayEffectEvent(
+                _mobile.Id,
+                _mobile.MapId,
+                _mobile.Location,
+                (ushort)Math.Min(itemId, ushort.MaxValue),
+                (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
+                (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
+                hue,
+                renderMode,
+                (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
+                (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
+                (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
+                (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
+                (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
             )
         ).AsTask().GetAwaiter().GetResult();
     }
