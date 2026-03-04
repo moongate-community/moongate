@@ -31,6 +31,7 @@ namespace Moongate.Server.Handlers;
     RegisterPacketHandler(PacketDefinition.DoubleClickPacket)
 ]
 public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent>, IGameEventListener<ItemAddedInSectorEvent>
+    , IGameEventListener<ItemDeletedEvent>
 {
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
@@ -487,6 +488,57 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
 
                 Enqueue(session, new ObjectInformationPacket(item));
             }
+        }
+    }
+
+    public async Task HandleAsync(ItemDeletedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        if (gameEvent.OldContainerId == Serial.Zero)
+        {
+            return;
+        }
+
+        var targetSessionIds = new HashSet<long>();
+
+        if (gameEvent.SessionId > 0 && _gameNetworkSessionService.TryGet(gameEvent.SessionId, out var sourceSession))
+        {
+            targetSessionIds.Add(sourceSession.SessionId);
+        }
+
+        foreach (var session in _gameNetworkSessionService.GetAll())
+        {
+            var character = session.Character;
+
+            if (character is null)
+            {
+                continue;
+            }
+
+            if (character.BackpackId == gameEvent.OldContainerId ||
+                (character.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId) &&
+                 equippedBackpackId == gameEvent.OldContainerId))
+            {
+                targetSessionIds.Add(session.SessionId);
+            }
+        }
+
+        if (targetSessionIds.Count == 0)
+        {
+            return;
+        }
+
+        var container = await _itemService.GetItemAsync(gameEvent.OldContainerId);
+
+        if (container is null)
+        {
+            return;
+        }
+
+        foreach (var sessionId in targetSessionIds)
+        {
+            Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(container));
         }
     }
 }

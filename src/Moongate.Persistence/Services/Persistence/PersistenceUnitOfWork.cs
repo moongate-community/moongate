@@ -121,7 +121,7 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
             RecalculateLastEntityIds();
         }
 
-        _logger.Verbose(
+        _logger.Information(
             "Persistence initialize completed Accounts={AccountCount} Mobiles={MobileCount} Items={ItemCount} LastSequenceId={LastSequenceId}",
             _stateStore.AccountsById.Count,
             _stateStore.MobilesById.Count,

@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Services;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Items;
@@ -7,6 +8,7 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.UO.Data.Ids;
+using MoonSharp.Interpreter;
 using Serilog;
 
 namespace Moongate.Server.Services.Items;
@@ -19,9 +21,10 @@ public sealed partial class ItemScriptDispatcher
     : IItemScriptDispatcher, IGameEventListener<ItemSingleClickEvent>, IGameEventListener<ItemDoubleClickEvent>
 {
     private readonly ILogger _logger = Log.ForContext<ItemScriptDispatcher>();
-    private readonly IScriptEngineService _scriptEngineService;
     private readonly IItemService _itemService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly Script? _luaScript;
+    private readonly bool _supportsMoonSharpRuntime;
 
     public ItemScriptDispatcher(
         IScriptEngineService scriptEngineService,
@@ -29,9 +32,10 @@ public sealed partial class ItemScriptDispatcher
         IGameNetworkSessionService gameNetworkSessionService
     )
     {
-        _scriptEngineService = scriptEngineService;
         _itemService = itemService;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
+        _supportsMoonSharpRuntime = _luaScript is not null;
     }
 
     public Task<bool> DispatchAsync(ItemScriptContext context, CancellationToken cancellationToken = default)
@@ -39,24 +43,41 @@ public sealed partial class ItemScriptDispatcher
         _ = cancellationToken;
         ArgumentNullException.ThrowIfNull(context);
 
-        if (string.IsNullOrWhiteSpace(context.Item.ScriptId) || string.IsNullOrWhiteSpace(context.Hook))
+        if (string.IsNullOrWhiteSpace(context.Hook))
         {
             return Task.FromResult(false);
         }
 
-        var tableName = NormalizeToken(context.Item.ScriptId);
-        var contextGlobalName = "__item_script_dispatch_context";
-        _scriptEngineService.RegisterGlobal(contextGlobalName, BuildLuaContextPayload(context));
+        if (!_supportsMoonSharpRuntime || _luaScript is null)
+        {
+            _logger.Warning("Item script dispatch requires MoonSharp runtime. ScriptId={ScriptId}", context.Item.ScriptId);
+
+            return Task.FromResult(false);
+        }
 
         try
         {
-            foreach (var hook in ResolveHookCandidates(context.Hook))
-            {
-                var command = BuildTableDispatchCommand(tableName, hook, contextGlobalName);
-                var result = _scriptEngineService.ExecuteFunction(command);
+            var payload = BuildLuaContextPayload(context);
 
-                if (result.Success && result.Data is bool dispatched && dispatched)
+            foreach (var tableName in ResolveTableCandidates(context))
+            {
+                var scriptTable = ResolveScriptTable(tableName);
+                if (scriptTable is null)
                 {
+                    continue;
+                }
+
+                foreach (var hook in ResolveHookCandidates(context.Hook))
+                {
+                    var hookFunction = ResolveTableFunction(scriptTable, hook);
+
+                    if (hookFunction is null)
+                    {
+                        continue;
+                    }
+
+                    _luaScript.Call(hookFunction, payload);
+
                     return Task.FromResult(true);
                 }
             }
@@ -67,17 +88,12 @@ public sealed partial class ItemScriptDispatcher
         {
             _logger.Error(
                 ex,
-                "Failed to dispatch item script hook '{Hook}' for script '{ScriptId}' table '{TableName}'",
+                "Failed to dispatch item script hook '{Hook}' for script '{ScriptId}'",
                 context.Hook,
-                context.Item.ScriptId,
-                tableName
+                context.Item.ScriptId
             );
 
             return Task.FromResult(false);
-        }
-        finally
-        {
-            _scriptEngineService.UnregisterGlobal(contextGlobalName);
         }
     }
 
@@ -104,22 +120,46 @@ public sealed partial class ItemScriptDispatcher
         return [$"on_{normalizedHook}", $"On{pascal}", normalizedHook];
     }
 
-    private static string BuildTableDispatchCommand(string tableName, string hook, string contextGlobalName)
+    private static IEnumerable<string> ResolveTableCandidates(ItemScriptContext context)
     {
-        return $"""
-                (function()
-                    local t = {tableName}
-                    if type(t) ~= "table" then
-                        return false
-                    end
-                    local f = t["{hook}"]
-                    if type(f) ~= "function" then
-                        return false
-                    end
-                    f({contextGlobalName})
-                    return true
-                end)()
-                """;
+        var scriptId = context.Item.ScriptId?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(scriptId) &&
+            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            yield return NormalizeToken(scriptId);
+            yield break;
+        }
+
+        var normalizedName = NormalizeToken(context.Item.Name ?? string.Empty);
+
+        if (!string.Equals(normalizedName, "unknown", StringComparison.Ordinal))
+        {
+            yield return normalizedName;
+            yield return $"items_{normalizedName}";
+        }
+    }
+
+    private DynValue? ResolveScriptTable(string tableName)
+    {
+        if (_luaScript is null)
+        {
+            return null;
+        }
+
+        return _luaScript.Globals.Get(tableName) is { Type: DataType.Table } table ? table : null;
+    }
+
+    private static DynValue? ResolveTableFunction(DynValue table, string functionName)
+    {
+        if (table.Type != DataType.Table || table.Table is null)
+        {
+            return null;
+        }
+
+        var function = table.Table.Get(functionName);
+
+        return function.Type == DataType.Function ? function : null;
     }
 
     private static Dictionary<string, object?> BuildLuaContextPayload(ItemScriptContext context)

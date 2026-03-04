@@ -55,7 +55,7 @@ public class EntityFactoryServiceTests
                 Assert.That(item.Name, Is.EqualTo("Shirt"));
                 Assert.That(item.Weight, Is.EqualTo(6));
                 Assert.That(item.IsStackable, Is.False);
-                Assert.That(item.Rarity, Is.EqualTo(ItemRarity.Common));
+                Assert.That(item.Rarity, Is.EqualTo(ItemRarity.None));
                 Assert.That(item.ItemId, Is.EqualTo(0x1517));
                 Assert.That(item.Hue, Is.EqualTo(100));
                 Assert.That(item.ScriptId, Is.EqualTo("none"));
@@ -187,7 +187,7 @@ public class EntityFactoryServiceTests
                 Assert.That(backpack.Name, Is.EqualTo("Backpack"));
                 Assert.That(backpack.Weight, Is.EqualTo(1));
                 Assert.That(backpack.IsStackable, Is.False);
-                Assert.That(backpack.Rarity, Is.EqualTo(ItemRarity.Common));
+                Assert.That(backpack.Rarity, Is.EqualTo(ItemRarity.None));
                 Assert.That(backpack.ItemId, Is.EqualTo(0x0E75));
                 Assert.That(backpack.ScriptId, Is.EqualTo("none"));
             }

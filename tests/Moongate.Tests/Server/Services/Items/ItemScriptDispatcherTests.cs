@@ -226,4 +226,79 @@ public class ItemScriptDispatcherTests
 
         Assert.That(dispatched, Is.False);
     }
+
+    [Test]
+    public async Task DispatchAsync_WhenScriptIdIsNone_ShouldFallbackToNormalizedItemNameTable()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0"),
+            []
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            """
+            brick = {
+              on_double_click = function(ctx)
+                _item_dispatch_called = "brick-double"
+              end
+            }
+            """
+        );
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+        var context = new ItemScriptContext(
+            null,
+            new UOItemEntity
+            {
+                ScriptId = "none",
+                Name = "Brick"
+            },
+            "double_click"
+        );
+
+        var dispatched = await dispatcher.DispatchAsync(context);
+        var result = scriptEngine.ExecuteFunction("(function() return _item_dispatch_called end)()");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("brick-double"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task DispatchAsync_ShouldReturnFalse_WhenMoonSharpRuntimeIsUnavailable()
+    {
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+        var context = new ItemScriptContext(
+            null,
+            new UOItemEntity
+            {
+                ScriptId = "items.healing_potion"
+            },
+            "single_click"
+        );
+
+        var dispatched = await dispatcher.DispatchAsync(context);
+
+        Assert.That(dispatched, Is.False);
+    }
 }

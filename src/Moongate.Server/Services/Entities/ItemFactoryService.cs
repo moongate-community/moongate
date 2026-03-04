@@ -74,7 +74,7 @@ public sealed class ItemFactoryService : IItemFactoryService
             Name = template.Name,
             Weight = (int)template.Weight,
             Amount = 1,
-            Rarity = ItemRarity.Common,
+            Rarity = template.Rarity,
             ItemId = ParseItemId(template.ItemId),
             Hue = template.Hue.Resolve(),
             GumpId = ParseOptionalInt(template.GumpId),

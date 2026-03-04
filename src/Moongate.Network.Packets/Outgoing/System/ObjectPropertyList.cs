@@ -112,6 +112,30 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         return true;
     }
 
+    public ObjectPropertyList Clone()
+    {
+        if (_buffer == null)
+        {
+            throw new ObjectDisposedException(nameof(ObjectPropertyList));
+        }
+
+        var clone = new ObjectPropertyList(Serial);
+
+        foreach (var entry in _entries)
+        {
+            if (entry.Argument is null)
+            {
+                clone.Add(entry.ClilocId);
+            }
+            else
+            {
+                clone.Add(entry.ClilocId, entry.Argument);
+            }
+        }
+
+        return clone;
+    }
+
     public void Dispose()
     {
         if (_buffer != null)

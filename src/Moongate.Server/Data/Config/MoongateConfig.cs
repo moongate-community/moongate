@@ -29,5 +29,7 @@ public class MoongateConfig
 
     public MoongateSpatialConfig Spatial { get; set; } = new();
 
+    public MoongateScriptingConfig Scripting { get; set; } = new();
+
     public MoongateEmailConfig Email { get; set; } = new();
 }

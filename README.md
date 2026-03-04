@@ -698,17 +698,23 @@ Related runtime events:
 ### Item `ScriptId` Dispatch
 
 Items can define `scriptId` in templates and runtime entities (`UOItemEntity.ScriptId`).
-`IItemScriptDispatcher` builds the Lua callback name from `scriptId + hook` and dispatches `ItemScriptContext`.
+`IItemScriptDispatcher` resolves `scriptId` as a Lua table and invokes hook functions on that table.
 
-Function naming convention:
+Dispatch convention:
 
-- `on_item_<script_id_normalized>_<hook_normalized>`
+- If `scriptId` is set and not `none`: table name is normalized `scriptId` (non-alphanumeric -> `_`, lowercase)
+- If `scriptId == "none"`: fallback table resolution from item name
+- First candidate: `<normalized_item_name>`
+- Second candidate: `items_<normalized_item_name>`
+- Hook candidates:
+- `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
+- `double_click` -> `on_double_click`, `OnDoubleClick`
 
 Example:
 
 - `scriptId = "items.healing-potion"`
-- `hook = "on_use"`
-- Lua function called: `on_item_items_healing_potion_on_use`
+- Lua table resolved: `items_healing_potion`
+- On single click dispatcher tries: `items_healing_potion.on_click` (and aliases)
 
 Example template:
 
@@ -725,9 +731,69 @@ Example template:
 Example Lua:
 
 ```lua
-function on_item_items_healing_potion_on_use(ctx)
-  log.info("Potion used by item " .. tostring(ctx.Item.Id))
-end
+items_healing_potion = {
+  on_click = function(ctx)
+    log.info("Potion clicked, serial=" .. tostring(ctx.item.serial))
+  end,
+  on_double_click = function(ctx)
+    log.info("Potion double clicked by mobile=" .. tostring(ctx.mobile_id))
+  end
+}
+```
+
+Fallback example (`scriptId = "none"` and item name `Brick`):
+
+```lua
+brick = {
+  on_double_click = function(ctx)
+    log.info("Brick double-click from session " .. tostring(ctx.session_id))
+  end
+}
+```
+
+`ctx` payload keys:
+
+- `hook`
+- `session_id`
+- `mobile_id`
+- `metadata`
+- `item`:
+- `serial`, `script_id`, `name`, `map_id`, `item_id`, `amount`, `hue`, `location.{x,y,z}`
+
+### Lua Gump Example
+
+Lua gump flow supports:
+
+- `gump.create()` to build layout/text
+- `gump.send(sessionId, builder, senderSerial, gumpId, x, y)` to open a gump
+- `gump.on(gumpId, buttonId, callback)` to handle `0xB1` button responses
+
+Example (first gump button opens second gump):
+
+```lua
+local FIRST_GUMP = 0xB10C
+local SECOND_GUMP = 0xB10D
+local OPEN_NEXT = 1
+
+gump.on(FIRST_GUMP, OPEN_NEXT, function(ctx)
+  local g2 = gump.create()
+  g2:ResizePic(0, 0, 9200, 260, 120)
+  g2:Text(20, 20, 1152, "Second gump")
+  g2:Text(20, 50, 0, "Opened from button callback")
+  gump.send(ctx.session_id, g2, ctx.character_id or 0, SECOND_GUMP, 140, 90)
+end)
+
+items_brick = {
+  on_double_click = function(ctx)
+    local g1 = gump.create()
+    g1:ResizePic(0, 0, 9200, 280, 150)
+    g1:Text(20, 20, 1152, "First gump")
+    g1:Text(20, 50, 0, "Press button to open next")
+    g1:Button(20, 95, 4005, 4007, OPEN_NEXT)
+    g1:Text(55, 96, 0, "Open next gump")
+    gump.send(ctx.session_id, g1, ctx.mobile_id or 0, FIRST_GUMP, 120, 80)
+  end
+}
 ```
 
 ## Scripts

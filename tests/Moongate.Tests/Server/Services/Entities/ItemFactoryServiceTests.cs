@@ -180,7 +180,8 @@ public class ItemFactoryServiceTests
                 GoldValue = GoldValueSpec.FromValue(0),
                 LootType = LootType.Regular,
                 ScriptId = "items.test_item",
-                Weight = 6
+                Weight = 6,
+                Rarity = ItemRarity.Legendary
             }
         );
 
@@ -197,6 +198,7 @@ public class ItemFactoryServiceTests
                 Assert.That(item.GumpId, Is.EqualTo(0x0042));
                 Assert.That(item.Hue, Is.EqualTo(77));
                 Assert.That(item.Weight, Is.EqualTo(6));
+                Assert.That(item.Rarity, Is.EqualTo(ItemRarity.Legendary));
                 Assert.That(item.ScriptId, Is.EqualTo("items.test_item"));
                 Assert.That(item.Location, Is.EqualTo(Point3D.Zero));
                 Assert.That(item.ParentContainerId, Is.EqualTo(Moongate.UO.Data.Ids.Serial.Zero));

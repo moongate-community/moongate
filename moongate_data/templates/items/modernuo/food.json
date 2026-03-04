@@ -9,12 +9,9 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 1,
-    "scriptId": "items.apple",
+    "scriptId": "apple",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -28,10 +25,7 @@
     "weight": 1,
     "scriptId": "items.apple_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -45,10 +39,7 @@
     "weight": 4,
     "scriptId": "items.awase_miso_soup",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -62,10 +53,7 @@
     "weight": 1,
     "scriptId": "items.bacon",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -79,11 +67,7 @@
     "weight": 1,
     "scriptId": "items.banana",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -97,11 +81,7 @@
     "weight": 1,
     "scriptId": "items.bananas",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -115,10 +95,7 @@
     "weight": 5,
     "scriptId": "items.bento_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -132,10 +109,7 @@
     "weight": 1,
     "scriptId": "items.bowl_flour",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -149,10 +123,7 @@
     "weight": 1,
     "scriptId": "items.bread_loaf",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -166,10 +137,7 @@
     "weight": 0.5,
     "scriptId": "items.brightly_colored_eggs",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -183,11 +151,7 @@
     "weight": 1,
     "scriptId": "items.cabbage",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -201,10 +165,7 @@
     "weight": 1,
     "scriptId": "items.cake",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -218,10 +179,7 @@
     "weight": 1,
     "scriptId": "items.cake_mix",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -235,11 +193,7 @@
     "weight": 1,
     "scriptId": "items.cantaloupe",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -253,11 +207,7 @@
     "weight": 1,
     "scriptId": "items.carrot",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -271,10 +221,7 @@
     "weight": 1,
     "scriptId": "items.cheese_pizza",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -288,10 +235,7 @@
     "weight": 0.1,
     "scriptId": "items.cheese_slice",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -305,10 +249,7 @@
     "weight": 0.1,
     "scriptId": "items.cheese_wedge",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -322,10 +263,7 @@
     "weight": 0.1,
     "scriptId": "items.cheese_wheel",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -339,10 +277,7 @@
     "weight": 1,
     "scriptId": "items.chicken_leg",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -356,10 +291,7 @@
     "weight": 1,
     "scriptId": "items.cocoa_butter",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -373,10 +305,7 @@
     "weight": 1,
     "scriptId": "items.cocoa_liquor",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -390,10 +319,7 @@
     "weight": 1,
     "scriptId": "items.cocoa_pulp",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -407,10 +333,7 @@
     "weight": 1,
     "scriptId": "items.coconut",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -424,10 +347,7 @@
     "weight": 1,
     "scriptId": "items.cooked_bird",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -441,10 +361,7 @@
     "weight": 1,
     "scriptId": "items.cookie_mix",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -458,10 +375,7 @@
     "weight": 1,
     "scriptId": "items.cookies",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -475,10 +389,7 @@
     "weight": 1,
     "scriptId": "items.dark_chocolate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -492,10 +403,7 @@
     "weight": 1,
     "scriptId": "items.dates",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -509,10 +417,7 @@
     "weight": 1,
     "scriptId": "items.dough",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -526,11 +431,7 @@
     "weight": 1,
     "scriptId": "items.ear_of_corn",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -544,10 +445,7 @@
     "weight": 0.5,
     "scriptId": "items.easter_eggs",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -561,10 +459,7 @@
     "weight": 1,
     "scriptId": "items.eggs",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -578,10 +473,7 @@
     "weight": 0.5,
     "scriptId": "items.eggshells",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -595,10 +487,7 @@
     "weight": 5,
     "scriptId": "items.empty_bento_box",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -612,10 +501,7 @@
     "weight": 1,
     "scriptId": "items.empty_pewter_bowl",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -629,10 +515,7 @@
     "weight": 2,
     "scriptId": "items.empty_pewter_tub",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -646,10 +529,7 @@
     "weight": 1,
     "scriptId": "items.empty_wooden_bowl",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -663,10 +543,7 @@
     "weight": 2,
     "scriptId": "items.empty_wooden_tub",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -680,10 +557,7 @@
     "weight": 0.1,
     "scriptId": "items.fish_steak",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -697,10 +571,7 @@
     "weight": 2,
     "scriptId": "items.french_bread",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -714,10 +585,7 @@
     "weight": 1,
     "scriptId": "items.fried_eggs",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -731,10 +599,7 @@
     "weight": 2,
     "scriptId": "items.fruit_basket",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -748,10 +613,7 @@
     "weight": 1,
     "scriptId": "items.fruit_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -765,11 +627,7 @@
     "weight": 0.1,
     "scriptId": "items.glass",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -783,11 +641,7 @@
     "weight": 0.3,
     "scriptId": "items.glass_bottle",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -801,10 +655,7 @@
     "weight": 1,
     "scriptId": "items.grapes",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -818,11 +669,7 @@
     "weight": 1,
     "scriptId": "items.green_gourd",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -836,10 +683,7 @@
     "weight": 4,
     "scriptId": "items.green_tea",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -853,10 +697,7 @@
     "weight": 10,
     "scriptId": "items.green_tea_basket",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -870,10 +711,7 @@
     "weight": 1,
     "scriptId": "items.ham",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -887,11 +725,7 @@
     "weight": 1,
     "scriptId": "items.honeydew_melon",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -905,10 +739,7 @@
     "weight": 1,
     "scriptId": "items.jar_honey",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -922,10 +753,7 @@
     "weight": 2,
     "scriptId": "items.lamb_leg",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -939,10 +767,7 @@
     "weight": 1,
     "scriptId": "items.lemon",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -956,10 +781,7 @@
     "weight": 1,
     "scriptId": "items.lemons",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -973,11 +795,7 @@
     "weight": 1,
     "scriptId": "items.lettuce",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -991,10 +809,7 @@
     "weight": 1,
     "scriptId": "items.lime",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1008,10 +823,7 @@
     "weight": 1,
     "scriptId": "items.limes",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1025,10 +837,7 @@
     "weight": 1,
     "scriptId": "items.meat_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1042,10 +851,7 @@
     "weight": 1,
     "scriptId": "items.milk_chocolate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1059,10 +865,7 @@
     "weight": 4,
     "scriptId": "items.miso_soup",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1076,10 +879,7 @@
     "weight": 1,
     "scriptId": "items.muffins",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1093,11 +893,7 @@
     "weight": 1,
     "scriptId": "items.onion",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -1111,10 +907,7 @@
     "weight": 1,
     "scriptId": "items.open_coconut",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1128,10 +921,7 @@
     "weight": 1,
     "scriptId": "items.peach",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1145,10 +935,7 @@
     "weight": 1,
     "scriptId": "items.peach_cobbler",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1162,10 +949,7 @@
     "weight": 1,
     "scriptId": "items.pear",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1179,10 +963,7 @@
     "weight": 1,
     "scriptId": "items.pewter_bowl_of_carrots",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1196,10 +977,7 @@
     "weight": 1,
     "scriptId": "items.pewter_bowl_of_corn",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1213,10 +991,7 @@
     "weight": 1,
     "scriptId": "items.pewter_bowl_of_lettuce",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1230,10 +1005,7 @@
     "weight": 1,
     "scriptId": "items.pewter_bowl_of_peas",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1247,10 +1019,7 @@
     "weight": 1,
     "scriptId": "items.pewter_bowl_of_potatos",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1264,11 +1033,7 @@
     "weight": 1,
     "scriptId": "items.pumpkin",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -1282,10 +1047,7 @@
     "weight": 1,
     "scriptId": "items.pumpkin_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1299,10 +1061,7 @@
     "weight": 1,
     "scriptId": "items.quiche",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1316,10 +1075,7 @@
     "weight": 1,
     "scriptId": "items.raw_bird",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1333,10 +1089,7 @@
     "weight": 1,
     "scriptId": "items.raw_chicken_leg",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1350,10 +1103,7 @@
     "weight": 0.1,
     "scriptId": "items.raw_fish_steak",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1367,10 +1117,7 @@
     "weight": 0,
     "scriptId": "items.raw_lamb_leg",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1384,10 +1131,7 @@
     "weight": 1,
     "scriptId": "items.raw_ribs",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1401,10 +1145,7 @@
     "weight": 4,
     "scriptId": "items.red_miso_soup",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1418,10 +1159,7 @@
     "weight": 1,
     "scriptId": "items.ribs",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1435,10 +1173,7 @@
     "weight": 45,
     "scriptId": "items.roast_pig",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1452,10 +1187,7 @@
     "weight": 5,
     "scriptId": "items.sack_flour",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1469,10 +1201,7 @@
     "weight": 1,
     "scriptId": "items.sack_of_sugar",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1486,10 +1215,7 @@
     "weight": 1,
     "scriptId": "items.sausage",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1503,10 +1229,7 @@
     "weight": 1,
     "scriptId": "items.sausage_pizza",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1520,10 +1243,7 @@
     "weight": 10,
     "scriptId": "items.sheaf_of_hay",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1537,10 +1257,7 @@
     "weight": 1,
     "scriptId": "items.slab_of_bacon",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1554,11 +1271,7 @@
     "weight": 1,
     "scriptId": "items.small_pumpkin",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -1572,10 +1285,7 @@
     "weight": 5,
     "scriptId": "items.small_watermelon",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1589,11 +1299,7 @@
     "weight": 1,
     "scriptId": "items.split_coconut",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -1607,11 +1313,7 @@
     "weight": 1,
     "scriptId": "items.squash",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -1625,10 +1327,7 @@
     "weight": 3,
     "scriptId": "items.sushi_platter",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1642,10 +1341,7 @@
     "weight": 3,
     "scriptId": "items.sushi_rolls",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1659,10 +1355,7 @@
     "weight": 1,
     "scriptId": "items.sweet_dough",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1676,11 +1369,7 @@
     "weight": 1,
     "scriptId": "items.turnip",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   },
   {
     "type": "item",
@@ -1694,10 +1383,7 @@
     "weight": 1,
     "scriptId": "items.unbaked_apple_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1711,10 +1397,7 @@
     "weight": 1,
     "scriptId": "items.unbaked_fruit_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1728,10 +1411,7 @@
     "weight": 1,
     "scriptId": "items.unbaked_meat_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1745,10 +1425,7 @@
     "weight": 1,
     "scriptId": "items.unbaked_peach_cobbler",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1762,10 +1439,7 @@
     "weight": 1,
     "scriptId": "items.unbaked_pumpkin_pie",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1779,10 +1453,7 @@
     "weight": 1,
     "scriptId": "items.unbaked_quiche",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1796,10 +1467,7 @@
     "weight": 1,
     "scriptId": "items.uncooked_cheese_pizza",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1813,10 +1481,7 @@
     "weight": 1,
     "scriptId": "items.uncooked_sausage_pizza",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1830,10 +1495,7 @@
     "weight": 1,
     "scriptId": "items.vanilla",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1847,10 +1509,7 @@
     "weight": 1,
     "scriptId": "items.wasabi",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1864,10 +1523,7 @@
     "weight": 1,
     "scriptId": "items.wasabi_clumps",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1881,10 +1537,7 @@
     "weight": 5,
     "scriptId": "items.watermelon",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1898,10 +1551,7 @@
     "weight": 1,
     "scriptId": "items.wheat_sheaf",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1915,10 +1565,7 @@
     "weight": 1,
     "scriptId": "items.white_chocolate",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1932,10 +1579,7 @@
     "weight": 4,
     "scriptId": "items.white_miso_soup",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1949,10 +1593,7 @@
     "weight": 1,
     "scriptId": "items.wooden_bowl",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1966,10 +1607,7 @@
     "weight": 1,
     "scriptId": "items.wooden_bowl_of_carrots",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -1983,10 +1621,7 @@
     "weight": 1,
     "scriptId": "items.wooden_bowl_of_corn",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -2000,10 +1635,7 @@
     "weight": 1,
     "scriptId": "items.wooden_bowl_of_lettuce",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -2017,10 +1649,7 @@
     "weight": 1,
     "scriptId": "items.wooden_bowl_of_peas",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -2034,10 +1663,7 @@
     "weight": 2,
     "scriptId": "items.wooden_bowl_of_stew",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -2051,10 +1677,7 @@
     "weight": 2,
     "scriptId": "items.wooden_bowl_of_tomato_soup",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food"
-    ]
+    "tags": ["modernuo", "food"]
   },
   {
     "type": "item",
@@ -2068,10 +1691,6 @@
     "weight": 1,
     "scriptId": "items.yellow_gourd",
     "isMovable": true,
-    "tags": [
-      "modernuo",
-      "food",
-      "flippable"
-    ]
+    "tags": ["modernuo", "food", "flippable"]
   }
 ]

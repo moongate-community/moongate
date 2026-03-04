@@ -86,6 +86,11 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
             {
                 context.Config.Email = fileConfig.Email;
             }
+
+            if (fileConfig.Scripting is not null)
+            {
+                context.Config.Scripting = fileConfig.Scripting;
+            }
         }
     }
 

@@ -214,19 +214,58 @@ Moongate supports item-scoped script dispatch through `IItemScriptDispatcher`.
 
 - Source field: `UOItemEntity.ScriptId` (usually filled by item templates via `scriptId`)
 - Runtime input: `ItemScriptContext` (`Session`, `Mobile`, `Item`, `Hook`, `Metadata`)
-- Naming convention:
-  - `on_item_<script_id_normalized>_<hook_normalized>`
+- Dispatch model:
+  - if `scriptId` is set and not `none`, normalized `scriptId` resolves a Lua table
+  - if `scriptId == "none"`, fallback table candidates are:
+    - `<normalized_item_name>`
+    - `items_<normalized_item_name>`
+  - hook resolves a function on that table
 
 Example:
 
 - `scriptId`: `items.healing-potion`
-- hook: `on_use`
-- dispatched Lua function: `on_item_items_healing_potion_on_use`
+- resolved table: `items_healing_potion`
+- `single_click` tries: `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
+- `double_click` tries: `on_double_click`, `OnDoubleClick`
 
 ```lua
-function on_item_items_healing_potion_on_use(ctx)
-    log.info("Item hook fired for serial: " .. tostring(ctx.Item.Id))
-end
+items_healing_potion = {
+    on_click = function(ctx)
+        log.info("Item hook fired for serial: " .. tostring(ctx.item.serial))
+    end
+}
+```
+
+Fallback example:
+
+```lua
+brick = {
+    on_double_click = function(ctx)
+        log.info("Brick double click: " .. tostring(ctx.session_id))
+    end
+}
+```
+
+## Gump Callbacks
+
+Lua gumps support response callbacks via packet `0xB1`:
+
+- `gump.send(sessionId, builder, senderSerial, gumpId, x, y)`
+- `gump.on(gumpId, buttonId, callback)`
+
+Example:
+
+```lua
+local FIRST_GUMP = 0xB10C
+local SECOND_GUMP = 0xB10D
+local OPEN_NEXT = 1
+
+gump.on(FIRST_GUMP, OPEN_NEXT, function(ctx)
+    local g2 = gump.create()
+    g2:ResizePic(0, 0, 9200, 260, 120)
+    g2:Text(20, 20, 1152, "Second gump")
+    gump.send(ctx.session_id, g2, ctx.character_id or 0, SECOND_GUMP, 140, 90)
+end)
 ```
 
 ### Callback Parameters

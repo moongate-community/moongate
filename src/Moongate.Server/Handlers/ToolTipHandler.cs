@@ -27,7 +27,7 @@ public class ToolTipHandler : BasePacketListener
     private readonly ConcurrentDictionary<Serial, CachedItemTooltip> _itemTooltipCache = [];
     private readonly ILogger _logger = Log.ForContext<ToolTipHandler>();
     private readonly IPersistenceService _persistenceService;
-    private readonly record struct CachedItemTooltip(int ItemHashCode, ObjectPropertyList Packet);
+    private readonly record struct CachedItemTooltip(int ItemHashCode, ObjectPropertyList PacketTemplate);
 
     public ToolTipHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -86,7 +86,7 @@ public class ToolTipHandler : BasePacketListener
             if (item is null)
             {
                 _logger.Debug("MegaCliloc request ignored. Unknown item serial {Serial}.", serial);
-                _itemTooltipCache.TryRemove(serial, out _);
+                RemoveAndDisposeCachedTooltip(serial);
 
                 return null;
             }
@@ -96,7 +96,7 @@ public class ToolTipHandler : BasePacketListener
             if (_itemTooltipCache.TryGetValue(serial, out var cachedTooltip) &&
                 cachedTooltip.ItemHashCode == itemHashCode)
             {
-                return cachedTooltip.Packet;
+                return cachedTooltip.PacketTemplate.Clone();
             }
 
             var propertyList = MegaClilocBuilder.CreateItemTooltip(
@@ -118,14 +118,32 @@ public class ToolTipHandler : BasePacketListener
                 propertyList.Replace(CommonClilocIds.ObjectName, clilocId);
             }
 
-            _itemTooltipCache[serial] = new(itemHashCode, propertyList);
+            ReplaceCachedTooltip(serial, new(itemHashCode, propertyList));
 
-            return propertyList;
+            return propertyList.Clone();
         }
 
         _logger.Debug("MegaCliloc request ignored. Invalid serial {Serial}.", serial);
 
         return null;
+    }
+
+    private void ReplaceCachedTooltip(Serial serial, CachedItemTooltip updated)
+    {
+        if (_itemTooltipCache.TryGetValue(serial, out var previous))
+        {
+            previous.PacketTemplate.Dispose();
+        }
+
+        _itemTooltipCache[serial] = updated;
+    }
+
+    private void RemoveAndDisposeCachedTooltip(Serial serial)
+    {
+        if (_itemTooltipCache.TryRemove(serial, out var removed))
+        {
+            removed.PacketTemplate.Dispose();
+        }
     }
 
     private async Task<bool> HandleMegaClilocPacketAsync(GameSession session, MegaClilocPacket clilocPacket)

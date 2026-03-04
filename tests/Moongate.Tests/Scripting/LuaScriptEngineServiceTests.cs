@@ -4,6 +4,8 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Incoming.UI;
+using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Modules;
@@ -13,12 +15,16 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Modules;
+using Moongate.Server.Services.Scripting;
 using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Services.Spatial;
+using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -663,6 +669,132 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
+    public async Task StartAsync_WithGumpModule_ShouldSendCompressedGumpToSession()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000022u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            $"""
+             (function()
+                 local g = gump.create()
+                 g:ResizePic(0, 0, 9200, 220, 120)
+                 g:Text(20, 20, 0, "Brick test gump")
+                 return gump.send({session.SessionId}, g, {(uint)session.CharacterId}, 0xB001, 120, 80)
+             end)()
+             """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldDispatchButtonCallbackAndSendFollowupGump()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var gumpDispatcher = new GumpScriptDispatcherService();
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000022u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IGumpScriptDispatcherService>(gumpDispatcher);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var registerResult = service.ExecuteFunction(
+            """
+            (function()
+                return gump.on(0xB10C, 1, function(ctx)
+                    local g = gump.create()
+                    g:Text(20, 20, 0, "Second gump")
+                    return gump.send(ctx.session_id, g, ctx.character_id or 0, 0xB10D, 130, 90)
+                end)
+            end)()
+            """
+        );
+
+        Assert.That(registerResult.Success, Is.True);
+        Assert.That(registerResult.Data, Is.EqualTo(true));
+
+        var packet = new GumpMenuSelectionPacket();
+        var parsed = packet.TryParse(BuildGumpResponsePacket((uint)session.CharacterId, 0xB10C, 1));
+        Assert.That(parsed, Is.True);
+
+        var dispatched = gumpDispatcher.TryDispatch(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+                var gump = (CompressedGumpPacket)outbound.Packet;
+                Assert.That(gump.GumpId, Is.EqualTo(0xB10D));
+            }
+        );
+    }
+
+    [Test]
     public async Task StartAsync_WithLogModule_ShouldKeepLogAsTable()
     {
         using var temp = new TempDirectory();
@@ -830,6 +962,35 @@ public class LuaScriptEngineServiceTests
         Assert.That(name, Is.EqualTo("hello_world_method"));
     }
 
+    [Test]
+    public async Task StartAsync_WhenFileWatcherIsDisabled_ShouldNotCreateWatcher()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", EnableFileWatcher: false),
+            []
+        );
+
+        await service.StartAsync();
+
+        var watcherField = typeof(LuaScriptEngineService).GetField(
+            "_watcher",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
+        );
+        var watcher = watcherField?.GetValue(service);
+
+        Assert.That(watcher, Is.Null);
+    }
+
     private static LuaScriptEngineService CreateService(string rootPath)
     {
         var dirs = new DirectoriesConfig(rootPath, Enum.GetNames<DirectoryType>());
@@ -846,4 +1007,36 @@ public class LuaScriptEngineServiceTests
             []
         );
     }
+
+    private static byte[] BuildGumpResponsePacket(uint serial, uint gumpId, uint buttonId)
+    {
+        using var ms = new MemoryStream();
+        using var bw = new BinaryWriter(ms);
+        bw.Write((byte)0xB1);
+        bw.Write((ushort)0);
+        WriteUInt32BE(bw, serial);
+        WriteUInt32BE(bw, gumpId);
+        WriteUInt32BE(bw, buttonId);
+        WriteInt32BE(bw, 0);
+        WriteInt32BE(bw, 0);
+        bw.Flush();
+
+        var bytes = ms.ToArray();
+        var length = (ushort)bytes.Length;
+        bytes[1] = (byte)(length >> 8);
+        bytes[2] = (byte)(length & 0xFF);
+
+        return bytes;
+    }
+
+    private static void WriteUInt32BE(BinaryWriter writer, uint value)
+    {
+        writer.Write((byte)(value >> 24));
+        writer.Write((byte)(value >> 16));
+        writer.Write((byte)(value >> 8));
+        writer.Write((byte)value);
+    }
+
+    private static void WriteInt32BE(BinaryWriter writer, int value)
+        => WriteUInt32BE(writer, unchecked((uint)value));
 }

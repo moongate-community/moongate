@@ -75,7 +75,8 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
             new LuaEngineConfig(
                 context.DirectoriesConfig[DirectoryType.Scripts],
                 context.DirectoriesConfig[DirectoryType.Scripts],
-                VersionUtils.Version
+                VersionUtils.Version,
+                context.Config.Scripting.EnableFileWatcher
             )
         );
         ScriptModuleRegistry.Register(context.Container);
