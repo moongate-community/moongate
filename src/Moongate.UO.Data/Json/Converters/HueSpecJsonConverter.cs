@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Templates.Items;
@@ -30,38 +29,13 @@ public sealed class HueSpecJsonConverter : JsonConverter<HueSpec>
             throw new JsonException("HueSpec cannot be null or empty.");
         }
 
-        var trimmed = value.Trim();
-
-        if (trimmed.StartsWith("hue(", StringComparison.OrdinalIgnoreCase) && trimmed.EndsWith(')'))
+        try
         {
-            var content = trimmed[4..^1];
-            var parts = content.Split(':', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-            if (parts.Length != 2 ||
-                !int.TryParse(parts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out var min) ||
-                !int.TryParse(parts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out var max))
-            {
-                throw new JsonException($"Invalid hue range format: {value}");
-            }
-
-            return HueSpec.FromRange(min, max);
+            return HueSpec.ParseFromString(value);
         }
-
-        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        catch (FormatException exception)
         {
-            if (!int.TryParse(trimmed[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var hexValue))
-            {
-                throw new JsonException($"Invalid hexadecimal hue value: {value}");
-            }
-
-            return HueSpec.FromValue(hexValue);
+            throw new JsonException(exception.Message, exception);
         }
-
-        if (int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out var numericValue))
-        {
-            return HueSpec.FromValue(numericValue);
-        }
-
-        throw new JsonException($"Invalid hue value: {value}");
     }
 }

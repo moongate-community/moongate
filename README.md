@@ -220,6 +220,7 @@ Moongate uses a lightweight file-based persistence model implemented in `src/Moo
 - Append-only journal (`world.journal.bin`) for incremental operations between snapshots.
 - MemoryPack binary serialization for compact and fast read/write.
 - Per-operation checksums in journal entries to detect truncated/corrupted tails.
+- Runtime file-lock mode for snapshot/journal handles (`PersistenceOptions.EnableFileLock`, default: enabled).
 - Thread-safe repositories for accounts, mobiles, and items.
 - Mobile/item relations are persisted by serial references:
   - `UOMobileEntity.BackpackId`
@@ -232,6 +233,7 @@ Runtime behavior:
 - On startup, `IPersistenceService.StartAsync()` loads snapshot (if present) and replays journal.
 - During runtime, repositories append operations to journal.
 - On save/stop, `SaveSnapshotAsync()` writes a new snapshot and resets the journal.
+- With file-lock mode enabled, snapshot/journal handles remain open for process lifetime and prevent concurrent writers.
 
 Storage location:
 
@@ -593,6 +595,7 @@ Built-in commands:
 - `add_user` -> Console + InGame, `Administrator`
 - `send_target` -> InGame only, `Regular`
 - `orion` -> InGame only, `Regular` (opens target cursor and spawns Orion on selected location)
+- `teleport|tp` -> InGame only, `GameMaster` (usage: `.teleport <mapId> <x> <y> <z>`)
 
 ## Scripting
 

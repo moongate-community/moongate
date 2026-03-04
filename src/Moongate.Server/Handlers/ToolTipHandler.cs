@@ -10,6 +10,7 @@ using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.MegaCliloc;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
@@ -92,7 +93,11 @@ public class ToolTipHandler : BasePacketListener
                 item.Amount,
                 hue: item.Hue
             );
-            propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
+
+            if (item.Rarity != ItemRarity.None)
+            {
+                propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
+            }
 
             return propertyList;
         }

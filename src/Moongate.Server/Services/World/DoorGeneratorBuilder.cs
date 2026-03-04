@@ -2,6 +2,7 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
@@ -575,11 +576,3 @@ public readonly record struct DoorGenerationPlacementRecord(
     DoorGenerationFacing Facing,
     int? PairGroupId = null
 );
-
-public enum DoorGenerationFacing
-{
-    WestCW = 0,
-    EastCCW = 1,
-    SouthCW = 2,
-    NorthCCW = 3
-}

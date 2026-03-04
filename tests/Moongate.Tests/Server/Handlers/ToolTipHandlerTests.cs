@@ -278,6 +278,7 @@ public class ToolTipHandlerTests
             new()
             {
                 Id = itemSerial,
+                Name = "Gold Coins",
                 ItemId = 0x0EED,
                 Hue = 0x0021
             }

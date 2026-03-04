@@ -3,11 +3,12 @@ namespace Moongate.UO.Data.Types;
 /// <summary>
 /// Represents ItemRarity.
 /// </summary>
-public enum ItemRarity
+public enum ItemRarity : byte
 {
-    Common = 0,
-    Uncommon = 1,
-    Rare = 2,
-    Epic = 3,
-    Legendary = 4
+    None = 0,
+    Common = 1,
+    Uncommon = 2,
+    Rare = 3,
+    Epic = 4,
+    Legendary = 5
 }

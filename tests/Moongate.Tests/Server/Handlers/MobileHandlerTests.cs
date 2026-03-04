@@ -1,7 +1,9 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
@@ -9,6 +11,7 @@ using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Services.Spatial;
@@ -18,11 +21,58 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Handlers;
 
 public sealed class MobileHandlerTests
 {
+    private sealed class MobileHandlerTestSpeechService : ISpeechService
+    {
+        public List<string> DirectMessages { get; } = [];
+
+        public Task<int> BroadcastFromServerAsync(string text, short hue = 946, short font = 3, string language = "ENU")
+            => Task.FromResult(0);
+
+        public Task HandleOpenChatWindowAsync(GameSession session, OpenChatWindowPacket packet, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+
+        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<UnicodeSpeechMessagePacket?>(null);
+
+        public Task<bool> SendMessageFromServerAsync(
+            GameSession session,
+            string text,
+            short hue = 946,
+            short font = 3,
+            string language = "ENU"
+        )
+        {
+            _ = session;
+            _ = hue;
+            _ = font;
+            _ = language;
+            DirectMessages.Add(text);
+            return Task.FromResult(true);
+        }
+
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            ChatMessageType messageType = ChatMessageType.Regular,
+            short hue = 0x3B2,
+            short font = 3,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(0);
+    }
+
     private sealed class MobileHandlerTestCharacterService : ICharacterService
     {
         private readonly UOMobileEntity _mobile;
@@ -162,9 +212,11 @@ public sealed class MobileHandlerTests
             SessionsInRange = [receiverSession]
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
             new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
@@ -194,9 +246,11 @@ public sealed class MobileHandlerTests
         var sessions = new FakeGameNetworkSessionService();
         var spatial = new MobileHandlerTestSpatialWorldService { SectorByLocation = null };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
             new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
@@ -232,9 +286,11 @@ public sealed class MobileHandlerTests
             SessionsInRange = [receiverSession]
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(mobileId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
             new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
@@ -309,9 +365,11 @@ public sealed class MobileHandlerTests
             SectorByLocationResolver = (_, location) => location == oldLocation ? oldSector : newSector
         };
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
             new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
@@ -337,6 +395,8 @@ public sealed class MobileHandlerTests
                 Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
                 Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.True);
                 Assert.That(packets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+                Assert.That(speechService.DirectMessages, Has.Count.EqualTo(1));
+                Assert.That(speechService.DirectMessages[0], Is.EqualTo("Items: 1 e Mobiles: 1"));
             }
         );
     }
@@ -401,9 +461,11 @@ public sealed class MobileHandlerTests
         };
 
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
             new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,
@@ -468,9 +530,11 @@ public sealed class MobileHandlerTests
         character.Location = spawnLocation;
         character.MapId = 1;
         var characterService = new MobileHandlerTestCharacterService(character);
+        var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
             characterService,
+            speechService,
             new DispatchEventsService(spatial, queue, sessions),
             sessions,
             queue,

@@ -137,18 +137,20 @@ public class DecorationDataLoader : IFileLoader
         return null;
     }
 
-    private static (string TypeName, Serial ItemId, string[] Parameters) ParseHeader(string headerLine)
+    private static (string TypeName, Serial ItemId, IReadOnlyDictionary<string, string> Parameters) ParseHeader(
+        string headerLine
+    )
     {
         var firstSpace = headerLine.IndexOf(' ');
 
         if (firstSpace < 0)
         {
-            return (headerLine, Serial.Zero, []);
+            return (headerLine, Serial.Zero, new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
         }
 
         var typeName = headerLine[..firstSpace].Trim();
         var span = headerLine[(firstSpace + 1)..].Trim();
-        var parameters = Array.Empty<string>();
+        var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var itemPart = span;
         var argsStart = span.IndexOf('(');
 
@@ -162,7 +164,32 @@ public class DecorationDataLoader : IFileLoader
                 argsPart = argsPart[..^1];
             }
 
-            parameters = argsPart.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            foreach (
+                var rawToken in argsPart.Split(
+                    ';',
+                    StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+                )
+            )
+            {
+                var equalsIndex = rawToken.IndexOf('=');
+
+                if (equalsIndex <= 0)
+                {
+                    parameters[rawToken] = string.Empty;
+
+                    continue;
+                }
+
+                var key = rawToken[..equalsIndex].Trim();
+                var value = rawToken[(equalsIndex + 1)..].Trim();
+
+                if (key.Length == 0)
+                {
+                    continue;
+                }
+
+                parameters[key] = value;
+            }
         }
 
         return (typeName, ParseSerial(itemPart), parameters);

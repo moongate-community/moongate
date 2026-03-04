@@ -46,7 +46,7 @@ public class SeedDataServiceTests
                 "sample.cfg",
                 "Static",
                 (Serial)0x00000450u,
-                [],
+                new Dictionary<string, string>(),
                 new Point3D(10, 20, 0),
                 string.Empty
             )

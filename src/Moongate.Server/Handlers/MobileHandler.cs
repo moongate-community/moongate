@@ -9,6 +9,7 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -32,6 +33,7 @@ public class MobileHandler
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
 
     private readonly ICharacterService _characterService;
+    private readonly ISpeechService _speechService;
     private readonly int _sectorEnterSyncRadius;
     private readonly int _mobileSyncRange;
     private readonly IDispatchEventsService _dispatchEventsService;
@@ -39,6 +41,7 @@ public class MobileHandler
     public MobileHandler(
         ISpatialWorldService spatialWorldService,
         ICharacterService characterService,
+        ISpeechService speechService,
         IDispatchEventsService dispatchEventsService,
         IGameNetworkSessionService gameNetworkSessionService,
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -47,6 +50,7 @@ public class MobileHandler
     {
         _spatialWorldService = spatialWorldService;
         _characterService = characterService;
+        _speechService = speechService;
         _dispatchEventsService = dispatchEventsService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _outgoingPacketQueue = outgoingPacketQueue;
@@ -133,7 +137,7 @@ public class MobileHandler
     )
         => _dispatchEventsService.DispatchMobileUpdateAsync(mobileEntity, mapId, _mobileSyncRange, isNew);
 
-    private Task SyncSectorSnapshotForEnteringPlayerAsync(
+    private async Task SyncSectorSnapshotForEnteringPlayerAsync(
         UOMobileEntity mobileEntity,
         int mapId,
         Point3D oldLocation,
@@ -142,7 +146,7 @@ public class MobileHandler
     {
         if (!mobileEntity.IsPlayer)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         var oldSector = _spatialWorldService.GetSectorByLocation(mapId, oldLocation);
@@ -150,22 +154,29 @@ public class MobileHandler
 
         if (newSector is null)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if (oldSector is not null &&
             oldSector.SectorX == newSector.SectorX &&
             oldSector.SectorY == newSector.SectorY)
         {
-            return Task.CompletedTask;
+            return;
         }
 
         if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
         {
-            return Task.CompletedTask;
+            return;
         }
 
-        return SyncSectorSnapshotForPlayerAsync(mobileEntity, mapId, newLocation);
+        var itemCount = newSector.GetItems()
+                                 .Count(item => item.ParentContainerId == Serial.Zero &&
+                                                item.EquippedMobileId == Serial.Zero);
+        var mobileCount = newSector.GetMobiles()
+                                   .Count(mobile => mobile.Id != mobileEntity.Id);
+
+        await _speechService.SendMessageFromServerAsync(session, $"Items: {itemCount} e Mobiles: {mobileCount}");
+        await SyncSectorSnapshotForPlayerAsync(mobileEntity, mapId, newLocation);
     }
 
     private Task SyncSectorSnapshotForPlayerAsync(

@@ -11,6 +11,7 @@ using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Items;
@@ -33,6 +34,13 @@ public class ItemServiceTests
                 Amount = 1,
                 Location = Point3D.Zero
             };
+        }
+
+        public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
+        {
+            template = null;
+
+            return false;
         }
 
         public UOItemEntity GetNewBackpack()

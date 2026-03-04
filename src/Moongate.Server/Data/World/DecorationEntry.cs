@@ -12,7 +12,7 @@ public readonly record struct DecorationEntry(
     string SourceFile,
     string TypeName,
     Serial ItemId,
-    IReadOnlyList<string> Parameters,
+    IReadOnlyDictionary<string, string> Parameters,
     Point3D Location,
     string Extra
 );

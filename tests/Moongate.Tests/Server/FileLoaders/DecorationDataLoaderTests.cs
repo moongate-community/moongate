@@ -41,7 +41,8 @@ public class DecorationDataLoaderTests
                 Assert.That(service.Entries.All(static entry => entry.MapId == 1), Is.True);
                 Assert.That(service.Entries[0].TypeName, Is.EqualTo("Static"));
                 Assert.That(service.Entries[0].ItemId, Is.EqualTo((Serial)0x00000450u));
-                Assert.That(service.Entries[0].Parameters, Is.EqualTo(new[] { "Hue=0x482", "Name=Test" }));
+                Assert.That(service.Entries[0].Parameters["Hue"], Is.EqualTo("0x482"));
+                Assert.That(service.Entries[0].Parameters["Name"], Is.EqualTo("Test"));
                 Assert.That(service.Entries[0].Location.X, Is.EqualTo(10));
                 Assert.That(service.Entries[0].Location.Y, Is.EqualTo(20));
                 Assert.That(service.Entries[0].Location.Z, Is.EqualTo(0));

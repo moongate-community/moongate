@@ -61,7 +61,7 @@ public class PersistenceServiceTests
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var service = CreatePersistenceService(directories);
+        using var service = CreatePersistenceService(directories);
 
         await service.StartAsync();
         await service.SaveAsync();
@@ -83,7 +83,7 @@ public class PersistenceServiceTests
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var service = CreatePersistenceService(directories);
+        using var service = CreatePersistenceService(directories);
 
         await service.StartAsync();
         await service.SaveAsync();
@@ -98,7 +98,7 @@ public class PersistenceServiceTests
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
 
-        var first = CreatePersistenceService(directories);
+        using var first = CreatePersistenceService(directories);
         await first.StartAsync();
 
         await first.UnitOfWork.Accounts.UpsertAsync(
@@ -111,8 +111,9 @@ public class PersistenceServiceTests
         );
 
         await first.StopAsync();
+        first.Dispose();
 
-        var second = CreatePersistenceService(directories);
+        using var second = CreatePersistenceService(directories);
         await second.StartAsync();
 
         var loaded = await second.UnitOfWork.Accounts.GetByUsernameAsync("persist-user");
@@ -135,7 +136,7 @@ public class PersistenceServiceTests
             }
         };
 
-        var service = new PersistenceService(directories, timerSpy, config, new NetworkServiceTestGameEventBusService());
+        using var service = new PersistenceService(directories, timerSpy, config, new NetworkServiceTestGameEventBusService());
         await service.StartAsync();
 
         Assert.That(timerSpy.LastInterval, Is.EqualTo(TimeSpan.FromSeconds(12)));

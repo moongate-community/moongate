@@ -11,6 +11,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.Server.Interfaces.Services.Scripting;
@@ -33,6 +34,13 @@ public class MobileServiceTests
 
         public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
             => CreateItemFromTemplateImpl(itemTemplateId);
+
+        public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
+        {
+            template = null;
+
+            return false;
+        }
 
         public UOItemEntity GetNewBackpack()
             => CreateItemFromTemplate("backpack");

@@ -67,7 +67,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             {
                 Index = 0,
                 IpAddress = IPAddress.Parse("127.0.0.1"),
-                ServerName = "Moongate"
+                ServerName = _serverConfig.Game.ShardName
             }
         );
     }

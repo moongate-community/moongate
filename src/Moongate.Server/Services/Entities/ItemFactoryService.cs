@@ -1,10 +1,12 @@
 using System.Globalization;
+using Moongate.Core.Extensions.Strings;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Serilog;
@@ -29,11 +31,39 @@ public sealed class ItemFactoryService : IItemFactoryService
     }
 
     /// <inheritdoc />
+    public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition)
+    {
+        definition = null;
+
+        if (string.IsNullOrWhiteSpace(itemTemplateId))
+        {
+            return false;
+        }
+
+        var normalizedTemplateId = itemTemplateId.Trim();
+
+        if (_itemTemplateService.TryGet(normalizedTemplateId, out definition))
+        {
+            return true;
+        }
+
+        var snakeCaseTemplateId = normalizedTemplateId.ToSnakeCase();
+
+        if (!string.Equals(snakeCaseTemplateId, normalizedTemplateId, StringComparison.Ordinal) &&
+            _itemTemplateService.TryGet(snakeCaseTemplateId, out definition))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <inheritdoc />
     public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(itemTemplateId);
 
-        if (!_itemTemplateService.TryGet(itemTemplateId, out var template) || template is null)
+        if (!TryGetItemTemplate(itemTemplateId, out var template) || template is null)
         {
             throw new InvalidOperationException($"Item template '{itemTemplateId}' not found.");
         }
@@ -137,4 +167,5 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
     }
+
 }

@@ -57,6 +57,7 @@ Built-in default commands currently include:
 - `add_user` (console + in-game, minimum `Administrator`)
 - `send_target` (in-game only, minimum `Regular`)
 - `orion` (in-game only, minimum `Regular`, requests target cursor and spawns Orion on selected tile)
+- `teleport` / `tp` (in-game only, minimum `GameMaster`, usage: `.teleport <mapId> <x> <y> <z>`)
 
 Command source and authorization rules:
 

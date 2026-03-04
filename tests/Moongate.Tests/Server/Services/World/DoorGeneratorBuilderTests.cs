@@ -2,6 +2,7 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;

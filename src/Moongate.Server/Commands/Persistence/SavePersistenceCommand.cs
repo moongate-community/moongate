@@ -20,7 +20,7 @@ public class SavePersistenceCommand : ICommandExecutor
 {
     private readonly IPersistenceService _persistenceService;
 
-    private ISpeechService _speechService;
+    private readonly ISpeechService _speechService;
 
     public SavePersistenceCommand(IPersistenceService persistenceService, ISpeechService speechService)
     {

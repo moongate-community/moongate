@@ -53,7 +53,7 @@ public class MovementHandler : BasePacketListener
             return Task.FromResult(true);
         }
 
-        _logger.Debug(
+        _logger.Verbose(
             "Move request Session={SessionId} Dir={Direction} WalkDir={WalkDirection} Run={Run} Seq={Sequence} Key=0x{FastWalkKey:X8}",
             session.SessionId,
             moveRequestPacket.Direction,
