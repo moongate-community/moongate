@@ -85,7 +85,7 @@ public sealed class ItemService : IItemService
         }
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-        _logger.Debug("Created item {ItemId} (ItemId=0x{TileId:X4})", item.Id, item.ItemId);
+        _logger.Verbose("Created item {ItemId} (ItemId=0x{TileId:X4})", item.Id, item.ItemId);
 
         return item.Id;
     }
@@ -101,7 +101,7 @@ public sealed class ItemService : IItemService
 
         var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-        _logger.Debug(
+        _logger.Verbose(
             "Spawned item {ItemId} from template {TemplateId} (ItemId=0x{TileId:X4})",
             item.Id,
             itemTemplateId,

@@ -86,7 +86,7 @@ public class LocationsDataLoader : IFileLoader
             _logger.Information(
                 "Loaded {Count} locations from file {FilePath} (MapId={MapId}).",
                 addedCount,
-                filePath,
+                new FileInfo(filePath).Name,
                 mapId
             );
         }

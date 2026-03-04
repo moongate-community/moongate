@@ -4,6 +4,7 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Lifecycle;
@@ -19,6 +20,7 @@ using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Accounting;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Entities;
+using Moongate.Server.Services.EventLoop;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Lifecycle;
@@ -55,6 +57,7 @@ public static class AddBootstrapCoreServicesExtension
     public static Container AddBootstrapCoreServices(this Container container)
     {
         container.Register<IMessageBusService, MessageBusService>(Reuse.Singleton);
+        container.Register<IBackgroundJobService, BackgroundJobService>(Reuse.Singleton);
         container.Register<IGameEventBusService, GameEventBusService>(Reuse.Singleton);
         container.Register<IDispatchEventsService, DispatchEventsService>(Reuse.Singleton);
         container.Register<IServerLifetimeService, ServerLifetimeService>(Reuse.Singleton);
@@ -91,6 +94,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ILocationCatalogService, LocationCatalogService>(Reuse.Singleton);
         container.Register<IDecorationDataService, DecorationDataService>(Reuse.Singleton);
         container.Register<ISignDataService, SignDataService>(Reuse.Singleton);
+        container.Register<ISeedDataService, SeedDataService>(Reuse.Singleton);
         container.RegisterDelegate(
             resolver =>
             {

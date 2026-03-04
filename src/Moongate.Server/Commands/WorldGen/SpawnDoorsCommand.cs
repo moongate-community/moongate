@@ -3,11 +3,12 @@ using Humanizer;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Server.Commands;
+namespace Moongate.Server.Commands.WorldGen;
 
 /// <summary>
 /// Runs world door generation.
@@ -22,9 +23,15 @@ public sealed class SpawnDoorsCommand : ICommandExecutor
 {
     private readonly IWorldGeneratorBuilderService _worldGeneratorBuilderService;
 
-    public SpawnDoorsCommand(IWorldGeneratorBuilderService worldGeneratorBuilderService)
+    private readonly IBackgroundJobService _backgroundJobService;
+
+    public SpawnDoorsCommand(
+        IWorldGeneratorBuilderService worldGeneratorBuilderService,
+        IBackgroundJobService backgroundJobService
+    )
     {
         _worldGeneratorBuilderService = worldGeneratorBuilderService;
+        _backgroundJobService = backgroundJobService;
     }
 
     public async Task ExecuteCommandAsync(CommandSystemContext context)

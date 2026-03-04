@@ -396,6 +396,50 @@ The server loop is timestamp-driven (monotonic `Stopwatch`) rather than fixed-sl
 - This keeps timer semantics stable while adapting to real runtime load.
 - Optional idle throttling (`Game.IdleCpuEnabled`, `Game.IdleSleepMilliseconds`) sleeps briefly when no work was processed.
 
+### Background Jobs And Main-Thread Dispatch
+
+Moongate provides `IBackgroundJobService` to run non-gameplay work in parallel and safely marshal results back to the game loop thread.
+
+Use it for:
+
+- file parsing/import tasks
+- image generation and offline processors
+- CPU/I/O work that does not directly mutate world state
+
+Do not mutate gameplay state directly inside background workers.  
+Post results back to game loop callbacks instead.
+
+Example:
+
+```csharp
+public sealed class SeedImportService
+{
+    private readonly IBackgroundJobService _backgroundJobService;
+
+    public SeedImportService(IBackgroundJobService backgroundJobService)
+    {
+        _backgroundJobService = backgroundJobService;
+    }
+
+    public void ImportAsync()
+    {
+        _backgroundJobService.RunBackgroundAndPostResultAsync(
+            async () => await LoadSeedStatsAsync(),
+            result =>
+            {
+                // This callback executes on game-loop thread.
+                ApplyStatsToRuntime(result);
+            },
+            ex =>
+            {
+                // Also marshaled on game-loop thread.
+                Log.Error(ex, "Seed import failed.");
+            }
+        );
+    }
+}
+```
+
 ## Requirements
 
 - .NET SDK 10.0.x

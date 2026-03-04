@@ -21,6 +21,7 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     private static readonly ulong FrequencyInMilliseconds = (ulong)Stopwatch.Frequency / 1000;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly IMessageBusService _messageBusService;
+    private readonly IBackgroundJobService _backgroundJobService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ITimerService _timerService;
@@ -44,6 +45,7 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     public GameLoopService(
         IPacketDispatchService packetDispatchService,
         IMessageBusService messageBusService,
+        IBackgroundJobService backgroundJobService,
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameNetworkSessionService gameNetworkSessionService,
         ITimerService timerService,
@@ -53,6 +55,7 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     {
         _packetDispatchService = packetDispatchService;
         _messageBusService = messageBusService;
+        _backgroundJobService = backgroundJobService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameNetworkSessionService = gameNetworkSessionService;
         _timerService = timerService;
@@ -97,6 +100,7 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
 
     public override Task StartAsync()
     {
+        _backgroundJobService.Start();
         _loopThread = new(RunLoop)
         {
             IsBackground = true,
@@ -107,14 +111,14 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
         return Task.CompletedTask;
     }
 
-    public override Task StopAsync()
+    public override async Task StopAsync()
     {
         if (!_cancellationTokenSource.IsCancellationRequested)
         {
             _cancellationTokenSource.Cancel();
         }
 
-        return Task.CompletedTask;
+        await _backgroundJobService.StopAsync();
     }
 
     private int DrainOutgoingPacketQueue()
@@ -171,10 +175,11 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     private int ProcessTick(long timestampMilliseconds)
     {
         var inbound = DrainPacketQueue();
+        var gameLoopCallbacks = _backgroundJobService.ExecutePendingOnGameLoop();
         var timerTicks = _timerService.UpdateTicksDelta(timestampMilliseconds);
         var outbound = DrainOutgoingPacketQueue();
 
-        return inbound + timerTicks + outbound;
+        return inbound + gameLoopCallbacks + timerTicks + outbound;
     }
 
     private void RunLoop()

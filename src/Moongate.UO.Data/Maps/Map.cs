@@ -22,6 +22,8 @@ public class Map : IComparable<Map>, IComparable
     public static Map TerMur => Maps[5];
     public static Map Internal => Maps[0x7F];
 
+    public static int[] MapIDs => [.. _allMaps.Select(m => m.MapID)];
+
     public int Index { get; }
     public int MapID { get; }
     public int FileIndex { get; }

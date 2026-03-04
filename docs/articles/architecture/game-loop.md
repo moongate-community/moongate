@@ -40,6 +40,45 @@ Outbound network send is intentionally inside the game loop:
 
 This keeps outbound ordering tied to loop progression.
 
+## Background Job Service
+
+`IBackgroundJobService` adds a safe two-phase model:
+
+1. run work on background workers
+2. marshal state updates back to game loop thread
+
+Available APIs:
+
+- `EnqueueBackground(Action|Func<Task>)`
+- `RunBackgroundAndPostResult<TResult>(...)`
+- `RunBackgroundAndPostResultAsync<TResult>(...)`
+- `PostToGameLoop(Action)`
+- `ExecutePendingOnGameLoop(...)` (drained by `GameLoopService` every tick)
+
+Practical rule:
+
+- worker thread: do I/O / CPU only
+- game-loop callback: apply runtime world/session/entity mutations
+
+Example:
+
+```csharp
+_backgroundJobService.RunBackgroundAndPostResult(
+    () => BuildNavigationChunk(chunkId),
+    navChunk =>
+    {
+        // Executed on game-loop thread
+        _navigationService.AttachChunk(navChunk);
+    },
+    ex =>
+    {
+        _logger.Error(ex, "Navigation chunk build failed.");
+    }
+);
+```
+
+This preserves deterministic world-state updates while still using parallelism for heavy tasks.
+
 ## Metrics
 
 `GameLoopService` exposes:
