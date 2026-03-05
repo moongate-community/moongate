@@ -21,6 +21,9 @@ public class CommandModuleTests
         public AccountType LastMinimumAccountType { get; private set; }
 
         public Func<CommandSystemContext, Task>? LastHandler { get; private set; }
+        public string? LastExecuteCommandText { get; private set; }
+        public CommandSourceType LastExecuteSource { get; private set; }
+        public IReadOnlyList<string> ExecuteOutput { get; set; } = [];
 
         public Task ExecuteCommandAsync(
             string commandWithArgs,
@@ -29,6 +32,21 @@ public class CommandModuleTests
             CancellationToken cancellationToken = default
         )
             => Task.CompletedTask;
+
+        public Task<IReadOnlyList<string>> ExecuteCommandWithOutputAsync(
+            string commandWithArgs,
+            CommandSourceType source = CommandSourceType.Console,
+            GameSession? session = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = session;
+            _ = cancellationToken;
+            LastExecuteCommandText = commandWithArgs;
+            LastExecuteSource = source;
+
+            return Task.FromResult(ExecuteOutput);
+        }
 
         public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
             => [];
@@ -150,6 +168,96 @@ public class CommandModuleTests
         Assert.That(
             () => module.Register(string.Empty, closure),
             Throws.TypeOf<ArgumentException>()
+        );
+    }
+
+    [Test]
+    public void Register_Handler_ShouldWrapLuaRuntimeErrors_WithCommandContext()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+        var script = new Script();
+        var closure = script.DoString("return function(_) error('boom') end").Function;
+
+        module.Register("lua_cmd", closure);
+
+        var context = new CommandSystemContext(
+            "lua_cmd",
+            [],
+            CommandSourceType.InGame,
+            7,
+            (_, _) => { }
+        );
+
+        Assert.That(
+            async () => await commandSystemService.LastHandler!(context),
+            Throws.TypeOf<InvalidOperationException>()
+                  .With.Message.Contains("Lua command handler failed: lua_cmd")
+        );
+    }
+
+    [Test]
+    public void Register_ShouldIgnoreCamelCaseMinimumAccountType_AndUseDefault()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+        var script = new Script();
+        var closure = script.DoString("return function(_) end").Function;
+        var options = new Table(script)
+        {
+            ["source"] = (int)CommandSourceType.InGame,
+            ["minimumAccountType"] = (int)AccountType.GameMaster
+        };
+
+        module.Register("lua_cmd", closure, options);
+
+        Assert.That(commandSystemService.LastMinimumAccountType, Is.EqualTo(AccountType.Regular));
+    }
+
+    [Test]
+    public void Execute_ShouldForwardToCommandSystem_AndReturnOutputLines()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService
+        {
+            ExecuteOutput = ["line one", "line two"]
+        };
+        var module = new CommandModule(commandSystemService);
+
+        var result = module.Execute("help", (int)CommandSourceType.Console);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(commandSystemService.LastExecuteCommandText, Is.EqualTo("help"));
+                Assert.That(commandSystemService.LastExecuteSource, Is.EqualTo(CommandSourceType.Console));
+                Assert.That(result.Length, Is.EqualTo(2));
+                Assert.That(result.Get(1).CastToString(), Is.EqualTo("line one"));
+                Assert.That(result.Get(2).CastToString(), Is.EqualTo("line two"));
+            }
+        );
+    }
+
+    [Test]
+    public void Execute_ShouldThrow_WhenCommandTextIsEmpty()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+
+        Assert.That(
+            () => module.Execute(string.Empty),
+            Throws.TypeOf<ArgumentException>()
+        );
+    }
+
+    [Test]
+    public void Execute_ShouldThrow_WhenSourceIsInvalid()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+
+        Assert.That(
+            () => module.Execute("help", 0),
+            Throws.TypeOf<ArgumentOutOfRangeException>()
         );
     }
 }

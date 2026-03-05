@@ -17,6 +17,7 @@ using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Data.Luarc;
 using Moongate.Scripting.Data.Scripts;
+using Moongate.Scripting.Descriptors;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Loaders;
 using Moongate.Scripting.Utils;
@@ -1318,7 +1319,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         foreach (var scriptUserData in _loadedUserData)
         {
             // Register the type to allow MoonSharp to access its members and methods
-            UserData.RegisterType(scriptUserData.UserType);
+            UserData.RegisterType(scriptUserData.UserType, new GenericUserDataDescriptor(scriptUserData.UserType));
 
             // Check if type has public constructors (instantiable)
         #pragma warning disable IL2075 // Suppress AOT warning for script proxy

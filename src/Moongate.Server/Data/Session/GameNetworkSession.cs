@@ -1,3 +1,4 @@
+using System.Net;
 using Moongate.Network.Client;
 using Moongate.UO.Data.Middlewares;
 
@@ -17,6 +18,9 @@ public sealed class GameNetworkSession
         SessionId = client.SessionId;
         _client = client;
         RemoteEndPoint = client.RemoteEndPoint?.ToString();
+        LocalEndPoint = client.LocalEndPoint?.ToString();
+        RemoteIpAddress = ResolveIpAddress(client.RemoteEndPoint);
+        LocalIpAddress = ResolveIpAddress(client.LocalEndPoint);
     }
 
     /// <summary>
@@ -28,6 +32,21 @@ public sealed class GameNetworkSession
     /// Gets the latest known remote endpoint string.
     /// </summary>
     public string? RemoteEndPoint { get; private set; }
+
+    /// <summary>
+    /// Gets the latest known local endpoint string.
+    /// </summary>
+    public string? LocalEndPoint { get; private set; }
+
+    /// <summary>
+    /// Gets the latest known remote IP address string (without port), when available.
+    /// </summary>
+    public string? RemoteIpAddress { get; private set; }
+
+    /// <summary>
+    /// Gets the latest known local IP address string (without port), when available.
+    /// </summary>
+    public string? LocalIpAddress { get; private set; }
 
     /// <summary>
     /// Gets the currently associated TCP client, if still attached.
@@ -164,6 +183,9 @@ public sealed class GameNetworkSession
     {
         _client = client;
         RemoteEndPoint = client.RemoteEndPoint?.ToString();
+        LocalEndPoint = client.LocalEndPoint?.ToString();
+        RemoteIpAddress = ResolveIpAddress(client.RemoteEndPoint);
+        LocalIpAddress = ResolveIpAddress(client.LocalEndPoint);
     }
 
     /// <summary>
@@ -200,5 +222,15 @@ public sealed class GameNetworkSession
         {
             action(_pendingBytes);
         }
+    }
+
+    private static string? ResolveIpAddress(EndPoint? endPoint)
+    {
+        if (endPoint is IPEndPoint ipEndPoint)
+        {
+            return ipEndPoint.Address.ToString();
+        }
+
+        return null;
     }
 }

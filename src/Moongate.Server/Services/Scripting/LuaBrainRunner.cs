@@ -117,6 +117,7 @@ public sealed class LuaBrainRunner
                 state.AiNextWakeTime = 0;
                 state.IsFaulted = false;
                 state.PendingSpeech.Clear();
+                state.PendingDeath.Clear();
                 InitializeRuntimeState(state);
 
                 return;
@@ -145,6 +146,18 @@ public sealed class LuaBrainRunner
             if (_states.TryGetValue(gameEvent.ListenerNpcId, out var state))
             {
                 state.PendingSpeech.Enqueue(gameEvent);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
+    {
+        lock (_syncRoot)
+        {
+            if (_states.TryGetValue(mobileId, out var state))
+            {
+                state.PendingDeath.Enqueue(deathContext);
             }
         }
     }
@@ -265,12 +278,14 @@ public sealed class LuaBrainRunner
             state.BrainCoroutine = null;
             state.OnEventFunction = null;
             state.OnSpeechFunction = null;
+            state.OnDeathFunction = null;
             state.IsFaulted = true;
 
             return;
         }
 
         state.OnSpeechFunction = ResolveTableFunction(brainTable, "on_speech", "OnSpeech");
+        state.OnDeathFunction = ResolveTableFunction(brainTable, "on_death", "OnDeath");
         state.OnEventFunction = ResolveTableFunction(brainTable, "on_event", "OnEvent");
 
         var brainLoop = ResolveTableFunction(brainTable, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
@@ -307,6 +322,7 @@ public sealed class LuaBrainRunner
         }
 
         DispatchPendingSpeech(state);
+        DispatchPendingDeath(state);
 
         if (state.BrainCoroutine.State == CoroutineState.Dead)
         {
@@ -353,6 +369,24 @@ public sealed class LuaBrainRunner
             );
         }
 
+        while (state.PendingDeath.Count > 0)
+        {
+            var death = state.PendingDeath.Dequeue();
+            var byCharacterId = death.ByCharacterId.HasValue ? (uint)death.ByCharacterId.Value : 0u;
+
+            _scriptEngineService.CallFunction(
+                "on_event",
+                "death",
+                byCharacterId,
+                death.Context
+            );
+            _scriptEngineService.CallFunction(
+                "on_death",
+                byCharacterId,
+                death.Context
+            );
+        }
+
         _scriptEngineService.CallFunction("on_brain_tick", (uint)state.MobileId);
     }
 
@@ -396,6 +430,47 @@ public sealed class LuaBrainRunner
                 speech.Location.X,
                 speech.Location.Y,
                 speech.Location.Z
+            );
+        }
+    }
+
+    private void DispatchPendingDeath(LuaBrainRuntimeState state)
+    {
+        if (_luaScript is null)
+        {
+            state.PendingDeath.Clear();
+
+            return;
+        }
+
+        while (state.PendingDeath.Count > 0)
+        {
+            var death = state.PendingDeath.Dequeue();
+            var byCharacter = death.ByCharacterId.HasValue
+                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
+                                  : DynValue.Nil;
+
+            if (state.OnEventFunction is not null)
+            {
+                _luaScript.Call(
+                    state.OnEventFunction,
+                    "death",
+                    byCharacter,
+                    death.Context
+                );
+
+                continue;
+            }
+
+            if (state.OnDeathFunction is null)
+            {
+                continue;
+            }
+
+            _luaScript.Call(
+                state.OnDeathFunction,
+                byCharacter,
+                death.Context
             );
         }
     }

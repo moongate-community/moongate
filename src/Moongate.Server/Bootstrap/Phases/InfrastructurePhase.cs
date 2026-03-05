@@ -7,6 +7,7 @@ using Moongate.Server.Interfaces.Bootstrap;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.UO.Data.Files;
+using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Filters;
 
@@ -46,52 +47,15 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
                 MoongateServerJsonContext.Default
             );
         }
-        else
-        {
-            var fileConfig = JsonUtils.DeserializeFromFile<MoongateConfig>(
-                configPath,
-                MoongateServerJsonContext.Default
-            );
 
-            context.Logger.Information("Loaded configuration from moongate.json in root directory.");
+        context.Logger.Debug("Loading configuration from moongate.json + MOONGATE_* environment variables.");
 
-            if (!string.IsNullOrWhiteSpace(fileConfig.RootDirectory))
-            {
-                context.Config.RootDirectory = fileConfig.RootDirectory;
-            }
+        var configuration = new ConfigurationBuilder()
+                            .AddJsonFile(configPath, optional: true, reloadOnChange: false)
+                            .AddEnvironmentVariables(prefix: "MOONGATE_")
+                            .Build();
 
-            if (!string.IsNullOrWhiteSpace(fileConfig.UODirectory))
-            {
-                context.Config.UODirectory = fileConfig.UODirectory;
-            }
-
-            if (fileConfig.LogLevel != LogLevelType.Information)
-            {
-                context.Config.LogLevel = fileConfig.LogLevel;
-            }
-
-            context.Config.LogPacketData = fileConfig.LogPacketData;
-
-            if (fileConfig.Persistence is not null)
-            {
-                context.Config.Persistence = fileConfig.Persistence;
-            }
-
-            if (fileConfig.Http is not null)
-            {
-                context.Config.Http = fileConfig.Http;
-            }
-
-            if (fileConfig.Email is not null)
-            {
-                context.Config.Email = fileConfig.Email;
-            }
-
-            if (fileConfig.Scripting is not null)
-            {
-                context.Config.Scripting = fileConfig.Scripting;
-            }
-        }
+        configuration.Bind(context.Config);
     }
 
     private static void CheckDirectoryConfig(BootstrapContext context)

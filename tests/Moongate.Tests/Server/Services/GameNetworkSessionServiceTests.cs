@@ -49,6 +49,24 @@ public sealed class GameNetworkSessionServiceTests
         );
     }
 
+    [Test]
+    public void GetOrCreate_ShouldExposeRemoteIpAddress()
+    {
+        var service = new GameNetworkSessionService();
+        var session = CreateSession(service, (Serial)0x00000042u);
+
+        Assert.That(session.NetworkSession.RemoteIpAddress, Is.EqualTo(null));
+    }
+
+    [Test]
+    public void GetOrCreate_ShouldExposeLocalIpAddress()
+    {
+        var service = new GameNetworkSessionService();
+        var session = CreateSession(service, (Serial)0x00000042u);
+
+        Assert.That(session.NetworkSession.LocalIpAddress, Is.EqualTo(null));
+    }
+
     private GameSession CreateSession(GameNetworkSessionService service, Serial characterId)
     {
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

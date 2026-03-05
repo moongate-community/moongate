@@ -339,13 +339,20 @@ public class NetworkService : INetworkService, INetworkMetricsSource
 
     private void OnClientDisconnected(object? sender, MoongateTCPClientEventArgs e)
     {
-        _logger.Information("Client disconnected: {SessionId}", e.Client.SessionId);
+        string? remoteEndPoint = null;
 
         if (_gameNetworkSessionService.TryGet(e.Client.SessionId, out var session))
         {
+            remoteEndPoint = session.NetworkSession.RemoteEndPoint;
             session.NetworkSession.SetState(NetworkSessionState.Disconnecting);
             session.NetworkSession.DetachClient();
         }
+        else
+        {
+            remoteEndPoint = e.Client.RemoteEndPoint?.ToString();
+        }
+
+        _logger.Information("Client disconnected: {SessionId}, RemoteEndPoint={RemoteEndPoint}", e.Client.SessionId, remoteEndPoint);
 
         _gameNetworkSessionService.Remove(e.Client.SessionId);
 
@@ -367,7 +374,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         _ = PublishEventSafeAsync(
             new PlayerDisconnectedEvent(
                 e.Client.SessionId,
-                e.Client.RemoteEndPoint?.ToString(),
+                remoteEndPoint,
                 DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
             )
         );

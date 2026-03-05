@@ -492,6 +492,104 @@ export MOONGATE_ADMIN_PASSWORD="change-me-now"
    - HTTP endpoints (default): `http://localhost:8088/`, `http://localhost:8088/health`, `http://localhost:8088/metrics`, `http://localhost:8088/scalar`
    - Logs: `MOONGATE_ROOT_DIRECTORY/logs`
 
+## Environment Configuration
+
+Moongate now supports full configuration override through environment variables.
+
+- Prefix: `MOONGATE_`
+- Nested properties: use `__` (double underscore)
+- Precedence: `MOONGATE_*` env vars override `moongate.json`
+
+Example:
+
+- `MOONGATE_HTTP__PORT=8088`
+- `MOONGATE_HTTP__JWT__ISSUER=moongate-http`
+- `MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS=3`
+
+Supported config env variables:
+
+- Core:
+  - `MOONGATE_ROOT_DIRECTORY`
+  - `MOONGATE_UO_DIRECTORY`
+  - `MOONGATE_LOG_LEVEL`
+  - `MOONGATE_LOG_PACKET_DATA`
+  - `MOONGATE_IS_DEVELOPER_MODE`
+- HTTP:
+  - `MOONGATE_HTTP__IS_ENABLED`
+  - `MOONGATE_HTTP__PORT`
+  - `MOONGATE_HTTP__WEBSITE_URL`
+  - `MOONGATE_HTTP__IS_OPEN_API_ENABLED`
+  - `MOONGATE_HTTP__JWT__IS_ENABLED`
+  - `MOONGATE_HTTP__JWT__SIGNING_KEY`
+  - `MOONGATE_HTTP__JWT__ISSUER`
+  - `MOONGATE_HTTP__JWT__AUDIENCE`
+  - `MOONGATE_HTTP__JWT__EXPIRATION_MINUTES`
+- Game:
+  - `MOONGATE_GAME__SHARD_NAME`
+  - `MOONGATE_GAME__TIMER_TICK_MILLISECONDS`
+  - `MOONGATE_GAME__TIMER_WHEEL_SIZE`
+  - `MOONGATE_GAME__IDLE_CPU_ENABLED`
+  - `MOONGATE_GAME__IDLE_SLEEP_MILLISECONDS`
+- Metrics:
+  - `MOONGATE_METRICS__ENABLED`
+  - `MOONGATE_METRICS__INTERVAL_MILLISECONDS`
+  - `MOONGATE_METRICS__LOG_ENABLED`
+  - `MOONGATE_METRICS__LOG_TO_CONSOLE`
+  - `MOONGATE_METRICS__LOG_LEVEL`
+- Persistence:
+  - `MOONGATE_PERSISTENCE__SAVE_INTERVAL_SECONDS`
+- Spatial:
+  - `MOONGATE_SPATIAL__LAZY_SECTOR_ITEM_LOAD_ENABLED`
+  - `MOONGATE_SPATIAL__SECTOR_WARMUP_RADIUS`
+  - `MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS`
+  - `MOONGATE_SPATIAL__LAZY_SECTOR_ENTITY_LOAD_RADIUS`
+- Scripting:
+  - `MOONGATE_SCRIPTING__ENABLE_FILE_WATCHER`
+- Email:
+  - `MOONGATE_EMAIL__IS_ENABLED`
+  - `MOONGATE_EMAIL__FROM_ADDRESS`
+  - `MOONGATE_EMAIL__FALLBACK_LOCALE`
+  - `MOONGATE_EMAIL__SMTP__HOST`
+  - `MOONGATE_EMAIL__SMTP__PORT`
+  - `MOONGATE_EMAIL__SMTP__USE_SSL`
+  - `MOONGATE_EMAIL__SMTP__USERNAME`
+  - `MOONGATE_EMAIL__SMTP__PASSWORD`
+
+Additional runtime env variables (not part of `MoongateConfig`):
+
+- `MOONGATE_ADMIN_USERNAME`
+- `MOONGATE_ADMIN_PASSWORD`
+- `MOONGATE_UI_DIST`
+- `MOONGATE_HTTP_JWT_SIGNING_KEY` (legacy explicit fallback; `MOONGATE_HTTP__JWT__SIGNING_KEY` is preferred)
+
+### Docker Compose Example
+
+```yaml
+services:
+  moongate:
+    image: tgiachi/moongate:latest
+    environment:
+      MOONGATE_ROOT_DIRECTORY: /data/moongate
+      MOONGATE_UO_DIRECTORY: /data/uo
+      MOONGATE_HTTP__PORT: "8088"
+      MOONGATE_HTTP__IS_OPEN_API_ENABLED: "true"
+      MOONGATE_HTTP__JWT__SIGNING_KEY: "change-me"
+      MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS: "3"
+      MOONGATE_PERSISTENCE__SAVE_INTERVAL_SECONDS: "60"
+      MOONGATE_EMAIL__IS_ENABLED: "true"
+      MOONGATE_EMAIL__SMTP__HOST: "smtp.example.com"
+      MOONGATE_EMAIL__SMTP__PORT: "587"
+      MOONGATE_EMAIL__SMTP__USE_SSL: "true"
+      MOONGATE_EMAIL__SMTP__USERNAME: "smtp-user"
+      MOONGATE_EMAIL__SMTP__PASSWORD: "smtp-pass"
+    volumes:
+      - ./moongate_data:/data/moongate
+      - ./uo:/data/uo:ro
+    ports:
+      - "2593:2593"
+      - "8088:8088"
+```
+
 ## Quick Start
 
 ```bash
@@ -762,39 +860,45 @@ brick = {
 
 ### Lua Gump Example
 
-Lua gump flow supports:
+Moongate now supports two complementary gump flows:
 
-- `gump.create()` to build layout/text
-- `gump.send(sessionId, builder, senderSerial, gumpId, x, y)` to open a gump
-- `gump.on(gumpId, buttonId, callback)` to handle `0xB1` button responses
+- file-based layout table (recommended) with `gump.send_layout(...)`
+- runtime fluent builder with `gump.create()` / `gump.send(...)`
 
-Example (first gump button opens second gump):
+File-based layout conventions:
+
+- store gump files in `moongate_data/scripts/gumps/**.lua`
+- each file returns a table with `ui` and optional `handlers`
+- button click wiring is declarative: `onclick = "handler_name"`
+- optional `ctx` can be passed to `gump.send_layout(...)` for text placeholders (`$ctx.name`, `$ctx.level`, ...)
+
+Example file (`moongate_data/scripts/gumps/test_shop.lua`):
 
 ```lua
-local FIRST_GUMP = 0xB10C
-local SECOND_GUMP = 0xB10D
-local OPEN_NEXT = 1
-
-gump.on(FIRST_GUMP, OPEN_NEXT, function(ctx)
-  local g2 = gump.create()
-  g2:ResizePic(0, 0, 9200, 260, 120)
-  g2:Text(20, 20, 1152, "Second gump")
-  g2:Text(20, 50, 0, "Opened from button callback")
-  gump.send(ctx.session_id, g2, ctx.character_id or 0, SECOND_GUMP, 140, 90)
-end)
-
-items_brick = {
-  on_double_click = function(ctx)
-    local g1 = gump.create()
-    g1:ResizePic(0, 0, 9200, 280, 150)
-    g1:Text(20, 20, 1152, "First gump")
-    g1:Text(20, 50, 0, "Press button to open next")
-    g1:Button(20, 95, 4005, 4007, OPEN_NEXT)
-    g1:Text(55, 96, 0, "Open next gump")
-    gump.send(ctx.session_id, g1, ctx.mobile_id or 0, FIRST_GUMP, 120, 80)
-  end
+return {
+  ui = {
+    { type = "page", index = 0 },
+    { type = "background", x = 0, y = 0, gump_id = 9200, width = 320, height = 180 },
+    { type = "label", x = 20, y = 20, hue = 1152, text = "Hello $ctx.name" },
+    { type = "button", id = 1, x = 20, y = 130, normal_id = 4005, pressed_id = 4007, onclick = "open_next" }
+  },
+  handlers = {
+    open_next = function(cb_ctx)
+      log.info("Button clicked: " .. tostring(cb_ctx.button_id))
+    end
+  }
 }
 ```
+
+Usage:
+
+```lua
+local layout = require("gumps/test_shop")
+local ui_ctx = { name = "Orion", level = 42 }
+gump.send_layout(session_id, layout, character_id, 0xB300, 120, 80, ui_ctx)
+```
+
+Runtime builder mode remains available for dynamic/UI-generated-at-runtime scenarios.
 
 ## Scripts
 

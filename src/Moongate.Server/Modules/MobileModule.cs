@@ -1,4 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -100,7 +101,8 @@ public sealed class MobileModule
             return;
         }
 
-        UserData.RegisterType<LuaMobileProxy>();
+        var type = typeof(LuaMobileProxy);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
         _isLuaMobileProxyTypeRegistered = true;
     }
 }

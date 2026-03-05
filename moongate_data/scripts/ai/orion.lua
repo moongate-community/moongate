@@ -28,7 +28,7 @@ function orion.brain_loop(npc_id)
             local now = time.now_ms()
 
             if now - state.last_move_ms >= MOVE_INTERVAL_MS then
-                npc:Move(random.direction())
+                npc:move(random.direction())
                 log.info("Orion moves in a random direction.")
                 state.last_move_ms = now
             end
@@ -36,13 +36,13 @@ function orion.brain_loop(npc_id)
             if now - state.last_speech_ms >= SPEECH_INTERVAL_MS then
                 local index = random.int(1, #MESSAGES)
                 log.info("Orion says: {0}", MESSAGES[index])
-                npc:Say(MESSAGES[index])
+                npc:say(MESSAGES[index])
                 state.last_speech_ms = now
             end
 
             if now - state.last_sound_ms >= SOUND_INTERVAL_MS then
                 local sound_index = random.int(1, #SOUNDS)
-                npc:PlaySound(SOUNDS[sound_index])
+                npc:play_sound(SOUNDS[sound_index])
                 log.info("Orion plays sound with ID: {0}", SOUNDS[sound_index])
                 state.last_sound_ms = now
             end
@@ -54,4 +54,8 @@ end
 
 function orion.on_event(event_type, from_serial, event_obj)
     -- No event reactions for now.
+end
+
+function orion.on_death(by_character, context)
+    -- TODO: death reaction hook.
 end

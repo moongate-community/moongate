@@ -252,6 +252,7 @@ Lua gumps support response callbacks via packet `0xB1`:
 
 - `gump.send(sessionId, builder, senderSerial, gumpId, x, y)`
 - `gump.on(gumpId, buttonId, callback)`
+- `gump.send_layout(sessionId, layoutTable, senderSerial, gumpId, x, y, ctx?)` (recommended)
 
 Example:
 
@@ -262,11 +263,41 @@ local OPEN_NEXT = 1
 
 gump.on(FIRST_GUMP, OPEN_NEXT, function(ctx)
     local g2 = gump.create()
-    g2:ResizePic(0, 0, 9200, 260, 120)
-    g2:Text(20, 20, 1152, "Second gump")
+    g2:resize_pic(0, 0, 9200, 260, 120)
+    g2:text(20, 20, 1152, "Second gump")
     gump.send(ctx.session_id, g2, ctx.character_id or 0, SECOND_GUMP, 140, 90)
 end)
 ```
+
+File-based layout example:
+
+```lua
+-- moongate_data/scripts/gumps/test_shop.lua
+return {
+    ui = {
+        { type = "page", index = 0 },
+        { type = "background", x = 0, y = 0, gump_id = 9200, width = 320, height = 180 },
+        { type = "label", x = 20, y = 20, hue = 1152, text = "Hello $ctx.name" },
+        { type = "button", id = 1, x = 20, y = 130, normal_id = 4005, pressed_id = 4007, onclick = "open_next" }
+    },
+    handlers = {
+        open_next = function(cb_ctx)
+            log.info("Button: " .. tostring(cb_ctx.button_id))
+        end
+    }
+}
+```
+
+```lua
+local layout = require("gumps/test_shop")
+local ui_ctx = { name = "Orion", level = 42 }
+gump.send_layout(session_id, layout, character_id, 0xB300, 120, 80, ui_ctx)
+```
+
+`ctx` placeholders are supported in text fields for file-based layouts:
+
+- `$ctx.name`
+- `$ctx.level`
 
 ### Callback Parameters
 

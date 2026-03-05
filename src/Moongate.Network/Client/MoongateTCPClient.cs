@@ -101,6 +101,24 @@ public sealed class MoongateTCPClient : IAsyncDisposable, IDisposable
     }
 
     /// <summary>
+    /// Local endpoint used for this connection, when available.
+    /// </summary>
+    public EndPoint? LocalEndPoint
+    {
+        get
+        {
+            try
+            {
+                return _socket.LocalEndPoint;
+            }
+            catch (ObjectDisposedException)
+            {
+                return null;
+            }
+        }
+    }
+
+    /// <summary>
     /// Gets the number of bytes currently available in the receive circular buffer.
     /// </summary>
     public int AvailableBytes

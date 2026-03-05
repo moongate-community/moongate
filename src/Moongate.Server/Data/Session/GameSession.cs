@@ -91,6 +91,11 @@ public sealed class GameSession
     public byte ViewRange { get; set; } = 18;
 
     /// <summary>
+    /// Gets or sets optional client-reported hardware info (packet 0xD9).
+    /// </summary>
+    public ClientHardwareInfo? HardwareInfo { get; set; }
+
+    /// <summary>
     /// Stores the negotiated client version for this session.
     /// </summary>
     /// <param name="clientVersion">Client version metadata.</param>

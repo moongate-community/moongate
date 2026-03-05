@@ -20,6 +20,7 @@ The following modules are available in the default server runtime:
 - `time`
 - `gump`
 - `effect`
+- `location`
 
 Effect module runtime helpers:
 
@@ -35,6 +36,19 @@ local npc = mobile.get(serial)
 if npc then
   npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
 end
+```
+
+`gump` supports two modes:
+
+- runtime builder (`gump.create()` + `gump.send(...)` + `gump.on(...)`)
+- file-based layout (`gump.send_layout(...)`) using files under `moongate_data/scripts/gumps/**`
+
+`location` runtime helpers:
+
+```lua
+local total = location.count()
+local first = location.get(1)       -- 1-based index, nil if out of range
+local by_name = location.find("Britain")
 ```
 
 ## Creating a Module

@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Interfaces.Services.Events;
@@ -188,6 +189,150 @@ public sealed class LuaMobileProxyTests
                 Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Speed, Is.EqualTo(10));
                 Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Duration, Is.EqualTo(10));
                 Assert.That(gameEventBusService.LastMobilePlayEffectEvent!.Value.Effect, Is.EqualTo(2023));
+            }
+        );
+    }
+
+    [Test]
+    public void EnableWar_ShouldSetWarModeAndPublishEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5),
+            IsWarMode = false
+        };
+        var speechService = new LuaMobileProxyTestSpeechService();
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService: null,
+            pathfindingService: null,
+            gameEventBusService
+        );
+
+        var enabled = proxy.EnableWar();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(enabled, Is.True);
+                Assert.That(mobile.IsWarMode, Is.True);
+                Assert.That(gameEventBusService.LastMobileWarModeChangedEvent.HasValue, Is.True);
+                Assert.That(
+                    gameEventBusService.LastMobileWarModeChangedEvent!.Value.Mobile.Id,
+                    Is.EqualTo((Serial)0x1234u)
+                );
+                Assert.That(gameEventBusService.LastMobileWarModeChangedEvent!.Value.Mobile.IsWarMode, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public void DisableWar_ShouldClearWarModeAndPublishEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5),
+            IsWarMode = true
+        };
+        var speechService = new LuaMobileProxyTestSpeechService();
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService: null,
+            pathfindingService: null,
+            gameEventBusService
+        );
+
+        var disabled = proxy.DisableWar();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(disabled, Is.True);
+                Assert.That(mobile.IsWarMode, Is.False);
+                Assert.That(gameEventBusService.LastMobileWarModeChangedEvent.HasValue, Is.True);
+                Assert.That(
+                    gameEventBusService.LastMobileWarModeChangedEvent!.Value.Mobile.Id,
+                    Is.EqualTo((Serial)0x1234u)
+                );
+                Assert.That(gameEventBusService.LastMobileWarModeChangedEvent!.Value.Mobile.IsWarMode, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void SetWarMode_WhenTrue_ShouldEnableWarAndPublishEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5),
+            IsWarMode = false
+        };
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            movementValidationService: null,
+            pathfindingService: null,
+            new LuaMobileProxyTestGameEventBusService()
+        );
+
+        var changed = proxy.SetWarMode(true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(changed, Is.True);
+                Assert.That(mobile.IsWarMode, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public void SetWarMode_WhenFalse_ShouldDisableWarAndPublishEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new Point3D(100, 200, 5),
+            IsWarMode = true
+        };
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            movementValidationService: null,
+            pathfindingService: null,
+            new LuaMobileProxyTestGameEventBusService()
+        );
+
+        var changed = proxy.SetWarMode(false);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(changed, Is.True);
+                Assert.That(mobile.IsWarMode, Is.False);
             }
         );
     }
@@ -594,6 +739,7 @@ public sealed class LuaMobileProxyTests
         public MobilePositionChangedEvent? LastMobilePositionChangedEvent { get; private set; }
         public MobilePlaySoundEvent? LastMobilePlaySoundEvent { get; private set; }
         public MobilePlayEffectEvent? LastMobilePlayEffectEvent { get; private set; }
+        public MobileWarModeChangedEvent? LastMobileWarModeChangedEvent { get; private set; }
 
         public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
             where TEvent : IGameEvent
@@ -611,6 +757,10 @@ public sealed class LuaMobileProxyTests
             else if (gameEvent is MobilePlayEffectEvent mobilePlayEffectEvent)
             {
                 LastMobilePlayEffectEvent = mobilePlayEffectEvent;
+            }
+            else if (gameEvent is MobileWarModeChangedEvent mobileWarModeChangedEvent)
+            {
+                LastMobileWarModeChangedEvent = mobileWarModeChangedEvent;
             }
 
             return ValueTask.CompletedTask;

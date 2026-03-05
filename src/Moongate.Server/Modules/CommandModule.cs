@@ -1,4 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Types.Commands;
@@ -14,7 +15,7 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class CommandModule
 {
-    private static bool _isLuaContextTypeRegistered;
+    private static int _isLuaContextTypeRegistered;
     private readonly ICommandSystemService _commandSystemService;
 
     public CommandModule(ICommandSystemService commandSystemService)
@@ -42,7 +43,17 @@ public sealed class CommandModule
             context =>
             {
                 var luaContext = new LuaCommandContext(context);
-                handler.OwnerScript.Call(handler, UserData.Create(luaContext));
+                try
+                {
+                    handler.OwnerScript.Call(handler, UserData.Create(luaContext));
+                }
+                catch (Exception exception)
+                {
+                    throw new InvalidOperationException(
+                        $"Lua command handler failed: {name}",
+                        exception
+                    );
+                }
 
                 return Task.CompletedTask;
             },
@@ -50,6 +61,42 @@ public sealed class CommandModule
             configuration.Source,
             configuration.MinimumAccountType
         );
+    }
+
+    [ScriptFunction("execute", "Executes a registered command and returns output lines.")]
+    public Table Execute(string commandText, int source = (int)CommandSourceType.Console)
+    {
+        if (string.IsNullOrWhiteSpace(commandText))
+        {
+            throw new ArgumentException("Command text cannot be empty.", nameof(commandText));
+        }
+
+        var normalizedSource = NormalizeExecutionSource(source);
+        var output = _commandSystemService.ExecuteCommandWithOutputAsync(commandText, normalizedSource)
+                                          .GetAwaiter()
+                                          .GetResult();
+
+        var table = new Table(new Script());
+        var index = 1;
+        foreach (var line in output)
+        {
+            table[index++] = line;
+        }
+
+        return table;
+    }
+
+    private static CommandSourceType NormalizeExecutionSource(int source)
+    {
+        var parsedSource = (CommandSourceType)source;
+        var normalized = parsedSource & (CommandSourceType.InGame | CommandSourceType.Console);
+
+        if (normalized == 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(source), source, "Invalid command source value.");
+        }
+
+        return normalized;
     }
 
     private static CommandRegistrationOptions ParseOptions(Table? options)
@@ -64,8 +111,7 @@ public sealed class CommandModule
         }
 
         var source = ReadSource(options);
-        var hasMinimum = TryReadEnum(options, "minimum_account_type", out AccountType minimumAccountType) ||
-                         TryReadEnum(options, "minimumAccountType", out minimumAccountType);
+        var hasMinimum = TryReadEnum(options, "minimum_account_type", out AccountType minimumAccountType);
 
         if (!hasMinimum)
         {
@@ -111,13 +157,13 @@ public sealed class CommandModule
 
     private static void RegisterLuaContextType()
     {
-        if (_isLuaContextTypeRegistered)
+        if (Interlocked.CompareExchange(ref _isLuaContextTypeRegistered, 1, 0) != 0)
         {
             return;
         }
 
-        UserData.RegisterType<LuaCommandContext>();
-        _isLuaContextTypeRegistered = true;
+        var type = typeof(LuaCommandContext);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
     }
 
     private static bool TryReadEnum<TEnum>(Table table, string key, out TEnum value) where TEnum : struct, Enum
