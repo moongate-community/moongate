@@ -358,15 +358,15 @@ Hook aliases:
 
 ```lua
 local builder = gump.create()
-builder:ResizePic(0, 0, 9200, 280, 150)
-builder:Text(20, 20, 1152, "First gump")
-builder:Button(20, 95, 4005, 4007, 1)
+builder:resize_pic(0, 0, 9200, 280, 150)
+builder:text(20, 20, 1152, "First gump")
+builder:button(20, 95, 4005, 4007, 1)
 gump.send(session_id, builder, character_id, 0xB10C, 120, 80)
 
 gump.on(0xB10C, 1, function(ctx)
     local second = gump.create()
-    second:ResizePic(0, 0, 9200, 260, 120)
-    second:Text(20, 20, 1152, "Second gump")
+    second:resize_pic(0, 0, 9200, 260, 120)
+    second:text(20, 20, 1152, "Second gump")
     gump.send(ctx.session_id, second, ctx.character_id or 0, 0xB10D, 140, 90)
 end)
 ```
@@ -380,6 +380,42 @@ end)
 - `serial`
 - `switches`
 - `text_entries`
+
+File-based layout (recommended):
+
+```lua
+-- moongate_data/scripts/gumps/test_shop.lua
+return {
+    ui = {
+        { type = "page", index = 0 },
+        { type = "background", x = 0, y = 0, gump_id = 9200, width = 320, height = 180 },
+        { type = "label", x = 20, y = 20, hue = 1152, text = "Hello $ctx.name" },
+        { type = "button", id = 1, x = 20, y = 130, normal_id = 4005, pressed_id = 4007, onclick = "open_next" }
+    },
+    handlers = {
+        open_next = function(cb_ctx)
+            log.info("Clicked button " .. tostring(cb_ctx.button_id))
+        end
+    }
+}
+```
+
+```lua
+local layout = require("gumps/test_shop")
+local ui_ctx = { name = "Orion", level = 42 }
+gump.send_layout(session_id, layout, character_id, 0xB300, 120, 80, ui_ctx)
+```
+
+Supported file-based element types currently include:
+
+- `page`, `group`
+- `background`, `alpha_region`
+- `image`, `image_tiled`, `item`
+- `label`, `label_cropped`, `html`
+- `checkbox`, `radio`
+- `text_entry`, `text_entry_limited`
+- `tooltip`
+- `button`, `button_page`
 
 ### ItemScriptContext (`ctx` payload)
 

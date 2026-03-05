@@ -860,39 +860,45 @@ brick = {
 
 ### Lua Gump Example
 
-Lua gump flow supports:
+Moongate now supports two complementary gump flows:
 
-- `gump.create()` to build layout/text
-- `gump.send(sessionId, builder, senderSerial, gumpId, x, y)` to open a gump
-- `gump.on(gumpId, buttonId, callback)` to handle `0xB1` button responses
+- file-based layout table (recommended) with `gump.send_layout(...)`
+- runtime fluent builder with `gump.create()` / `gump.send(...)`
 
-Example (first gump button opens second gump):
+File-based layout conventions:
+
+- store gump files in `moongate_data/scripts/gumps/**.lua`
+- each file returns a table with `ui` and optional `handlers`
+- button click wiring is declarative: `onclick = "handler_name"`
+- optional `ctx` can be passed to `gump.send_layout(...)` for text placeholders (`$ctx.name`, `$ctx.level`, ...)
+
+Example file (`moongate_data/scripts/gumps/test_shop.lua`):
 
 ```lua
-local FIRST_GUMP = 0xB10C
-local SECOND_GUMP = 0xB10D
-local OPEN_NEXT = 1
-
-gump.on(FIRST_GUMP, OPEN_NEXT, function(ctx)
-  local g2 = gump.create()
-  g2:ResizePic(0, 0, 9200, 260, 120)
-  g2:Text(20, 20, 1152, "Second gump")
-  g2:Text(20, 50, 0, "Opened from button callback")
-  gump.send(ctx.session_id, g2, ctx.character_id or 0, SECOND_GUMP, 140, 90)
-end)
-
-items_brick = {
-  on_double_click = function(ctx)
-    local g1 = gump.create()
-    g1:ResizePic(0, 0, 9200, 280, 150)
-    g1:Text(20, 20, 1152, "First gump")
-    g1:Text(20, 50, 0, "Press button to open next")
-    g1:Button(20, 95, 4005, 4007, OPEN_NEXT)
-    g1:Text(55, 96, 0, "Open next gump")
-    gump.send(ctx.session_id, g1, ctx.mobile_id or 0, FIRST_GUMP, 120, 80)
-  end
+return {
+  ui = {
+    { type = "page", index = 0 },
+    { type = "background", x = 0, y = 0, gump_id = 9200, width = 320, height = 180 },
+    { type = "label", x = 20, y = 20, hue = 1152, text = "Hello $ctx.name" },
+    { type = "button", id = 1, x = 20, y = 130, normal_id = 4005, pressed_id = 4007, onclick = "open_next" }
+  },
+  handlers = {
+    open_next = function(cb_ctx)
+      log.info("Button clicked: " .. tostring(cb_ctx.button_id))
+    end
+  }
 }
 ```
+
+Usage:
+
+```lua
+local layout = require("gumps/test_shop")
+local ui_ctx = { name = "Orion", level = 42 }
+gump.send_layout(session_id, layout, character_id, 0xB300, 120, 80, ui_ctx)
+```
+
+Runtime builder mode remains available for dynamic/UI-generated-at-runtime scenarios.
 
 ## Scripts
 

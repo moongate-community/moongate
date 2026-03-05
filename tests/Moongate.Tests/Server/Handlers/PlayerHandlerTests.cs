@@ -35,7 +35,7 @@ public sealed class PlayerHandlerTests
                 Assert.That(session.HardwareInfo, Is.Not.Null);
                 Assert.That(session.HardwareInfo!.InstanceId, Is.EqualTo(0x11223344u));
                 Assert.That(session.HardwareInfo.OsMajor, Is.EqualTo(10u));
-                Assert.That(session.HardwareInfo.VideoCardDescription, Is.EqualTo("NVIDIA TNT2 RIVA"));
+                Assert.That(session.HardwareInfo.VideoCardDescription, Is.EqualTo("NVIDIA RTX"));
                 Assert.That(session.HardwareInfo.LanguageCode, Is.EqualTo("ENU"));
             }
         );
