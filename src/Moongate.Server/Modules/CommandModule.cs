@@ -63,6 +63,42 @@ public sealed class CommandModule
         );
     }
 
+    [ScriptFunction("execute", "Executes a registered command and returns output lines.")]
+    public Table Execute(string commandText, int source = (int)CommandSourceType.Console)
+    {
+        if (string.IsNullOrWhiteSpace(commandText))
+        {
+            throw new ArgumentException("Command text cannot be empty.", nameof(commandText));
+        }
+
+        var normalizedSource = NormalizeExecutionSource(source);
+        var output = _commandSystemService.ExecuteCommandWithOutputAsync(commandText, normalizedSource)
+                                          .GetAwaiter()
+                                          .GetResult();
+
+        var table = new Table(new Script());
+        var index = 1;
+        foreach (var line in output)
+        {
+            table[index++] = line;
+        }
+
+        return table;
+    }
+
+    private static CommandSourceType NormalizeExecutionSource(int source)
+    {
+        var parsedSource = (CommandSourceType)source;
+        var normalized = parsedSource & (CommandSourceType.InGame | CommandSourceType.Console);
+
+        if (normalized == 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(source), source, "Invalid command source value.");
+        }
+
+        return normalized;
+    }
+
     private static CommandRegistrationOptions ParseOptions(Table? options)
     {
         if (options is null)

@@ -50,6 +50,9 @@ public class LuaScriptEngineServiceTests
         public CommandSourceType RegisteredSource { get; private set; }
 
         public AccountType RegisteredMinimumAccountType { get; private set; }
+        public string? LastExecutedCommandText { get; private set; }
+        public CommandSourceType LastExecuteSource { get; private set; }
+        public IReadOnlyList<string> ExecuteOutput { get; set; } = [];
 
         public Task ExecuteCommandAsync(
             string commandWithArgs,
@@ -58,6 +61,21 @@ public class LuaScriptEngineServiceTests
             CancellationToken cancellationToken = default
         )
             => Task.CompletedTask;
+
+        public Task<IReadOnlyList<string>> ExecuteCommandWithOutputAsync(
+            string commandWithArgs,
+            CommandSourceType source = CommandSourceType.Console,
+            GameSession? session = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = session;
+            _ = cancellationToken;
+            LastExecutedCommandText = commandWithArgs;
+            LastExecuteSource = source;
+
+            return Task.FromResult(ExecuteOutput);
+        }
 
         public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
             => [];
@@ -644,6 +662,53 @@ public class LuaScriptEngineServiceTests
             {
                 Assert.That(callbackResult.Success, Is.True);
                 Assert.That(callbackResult.Data, Is.EqualTo("lua_test foo"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithCommandModule_ShouldExecuteCommandAndReturnOutput()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var commandSystemService = new LuaScriptEngineServiceTestsCommandSystemService
+        {
+            ExecuteOutput = ["line one", "line two"]
+        };
+        var container = new Container();
+        container.RegisterInstance<ICommandSystemService>(commandSystemService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(CommandModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local output = command.execute("help", 1)
+                return output[1] == "line one" and output[2] == "line two"
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+                Assert.That(commandSystemService.LastExecutedCommandText, Is.EqualTo("help"));
+                Assert.That(commandSystemService.LastExecuteSource, Is.EqualTo(CommandSourceType.InGame));
             }
         );
     }
