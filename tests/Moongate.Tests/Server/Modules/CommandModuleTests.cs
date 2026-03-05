@@ -152,4 +152,47 @@ public class CommandModuleTests
             Throws.TypeOf<ArgumentException>()
         );
     }
+
+    [Test]
+    public void Register_Handler_ShouldWrapLuaRuntimeErrors_WithCommandContext()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+        var script = new Script();
+        var closure = script.DoString("return function(_) error('boom') end").Function;
+
+        module.Register("lua_cmd", closure);
+
+        var context = new CommandSystemContext(
+            "lua_cmd",
+            [],
+            CommandSourceType.InGame,
+            7,
+            (_, _) => { }
+        );
+
+        Assert.That(
+            async () => await commandSystemService.LastHandler!(context),
+            Throws.TypeOf<InvalidOperationException>()
+                  .With.Message.Contains("Lua command handler failed: lua_cmd")
+        );
+    }
+
+    [Test]
+    public void Register_ShouldIgnoreCamelCaseMinimumAccountType_AndUseDefault()
+    {
+        var commandSystemService = new CommandModuleTestCommandSystemService();
+        var module = new CommandModule(commandSystemService);
+        var script = new Script();
+        var closure = script.DoString("return function(_) end").Function;
+        var options = new Table(script)
+        {
+            ["source"] = (int)CommandSourceType.InGame,
+            ["minimumAccountType"] = (int)AccountType.GameMaster
+        };
+
+        module.Register("lua_cmd", closure, options);
+
+        Assert.That(commandSystemService.LastMinimumAccountType, Is.EqualTo(AccountType.Regular));
+    }
 }

@@ -15,7 +15,7 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class CommandModule
 {
-    private static bool _isLuaContextTypeRegistered;
+    private static int _isLuaContextTypeRegistered;
     private readonly ICommandSystemService _commandSystemService;
 
     public CommandModule(ICommandSystemService commandSystemService)
@@ -43,7 +43,17 @@ public sealed class CommandModule
             context =>
             {
                 var luaContext = new LuaCommandContext(context);
-                handler.OwnerScript.Call(handler, UserData.Create(luaContext));
+                try
+                {
+                    handler.OwnerScript.Call(handler, UserData.Create(luaContext));
+                }
+                catch (Exception exception)
+                {
+                    throw new InvalidOperationException(
+                        $"Lua command handler failed: {name}",
+                        exception
+                    );
+                }
 
                 return Task.CompletedTask;
             },
@@ -65,8 +75,7 @@ public sealed class CommandModule
         }
 
         var source = ReadSource(options);
-        var hasMinimum = TryReadEnum(options, "minimum_account_type", out AccountType minimumAccountType) ||
-                         TryReadEnum(options, "minimumAccountType", out minimumAccountType);
+        var hasMinimum = TryReadEnum(options, "minimum_account_type", out AccountType minimumAccountType);
 
         if (!hasMinimum)
         {
@@ -112,14 +121,13 @@ public sealed class CommandModule
 
     private static void RegisterLuaContextType()
     {
-        if (_isLuaContextTypeRegistered)
+        if (Interlocked.CompareExchange(ref _isLuaContextTypeRegistered, 1, 0) != 0)
         {
             return;
         }
 
         var type = typeof(LuaCommandContext);
         UserData.RegisterType(type, new GenericUserDataDescriptor(type));
-        _isLuaContextTypeRegistered = true;
     }
 
     private static bool TryReadEnum<TEnum>(Table table, string key, out TEnum value) where TEnum : struct, Enum
