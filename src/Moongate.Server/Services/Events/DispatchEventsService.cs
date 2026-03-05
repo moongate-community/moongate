@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Interfaces.Services.Events;
@@ -22,6 +23,7 @@ namespace Moongate.Server.Services.Events;
 [RegisterGameEventListener]
 public sealed class DispatchEventsService
     : IDispatchEventsService,
+      IGameEventListener<MobileWarModeChangedEvent>,
       IGameEventListener<MobilePlaySoundEvent>,
       IGameEventListener<PlaySoundToPlayerEvent>,
       IGameEventListener<MobilePlayEffectEvent>,
@@ -148,6 +150,18 @@ public sealed class DispatchEventsService
         var packet = new PlaySoundEffectPacket(mode, soundModel, unknown3, location);
 
         return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
+    }
+
+    /// <inheritdoc />
+    public Task HandleAsync(MobileWarModeChangedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        return _spatialWorldService.BroadcastToPlayersAsync(
+            new MobileMovingPacket(gameEvent.Mobile, true),
+            gameEvent.Mobile.MapId,
+            gameEvent.Mobile.Location
+        );
     }
 
     /// <inheritdoc />

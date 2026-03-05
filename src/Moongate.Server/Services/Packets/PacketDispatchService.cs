@@ -25,7 +25,7 @@ public class PacketDispatchService : IPacketDispatchService
             listeners.Add(packetListener);
         }
 
-        _logger.Information("Added packet listener for opcode 0x{OpCode:X2}", opCode);
+        _logger.Debug("Added packet listener for opcode 0x{OpCode:X2}", opCode);
     }
 
     public bool NotifyPacketListeners(IncomingGamePacket gamePacket)

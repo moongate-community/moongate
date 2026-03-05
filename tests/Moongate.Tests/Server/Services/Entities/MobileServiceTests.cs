@@ -17,6 +17,7 @@ using Moongate.UO.Data.Types;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Data.Internal.Scripting;
 
 namespace Moongate.Tests.Server.Services.Entities;
 
@@ -105,6 +106,12 @@ public class MobileServiceTests
 
         public void EnqueueSpeech(SpeechHeardEvent gameEvent)
             => _ = gameEvent;
+
+        public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
+        {
+            _ = mobileId;
+            _ = deathContext;
+        }
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
         {

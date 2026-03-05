@@ -5,6 +5,7 @@ using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -199,15 +200,18 @@ public sealed class LuaMobileProxy
             var oldMapId = _mobile.MapId;
 
             _gameEventBusService.PublishAsync(
-                new MobilePositionChangedEvent(
-                    sessionId,
-                    _mobile.Id,
-                    oldMapId,
-                    _mobile.MapId,
-                    oldLocation,
-                    newLocation
-                )
-            ).AsTask().GetAwaiter().GetResult();
+                                    new MobilePositionChangedEvent(
+                                        sessionId,
+                                        _mobile.Id,
+                                        oldMapId,
+                                        _mobile.MapId,
+                                        oldLocation,
+                                        newLocation
+                                    )
+                                )
+                                .AsTask()
+                                .GetAwaiter()
+                                .GetResult();
         }
 
         return true;
@@ -234,15 +238,18 @@ public sealed class LuaMobileProxy
                                 : -1;
 
             _gameEventBusService.PublishAsync(
-                new MobilePositionChangedEvent(
-                    sessionId,
-                    _mobile.Id,
-                    oldMapId,
-                    _mobile.MapId,
-                    oldLocation,
-                    newLocation
-                )
-            ).AsTask().GetAwaiter().GetResult();
+                                    new MobilePositionChangedEvent(
+                                        sessionId,
+                                        _mobile.Id,
+                                        oldMapId,
+                                        _mobile.MapId,
+                                        oldLocation,
+                                        newLocation
+                                    )
+                                )
+                                .AsTask()
+                                .GetAwaiter()
+                                .GetResult();
         }
 
         return true;
@@ -302,15 +309,18 @@ public sealed class LuaMobileProxy
         }
 
         _gameEventBusService.PublishAsync(
-            new MobilePlaySoundEvent(
-                _mobile.Id,
-                _mobile.MapId,
-                _mobile.Location,
-                (ushort)Math.Min(soundId, ushort.MaxValue),
-                0x01,
-                0
-            )
-        ).AsTask().GetAwaiter().GetResult();
+                                new MobilePlaySoundEvent(
+                                    _mobile.Id,
+                                    _mobile.MapId,
+                                    _mobile.Location,
+                                    (ushort)Math.Min(soundId, ushort.MaxValue),
+                                    0x01,
+                                    0
+                                )
+                            )
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
     }
 
     public void SetEffect(
@@ -332,28 +342,68 @@ public sealed class LuaMobileProxy
         }
 
         _gameEventBusService.PublishAsync(
-            new MobilePlayEffectEvent(
-                _mobile.Id,
-                _mobile.MapId,
-                _mobile.Location,
-                (ushort)Math.Min(itemId, ushort.MaxValue),
-                (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
-                (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
-                hue,
-                renderMode,
-                (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
-                (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
-                (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
-                (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
-                (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
-            )
-        ).AsTask().GetAwaiter().GetResult();
+                                new MobilePlayEffectEvent(
+                                    _mobile.Id,
+                                    _mobile.MapId,
+                                    _mobile.Location,
+                                    (ushort)Math.Min(itemId, ushort.MaxValue),
+                                    (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
+                                    (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
+                                    hue,
+                                    renderMode,
+                                    (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
+                                    (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
+                                    (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
+                                    (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
+                                    (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
+                                )
+                            )
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
     }
 
     public void PlayAnimation(int animId)
 
         // TODO: Implement animation primitive for brain point 5.
         => _ = animId;
+
+    public bool EnableWar()
+    {
+        _mobile.IsWarMode = true;
+
+        if (_gameEventBusService is null)
+        {
+            return false;
+        }
+
+        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+
+        return true;
+    }
+
+    public bool DisableWar()
+    {
+        _mobile.IsWarMode = false;
+
+        if (_gameEventBusService is null)
+        {
+            return false;
+        }
+
+        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+
+        return true;
+    }
+
+    public bool SetWarMode(bool isEnabled)
+        => isEnabled ? EnableWar() : DisableWar();
 
     public void SummonUndead(int count)
 

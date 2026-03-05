@@ -20,6 +20,7 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Scripting;
 using Moongate.Server.Types.Commands;
@@ -346,6 +347,57 @@ public class LuaScriptEngineServiceTests
             _ = items;
 
             return Task.CompletedTask;
+        }
+    }
+
+    private sealed class LuaScriptEngineServiceTestsTimerService : ITimerService
+    {
+        public string? LastName { get; private set; }
+
+        public TimeSpan LastInterval { get; private set; }
+
+        public TimeSpan? LastDelay { get; private set; }
+
+        public bool LastRepeat { get; private set; }
+
+        public Action? LastCallback { get; private set; }
+
+        public string NextTimerId { get; set; } = "timer-lua-1";
+
+        public void ProcessTick() { }
+
+        public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
+        {
+            LastName = name;
+            LastInterval = interval;
+            LastDelay = delay;
+            LastRepeat = repeat;
+            LastCallback = callback;
+
+            return NextTimerId;
+        }
+
+        public void UnregisterAllTimers() { }
+
+        public bool UnregisterTimer(string timerId)
+        {
+            _ = timerId;
+
+            return true;
+        }
+
+        public int UnregisterTimersByName(string name)
+        {
+            _ = name;
+
+            return 0;
+        }
+
+        public int UpdateTicksDelta(long timestampMilliseconds)
+        {
+            _ = timestampMilliseconds;
+
+            return 0;
         }
     }
 
@@ -947,6 +999,54 @@ public class LuaScriptEngineServiceTests
                 Assert.That(result.Data, Is.EqualTo(true));
                 Assert.That(speechService.SendCalls, Is.EqualTo(2));
                 Assert.That(speechService.BroadcastCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithTimerModule_ShouldRegisterNamedTimerFromLua()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var timerService = new LuaScriptEngineServiceTestsTimerService
+        {
+            NextTimerId = "timer-script-123"
+        };
+        var container = new Container();
+        container.RegisterInstance<ITimerService>(timerService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TimerModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                return timer.after("lua_timer", 250, function() end)
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("timer-script-123"));
+                Assert.That(timerService.LastName, Is.EqualTo("lua_timer"));
+                Assert.That(timerService.LastInterval, Is.EqualTo(TimeSpan.FromMilliseconds(250)));
+                Assert.That(timerService.LastDelay, Is.EqualTo(TimeSpan.FromMilliseconds(250)));
+                Assert.That(timerService.LastRepeat, Is.False);
             }
         );
     }

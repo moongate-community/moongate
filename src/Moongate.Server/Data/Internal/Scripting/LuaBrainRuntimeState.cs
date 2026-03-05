@@ -11,6 +11,7 @@ namespace Moongate.Server.Data.Internal.Scripting;
 public sealed class LuaBrainRuntimeState
 {
     private readonly Queue<SpeechHeardEvent> _pendingSpeech = new();
+    private readonly Queue<LuaBrainDeathContext> _pendingDeath = new();
 
     public LuaBrainRuntimeState(UOMobileEntity mobile, string brainId, string brainTableName)
     {
@@ -35,7 +36,11 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnEventFunction { get; set; }
 
+    public DynValue? OnDeathFunction { get; set; }
+
     public Serial MobileId => Mobile.Id;
 
     public Queue<SpeechHeardEvent> PendingSpeech => _pendingSpeech;
+
+    public Queue<LuaBrainDeathContext> PendingDeath => _pendingDeath;
 }

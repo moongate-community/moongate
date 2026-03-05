@@ -16,6 +16,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Moongate.UO.Data.Version;
@@ -40,7 +41,6 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private readonly IAccountService _accountService;
     private readonly ICharacterService _characterService;
-    private readonly ServerListPacket _serverListPacket;
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -61,35 +61,38 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         _gameEventBusService = gameEventBusService;
         _serverConfig = serverConfig;
         _gameNetworkSessionService = gameNetworkSessionService;
-        _serverListPacket = new();
-        _serverListPacket.Shards.Add(
-            new()
-            {
-                Index = 0,
-                IpAddress = IPAddress.Parse("127.0.0.1"),
-                ServerName = _serverConfig.Game.ShardName
-            }
-        );
     }
 
-    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
+    public Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        try
         {
-            Enqueue(session, SpeechMessageFactory.CreateSystem($"Welcome to {_serverConfig.Game.ShardName} !"));
-            Enqueue(
-                session,
-                SpeechMessageFactory.CreateSystem(
-                    $"Server is Moongate v{VersionUtils.Version} codename {VersionUtils.Codename}",
-                    SpeechHues.Red,
-                    2
-                )
-            );
-            Enqueue(session, SpeechMessageFactory.CreateSystem($"Current server time is {DateTime.UtcNow:HH:mm:ss} UTC"));
-            Enqueue(
-                session,
-                SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
-            );
+            if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+            {
+                Enqueue(session, SpeechMessageFactory.CreateSystem($"Welcome to {_serverConfig.Game.ShardName} !"));
+                Enqueue(
+                    session,
+                    SpeechMessageFactory.CreateSystem(
+                        $"Server is Moongate v{VersionUtils.Version} codename {VersionUtils.Codename}",
+                        SpeechHues.Red,
+                        2
+                    )
+                );
+                Enqueue(
+                    session,
+                    SpeechMessageFactory.CreateSystem($"Current server time is {DateTime.UtcNow:HH:mm:ss} UTC")
+                );
+                Enqueue(
+                    session,
+                    SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
+                );
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception exception)
+        {
+            return Task.FromException(exception);
         }
     }
 
@@ -128,6 +131,21 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return true;
     }
 
+    private static ServerListPacket CreateServerListPacket(string shardName, IPAddress ipAddress)
+    {
+        var packet = new ServerListPacket();
+        packet.AddShard(
+            new GameServerEntry
+            {
+                Index = 0,
+                IpAddress = ipAddress,
+                ServerName = shardName
+            }
+        );
+
+        return packet;
+    }
+
     private async Task<bool> HandleAccountLoginPacketAsync(GameSession session, AccountLoginPacket accountLoginPacket)
     {
         _logger.Information(
@@ -148,7 +166,10 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         session.AccountId = account.Id;
         session.AccountType = account.AccountType;
 
-        Enqueue(session, _serverListPacket);
+        Enqueue(
+            session,
+            CreateServerListPacket(_serverConfig.Game.ShardName, IPAddress.Parse(session.NetworkSession.LocalIpAddress))
+        );
 
         return true;
     }
@@ -223,25 +244,29 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return Task.FromResult(true);
     }
 
-    private async Task<bool> HandleServerSelectPacketAsync(GameSession session, ServerSelectPacket serverSelectPacket)
+    private Task<bool> HandleServerSelectPacketAsync(GameSession session, ServerSelectPacket _)
     {
-        var selectedIndex = serverSelectPacket.SelectedServerIndex;
-        var selectedShard = _serverListPacket.Shards[selectedIndex];
-
-        var sessionKey = new Random().Next();
-
-        var connectToServer = new ServerRedirectPacket
+        try
         {
-            IPAddress = selectedShard.IpAddress,
-            Port = 2593,
-            SessionKey = (uint)sessionKey
-        };
+            var sessionKey = new Random().Next();
 
-        session.NetworkSession.SetSeed((uint)sessionKey);
+            var connectToServer = new ServerRedirectPacket
+            {
+                IPAddress = IPAddress.Parse(session.NetworkSession.LocalIpAddress),
+                Port = 2593,
+                SessionKey = (uint)sessionKey
+            };
 
-        Enqueue(session, connectToServer);
+            session.NetworkSession.SetSeed((uint)sessionKey);
 
-        return true;
+            Enqueue(session, connectToServer);
+
+            return Task.FromResult(true);
+        }
+        catch (Exception exception)
+        {
+            return Task.FromException<bool>(exception);
+        }
     }
 
     private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)

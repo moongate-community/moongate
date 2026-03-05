@@ -1,7 +1,9 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -18,6 +20,38 @@ namespace Moongate.Tests.Server.Services.Events;
 
 public sealed class DispatchEventsServiceTests
 {
+    [Test]
+    public async Task HandleAsync_ForMobileWarModeChangedEvent_ShouldBroadcastMobileMovingPacket()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002u,
+            MapId = 1,
+            Location = new Point3D(111, 222, 7),
+            IsWarMode = true
+        };
+
+        await service.HandleAsync(new MobileWarModeChangedEvent(mobile));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
+                Assert.That(spatial.LastMapId, Is.EqualTo(1));
+                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(spatial.LastPacket, Is.TypeOf<MobileMovingPacket>());
+            }
+        );
+
+        var packet = (MobileMovingPacket)spatial.LastPacket!;
+        Assert.That(packet.Mobile, Is.Not.Null);
+        Assert.That(packet.Mobile!.IsWarMode, Is.True);
+    }
+
     [Test]
     public async Task HandleAsync_ForMobilePlaySoundEvent_ShouldBroadcastPlaySoundPacket()
     {

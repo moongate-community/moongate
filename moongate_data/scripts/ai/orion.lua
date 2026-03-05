@@ -55,3 +55,7 @@ end
 function orion.on_event(event_type, from_serial, event_obj)
     -- No event reactions for now.
 end
+
+function orion.on_death(by_character, context)
+    -- TODO: death reaction hook.
+end

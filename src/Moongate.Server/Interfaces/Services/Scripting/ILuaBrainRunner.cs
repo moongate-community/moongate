@@ -1,6 +1,7 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -30,6 +31,13 @@ public interface ILuaBrainRunner : IMoongateService, IGameEventListener<SpeechHe
     /// </summary>
     /// <param name="gameEvent">Speech event already filtered per target npc.</param>
     void EnqueueSpeech(SpeechHeardEvent gameEvent);
+
+    /// <summary>
+    /// Enqueues an NPC death hook payload for deferred brain processing.
+    /// </summary>
+    /// <param name="mobileId">Npc id receiving the death notification.</param>
+    /// <param name="deathContext">Death payload.</param>
+    void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext);
 
     /// <summary>
     /// Processes due brain ticks for all registered NPCs.

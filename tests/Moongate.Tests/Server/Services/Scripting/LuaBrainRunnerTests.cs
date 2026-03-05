@@ -3,6 +3,7 @@ using Moongate.Core.Types;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Scripting;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
@@ -188,5 +189,48 @@ public sealed class LuaBrainRunnerTests
         Assert.That(tickCall.FunctionName, Is.EqualTo("on_brain_tick"));
         Assert.That(tickCall.Args.Length, Is.EqualTo(1));
         Assert.That(tickCall.Args[0], Is.EqualTo((uint)npc.Id));
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenDeathIsQueued_ShouldInvokeOnDeathHooks()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x61,
+            Name = "orion",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new Point3D(100, 100, 0)
+        };
+        var deathContext = new LuaBrainDeathContext(
+            (Serial)0x07,
+            new Dictionary<string, object?> { ["reason"] = "test" }
+        );
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
+        runner.EnqueueDeath(npc.Id, deathContext);
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var onEventCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "death"));
+        var onDeathCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_death");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(onEventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(onEventCall.Args.Length, Is.EqualTo(3));
+                Assert.That(onEventCall.Args[1], Is.EqualTo((uint)0x07));
+                Assert.That(onEventCall.Args[2], Is.TypeOf<Dictionary<string, object?>>());
+                Assert.That(onDeathCall.FunctionName, Is.EqualTo("on_death"));
+                Assert.That(onDeathCall.Args.Length, Is.EqualTo(2));
+                Assert.That(onDeathCall.Args[0], Is.EqualTo((uint)0x07));
+                Assert.That(onDeathCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
+            }
+        );
     }
 }
