@@ -160,6 +160,7 @@ Moongate uses a world-generation pipeline based on `IWorldGenerator`.
 - Door generation is implemented as `DoorGeneratorBuilder` (`Name = "doors"`), with hardcoded scan regions (ModernUO-style) and `CanFit` filtering before accepting candidate placements.
 - Generated doors are persisted as world items and include facing/link metadata for runtime behavior.
 - Doors now support live open/close behavior on double-click through Lua + `DoorService`.
+- ORA LE PORTE SI APRONO!! :D :D
 
 Manual trigger:
 
