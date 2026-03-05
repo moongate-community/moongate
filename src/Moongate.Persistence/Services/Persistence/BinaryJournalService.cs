@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-using MemoryPack;
+using MessagePack;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Persistence.Utils;
@@ -66,7 +66,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
             entry.SequenceId,
             entry.OperationType
         );
-        var payload = MemoryPackSerializer.Serialize(entry);
+        var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
         var checksum = ChecksumUtils.Compute(payload);
 
         var lengthBuffer = new byte[4];
@@ -187,7 +187,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
                     break;
                 }
 
-                var entry = MemoryPackSerializer.Deserialize<JournalEntry>(payload);
+                var entry = MessagePackSerializer.Deserialize<JournalEntry>(payload, cancellationToken: cancellationToken);
 
                 if (entry is null)
                 {

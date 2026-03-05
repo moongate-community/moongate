@@ -221,7 +221,7 @@ Moongate uses a lightweight file-based persistence model implemented in `src/Moo
 
 - Snapshot file (`world.snapshot.bin`) for full world state checkpoints.
 - Append-only journal (`world.journal.bin`) for incremental operations between snapshots.
-- MemoryPack binary serialization for compact and fast read/write.
+- MessagePack-CSharp (source-generated) binary serialization for compact and fast read/write.
 - Per-operation checksums in journal entries to detect truncated/corrupted tails.
 - Runtime file-lock mode for snapshot/journal handles (`PersistenceOptions.EnableFileLock`, default: enabled).
 - Thread-safe repositories for accounts, mobiles, and items.
@@ -237,6 +237,13 @@ Runtime behavior:
 - During runtime, repositories append operations to journal.
 - On save/stop, `SaveSnapshotAsync()` writes a new snapshot and resets the journal.
 - With file-lock mode enabled, snapshot/journal handles remain open for process lifetime and prevent concurrent writers.
+
+NativeAOT note (post-mortem):
+
+- We hit an insidious NativeAOT crash (`Segmentation fault: 11`) during persistence save.
+- Root cause: the previous MemoryPack-based snapshot/journal path crashed under AOT in our runtime scenario.
+- Resolution: full persistence serializer migration from MemoryPack to MessagePack-CSharp source-generated contracts (`MessagePackObject`), covering both snapshot and journal payloads.
+- Result: AOT startup + first admin account creation + save cycle now complete without crash.
 
 Storage location:
 
@@ -1017,6 +1024,42 @@ Latest comparison snapshot (`2026-02-23`, `net10.0`, Apple `M4 Max`, `osx-arm64`
 Detailed report:
 
 - `BenchmarkDotNet.Artifacts/results/aot-vs-jit.md`
+
+## Stress Test (Socket UO, Black-Box)
+
+Use the dedicated stress runner to validate server stability with real UO socket clients.
+
+Scenario target (default):
+
+- `100` concurrent clients
+- `300s` duration
+- account bootstrap via HTTP users API
+- login + enter world + continuous movement loop
+- SLO checks:
+  - login success rate `>= 99%`
+  - unexpected disconnects `= 0`
+  - movement ACK p95 `< 200ms`
+
+Run:
+
+```bash
+dotnet run --project tools/Moongate.Stress -- \
+  --host 127.0.0.1 --port 2593 \
+  --http http://localhost:8088 \
+  --clients 100 --duration 300 --ramp-up-per-second 10
+```
+
+When JWT protection is enabled on `/api/users`, provide admin credentials:
+
+```bash
+dotnet run --project tools/Moongate.Stress -- \
+  --admin-username admin --admin-password your_password
+```
+
+Output:
+
+- console summary with pass/fail and SLO violations
+- JSON report at `artifacts/stress/latest.json`
 
 ## Docker
 

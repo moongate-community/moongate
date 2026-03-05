@@ -1,11 +1,11 @@
-using MemoryPack;
+using MessagePack;
 
 namespace Moongate.Persistence.Data.Persistence;
 
 /// <summary>
 /// Serialized typed custom property for an item.
 /// </summary>
-[MemoryPackable]
+[MessagePackObject(keyAsPropertyName: true)]
 public sealed partial class ItemCustomPropertySnapshot
 {
     public string Key { get; set; } = null!;

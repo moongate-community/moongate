@@ -1,4 +1,4 @@
-using MemoryPack;
+using MessagePack;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Serilog;
@@ -7,18 +7,18 @@ using System.Collections.Concurrent;
 namespace Moongate.Persistence.Services.Persistence;
 
 /// <summary>
-/// Persists full world snapshots using MemoryPack binary serialization.
+/// Persists full world snapshots using MessagePack binary serialization.
 /// </summary>
-public sealed class MemoryPackSnapshotService : ISnapshotService, IDisposable
+public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
 {
     private static readonly ConcurrentDictionary<string, byte> LockedPaths = new(StringComparer.OrdinalIgnoreCase);
     private readonly SemaphoreSlim _ioLock = new(1, 1);
-    private readonly ILogger _logger = Log.ForContext<MemoryPackSnapshotService>();
+    private readonly ILogger _logger = Log.ForContext<MessagePackSnapshotService>();
     private readonly string _snapshotFilePath;
     private readonly FileStream _snapshotStream;
     private readonly bool _fileLockEnabled;
 
-    public MemoryPackSnapshotService(string snapshotFilePath, bool enableFileLock = true)
+    public MessagePackSnapshotService(string snapshotFilePath, bool enableFileLock = true)
     {
         _snapshotFilePath = Path.GetFullPath(snapshotFilePath);
         _fileLockEnabled = enableFileLock;
@@ -70,11 +70,38 @@ public sealed class MemoryPackSnapshotService : ISnapshotService, IDisposable
             }
 
             _snapshotStream.Position = 0;
+            var payloadLength = checked((int)_snapshotStream.Length);
+            var payload = new byte[payloadLength];
+            var totalRead = 0;
 
-            var snapshot = await MemoryPackSerializer.DeserializeAsync<WorldSnapshot>(
-                               _snapshotStream,
-                               cancellationToken: cancellationToken
+            while (totalRead < payloadLength)
+            {
+                var read = await _snapshotStream.ReadAsync(
+                               payload.AsMemory(totalRead, payloadLength - totalRead),
+                               cancellationToken
                            );
+
+                if (read == 0)
+                {
+                    break;
+                }
+
+                totalRead += read;
+            }
+
+            if (totalRead != payloadLength)
+            {
+                _logger.Warning(
+                    "Snapshot load short-read Path={SnapshotPath} Expected={ExpectedBytes} Read={ReadBytes}",
+                    _snapshotFilePath,
+                    payloadLength,
+                    totalRead
+                );
+
+                return null;
+            }
+
+            var snapshot = MessagePackSerializer.Deserialize<WorldSnapshot>(payload, cancellationToken: cancellationToken);
             _logger.Verbose(
                 "Snapshot load completed Path={SnapshotPath} Found={Found}",
                 _snapshotFilePath,
@@ -102,14 +129,11 @@ public sealed class MemoryPackSnapshotService : ISnapshotService, IDisposable
 
         try
         {
+            var payload = MessagePackSerializer.Serialize(snapshot, cancellationToken: cancellationToken);
             _snapshotStream.SetLength(0);
             _snapshotStream.Position = 0;
 
-            await MemoryPackSerializer.SerializeAsync(
-                _snapshotStream,
-                snapshot,
-                cancellationToken: cancellationToken
-            );
+            await _snapshotStream.WriteAsync(payload, cancellationToken);
             await _snapshotStream.FlushAsync(cancellationToken);
         }
         finally

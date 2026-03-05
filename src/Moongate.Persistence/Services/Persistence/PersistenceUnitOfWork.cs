@@ -14,7 +14,7 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 {
     private readonly BinaryJournalService _journalService;
     private readonly ILogger _logger = Log.ForContext<PersistenceUnitOfWork>();
-    private readonly MemoryPackSnapshotService _snapshotService;
+    private readonly MessagePackSnapshotService _snapshotService;
     private readonly PersistenceStateStore _stateStore = new();
 
     public PersistenceUnitOfWork(PersistenceOptions options)

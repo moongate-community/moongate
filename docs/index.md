@@ -53,6 +53,10 @@ Deep dive into network protocols:
 
 - [Code Convention](CODE_CONVENTION.md) - Project-wide coding and test structure conventions
 
+### Operations
+
+- [Stress Test](articles/operations/stress-test.md) - Black-box UO socket load testing (100 clients scenario)
+
 ## 🔗 Quick Links
 
 - [GitHub Repository](https://github.com/moongate-community/moongatev2)

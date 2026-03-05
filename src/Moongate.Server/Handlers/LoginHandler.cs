@@ -168,7 +168,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         Enqueue(
             session,
-            CreateServerListPacket(_serverConfig.Game.ShardName, IPAddress.Parse(session.NetworkSession.LocalIpAddress))
+            CreateServerListPacket(_serverConfig.Game.ShardName, ResolveShardAddress(session))
         );
 
         return true;
@@ -252,7 +252,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
             var connectToServer = new ServerRedirectPacket
             {
-                IPAddress = IPAddress.Parse(session.NetworkSession.LocalIpAddress),
+                IPAddress = ResolveShardAddress(session),
                 Port = 2593,
                 SessionKey = (uint)sessionKey
             };
@@ -291,5 +291,23 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         );
 
         return true;
+    }
+
+    private IPAddress ResolveShardAddress(GameSession session)
+    {
+        var rawAddress = session.NetworkSession.LocalIpAddress;
+
+        if (!string.IsNullOrWhiteSpace(rawAddress) && IPAddress.TryParse(rawAddress, out var resolved))
+        {
+            return resolved;
+        }
+
+        _logger.Warning(
+            "Session {SessionId} has invalid LocalIpAddress '{LocalIpAddress}'. Falling back to loopback.",
+            session.SessionId,
+            rawAddress
+        );
+
+        return IPAddress.Loopback;
     }
 }

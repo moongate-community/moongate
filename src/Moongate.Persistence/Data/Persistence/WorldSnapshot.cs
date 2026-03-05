@@ -1,11 +1,11 @@
-using MemoryPack;
+using MessagePack;
 
 namespace Moongate.Persistence.Data.Persistence;
 
 /// <summary>
 /// Full persisted world state stored periodically on disk.
 /// </summary>
-[MemoryPackable]
+[MessagePackObject(keyAsPropertyName: true)]
 public sealed partial class WorldSnapshot
 {
     public int Version { get; set; } = 1;
