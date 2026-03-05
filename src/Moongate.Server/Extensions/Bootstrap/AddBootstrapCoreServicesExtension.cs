@@ -65,6 +65,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IMovementValidationService, MovementValidationService>(Reuse.Singleton);
         container.Register<IPathfindingService, AStarPathfindingService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+        container.Register<IDoorService, DoorService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
@@ -91,11 +92,13 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IStartupTemplateService, StartupTemplateService>(Reuse.Singleton);
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
+        container.Register<IDoorGenerationMapSpecProvider, DefaultDoorGenerationMapSpecProvider>(Reuse.Singleton);
         container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);
         container.Register<IWorldGenerator, ItemsImageBuilder>(Reuse.Singleton);
         container.Register<ILocationCatalogService, LocationCatalogService>(Reuse.Singleton);
         container.Register<IDecorationDataService, DecorationDataService>(Reuse.Singleton);
         container.Register<ISignDataService, SignDataService>(Reuse.Singleton);
+        container.Register<IDoorDataService, DoorDataService>(Reuse.Singleton);
         container.Register<ISeedDataService, SeedDataService>(Reuse.Singleton);
         container.RegisterDelegate(
             resolver =>

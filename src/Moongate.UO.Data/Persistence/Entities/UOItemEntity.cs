@@ -43,6 +43,8 @@ public class UOItemEntity : IItemEntity
 
     public bool IsStackable { get; set; }
 
+    public bool IsDoor => TileData.ItemTable[ItemId][UOTileFlag.Door];
+
     public string ScriptId { get; set; }
 
     public ItemRarity Rarity { get; set; }
@@ -279,7 +281,8 @@ public class UOItemEntity : IItemEntity
     /// <summary>
     /// Clears all custom properties.
     /// </summary>
-    public void ClearCustomProperties() => _customProperties.Clear();
+    public void ClearCustomProperties()
+        => _customProperties.Clear();
 
     /// <summary>
     /// Sets an integer custom property.
@@ -358,6 +361,7 @@ public class UOItemEntity : IItemEntity
     public bool TryGetCustomInteger(string key, out long value)
     {
         value = 0;
+
         if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
         {
             return false;
@@ -377,6 +381,7 @@ public class UOItemEntity : IItemEntity
     public bool TryGetCustomBoolean(string key, out bool value)
     {
         value = false;
+
         if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Boolean)
         {
             return false;
@@ -396,6 +401,7 @@ public class UOItemEntity : IItemEntity
     public bool TryGetCustomDouble(string key, out double value)
     {
         value = 0;
+
         if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Double)
         {
             return false;
@@ -415,6 +421,7 @@ public class UOItemEntity : IItemEntity
     public bool TryGetCustomString(string key, out string? value)
     {
         value = null;
+
         if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.String)
         {
             return false;

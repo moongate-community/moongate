@@ -1,6 +1,7 @@
 using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.World;
 using Moongate.Server.Types.World;
 using Moongate.Tests.Server.Support;
@@ -157,14 +158,27 @@ public class DoorGeneratorBuilderTests
     )
     {
         var tileQuery = new FakeMovementTileQueryService(staticTiles, width, height);
-        var spatial = new RegionDataLoaderTestSpatialWorldService();
         itemService ??= new FakeDoorGeneratorItemService();
         var specs = new List<DoorGenerationMapSpec>
         {
             new(1, [new Rectangle2D(0, 0, 4, 4)])
         };
+        var specProvider = new FakeDoorGenerationMapSpecProvider(specs);
 
-        return new(tileQuery, spatial, itemService, specs);
+        return new(tileQuery, itemService, specProvider);
+    }
+
+    private sealed class FakeDoorGenerationMapSpecProvider : IDoorGenerationMapSpecProvider
+    {
+        private readonly IReadOnlyList<DoorGenerationMapSpec> _mapSpecs;
+
+        public FakeDoorGenerationMapSpecProvider(IReadOnlyList<DoorGenerationMapSpec> mapSpecs)
+        {
+            _mapSpecs = mapSpecs;
+        }
+
+        public IReadOnlyList<DoorGenerationMapSpec> GetMapSpecs()
+            => _mapSpecs;
     }
 
     private sealed class FakeDoorGeneratorItemService : IItemService

@@ -18,8 +18,9 @@ public class SeedDataServiceTests
         ];
         var signDataService = new InMemorySignDataService(signs);
         var decorationDataService = new InMemoryDecorationDataService([]);
+        var doorDataService = new InMemoryDoorDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService([]);
-        var service = new SeedDataService(signDataService, decorationDataService, locationCatalogService);
+        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
 
         var map0 = service.GetSignsByMap(0);
         var map1 = service.GetSignsByMap(1);
@@ -53,8 +54,9 @@ public class SeedDataServiceTests
         ];
         var signDataService = new InMemorySignDataService([]);
         var decorationDataService = new InMemoryDecorationDataService(decorations);
+        var doorDataService = new InMemoryDoorDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService([]);
-        var service = new SeedDataService(signDataService, decorationDataService, locationCatalogService);
+        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
 
         var result = service.GetDecorationsByMap(1);
 
@@ -77,8 +79,9 @@ public class SeedDataServiceTests
         ];
         var signDataService = new InMemorySignDataService([]);
         var decorationDataService = new InMemoryDecorationDataService([]);
+        var doorDataService = new InMemoryDoorDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService(locations);
-        var service = new SeedDataService(signDataService, decorationDataService, locationCatalogService);
+        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
 
         var result = service.GetLocations();
 
@@ -88,6 +91,31 @@ public class SeedDataServiceTests
                 Assert.That(result, Has.Count.EqualTo(1));
                 Assert.That(result[0].MapId, Is.EqualTo(0));
                 Assert.That(result[0].Name, Is.EqualTo("Britain"));
+            }
+        );
+    }
+
+    [Test]
+    public void GetDoors_ShouldDelegateToDoorDataService()
+    {
+        IReadOnlyList<DoorComponentEntry> doors =
+        [
+            new DoorComponentEntry(0, 1, 2, 3, 4, 5, 6, 7, 8, 0, "Test Door")
+        ];
+        var signDataService = new InMemorySignDataService([]);
+        var decorationDataService = new InMemoryDecorationDataService([]);
+        var doorDataService = new InMemoryDoorDataService(doors);
+        var locationCatalogService = new InMemoryLocationCatalogService([]);
+        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+
+        var result = service.GetDoors();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Has.Count.EqualTo(1));
+                Assert.That(result[0].Category, Is.EqualTo(0));
+                Assert.That(result[0].Comment, Is.EqualTo("Test Door"));
             }
         );
     }
@@ -150,5 +178,31 @@ public class SeedDataServiceTests
 
         public IReadOnlyList<WorldLocationEntry> GetAllLocations()
             => _entries;
+    }
+
+    private sealed class InMemoryDoorDataService : IDoorDataService
+    {
+        private readonly IReadOnlyList<DoorComponentEntry> _entries;
+
+        public InMemoryDoorDataService(IReadOnlyList<DoorComponentEntry> entries)
+        {
+            _entries = entries;
+        }
+
+        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
+        {
+            throw new NotSupportedException();
+        }
+
+        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
+            => _entries;
+
+        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
+        {
+            _ = itemId;
+            definition = default;
+
+            return false;
+        }
     }
 }

@@ -1,6 +1,7 @@
 require("ai.orion")
 require("items.apple")
 require("items.brick")
+require("items.door")
 local teleports = require("gumps.teleports")
 
 function on_player_connected(p)
@@ -22,5 +23,5 @@ command.register("teleports", function(ctx)
         ctx:print_error("Failed to open teleports gump.")
     end
 end, {
-    description = "Open teleport browser gump."
+    description = "Open teleport browser gump.",
 })

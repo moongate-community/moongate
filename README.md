@@ -158,7 +158,8 @@ Moongate uses a world-generation pipeline based on `IWorldGenerator`.
   - targeted execution by name (`GenerateAsync("doors")`),
   - optional progress callback (`Action<string>`) for logs/progress output.
 - Door generation is implemented as `DoorGeneratorBuilder` (`Name = "doors"`), with hardcoded scan regions (ModernUO-style) and `CanFit` filtering before accepting candidate placements.
-- Current output is a generated placement record list (`MapId`, `Location`, `Facing`) used for debug/integration; item instantiation is intentionally decoupled.
+- Generated doors are persisted as world items and include facing/link metadata for runtime behavior.
+- Doors now support live open/close behavior on double-click through Lua + `DoorService`.
 
 Manual trigger:
 

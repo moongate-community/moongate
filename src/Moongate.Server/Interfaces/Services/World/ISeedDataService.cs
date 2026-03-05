@@ -22,6 +22,12 @@ public interface ISeedDataService
     IReadOnlyList<DecorationEntry> GetDecorationsByMap(int mapId);
 
     /// <summary>
+    /// Returns all loaded door component entries.
+    /// </summary>
+    /// <returns>Door component entries.</returns>
+    IReadOnlyList<DoorComponentEntry> GetDoors();
+
+    /// <summary>
     /// Returns all known world locations.
     /// </summary>
     /// <returns>World location entries.</returns>

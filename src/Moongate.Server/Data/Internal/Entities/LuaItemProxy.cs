@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -105,6 +106,33 @@ public sealed class LuaItemProxy
         }
 
         _item.Hue = hue;
+
+        return PersistItem();
+    }
+
+    public bool SetItemId(int itemId)
+    {
+        if (itemId < ushort.MinValue || itemId > ushort.MaxValue)
+        {
+            return false;
+        }
+
+        _item.ItemId = itemId;
+
+        return PersistItem();
+    }
+
+    public bool SetDirection(int direction)
+    {
+        if (direction < byte.MinValue || direction > byte.MaxValue)
+        {
+            return false;
+        }
+
+        var directionValue = (DirectionType)(byte)direction;
+        var baseDirection = Point3D.GetBaseDirection(directionValue);
+
+        _item.Direction = baseDirection;
 
         return PersistItem();
     }
@@ -359,6 +387,13 @@ public sealed class LuaItemProxy
         }
 
         _itemService.UpsertItemAsync(_item).GetAwaiter().GetResult();
+
+        if (_spatialWorldService is not null &&
+            _item.ParentContainerId == 0 &&
+            _item.EquippedMobileId == 0)
+        {
+            _spatialWorldService.AddOrUpdateItem(_item, _item.MapId);
+        }
 
         return true;
     }
