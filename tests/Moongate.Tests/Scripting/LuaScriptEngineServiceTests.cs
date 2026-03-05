@@ -607,10 +607,10 @@ public class LuaScriptEngineServiceTests
             """
             (function()
                 local g = gump.create()
-                g:ResizePic(0, 0, 9200, 300, 200)
-                g:Text(80, 15, 0x480, "The Blacksmith")
-                g:Text(30, 50, 0, "What dost thou require?")
-                return g:BuildLayout()
+                g:resize_pic(0, 0, 9200, 300, 200)
+                g:text(80, 15, 0x480, "The Blacksmith")
+                g:text(30, 50, 0, "What dost thou require?")
+                return g:build_layout()
             end)()
             """
         );
@@ -651,9 +651,9 @@ public class LuaScriptEngineServiceTests
             """
             (function()
                 local g = gump.create()
-                g:Text(10, 10, 0, "First")
-                g:Text(10, 25, 0, "Second")
-                local texts = g:BuildTexts()
+                g:text(10, 10, 0, "First")
+                g:text(10, 25, 0, "Second")
+                local texts = g:build_texts()
                 return texts[1] .. "|" .. texts[2]
             end)()
             """
@@ -705,8 +705,8 @@ public class LuaScriptEngineServiceTests
             $"""
              (function()
                  local g = gump.create()
-                 g:ResizePic(0, 0, 9200, 220, 120)
-                 g:Text(20, 20, 0, "Brick test gump")
+                 g:resize_pic(0, 0, 9200, 220, 120)
+                 g:text(20, 20, 0, "Brick test gump")
                  return gump.send({session.SessionId}, g, {(uint)session.CharacterId}, 0xB001, 120, 80)
              end)()
              """
@@ -765,7 +765,7 @@ public class LuaScriptEngineServiceTests
             (function()
                 return gump.on(0xB10C, 1, function(ctx)
                     local g = gump.create()
-                    g:Text(20, 20, 0, "Second gump")
+                    g:text(20, 20, 0, "Second gump")
                     return gump.send(ctx.session_id, g, ctx.character_id or 0, 0xB10D, 130, 90)
                 end)
             end)()

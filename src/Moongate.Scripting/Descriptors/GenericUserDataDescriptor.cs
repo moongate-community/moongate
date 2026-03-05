@@ -1,3 +1,4 @@
+using Moongate.Core.Extensions.Strings;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
 
@@ -21,6 +22,7 @@ public class GenericUserDataDescriptor : StandardUserDataDescriptor
     {
         ArgumentNullException.ThrowIfNull(type);
         _isXnaType = type.Namespace?.StartsWith("Microsoft.Xna.Framework", StringComparison.Ordinal) == true;
+        NormalizeMembersToSnakeCase();
     }
 
     /// <summary>
@@ -56,5 +58,37 @@ public class GenericUserDataDescriptor : StandardUserDataDescriptor
                    // Fallback: use the type name if ToString() returns empty/null
                    $"{Type.Name}({{}})"
                    : str;
+    }
+
+    private void NormalizeMembersToSnakeCase()
+    {
+        var members = MemberNames.ToList();
+
+        foreach (var memberName in members)
+        {
+            var descriptor = FindMember(memberName);
+
+            if (descriptor is null)
+            {
+                continue;
+            }
+
+            var snakeCaseName = memberName.ToSnakeCase();
+
+            if (!HasMember(snakeCaseName))
+            {
+                AddMember(snakeCaseName, descriptor);
+            }
+        }
+
+        foreach (var memberName in members)
+        {
+            var snakeCaseName = memberName.ToSnakeCase();
+
+            if (!string.Equals(memberName, snakeCaseName, StringComparison.Ordinal))
+            {
+                RemoveMember(memberName);
+            }
+        }
     }
 }

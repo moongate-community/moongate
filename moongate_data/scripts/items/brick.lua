@@ -13,11 +13,11 @@ gump.on(BRICK_FIRST_GUMP_ID, BRICK_OPEN_SECOND_BUTTON, function(ctx)
     end
 
     local g = gump.create()
-    g:ResizePic(0, 0, 9200, 280, 130)
-    g:NoMove()
-    g:Text(24, 22, 1152, "Brick - second gump")
-    g:Text(24, 52, 0, "You pressed the button.")
-    g:Text(24, 72, 0, "This is the follow-up gump.")
+    g:resize_pic(0, 0, 9200, 280, 130)
+    g:no_move()
+    g:text(24, 22, 1152, "Brick - second gump")
+    g:text(24, 52, 0, "You pressed the button.")
+    g:text(24, 72, 0, "This is the follow-up gump.")
 
     gump.send(ctx.session_id, g, sender, BRICK_SECOND_GUMP_ID, 140, 90)
 end)
@@ -34,13 +34,13 @@ brick = {
         end
 
         local g = gump.create()
-        g:ResizePic(0, 0, 9200, 300, 160)
-        g:NoMove()
-        g:Text(24, 18, 1152, "Brick")
-        g:Text(24, 48, 0, "First test gump from item double click.")
-        g:Text(24, 68, 0, "Press the button to open the second gump.")
-        g:Button(24, 108, 4005, 4007, BRICK_OPEN_SECOND_BUTTON)
-        g:Text(58, 109, 0, "Open next gump")
+        g:resize_pic(0, 0, 9200, 300, 160)
+        g:no_move()
+        g:text(24, 18, 1152, "Brick")
+        g:text(24, 48, 0, "First test gump from item double click.")
+        g:text(24, 68, 0, "Press the button to open the second gump.")
+        g:button(24, 108, 4005, 4007, BRICK_OPEN_SECOND_BUTTON)
+        g:text(58, 109, 0, "Open next gump")
 
         gump.send(ctx.session_id, g, sender, BRICK_FIRST_GUMP_ID, 120, 80)
     end,

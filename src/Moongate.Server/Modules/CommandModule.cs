@@ -1,4 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Types.Commands;
@@ -116,7 +117,8 @@ public sealed class CommandModule
             return;
         }
 
-        UserData.RegisterType<LuaCommandContext>();
+        var type = typeof(LuaCommandContext);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
         _isLuaContextTypeRegistered = true;
     }
 

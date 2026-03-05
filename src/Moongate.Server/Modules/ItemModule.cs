@@ -1,4 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -52,7 +53,8 @@ public sealed class ItemModule
             return;
         }
 
-        UserData.RegisterType<LuaItemProxy>();
+        var type = typeof(LuaItemProxy);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
         _isLuaItemProxyTypeRegistered = true;
     }
 }

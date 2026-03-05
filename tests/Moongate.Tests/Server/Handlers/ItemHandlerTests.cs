@@ -306,6 +306,113 @@ public class ItemHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenSingleClickGroundItemOutOfRangeAndRegular_ShouldNotPublishEvent()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var targetSerial = (Serial)0x40000021u;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0EED,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            ParentContainerId = Serial.Zero,
+            EquippedMobileId = Serial.Zero
+        };
+        var session = new GameSession(new(client))
+        {
+            AccountType = AccountType.Regular,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u,
+                MapId = 0,
+                Location = new(10, 10, 0)
+            }
+        };
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new SingleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(eventBus.Events.OfType<ItemSingleClickEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenSingleClickGroundItemOutOfRangeAndGameMaster_ShouldPublishEvent()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var targetSerial = (Serial)0x40000022u;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0EED,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            ParentContainerId = Serial.Zero,
+            EquippedMobileId = Serial.Zero
+        };
+        var session = new GameSession(new(client))
+        {
+            AccountType = AccountType.GameMaster,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u,
+                MapId = 0,
+                Location = new(10, 10, 0)
+            }
+        };
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new SingleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+        var singleClickEvent = eventBus.Events.OfType<ItemSingleClickEvent>().FirstOrDefault();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(singleClickEvent.ItemSerial, Is.EqualTo(targetSerial));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_ShouldPublishItemDoubleClickEvent()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -335,6 +442,59 @@ public class ItemHandlerTests
                 Assert.That(handled, Is.True);
                 Assert.That(doubleClickEvent.ItemSerial, Is.EqualTo(targetSerial));
                 Assert.That(doubleClickEvent.SessionId, Is.EqualTo(session.SessionId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickGroundItemOutOfRangeAndRegular_ShouldNotPublishEvent()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var targetSerial = (Serial)0x40000023u;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0EED,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            ParentContainerId = Serial.Zero,
+            EquippedMobileId = Serial.Zero
+        };
+        var session = new GameSession(new(client))
+        {
+            AccountType = AccountType.Regular,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u,
+                MapId = 0,
+                Location = new(10, 10, 0)
+            }
+        };
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DoubleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(eventBus.Events.OfType<ItemDoubleClickEvent>(), Is.Empty);
             }
         );
     }

@@ -1,4 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Descriptors;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Server.Modules.Builders;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -36,7 +37,8 @@ public sealed class GumpModule
     {
         if (!_isBuilderTypeRegistered)
         {
-            UserData.RegisterType<LuaGumpBuilder>();
+            var type = typeof(LuaGumpBuilder);
+            UserData.RegisterType(type, new GenericUserDataDescriptor(type));
             _isBuilderTypeRegistered = true;
         }
 

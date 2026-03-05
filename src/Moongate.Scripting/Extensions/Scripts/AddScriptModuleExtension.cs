@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Extensions.Container;
 using Moongate.Scripting.Data.Internal;
+using Moongate.Scripting.Descriptors;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Scripting.Extensions.Scripts;
@@ -33,7 +34,8 @@ public static class AddScriptModuleExtension
         /// </summary>
         public IContainer RegisterLuaUserData<TUserData>()
         {
-            UserData.RegisterType<TUserData>();
+            var type = typeof(TUserData);
+            UserData.RegisterType(type, new GenericUserDataDescriptor(type));
 
             return container.RegisterLuaUserData(typeof(TUserData));
         }

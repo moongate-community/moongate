@@ -492,6 +492,104 @@ export MOONGATE_ADMIN_PASSWORD="change-me-now"
    - HTTP endpoints (default): `http://localhost:8088/`, `http://localhost:8088/health`, `http://localhost:8088/metrics`, `http://localhost:8088/scalar`
    - Logs: `MOONGATE_ROOT_DIRECTORY/logs`
 
+## Environment Configuration
+
+Moongate now supports full configuration override through environment variables.
+
+- Prefix: `MOONGATE_`
+- Nested properties: use `__` (double underscore)
+- Precedence: `MOONGATE_*` env vars override `moongate.json`
+
+Example:
+
+- `MOONGATE_HTTP__PORT=8088`
+- `MOONGATE_HTTP__JWT__ISSUER=moongate-http`
+- `MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS=3`
+
+Supported config env variables:
+
+- Core:
+  - `MOONGATE_ROOT_DIRECTORY`
+  - `MOONGATE_UO_DIRECTORY`
+  - `MOONGATE_LOG_LEVEL`
+  - `MOONGATE_LOG_PACKET_DATA`
+  - `MOONGATE_IS_DEVELOPER_MODE`
+- HTTP:
+  - `MOONGATE_HTTP__IS_ENABLED`
+  - `MOONGATE_HTTP__PORT`
+  - `MOONGATE_HTTP__WEBSITE_URL`
+  - `MOONGATE_HTTP__IS_OPEN_API_ENABLED`
+  - `MOONGATE_HTTP__JWT__IS_ENABLED`
+  - `MOONGATE_HTTP__JWT__SIGNING_KEY`
+  - `MOONGATE_HTTP__JWT__ISSUER`
+  - `MOONGATE_HTTP__JWT__AUDIENCE`
+  - `MOONGATE_HTTP__JWT__EXPIRATION_MINUTES`
+- Game:
+  - `MOONGATE_GAME__SHARD_NAME`
+  - `MOONGATE_GAME__TIMER_TICK_MILLISECONDS`
+  - `MOONGATE_GAME__TIMER_WHEEL_SIZE`
+  - `MOONGATE_GAME__IDLE_CPU_ENABLED`
+  - `MOONGATE_GAME__IDLE_SLEEP_MILLISECONDS`
+- Metrics:
+  - `MOONGATE_METRICS__ENABLED`
+  - `MOONGATE_METRICS__INTERVAL_MILLISECONDS`
+  - `MOONGATE_METRICS__LOG_ENABLED`
+  - `MOONGATE_METRICS__LOG_TO_CONSOLE`
+  - `MOONGATE_METRICS__LOG_LEVEL`
+- Persistence:
+  - `MOONGATE_PERSISTENCE__SAVE_INTERVAL_SECONDS`
+- Spatial:
+  - `MOONGATE_SPATIAL__LAZY_SECTOR_ITEM_LOAD_ENABLED`
+  - `MOONGATE_SPATIAL__SECTOR_WARMUP_RADIUS`
+  - `MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS`
+  - `MOONGATE_SPATIAL__LAZY_SECTOR_ENTITY_LOAD_RADIUS`
+- Scripting:
+  - `MOONGATE_SCRIPTING__ENABLE_FILE_WATCHER`
+- Email:
+  - `MOONGATE_EMAIL__IS_ENABLED`
+  - `MOONGATE_EMAIL__FROM_ADDRESS`
+  - `MOONGATE_EMAIL__FALLBACK_LOCALE`
+  - `MOONGATE_EMAIL__SMTP__HOST`
+  - `MOONGATE_EMAIL__SMTP__PORT`
+  - `MOONGATE_EMAIL__SMTP__USE_SSL`
+  - `MOONGATE_EMAIL__SMTP__USERNAME`
+  - `MOONGATE_EMAIL__SMTP__PASSWORD`
+
+Additional runtime env variables (not part of `MoongateConfig`):
+
+- `MOONGATE_ADMIN_USERNAME`
+- `MOONGATE_ADMIN_PASSWORD`
+- `MOONGATE_UI_DIST`
+- `MOONGATE_HTTP_JWT_SIGNING_KEY` (legacy explicit fallback; `MOONGATE_HTTP__JWT__SIGNING_KEY` is preferred)
+
+### Docker Compose Example
+
+```yaml
+services:
+  moongate:
+    image: tgiachi/moongate:latest
+    environment:
+      MOONGATE_ROOT_DIRECTORY: /data/moongate
+      MOONGATE_UO_DIRECTORY: /data/uo
+      MOONGATE_HTTP__PORT: "8088"
+      MOONGATE_HTTP__IS_OPEN_API_ENABLED: "true"
+      MOONGATE_HTTP__JWT__SIGNING_KEY: "change-me"
+      MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS: "3"
+      MOONGATE_PERSISTENCE__SAVE_INTERVAL_SECONDS: "60"
+      MOONGATE_EMAIL__IS_ENABLED: "true"
+      MOONGATE_EMAIL__SMTP__HOST: "smtp.example.com"
+      MOONGATE_EMAIL__SMTP__PORT: "587"
+      MOONGATE_EMAIL__SMTP__USE_SSL: "true"
+      MOONGATE_EMAIL__SMTP__USERNAME: "smtp-user"
+      MOONGATE_EMAIL__SMTP__PASSWORD: "smtp-pass"
+    volumes:
+      - ./moongate_data:/data/moongate
+      - ./uo:/data/uo:ro
+    ports:
+      - "2593:2593"
+      - "8088:8088"
+```
+
 ## Quick Start
 
 ```bash

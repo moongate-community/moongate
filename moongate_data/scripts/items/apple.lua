@@ -15,7 +15,7 @@ apple = {
             return
         end
 
-        local deleted = apple:Delete()
+        local deleted = apple:delete()
 
         if ctx.session_id ~= nil then
             if deleted then

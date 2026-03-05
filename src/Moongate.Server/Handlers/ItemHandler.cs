@@ -30,9 +30,12 @@ namespace Moongate.Server.Handlers;
     RegisterPacketHandler(PacketDefinition.SingleClickPacket),
     RegisterPacketHandler(PacketDefinition.DoubleClickPacket)
 ]
-public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent>, IGameEventListener<ItemAddedInSectorEvent>
-    , IGameEventListener<ItemDeletedEvent>
+public class ItemHandler
+    : BasePacketListener, IGameEventListener<ItemMovedEvent>, IGameEventListener<ItemAddedInSectorEvent>
+      , IGameEventListener<ItemDeletedEvent>
 {
+    private const int GroundItemInteractionRange = 2;
+
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
     private readonly IItemService _itemService;
@@ -145,6 +148,13 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
             return true;
         }
 
+        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, doubleClickPacket.TargetSerial);
+
+        if (!canInteract)
+        {
+            return true;
+        }
+
         await _gameEventBusService.PublishAsync(
             new ItemDoubleClickEvent(
                 session.SessionId,
@@ -152,7 +162,7 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
             )
         );
 
-        var item = await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
+        var item = resolvedItem ?? await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
 
         if (item is null)
         {
@@ -174,6 +184,13 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
 
     private async Task<bool> HandleSingleClickAsync(GameSession session, SingleClickPacket singleClickPacket)
     {
+        var (canInteract, _) = await ValidateGroundItemInteractionAsync(session, singleClickPacket.TargetSerial);
+
+        if (!canInteract)
+        {
+            return true;
+        }
+
         await _gameEventBusService.PublishAsync(
             new ItemSingleClickEvent(
                 session.SessionId,
@@ -183,6 +200,39 @@ public class ItemHandler : BasePacketListener, IGameEventListener<ItemMovedEvent
 
         return true;
     }
+
+    private async Task<(bool CanInteract, UOItemEntity? Item)> ValidateGroundItemInteractionAsync(
+        GameSession session,
+        Serial itemId
+    )
+    {
+        var item = await _itemService.GetItemAsync(itemId);
+
+        if (item is null || !IsGroundItem(item) || session.AccountType >= AccountType.GameMaster)
+        {
+            return (true, item);
+        }
+
+        var character = session.Character;
+
+        if (character is null ||
+            character.MapId != item.MapId ||
+            !character.Location.InRange(item.Location, GroundItemInteractionRange))
+        {
+            _logger.Debug(
+                "Item interaction rejected Session={SessionId} ItemId={ItemId}: out of range for ground item",
+                session.SessionId,
+                itemId
+            );
+
+            return (false, item);
+        }
+
+        return (true, item);
+    }
+
+    private static bool IsGroundItem(UOItemEntity item)
+        => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;
 
     private async Task DropItemInContainerAsync(GameSession session, DropItemPacket dropItemPacket)
     {

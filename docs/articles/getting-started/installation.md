@@ -112,7 +112,7 @@ Current top-level model includes:
 - `metrics`
 - `persistence`
 
-Note: bootstrap currently merges a subset explicitly (`RootDirectory`, `UODirectory`, `LogLevel`, `LogPacketData`, `Persistence`).
+Bootstrap now binds the full config model from `moongate.json` and applies `MOONGATE_*` environment overrides on top.
 
 ---
 

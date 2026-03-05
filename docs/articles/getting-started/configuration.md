@@ -31,16 +31,25 @@ dotnet run --project src/Moongate.Server -- \
 
 ## Environment Variables
 
-Currently used by bootstrap/runtime:
+Configuration env support is generic and maps to the full `MoongateConfig` model:
 
 - `MOONGATE_ROOT_DIRECTORY`
 - `MOONGATE_UO_DIRECTORY`
+- `MOONGATE_<PROPERTY>`
+- `MOONGATE_<SECTION>__<PROPERTY>`
+- `MOONGATE_<SECTION>__<SUBSECTION>__<PROPERTY>`
+
+Examples:
+
+- `MOONGATE_HTTP__PORT=8088`
+- `MOONGATE_HTTP__JWT__SIGNING_KEY=change-me`
+- `MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS=3`
+
+Additional runtime env vars (outside `MoongateConfig`):
+
 - `MOONGATE_ADMIN_USERNAME`
 - `MOONGATE_ADMIN_PASSWORD`
-
-`MOONGATE_ROOT_DIRECTORY` is used if `--rootDirectory` is not passed.
-
-`MOONGATE_UO_DIRECTORY` is required if `--uoDirectory` is not passed.
+- `MOONGATE_UI_DIST`
 
 ## `moongate.json`
 
@@ -52,17 +61,10 @@ If missing, bootstrap creates one with default values.
 
 ### Current Merge Behavior
 
-At startup, bootstrap explicitly applies these sections from file:
+At startup, bootstrap loads configuration with standard provider precedence:
 
-- `RootDirectory`
-- `UODirectory`
-- `LogLevel`
-- `LogPacketData`
-- `Http`
-- `Persistence`
-- `Email`
-
-Other sections can exist in the config model, but are not explicitly merged in `CheckConfig()` unless listed above.
+1. `moongate.json`
+2. `MOONGATE_*` environment variables (override file values)
 
 ## Config Model
 
@@ -176,6 +178,8 @@ MOONGATE_UO_DIRECTORY=/uo
 ```
 
 Mount `/app` for runtime data and `/uo` for UO client files.
+
+For a full variable list and a complete `docker-compose` sample, see `README.md` -> **Environment Configuration**.
 
 ---
 
