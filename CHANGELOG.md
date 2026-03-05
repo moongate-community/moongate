@@ -1,3 +1,16 @@
+## [0.29.0](https://github.com/moongate-community/moongatev2/compare/v0.28.0...v0.29.0) (2026-03-05)
+
+### Features
+
+* add Lua command.execute bridge with output capture ([ac0443e](https://github.com/moongate-community/moongatev2/commit/ac0443ed3f083f344d7b3aad0f81c514a2e0588e))
+* **config,scripting:** support env overrides and snake_case userdata ([8c98a0e](https://github.com/moongate-community/moongatev2/commit/8c98a0e7a391bbf5412ec0f494f7bc9f6fe899e0))
+* extend lua gump layout flow and scripting runtime modules ([bdd7237](https://github.com/moongate-community/moongatev2/commit/bdd7237e686820314eb8a9e40c5686506a690f8b))
+* **network:** capture client hardware info and local bind endpoint in sessions ([625b33c](https://github.com/moongate-community/moongatev2/commit/625b33cd3a2746931cb6bca6fa1326f4671ffe24))
+
+### Bug Fixes
+
+* **commands:** harden lua command module registration and error handling ([482709f](https://github.com/moongate-community/moongatev2/commit/482709ff234312ae9f1971cd67640454c6dae697))
+
 ## [0.28.0](https://github.com/moongate-community/moongatev2/compare/v0.27.0...v0.28.0) (2026-03-04)
 
 ### Features
