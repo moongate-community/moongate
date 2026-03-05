@@ -164,7 +164,6 @@ public class MovementHandler : BasePacketListener
         {
             session.MoveCredit = 0;
             session.MoveTime = now;
-
             return false;
         }
 

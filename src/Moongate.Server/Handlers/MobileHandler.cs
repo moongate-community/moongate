@@ -96,7 +96,6 @@ public class MobileHandler
         }
 
         TrySendMapChangeIfNeeded(mobileEntity, gameEvent);
-
         await UpdatePlayerForMobileMovedOrCreated(
             mobileEntity,
             gameEvent.MapId,
@@ -289,4 +288,5 @@ public class MobileHandler
             new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
         );
     }
+
 }
