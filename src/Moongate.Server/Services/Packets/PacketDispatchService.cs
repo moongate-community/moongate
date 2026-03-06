@@ -53,21 +53,37 @@ public class PacketDispatchService : IPacketDispatchService
             return false;
         }
 
-        IPacketListener[] snapshot;
+        int listenerCount;
 
         lock (listeners)
         {
-            if (listeners.Count == 0)
-            {
-                return false;
-            }
+            listenerCount = listeners.Count;
+        }
 
-            snapshot = listeners.ToArray();
+        if (listenerCount == 0)
+        {
+            return false;
         }
 
         var dispatchStart = Stopwatch.GetTimestamp();
-        var tasks = snapshot.Select(l => NotifyListenerSafeAsync(opCode, gamePacket, l));
-        Task.WhenAll(tasks).GetAwaiter().GetResult();
+
+        for (var i = 0; i < listenerCount; i++)
+        {
+            IPacketListener listener;
+
+            lock (listeners)
+            {
+                if (i >= listeners.Count)
+                {
+                    break;
+                }
+
+                listener = listeners[i];
+            }
+
+            NotifyListenerSafe(opCode, gamePacket, listener);
+        }
+
         var dispatchElapsed = Stopwatch.GetElapsedTime(dispatchStart);
 
         if (dispatchElapsed.TotalMilliseconds >= SlowOpcodeDispatchThresholdMilliseconds)
@@ -75,7 +91,7 @@ public class PacketDispatchService : IPacketDispatchService
             _logger.Warning(
                 "Slow packet dispatch opcode=0x{OpCode:X2} listeners={ListenerCount} elapsed={ElapsedMs:0.###}ms session={SessionId} packet={PacketType}",
                 opCode,
-                snapshot.Length,
+                listenerCount,
                 dispatchElapsed.TotalMilliseconds,
                 gamePacket.Session?.SessionId ?? 0,
                 gamePacket.Packet.GetType().Name
@@ -93,13 +109,18 @@ public class PacketDispatchService : IPacketDispatchService
         return registry;
     }
 
-    private async Task NotifyListenerSafeAsync(byte opCode, IncomingGamePacket gamePacket, IPacketListener listener)
+    private void NotifyListenerSafe(byte opCode, IncomingGamePacket gamePacket, IPacketListener listener)
     {
         var listenerStart = Stopwatch.GetTimestamp();
 
         try
         {
-            _ = await listener.HandlePacketAsync(gamePacket.Session, gamePacket.Packet);
+            var task = listener.HandlePacketAsync(gamePacket.Session, gamePacket.Packet);
+
+            if (!task.IsCompletedSuccessfully)
+            {
+                task.GetAwaiter().GetResult();
+            }
         }
         catch (Exception ex)
         {
