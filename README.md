@@ -128,6 +128,16 @@ The project is actively in development and already includes:
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
 - Minimal email stack with Scriban templates and SMTP sender (`Moongate.Email`), wired through `IEmailService`.
 - Basic/timid A* pathfinding service is available (`IPathfindingService` / `AStarPathfindingService`) and already used by Lua mobile movement primitives (`MoveTowards`).
+- Light cycle is now isolated in `ILightService`/`LightService` (separate from weather), including global override commands exposed to Lua.
+- Lua command scripts are organized under `moongate_data/scripts/commands/gm` (one command per file, imported from `init.lua`).
+
+## Recent Development Highlights
+
+- Persistence serialization was migrated to MessagePack-CSharp source-generated contracts to resolve NativeAOT runtime instability.
+- Outbound packet sending was split into a dedicated networking thread path to reduce game-loop contention.
+- Spatial/game-loop hot paths received allocation-focused optimizations across login, packet dispatch, event bus, and persistence mapping.
+- Light cycle logic was extracted from `WeatherService` into dedicated `ILightService`/`LightService`.
+- New Lua GM command scripts were added under `moongate_data/scripts/commands/gm` (`.eclipse`, `.set_world_light`, `.teleports`).
 
 ## Spatial Chunk Strategy
 
@@ -779,12 +789,12 @@ end
 
 Notes:
 
-- `brain` in the mobile template maps to `scripts/ai/<brain>.lua` (or explicit script path if configured in registry).
+- `brain` in mobile templates is treated as a brain id.
+- Scripts are loaded from `moongate_data/scripts/**` (usually via `require(...)` in `init.lua`).
 - `brain_loop` is resumed by the runner and can control next wake time via `coroutine.yield(ms)`.
 - `on_event` is invoked with `(eventType, fromSerial, eventObject)`.
 - Current event type emitted by the brain runner: `speech_heard`.
 - `eventObject` contains: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, and `location` (`x`, `y`, `z`).
-- Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
 
 ### Visual Effects From Lua
 
@@ -819,9 +829,15 @@ Dispatch convention:
 - If `scriptId == "none"`: fallback table resolution from item name
 - First candidate: `<normalized_item_name>`
 - Second candidate: `items_<normalized_item_name>`
-- Hook candidates:
-- `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
-- `double_click` -> `on_double_click`, `OnDoubleClick`
+- Hook names:
+- `single_click` -> `on_click`
+- `double_click` -> `on_double_click`
+
+GM Lua command examples shipped today:
+
+- `moongate_data/scripts/commands/gm/eclipse.lua` -> `.eclipse`
+- `moongate_data/scripts/commands/gm/set_world_light.lua` -> `.set_world_light <0-255>`
+- `moongate_data/scripts/commands/gm/teleports.lua` -> `.teleports`
 
 Example:
 

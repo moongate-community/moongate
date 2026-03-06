@@ -25,7 +25,7 @@ Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other emulator. Wh
 | **MoonSharp** | Lua scripting engine for gameplay customization |
 | **Serilog** | Structured logging with console and file sinks |
 | **Spectre.Console** | Rich terminal UI with colored output |
-| **MemoryPack** | High-performance binary serialization for persistence |
+| **MessagePack-CSharp** | Source-generated binary serialization for persistence (AOT-safe) |
 | **ZLinq** | LINQ-like queries for data repositories |
 
 ## Architecture Highlights
@@ -55,7 +55,7 @@ Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other emulator. Wh
 
 - Snapshot file (`world.snapshot.bin`) for full state checkpoints
 - Append-only journal (`world.journal.bin`) for incremental changes
-- MemoryPack binary serialization
+- MessagePack-CSharp source-generated binary serialization
 - Thread-safe repositories with ZLinq queries
 
 ### Scripting

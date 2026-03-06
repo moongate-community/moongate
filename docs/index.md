@@ -90,13 +90,16 @@ Moongate v2 is **actively in development**. Current capabilities include:
 - ✅ Lua scripting runtime with `.luarc` generation
 - ✅ Embedded HTTP server with OpenAPI/Scalar documentation
 - ✅ Snapshot + Journal persistence system
+- ✅ MessagePack-CSharp source-generated persistence (AOT-safe)
 - ✅ Interactive console UI with colored logging
 - ✅ Command system with source-generated registration (`ICommandExecutor` + `[RegisterConsoleCommand]`)
 - ✅ Command authorization by source + `AccountType`
 - ✅ Console `Tab` / `Shift+Tab` autocomplete (commands + argument providers)
 - ✅ Contextual `help <command>` output
+- ✅ Lua GM command scripts (`.eclipse`, `.set_world_light`, `.teleports`) via `moongate_data/scripts/commands/gm`
 - ✅ Custom DocFX Moongate theme with moon branding and Fira Code
 - ✅ Timer wheel metrics integration
+- ✅ Dedicated `ILightService` for day/night cycle and global light override
 
 ## 📄 License
 

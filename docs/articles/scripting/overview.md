@@ -392,16 +392,16 @@ world.despawn(serial)               -- Despawn object
 Scripts are loaded from:
 
 ```
-scripts/
-├── init.lua              # Main entry point
-├── commands/             # Command handlers
-│   ├── admin.lua
-│   └── player.lua
-├── events/               # Event handlers
-│   ├── combat.lua
-│   └── trade.lua
-└── modules/              # Custom Lua modules
-    └── utils.lua
+moongate_data/scripts/
+├── init.lua                      # Main entry point (requires command/item/brain files)
+├── commands/
+│   └── gm/
+│       ├── eclipse.lua           # .eclipse
+│       ├── set_world_light.lua   # .set_world_light <0-255>
+│       └── teleports.lua         # .teleports
+├── ai/                           # NPC brain tables
+├── gumps/                        # Layout-driven gumps
+└── items/                        # Item script tables
 ```
 
 ## Editor Tooling

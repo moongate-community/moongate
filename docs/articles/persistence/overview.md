@@ -8,7 +8,7 @@ The persistence layer provides:
 
 - Full world checkpoint in one snapshot file
 - Incremental operations in one journal file
-- MemoryPack serialization for compact binary payloads
+- MessagePack-CSharp source-generated serialization for compact binary payloads
 - Per-entry journal checksum validation
 - Thread-safe repositories over shared in-memory state
 
@@ -40,8 +40,8 @@ The persisted snapshot model is `WorldSnapshot` in `Moongate.Persistence.Data.Pe
 
 Implemented behavior:
 
-- Written by `MemoryPackSnapshotService`
-- Uses `MemoryPackSerializer.SerializeAsync`
+- Written by `MessagePackSnapshotService`
+- Uses `MessagePackSerializer.Serialize(...)`
 - Saved by rewriting the snapshot file on a lock-held stream.
 
 ## Journal
@@ -49,7 +49,7 @@ Implemented behavior:
 The journal is handled by `BinaryJournalService` and stores records as:
 
 - `int32 payloadLength` (little-endian)
-- `payload` (MemoryPack serialized `JournalEntry`)
+- `payload` (MessagePack serialized `JournalEntry`)
 - `uint32 checksum` (little-endian, computed over payload)
 
 On replay:
