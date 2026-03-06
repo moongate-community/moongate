@@ -204,10 +204,15 @@ public class MovementHandler : BasePacketListener
             newLocation
         );
 
-        _gameEventBusService
-            .PublishAsync(gameEvent)
-            .AsTask()
-            .GetAwaiter()
-            .GetResult();
+        var task = _gameEventBusService.PublishAsync(gameEvent);
+
+        if (!task.IsCompletedSuccessfully)
+        {
+            task.AsTask().ContinueWith(
+                static t => Log.ForContext<MovementHandler>()
+                               .Error(t.Exception, "MobilePositionChangedEvent publish failed"),
+                TaskContinuationOptions.OnlyOnFaulted
+            );
+        }
     }
 }
