@@ -1,3 +1,14 @@
+## [0.31.0](https://github.com/moongate-community/moongatev2/compare/v0.30.0...v0.31.0) (2026-03-06)
+
+### Features
+
+* **persistence:** add bulk upsert for items with batched journal writes ([ed2a2e1](https://github.com/moongate-community/moongatev2/commit/ed2a2e10b954c381367dd05b46c9f392bca7ab90))
+
+### Bug Fixes
+
+* align door toggle with ModernUO item+location behavior ([541b4ca](https://github.com/moongate-community/moongatev2/commit/541b4ca8a52af6d7c777f0ece992023e3fd7b2d5))
+* delta sector sync, bulk persistence perf, rename emulator to server ([b68e4fc](https://github.com/moongate-community/moongatev2/commit/b68e4fc0b3b3464aad916bd406d848645155a140))
+
 ## [0.30.0](https://github.com/moongate-community/moongatev2/compare/v0.29.0...v0.30.0) (2026-03-06)
 
 ### Features
