@@ -465,19 +465,7 @@ public sealed class SpatialWorldService
     }
 
     private UOMobileEntity? TryResolveMobileFromSpatial(Serial mobileId)
-    {
-        foreach (var sector in _entityIndex.GetActiveSectors())
-        {
-            var mobile = sector.GetEntity<UOMobileEntity>(mobileId);
-
-            if (mobile is not null)
-            {
-                return mobile;
-            }
-        }
-
-        return null;
-    }
+        => _entityIndex.TryGetEntity<UOMobileEntity>(mobileId);
 
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
         => _gameEventBusService.PublishAsync(gameEvent).AsTask().GetAwaiter().GetResult();

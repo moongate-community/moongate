@@ -1017,6 +1017,28 @@ public sealed class SpatialWorldServiceTests
         Assert.That(itemResult.Select(static value => value.Id), Does.Not.Contain(item.Id));
     }
 
+    [Test]
+    public async Task HandleAsync_NpcPositionChanged_ShouldResolveMobileFromSpatialIndex()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false }
+        );
+        var npc = CreateMobile(0x900, 100, 100, 0, false);
+        service.AddOrUpdateMobile(npc);
+        eventBus.Events.Clear();
+
+        await service.HandleAsync(
+            new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0))
+        );
+
+        var nearby = service.GetNearbyMobiles(new(200, 200, 0), 5, 0);
+        Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
+    }
+
     [TearDown]
     public void TearDown()
     {

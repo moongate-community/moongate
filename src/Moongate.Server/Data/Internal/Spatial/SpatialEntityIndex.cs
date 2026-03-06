@@ -2,6 +2,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
@@ -232,6 +233,26 @@ internal sealed class SpatialEntityIndex
             }
 
             return mapIndex.GetSector(sectorX, sectorY);
+        }
+    }
+
+    public T? TryGetEntity<T>(Serial serial) where T : class, IPositionEntity
+    {
+        lock (_sync)
+        {
+            if (!_entityLocations.TryGetValue(serial, out var location))
+            {
+                return null;
+            }
+
+            if (!_mapIndices.TryGetValue(location.MapId, out var mapIndex))
+            {
+                return null;
+            }
+
+            var sector = mapIndex.GetSector(location.SectorX, location.SectorY);
+
+            return sector?.GetEntity<T>(serial);
         }
     }
 
