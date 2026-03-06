@@ -468,5 +468,16 @@ public sealed class SpatialWorldService
         => _entityIndex.TryGetEntity<UOMobileEntity>(mobileId);
 
     private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
-        => _gameEventBusService.PublishAsync(gameEvent).AsTask().GetAwaiter().GetResult();
+    {
+        var task = _gameEventBusService.PublishAsync(gameEvent);
+
+        if (!task.IsCompletedSuccessfully)
+        {
+            task.AsTask().ContinueWith(
+                static t => Log.ForContext<SpatialWorldService>()
+                               .Error(t.Exception, "Event publish failed for {EventType}", typeof(TEvent).Name),
+                TaskContinuationOptions.OnlyOnFaulted
+            );
+        }
+    }
 }
