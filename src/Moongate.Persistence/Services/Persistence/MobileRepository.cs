@@ -5,7 +5,6 @@ using Moongate.Persistence.Types;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
-using ZLinq;
 
 namespace Moongate.Persistence.Services.Persistence;
 
@@ -75,15 +74,22 @@ public sealed class MobileRepository : IMobileRepository
         ArgumentNullException.ThrowIfNull(predicate);
         ArgumentNullException.ThrowIfNull(selector);
 
-        UOMobileEntity[] snapshot;
+        var results = new List<TResult>();
 
         lock (_stateStore.SyncRoot)
         {
-            snapshot = [.. _stateStore.MobilesById.Values.Select(Clone)];
+            foreach (var mobile in _stateStore.MobilesById.Values)
+            {
+                if (!predicate(mobile))
+                {
+                    continue;
+                }
+
+                results.Add(selector(Clone(mobile)));
+            }
         }
 
-        var results = snapshot.AsValueEnumerable().Where(predicate).Select(selector).ToArray();
-        _logger.Verbose("Mobile query completed with Count={Count}", results.Length);
+        _logger.Verbose("Mobile query completed with Count={Count}", results.Count);
 
         return ValueTask.FromResult<IReadOnlyList<TResult>>(results);
     }

@@ -205,7 +205,11 @@ public class MobileHandler
                  sectorY <= newSector.SectorY + _sectorEnterSyncRadius;
                  sectorY++)
             {
-                if (oldSector is not null &&
+                var isNearPlayer = Math.Abs(sectorX - newSector.SectorX) <= 1 &&
+                                   Math.Abs(sectorY - newSector.SectorY) <= 1;
+
+                if (!isNearPlayer &&
+                    oldSector is not null &&
                     sectorX >= oldCenterX - _sectorEnterSyncRadius &&
                     sectorX <= oldCenterX + _sectorEnterSyncRadius &&
                     sectorY >= oldCenterY - _sectorEnterSyncRadius &&

@@ -111,35 +111,31 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
             return;
         }
 
-        var directoryPath = Path.GetDirectoryName(_journalFilePath);
+        using var buffer = new MemoryStream();
+        var lengthBytes = new byte[4];
+        var checksumBytes = new byte[4];
 
-        if (!string.IsNullOrWhiteSpace(directoryPath))
+        foreach (var entry in entries)
         {
-            Directory.CreateDirectory(directoryPath);
+            var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
+            var checksum = ChecksumUtils.Compute(payload);
+
+            BinaryPrimitives.WriteInt32LittleEndian(lengthBytes, payload.Length);
+            BinaryPrimitives.WriteUInt32LittleEndian(checksumBytes, checksum);
+
+            buffer.Write(lengthBytes);
+            buffer.Write(payload);
+            buffer.Write(checksumBytes);
         }
+
+        var batchData = buffer.ToArray();
 
         await _ioLock.WaitAsync(cancellationToken);
 
         try
         {
             _journalStream.Position = _journalStream.Length;
-
-            var lengthBuffer = new byte[4];
-            var checksumBuffer = new byte[4];
-
-            foreach (var entry in entries)
-            {
-                var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
-                var checksum = ChecksumUtils.Compute(payload);
-
-                BinaryPrimitives.WriteInt32LittleEndian(lengthBuffer, payload.Length);
-                BinaryPrimitives.WriteUInt32LittleEndian(checksumBuffer, checksum);
-
-                await _journalStream.WriteAsync(lengthBuffer, cancellationToken);
-                await _journalStream.WriteAsync(payload, cancellationToken);
-                await _journalStream.WriteAsync(checksumBuffer, cancellationToken);
-            }
-
+            await _journalStream.WriteAsync(batchData, cancellationToken);
             await _journalStream.FlushAsync(cancellationToken);
         }
         finally

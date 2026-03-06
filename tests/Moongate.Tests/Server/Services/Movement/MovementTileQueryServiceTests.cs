@@ -1,7 +1,9 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Movement;
+using Moongate.Server.Data.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -78,6 +80,20 @@ public sealed class MovementTileQueryServiceTests
         public void RemoveEntity(Serial serial) { }
     }
 
+    private sealed class TestDoorDataService : IDoorDataService
+    {
+        public Dictionary<int, DoorToggleDefinition> Definitions { get; } = [];
+
+        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
+            => [];
+
+        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
+            => _ = entries;
+
+        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
+            => Definitions.TryGetValue(itemId, out definition);
+    }
+
     [Test]
     public void CanFit_ShouldReturnFalse_WhenBlockingMobileExistsAtLocation()
     {
@@ -92,7 +108,7 @@ public sealed class MovementTileQueryServiceTests
             }
         );
 
-        var service = new MovementTileQueryService(spatial);
+        var service = new MovementTileQueryService(spatial, new TestDoorDataService());
         var canFit = service.CanFit(
             mapId,
             12,
@@ -118,7 +134,7 @@ public sealed class MovementTileQueryServiceTests
             }
         );
 
-        var service = new MovementTileQueryService(spatial);
+        var service = new MovementTileQueryService(spatial, new TestDoorDataService());
         var canFit = service.CanFit(
             mapId,
             10,
@@ -132,6 +148,37 @@ public sealed class MovementTileQueryServiceTests
         Assert.That(canFit, Is.False);
     }
 
+    [Test]
+    public void CanFit_ShouldIgnoreBlockingDoorItem_WhenDoorStateIsOpen()
+    {
+        var mapId = RegisterTestMap();
+        var spatial = new TestSpatialWorldService();
+        spatial.Items.Add(
+            new()
+            {
+                Id = (Serial)0x40000011u,
+                MapId = mapId,
+                Location = new(20, 20, 0),
+                ItemId = 0x3000
+            }
+        );
+
+        var doorData = new TestDoorDataService();
+        doorData.Definitions[0x3000] = new(0x3000, 0x3001, false, Point3D.Zero);
+        var service = new MovementTileQueryService(spatial, doorData);
+        var canFit = service.CanFit(
+            mapId,
+            20,
+            20,
+            0,
+            16,
+            false,
+            false
+        );
+
+        Assert.That(canFit, Is.True);
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -139,6 +186,16 @@ public sealed class MovementTileQueryServiceTests
         TileData.ItemTable[0x2200] = new(
             "blocking_world_item",
             UOTileFlag.Surface | UOTileFlag.Impassable,
+            0,
+            0,
+            0,
+            0,
+            0,
+            20
+        );
+        TileData.ItemTable[0x3000] = new(
+            "door_open_state_item",
+            UOTileFlag.Surface | UOTileFlag.Impassable | UOTileFlag.Door,
             0,
             0,
             0,

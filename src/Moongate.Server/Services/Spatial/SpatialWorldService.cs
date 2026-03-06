@@ -260,11 +260,8 @@ public sealed class SpatialWorldService
 
         var sectorX = character.Location.X >> MapSectorConsts.SectorShift;
         var sectorY = character.Location.Y >> MapSectorConsts.SectorShift;
-        var warmupRadius = Math.Max(0, _spatialConfig.SectorWarmupRadius);
-
-        await _entityIndex.WarmupAroundSectorAsync(character.MapId, sectorX, sectorY, warmupRadius, cancellationToken);
-
         AddOrUpdateMobile(character);
+        WarmupSectorsFireAndForget(character.MapId, sectorX, sectorY);
 
         var region = _regionResolver.ResolveRegion(character.MapId, character.Location);
 

@@ -2,11 +2,11 @@
 
 ## What is Moongate v2?
 
-**Moongate v2** is a modern, high-performance Ultima Online server emulator built from the ground up with **.NET 10** and **NativeAOT** (Ahead-of-Time) compilation. It represents a complete rewrite of the original Moongate project, focusing on clean architecture, explicit boundaries, and practical performance.
+**Moongate v2** is a modern, high-performance Ultima Online server built from the ground up with **.NET 10** and **NativeAOT** (Ahead-of-Time) compilation. It represents a complete rewrite of the original Moongate project, focusing on clean architecture, explicit boundaries, and practical performance.
 
 ## Project Vision
 
-Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other emulator. While we owe inspiration to these projects and their invaluable contributions to the UO community, Moongate v2 follows its own path:
+Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other server. While we owe inspiration to these projects and their invaluable contributions to the UO community, Moongate v2 follows its own path:
 
 ### Core Principles
 
@@ -116,7 +116,7 @@ Moongate v2 is designed for:
 
 - **Server Administrators** who want a performant, customizable UO server
 - **Developers** interested in learning MMO server architecture
-- **Contributors** who want to help build a modern UO emulator
+- **Contributors** who want to help build a modern UO server
 - **Players** who want to run their own shards with unique features
 
 ## Getting Started

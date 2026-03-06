@@ -1,6 +1,6 @@
 # 🌙 Moongate v2 Documentation
 
-Welcome to the official documentation for **Moongate v2**, a modern Ultima Online server emulator built with .NET 10 and NativeAOT compilation.
+Welcome to the official documentation for **Moongate v2**, a modern Ultima Online server built with .NET 10 and NativeAOT compilation.
 
 > **Moongate v2** is designed for performance, modularity, and extensibility. It leverages modern .NET features to deliver an ultra-fast, customizable UO server experience.
 
