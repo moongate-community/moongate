@@ -37,7 +37,8 @@
     "LazySectorItemLoadEnabled": true,
     "SectorWarmupRadius": 1,
     "SectorEnterSyncRadius": 3,
-    "LazySectorEntityLoadRadius": 3
+    "LazySectorEntityLoadRadius": 3,
+    "SectorUpdateBroadcastRadius": 3
   },
   "Scripting": {
     "EnableFileWatcher": true

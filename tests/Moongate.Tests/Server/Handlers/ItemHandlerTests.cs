@@ -3,6 +3,7 @@ using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
@@ -275,9 +276,17 @@ public class ItemHandlerTests
     public async Task HandlePacketAsync_ShouldPublishItemSingleClickEvent()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var targetSerial = (Serial)0x40000010u;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0EED,
+            ParentContainerId = (Serial)0x40000001u
+        };
         var handler = new ItemHandler(
             new BasePacketListenerTestOutgoingPacketQueue(),
-            new ItemHandlerTestItemService(),
+            itemService,
             eventBus,
             new FakeGameNetworkSessionService(),
             new PlayerDragService(),
@@ -286,7 +295,6 @@ public class ItemHandlerTests
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));
-        var targetSerial = (Serial)0x40000010u;
         var packet = new SingleClickPacket
         {
             TargetSerial = targetSerial
@@ -416,9 +424,17 @@ public class ItemHandlerTests
     public async Task HandlePacketAsync_ShouldPublishItemDoubleClickEvent()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var targetSerial = (Serial)0x40000020u;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0EED,
+            ParentContainerId = (Serial)0x40000001u
+        };
         var handler = new ItemHandler(
             new BasePacketListenerTestOutgoingPacketQueue(),
-            new ItemHandlerTestItemService(),
+            itemService,
             eventBus,
             new FakeGameNetworkSessionService(),
             new PlayerDragService(),
@@ -427,7 +443,6 @@ public class ItemHandlerTests
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client));
-        var targetSerial = (Serial)0x40000020u;
         var packet = new DoubleClickPacket
         {
             TargetSerial = targetSerial
@@ -442,6 +457,89 @@ public class ItemHandlerTests
                 Assert.That(handled, Is.True);
                 Assert.That(doubleClickEvent.ItemSerial, Is.EqualTo(targetSerial));
                 Assert.That(doubleClickEvent.SessionId, Is.EqualTo(session.SessionId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickItemWithoutScriptHook_ShouldNotPublishItemDoubleClickEvent()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var targetSerial = (Serial)0x40000066u;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0EED,
+            Name = "no-script-item",
+            ScriptId = "none"
+        };
+
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            new ItemHandlerTestScriptDispatcher(false)
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+            session,
+            new DoubleClickPacket
+            {
+                TargetSerial = targetSerial
+            }
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(eventBus.Events.OfType<ItemDoubleClickEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickMobile_ShouldPublishMobileDoubleClickEvent()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new ItemHandlerTestItemService(),
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var targetSerial = (Serial)0x00000099u;
+
+        var handled = await handler.HandlePacketAsync(
+            session,
+            new DoubleClickPacket
+            {
+                TargetSerial = targetSerial
+            }
+        );
+
+        var gameEvent = eventBus.Events.OfType<MobileDoubleClickEvent>().SingleOrDefault();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(gameEvent.MobileSerial, Is.EqualTo(targetSerial));
             }
         );
     }
@@ -987,5 +1085,31 @@ public class ItemHandlerTests
 
         public void RemoveEntity(Serial serial)
             => _ = serial;
+    }
+
+    private sealed class ItemHandlerTestScriptDispatcher : IItemScriptDispatcher
+    {
+        private readonly bool _hasHook;
+
+        public ItemHandlerTestScriptDispatcher(bool hasHook)
+        {
+            _hasHook = hasHook;
+        }
+
+        public bool HasHook(UOItemEntity item, string hook)
+        {
+            _ = item;
+            _ = hook;
+
+            return _hasHook;
+        }
+
+        public Task<bool> DispatchAsync(ItemScriptContext context, CancellationToken cancellationToken = default)
+        {
+            _ = context;
+            _ = cancellationToken;
+
+            return Task.FromResult(_hasHook);
+        }
     }
 }

@@ -301,4 +301,80 @@ public class ItemScriptDispatcherTests
 
         Assert.That(dispatched, Is.False);
     }
+
+    [Test]
+    public async Task HasHook_ShouldReturnTrue_WhenHookFunctionExists()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            """
+            potion = {
+              on_double_click = function(ctx)
+                _ = ctx
+              end
+            }
+            """
+        );
+
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+
+        var hasHook = dispatcher.HasHook(
+            new UOItemEntity
+            {
+                ScriptId = "none",
+                Name = "Potion"
+            },
+            "double_click"
+        );
+
+        Assert.That(hasHook, Is.True);
+    }
+
+    [Test]
+    public async Task HasHook_ShouldReturnFalse_WhenHookFunctionIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript("potion = { }");
+
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+
+        var hasHook = dispatcher.HasHook(
+            new UOItemEntity
+            {
+                ScriptId = "none",
+                Name = "Potion"
+            },
+            "double_click"
+        );
+
+        Assert.That(hasHook, Is.False);
+    }
 }

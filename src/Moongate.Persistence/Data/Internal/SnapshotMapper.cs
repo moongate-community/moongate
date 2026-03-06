@@ -200,6 +200,24 @@ internal static class SnapshotMapper
             entity.EquippedItemIds[(ItemLayerType)snapshot.EquippedLayers[i]] = (Serial)snapshot.EquippedItemIds[i];
         }
 
+        if (snapshot.CustomProperties is { Length: > 0 })
+        {
+            foreach (var customProperty in snapshot.CustomProperties)
+            {
+                entity.SetCustomProperty(
+                    customProperty.Key,
+                    new()
+                    {
+                        Type = (ItemCustomPropertyType)customProperty.Type,
+                        IntegerValue = customProperty.IntegerValue,
+                        BooleanValue = customProperty.BooleanValue,
+                        DoubleValue = customProperty.DoubleValue,
+                        StringValue = customProperty.StringValue
+                    }
+                );
+            }
+        }
+
         return entity;
     }
 
@@ -251,6 +269,20 @@ internal static class SnapshotMapper
             BackpackId = (uint)entity.BackpackId,
             EquippedLayers = [.. equipped.Select(static pair => (byte)pair.Key)],
             EquippedItemIds = [.. equipped.Select(static pair => (uint)pair.Value)],
+            CustomProperties =
+            [
+                .. entity.CustomProperties.Select(
+                    static pair => new ItemCustomPropertySnapshot
+                    {
+                        Key = pair.Key,
+                        Type = (byte)pair.Value.Type,
+                        IntegerValue = pair.Value.IntegerValue,
+                        BooleanValue = pair.Value.BooleanValue,
+                        DoubleValue = pair.Value.DoubleValue,
+                        StringValue = pair.Value.StringValue
+                    }
+                )
+            ],
             IsWarMode = entity.IsWarMode,
             IsHidden = entity.IsHidden,
             IsFrozen = entity.IsFrozen,

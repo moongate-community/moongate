@@ -30,7 +30,7 @@ public static class DoorGenerationFacingExtensions
         /// Computes the concrete door item id from a base door item id and the facing.
         /// </summary>
         /// <param name="baseItemId">Base item id for the door family.</param>
-        /// <returns>Resolved item id (`baseItemId + 2 * facing`).</returns>
+        /// <returns>Resolved closed door item id for the requested facing.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the facing value is unknown.</exception>
         public int ToItemId(int baseItemId)
         {
@@ -39,7 +39,16 @@ public static class DoorGenerationFacingExtensions
                 throw new ArgumentOutOfRangeException(nameof(facing), facing, "Invalid door facing.");
             }
 
-            return baseItemId + (2 * (int)facing);
+            // ModernUO closed-door piece order:
+            // WestCW(base), EastCCW(base+2), SouthCW(base+8), NorthCCW(base+10).
+            return facing switch
+            {
+                DoorGenerationFacing.WestCW => baseItemId,
+                DoorGenerationFacing.EastCCW => baseItemId + 2,
+                DoorGenerationFacing.SouthCW => baseItemId + 8,
+                DoorGenerationFacing.NorthCCW => baseItemId + 10,
+                _ => throw new ArgumentOutOfRangeException(nameof(facing), facing, "Invalid door facing.")
+            };
         }
     }
 }

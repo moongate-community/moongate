@@ -57,7 +57,10 @@ public class MobileHandler
         _gameNetworkSessionService = gameNetworkSessionService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _sectorEnterSyncRadius = Math.Max(0, moongateConfig.Spatial.SectorEnterSyncRadius);
-        _mobileSyncRange = DefaultMobileSyncRange;
+        _mobileSyncRange = Math.Max(
+            DefaultMobileSyncRange,
+            _spatialWorldService.GetUpdateBroadcastSectorRadius() * MapSectorConsts.SectorSize
+        );
     }
 
     public async Task HandleAsync(MobileAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
@@ -173,12 +176,17 @@ public class MobileHandler
         }
 
         var itemCount = newSector.GetItems()
-                                 .Count(item => item.ParentContainerId == Serial.Zero &&
-                                                item.EquippedMobileId == Serial.Zero);
+                                 .Count(
+                                     item => item.ParentContainerId == Serial.Zero &&
+                                             item.EquippedMobileId == Serial.Zero
+                                 );
         var mobileCount = newSector.GetMobiles()
                                    .Count(mobile => mobile.Id != mobileEntity.Id);
 
-        await _speechService.SendMessageFromServerAsync(session, $"Items: {itemCount} e Mobiles: {mobileCount}");
+        await _speechService.SendMessageFromServerAsync(
+            session,
+            $"Sector: {newSector.SectorX} {newSector.SectorY} Items: {itemCount} e Mobiles: {mobileCount}"
+        );
         await SyncSectorSnapshotForPlayerAsync(mobileEntity, mapId, newLocation);
     }
 
@@ -259,6 +267,7 @@ public class MobileHandler
     private UOMobileEntity? TryResolveMobileFromSpatial(MobilePositionChangedEvent gameEvent)
     {
         var nearby = _spatialWorldService.GetNearbyMobiles(gameEvent.NewLocation, 2, gameEvent.MapId);
+
         return nearby.FirstOrDefault(mobile => mobile.Id == gameEvent.MobileId);
     }
 
@@ -288,5 +297,4 @@ public class MobileHandler
             new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
         );
     }
-
 }

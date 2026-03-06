@@ -419,7 +419,7 @@ public sealed class SpatialWorldServiceTests
             queue: queue
         );
         var nearPlayer = CreateMobile(0x333, 500, 500, 0, true);
-        var farPlayer = CreateMobile(0x334, 530, 500, 0, true);
+        var farPlayer = CreateMobile(0x334, 600, 500, 0, true);
 
         service.AddOrUpdateMobile(nearPlayer);
         service.AddOrUpdateMobile(farPlayer);
@@ -446,6 +446,71 @@ public sealed class SpatialWorldServiceTests
             {
                 Assert.That(recipients, Is.EqualTo(1));
                 Assert.That(packets.Select(static packet => packet.SessionId), Contains.Item(nearSession.SessionId));
+                Assert.That(packets.Select(static packet => packet.SessionId), Does.Not.Contain(farSession.SessionId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task BroadcastToPlayersInSectorRangeAsync_ShouldEnqueuePacketForPlayersInSectorRadius()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = CreateService(sessions, eventBus, queue: queue);
+        var centerPlayer = CreateMobile(
+            0x335,
+            8 << MapSectorConsts.SectorShift,
+            8 << MapSectorConsts.SectorShift,
+            0,
+            true
+        );
+        var nearbyPlayer = CreateMobile(
+            0x336,
+            9 << MapSectorConsts.SectorShift,
+            8 << MapSectorConsts.SectorShift,
+            0,
+            true
+        );
+        var farPlayer = CreateMobile(
+            0x337,
+            11 << MapSectorConsts.SectorShift,
+            8 << MapSectorConsts.SectorShift,
+            0,
+            true
+        );
+
+        service.AddOrUpdateMobile(centerPlayer);
+        service.AddOrUpdateMobile(nearbyPlayer);
+        service.AddOrUpdateMobile(farPlayer);
+
+        var centerSession = CreateSession(centerPlayer);
+        var nearbySession = CreateSession(nearbyPlayer);
+        var farSession = CreateSession(farPlayer);
+        sessions.Add(centerSession);
+        sessions.Add(nearbySession);
+        sessions.Add(farSession);
+
+        var recipients = await service.BroadcastToPlayersInSectorRangeAsync(
+                             new ClientViewRangePacket(12),
+                             0,
+                             8,
+                             8,
+                             1
+                         );
+
+        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
+        while (queue.TryDequeue(out var queued))
+        {
+            packets.Add(queued);
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(recipients, Is.EqualTo(2));
+                Assert.That(packets.Select(static packet => packet.SessionId), Contains.Item(centerSession.SessionId));
+                Assert.That(packets.Select(static packet => packet.SessionId), Contains.Item(nearbySession.SessionId));
                 Assert.That(packets.Select(static packet => packet.SessionId), Does.Not.Contain(farSession.SessionId));
             }
         );
@@ -487,15 +552,35 @@ public sealed class SpatialWorldServiceTests
         var eventBus = new NetworkServiceTestGameEventBusService();
         var service = CreateService(sessions, eventBus);
 
-        var center = CreateMobile(0x320, 128, 128, 0, true); // sector (8,8)
-        var nearbyNpc = CreateMobile(0x321, 144, 128, 0, false); // sector (9,8)
-        var outside = CreateMobile(0x322, 176, 128, 0, false); // sector (11,8)
+        var centerSectorX = 8;
+        var centerSectorY = 8;
+        var center = CreateMobile(
+            0x320,
+            centerSectorX << MapSectorConsts.SectorShift,
+            centerSectorY << MapSectorConsts.SectorShift,
+            0,
+            true
+        );
+        var nearbyNpc = CreateMobile(
+            0x321,
+            (centerSectorX + 1) << MapSectorConsts.SectorShift,
+            centerSectorY << MapSectorConsts.SectorShift,
+            0,
+            false
+        );
+        var outside = CreateMobile(
+            0x322,
+            (centerSectorX + 3) << MapSectorConsts.SectorShift,
+            centerSectorY << MapSectorConsts.SectorShift,
+            0,
+            false
+        );
 
         service.AddOrUpdateMobile(center);
         service.AddOrUpdateMobile(nearbyNpc);
         service.AddOrUpdateMobile(outside);
 
-        var result = service.GetMobilesInSectorRange(0, 8, 8, 1);
+        var result = service.GetMobilesInSectorRange(0, centerSectorX, centerSectorY, 1);
 
         Assert.Multiple(
             () =>
@@ -514,13 +599,27 @@ public sealed class SpatialWorldServiceTests
         var eventBus = new NetworkServiceTestGameEventBusService();
         var service = CreateService(sessions, eventBus);
 
-        var includedAtRadiusTwo = CreateMobile(0x323, 160, 128, 0, false); // sector (10,8), delta 2
-        var outsideRadiusTwo = CreateMobile(0x324, 176, 128, 0, false); // sector (11,8), delta 3
+        var centerSectorX = 8;
+        var centerSectorY = 8;
+        var includedAtRadiusTwo = CreateMobile(
+            0x323,
+            (centerSectorX + 2) << MapSectorConsts.SectorShift,
+            centerSectorY << MapSectorConsts.SectorShift,
+            0,
+            false
+        );
+        var outsideRadiusTwo = CreateMobile(
+            0x324,
+            (centerSectorX + 3) << MapSectorConsts.SectorShift,
+            centerSectorY << MapSectorConsts.SectorShift,
+            0,
+            false
+        );
 
         service.AddOrUpdateMobile(includedAtRadiusTwo);
         service.AddOrUpdateMobile(outsideRadiusTwo);
 
-        var result = service.GetMobilesInSectorRange(0, 8, 8);
+        var result = service.GetMobilesInSectorRange(0, centerSectorX, centerSectorY);
 
         Assert.Multiple(
             () =>
@@ -569,19 +668,21 @@ public sealed class SpatialWorldServiceTests
         var mobileService = new SpatialWorldServiceTestMobileService();
         var service = CreateService(sessions, eventBus, itemService, mobileService: mobileService);
         var location = new Point3D(130, 130, 0);
+        var sectorX = location.X >> MapSectorConsts.SectorShift;
+        var sectorY = location.Y >> MapSectorConsts.SectorShift;
         var expectedItem = new UOItemEntity
         {
             Id = (Serial)0x700u,
             ItemId = 0x0EED,
             Location = location
         };
-        itemService.ItemsBySector[(0, 8, 8)] = [expectedItem];
+        itemService.ItemsBySector[(0, sectorX, sectorY)] = [expectedItem];
 
         var sector = service.GetSectorByLocation(0, location);
 
         Assert.That(sector, Is.Not.Null);
         Assert.That(sector!.GetItems().Select(static item => item.Id), Contains.Item(expectedItem.Id));
-        Assert.That(itemService.LoadRequests, Has.Member((0, 8, 8)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX, sectorY)));
     }
 
     [Test]
@@ -710,14 +811,16 @@ public sealed class SpatialWorldServiceTests
             mobileService: mobileService
         );
         var character = CreateMobile(0x701, 130, 130, 0, true);
+        var sectorX = character.Location.X >> MapSectorConsts.SectorShift;
+        var sectorY = character.Location.Y >> MapSectorConsts.SectorShift;
         characterService.Add(character);
 
         await service.HandleAsync(new PlayerCharacterLoggedInEvent(1, (Serial)0x01u, character.Id));
 
         Assert.That(itemService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
-        Assert.That(itemService.LoadRequests, Has.Member((0, 8, 8)));
-        Assert.That(itemService.LoadRequests, Has.Member((0, 7, 7)));
-        Assert.That(itemService.LoadRequests, Has.Member((0, 9, 9)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX, sectorY)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX - 1, sectorY - 1)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX + 1, sectorY + 1)));
         Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
     }
 

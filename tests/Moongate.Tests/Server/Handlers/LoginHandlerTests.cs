@@ -19,6 +19,8 @@ public class LoginHandlerTests
 {
     private sealed class LoginHandlerTestAccountService : IAccountService
     {
+        public UOAccountEntity? NextLoginResult { get; set; }
+
         public Task<bool> CheckAccountExistsAsync(string username)
         {
             _ = username;
@@ -67,7 +69,7 @@ public class LoginHandlerTests
             _ = username;
             _ = password;
 
-            return Task.FromResult<UOAccountEntity?>(null);
+            return Task.FromResult(NextLoginResult);
         }
 
         public Task<UOAccountEntity?> UpdateAccountAsync(
@@ -94,6 +96,10 @@ public class LoginHandlerTests
 
     private sealed class LoginHandlerTestCharacterService : ICharacterService
     {
+        public int GetCharactersForAccountCalls { get; private set; }
+
+        public List<UOMobileEntity> CharactersForAccount { get; set; } = [];
+
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
         {
             _ = accountId;
@@ -135,8 +141,9 @@ public class LoginHandlerTests
         public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
         {
             _ = accountId;
+            GetCharactersForAccountCalls++;
 
-            return Task.FromResult(new List<UOMobileEntity>());
+            return Task.FromResult(CharactersForAccount);
         }
 
         public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
@@ -190,6 +197,63 @@ public class LoginHandlerTests
                 Assert.That(session.ClientVersion, Is.Null);
             }
         );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenSelectingCharacterAfterGameLogin_ShouldReuseCachedCharacterList()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var accountService = new LoginHandlerTestAccountService();
+        var characterService = new LoginHandlerTestCharacterService
+        {
+            CharactersForAccount =
+            [
+                new UOMobileEntity
+                {
+                    Id = (Serial)0x00000042,
+                    Name = "TestChar",
+                    MapId = 0,
+                    Location = new(0, 0, 0)
+                }
+            ]
+        };
+        var handler = new LoginHandler(
+            queue,
+            accountService,
+            characterService,
+            new NetworkServiceTestGameEventBusService(),
+            new MoongateConfig(),
+            new FakeGameNetworkSessionService()
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            AccountId = (Serial)0x00000001
+        };
+
+        var gameLoginPacket = new GameLoginPacket
+        {
+            AccountName = "admin",
+            Password = "admin"
+        };
+        var loginCharacterPacket = new LoginCharacterPacket
+        {
+            CharacterName = "TestChar"
+        };
+
+        // Simulate authenticated session to reach character-list fetch.
+        accountService.NextLoginResult = new UOAccountEntity
+        {
+            Id = (Serial)0x00000001,
+            Username = "admin",
+            PasswordHash = "x"
+        };
+
+        _ = await handler.HandlePacketAsync(session, gameLoginPacket);
+        _ = await handler.HandlePacketAsync(session, loginCharacterPacket);
+
+        Assert.That(characterService.GetCharactersForAccountCalls, Is.EqualTo(1));
     }
 
     private static LoginHandler CreateHandler()

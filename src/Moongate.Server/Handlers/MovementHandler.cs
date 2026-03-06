@@ -195,17 +195,17 @@ public class MovementHandler : BasePacketListener
 
         session.LastMobilePositionEventTimestamp = now;
 
+        var gameEvent = new MobilePositionChangedEvent(
+            session.SessionId,
+            session.Character.Id,
+            session.Character.MapId,
+            session.Character.MapId,
+            oldLocation,
+            newLocation
+        );
+
         _gameEventBusService
-            .PublishAsync(
-                new MobilePositionChangedEvent(
-                    session.SessionId,
-                    session.Character.Id,
-                    session.Character.MapId,
-                    session.Character.MapId,
-                    oldLocation,
-                    newLocation
-                )
-            )
+            .PublishAsync(gameEvent)
             .AsTask()
             .GetAwaiter()
             .GetResult();

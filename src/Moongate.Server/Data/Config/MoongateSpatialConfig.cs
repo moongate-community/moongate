@@ -27,4 +27,10 @@ public sealed class MoongateSpatialConfig
     /// A value of <c>3</c> loads a 7x7 area centered on the requested sector.
     /// </summary>
     public int LazySectorEntityLoadRadius { get; set; } = 3;
+
+    /// <summary>
+    /// Gets or sets the sector radius used for live update broadcast (item/mobile changes).
+    /// A value of <c>3</c> sends updates to a 7x7 sector area centered on source sector.
+    /// </summary>
+    public int SectorUpdateBroadcastRadius { get; set; } = 3;
 }

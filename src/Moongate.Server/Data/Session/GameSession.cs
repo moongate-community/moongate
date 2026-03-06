@@ -51,6 +51,11 @@ public sealed class GameSession
     public UOMobileEntity? Character { get; set; }
 
     /// <summary>
+    /// Gets or sets the cached characters list loaded for the authenticated account during login flow.
+    /// </summary>
+    public List<UOMobileEntity>? AccountCharactersCache { get; set; }
+
+    /// <summary>
     /// Gets or sets the current ping sequence number for this session, used for latency monitoring and connection health checks.
     /// </summary>
     public byte PingSequence { get; set; }

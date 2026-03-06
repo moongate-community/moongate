@@ -15,6 +15,7 @@ namespace Moongate.UO.Data.Persistence.Entities;
 public class UOMobileEntity : IMobileEntity
 {
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
+    private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
 
     public Serial Id { get; set; }
 
@@ -138,6 +139,11 @@ public class UOMobileEntity : IMobileEntity
     /// This cache is not used for persistence.
     /// </summary>
     public IReadOnlyDictionary<ItemLayerType, ItemReference> EquippedItemReferences => _equippedItemReferences;
+
+    /// <summary>
+    /// Gets persisted custom mobile properties.
+    /// </summary>
+    public IReadOnlyDictionary<string, ItemCustomProperty> CustomProperties => _customProperties;
 
     public bool IsWarMode { get; set; }
 
@@ -372,5 +378,183 @@ public class UOMobileEntity : IMobileEntity
         }
 
         return removed;
+    }
+
+    /// <summary>
+    /// Sets or replaces a typed custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="property">Property value.</param>
+    public void SetCustomProperty(string key, ItemCustomProperty property)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        ArgumentNullException.ThrowIfNull(property);
+        _customProperties[key] = property;
+    }
+
+    /// <summary>
+    /// Removes a custom property by key.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
+    public bool RemoveCustomProperty(string key)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        return _customProperties.Remove(key);
+    }
+
+    /// <summary>
+    /// Clears all custom properties.
+    /// </summary>
+    public void ClearCustomProperties()
+        => _customProperties.Clear();
+
+    /// <summary>
+    /// Sets an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value.</param>
+    public void SetCustomInteger(string key, long value)
+    {
+        SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Integer,
+                IntegerValue = value
+            }
+        );
+    }
+
+    /// <summary>
+    /// Sets a boolean custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Boolean value.</param>
+    public void SetCustomBoolean(string key, bool value)
+    {
+        SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Boolean,
+                BooleanValue = value
+            }
+        );
+    }
+
+    /// <summary>
+    /// Sets a double custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Double value.</param>
+    public void SetCustomDouble(string key, double value)
+    {
+        SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Double,
+                DoubleValue = value
+            }
+        );
+    }
+
+    /// <summary>
+    /// Sets a string custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">String value.</param>
+    public void SetCustomString(string key, string? value)
+    {
+        SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.String,
+                StringValue = value
+            }
+        );
+    }
+
+    /// <summary>
+    /// Tries to get an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomInteger(string key, out long value)
+    {
+        value = 0;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
+        {
+            return false;
+        }
+
+        value = property.IntegerValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a boolean custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Boolean value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomBoolean(string key, out bool value)
+    {
+        value = false;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Boolean)
+        {
+            return false;
+        }
+
+        value = property.BooleanValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a double custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Double value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomDouble(string key, out double value)
+    {
+        value = 0;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Double)
+        {
+            return false;
+        }
+
+        value = property.DoubleValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a string custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">String value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomString(string key, out string? value)
+    {
+        value = null;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.String)
+        {
+            return false;
+        }
+
+        value = property.StringValue;
+
+        return true;
     }
 }

@@ -361,7 +361,7 @@ public class ItemServiceTests
             }
         );
 
-        var items = await service.GetGroundItemsInSectorAsync(1, 8, 8);
+        var items = await service.GetGroundItemsInSectorAsync(1, 4, 4);
 
         Assert.That(items, Has.Count.EqualTo(1));
         Assert.That(items[0].MapId, Is.EqualTo(1));

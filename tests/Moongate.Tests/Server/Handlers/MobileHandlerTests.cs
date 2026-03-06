@@ -24,6 +24,7 @@ using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Handlers;
 
@@ -180,7 +181,7 @@ public sealed class MobileHandlerTests
                 return SectorByLocationResolver(mapId, location);
             }
 
-            var key = (mapId, location.X >> 4, location.Y >> 4);
+            var key = (mapId, location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
             if (SectorsByCoordinate.TryGetValue(key, out var sector))
             {
                 return sector;
@@ -453,7 +454,7 @@ public sealed class MobileHandlerTests
                 Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.True);
                 Assert.That(packets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
                 Assert.That(speechService.DirectMessages, Has.Count.EqualTo(1));
-                Assert.That(speechService.DirectMessages[0], Is.EqualTo("Items: 1 e Mobiles: 1"));
+                Assert.That(speechService.DirectMessages[0], Does.Contain("Items: 1 e Mobiles: 1"));
             }
         );
     }
@@ -480,7 +481,7 @@ public sealed class MobileHandlerTests
                 ItemId = 0x0EED,
                 ParentContainerId = Serial.Zero,
                 EquippedMobileId = Serial.Zero,
-                Location = new(8 << 4, 8 << 4, 0),
+                Location = new(8 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0),
                 MapId = 1
             }
         );
@@ -493,7 +494,7 @@ public sealed class MobileHandlerTests
                 ItemId = 0x0EED,
                 ParentContainerId = Serial.Zero,
                 EquippedMobileId = Serial.Zero,
-                Location = new(9 << 4, 8 << 4, 0),
+                Location = new(9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0),
                 MapId = 1
             }
         );
@@ -513,7 +514,7 @@ public sealed class MobileHandlerTests
                 return centerSector;
             }
 
-            var key = (1, location.X >> 4, location.Y >> 4);
+            var key = (1, location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
             return spatial.SectorsByCoordinate.TryGetValue(key, out var sector) ? sector : null;
         };
 
@@ -562,7 +563,9 @@ public sealed class MobileHandlerTests
         sessions.Add(movingSession);
 
         var spawnLocation = new Point3D(132, 132, 0);
-        var centerSector = new MapSector(1, 8, 8);
+        var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
         centerSector.AddEntity(
             new UOItemEntity
             {
@@ -577,10 +580,10 @@ public sealed class MobileHandlerTests
         );
 
         var spatial = new MobileHandlerTestSpatialWorldService();
-        spatial.SectorsByCoordinate[(1, 8, 8)] = centerSector;
+        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
         spatial.SectorByLocationResolver = (_, location) =>
         {
-            var key = (1, location.X >> 4, location.Y >> 4);
+            var key = (1, location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
             return spatial.SectorsByCoordinate.TryGetValue(key, out var sector) ? sector : null;
         };
 

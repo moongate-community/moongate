@@ -28,8 +28,8 @@ public class DoorGenerationFacingExtensionsTests
 
     [TestCase(DoorGenerationFacing.WestCW, 0x0675, 0x0675)]
     [TestCase(DoorGenerationFacing.EastCCW, 0x0675, 0x0677)]
-    [TestCase(DoorGenerationFacing.SouthCW, 0x0675, 0x0679)]
-    [TestCase(DoorGenerationFacing.NorthCCW, 0x0675, 0x067B)]
+    [TestCase(DoorGenerationFacing.SouthCW, 0x0675, 0x067D)]
+    [TestCase(DoorGenerationFacing.NorthCCW, 0x0675, 0x067F)]
     public void ToItemId_ShouldMapFacingUsingDoorStride(
         DoorGenerationFacing facing,
         int baseItemId,

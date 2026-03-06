@@ -1,5 +1,7 @@
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Events.Console;
+using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Support;
 
@@ -68,5 +70,43 @@ public class GameEventBusServiceTests
 
         Assert.That(tracking.Received.Count, Is.EqualTo(1));
         Assert.That(tracking.Received[0].SessionId, Is.EqualTo(7));
+    }
+
+    [Test]
+    public async Task PublishAsync_ShouldDispatchListenersConcurrently()
+    {
+        var bus = new GameEventBusService();
+        var delayMilliseconds = 150;
+
+        bus.RegisterListener(new DelayedConnectedListener(delayMilliseconds));
+        bus.RegisterListener(new DelayedConnectedListener(delayMilliseconds));
+
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        await bus.PublishAsync(new PlayerConnectedEvent(7, null, 1));
+        stopwatch.Stop();
+
+        Assert.That(
+            stopwatch.ElapsedMilliseconds,
+            Is.LessThan(delayMilliseconds * 2 - 20),
+            $"Listeners were executed sequentially. Elapsed={stopwatch.ElapsedMilliseconds}ms"
+        );
+    }
+
+    private sealed class DelayedConnectedListener : IGameEventListener<PlayerConnectedEvent>
+    {
+        private readonly int _delayMilliseconds;
+
+        public DelayedConnectedListener(int delayMilliseconds)
+        {
+            _delayMilliseconds = delayMilliseconds;
+        }
+
+        public async Task HandleAsync(
+            PlayerConnectedEvent gameEvent,
+            CancellationToken cancellationToken = default
+        )
+        {
+            await Task.Delay(_delayMilliseconds, cancellationToken);
+        }
     }
 }

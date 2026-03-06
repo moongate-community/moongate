@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Moongate.Server.Http.Data;
 using Moongate.UO.Data.Templates.Items;
@@ -13,6 +14,9 @@ namespace Moongate.Server.Http.Json;
  JsonSerializable(typeof(List<MoongateHttpUser>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpUser>)),
  JsonSerializable(typeof(MoongateHttpItemTemplateSummary)),
+ JsonSerializable(typeof(ItemTemplateParamDefinition)),
+ JsonSerializable(typeof(Dictionary<string, ItemTemplateParamDefinition>)),
+ JsonSerializable(typeof(IReadOnlyDictionary<string, ItemTemplateParamDefinition>)),
  JsonSerializable(typeof(List<MoongateHttpItemTemplateSummary>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpItemTemplateSummary>)),
  JsonSerializable(typeof(MoongateHttpActiveSession)),

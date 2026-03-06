@@ -102,6 +102,8 @@ public sealed class ItemFactoryService : IItemFactoryService
             item.Weight = itemFromTile.Weight;
         }
 
+        ApplyTemplateParams(item, template);
+
         return item;
     }
 
@@ -166,6 +168,57 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
+    }
+
+    private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        foreach (var (key, param) in template.Params)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new InvalidOperationException(
+                    $"Item template '{template.Id}' has an invalid params entry with an empty key."
+                );
+            }
+
+            var normalizedKey = key.Trim();
+
+            switch (param.Type)
+            {
+                case ItemTemplateParamType.String:
+                    item.SetCustomString(normalizedKey, param.Value);
+                    break;
+                case ItemTemplateParamType.Serial:
+                    if (!Serial.TryParse(param.Value, null, out var serial))
+                    {
+                        throw new InvalidOperationException(
+                            $"Item template '{template.Id}' has invalid serial param '{normalizedKey}' = '{param.Value}'."
+                        );
+                    }
+
+                    item.SetCustomInteger(normalizedKey, serial.Value);
+                    break;
+                case ItemTemplateParamType.Hue:
+                    try
+                    {
+                        var resolvedHue = HueSpec.ParseFromString(param.Value).Resolve();
+                        item.SetCustomInteger(normalizedKey, resolvedHue);
+                    }
+                    catch (FormatException exception)
+                    {
+                        throw new InvalidOperationException(
+                            $"Item template '{template.Id}' has invalid hue param '{normalizedKey}' = '{param.Value}'.",
+                            exception
+                        );
+                    }
+
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Item template '{template.Id}' has unsupported param type '{param.Type}' for key '{normalizedKey}'."
+                    );
+            }
+        }
     }
 
 }

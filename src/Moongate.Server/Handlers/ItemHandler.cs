@@ -3,11 +3,13 @@ using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -45,6 +47,8 @@ public class ItemHandler
 
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IPlayerDragService _playerDragService;
+    private readonly IItemScriptDispatcher? _itemScriptDispatcher;
+    private readonly ICharacterService? _characterService;
 
     private readonly ISpatialWorldService _spatialWorldService;
 
@@ -55,7 +59,9 @@ public class ItemHandler
         IGameNetworkSessionService gameNetworkSessionService,
         IPlayerDragService playerDragService,
         ISpatialWorldService spatialWorldService,
-        IMobileService mobileService
+        IMobileService mobileService,
+        IItemScriptDispatcher? itemScriptDispatcher = null,
+        ICharacterService? characterService = null
     ) : base(outgoingPacketQueue)
     {
         _itemService = itemService;
@@ -63,6 +69,8 @@ public class ItemHandler
         _playerDragService = playerDragService;
         _spatialWorldService = spatialWorldService;
         _mobileService = mobileService;
+        _itemScriptDispatcher = itemScriptDispatcher;
+        _characterService = characterService;
         {
             _gameEventBusService = gameEventBusService;
         }
@@ -145,6 +153,30 @@ public class ItemHandler
     {
         if (doubleClickPacket.TargetSerial.IsMobile)
         {
+            await _gameEventBusService.PublishAsync(
+                new MobileDoubleClickEvent(
+                    session.SessionId,
+                    doubleClickPacket.TargetSerial
+                )
+            );
+
+            if (_characterService is null)
+            {
+                return true;
+            }
+
+            var mobile = await _characterService.GetCharacterAsync(doubleClickPacket.TargetSerial);
+
+            if (mobile is null)
+            {
+                return true;
+            }
+
+            if (mobile.Body is { IsAnimal: false, IsMonster: false })
+            {
+                Enqueue(session, new PaperdollPacket(mobile));
+            }
+
             return true;
         }
 
@@ -155,13 +187,6 @@ public class ItemHandler
             return true;
         }
 
-        await _gameEventBusService.PublishAsync(
-            new ItemDoubleClickEvent(
-                session.SessionId,
-                doubleClickPacket.TargetSerial
-            )
-        );
-
         var item = resolvedItem ?? await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
 
         if (item is null)
@@ -169,14 +194,19 @@ public class ItemHandler
             return true;
         }
 
+        if (_itemScriptDispatcher?.HasHook(item, "double_click") != false)
+        {
+            await _gameEventBusService.PublishAsync(
+                new ItemDoubleClickEvent(
+                    session.SessionId,
+                    doubleClickPacket.TargetSerial
+                )
+            );
+        }
+
         if (item.IsContainer)
         {
-            var container = await _itemService.GetItemAsync(item.Id);
-
-            if (container is not null)
-            {
-                Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
-            }
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
         }
 
         return true;
@@ -184,19 +214,27 @@ public class ItemHandler
 
     private async Task<bool> HandleSingleClickAsync(GameSession session, SingleClickPacket singleClickPacket)
     {
-        var (canInteract, _) = await ValidateGroundItemInteractionAsync(session, singleClickPacket.TargetSerial);
+        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, singleClickPacket.TargetSerial);
 
         if (!canInteract)
         {
             return true;
         }
 
-        await _gameEventBusService.PublishAsync(
-            new ItemSingleClickEvent(
-                session.SessionId,
-                singleClickPacket.TargetSerial
-            )
-        );
+        if (resolvedItem is null)
+        {
+            return true;
+        }
+
+        if (_itemScriptDispatcher?.HasHook(resolvedItem, "single_click") != false)
+        {
+            await _gameEventBusService.PublishAsync(
+                new ItemSingleClickEvent(
+                    session.SessionId,
+                    singleClickPacket.TargetSerial
+                )
+            );
+        }
 
         return true;
     }
@@ -492,13 +530,25 @@ public class ItemHandler
             return;
         }
 
-        var players = _spatialWorldService.GetPlayersInSector(mobile.MapId, sector.SectorX, sector.SectorY);
+        var updateRadius = _spatialWorldService.GetUpdateBroadcastSectorRadius();
 
-        foreach (var player in players)
+        for (var sectorX = sector.SectorX - updateRadius;
+             sectorX <= sector.SectorX + updateRadius;
+             sectorX++)
         {
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
+            for (var sectorY = sector.SectorY - updateRadius;
+                 sectorY <= sector.SectorY + updateRadius;
+                 sectorY++)
             {
-                sessionIdsToNotify.Add(session.SessionId);
+                var players = _spatialWorldService.GetPlayersInSector(mobile.MapId, sectorX, sectorY);
+
+                foreach (var player in players)
+                {
+                    if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
+                    {
+                        sessionIdsToNotify.Add(session.SessionId);
+                    }
+                }
             }
         }
 
@@ -523,22 +573,19 @@ public class ItemHandler
 
     public async Task HandleAsync(ItemAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        var players = _spatialWorldService.GetPlayersInSector(gameEvent.MapId, gameEvent.SectorX, gameEvent.SectorY);
+        _ = cancellationToken;
+        var item = await _itemService.GetItemAsync(gameEvent.ItemId);
 
-        foreach (var player in players)
+        if (item is null)
         {
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                var item = await _itemService.GetItemAsync(gameEvent.ItemId);
-
-                if (item is null)
-                {
-                    continue;
-                }
-
-                Enqueue(session, new ObjectInformationPacket(item));
-            }
+            return;
         }
+
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            new ObjectInformationPacket(item),
+            gameEvent.MapId,
+            item.Location
+        );
     }
 
     public async Task HandleAsync(ItemDeletedEvent gameEvent, CancellationToken cancellationToken = default)

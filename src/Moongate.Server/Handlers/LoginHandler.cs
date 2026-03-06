@@ -148,7 +148,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleAccountLoginPacketAsync(GameSession session, AccountLoginPacket accountLoginPacket)
     {
-        _logger.Information(
+        _logger.Debug(
             "Received AccountLoginPacket from session {SessionId} with username {Username}",
             session.SessionId,
             accountLoginPacket.Account
@@ -176,7 +176,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleGameLoginPacketAsync(GameSession session, GameLoginPacket gameLoginPacket)
     {
-        _logger.Information(
+        _logger.Debug(
             "Received GameLoginPacket from session {SessionId} with account name {AccountName}",
             session.SessionId,
             gameLoginPacket.AccountName
@@ -200,6 +200,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         characterListPacket.Cities.AddRange(StartingCities.AvailableStartingCities);
 
         var characters = await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        session.AccountCharactersCache = characters;
         characterListPacket.FillCharacters(characters);
 
         Enqueue(session, new SupportFeaturesPacket());
@@ -210,7 +211,8 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleLoginCharacterPacketAsync(GameSession session, LoginCharacterPacket loginCharacterPacket)
     {
-        var characters = await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        var characters = session.AccountCharactersCache ?? await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        session.AccountCharactersCache = characters;
 
         var character = characters.FirstOrDefault(c => c.Name == loginCharacterPacket.CharacterName);
 
@@ -234,7 +236,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private Task<bool> HandleLoginSeedPacketAsync(GameSession session, LoginSeedPacket packet)
     {
-        _logger.Information(
+        _logger.Debug(
             "Received LoginSeedPacket from session {SessionId} with seed {Seed} and client version {ClientVersion}",
             session.SessionId,
             packet.Seed,
@@ -283,7 +285,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         var clientVersion = new ClientVersion(rawVersion);
         session.SetClientVersion(clientVersion);
 
-        _logger.Information(
+        _logger.Debug(
             "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
             session.SessionId,
             clientVersion.SourceString,

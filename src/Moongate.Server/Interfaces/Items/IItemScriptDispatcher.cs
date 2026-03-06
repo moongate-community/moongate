@@ -1,4 +1,5 @@
 using Moongate.Server.Data.Items;
+using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Interfaces.Items;
 
@@ -7,6 +8,13 @@ namespace Moongate.Server.Interfaces.Items;
 /// </summary>
 public interface IItemScriptDispatcher
 {
+    /// <summary>
+    /// Returns <c>true</c> when at least one Lua hook is resolvable for the item/hook pair.
+    /// </summary>
+    /// <param name="item">Item to resolve.</param>
+    /// <param name="hook">Hook name (e.g. <c>single_click</c>, <c>double_click</c>).</param>
+    bool HasHook(UOItemEntity item, string hook);
+
     /// <summary>
     /// Dispatches a hook for the provided item script context.
     /// </summary>

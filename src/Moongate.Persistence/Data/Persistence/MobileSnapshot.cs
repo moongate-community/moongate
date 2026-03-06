@@ -92,6 +92,8 @@ public sealed partial class MobileSnapshot
 
     public uint[] EquippedItemIds { get; set; } = [];
 
+    public ItemCustomPropertySnapshot[] CustomProperties { get; set; } = [];
+
     public bool IsWarMode { get; set; }
 
     public bool IsHidden { get; set; }

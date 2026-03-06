@@ -737,7 +737,16 @@ internal static class MoongateHttpRouteExtensions
             Id = template.Id,
             Name = template.Name,
             Category = template.Category,
-            ItemId = template.ItemId
+            ItemId = template.ItemId,
+            Params = template.Params.ToDictionary(
+                static kvp => kvp.Key,
+                static kvp => new ItemTemplateParamDefinition
+                {
+                    Type = kvp.Value.Type,
+                    Value = kvp.Value.Value
+                },
+                StringComparer.OrdinalIgnoreCase
+            )
         };
 
     private static Serial? ParseAccountIdOrNull(string accountId)

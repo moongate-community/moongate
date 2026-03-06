@@ -3,6 +3,7 @@ using Moongate.Core.Types;
 using Moongate.Server.FileLoaders;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.FileLoaders;
@@ -280,6 +281,98 @@ public class ItemTemplateLoaderTests
                 Assert.That(template?.Hue.Resolve(), Is.EqualTo(0));
                 Assert.That(template?.GoldValue.IsDiceExpression, Is.False);
                 Assert.That(template?.GoldValue.Resolve(), Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenBaseItemHasParams_ShouldInheritAndOverrideParams()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "base");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "params.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "test",
+                "id": "base_item",
+                "name": "Base Item",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x1517",
+                "lootType": "Regular",
+                "scriptId": "items.base_item",
+                "tags": [],
+                "weight": 1.0,
+                "params": {
+                  "label_number": { "type": "string", "value": "#1000001" },
+                  "linked_id": { "type": "serial", "value": "0x40000001" }
+                }
+              },
+              {
+                "type": "item",
+                "category": "test",
+                "id": "child_item",
+                "base_item": "base_item",
+                "name": "Child Item",
+                "description": "child",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x1518",
+                "lootType": "Regular",
+                "scriptId": "items.child_item",
+                "tags": [],
+                "weight": 1.0,
+                "params": {
+                  "linked_id": { "type": "serial", "value": "0x40000002" },
+                  "tint": { "type": "hue", "value": "0x044D" }
+                }
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("child_item", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Params, Has.Count.EqualTo(3));
+                Assert.That(template.Params.ContainsKey("label_number"), Is.True);
+                Assert.That(template.Params["label_number"].Type, Is.EqualTo(ItemTemplateParamType.String));
+                Assert.That(template.Params["label_number"].Value, Is.EqualTo("#1000001"));
+                Assert.That(template.Params["linked_id"].Type, Is.EqualTo(ItemTemplateParamType.Serial));
+                Assert.That(template.Params["linked_id"].Value, Is.EqualTo("0x40000002"));
+                Assert.That(template.Params["tint"].Type, Is.EqualTo(ItemTemplateParamType.Hue));
+                Assert.That(template.Params["tint"].Value, Is.EqualTo("0x044D"));
             }
         );
     }

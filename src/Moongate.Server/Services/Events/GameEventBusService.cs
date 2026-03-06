@@ -21,26 +21,44 @@ public sealed class GameEventBusService : IGameEventBusService
             return;
         }
 
-        foreach (var listenerObject in listeners)
+        var dispatchTasks = new Task[listeners.Length];
+
+        for (var i = 0; i < listeners.Length; i++)
         {
-            try
-            {
-                if (listenerObject is IGameEventListener<TEvent> typedListener)
-                {
-                    await typedListener.HandleAsync(gameEvent, cancellationToken);
+            dispatchTasks[i] = DispatchListenerSafeAsync<TEvent>(
+                listeners[i],
+                gameEvent,
+                cancellationToken
+            );
+        }
 
-                    continue;
-                }
+        await Task.WhenAll(dispatchTasks);
+    }
 
-                if (listenerObject is IGameEventListener<IGameEvent> globalListener)
-                {
-                    await globalListener.HandleAsync(gameEvent, cancellationToken);
-                }
-            }
-            catch (Exception ex)
+    private async Task DispatchListenerSafeAsync<TEvent>(
+        object listenerObject,
+        TEvent gameEvent,
+        CancellationToken cancellationToken
+    )
+        where TEvent : IGameEvent
+    {
+        try
+        {
+            if (listenerObject is IGameEventListener<TEvent> typedListener)
             {
-                _logger.Error(ex, "Game event listener failed for event type {EventType}", typeof(TEvent).Name);
+                await typedListener.HandleAsync(gameEvent, cancellationToken);
+
+                return;
             }
+
+            if (listenerObject is IGameEventListener<IGameEvent> globalListener)
+            {
+                await globalListener.HandleAsync(gameEvent, cancellationToken);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Game event listener failed for event type {EventType}", typeof(TEvent).Name);
         }
     }
 

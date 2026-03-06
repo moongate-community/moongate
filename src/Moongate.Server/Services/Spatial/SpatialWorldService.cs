@@ -76,16 +76,70 @@ public sealed class SpatialWorldService
     )
     {
         ArgumentNullException.ThrowIfNull(packet);
-        var resolvedRange = Math.Max(0, range ?? _spatialConfig.SectorEnterSyncRadius);
-        GameSession? excludedSession = null;
+        var excludedSession = ResolveExcludedSession(excludeSessionId);
 
-        if (excludeSessionId.HasValue &&
-            _gameNetworkSessionService.TryGet(excludeSessionId.Value, out var session))
+        List<GameSession> recipients;
+
+        if (range.HasValue)
         {
-            excludedSession = session;
+            recipients = GetPlayersInRange(location, Math.Max(0, range.Value), mapId, excludedSession);
+        }
+        else
+        {
+            var sectorX = location.X >> MapSectorConsts.SectorShift;
+            var sectorY = location.Y >> MapSectorConsts.SectorShift;
+            recipients = GetPlayersInSectorRange(mapId, sectorX, sectorY, Math.Max(0, _spatialConfig.SectorEnterSyncRadius), excludedSession);
         }
 
-        var recipients = GetPlayersInRange(location, resolvedRange, mapId, excludedSession);
+        foreach (var recipient in recipients)
+        {
+            _outgoingPacketQueue.Enqueue(recipient.SessionId, packet);
+        }
+
+        return Task.FromResult(recipients.Count);
+    }
+
+    public Task<int> BroadcastToPlayersInUpdateRadiusAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        long? excludeSessionId = null
+    )
+    {
+        var sectorX = location.X >> MapSectorConsts.SectorShift;
+        var sectorY = location.Y >> MapSectorConsts.SectorShift;
+
+        return BroadcastToPlayersInSectorRangeAsync(
+            packet,
+            mapId,
+            sectorX,
+            sectorY,
+            GetUpdateBroadcastSectorRadius(),
+            excludeSessionId
+        );
+    }
+
+    public int GetUpdateBroadcastSectorRadius()
+        => Math.Max(0, _spatialConfig.SectorUpdateBroadcastRadius);
+
+    public Task<int> BroadcastToPlayersInSectorRangeAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int sectorRadius = 0,
+        long? excludeSessionId = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(packet);
+        var excludedSession = ResolveExcludedSession(excludeSessionId);
+        var recipients = GetPlayersInSectorRange(
+            mapId,
+            centerSectorX,
+            centerSectorY,
+            Math.Max(0, sectorRadius),
+            excludedSession
+        );
 
         foreach (var recipient in recipients)
         {
@@ -152,6 +206,56 @@ public sealed class SpatialWorldService
                 session != excludeSession)
             {
                 result.Add(session);
+            }
+        }
+
+        return result;
+    }
+
+    private GameSession? ResolveExcludedSession(long? excludeSessionId)
+    {
+        if (!excludeSessionId.HasValue)
+        {
+            return null;
+        }
+
+        return _gameNetworkSessionService.TryGet(excludeSessionId.Value, out var session)
+                   ? session
+                   : null;
+    }
+
+    private List<GameSession> GetPlayersInSectorRange(
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int sectorRadius,
+        GameSession? excludeSession
+    )
+    {
+        var sessions = _gameNetworkSessionService.GetAll();
+        var sessionsByCharacter = sessions
+                                  .Where(static session => session.Character is not null)
+                                  .ToDictionary(static session => session.Character!.Id, static session => session);
+        var result = new List<GameSession>();
+        var seenSessionIds = new HashSet<long>();
+
+        for (var sectorX = centerSectorX - sectorRadius; sectorX <= centerSectorX + sectorRadius; sectorX++)
+        {
+            for (var sectorY = centerSectorY - sectorRadius; sectorY <= centerSectorY + sectorRadius; sectorY++)
+            {
+                var players = GetPlayersInSector(mapId, sectorX, sectorY);
+
+                foreach (var player in players)
+                {
+                    if (!sessionsByCharacter.TryGetValue(player.Id, out var session) ||
+                        session == excludeSession ||
+                        !seenSessionIds.Add(session.SessionId))
+                    {
+                        continue;
+                    }
+
+                    result.Add(session);
+                }
             }
         }
 
@@ -251,16 +355,12 @@ public sealed class SpatialWorldService
             return;
         }
 
-        var players = GetPlayersInSector(mapId, sector.SectorX, sector.SectorY);
         var dropPacket = new ObjectInformationPacket(item);
-
-        foreach (var player in players)
-        {
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                _outgoingPacketQueue.Enqueue(session.SessionId, dropPacket);
-            }
-        }
+        await BroadcastToPlayersInUpdateRadiusAsync(
+            dropPacket,
+            mapId,
+            gameEvent.NewLocation
+        );
     }
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)

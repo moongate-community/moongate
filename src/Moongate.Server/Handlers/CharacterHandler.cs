@@ -1,6 +1,5 @@
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
-using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
@@ -28,7 +27,6 @@ namespace Moongate.Server.Handlers;
 
 [RegisterGameEventListener,
  RegisterPacketHandler(PacketDefinition.CharacterCreationPacket),
- RegisterPacketHandler(PacketDefinition.DoubleClickPacket),
  RegisterPacketHandler(PacketDefinition.RequestWarModePacket)
 ]
 
@@ -142,11 +140,6 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
             return await HandleCharacterCreationPacketAsync(session, characterCreationPacket);
         }
 
-        if (packet is DoubleClickPacket doubleClickPacket)
-        {
-            return await HandleMobileDoubleClickAsync(session, doubleClickPacket);
-        }
-
         if (packet is RequestWarModePacket requestWarModePacket)
         {
             return HandleRequestWarModeAsync(session, requestWarModePacket);
@@ -164,33 +157,6 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         session.Character.IsWarMode = requestWarModePacket.IsWarMode;
         Enqueue(session, new WarModePacket(session.Character));
-
-        return true;
-    }
-
-    private async Task<bool> HandleMobileDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
-    {
-        if (doubleClickPacket.TargetSerial.IsMobile)
-        {
-            await _gameEventBusService.PublishAsync(
-                new MobileDoubleClickEvent(
-                    session.SessionId,
-                    doubleClickPacket.TargetSerial
-                )
-            );
-
-            var mobile = await _characterService.GetCharacterAsync(doubleClickPacket.TargetSerial);
-
-            if (mobile is null)
-            {
-                return true;
-            }
-
-            if (mobile.Body is { IsAnimal: false, IsMonster: false })
-            {
-                Enqueue(session, new PaperdollPacket(mobile));
-            }
-        }
 
         return true;
     }
@@ -228,4 +194,5 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         return true;
     }
+
 }

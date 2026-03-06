@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Attributes;
@@ -8,6 +9,7 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using MoonSharp.Interpreter;
 using Serilog;
 
@@ -25,6 +27,7 @@ public sealed partial class ItemScriptDispatcher
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly Script? _luaScript;
     private readonly bool _supportsMoonSharpRuntime;
+    private readonly ConcurrentDictionary<string, bool> _hookAvailabilityCache = new(StringComparer.Ordinal);
 
     public ItemScriptDispatcher(
         IScriptEngineService scriptEngineService,
@@ -57,32 +60,19 @@ public sealed partial class ItemScriptDispatcher
 
         try
         {
-            var payload = BuildLuaContextPayload(context);
-
-            foreach (var tableName in ResolveTableCandidates(context))
+            if (!TryResolveHookFunction(
+                    ResolveTableCandidates(context.Item),
+                    ResolveHookCandidates(context.Hook),
+                    out var hookFunction
+                ))
             {
-                var scriptTable = ResolveScriptTable(tableName);
-                if (scriptTable is null)
-                {
-                    continue;
-                }
-
-                foreach (var hook in ResolveHookCandidates(context.Hook))
-                {
-                    var hookFunction = ResolveTableFunction(scriptTable, hook);
-
-                    if (hookFunction is null)
-                    {
-                        continue;
-                    }
-
-                    _luaScript.Call(hookFunction, payload);
-
-                    return Task.FromResult(true);
-                }
+                return Task.FromResult(false);
             }
 
-            return Task.FromResult(false);
+            var payload = BuildLuaContextPayload(context);
+            _luaScript.Call(hookFunction!, payload);
+
+            return Task.FromResult(true);
         }
         catch (Exception ex)
         {
@@ -95,6 +85,35 @@ public sealed partial class ItemScriptDispatcher
 
             return Task.FromResult(false);
         }
+    }
+
+    public bool HasHook(UOItemEntity item, string hook)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!_supportsMoonSharpRuntime || _luaScript is null || string.IsNullOrWhiteSpace(hook))
+        {
+            return false;
+        }
+
+        var normalizedHook = NormalizeToken(hook);
+        var scriptIdentity = ResolveScriptIdentity(item);
+        var cacheKey = $"{scriptIdentity}|{normalizedHook}";
+
+        if (_hookAvailabilityCache.TryGetValue(cacheKey, out var cached))
+        {
+            return cached;
+        }
+
+        var hasHook = TryResolveHookFunction(
+            ResolveTableCandidates(item),
+            ResolveHookCandidates(hook),
+            out _
+        );
+
+        _hookAvailabilityCache[cacheKey] = hasHook;
+
+        return hasHook;
     }
 
     private static IEnumerable<string> ResolveHookCandidates(string hook)
@@ -120,9 +139,9 @@ public sealed partial class ItemScriptDispatcher
         return [$"on_{normalizedHook}", $"On{pascal}", normalizedHook];
     }
 
-    private static IEnumerable<string> ResolveTableCandidates(ItemScriptContext context)
+    private static IEnumerable<string> ResolveTableCandidates(UOItemEntity item)
     {
-        var scriptId = context.Item.ScriptId?.Trim();
+        var scriptId = item.ScriptId?.Trim();
 
         if (!string.IsNullOrWhiteSpace(scriptId) &&
             !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
@@ -131,7 +150,7 @@ public sealed partial class ItemScriptDispatcher
             yield break;
         }
 
-        var normalizedName = NormalizeToken(context.Item.Name ?? string.Empty);
+        var normalizedName = NormalizeToken(item.Name ?? string.Empty);
 
         if (!string.Equals(normalizedName, "unknown", StringComparison.Ordinal))
         {
@@ -160,6 +179,55 @@ public sealed partial class ItemScriptDispatcher
         var function = table.Table.Get(functionName);
 
         return function.Type == DataType.Function ? function : null;
+    }
+
+    private bool TryResolveHookFunction(
+        IEnumerable<string> tableCandidates,
+        IEnumerable<string> hookCandidates,
+        out DynValue? hookFunction
+    )
+    {
+        hookFunction = null;
+
+        foreach (var tableName in tableCandidates)
+        {
+            var scriptTable = ResolveScriptTable(tableName);
+
+            if (scriptTable is null)
+            {
+                continue;
+            }
+
+            foreach (var hookName in hookCandidates)
+            {
+                var resolvedFunction = ResolveTableFunction(scriptTable, hookName);
+
+                if (resolvedFunction is null)
+                {
+                    continue;
+                }
+
+                hookFunction = resolvedFunction;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string ResolveScriptIdentity(UOItemEntity item)
+    {
+        var scriptId = item.ScriptId?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(scriptId) &&
+            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"sid:{NormalizeToken(scriptId)}";
+        }
+
+        var normalizedName = NormalizeToken(item.Name ?? string.Empty);
+        return $"name:{normalizedName}";
     }
 
     private static Dictionary<string, object?> BuildLuaContextPayload(ItemScriptContext context)

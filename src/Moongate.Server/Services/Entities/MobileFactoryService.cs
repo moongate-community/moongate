@@ -7,6 +7,8 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
+using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.Entities;
@@ -88,6 +90,8 @@ public sealed class MobileFactoryService : IMobileFactoryService
             mobile.Hits = Math.Min(mobile.Hits, mobile.MaxHits);
         }
 
+        ApplyTemplateParams(mobile, template);
+
         return mobile;
     }
 
@@ -137,5 +141,56 @@ public sealed class MobileFactoryService : IMobileFactoryService
         mobile.RecalculateMaxStats();
 
         return mobile;
+    }
+
+    private static void ApplyTemplateParams(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        foreach (var (key, param) in template.Params)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new InvalidOperationException(
+                    $"Mobile template '{template.Id}' has an invalid params entry with an empty key."
+                );
+            }
+
+            var normalizedKey = key.Trim();
+
+            switch (param.Type)
+            {
+                case ItemTemplateParamType.String:
+                    mobile.SetCustomString(normalizedKey, param.Value);
+                    break;
+                case ItemTemplateParamType.Serial:
+                    if (!Serial.TryParse(param.Value, null, out var serial))
+                    {
+                        throw new InvalidOperationException(
+                            $"Mobile template '{template.Id}' has invalid serial param '{normalizedKey}' = '{param.Value}'."
+                        );
+                    }
+
+                    mobile.SetCustomInteger(normalizedKey, serial.Value);
+                    break;
+                case ItemTemplateParamType.Hue:
+                    try
+                    {
+                        var resolvedHue = HueSpec.ParseFromString(param.Value).Resolve();
+                        mobile.SetCustomInteger(normalizedKey, resolvedHue);
+                    }
+                    catch (FormatException exception)
+                    {
+                        throw new InvalidOperationException(
+                            $"Mobile template '{template.Id}' has invalid hue param '{normalizedKey}' = '{param.Value}'.",
+                            exception
+                        );
+                    }
+
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Mobile template '{template.Id}' has unsupported param type '{param.Type}' for key '{normalizedKey}'."
+                    );
+            }
+        }
     }
 }

@@ -257,6 +257,81 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldApplyTypedParamsToCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "param_mobile",
+                Name = "Param Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Params = new Dictionary<string, ItemTemplateParamDefinition>
+                {
+                    ["title_suffix"] = new() { Type = ItemTemplateParamType.String, Value = "the brave" },
+                    ["owner_id"] = new() { Type = ItemTemplateParamType.Serial, Value = "0x00001234" },
+                    ["marker_hue"] = new() { Type = ItemTemplateParamType.Hue, Value = "0x044D" }
+                }
+            }
+        );
+        var nameService = new TestNameService();
+        var service = new MobileFactoryService(templateService, nameService, persistence);
+
+        var mobile = service.CreateMobileFromTemplate("param_mobile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
+                Assert.That(titleSuffix, Is.EqualTo("the brave"));
+                Assert.That(mobile.TryGetCustomInteger("owner_id", out var ownerId), Is.True);
+                Assert.That(ownerId, Is.EqualTo(0x00001234));
+                Assert.That(mobile.TryGetCustomInteger("marker_hue", out var markerHue), Is.True);
+                Assert.That(markerHue, Is.EqualTo(0x044D));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_ShouldThrow_WhenSerialParamIsInvalid()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "invalid_serial_param_mobile",
+                Name = "Invalid Serial Param Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Params = new Dictionary<string, ItemTemplateParamDefinition>
+                {
+                    ["owner_id"] = new() { Type = ItemTemplateParamType.Serial, Value = "bad-serial" }
+                }
+            }
+        );
+        var nameService = new TestNameService();
+        var service = new MobileFactoryService(templateService, nameService, persistence);
+
+        Assert.That(
+            () => service.CreateMobileFromTemplate("invalid_serial_param_mobile"),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("invalid serial param")
+        );
+    }
+
+    [Test]
     public async Task CreatePlayerMobile_ShouldMapPacketFieldsAndAllocateSerial()
     {
         using var temp = new TempDirectory();

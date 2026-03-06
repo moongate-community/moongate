@@ -349,7 +349,7 @@ public class MobileServiceTests
             }
         );
 
-        var loaded = await service.GetPersistentMobilesInSectorAsync(1, 8, 8);
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, 4, 4);
         var mobile = loaded.Single();
 
         Assert.Multiple(

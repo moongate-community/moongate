@@ -5,6 +5,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Interfaces.Services.Spatial;
 
@@ -32,6 +33,70 @@ public interface ISpatialWorldService
         int? range = null,
         long? excludeSessionId = null
     );
+
+    /// <summary>
+    /// Broadcasts a packet to player sessions within a sector-based radius on a map.
+    /// </summary>
+    /// <param name="packet">Packet to enqueue.</param>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="centerSectorX">Center sector X coordinate.</param>
+    /// <param name="centerSectorY">Center sector Y coordinate.</param>
+    /// <param name="sectorRadius">Sector radius (0 = center sector only).</param>
+    /// <param name="excludeSessionId">Optional session id to exclude.</param>
+    /// <returns>Number of recipient sessions.</returns>
+    Task<int> BroadcastToPlayersInSectorRangeAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int sectorRadius = 0,
+        long? excludeSessionId = null
+    )
+    {
+        var clampedRadius = Math.Max(0, sectorRadius);
+        var centerLocation = new Point3D(
+            (centerSectorX << MapSectorConsts.SectorShift) + (MapSectorConsts.SectorSize / 2),
+            (centerSectorY << MapSectorConsts.SectorShift) + (MapSectorConsts.SectorSize / 2),
+            0
+        );
+        var tileRange = clampedRadius * MapSectorConsts.SectorSize;
+
+        return BroadcastToPlayersAsync(packet, mapId, centerLocation, tileRange, excludeSessionId);
+    }
+
+    /// <summary>
+    /// Broadcasts a packet to players in the configured update sector radius around a world location.
+    /// </summary>
+    /// <param name="packet">Packet to enqueue.</param>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="location">Center location.</param>
+    /// <param name="excludeSessionId">Optional session id to exclude.</param>
+    /// <returns>Number of recipient sessions.</returns>
+    Task<int> BroadcastToPlayersInUpdateRadiusAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        long? excludeSessionId = null
+    )
+    {
+        var sectorX = location.X >> MapSectorConsts.SectorShift;
+        var sectorY = location.Y >> MapSectorConsts.SectorShift;
+
+        return BroadcastToPlayersInSectorRangeAsync(
+            packet,
+            mapId,
+            sectorX,
+            sectorY,
+            GetUpdateBroadcastSectorRadius(),
+            excludeSessionId
+        );
+    }
+
+    /// <summary>
+    /// Returns the configured sector radius for live update broadcasts.
+    /// </summary>
+    int GetUpdateBroadcastSectorRadius()
+        => 3;
 
     /// <summary>
     /// Adds or updates an item position in the spatial index.

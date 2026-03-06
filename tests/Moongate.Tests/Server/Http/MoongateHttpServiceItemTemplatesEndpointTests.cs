@@ -24,7 +24,17 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
         var itemTemplateService = new ItemTemplateService();
         itemTemplateService.UpsertRange(
         [
-            new ItemTemplateDefinition { Id = "a_item", Name = "A", Category = "cat", ItemId = "0x1000" },
+            new ItemTemplateDefinition
+            {
+                Id = "a_item",
+                Name = "A",
+                Category = "cat",
+                ItemId = "0x1000",
+                Params = new Dictionary<string, ItemTemplateParamDefinition>
+                {
+                    ["tooltip"] = new() { Type = ItemTemplateParamType.String, Value = "alpha" }
+                }
+            },
             new ItemTemplateDefinition { Id = "b_item", Name = "B", Category = "cat", ItemId = "0x1001" },
             new ItemTemplateDefinition { Id = "c_item", Name = "C", Category = "cat", ItemId = "0x1002" }
         ]
@@ -58,6 +68,8 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
                     Assert.That(root.GetProperty("pageSize").GetInt32(), Is.EqualTo(2));
                     Assert.That(root.GetProperty("totalCount").GetInt32(), Is.EqualTo(3));
                     Assert.That(root.GetProperty("items").GetArrayLength(), Is.EqualTo(1));
+                    Assert.That(root.GetProperty("items")[0].TryGetProperty("params", out _), Is.True);
+                    Assert.That(root.GetProperty("items")[0].GetProperty("params").ValueKind, Is.EqualTo(JsonValueKind.Object));
                 }
             );
         }
@@ -171,7 +183,17 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
         var port = GetRandomPort();
         var itemTemplateService = new ItemTemplateService();
         itemTemplateService.Upsert(
-            new ItemTemplateDefinition { Id = "test_item", Name = "Test", Category = "test", ItemId = "0x1F9E" }
+            new ItemTemplateDefinition
+            {
+                Id = "test_item",
+                Name = "Test",
+                Category = "test",
+                ItemId = "0x1F9E",
+                Params = new Dictionary<string, ItemTemplateParamDefinition>
+                {
+                    ["owner"] = new() { Type = ItemTemplateParamType.Serial, Value = "0x40000001" }
+                }
+            }
         );
 
         var service = new MoongateHttpService(
@@ -191,12 +213,16 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
             using var http = new HttpClient();
             var okResponse = await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/test_item");
             var notFoundResponse = await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/missing");
+            using var okDoc = JsonDocument.Parse(await okResponse.Content.ReadAsStringAsync());
 
             Assert.Multiple(
                 () =>
                 {
                     Assert.That(okResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(notFoundResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(okDoc.RootElement.GetProperty("params").TryGetProperty("owner", out var owner), Is.True);
+                    Assert.That(owner.GetProperty("type").GetInt32(), Is.EqualTo((int)ItemTemplateParamType.Serial));
+                    Assert.That(owner.GetProperty("value").GetString(), Is.EqualTo("0x40000001"));
                 }
             );
         }

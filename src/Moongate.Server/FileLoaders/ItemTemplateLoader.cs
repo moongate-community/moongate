@@ -135,6 +135,8 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.Container = [..parent.Container];
         }
 
+        child.Params = MergeParams(parent.Params, child.Params);
+
         if (child.Hue.Equals(default))
         {
             child.Hue = parent.Hue;
@@ -180,6 +182,35 @@ public sealed class ItemTemplateLoader : IFileLoader
 
     private static int InheritInt(int childValue, int parentValue, int defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
+
+    private static Dictionary<string, ItemTemplateParamDefinition> MergeParams(
+        Dictionary<string, ItemTemplateParamDefinition> parentParams,
+        Dictionary<string, ItemTemplateParamDefinition> childParams
+    )
+    {
+        var merged = new Dictionary<string, ItemTemplateParamDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, param) in parentParams)
+        {
+            merged[key] = CloneParam(param);
+        }
+
+        foreach (var (key, param) in childParams)
+        {
+            merged[key] = CloneParam(param);
+        }
+
+        return merged;
+    }
+
+    private static ItemTemplateParamDefinition CloneParam(ItemTemplateParamDefinition param)
+    {
+        return new()
+        {
+            Type = param.Type,
+            Value = param.Value
+        };
+    }
 
     private static void ResolveBaseItems(List<ItemTemplateDefinition> templates)
     {
