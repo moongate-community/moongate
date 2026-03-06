@@ -69,7 +69,7 @@ public sealed class ServerChangePacket : BaseGameNetworkPacket
         Unknown2 = reader.ReadInt16();
         MapWidth = reader.ReadUInt16();
         MapHeight = reader.ReadUInt16();
-        Location = new Point3D(x, y, z);
+        Location = new(x, y, z);
 
         return reader.Remaining == 0;
     }

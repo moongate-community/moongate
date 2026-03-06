@@ -47,6 +47,35 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void CustomProperties_ShouldStoreTypedValues()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001003
+        };
+
+        mobile.SetCustomInteger("owner_id", 1234);
+        mobile.SetCustomBoolean("is_boss", true);
+        mobile.SetCustomDouble("scale", 1.5d);
+        mobile.SetCustomString("title_suffix", "the brave");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetCustomInteger("owner_id", out var ownerId), Is.True);
+                Assert.That(ownerId, Is.EqualTo(1234));
+                Assert.That(mobile.TryGetCustomBoolean("is_boss", out var isBoss), Is.True);
+                Assert.That(isBoss, Is.True);
+                Assert.That(mobile.TryGetCustomDouble("scale", out var scale), Is.True);
+                Assert.That(scale, Is.EqualTo(1.5d));
+                Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
+                Assert.That(titleSuffix, Is.EqualTo("the brave"));
+                Assert.That(mobile.CustomProperties, Has.Count.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
     public void DefaultLevel_ShouldBeOne()
     {
         var mobile = new UOMobileEntity();
@@ -218,35 +247,6 @@ public class UOMobileEntityTests
                 Assert.That(mobile.TryGetEquippedReference(ItemLayerType.Pants, out _), Is.False);
                 Assert.That(item.EquippedMobileId, Is.EqualTo(Serial.Zero));
                 Assert.That(item.EquippedLayer, Is.Null);
-            }
-        );
-    }
-
-    [Test]
-    public void CustomProperties_ShouldStoreTypedValues()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00001003
-        };
-
-        mobile.SetCustomInteger("owner_id", 1234);
-        mobile.SetCustomBoolean("is_boss", true);
-        mobile.SetCustomDouble("scale", 1.5d);
-        mobile.SetCustomString("title_suffix", "the brave");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.TryGetCustomInteger("owner_id", out var ownerId), Is.True);
-                Assert.That(ownerId, Is.EqualTo(1234));
-                Assert.That(mobile.TryGetCustomBoolean("is_boss", out var isBoss), Is.True);
-                Assert.That(isBoss, Is.True);
-                Assert.That(mobile.TryGetCustomDouble("scale", out var scale), Is.True);
-                Assert.That(scale, Is.EqualTo(1.5d));
-                Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
-                Assert.That(titleSuffix, Is.EqualTo("the brave"));
-                Assert.That(mobile.CustomProperties, Has.Count.EqualTo(4));
             }
         );
     }

@@ -6,15 +6,13 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Commands.Persistence;
 
 [RegisterConsoleCommand(
     "save_persistence",
     "Saves the world immediately. Usage: save_persistence",
-    CommandSourceType.Console | CommandSourceType.InGame,
-    AccountType.Administrator
+    CommandSourceType.Console | CommandSourceType.InGame
 )]
 public class SavePersistenceCommand : ICommandExecutor
 {

@@ -10,6 +10,24 @@ public sealed class GameNetworkSessionServiceTests
 {
     private readonly List<MoongateTCPClient> _clientsToDispose = [];
 
+    [Test]
+    public void GetOrCreate_ShouldExposeLocalIpAddress()
+    {
+        var service = new GameNetworkSessionService();
+        var session = CreateSession(service, (Serial)0x00000042u);
+
+        Assert.That(session.NetworkSession.LocalIpAddress, Is.EqualTo(null));
+    }
+
+    [Test]
+    public void GetOrCreate_ShouldExposeRemoteIpAddress()
+    {
+        var service = new GameNetworkSessionService();
+        var session = CreateSession(service, (Serial)0x00000042u);
+
+        Assert.That(session.NetworkSession.RemoteIpAddress, Is.EqualTo(null));
+    }
+
     [TearDown]
     public void TearDown()
     {
@@ -47,24 +65,6 @@ public sealed class GameNetworkSessionServiceTests
                 Assert.That(resolved, Is.SameAs(session));
             }
         );
-    }
-
-    [Test]
-    public void GetOrCreate_ShouldExposeRemoteIpAddress()
-    {
-        var service = new GameNetworkSessionService();
-        var session = CreateSession(service, (Serial)0x00000042u);
-
-        Assert.That(session.NetworkSession.RemoteIpAddress, Is.EqualTo(null));
-    }
-
-    [Test]
-    public void GetOrCreate_ShouldExposeLocalIpAddress()
-    {
-        var service = new GameNetworkSessionService();
-        var session = CreateSession(service, (Serial)0x00000042u);
-
-        Assert.That(session.NetworkSession.LocalIpAddress, Is.EqualTo(null));
     }
 
     private GameSession CreateSession(GameNetworkSessionService service, Serial characterId)

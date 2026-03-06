@@ -125,63 +125,10 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
-    /// Hydrates runtime contained-item references and in-memory child list from resolved entities.
+    /// Clears all custom properties.
     /// </summary>
-    /// <param name="containedItems">Resolved contained items for this container.</param>
-    public void HydrateContainedItemsRuntime(IEnumerable<UOItemEntity> containedItems)
-    {
-        ArgumentNullException.ThrowIfNull(containedItems);
-
-        _items.Clear();
-        _containedItemReferences.Clear();
-        ContainedItemIds.Clear();
-
-        foreach (var item in containedItems)
-        {
-            if (item.ParentContainerId != Id)
-            {
-                continue;
-            }
-
-            ContainedItemIds.Add(item.Id);
-            _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
-            item.Location = new(item.ContainerPosition.X, item.ContainerPosition.Y, 0);
-            _items.Add(item);
-        }
-    }
-
-    /// <summary>
-    /// Removes a contained item entry from this container.
-    /// </summary>
-    /// <param name="itemId">Contained item serial identifier.</param>
-    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
-    public bool RemoveItem(Serial itemId)
-    {
-        var removed = false;
-
-        for (var i = _items.Count - 1; i >= 0; i--)
-        {
-            if (_items[i].Id != itemId)
-            {
-                continue;
-            }
-
-            _items.RemoveAt(i);
-            removed = true;
-        }
-
-        if (ContainedItemIds.Remove(itemId))
-        {
-            removed = true;
-        }
-
-        _containedItemReferences.Remove(itemId);
-
-        return removed;
-    }
-
-    public override string ToString()
-        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
+    public void ClearCustomProperties()
+        => _customProperties.Clear();
 
     public override int GetHashCode()
     {
@@ -224,46 +171,29 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
-    /// Updates the container-local position for an item contained in this container.
+    /// Hydrates runtime contained-item references and in-memory child list from resolved entities.
     /// </summary>
-    /// <param name="item">Contained item to update.</param>
-    /// <param name="position">New container-local position.</param>
-    /// <returns><c>true</c> when the item is contained and updated; otherwise <c>false</c>.</returns>
-    public bool UpdateItemLocation(UOItemEntity item, Point2D position)
+    /// <param name="containedItems">Resolved contained items for this container.</param>
+    public void HydrateContainedItemsRuntime(IEnumerable<UOItemEntity> containedItems)
     {
-        ArgumentNullException.ThrowIfNull(item);
+        ArgumentNullException.ThrowIfNull(containedItems);
 
-        for (var i = 0; i < _items.Count; i++)
+        _items.Clear();
+        _containedItemReferences.Clear();
+        ContainedItemIds.Clear();
+
+        foreach (var item in containedItems)
         {
-            if (_items[i].Id != item.Id)
+            if (item.ParentContainerId != Id)
             {
                 continue;
             }
 
-            item.ParentContainerId = Id;
-            item.ContainerPosition = position;
-            item.Location = new(position.X, position.Y, 0);
-            item.EquippedMobileId = Serial.Zero;
-            item.EquippedLayer = null;
+            ContainedItemIds.Add(item.Id);
             _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
-            _items[i] = item;
-
-            return true;
+            item.Location = new(item.ContainerPosition.X, item.ContainerPosition.Y, 0);
+            _items.Add(item);
         }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Sets or replaces a typed custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="property">Property value.</param>
-    public void SetCustomProperty(string key, ItemCustomProperty property)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        ArgumentNullException.ThrowIfNull(property);
-        _customProperties[key] = property;
     }
 
     /// <summary>
@@ -279,26 +209,33 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
-    /// Clears all custom properties.
+    /// Removes a contained item entry from this container.
     /// </summary>
-    public void ClearCustomProperties()
-        => _customProperties.Clear();
-
-    /// <summary>
-    /// Sets an integer custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Integer value.</param>
-    public void SetCustomInteger(string key, long value)
+    /// <param name="itemId">Contained item serial identifier.</param>
+    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
+    public bool RemoveItem(Serial itemId)
     {
-        SetCustomProperty(
-            key,
-            new()
+        var removed = false;
+
+        for (var i = _items.Count - 1; i >= 0; i--)
+        {
+            if (_items[i].Id != itemId)
             {
-                Type = ItemCustomPropertyType.Integer,
-                IntegerValue = value
+                continue;
             }
-        );
+
+            _items.RemoveAt(i);
+            removed = true;
+        }
+
+        if (ContainedItemIds.Remove(itemId))
+        {
+            removed = true;
+        }
+
+        _containedItemReferences.Remove(itemId);
+
+        return removed;
     }
 
     /// <summary>
@@ -307,8 +244,7 @@ public class UOItemEntity : IItemEntity
     /// <param name="key">Property key.</param>
     /// <param name="value">Boolean value.</param>
     public void SetCustomBoolean(string key, bool value)
-    {
-        SetCustomProperty(
+        => SetCustomProperty(
             key,
             new()
             {
@@ -316,7 +252,6 @@ public class UOItemEntity : IItemEntity
                 BooleanValue = value
             }
         );
-    }
 
     /// <summary>
     /// Sets a double custom property.
@@ -324,8 +259,7 @@ public class UOItemEntity : IItemEntity
     /// <param name="key">Property key.</param>
     /// <param name="value">Double value.</param>
     public void SetCustomDouble(string key, double value)
-    {
-        SetCustomProperty(
+        => SetCustomProperty(
             key,
             new()
             {
@@ -333,6 +267,32 @@ public class UOItemEntity : IItemEntity
                 DoubleValue = value
             }
         );
+
+    /// <summary>
+    /// Sets an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value.</param>
+    public void SetCustomInteger(string key, long value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Integer,
+                IntegerValue = value
+            }
+        );
+
+    /// <summary>
+    /// Sets or replaces a typed custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="property">Property value.</param>
+    public void SetCustomProperty(string key, ItemCustomProperty property)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        ArgumentNullException.ThrowIfNull(property);
+        _customProperties[key] = property;
     }
 
     /// <summary>
@@ -341,8 +301,7 @@ public class UOItemEntity : IItemEntity
     /// <param name="key">Property key.</param>
     /// <param name="value">String value.</param>
     public void SetCustomString(string key, string? value)
-    {
-        SetCustomProperty(
+        => SetCustomProperty(
             key,
             new()
             {
@@ -350,27 +309,9 @@ public class UOItemEntity : IItemEntity
                 StringValue = value
             }
         );
-    }
 
-    /// <summary>
-    /// Tries to get an integer custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Integer value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomInteger(string key, out long value)
-    {
-        value = 0;
-
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
-        {
-            return false;
-        }
-
-        value = property.IntegerValue;
-
-        return true;
-    }
+    public override string ToString()
+        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
 
     /// <summary>
     /// Tries to get a boolean custom property.
@@ -413,6 +354,26 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
+    /// Tries to get an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomInteger(string key, out long value)
+    {
+        value = 0;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
+        {
+            return false;
+        }
+
+        value = property.IntegerValue;
+
+        return true;
+    }
+
+    /// <summary>
     /// Tries to get a string custom property.
     /// </summary>
     /// <param name="key">Property key.</param>
@@ -430,5 +391,36 @@ public class UOItemEntity : IItemEntity
         value = property.StringValue;
 
         return true;
+    }
+
+    /// <summary>
+    /// Updates the container-local position for an item contained in this container.
+    /// </summary>
+    /// <param name="item">Contained item to update.</param>
+    /// <param name="position">New container-local position.</param>
+    /// <returns><c>true</c> when the item is contained and updated; otherwise <c>false</c>.</returns>
+    public bool UpdateItemLocation(UOItemEntity item, Point2D position)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        for (var i = 0; i < _items.Count; i++)
+        {
+            if (_items[i].Id != item.Id)
+            {
+                continue;
+            }
+
+            item.ParentContainerId = Id;
+            item.ContainerPosition = position;
+            item.Location = new(position.X, position.Y, 0);
+            item.EquippedMobileId = Serial.Zero;
+            item.EquippedLayer = null;
+            _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
+            _items[i] = item;
+
+            return true;
+        }
+
+        return false;
     }
 }

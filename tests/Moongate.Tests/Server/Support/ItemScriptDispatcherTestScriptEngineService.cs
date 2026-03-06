@@ -11,11 +11,6 @@ public sealed class ItemScriptDispatcherTestScriptEngineService : IScriptEngineS
 
     public List<(string FunctionName, object[] Args)> Calls { get; } = [];
 
-#pragma warning disable CS0067
-    public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
-    public event EventHandler<ScriptErrorInfo>? OnScriptError;
-#pragma warning restore CS0067
-
     public void AddCallback(string name, Action<object[]> callback) { }
 
     public void AddConstant(string name, object value) { }
@@ -80,4 +75,9 @@ public sealed class ItemScriptDispatcherTestScriptEngineService : IScriptEngineS
 
     public bool UnregisterGlobal(string name)
         => true;
+
+#pragma warning disable CS0067
+    public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
+    public event EventHandler<ScriptErrorInfo>? OnScriptError;
+#pragma warning restore CS0067
 }

@@ -45,6 +45,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         var now = DateTime.UtcNow;
         var resolvedName = template.Name;
+
         if (string.IsNullOrWhiteSpace(resolvedName))
         {
             resolvedName = _nameService.GenerateName(template);
@@ -160,6 +161,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             {
                 case ItemTemplateParamType.String:
                     mobile.SetCustomString(normalizedKey, param.Value);
+
                     break;
                 case ItemTemplateParamType.Serial:
                     if (!Serial.TryParse(param.Value, null, out var serial))
@@ -170,6 +172,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
                     }
 
                     mobile.SetCustomInteger(normalizedKey, serial.Value);
+
                     break;
                 case ItemTemplateParamType.Hue:
                     try

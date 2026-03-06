@@ -65,7 +65,7 @@ internal sealed class UoCompressionStreamDecoder
         for (var bitIndex = 0; bitIndex < totalBits; bitIndex++)
         {
             var byteIndex = bitIndex / 8;
-            var bitInByte = 7 - (bitIndex % 8);
+            var bitInByte = 7 - bitIndex % 8;
             var bit = (input[byteIndex] >> bitInByte) & 1;
             var key = (position << 1) | bit;
 
@@ -121,13 +121,13 @@ internal sealed class UoCompressionStreamDecoder
 
                 if (bit == 0)
                 {
-                    tree[key] = new Node { IsLeaf = true, Value = byteValue };
+                    tree[key] = new() { IsLeaf = true, Value = byteValue };
                 }
                 else
                 {
                     if (!tree.TryGetValue(key, out var currentNode) || currentNode.IsLeaf)
                     {
-                        tree[key] = new Node { IsLeaf = false, NextPosition = nextPosition++ };
+                        tree[key] = new() { IsLeaf = false, NextPosition = nextPosition++ };
                     }
 
                     position = tree[key].NextPosition;
@@ -135,7 +135,7 @@ internal sealed class UoCompressionStreamDecoder
             }
         }
 
-        tree[0x200] = new Node { IsLeaf = true, Value = 256 };
+        tree[0x200] = new() { IsLeaf = true, Value = 256 };
 
         return tree;
     }

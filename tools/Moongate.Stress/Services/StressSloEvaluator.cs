@@ -35,7 +35,7 @@ public sealed class StressSloEvaluator
             failed.Add($"Movement ACK p95 {snapshot.AckLatencyP95Ms:F2}ms > {MaximumP95AckMs:F0}ms");
         }
 
-        return new StressEvaluationResult
+        return new()
         {
             Metrics = snapshot,
             FailedConditions = failed

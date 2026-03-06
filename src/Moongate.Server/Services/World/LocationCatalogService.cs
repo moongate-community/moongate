@@ -11,19 +11,19 @@ public class LocationCatalogService : ILocationCatalogService
     private readonly object _sync = new();
     private List<WorldLocationEntry> _locations = [];
 
-    public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
-    {
-        lock (_sync)
-        {
-            _locations = [..locations];
-        }
-    }
-
     public IReadOnlyList<WorldLocationEntry> GetAllLocations()
     {
         lock (_sync)
         {
             return [.._locations];
+        }
+    }
+
+    public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
+    {
+        lock (_sync)
+        {
+            _locations = [..locations];
         }
     }
 }

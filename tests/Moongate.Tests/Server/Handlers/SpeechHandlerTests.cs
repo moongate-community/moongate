@@ -85,6 +85,51 @@ public class SpeechHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenOpenChatWindowPacketReceived_ShouldPublishOpenChatWindowRequestedEvent()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBusService = new NetworkServiceTestGameEventBusService();
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
+        var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
+        var handler = new SpeechHandler(
+            queue,
+            new SpeechService(
+                new MockCommandSystemService(),
+                queue,
+                gameNetworkSessionService,
+                gameEventBusService,
+                spatialWorldService,
+                new DispatchEventsService(spatialWorldService, queue, gameNetworkSessionService)
+            )
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = new OpenChatWindowPacket();
+        var payload = new byte[64];
+        payload[0] = 0xB5;
+        payload[1] = 0x41;
+        payload[2] = 0x00;
+        Assert.That(packet.TryParse(payload), Is.True);
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+        var gameEvent = gameEventBusService.Events.OfType<OpenChatWindowRequestedEvent>().Single();
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<ChatCommandPacket>());
+                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(gameEvent.Payload.Length, Is.EqualTo(63));
+                Assert.That(gameEvent.Payload[0], Is.EqualTo(0x41));
+                Assert.That(gameEvent.Payload[1], Is.EqualTo(0x00));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_WhenSpeechStartsWithDot_ShouldDispatchCommandWithSession()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -135,51 +180,6 @@ public class SpeechHandlerTests
                 Assert.That(commandSystemService.LastCommandWithArgs, Is.EqualTo("help"));
                 Assert.That(commandSystemService.LastSource, Is.EqualTo(CommandSourceType.InGame));
                 Assert.That(commandSystemService.LastSession, Is.SameAs(session));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenOpenChatWindowPacketReceived_ShouldPublishOpenChatWindowRequestedEvent()
-    {
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var gameEventBusService = new NetworkServiceTestGameEventBusService();
-        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
-        var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
-        var handler = new SpeechHandler(
-            queue,
-            new SpeechService(
-                new MockCommandSystemService(),
-                queue,
-                gameNetworkSessionService,
-                gameEventBusService,
-                spatialWorldService,
-                new DispatchEventsService(spatialWorldService, queue, gameNetworkSessionService)
-            )
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-        var packet = new OpenChatWindowPacket();
-        var payload = new byte[64];
-        payload[0] = 0xB5;
-        payload[1] = 0x41;
-        payload[2] = 0x00;
-        Assert.That(packet.TryParse(payload), Is.True);
-
-        var handled = await handler.HandlePacketAsync(session, packet);
-        var gameEvent = gameEventBusService.Events.OfType<OpenChatWindowRequestedEvent>().Single();
-        var dequeued = queue.TryDequeue(out var outbound);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(dequeued, Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<ChatCommandPacket>());
-                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(gameEvent.Payload.Length, Is.EqualTo(63));
-                Assert.That(gameEvent.Payload[0], Is.EqualTo(0x41));
-                Assert.That(gameEvent.Payload[1], Is.EqualTo(0x00));
             }
         );
     }

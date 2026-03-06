@@ -62,6 +62,31 @@ public class MegaClilocPacketTests
     }
 
     [Test]
+    public void ObjectPropertyList_Replace_ShouldUpdateExistingCliloc()
+    {
+        using var packet = new ObjectPropertyList((Serial)0x40000010);
+        packet.Add(CommonClilocIds.ObjectName, "OldName");
+        packet.Add(1_000_001u, "Second");
+
+        var replaced = packet.Replace(CommonClilocIds.ObjectName, "NewName");
+        var bytes = Write(packet);
+        var incoming = new MegaClilocPacket();
+
+        var ok = incoming.TryParse(bytes);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(replaced, Is.True);
+                Assert.That(ok, Is.True);
+                Assert.That(incoming.Properties.Count, Is.EqualTo(2));
+                Assert.That(incoming.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
+                Assert.That(incoming.Properties[0].Text, Is.EqualTo("NewName"));
+            }
+        );
+    }
+
+    [Test]
     public void ObjectPropertyList_Write_ShouldBeParsableByMegaClilocPacket()
     {
         using var outgoing = new ObjectPropertyList((Serial)0x40000011);
@@ -100,31 +125,6 @@ public class MegaClilocPacketTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(1, 2)), Is.EqualTo((ushort)bytes.Length));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(3, 2)), Is.EqualTo((ushort)0x0001));
                 Assert.That(BinaryPrimitives.ReadUInt32BigEndian(bytes.AsSpan(bytes.Length - 4, 4)), Is.EqualTo(0u));
-            }
-        );
-    }
-
-    [Test]
-    public void ObjectPropertyList_Replace_ShouldUpdateExistingCliloc()
-    {
-        using var packet = new ObjectPropertyList((Serial)0x40000010);
-        packet.Add(CommonClilocIds.ObjectName, "OldName");
-        packet.Add(1_000_001u, "Second");
-
-        var replaced = packet.Replace(CommonClilocIds.ObjectName, "NewName");
-        var bytes = Write(packet);
-        var incoming = new MegaClilocPacket();
-
-        var ok = incoming.TryParse(bytes);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(replaced, Is.True);
-                Assert.That(ok, Is.True);
-                Assert.That(incoming.Properties.Count, Is.EqualTo(2));
-                Assert.That(incoming.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
-                Assert.That(incoming.Properties[0].Text, Is.EqualTo("NewName"));
             }
         );
     }

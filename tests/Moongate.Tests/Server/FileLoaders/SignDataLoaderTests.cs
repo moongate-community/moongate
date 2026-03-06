@@ -4,12 +4,30 @@ using Moongate.Server.Data.World;
 using Moongate.Server.FileLoaders;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Server.FileLoaders;
 
 public class SignDataLoaderTests
 {
+    private sealed class TestSignDataService : ISignDataService
+    {
+        public List<SignEntry> Entries { get; } = [];
+
+        public IReadOnlyList<SignEntry> GetAllEntries()
+            => Entries;
+
+        public IReadOnlyList<SignEntry> GetEntriesByMap(int mapId)
+            => [..Entries.Where(entry => entry.MapId == mapId)];
+
+        public void SetEntries(IReadOnlyList<SignEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
+    }
+
     [Test]
     public async Task LoadAsync_ShouldDuplicateMapCodeZeroToFeluccaAndTrammel()
     {
@@ -35,7 +53,7 @@ public class SignDataLoaderTests
                 Assert.That(service.Entries.Select(static entry => entry.MapId), Is.EquivalentTo(new[] { 0, 1 }));
                 Assert.That(service.Entries.All(static entry => entry.SourceMapCode == 0), Is.True);
                 Assert.That(service.Entries.All(static entry => entry.ItemId == (Serial)3032u), Is.True);
-                Assert.That(service.Entries[0].Location, Is.EqualTo(new Moongate.UO.Data.Geometry.Point3D(373, 904, -1)));
+                Assert.That(service.Entries[0].Location, Is.EqualTo(new Point3D(373, 904, -1)));
                 Assert.That(service.Entries[0].Text, Is.EqualTo("#1016093"));
             }
         );
@@ -69,22 +87,5 @@ public class SignDataLoaderTests
                 Assert.That(service.Entries[0].Text, Is.EqualTo("The Shakin' Bakery"));
             }
         );
-    }
-
-    private sealed class TestSignDataService : ISignDataService
-    {
-        public List<SignEntry> Entries { get; } = [];
-
-        public void SetEntries(IReadOnlyList<SignEntry> entries)
-        {
-            Entries.Clear();
-            Entries.AddRange(entries);
-        }
-
-        public IReadOnlyList<SignEntry> GetAllEntries()
-            => Entries;
-
-        public IReadOnlyList<SignEntry> GetEntriesByMap(int mapId)
-            => [..Entries.Where(entry => entry.MapId == mapId)];
     }
 }

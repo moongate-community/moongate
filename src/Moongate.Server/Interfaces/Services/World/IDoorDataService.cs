@@ -8,16 +8,16 @@ namespace Moongate.Server.Interfaces.Services.World;
 public interface IDoorDataService
 {
     /// <summary>
-    /// Replaces all door component entries and rebuilds runtime toggle maps.
-    /// </summary>
-    /// <param name="entries">Door component entries.</param>
-    void SetEntries(IReadOnlyList<DoorComponentEntry> entries);
-
-    /// <summary>
     /// Returns all loaded door component entries.
     /// </summary>
     /// <returns>All entries.</returns>
     IReadOnlyList<DoorComponentEntry> GetAllEntries();
+
+    /// <summary>
+    /// Replaces all door component entries and rebuilds runtime toggle maps.
+    /// </summary>
+    /// <param name="entries">Door component entries.</param>
+    void SetEntries(IReadOnlyList<DoorComponentEntry> entries);
 
     /// <summary>
     /// Tries to resolve door toggle metadata for a concrete item id.

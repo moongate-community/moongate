@@ -11,14 +11,12 @@ namespace Moongate.UO.Data.Json.Converters;
 public sealed class GoldValueSpecJsonConverter : JsonConverter<GoldValueSpec>
 {
     public override GoldValueSpec Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        return reader.TokenType switch
+        => reader.TokenType switch
         {
             JsonTokenType.Number => GoldValueSpec.FromValue(reader.GetInt32()),
             JsonTokenType.String => Parse(reader.GetString()),
             _                    => throw new JsonException($"Unsupported token type for GoldValueSpec: {reader.TokenType}")
         };
-    }
 
     public override void Write(Utf8JsonWriter writer, GoldValueSpec value, JsonSerializerOptions options)
         => writer.WriteStringValue(value.ToString());

@@ -15,45 +15,12 @@ public sealed class StressMetricsCollector
     private long _movesSent;
     private long _movesAcked;
 
-    public void MarkLoginSucceeded()
-    {
-        _ = Interlocked.Increment(ref _loginSucceeded);
-    }
-
-    public void MarkLoginFailed()
-    {
-        _ = Interlocked.Increment(ref _loginFailed);
-    }
-
-    public void MarkUnexpectedDisconnect()
-    {
-        _ = Interlocked.Increment(ref _unexpectedDisconnects);
-    }
-
-    public void MarkMoveSent(int clientIndex, byte sequence)
-    {
-        _ = Interlocked.Increment(ref _movesSent);
-        _moveStartTicks[(clientIndex, sequence)] = Stopwatch.GetTimestamp();
-    }
-
-    public void MarkMoveAcked(int clientIndex, byte sequence)
-    {
-        if (_moveStartTicks.TryRemove((clientIndex, sequence), out var startedTick))
-        {
-            var elapsedTicks = Stopwatch.GetTimestamp() - startedTick;
-            var elapsedMs = elapsedTicks * 1000.0 / Stopwatch.Frequency;
-            _ackLatenciesMs.Enqueue(elapsedMs);
-        }
-
-        _ = Interlocked.Increment(ref _movesAcked);
-    }
-
     public StressMetricsSnapshot CreateSnapshot(int totalClients, TimeSpan duration)
     {
         var latencies = _ackLatenciesMs.ToArray();
         Array.Sort(latencies);
 
-        return new StressMetricsSnapshot
+        return new()
         {
             TotalClients = totalClients,
             LoginSucceeded = Volatile.Read(ref _loginSucceeded),
@@ -67,6 +34,33 @@ public sealed class StressMetricsCollector
             DurationSeconds = (int)Math.Round(duration.TotalSeconds)
         };
     }
+
+    public void MarkLoginFailed()
+        => _ = Interlocked.Increment(ref _loginFailed);
+
+    public void MarkLoginSucceeded()
+        => _ = Interlocked.Increment(ref _loginSucceeded);
+
+    public void MarkMoveAcked(int clientIndex, byte sequence)
+    {
+        if (_moveStartTicks.TryRemove((clientIndex, sequence), out var startedTick))
+        {
+            var elapsedTicks = Stopwatch.GetTimestamp() - startedTick;
+            var elapsedMs = elapsedTicks * 1000.0 / Stopwatch.Frequency;
+            _ackLatenciesMs.Enqueue(elapsedMs);
+        }
+
+        _ = Interlocked.Increment(ref _movesAcked);
+    }
+
+    public void MarkMoveSent(int clientIndex, byte sequence)
+    {
+        _ = Interlocked.Increment(ref _movesSent);
+        _moveStartTicks[(clientIndex, sequence)] = Stopwatch.GetTimestamp();
+    }
+
+    public void MarkUnexpectedDisconnect()
+        => _ = Interlocked.Increment(ref _unexpectedDisconnects);
 
     private static double Percentile(IReadOnlyList<double> sortedValues, double percentile)
     {

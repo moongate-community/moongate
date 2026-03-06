@@ -10,14 +10,12 @@ namespace Moongate.UO.Data.Json.Converters;
 public sealed class HueSpecJsonConverter : JsonConverter<HueSpec>
 {
     public override HueSpec Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        return reader.TokenType switch
+        => reader.TokenType switch
         {
             JsonTokenType.Number => HueSpec.FromValue(reader.GetInt32()),
             JsonTokenType.String => Parse(reader.GetString()),
             _                    => throw new JsonException($"Unsupported token type for HueSpec: {reader.TokenType}")
         };
-    }
 
     public override void Write(Utf8JsonWriter writer, HueSpec value, JsonSerializerOptions options)
         => writer.WriteStringValue(value.ToString());

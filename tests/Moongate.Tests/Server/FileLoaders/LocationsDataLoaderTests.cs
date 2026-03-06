@@ -9,6 +9,65 @@ namespace Moongate.Tests.Server.FileLoaders;
 
 public class LocationsDataLoaderTests
 {
+    private sealed class TestLocationCatalogService : ILocationCatalogService
+    {
+        public List<WorldLocationEntry> Locations { get; } = [];
+
+        public IReadOnlyList<WorldLocationEntry> GetAllLocations()
+            => Locations;
+
+        public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
+        {
+            Locations.Clear();
+            Locations.AddRange(locations);
+        }
+    }
+
+    [Test]
+    public async Task LoadAsync_ShouldFlattenNestedCategoriesIntoCategoryPath()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var locationsPath = Path.Combine(directories[DirectoryType.Data], "locations");
+        Directory.CreateDirectory(locationsPath);
+
+        const string trammelJson = """
+                                   {
+                                     "name": "Trammel",
+                                     "categories": [
+                                       {
+                                         "name": "Dungeons",
+                                         "categories": [
+                                           {
+                                             "name": "Despise",
+                                             "locations": [
+                                               { "name": "Entrance", "location": [1298, 1080, 0] }
+                                             ]
+                                           }
+                                         ]
+                                       }
+                                     ]
+                                   }
+                                   """;
+
+        await File.WriteAllTextAsync(Path.Combine(locationsPath, "trammel.json"), trammelJson);
+
+        var locationCatalogService = new TestLocationCatalogService();
+        var loader = new LocationsDataLoader(directories, locationCatalogService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(locationCatalogService.Locations, Has.Count.EqualTo(1));
+                Assert.That(locationCatalogService.Locations[0].MapId, Is.EqualTo(1));
+                Assert.That(locationCatalogService.Locations[0].CategoryPath, Is.EqualTo("Dungeons / Despise"));
+                Assert.That(locationCatalogService.Locations[0].Name, Is.EqualTo("Entrance"));
+            }
+        );
+    }
+
     [Test]
     public async Task LoadAsync_ShouldImportLocationsWithMapIdDerivedFromFileName()
     {
@@ -83,64 +142,5 @@ public class LocationsDataLoaderTests
         await loader.LoadAsync();
 
         Assert.That(locationCatalogService.Locations, Is.Empty);
-    }
-
-    [Test]
-    public async Task LoadAsync_ShouldFlattenNestedCategoriesIntoCategoryPath()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var locationsPath = Path.Combine(directories[DirectoryType.Data], "locations");
-        Directory.CreateDirectory(locationsPath);
-
-        const string trammelJson = """
-                                   {
-                                     "name": "Trammel",
-                                     "categories": [
-                                       {
-                                         "name": "Dungeons",
-                                         "categories": [
-                                           {
-                                             "name": "Despise",
-                                             "locations": [
-                                               { "name": "Entrance", "location": [1298, 1080, 0] }
-                                             ]
-                                           }
-                                         ]
-                                       }
-                                     ]
-                                   }
-                                   """;
-
-        await File.WriteAllTextAsync(Path.Combine(locationsPath, "trammel.json"), trammelJson);
-
-        var locationCatalogService = new TestLocationCatalogService();
-        var loader = new LocationsDataLoader(directories, locationCatalogService);
-
-        await loader.LoadAsync();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(locationCatalogService.Locations, Has.Count.EqualTo(1));
-                Assert.That(locationCatalogService.Locations[0].MapId, Is.EqualTo(1));
-                Assert.That(locationCatalogService.Locations[0].CategoryPath, Is.EqualTo("Dungeons / Despise"));
-                Assert.That(locationCatalogService.Locations[0].Name, Is.EqualTo("Entrance"));
-            }
-        );
-    }
-
-    private sealed class TestLocationCatalogService : ILocationCatalogService
-    {
-        public List<WorldLocationEntry> Locations { get; } = [];
-
-        public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
-        {
-            Locations.Clear();
-            Locations.AddRange(locations);
-        }
-
-        public IReadOnlyList<WorldLocationEntry> GetAllLocations()
-            => Locations;
     }
 }

@@ -1,8 +1,8 @@
+using System.Collections.Concurrent;
 using MessagePack;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Serilog;
-using System.Collections.Concurrent;
 
 namespace Moongate.Persistence.Services.Persistence;
 
@@ -51,6 +51,17 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
             }
 
             throw;
+        }
+    }
+
+    public void Dispose()
+    {
+        _snapshotStream.Dispose();
+        _ioLock.Dispose();
+
+        if (_fileLockEnabled)
+        {
+            LockedPaths.TryRemove(_snapshotFilePath, out _);
         }
     }
 
@@ -142,16 +153,5 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
         }
 
         _logger.Verbose("Snapshot save completed Path={SnapshotPath}", _snapshotFilePath);
-    }
-
-    public void Dispose()
-    {
-        _snapshotStream.Dispose();
-        _ioLock.Dispose();
-
-        if (_fileLockEnabled)
-        {
-            LockedPaths.TryRemove(_snapshotFilePath, out _);
-        }
     }
 }

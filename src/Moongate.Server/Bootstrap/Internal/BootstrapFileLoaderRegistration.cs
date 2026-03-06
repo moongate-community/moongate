@@ -9,9 +9,7 @@ namespace Moongate.Server.Bootstrap.Internal;
 internal static partial class BootstrapFileLoaderRegistration
 {
     public static void Register(IFileLoaderService fileLoaderService)
-    {
-        RegisterGenerated(fileLoaderService);
-    }
+        => RegisterGenerated(fileLoaderService);
 
     static partial void RegisterGenerated(IFileLoaderService fileLoaderService);
 }

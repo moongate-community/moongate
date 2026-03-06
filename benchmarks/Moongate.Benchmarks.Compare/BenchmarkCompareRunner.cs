@@ -152,9 +152,7 @@ public sealed class BenchmarkCompareRunner
     }
 
     private void Compress256Bytes()
-    {
-        BenchmarkSink.Value = NetworkCompression.Compress(_payload256, _compressedBuffer);
-    }
+        => BenchmarkSink.Value = NetworkCompression.Compress(_payload256, _compressedBuffer);
 
     private void CompressAndDecompress1024Bytes()
     {

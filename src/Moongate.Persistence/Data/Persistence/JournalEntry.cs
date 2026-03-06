@@ -6,8 +6,8 @@ namespace Moongate.Persistence.Data.Persistence;
 /// <summary>
 /// Journal record appended for every persisted mutation.
 /// </summary>
-[MessagePackObject(keyAsPropertyName: true)]
-public sealed partial class JournalEntry
+[MessagePackObject(true)]
+public sealed class JournalEntry
 {
     public long SequenceId { get; set; }
 

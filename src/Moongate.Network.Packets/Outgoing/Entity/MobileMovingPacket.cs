@@ -37,7 +37,7 @@ public sealed class MobileMovingPacket : BaseGameNetworkPacket
         writer.Write((short)Mobile.Location.Y);
         writer.Write((sbyte)Mobile.Location.Z);
         writer.Write((byte)Mobile.Direction);
-        writer.Write((short)Mobile.SkinHue);
+        writer.Write(Mobile.SkinHue);
         writer.Write(Mobile.GetPacketFlags(StygianAbyss));
         writer.Write((byte)Mobile.Notoriety);
     }

@@ -75,6 +75,8 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         ShowRegisteredPackets();
     }
 
+    private readonly record struct PendingClientData(MoongateTCPClient Client, ReadOnlyMemory<byte> Data);
+
     public void AddPacketListener(byte OpCode, IPacketListener packetListener)
         => _packetDispatchService.AddPacketListener(OpCode, packetListener);
 
@@ -86,19 +88,17 @@ public class NetworkService : INetworkService, INetworkMetricsSource
     }
 
     public static IEnumerable<IPEndPoint> GetListeningAddresses(IPEndPoint ipep)
-    {
-        return NetworkInterface.GetAllNetworkInterfaces()
-                               .SelectMany(
-                                   adapter =>
-                                       adapter.GetIPProperties()
-                                              .UnicastAddresses
-                                              .Where(
-                                                  uip => ipep.AddressFamily ==
-                                                         uip.Address.AddressFamily
-                                              )
-                                              .Select(uip => new IPEndPoint(uip.Address, ipep.Port))
-                               );
-    }
+        => NetworkInterface.GetAllNetworkInterfaces()
+                           .SelectMany(
+                               adapter =>
+                                   adapter.GetIPProperties()
+                                          .UnicastAddresses
+                                          .Where(
+                                              uip => ipep.AddressFamily ==
+                                                     uip.Address.AddressFamily
+                                          )
+                                          .Select(uip => new IPEndPoint(uip.Address, ipep.Port))
+                           );
 
     public NetworkMetricsSnapshot GetMetricsSnapshot()
     {
@@ -157,6 +157,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         _gameNetworkSessionService.Clear();
 
         while (_parsedPackets.TryDequeue(out _)) { }
+
         while (_pendingClientDataQueue.TryDequeue(out _)) { }
     }
 
@@ -331,91 +332,6 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         ProcessClientData(e.Client, e.Data);
     }
 
-    private void ProcessClientData(MoongateTCPClient client, ReadOnlyMemory<byte> data)
-    {
-        if (data.IsEmpty)
-        {
-            return;
-        }
-
-        var session = _gameNetworkSessionService.GetOrCreate(client);
-        var metrics = _parserMetrics.GetOrAdd(session.SessionId, _ => new());
-        metrics.AddReceivedBytes(data.Length);
-        session.NetworkSession.WithPendingBytesLock(
-            pendingBytes =>
-            {
-                pendingBytes.AddRange(data.ToArray());
-
-                if (pendingBytes.Count > MaxPendingBufferBytes)
-                {
-                    metrics.IncrementPendingBufferOverflows();
-                    DisconnectSession(
-                        session,
-                        $"Pending buffer exceeded limit ({pendingBytes.Count} > {MaxPendingBufferBytes}).",
-                        metrics,
-                        pendingBytes
-                    );
-
-                    return;
-                }
-
-                ParseAvailablePackets(pendingBytes, session, metrics);
-            }
-        );
-    }
-
-    private void RunNetworkIngressLoop()
-    {
-        while (!_networkIngressLoopStopRequested)
-        {
-            if (!_pendingClientDataQueue.TryDequeue(out var pending))
-            {
-                _pendingClientDataSignal.WaitOne(5);
-                continue;
-            }
-
-            try
-            {
-                ProcessClientData(pending.Client, pending.Data);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Unhandled exception in network ingress loop.");
-            }
-        }
-    }
-
-    private void StartNetworkIngressLoop()
-    {
-        if (_networkIngressLoopThread is not null)
-        {
-            return;
-        }
-
-        _networkIngressLoopStopRequested = false;
-        _networkIngressLoopThread = new(RunNetworkIngressLoop)
-        {
-            IsBackground = true,
-            Name = "Moongate-NetworkIngressLoop"
-        };
-        _networkIngressLoopThread.Start();
-    }
-
-    private void StopNetworkIngressLoop()
-    {
-        if (_networkIngressLoopThread is null)
-        {
-            return;
-        }
-
-        _networkIngressLoopStopRequested = true;
-        _pendingClientDataSignal.Set();
-        _networkIngressLoopThread.Join(TimeSpan.FromSeconds(2));
-        _networkIngressLoopThread = null;
-    }
-
-    private readonly record struct PendingClientData(MoongateTCPClient Client, ReadOnlyMemory<byte> Data);
-
     private void OnClientDisconnected(object? sender, MoongateTCPClientEventArgs e)
     {
         string? remoteEndPoint = null;
@@ -431,7 +347,11 @@ public class NetworkService : INetworkService, INetworkMetricsSource
             remoteEndPoint = e.Client.RemoteEndPoint?.ToString();
         }
 
-        _logger.Information("Client disconnected: {SessionId}, RemoteEndPoint={RemoteEndPoint}", e.Client.SessionId, remoteEndPoint);
+        _logger.Information(
+            "Client disconnected: {SessionId}, RemoteEndPoint={RemoteEndPoint}",
+            e.Client.SessionId,
+            remoteEndPoint
+        );
 
         _gameNetworkSessionService.Remove(e.Client.SessionId);
 
@@ -460,9 +380,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
     }
 
     private void OnClientException(object? sender, MoongateTCPExceptionEventArgs e)
-    {
-        _logger.Error(e.Exception, "Client exception: {Message}", e.Exception.Message);
-    }
+        => _logger.Error(e.Exception, "Client exception: {Message}", e.Exception.Message);
 
     private void ParseAvailablePackets(
         List<byte> pendingBytes,
@@ -628,6 +546,39 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         }
     }
 
+    private void ProcessClientData(MoongateTCPClient client, ReadOnlyMemory<byte> data)
+    {
+        if (data.IsEmpty)
+        {
+            return;
+        }
+
+        var session = _gameNetworkSessionService.GetOrCreate(client);
+        var metrics = _parserMetrics.GetOrAdd(session.SessionId, _ => new());
+        metrics.AddReceivedBytes(data.Length);
+        session.NetworkSession.WithPendingBytesLock(
+            pendingBytes =>
+            {
+                pendingBytes.AddRange(data.ToArray());
+
+                if (pendingBytes.Count > MaxPendingBufferBytes)
+                {
+                    metrics.IncrementPendingBufferOverflows();
+                    DisconnectSession(
+                        session,
+                        $"Pending buffer exceeded limit ({pendingBytes.Count} > {MaxPendingBufferBytes}).",
+                        metrics,
+                        pendingBytes
+                    );
+
+                    return;
+                }
+
+                ParseAvailablePackets(pendingBytes, session, metrics);
+            }
+        );
+    }
+
     private async Task PublishEventSafeAsync<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
     {
         try
@@ -705,6 +656,28 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
     }
 
+    private void RunNetworkIngressLoop()
+    {
+        while (!_networkIngressLoopStopRequested)
+        {
+            if (!_pendingClientDataQueue.TryDequeue(out var pending))
+            {
+                _pendingClientDataSignal.WaitOne(5);
+
+                continue;
+            }
+
+            try
+            {
+                ProcessClientData(pending.Client, pending.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unhandled exception in network ingress loop.");
+            }
+        }
+    }
+
     private void ShowRegisteredPackets()
     {
         _logger.Information("Registered packets: {Count}", _packetRegistry.RegisteredPackets.Count);
@@ -720,6 +693,35 @@ public class NetworkService : INetworkService, INetworkMetricsSource
                 packet.Description
             );
         }
+    }
+
+    private void StartNetworkIngressLoop()
+    {
+        if (_networkIngressLoopThread is not null)
+        {
+            return;
+        }
+
+        _networkIngressLoopStopRequested = false;
+        _networkIngressLoopThread = new(RunNetworkIngressLoop)
+        {
+            IsBackground = true,
+            Name = "Moongate-NetworkIngressLoop"
+        };
+        _networkIngressLoopThread.Start();
+    }
+
+    private void StopNetworkIngressLoop()
+    {
+        if (_networkIngressLoopThread is null)
+        {
+            return;
+        }
+
+        _networkIngressLoopStopRequested = true;
+        _pendingClientDataSignal.Set();
+        _networkIngressLoopThread.Join(TimeSpan.FromSeconds(2));
+        _networkIngressLoopThread = null;
     }
 
     private bool TryProcessInitialHandshake(List<byte> pendingBytes, GameSession session)

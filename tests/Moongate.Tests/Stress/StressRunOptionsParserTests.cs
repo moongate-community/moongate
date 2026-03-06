@@ -22,6 +22,20 @@ public sealed class StressRunOptionsParserTests
     }
 
     [Test]
+    public void TryParse_WithInvalidClients_ShouldFail()
+    {
+        var ok = StressRunOptionsParser.TryParse(["--clients", "0"], out _, out var error);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.False);
+                Assert.That(error, Does.Contain("clients"));
+            }
+        );
+    }
+
+    [Test]
     public void TryParse_WithOverrides_ShouldSucceed()
     {
         var ok = StressRunOptionsParser.TryParse(
@@ -39,20 +53,6 @@ public sealed class StressRunOptionsParserTests
                 Assert.That(options.Clients, Is.EqualTo(250));
                 Assert.That(options.Duration, Is.EqualTo(TimeSpan.FromSeconds(120)));
                 Assert.That(options.Verbose, Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public void TryParse_WithInvalidClients_ShouldFail()
-    {
-        var ok = StressRunOptionsParser.TryParse(["--clients", "0"], out _, out var error);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ok, Is.False);
-                Assert.That(error, Does.Contain("clients"));
             }
         );
     }

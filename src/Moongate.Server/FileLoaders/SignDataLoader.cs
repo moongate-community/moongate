@@ -20,11 +20,11 @@ public class SignDataLoader : IFileLoader
         new Dictionary<int, int[]>
         {
             [0] = [0, 1], // britannia => felucca + trammel
-            [1] = [0], // felucca
-            [2] = [1], // trammel
-            [3] = [2], // ilshenar
-            [4] = [3], // malas
-            [5] = [4] // tokuno
+            [1] = [0],    // felucca
+            [2] = [1],    // trammel
+            [3] = [2],    // ilshenar
+            [4] = [3],    // malas
+            [5] = [4]     // tokuno
         };
 
     private readonly DirectoriesConfig _directoriesConfig;
@@ -52,6 +52,7 @@ public class SignDataLoader : IFileLoader
         var entries = new List<SignEntry>();
 
         using var reader = new StreamReader(signsFile);
+
         while (await reader.ReadLineAsync() is { } line)
         {
             var trimmed = line.Trim();
@@ -89,6 +90,18 @@ public class SignDataLoader : IFileLoader
         _logger.Information("Loaded {Count} sign entries from {Path}.", entries.Count, signsFile);
     }
 
+    private static int ParseInt(string value)
+    {
+        var trimmed = value.Trim();
+
+        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return Convert.ToInt32(trimmed[2..], 16);
+        }
+
+        return int.TryParse(trimmed, out var parsed) ? parsed : 0;
+    }
+
     private static bool TryParseLine(
         string line,
         out (int SourceMapCode, Serial ItemId, Point3D Location, string Text) parsed
@@ -114,17 +127,5 @@ public class SignDataLoader : IFileLoader
         parsed = (sourceMapCode, itemId, new(x, y, z), text);
 
         return true;
-    }
-
-    private static int ParseInt(string value)
-    {
-        var trimmed = value.Trim();
-
-        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-        {
-            return Convert.ToInt32(trimmed[2..], 16);
-        }
-
-        return int.TryParse(trimmed, out var parsed) ? parsed : 0;
     }
 }

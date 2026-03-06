@@ -6,6 +6,30 @@ namespace Moongate.Tests.Server.Modules;
 
 public sealed class DoorModuleTests
 {
+    private sealed class DoorModuleTestDoorService : IDoorService
+    {
+        public bool IsDoorResult { get; set; }
+        public bool ToggleResult { get; set; }
+        public Serial LastIsDoorSerial { get; private set; }
+        public Serial LastToggleSerial { get; private set; }
+
+        public Task<bool> IsDoorAsync(Serial itemId, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            LastIsDoorSerial = itemId;
+
+            return Task.FromResult(IsDoorResult);
+        }
+
+        public Task<bool> ToggleAsync(Serial itemId, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            LastToggleSerial = itemId;
+
+            return Task.FromResult(ToggleResult);
+        }
+    }
+
     [Test]
     public void IsDoor_WhenSerialIsZero_ShouldReturnFalse()
     {
@@ -66,29 +90,5 @@ public sealed class DoorModuleTests
                 Assert.That(service.LastToggleSerial, Is.EqualTo((Serial)0x40000001u));
             }
         );
-    }
-
-    private sealed class DoorModuleTestDoorService : IDoorService
-    {
-        public bool IsDoorResult { get; set; }
-        public bool ToggleResult { get; set; }
-        public Serial LastIsDoorSerial { get; private set; }
-        public Serial LastToggleSerial { get; private set; }
-
-        public Task<bool> IsDoorAsync(Serial itemId, CancellationToken cancellationToken = default)
-        {
-            _ = cancellationToken;
-            LastIsDoorSerial = itemId;
-
-            return Task.FromResult(IsDoorResult);
-        }
-
-        public Task<bool> ToggleAsync(Serial itemId, CancellationToken cancellationToken = default)
-        {
-            _ = cancellationToken;
-            LastToggleSerial = itemId;
-
-            return Task.FromResult(ToggleResult);
-        }
     }
 }

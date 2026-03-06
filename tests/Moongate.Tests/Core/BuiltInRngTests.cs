@@ -7,7 +7,5 @@ public class BuiltInRngTests
 {
     [Test]
     public void Generator_ShouldImplementIEnhancedRandom()
-    {
-        Assert.That(BuiltInRng.Generator, Is.AssignableTo<IEnhancedRandom>());
-    }
+        => Assert.That(BuiltInRng.Generator, Is.AssignableTo<IEnhancedRandom>());
 }

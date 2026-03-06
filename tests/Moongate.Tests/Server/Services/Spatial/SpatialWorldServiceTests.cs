@@ -6,6 +6,7 @@ using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Items;
+using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -41,13 +42,15 @@ public sealed class SpatialWorldServiceTests
         public Task<Serial> CreateItemAsync(UOItemEntity item)
             => throw new NotSupportedException();
 
-        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-            => throw new NotSupportedException();
-
         public Task<bool> DeleteItemAsync(Serial itemId)
             => throw new NotSupportedException();
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
             => throw new NotSupportedException();
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -64,13 +67,6 @@ public sealed class SpatialWorldServiceTests
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
             => Task.FromResult(ItemsById.TryGetValue(itemId, out var item) ? item : null);
 
-        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
-        {
-            var found = ItemsById.TryGetValue(itemId, out var item);
-
-            return Task.FromResult((found, item));
-        }
-
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => throw new NotSupportedException();
 
@@ -79,6 +75,16 @@ public sealed class SpatialWorldServiceTests
 
         public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => throw new NotSupportedException();
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => throw new NotSupportedException();
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+        {
+            var found = ItemsById.TryGetValue(itemId, out var item);
+
+            return Task.FromResult((found, item));
+        }
 
         public Task UpsertItemAsync(UOItemEntity item)
             => throw new NotSupportedException();
@@ -97,10 +103,10 @@ public sealed class SpatialWorldServiceTests
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
             => throw new NotSupportedException();
 
-        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
             => throw new NotSupportedException();
 
-        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
             => throw new NotSupportedException();
 
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
@@ -152,130 +158,6 @@ public sealed class SpatialWorldServiceTests
             CancellationToken cancellationToken = default
         )
             => throw new NotSupportedException();
-    }
-
-    [Test]
-    public void GetMusic_ShouldResolveMusicByRegionCoordinate()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-
-        service.AddRegion(
-            new()
-            {
-                Music = MusicName.Cove,
-                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
-            }
-        );
-
-        var found = service.GetMusic(0, new(150, 150, 0));
-        var otherMap = service.GetMusic(1, new(150, 150, 0));
-        var fallback = service.GetMusic(0, new(5000, 5000, 0));
-
-        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
-        Assert.That(otherMap, Is.EqualTo(0));
-        Assert.That(fallback, Is.EqualTo(0));
-    }
-
-    [Test]
-    public void GetMusic_WithOverlappingRegions_ShouldPreferHigherPriorityRegion()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-
-        service.AddRegion(
-            new()
-            {
-                Map = "Felucca",
-                Name = "Low",
-                Priority = 10,
-                Music = MusicName.Britain1,
-                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
-            }
-        );
-        service.AddRegion(
-            new()
-            {
-                Map = "Felucca",
-                Name = "High",
-                Priority = 100,
-                Music = MusicName.Cove,
-                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
-            }
-        );
-
-        var found = service.GetMusic(0, new(150, 150, 0));
-
-        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
-    }
-
-    [Test]
-    public void GetMusic_WithSamePriority_ShouldPreferChildRegionByParentHierarchy()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-
-        service.AddRegion(
-            new JsonTownRegion
-            {
-                Map = "Felucca",
-                Name = "TownParent",
-                Priority = 50,
-                Music = MusicName.Britain1,
-                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
-            }
-        );
-        service.AddRegion(
-            new JsonTownRegion
-            {
-                Map = "Felucca",
-                Name = "TownChild",
-                Priority = 50,
-                Parent = new JsonRegionParent
-                {
-                    Map = "Felucca",
-                    Name = "TownParent"
-                },
-                Music = MusicName.Cove,
-                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
-            }
-        );
-
-        var found = service.GetMusic(0, new(150, 150, 0));
-
-        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
-    }
-
-    [Test]
-    public void GetRegionById_ShouldReturnMatchingRegion()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-        var region = new JsonTownRegion
-        {
-            Id = 99,
-            Map = "Felucca",
-            Name = "ById",
-            Area = [new() { X1 = 100, Y1 = 100, X2 = 101, Y2 = 101 }]
-        };
-
-        service.AddRegion(region);
-
-        var found = service.GetRegionById(99);
-        var missing = service.GetRegionById(100);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(found, Is.Not.Null);
-                Assert.That(found!.Name, Is.EqualTo("ById"));
-                Assert.That(missing, Is.Null);
-            }
-        );
     }
 
     [Test]
@@ -333,32 +215,6 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public void GetPlayersInRange_ShouldReturnMappedSessionsAndApplyExclusion()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-        var firstPlayer = CreateMobile(0x300, 500, 500, 0, true);
-        var secondPlayer = CreateMobile(0x301, 502, 503, 0, true);
-
-        service.AddOrUpdateMobile(firstPlayer);
-        service.AddOrUpdateMobile(secondPlayer);
-
-        var firstSession = CreateSession(firstPlayer);
-        var secondSession = CreateSession(secondPlayer);
-        sessions.Add(firstSession);
-        sessions.Add(secondSession);
-
-        var included = service.GetPlayersInRange(new(500, 500, 0), 8, 0);
-        var excluded = service.GetPlayersInRange(new(500, 500, 0), 8, 0, firstSession);
-
-        Assert.That(included.Select(static session => session.SessionId), Contains.Item(firstSession.SessionId));
-        Assert.That(included.Select(static session => session.SessionId), Contains.Item(secondSession.SessionId));
-        Assert.That(excluded.Select(static session => session.SessionId), Does.Not.Contain(firstSession.SessionId));
-        Assert.That(excluded.Select(static session => session.SessionId), Contains.Item(secondSession.SessionId));
-    }
-
-    [Test]
     public async Task BroadcastToPlayersAsync_ShouldEnqueuePacketForPlayersInRange()
     {
         var sessions = new FakeGameNetworkSessionService();
@@ -388,7 +244,8 @@ public sealed class SpatialWorldServiceTests
                              firstSession.SessionId
                          );
 
-        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
+        var packets = new List<OutgoingGamePacket>();
+
         while (queue.TryDequeue(out var queued))
         {
             packets.Add(queued);
@@ -415,7 +272,7 @@ public sealed class SpatialWorldServiceTests
         var service = CreateService(
             sessions,
             eventBus,
-            spatialConfig: new MoongateSpatialConfig { SectorEnterSyncRadius = 1 },
+            spatialConfig: new() { SectorEnterSyncRadius = 1 },
             queue: queue
         );
         var nearPlayer = CreateMobile(0x333, 500, 500, 0, true);
@@ -435,7 +292,8 @@ public sealed class SpatialWorldServiceTests
                              new(500, 500, 0)
                          );
 
-        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
+        var packets = new List<OutgoingGamePacket>();
+
         while (queue.TryDequeue(out var queued))
         {
             packets.Add(queued);
@@ -499,7 +357,8 @@ public sealed class SpatialWorldServiceTests
                              1
                          );
 
-        var packets = new List<Moongate.Server.Data.Packets.OutgoingGamePacket>();
+        var packets = new List<OutgoingGamePacket>();
+
         while (queue.TryDequeue(out var queued))
         {
             packets.Add(queued);
@@ -517,30 +376,36 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public void GetPlayersInSector_ShouldReturnOnlyPlayersInTargetSector()
+    public void GetActiveSectors_ShouldReturnLoadedSectorsAcrossMaps()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var service = CreateService(sessions, eventBus);
 
-        var playerInSector = CreateMobile(0x310, 140, 150, 0, true);
-        var npcInSector = CreateMobile(0x311, 141, 151, 0, false);
-        var playerOtherSector = CreateMobile(0x312, 800, 800, 0, true);
+        service.AddOrUpdateMobile(CreateMobile(0x320, 16, 16, 0, true));
+        service.AddOrUpdateItem(
+            new()
+            {
+                Id = (Serial)0x900u,
+                ItemId = 0x0EED,
+                Location = new(32, 32, 0)
+            },
+            1
+        );
 
-        service.AddOrUpdateMobile(playerInSector);
-        service.AddOrUpdateMobile(npcInSector);
-        service.AddOrUpdateMobile(playerOtherSector);
-
-        var sectorX = playerInSector.Location.X >> MapSectorConsts.SectorShift;
-        var sectorY = playerInSector.Location.Y >> MapSectorConsts.SectorShift;
-        var players = service.GetPlayersInSector(0, sectorX, sectorY);
+        var sectors = service.GetActiveSectors();
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(players.Select(static player => player.Id), Contains.Item(playerInSector.Id));
-                Assert.That(players.Select(static player => player.Id), Does.Not.Contain(npcInSector.Id));
-                Assert.That(players.Select(static player => player.Id), Does.Not.Contain(playerOtherSector.Id));
+                Assert.That(
+                    sectors.Any(static sector => sector.MapIndex == 0 && sector.SectorX == 1 && sector.SectorY == 1),
+                    Is.True
+                );
+                Assert.That(
+                    sectors.Any(static sector => sector.MapIndex == 1 && sector.SectorX == 2 && sector.SectorY == 2),
+                    Is.True
+                );
             }
         );
     }
@@ -631,32 +496,194 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public void GetActiveSectors_ShouldReturnLoadedSectorsAcrossMaps()
+    public void GetMusic_ShouldResolveMusicByRegionCoordinate()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var service = CreateService(sessions, eventBus);
 
-        service.AddOrUpdateMobile(CreateMobile(0x320, 16, 16, 0, true));
-        service.AddOrUpdateItem(
-            new UOItemEntity
+        service.AddRegion(
+            new()
             {
-                Id = (Serial)0x900u,
-                ItemId = 0x0EED,
-                Location = new(32, 32, 0)
-            },
-            1
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
         );
 
-        var sectors = service.GetActiveSectors();
+        var found = service.GetMusic(0, new(150, 150, 0));
+        var otherMap = service.GetMusic(1, new(150, 150, 0));
+        var fallback = service.GetMusic(0, new(5000, 5000, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+        Assert.That(otherMap, Is.EqualTo(0));
+        Assert.That(fallback, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void GetMusic_WithOverlappingRegions_ShouldPreferHigherPriorityRegion()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddRegion(
+            new()
+            {
+                Map = "Felucca",
+                Name = "Low",
+                Priority = 10,
+                Music = MusicName.Britain1,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+        service.AddRegion(
+            new()
+            {
+                Map = "Felucca",
+                Name = "High",
+                Priority = 100,
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
+            }
+        );
+
+        var found = service.GetMusic(0, new(150, 150, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+    }
+
+    [Test]
+    public void GetMusic_WithSamePriority_ShouldPreferChildRegionByParentHierarchy()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        service.AddRegion(
+            new JsonTownRegion
+            {
+                Map = "Felucca",
+                Name = "TownParent",
+                Priority = 50,
+                Music = MusicName.Britain1,
+                Area = [new() { X1 = 100, Y1 = 100, X2 = 200, Y2 = 200 }]
+            }
+        );
+        service.AddRegion(
+            new JsonTownRegion
+            {
+                Map = "Felucca",
+                Name = "TownChild",
+                Priority = 50,
+                Parent = new()
+                {
+                    Map = "Felucca",
+                    Name = "TownParent"
+                },
+                Music = MusicName.Cove,
+                Area = [new() { X1 = 120, Y1 = 120, X2 = 180, Y2 = 180 }]
+            }
+        );
+
+        var found = service.GetMusic(0, new(150, 150, 0));
+
+        Assert.That(found, Is.EqualTo((int)MusicName.Cove));
+    }
+
+    [Test]
+    public void GetPlayersInRange_ShouldReturnMappedSessionsAndApplyExclusion()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var firstPlayer = CreateMobile(0x300, 500, 500, 0, true);
+        var secondPlayer = CreateMobile(0x301, 502, 503, 0, true);
+
+        service.AddOrUpdateMobile(firstPlayer);
+        service.AddOrUpdateMobile(secondPlayer);
+
+        var firstSession = CreateSession(firstPlayer);
+        var secondSession = CreateSession(secondPlayer);
+        sessions.Add(firstSession);
+        sessions.Add(secondSession);
+
+        var included = service.GetPlayersInRange(new(500, 500, 0), 8, 0);
+        var excluded = service.GetPlayersInRange(new(500, 500, 0), 8, 0, firstSession);
+
+        Assert.That(included.Select(static session => session.SessionId), Contains.Item(firstSession.SessionId));
+        Assert.That(included.Select(static session => session.SessionId), Contains.Item(secondSession.SessionId));
+        Assert.That(excluded.Select(static session => session.SessionId), Does.Not.Contain(firstSession.SessionId));
+        Assert.That(excluded.Select(static session => session.SessionId), Contains.Item(secondSession.SessionId));
+    }
+
+    [Test]
+    public void GetPlayersInSector_ShouldReturnOnlyPlayersInTargetSector()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        var playerInSector = CreateMobile(0x310, 140, 150, 0, true);
+        var npcInSector = CreateMobile(0x311, 141, 151, 0, false);
+        var playerOtherSector = CreateMobile(0x312, 800, 800, 0, true);
+
+        service.AddOrUpdateMobile(playerInSector);
+        service.AddOrUpdateMobile(npcInSector);
+        service.AddOrUpdateMobile(playerOtherSector);
+
+        var sectorX = playerInSector.Location.X >> MapSectorConsts.SectorShift;
+        var sectorY = playerInSector.Location.Y >> MapSectorConsts.SectorShift;
+        var players = service.GetPlayersInSector(0, sectorX, sectorY);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(sectors.Any(static sector => sector.MapIndex == 0 && sector.SectorX == 1 && sector.SectorY == 1), Is.True);
-                Assert.That(sectors.Any(static sector => sector.MapIndex == 1 && sector.SectorX == 2 && sector.SectorY == 2), Is.True);
+                Assert.That(players.Select(static player => player.Id), Contains.Item(playerInSector.Id));
+                Assert.That(players.Select(static player => player.Id), Does.Not.Contain(npcInSector.Id));
+                Assert.That(players.Select(static player => player.Id), Does.Not.Contain(playerOtherSector.Id));
             }
         );
+    }
+
+    [Test]
+    public void GetRegionById_ShouldReturnMatchingRegion()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var region = new JsonTownRegion
+        {
+            Id = 99,
+            Map = "Felucca",
+            Name = "ById",
+            Area = [new() { X1 = 100, Y1 = 100, X2 = 101, Y2 = 101 }]
+        };
+
+        service.AddRegion(region);
+
+        var found = service.GetRegionById(99);
+        var missing = service.GetRegionById(100);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.Not.Null);
+                Assert.That(found!.Name, Is.EqualTo("ById"));
+                Assert.That(missing, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public void GetSectorByLocation_ShouldCreateEmptySector_WhenMapNotIndexed()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+
+        var sector = service.GetSectorByLocation(99, new(10, 10, 0));
+
+        Assert.That(sector, Is.Not.Null);
     }
 
     [Test]
@@ -696,11 +723,21 @@ public sealed class SpatialWorldServiceTests
         var location = new Point3D(130, 130, 0); // sector (8,8)
 
         var npc = CreateMobile(0x750, 9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0, false);
-        var persistedPlayer = CreateMobile(0x751, 9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0, true);
+        var persistedPlayer = CreateMobile(
+            0x751,
+            9 << MapSectorConsts.SectorShift,
+            8 << MapSectorConsts.SectorShift,
+            0,
+            true
+        );
         mobileService.MobilesBySector[(0, 9, 8)] = [npc, persistedPlayer];
 
         var sector = service.GetSectorByLocation(0, location);
-        var nearby = service.GetNearbyMobiles(new(9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0), 2, 0);
+        var nearby = service.GetNearbyMobiles(
+            new(9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0),
+            2,
+            0
+        );
 
         Assert.Multiple(
             () =>
@@ -732,18 +769,6 @@ public sealed class SpatialWorldServiceTests
 
         Assert.That(sector, Is.Not.Null);
         Assert.That(sector!.GetPlayers().Select(static player => player.Id), Contains.Item(mobile.Id));
-    }
-
-    [Test]
-    public void GetSectorByLocation_ShouldCreateEmptySector_WhenMapNotIndexed()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-
-        var sector = service.GetSectorByLocation(99, new(10, 10, 0));
-
-        Assert.That(sector, Is.Not.Null);
     }
 
     [Test]
@@ -795,33 +820,23 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public async Task HandleAsync_PlayerCharacterLoggedIn_ShouldWarmupSectorsAroundPlayer()
+    public async Task HandleAsync_NpcPositionChanged_ShouldResolveMobileFromSpatialIndex()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new SpatialWorldServiceTestItemService();
-        var mobileService = new SpatialWorldServiceTestMobileService();
-        var characterService = new SpatialWorldServiceTestCharacterService();
         var service = CreateService(
             sessions,
             eventBus,
-            itemService,
-            characterService,
-            new() { SectorWarmupRadius = 1, LazySectorItemLoadEnabled = true, LazySectorEntityLoadRadius = 3 },
-            mobileService: mobileService
+            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false }
         );
-        var character = CreateMobile(0x701, 130, 130, 0, true);
-        var sectorX = character.Location.X >> MapSectorConsts.SectorShift;
-        var sectorY = character.Location.Y >> MapSectorConsts.SectorShift;
-        characterService.Add(character);
+        var npc = CreateMobile(0x900, 100, 100, 0, false);
+        service.AddOrUpdateMobile(npc);
+        eventBus.Events.Clear();
 
-        await service.HandleAsync(new PlayerCharacterLoggedInEvent(1, (Serial)0x01u, character.Id));
+        await service.HandleAsync(new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0)));
 
-        Assert.That(itemService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
-        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX, sectorY)));
-        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX - 1, sectorY - 1)));
-        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX + 1, sectorY + 1)));
-        Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
+        var nearby = service.GetNearbyMobiles(new(200, 200, 0), 5, 0);
+        Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
     }
 
     [Test]
@@ -877,58 +892,33 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public void OnMobileMoved_ShouldUpdateRangeQueriesAcrossSectors()
+    public async Task HandleAsync_PlayerCharacterLoggedIn_ShouldWarmupSectorsAroundPlayer()
     {
         var sessions = new FakeGameNetworkSessionService();
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-        var mobile = CreateMobile(0x101, 10, 10, 0, false);
-
-        service.AddOrUpdateMobile(mobile);
-        service.OnMobileMoved(mobile, new(10, 10, 0), new(200, 200, 0));
-
-        var oldLocationResult = service.GetNearbyMobiles(new(10, 10, 0), 4, 0);
-        var newLocationResult = service.GetNearbyMobiles(new(200, 200, 0), 4, 0);
-
-        Assert.That(oldLocationResult, Is.Empty);
-        Assert.That(newLocationResult.Select(static item => item.Id), Contains.Item(mobile.Id));
-    }
-
-    [Test]
-    public void OnMobileMoved_WhenSectorChanges_ShouldPublishMobileSectorChangedEvent()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-        var mobile = CreateMobile(0x501, 1, 1, 0, false);
-
-        service.AddOrUpdateMobile(mobile);
-        service.OnMobileMoved(mobile, new(1, 1, 0), new(200, 200, 0));
-
-        var gameEvent = eventBus.Events.OfType<MobileSectorChangedEvent>().Single();
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(gameEvent.MobileId, Is.EqualTo(mobile.Id));
-                Assert.That(gameEvent.OldSectorX, Is.Not.EqualTo(gameEvent.NewSectorX));
-                Assert.That(gameEvent.OldSectorY, Is.Not.EqualTo(gameEvent.NewSectorY));
-            }
+        var itemService = new SpatialWorldServiceTestItemService();
+        var mobileService = new SpatialWorldServiceTestMobileService();
+        var characterService = new SpatialWorldServiceTestCharacterService();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            itemService,
+            characterService,
+            new() { SectorWarmupRadius = 1, LazySectorItemLoadEnabled = true, LazySectorEntityLoadRadius = 3 },
+            mobileService: mobileService
         );
-    }
+        var character = CreateMobile(0x701, 130, 130, 0, true);
+        var sectorX = character.Location.X >> MapSectorConsts.SectorShift;
+        var sectorY = character.Location.Y >> MapSectorConsts.SectorShift;
+        characterService.Add(character);
 
-    [Test]
-    public void OnMobileMoved_WhenSectorDoesNotChange_ShouldNotPublishMobileSectorChangedEvent()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(sessions, eventBus);
-        var mobile = CreateMobile(0x502, 20, 20, 0, false);
+        await service.HandleAsync(new PlayerCharacterLoggedInEvent(1, (Serial)0x01u, character.Id));
 
-        service.AddOrUpdateMobile(mobile);
-        eventBus.Events.Clear();
-        service.OnMobileMoved(mobile, new(20, 20, 0), new(25, 25, 0));
-
-        Assert.That(eventBus.Events.OfType<MobileSectorChangedEvent>(), Is.Empty);
+        Assert.That(itemService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX, sectorY)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX - 1, sectorY - 1)));
+        Assert.That(itemService.LoadRequests, Has.Member((0, sectorX + 1, sectorY + 1)));
+        Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.EqualTo(81));
     }
 
     [Test]
@@ -996,6 +986,61 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public void OnMobileMoved_ShouldUpdateRangeQueriesAcrossSectors()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var mobile = CreateMobile(0x101, 10, 10, 0, false);
+
+        service.AddOrUpdateMobile(mobile);
+        service.OnMobileMoved(mobile, new(10, 10, 0), new(200, 200, 0));
+
+        var oldLocationResult = service.GetNearbyMobiles(new(10, 10, 0), 4, 0);
+        var newLocationResult = service.GetNearbyMobiles(new(200, 200, 0), 4, 0);
+
+        Assert.That(oldLocationResult, Is.Empty);
+        Assert.That(newLocationResult.Select(static item => item.Id), Contains.Item(mobile.Id));
+    }
+
+    [Test]
+    public void OnMobileMoved_WhenSectorChanges_ShouldPublishMobileSectorChangedEvent()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var mobile = CreateMobile(0x501, 1, 1, 0, false);
+
+        service.AddOrUpdateMobile(mobile);
+        service.OnMobileMoved(mobile, new(1, 1, 0), new(200, 200, 0));
+
+        var gameEvent = eventBus.Events.OfType<MobileSectorChangedEvent>().Single();
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gameEvent.MobileId, Is.EqualTo(mobile.Id));
+                Assert.That(gameEvent.OldSectorX, Is.Not.EqualTo(gameEvent.NewSectorX));
+                Assert.That(gameEvent.OldSectorY, Is.Not.EqualTo(gameEvent.NewSectorY));
+            }
+        );
+    }
+
+    [Test]
+    public void OnMobileMoved_WhenSectorDoesNotChange_ShouldNotPublishMobileSectorChangedEvent()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(sessions, eventBus);
+        var mobile = CreateMobile(0x502, 20, 20, 0, false);
+
+        service.AddOrUpdateMobile(mobile);
+        eventBus.Events.Clear();
+        service.OnMobileMoved(mobile, new(20, 20, 0), new(25, 25, 0));
+
+        Assert.That(eventBus.Events.OfType<MobileSectorChangedEvent>(), Is.Empty);
+    }
+
+    [Test]
     public void RemoveEntity_ShouldRemoveMobileAndItemFromQueries()
     {
         var sessions = new FakeGameNetworkSessionService();
@@ -1015,28 +1060,6 @@ public sealed class SpatialWorldServiceTests
 
         Assert.That(mobileResult.Select(static value => value.Id), Does.Not.Contain(mobile.Id));
         Assert.That(itemResult.Select(static value => value.Id), Does.Not.Contain(item.Id));
-    }
-
-    [Test]
-    public async Task HandleAsync_NpcPositionChanged_ShouldResolveMobileFromSpatialIndex()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(
-            sessions,
-            eventBus,
-            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false }
-        );
-        var npc = CreateMobile(0x900, 100, 100, 0, false);
-        service.AddOrUpdateMobile(npc);
-        eventBus.Events.Clear();
-
-        await service.HandleAsync(
-            new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0))
-        );
-
-        var nearby = service.GetNearbyMobiles(new(200, 200, 0), 5, 0);
-        Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
     }
 
     [TearDown]

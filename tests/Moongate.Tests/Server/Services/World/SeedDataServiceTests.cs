@@ -1,39 +1,88 @@
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.World;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Server.Services.World;
 
 public class SeedDataServiceTests
 {
-    [Test]
-    public void GetSignsByMap_ShouldDelegateToSignDataService()
+    private sealed class InMemorySignDataService : ISignDataService
     {
-        IReadOnlyList<SignEntry> signs =
-        [
-            new SignEntry(0, 0, (Serial)0x00000BD8u, new(1, 2, 3), "#1016093"),
-            new SignEntry(1, 0, (Serial)0x00000BD9u, new(4, 5, 6), "Baker")
-        ];
-        var signDataService = new InMemorySignDataService(signs);
-        var decorationDataService = new InMemoryDecorationDataService([]);
-        var doorDataService = new InMemoryDoorDataService([]);
-        var locationCatalogService = new InMemoryLocationCatalogService([]);
-        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+        private readonly IReadOnlyList<SignEntry> _entries;
 
-        var map0 = service.GetSignsByMap(0);
-        var map1 = service.GetSignsByMap(1);
+        public InMemorySignDataService(IReadOnlyList<SignEntry> entries)
+        {
+            _entries = entries;
+        }
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(map0, Has.Count.EqualTo(1));
-                Assert.That(map0[0].Text, Is.EqualTo("#1016093"));
-                Assert.That(map1, Has.Count.EqualTo(1));
-                Assert.That(map1[0].Text, Is.EqualTo("Baker"));
-            }
-        );
+        public IReadOnlyList<SignEntry> GetAllEntries()
+            => _entries;
+
+        public IReadOnlyList<SignEntry> GetEntriesByMap(int mapId)
+            => [.. _entries.Where(entry => entry.MapId == mapId)];
+
+        public void SetEntries(IReadOnlyList<SignEntry> entries)
+            => throw new NotSupportedException();
+    }
+
+    private sealed class InMemoryDecorationDataService : IDecorationDataService
+    {
+        private readonly IReadOnlyList<DecorationEntry> _entries;
+
+        public InMemoryDecorationDataService(IReadOnlyList<DecorationEntry> entries)
+        {
+            _entries = entries;
+        }
+
+        public IReadOnlyList<DecorationEntry> GetAllEntries()
+            => _entries;
+
+        public IReadOnlyList<DecorationEntry> GetEntriesByMap(int mapId)
+            => [.. _entries.Where(entry => entry.MapId == mapId)];
+
+        public void SetEntries(IReadOnlyList<DecorationEntry> entries)
+            => throw new NotSupportedException();
+    }
+
+    private sealed class InMemoryLocationCatalogService : ILocationCatalogService
+    {
+        private readonly IReadOnlyList<WorldLocationEntry> _entries;
+
+        public InMemoryLocationCatalogService(IReadOnlyList<WorldLocationEntry> entries)
+        {
+            _entries = entries;
+        }
+
+        public IReadOnlyList<WorldLocationEntry> GetAllLocations()
+            => _entries;
+
+        public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
+            => throw new NotSupportedException();
+    }
+
+    private sealed class InMemoryDoorDataService : IDoorDataService
+    {
+        private readonly IReadOnlyList<DoorComponentEntry> _entries;
+
+        public InMemoryDoorDataService(IReadOnlyList<DoorComponentEntry> entries)
+        {
+            _entries = entries;
+        }
+
+        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
+            => _entries;
+
+        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
+            => throw new NotSupportedException();
+
+        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
+        {
+            _ = itemId;
+            definition = default;
+
+            return false;
+        }
     }
 
     [Test]
@@ -41,14 +90,14 @@ public class SeedDataServiceTests
     {
         IReadOnlyList<DecorationEntry> decorations =
         [
-            new DecorationEntry(
+            new(
                 1,
                 "Trammel",
                 "sample.cfg",
                 "Static",
                 (Serial)0x00000450u,
                 new Dictionary<string, string>(),
-                new Point3D(10, 20, 0),
+                new(10, 20, 0),
                 string.Empty
             )
         ];
@@ -71,11 +120,48 @@ public class SeedDataServiceTests
     }
 
     [Test]
+    public void GetDoors_ShouldDelegateToDoorDataService()
+    {
+        IReadOnlyList<DoorComponentEntry> doors =
+        [
+            new(
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                0,
+                "Test Door"
+            )
+        ];
+        var signDataService = new InMemorySignDataService([]);
+        var decorationDataService = new InMemoryDecorationDataService([]);
+        var doorDataService = new InMemoryDoorDataService(doors);
+        var locationCatalogService = new InMemoryLocationCatalogService([]);
+        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+
+        var result = service.GetDoors();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Has.Count.EqualTo(1));
+                Assert.That(result[0].Category, Is.EqualTo(0));
+                Assert.That(result[0].Comment, Is.EqualTo("Test Door"));
+            }
+        );
+    }
+
+    [Test]
     public void GetLocations_ShouldDelegateToLocationCatalogService()
     {
         IReadOnlyList<WorldLocationEntry> locations =
         [
-            new WorldLocationEntry(0, "Felucca", "Towns", "Britain", new(1496, 1628, 20))
+            new(0, "Felucca", "Towns", "Britain", new(1496, 1628, 20))
         ];
         var signDataService = new InMemorySignDataService([]);
         var decorationDataService = new InMemoryDecorationDataService([]);
@@ -96,113 +182,30 @@ public class SeedDataServiceTests
     }
 
     [Test]
-    public void GetDoors_ShouldDelegateToDoorDataService()
+    public void GetSignsByMap_ShouldDelegateToSignDataService()
     {
-        IReadOnlyList<DoorComponentEntry> doors =
+        IReadOnlyList<SignEntry> signs =
         [
-            new DoorComponentEntry(0, 1, 2, 3, 4, 5, 6, 7, 8, 0, "Test Door")
+            new(0, 0, (Serial)0x00000BD8u, new(1, 2, 3), "#1016093"),
+            new(1, 0, (Serial)0x00000BD9u, new(4, 5, 6), "Baker")
         ];
-        var signDataService = new InMemorySignDataService([]);
+        var signDataService = new InMemorySignDataService(signs);
         var decorationDataService = new InMemoryDecorationDataService([]);
-        var doorDataService = new InMemoryDoorDataService(doors);
+        var doorDataService = new InMemoryDoorDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService([]);
         var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
 
-        var result = service.GetDoors();
+        var map0 = service.GetSignsByMap(0);
+        var map1 = service.GetSignsByMap(1);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(result, Has.Count.EqualTo(1));
-                Assert.That(result[0].Category, Is.EqualTo(0));
-                Assert.That(result[0].Comment, Is.EqualTo("Test Door"));
+                Assert.That(map0, Has.Count.EqualTo(1));
+                Assert.That(map0[0].Text, Is.EqualTo("#1016093"));
+                Assert.That(map1, Has.Count.EqualTo(1));
+                Assert.That(map1[0].Text, Is.EqualTo("Baker"));
             }
         );
-    }
-
-    private sealed class InMemorySignDataService : ISignDataService
-    {
-        private readonly IReadOnlyList<SignEntry> _entries;
-
-        public InMemorySignDataService(IReadOnlyList<SignEntry> entries)
-        {
-            _entries = entries;
-        }
-
-        public void SetEntries(IReadOnlyList<SignEntry> entries)
-        {
-            throw new NotSupportedException();
-        }
-
-        public IReadOnlyList<SignEntry> GetAllEntries()
-            => _entries;
-
-        public IReadOnlyList<SignEntry> GetEntriesByMap(int mapId)
-            => [.. _entries.Where(entry => entry.MapId == mapId)];
-    }
-
-    private sealed class InMemoryDecorationDataService : IDecorationDataService
-    {
-        private readonly IReadOnlyList<DecorationEntry> _entries;
-
-        public InMemoryDecorationDataService(IReadOnlyList<DecorationEntry> entries)
-        {
-            _entries = entries;
-        }
-
-        public void SetEntries(IReadOnlyList<DecorationEntry> entries)
-        {
-            throw new NotSupportedException();
-        }
-
-        public IReadOnlyList<DecorationEntry> GetAllEntries()
-            => _entries;
-
-        public IReadOnlyList<DecorationEntry> GetEntriesByMap(int mapId)
-            => [.. _entries.Where(entry => entry.MapId == mapId)];
-    }
-
-    private sealed class InMemoryLocationCatalogService : ILocationCatalogService
-    {
-        private readonly IReadOnlyList<WorldLocationEntry> _entries;
-
-        public InMemoryLocationCatalogService(IReadOnlyList<WorldLocationEntry> entries)
-        {
-            _entries = entries;
-        }
-
-        public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
-        {
-            throw new NotSupportedException();
-        }
-
-        public IReadOnlyList<WorldLocationEntry> GetAllLocations()
-            => _entries;
-    }
-
-    private sealed class InMemoryDoorDataService : IDoorDataService
-    {
-        private readonly IReadOnlyList<DoorComponentEntry> _entries;
-
-        public InMemoryDoorDataService(IReadOnlyList<DoorComponentEntry> entries)
-        {
-            _entries = entries;
-        }
-
-        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
-        {
-            throw new NotSupportedException();
-        }
-
-        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
-            => _entries;
-
-        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
-        {
-            _ = itemId;
-            definition = default;
-
-            return false;
-        }
     }
 }

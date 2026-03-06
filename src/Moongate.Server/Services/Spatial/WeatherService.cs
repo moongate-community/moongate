@@ -32,29 +32,6 @@ public class WeatherService : IWeatherService
         _gameNetworkSessionService = gameNetworkSessionService;
     }
 
-    public Task StartAsync()
-    {
-        _timerService.RegisterTimer(
-            "weather_update",
-            TimeSpan.FromMinutes(5),
-            OnWeatherCallBack,
-            TimeSpan.FromMinutes(5),
-            true
-        );
-
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync()
-        => Task.CompletedTask;
-
-    public void SetWeatherTypes(List<JsonWeather> weatherTypes)
-    {
-        _weatherTypes.Clear();
-        _weatherTypes.AddRange(weatherTypes);
-        _logger.Information("Weather types set: {Count} types loaded.", _weatherTypes.Count);
-    }
-
     public WeatherSnapshot GenerateSnapshot(JsonWeather weather, Random? random = null)
     {
         random ??= Random.Shared;
@@ -97,6 +74,29 @@ public class WeatherService : IWeatherService
             effectCount
         );
     }
+
+    public void SetWeatherTypes(List<JsonWeather> weatherTypes)
+    {
+        _weatherTypes.Clear();
+        _weatherTypes.AddRange(weatherTypes);
+        _logger.Information("Weather types set: {Count} types loaded.", _weatherTypes.Count);
+    }
+
+    public Task StartAsync()
+    {
+        _timerService.RegisterTimer(
+            "weather_update",
+            TimeSpan.FromMinutes(5),
+            OnWeatherCallBack,
+            TimeSpan.FromMinutes(5),
+            true
+        );
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+        => Task.CompletedTask;
 
     private void OnWeatherCallBack()
     {

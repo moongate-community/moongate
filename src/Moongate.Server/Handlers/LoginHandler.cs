@@ -16,7 +16,6 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Maps;
-using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Moongate.UO.Data.Version;
@@ -135,7 +134,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
     {
         var packet = new ServerListPacket();
         packet.AddShard(
-            new GameServerEntry
+            new()
             {
                 Index = 0,
                 IpAddress = ipAddress,
@@ -169,6 +168,30 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         Enqueue(
             session,
             CreateServerListPacket(_serverConfig.Game.ShardName, ResolveShardAddress(session))
+        );
+
+        return true;
+    }
+
+    private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
+    {
+        var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
+
+        if (string.IsNullOrWhiteSpace(rawVersion))
+        {
+            _logger.Debug("Received empty ClientVersionPacket from session {SessionId}", session.SessionId);
+
+            return true;
+        }
+
+        var clientVersion = new ClientVersion(rawVersion);
+        session.SetClientVersion(clientVersion);
+
+        _logger.Debug(
+            "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
+            session.SessionId,
+            clientVersion.SourceString,
+            clientVersion.Type
         );
 
         return true;
@@ -211,7 +234,8 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleLoginCharacterPacketAsync(GameSession session, LoginCharacterPacket loginCharacterPacket)
     {
-        var characters = session.AccountCharactersCache ?? await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        var characters = session.AccountCharactersCache ??
+                         await _characterService.GetCharactersForAccountAsync(session.AccountId);
         session.AccountCharactersCache = characters;
 
         var character = characters.FirstOrDefault(c => c.Name == loginCharacterPacket.CharacterName);
@@ -269,30 +293,6 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         {
             return Task.FromException<bool>(exception);
         }
-    }
-
-    private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
-    {
-        var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
-
-        if (string.IsNullOrWhiteSpace(rawVersion))
-        {
-            _logger.Debug("Received empty ClientVersionPacket from session {SessionId}", session.SessionId);
-
-            return true;
-        }
-
-        var clientVersion = new ClientVersion(rawVersion);
-        session.SetClientVersion(clientVersion);
-
-        _logger.Debug(
-            "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
-            session.SessionId,
-            clientVersion.SourceString,
-            clientVersion.Type
-        );
-
-        return true;
     }
 
     private IPAddress ResolveShardAddress(GameSession session)

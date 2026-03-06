@@ -175,6 +175,6 @@ public sealed class ConsoleCommandRegistrationGenerator : IIncrementalGenerator
     {
         var chars = typeName.Select(static c => char.IsLetterOrDigit(c) ? c : '_').ToArray();
 
-        return new string(chars);
+        return new(chars);
     }
 }

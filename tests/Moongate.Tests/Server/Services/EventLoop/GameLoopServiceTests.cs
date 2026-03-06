@@ -129,6 +129,34 @@ public class GameLoopServiceTests
     }
 
     [Test]
+    public async Task StartAsync_ShouldExecutePostedGameLoopCallbacks()
+    {
+        var backgroundJobService = new BackgroundJobService();
+        var executed = 0;
+
+        _service = new(
+            new PacketDispatchService(),
+            new MessageBusService(),
+            backgroundJobService,
+            new OutgoingPacketQueue(),
+            new GameNetworkSessionService(),
+            CreateTimerService(),
+            new GameLoopTestOutboundPacketSender()
+        );
+
+        backgroundJobService.PostToGameLoop(() => Interlocked.Increment(ref executed));
+
+        await _service.StartAsync();
+
+        var callbackExecuted = await WaitUntilAsync(
+                                   () => Volatile.Read(ref executed) == 1,
+                                   TimeSpan.FromSeconds(2)
+                               );
+
+        Assert.That(callbackExecuted, Is.True, "Posted game-loop callback was not executed.");
+    }
+
+    [Test]
     public async Task StartAsync_ShouldFlushOutgoingPacketsFromQueue()
     {
         var packetDispatch = new PacketDispatchService();
@@ -159,6 +187,72 @@ public class GameLoopServiceTests
                 Assert.That(sent, Is.True, "Outgoing queue was not flushed in time.");
                 Assert.That(sender.SentPackets[0].SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(sender.SentPackets[0].Packet.OpCode, Is.EqualTo(0x22));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_ShouldProcessTimerWheelInProcessQueue()
+    {
+        var timerService = new TimerWheelService(
+            new()
+            {
+                TickDuration = TimeSpan.FromMilliseconds(250),
+                WheelSize = 512
+            }
+        );
+        var fired = 0;
+
+        timerService.RegisterTimer("test", TimeSpan.FromMilliseconds(250), () => Interlocked.Increment(ref fired));
+
+        _service = new(
+            new PacketDispatchService(),
+            new MessageBusService(),
+            new BackgroundJobService(),
+            new OutgoingPacketQueue(),
+            new GameNetworkSessionService(),
+            timerService,
+            new GameLoopTestOutboundPacketSender()
+        );
+
+        await _service.StartAsync();
+
+        var timerFired = await WaitUntilAsync(() => Volatile.Read(ref fired) > 0, TimeSpan.FromSeconds(2));
+
+        Assert.That(timerFired, Is.True, "Timer callback was not executed by game loop processing.");
+    }
+
+    [Test]
+    public async Task StartAsync_WhenListenerThrows_ShouldStillInvokeOtherListeners()
+    {
+        var messageBus = new MessageBusService();
+        var packetDispatch = new PacketDispatchService();
+        var successfulListener = new GameLoopRecordingPacketListener();
+        packetDispatch.AddPacketListener(0xAB, new GameLoopThrowingPacketListener());
+        packetDispatch.AddPacketListener(0xAB, successfulListener);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        messageBus.PublishIncomingPacket(new(session, 0xAB, new GameLoopTestPacket(0xAB, 42), 1));
+
+        _service = new(
+            packetDispatch,
+            messageBus,
+            new BackgroundJobService(),
+            new OutgoingPacketQueue(),
+            new GameNetworkSessionService(),
+            CreateTimerService(),
+            new GameLoopTestOutboundPacketSender()
+        );
+
+        await _service.StartAsync();
+        var invoked = await WaitUntilAsync(() => successfulListener.Sequences.Count == 1, TimeSpan.FromSeconds(2));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(invoked, Is.True, "Non-throwing listener was not invoked.");
+                Assert.That(successfulListener.Sequences.Single(), Is.EqualTo(42));
             }
         );
     }
@@ -230,100 +324,6 @@ public class GameLoopServiceTests
         await Task.Delay(250);
 
         Assert.That(sender.SentPackets, Is.Empty, "Outbound packets were sent after service stop.");
-    }
-
-    [Test]
-    public async Task StartAsync_ShouldProcessTimerWheelInProcessQueue()
-    {
-        var timerService = new TimerWheelService(
-            new()
-            {
-                TickDuration = TimeSpan.FromMilliseconds(250),
-                WheelSize = 512
-            }
-        );
-        var fired = 0;
-
-        timerService.RegisterTimer("test", TimeSpan.FromMilliseconds(250), () => Interlocked.Increment(ref fired));
-
-        _service = new(
-            new PacketDispatchService(),
-            new MessageBusService(),
-            new BackgroundJobService(),
-            new OutgoingPacketQueue(),
-            new GameNetworkSessionService(),
-            timerService,
-            new GameLoopTestOutboundPacketSender()
-        );
-
-        await _service.StartAsync();
-
-        var timerFired = await WaitUntilAsync(() => Volatile.Read(ref fired) > 0, TimeSpan.FromSeconds(2));
-
-        Assert.That(timerFired, Is.True, "Timer callback was not executed by game loop processing.");
-    }
-
-    [Test]
-    public async Task StartAsync_ShouldExecutePostedGameLoopCallbacks()
-    {
-        var backgroundJobService = new BackgroundJobService();
-        var executed = 0;
-
-        _service = new(
-            new PacketDispatchService(),
-            new MessageBusService(),
-            backgroundJobService,
-            new OutgoingPacketQueue(),
-            new GameNetworkSessionService(),
-            CreateTimerService(),
-            new GameLoopTestOutboundPacketSender()
-        );
-
-        backgroundJobService.PostToGameLoop(() => Interlocked.Increment(ref executed));
-
-        await _service.StartAsync();
-
-        var callbackExecuted = await WaitUntilAsync(
-                                   () => Volatile.Read(ref executed) == 1,
-                                   TimeSpan.FromSeconds(2)
-                               );
-
-        Assert.That(callbackExecuted, Is.True, "Posted game-loop callback was not executed.");
-    }
-
-    [Test]
-    public async Task StartAsync_WhenListenerThrows_ShouldStillInvokeOtherListeners()
-    {
-        var messageBus = new MessageBusService();
-        var packetDispatch = new PacketDispatchService();
-        var successfulListener = new GameLoopRecordingPacketListener();
-        packetDispatch.AddPacketListener(0xAB, new GameLoopThrowingPacketListener());
-        packetDispatch.AddPacketListener(0xAB, successfulListener);
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-        messageBus.PublishIncomingPacket(new(session, 0xAB, new GameLoopTestPacket(0xAB, 42), 1));
-
-        _service = new(
-            packetDispatch,
-            messageBus,
-            new BackgroundJobService(),
-            new OutgoingPacketQueue(),
-            new GameNetworkSessionService(),
-            CreateTimerService(),
-            new GameLoopTestOutboundPacketSender()
-        );
-
-        await _service.StartAsync();
-        var invoked = await WaitUntilAsync(() => successfulListener.Sequences.Count == 1, TimeSpan.FromSeconds(2));
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(invoked, Is.True, "Non-throwing listener was not invoked.");
-                Assert.That(successfulListener.Sequences.Single(), Is.EqualTo(42));
-            }
-        );
     }
 
     [Test]

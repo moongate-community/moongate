@@ -136,7 +136,12 @@ public class PersistenceServiceTests
             }
         };
 
-        using var service = new PersistenceService(directories, timerSpy, config, new NetworkServiceTestGameEventBusService());
+        using var service = new PersistenceService(
+            directories,
+            timerSpy,
+            config,
+            new NetworkServiceTestGameEventBusService()
+        );
         await service.StartAsync();
 
         Assert.That(timerSpy.LastInterval, Is.EqualTo(TimeSpan.FromSeconds(12)));

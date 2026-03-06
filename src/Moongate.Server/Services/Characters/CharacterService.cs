@@ -68,6 +68,19 @@ public class CharacterService : ICharacterService
         return true;
     }
 
+    public async Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+    {
+        var character = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(characterId);
+
+        if (character is null)
+        {
+            return;
+        }
+
+        await ApplyEquippedItemHueAsync(character, ItemLayerType.Shirt, shirtHue);
+        await ApplyEquippedItemHueAsync(character, ItemLayerType.Pants, pantsHue);
+    }
+
     public async Task<Serial> CreateCharacterAsync(UOMobileEntity character)
     {
         character.Id = _persistenceService.UnitOfWork.AllocateNextMobileId();
@@ -87,19 +100,6 @@ public class CharacterService : ICharacterService
         _logger.Debug("Created character {CharacterName}", character.Name);
 
         return character.Id;
-    }
-
-    public async Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
-    {
-        var character = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(characterId);
-
-        if (character is null)
-        {
-            return;
-        }
-
-        await ApplyEquippedItemHueAsync(character, ItemLayerType.Shirt, shirtHue);
-        await ApplyEquippedItemHueAsync(character, ItemLayerType.Pants, pantsHue);
     }
 
     public async Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
@@ -225,6 +225,24 @@ public class CharacterService : ICharacterService
         return true;
     }
 
+    private async Task ApplyEquippedItemHueAsync(UOMobileEntity character, ItemLayerType layer, short hue)
+    {
+        if (!character.EquippedItemIds.TryGetValue(layer, out var itemId))
+        {
+            return;
+        }
+
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            return;
+        }
+
+        item.Hue = hue;
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+    }
+
     private static UOItemEntity CloneItem(UOItemEntity item)
         => new()
         {
@@ -246,24 +264,6 @@ public class CharacterService : ICharacterService
 
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);
-
-    private async Task ApplyEquippedItemHueAsync(UOMobileEntity character, ItemLayerType layer, short hue)
-    {
-        if (!character.EquippedItemIds.TryGetValue(layer, out var itemId))
-        {
-            return;
-        }
-
-        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
-
-        if (item is null)
-        {
-            return;
-        }
-
-        item.Hue = hue;
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-    }
 
     private async Task EnsureStarterContainerItemAsync(UOMobileEntity character, UOItemEntity item)
     {
@@ -379,9 +379,9 @@ public class CharacterService : ICharacterService
 
         // Single batch query for ALL missing items instead of N individual GetByIdAsync calls
         var missingItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-            item => missingIds.Contains(item.Id),
-            static item => item
-        );
+                               item => missingIds.Contains(item.Id),
+                               static item => item
+                           );
 
         var inferredItems = new List<UOItemEntity>(missingItems.Count);
 
@@ -397,6 +397,7 @@ public class CharacterService : ICharacterService
                 item.EquippedMobileId = character.Id;
                 item.EquippedLayer = layer;
                 inferredItems.Add(item);
+
                 break;
             }
         }

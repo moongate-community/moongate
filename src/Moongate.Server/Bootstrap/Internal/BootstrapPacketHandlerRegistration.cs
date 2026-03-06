@@ -10,9 +10,7 @@ namespace Moongate.Server.Bootstrap.Internal;
 internal static partial class BootstrapPacketHandlerRegistration
 {
     public static void Register(Container container)
-    {
-        RegisterGenerated(container);
-    }
+        => RegisterGenerated(container);
 
     static partial void RegisterGenerated(Container container);
 

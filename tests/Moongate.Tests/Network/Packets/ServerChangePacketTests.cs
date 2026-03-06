@@ -45,7 +45,7 @@ public sealed class ServerChangePacketTests
     public void Write_ShouldSerializeExpectedPayload()
     {
         var packet = new ServerChangePacket(
-            new Point3D(3613, 2585, 0),
+            new(3613, 2585, 0),
             7168,
             4096
         );

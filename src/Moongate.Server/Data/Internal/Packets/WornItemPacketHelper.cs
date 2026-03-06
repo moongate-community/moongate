@@ -26,7 +26,7 @@ public static class WornItemPacketHelper
                 continue;
             }
 
-            enqueuePacket(new WornItemPacket(character, itemReference, layer));
+            enqueuePacket(new(character, itemReference, layer));
         }
     }
 }

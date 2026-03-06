@@ -104,6 +104,16 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
         );
     }
 
+    public void Dispose()
+    {
+        _journalStream.Dispose();
+
+        if (_fileLockEnabled)
+        {
+            LockedPaths.TryRemove(_journalFilePath, out _);
+        }
+    }
+
     public async ValueTask<IReadOnlyCollection<JournalEntry>> ReadAllAsync(CancellationToken cancellationToken = default)
     {
         _logger.Verbose("Journal read-all requested Path={JournalPath}", _journalFilePath);
@@ -226,15 +236,5 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
         }
 
         _logger.Verbose("Journal reset completed Path={JournalPath}", _journalFilePath);
-    }
-
-    public void Dispose()
-    {
-        _journalStream.Dispose();
-
-        if (_fileLockEnabled)
-        {
-            LockedPaths.TryRemove(_journalFilePath, out _);
-        }
     }
 }

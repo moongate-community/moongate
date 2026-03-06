@@ -10,14 +10,12 @@ namespace Moongate.UO.Data.Json.Converters;
 public sealed class Int32FlexibleJsonConverter : JsonConverter<int>
 {
     public override int Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        return reader.TokenType switch
+        => reader.TokenType switch
         {
             JsonTokenType.Number => reader.GetInt32(),
             JsonTokenType.String => Parse(reader.GetString()),
             _                    => throw new JsonException($"Unsupported token type for int conversion: {reader.TokenType}")
         };
-    }
 
     public override void Write(Utf8JsonWriter writer, int value, JsonSerializerOptions options)
         => writer.WriteNumberValue(value);

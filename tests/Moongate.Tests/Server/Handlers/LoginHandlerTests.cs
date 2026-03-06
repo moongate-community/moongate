@@ -2,7 +2,6 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Spans;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
@@ -108,13 +107,6 @@ public class LoginHandlerTests
             return Task.FromResult(false);
         }
 
-        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
-        {
-            _ = character;
-
-            return Task.FromResult(Serial.Zero);
-        }
-
         public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
         {
             _ = characterId;
@@ -122,6 +114,13 @@ public class LoginHandlerTests
             _ = pantsHue;
 
             return Task.CompletedTask;
+        }
+
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+        {
+            _ = character;
+
+            return Task.FromResult(Serial.Zero);
         }
 
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
@@ -156,6 +155,26 @@ public class LoginHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenClientVersionPacketIsEmpty_ShouldNotStoreClientVersion()
+    {
+        var handler = CreateHandler();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = new ClientVersionPacket();
+        Assert.That(packet.TryParse(new byte[] { 0xBD, 0x00, 0x03 }), Is.True);
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(session.ClientVersion, Is.Null);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_WhenClientVersionPacketIsReceived_ShouldStoreClientVersionInSession()
     {
         var handler = CreateHandler();
@@ -180,26 +199,6 @@ public class LoginHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_WhenClientVersionPacketIsEmpty_ShouldNotStoreClientVersion()
-    {
-        var handler = CreateHandler();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-        var packet = new ClientVersionPacket();
-        Assert.That(packet.TryParse(new byte[] { 0xBD, 0x00, 0x03 }), Is.True);
-
-        var handled = await handler.HandlePacketAsync(session, packet);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(session.ClientVersion, Is.Null);
-            }
-        );
-    }
-
-    [Test]
     public async Task HandlePacketAsync_WhenSelectingCharacterAfterGameLogin_ShouldReuseCachedCharacterList()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -208,7 +207,7 @@ public class LoginHandlerTests
         {
             CharactersForAccount =
             [
-                new UOMobileEntity
+                new()
                 {
                     Id = (Serial)0x00000042,
                     Name = "TestChar",
@@ -222,7 +221,7 @@ public class LoginHandlerTests
             accountService,
             characterService,
             new NetworkServiceTestGameEventBusService(),
-            new MoongateConfig(),
+            new(),
             new FakeGameNetworkSessionService()
         );
 
@@ -243,7 +242,7 @@ public class LoginHandlerTests
         };
 
         // Simulate authenticated session to reach character-list fetch.
-        accountService.NextLoginResult = new UOAccountEntity
+        accountService.NextLoginResult = new()
         {
             Id = (Serial)0x00000001,
             Username = "admin",
@@ -256,22 +255,13 @@ public class LoginHandlerTests
         Assert.That(characterService.GetCharactersForAccountCalls, Is.EqualTo(1));
     }
 
-    private static LoginHandler CreateHandler()
-        => new(
-            new BasePacketListenerTestOutgoingPacketQueue(),
-            new LoginHandlerTestAccountService(),
-            new LoginHandlerTestCharacterService(),
-            new NetworkServiceTestGameEventBusService(),
-            new MoongateConfig(),
-            new FakeGameNetworkSessionService()
-        );
-
     private static byte[] BuildClientVersionPayload(string version, bool includeNullTerminator)
     {
         var writer = new SpanWriter(64, true);
         writer.Write((byte)0xBD);
         writer.Write((ushort)0);
         writer.WriteAscii(version);
+
         if (includeNullTerminator)
         {
             writer.Write((byte)0);
@@ -283,4 +273,14 @@ public class LoginHandlerTests
 
         return data;
     }
+
+    private static LoginHandler CreateHandler()
+        => new(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new LoginHandlerTestAccountService(),
+            new LoginHandlerTestCharacterService(),
+            new NetworkServiceTestGameEventBusService(),
+            new(),
+            new FakeGameNetworkSessionService()
+        );
 }

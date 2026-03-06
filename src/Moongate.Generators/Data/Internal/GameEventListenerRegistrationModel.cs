@@ -30,10 +30,10 @@ internal sealed class GameEventListenerRegistrationModel : IEquatable<GameEventL
             return false;
         }
 
-        return ListenerTypeName == other.ListenerTypeName
-               && EventTypeName == other.EventTypeName
-               && Priority == other.Priority
-               && ImplementsMoongateService == other.ImplementsMoongateService;
+        return ListenerTypeName == other.ListenerTypeName &&
+               EventTypeName == other.EventTypeName &&
+               Priority == other.Priority &&
+               ImplementsMoongateService == other.ImplementsMoongateService;
     }
 
     public override bool Equals(object? obj)

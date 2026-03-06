@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Moongate.UO.Data.Geometry;
-using Moongate.UO.Data.Json;
 using Moongate.UO.Data.Json.Converters;
 using Moongate.UO.Data.Types;
 
@@ -104,13 +103,13 @@ internal static class RegionMapIdResolver
     public static int Resolve(string? map)
         => map?.ToLowerInvariant() switch
         {
-            "felucca" => 0,
-            "trammel" => 1,
+            "felucca"  => 0,
+            "trammel"  => 1,
             "ilshenar" => 2,
-            "malas" => 3,
-            "tokuno" => 4,
-            "termur" => 5,
+            "malas"    => 3,
+            "tokuno"   => 4,
+            "termur"   => 5,
             "internal" => 0x7F,
-            _ => 0
+            _          => 0
         };
 }

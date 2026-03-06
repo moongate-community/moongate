@@ -41,9 +41,7 @@ public class Point3DList
     }
 
     public void Clear()
-    {
-        Count = 0;
-    }
+        => Count = 0;
 
     public Point3D[] ToArray()
     {
@@ -72,6 +70,7 @@ public class Point3DList
         }
 
         var newSize = m_List.Length * 2;
+
         while (newSize < requiredCount)
         {
             newSize *= 2;

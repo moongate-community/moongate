@@ -1,5 +1,5 @@
-using System.Text.RegularExpressions;
 using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Attributes;
@@ -16,6 +16,7 @@ using Serilog;
 namespace Moongate.Server.Services.Items;
 
 [RegisterGameEventListener]
+
 /// <summary>
 /// Resolves and invokes Lua callbacks for item script hooks.
 /// </summary>
@@ -87,6 +88,12 @@ public sealed partial class ItemScriptDispatcher
         }
     }
 
+    public async Task HandleAsync(ItemSingleClickEvent gameEvent, CancellationToken cancellationToken = default)
+        => await HandleItemEvent(true, gameEvent.ItemSerial, gameEvent.SessionId);
+
+    public async Task HandleAsync(ItemDoubleClickEvent gameEvent, CancellationToken cancellationToken = default)
+        => await HandleItemEvent(false, gameEvent.ItemSerial, gameEvent.SessionId);
+
     public bool HasHook(UOItemEntity item, string hook)
     {
         ArgumentNullException.ThrowIfNull(item);
@@ -116,6 +123,57 @@ public sealed partial class ItemScriptDispatcher
         return hasHook;
     }
 
+    private static Dictionary<string, object?> BuildLuaContextPayload(ItemScriptContext context)
+        => new()
+        {
+            ["hook"] = context.Hook,
+            ["session_id"] = context.Session?.SessionId,
+            ["mobile_id"] = context.Mobile is null ? null : (uint)context.Mobile.Id,
+            ["metadata"] = context.Metadata,
+            ["item"] = new Dictionary<string, object?>
+            {
+                ["serial"] = (uint)context.Item.Id,
+                ["script_id"] = context.Item.ScriptId,
+                ["name"] = context.Item.Name,
+                ["map_id"] = context.Item.MapId,
+                ["item_id"] = context.Item.ItemId,
+                ["amount"] = context.Item.Amount,
+                ["hue"] = context.Item.Hue,
+                ["location"] = new Dictionary<string, int>
+                {
+                    ["x"] = context.Item.Location.X,
+                    ["y"] = context.Item.Location.Y,
+                    ["z"] = context.Item.Location.Z
+                }
+            }
+        };
+
+    private async Task HandleItemEvent(bool isSingleClick, Serial itemId, long sessionId)
+    {
+        var (Found, Item) = await _itemService.TryToGetItemAsync(itemId);
+
+        if (Found)
+        {
+            if (_gameNetworkSessionService.TryGet(sessionId, out var session))
+            {
+                await DispatchAsync(new(session, Item, isSingleClick ? "single_click" : "double_click"));
+            }
+        }
+    }
+
+    [GeneratedRegex("[^a-zA-Z0-9]+", RegexOptions.Compiled)]
+    private static partial Regex NonAlphaNumericRegex();
+
+    private static string NormalizeToken(string token)
+    {
+        var normalized = NonAlphaNumericRegex()
+                         .Replace(token, "_")
+                         .Trim('_')
+                         .ToLowerInvariant();
+
+        return string.IsNullOrWhiteSpace(normalized) ? "unknown" : normalized;
+    }
+
     private static IEnumerable<string> ResolveHookCandidates(string hook)
     {
         var normalizedHook = NormalizeToken(hook);
@@ -131,6 +189,7 @@ public sealed partial class ItemScriptDispatcher
         }
 
         var pascal = ToPascalCase(normalizedHook);
+
         if (normalizedHook.StartsWith("on_", StringComparison.Ordinal))
         {
             return [normalizedHook, pascal];
@@ -139,24 +198,19 @@ public sealed partial class ItemScriptDispatcher
         return [$"on_{normalizedHook}", $"On{pascal}", normalizedHook];
     }
 
-    private static IEnumerable<string> ResolveTableCandidates(UOItemEntity item)
+    private static string ResolveScriptIdentity(UOItemEntity item)
     {
         var scriptId = item.ScriptId?.Trim();
 
         if (!string.IsNullOrWhiteSpace(scriptId) &&
             !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
         {
-            yield return NormalizeToken(scriptId);
-            yield break;
+            return $"sid:{NormalizeToken(scriptId)}";
         }
 
         var normalizedName = NormalizeToken(item.Name ?? string.Empty);
 
-        if (!string.Equals(normalizedName, "unknown", StringComparison.Ordinal))
-        {
-            yield return normalizedName;
-            yield return $"items_{normalizedName}";
-        }
+        return $"name:{normalizedName}";
     }
 
     private DynValue? ResolveScriptTable(string tableName)
@@ -169,6 +223,27 @@ public sealed partial class ItemScriptDispatcher
         return _luaScript.Globals.Get(tableName) is { Type: DataType.Table } table ? table : null;
     }
 
+    private static IEnumerable<string> ResolveTableCandidates(UOItemEntity item)
+    {
+        var scriptId = item.ScriptId?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(scriptId) &&
+            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            yield return NormalizeToken(scriptId);
+
+            yield break;
+        }
+
+        var normalizedName = NormalizeToken(item.Name ?? string.Empty);
+
+        if (!string.Equals(normalizedName, "unknown", StringComparison.Ordinal))
+        {
+            yield return normalizedName;
+            yield return $"items_{normalizedName}";
+        }
+    }
+
     private static DynValue? ResolveTableFunction(DynValue table, string functionName)
     {
         if (table.Type != DataType.Table || table.Table is null)
@@ -179,6 +254,29 @@ public sealed partial class ItemScriptDispatcher
         var function = table.Table.Get(functionName);
 
         return function.Type == DataType.Function ? function : null;
+    }
+
+    private static string ToPascalCase(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return "Unknown";
+        }
+
+        var parts = token.Split('_', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        if (parts.Length == 0)
+        {
+            return "Unknown";
+        }
+
+        return string.Concat(
+            parts.Select(
+                static part => part.Length == 1
+                                   ? part.ToUpperInvariant()
+                                   : char.ToUpperInvariant(part[0]) + part[1..].ToLowerInvariant()
+            )
+        );
     }
 
     private bool TryResolveHookFunction(
@@ -214,105 +312,5 @@ public sealed partial class ItemScriptDispatcher
         }
 
         return false;
-    }
-
-    private static string ResolveScriptIdentity(UOItemEntity item)
-    {
-        var scriptId = item.ScriptId?.Trim();
-
-        if (!string.IsNullOrWhiteSpace(scriptId) &&
-            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
-        {
-            return $"sid:{NormalizeToken(scriptId)}";
-        }
-
-        var normalizedName = NormalizeToken(item.Name ?? string.Empty);
-        return $"name:{normalizedName}";
-    }
-
-    private static Dictionary<string, object?> BuildLuaContextPayload(ItemScriptContext context)
-    {
-        return new()
-        {
-            ["hook"] = context.Hook,
-            ["session_id"] = context.Session?.SessionId,
-            ["mobile_id"] = context.Mobile is null ? null : (uint)context.Mobile.Id,
-            ["metadata"] = context.Metadata,
-            ["item"] = new Dictionary<string, object?>
-            {
-                ["serial"] = (uint)context.Item.Id,
-                ["script_id"] = context.Item.ScriptId,
-                ["name"] = context.Item.Name,
-                ["map_id"] = context.Item.MapId,
-                ["item_id"] = context.Item.ItemId,
-                ["amount"] = context.Item.Amount,
-                ["hue"] = context.Item.Hue,
-                ["location"] = new Dictionary<string, int>
-                {
-                    ["x"] = context.Item.Location.X,
-                    ["y"] = context.Item.Location.Y,
-                    ["z"] = context.Item.Location.Z
-                }
-            }
-        };
-    }
-
-    private static string NormalizeToken(string token)
-    {
-        var normalized = NonAlphaNumericRegex()
-                         .Replace(token, "_")
-                         .Trim('_')
-                         .ToLowerInvariant();
-
-        return string.IsNullOrWhiteSpace(normalized) ? "unknown" : normalized;
-    }
-
-    [GeneratedRegex("[^a-zA-Z0-9]+", RegexOptions.Compiled)]
-    private static partial Regex NonAlphaNumericRegex();
-
-    private static string ToPascalCase(string token)
-    {
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            return "Unknown";
-        }
-
-        var parts = token.Split('_', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        if (parts.Length == 0)
-        {
-            return "Unknown";
-        }
-
-        return string.Concat(parts.Select(
-            static part => part.Length == 1
-                               ? part.ToUpperInvariant()
-                               : char.ToUpperInvariant(part[0]) + part[1..].ToLowerInvariant()
-        ));
-    }
-
-    public async Task HandleAsync(ItemSingleClickEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await HandleItemEvent(true, gameEvent.ItemSerial, gameEvent.SessionId);
-    }
-
-    public async Task HandleAsync(ItemDoubleClickEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await HandleItemEvent(false, gameEvent.ItemSerial, gameEvent.SessionId);
-    }
-
-    private async Task HandleItemEvent(bool isSingleClick, Serial itemId, long sessionId)
-    {
-        var (Found, Item) = await _itemService.TryToGetItemAsync(itemId);
-
-        if (Found)
-        {
-            if (_gameNetworkSessionService.TryGet(sessionId, out var session))
-            {
-                await DispatchAsync(
-                    new ItemScriptContext(session, Item, isSingleClick ? "single_click" : "double_click")
-                );
-            }
-        }
     }
 }

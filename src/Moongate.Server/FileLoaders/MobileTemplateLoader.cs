@@ -77,6 +77,7 @@ public sealed class MobileTemplateLoader : IFileLoader
             }
 
             var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
+
             foreach (var mobileTemplate in mobileTemplates)
             {
                 NormalizeTitleAndName(mobileTemplate);
@@ -271,6 +272,13 @@ public sealed class MobileTemplateLoader : IFileLoader
         child.Params = MergeParams(parent.Params, child.Params);
     }
 
+    private static ItemTemplateParamDefinition CloneParam(ItemTemplateParamDefinition param)
+        => new()
+        {
+            Type = param.Type,
+            Value = param.Value
+        };
+
     private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
 
@@ -295,15 +303,6 @@ public sealed class MobileTemplateLoader : IFileLoader
         }
 
         return merged;
-    }
-
-    private static ItemTemplateParamDefinition CloneParam(ItemTemplateParamDefinition param)
-    {
-        return new()
-        {
-            Type = param.Type,
-            Value = param.Value
-        };
     }
 
     private static void NormalizeTitleAndName(MobileTemplateDefinition template)

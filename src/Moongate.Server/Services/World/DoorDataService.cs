@@ -13,13 +13,13 @@ public class DoorDataService : IDoorDataService
     private static readonly Point3D[] OffsetsByDoorFacing =
     [
         new(-1, 1, 0), // WestCW
-        new(1, 1, 0), // EastCCW
+        new(1, 1, 0),  // EastCCW
         new(-1, 0, 0), // WestCCW
         new(1, -1, 0), // EastCW
-        new(1, 1, 0), // SouthCW
+        new(1, 1, 0),  // SouthCW
         new(1, -1, 0), // NorthCCW
-        new(0, 0, 0), // SouthCCW
-        new(0, -1, 0) // NorthCW
+        new(0, 0, 0),  // SouthCCW
+        new(0, -1, 0)  // NorthCW
     ];
 
     // doors.txt piece order: WestCCW, EastCW, WestCW, EastCCW, SouthCW, NorthCCW, SouthCCW, NorthCW
@@ -39,20 +39,20 @@ public class DoorDataService : IDoorDataService
     private List<DoorComponentEntry> _entries = [];
     private Dictionary<int, DoorToggleDefinition> _toggleByItemId = [];
 
+    public IReadOnlyList<DoorComponentEntry> GetAllEntries()
+    {
+        lock (_sync)
+        {
+            return [.. _entries];
+        }
+    }
+
     public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
     {
         lock (_sync)
         {
             _entries = [.. entries];
             _toggleByItemId = BuildToggleMap(entries);
-        }
-    }
-
-    public IReadOnlyList<DoorComponentEntry> GetAllEntries()
-    {
-        lock (_sync)
-        {
-            return [.. _entries];
         }
     }
 
@@ -100,6 +100,7 @@ public class DoorDataService : IDoorDataService
 
                 // Legacy recovery for old wrong-id spawns (closedId - 1).
                 var legacyClosedId = closedId - 1;
+
                 if (legacyClosedId > 0 && !map.ContainsKey(legacyClosedId))
                 {
                     map[legacyClosedId] = new(legacyClosedId, openedId, true, offset);

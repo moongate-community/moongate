@@ -1,7 +1,11 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -14,10 +18,6 @@ using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
-using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Data.Events.Spatial;
-using Moongate.Server.Data.Events.Speech;
-using Moongate.Server.Data.Internal.Scripting;
 
 namespace Moongate.Tests.Server.Services.Entities;
 
@@ -36,15 +36,15 @@ public class MobileServiceTests
         public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
             => CreateItemFromTemplateImpl(itemTemplateId);
 
+        public UOItemEntity GetNewBackpack()
+            => CreateItemFromTemplate("backpack");
+
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
         {
             template = null;
 
             return false;
         }
-
-        public UOItemEntity GetNewBackpack()
-            => CreateItemFromTemplate("backpack");
     }
 
     private sealed class TestMobileFactoryService : IMobileFactoryService
@@ -104,14 +104,14 @@ public class MobileServiceTests
 
         public List<Serial> Unregistered { get; } = [];
 
-        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-            => _ = gameEvent;
-
         public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
         {
             _ = mobileId;
             _ = deathContext;
         }
+
+        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
+            => _ = gameEvent;
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
         {
@@ -240,6 +240,57 @@ public class MobileServiceTests
     }
 
     [Test]
+    public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateEquippedItemReferences()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var equippedItemId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(130, 130, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Shirt] = equippedItemId
+                }
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = equippedItemId,
+                ItemId = 0x1517,
+                Hue = 0x0444,
+                EquippedMobileId = mobileId,
+                EquippedLayer = ItemLayerType.Shirt
+            }
+        );
+
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, 4, 4);
+        var mobile = loaded.Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loaded, Has.Count.EqualTo(1));
+                Assert.That(mobile.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
+                Assert.That(mobile.EquippedItemReferences.ContainsKey(ItemLayerType.Shirt), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task SpawnFromTemplateAsync_ShouldUseFactoryAndPersistMobile()
     {
         using var temp = new TempDirectory();
@@ -307,57 +358,6 @@ public class MobileServiceTests
                 Assert.That(spawned.BrainId, Is.EqualTo("orc_warrior"));
                 Assert.That(saved.BrainId, Is.EqualTo("orc_warrior"));
                 Assert.That(luaBrainRunner.Registered, Is.Empty);
-            }
-        );
-    }
-
-    [Test]
-    public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateEquippedItemReferences()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var factory = new TestMobileFactoryService();
-        var itemFactory = new TestItemFactoryService();
-        var templateService = new TestMobileTemplateService();
-        var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
-
-        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
-        var equippedItemId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(
-            new()
-            {
-                Id = mobileId,
-                IsPlayer = false,
-                MapId = 1,
-                Location = new(130, 130, 0),
-                EquippedItemIds = new()
-                {
-                    [ItemLayerType.Shirt] = equippedItemId
-                }
-            }
-        );
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = equippedItemId,
-                ItemId = 0x1517,
-                Hue = 0x0444,
-                EquippedMobileId = mobileId,
-                EquippedLayer = ItemLayerType.Shirt
-            }
-        );
-
-        var loaded = await service.GetPersistentMobilesInSectorAsync(1, 4, 4);
-        var mobile = loaded.Single();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(loaded, Has.Count.EqualTo(1));
-                Assert.That(mobile.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
-                Assert.That(mobile.EquippedItemReferences.ContainsKey(ItemLayerType.Shirt), Is.True);
             }
         );
     }

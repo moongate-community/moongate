@@ -25,6 +25,16 @@ public class NameServiceTests
     }
 
     [Test]
+    public void GenerateName_WhenTypeHasValues_ShouldReturnName()
+    {
+        _service.AddNames("tokuno male", "Dosyaku", "Warimoto");
+
+        var name = _service.GenerateName("tokuno male");
+
+        Assert.That(name, Is.Not.Empty);
+    }
+
+    [Test]
     public void GenerateName_WhenTypeIsEmpty_ShouldReturnRandomFromAnyPool()
     {
         _service.AddNames("tokuno male", "Dosyaku");
@@ -34,16 +44,6 @@ public class NameServiceTests
 
         Assert.That(name, Is.Not.Empty);
         Assert.That(name, Is.AnyOf("Dosyaku", "John"));
-    }
-
-    [Test]
-    public void GenerateName_WhenTypeHasValues_ShouldReturnName()
-    {
-        _service.AddNames("tokuno male", "Dosyaku", "Warimoto");
-
-        var name = _service.GenerateName("tokuno male");
-
-        Assert.That(name, Is.Not.Empty);
     }
 
     [Test]

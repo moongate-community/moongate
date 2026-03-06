@@ -101,7 +101,5 @@ public class UoFiles
     /// <param name="path"></param>
     /// <param name="key"></param>
     public static void SetMulPath(string path, string key)
-    {
-        MulPath[key.ToLowerInvariant()] = path;
-    }
+        => MulPath[key.ToLowerInvariant()] = path;
 }

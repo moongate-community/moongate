@@ -120,23 +120,6 @@ public class DecorationDataLoader : IFileLoader
         return entries;
     }
 
-    private static async Task<string?> ReadNextHeaderAsync(StreamReader reader)
-    {
-        while (await reader.ReadLineAsync() is { } line)
-        {
-            var trimmed = line.Trim();
-
-            if (trimmed.Length == 0 || trimmed.StartsWith('#'))
-            {
-                continue;
-            }
-
-            return trimmed;
-        }
-
-        return null;
-    }
-
     private static (string TypeName, Serial ItemId, IReadOnlyDictionary<string, string> Parameters) ParseHeader(
         string headerLine
     )
@@ -195,6 +178,25 @@ public class DecorationDataLoader : IFileLoader
         return (typeName, ParseSerial(itemPart), parameters);
     }
 
+    private static int ParseInt(string value)
+    {
+        var trimmed = value.Trim();
+
+        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return Convert.ToInt32(trimmed[2..], 16);
+        }
+
+        return int.TryParse(trimmed, out var parsed) ? parsed : 0;
+    }
+
+    private static Serial ParseSerial(string value)
+    {
+        var parsed = ParseInt(value);
+
+        return parsed <= 0 ? Serial.Zero : (Serial)(uint)parsed;
+    }
+
     private static async Task<List<(Point3D Location, string Extra)>> ReadBlockEntriesAsync(StreamReader reader)
     {
         var entries = new List<(Point3D Location, string Extra)>();
@@ -224,6 +226,23 @@ public class DecorationDataLoader : IFileLoader
         return entries;
     }
 
+    private static async Task<string?> ReadNextHeaderAsync(StreamReader reader)
+    {
+        while (await reader.ReadLineAsync() is { } line)
+        {
+            var trimmed = line.Trim();
+
+            if (trimmed.Length == 0 || trimmed.StartsWith('#'))
+            {
+                continue;
+            }
+
+            return trimmed;
+        }
+
+        return null;
+    }
+
     private static bool TryParsePlacement(string line, out (Point3D Location, string Extra) placement)
     {
         var tokens = line.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
@@ -243,24 +262,5 @@ public class DecorationDataLoader : IFileLoader
         placement = (new(x, y, z), extra);
 
         return true;
-    }
-
-    private static int ParseInt(string value)
-    {
-        var trimmed = value.Trim();
-
-        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-        {
-            return Convert.ToInt32(trimmed[2..], 16);
-        }
-
-        return int.TryParse(trimmed, out var parsed) ? parsed : 0;
-    }
-
-    private static Serial ParseSerial(string value)
-    {
-        var parsed = ParseInt(value);
-
-        return parsed <= 0 ? Serial.Zero : (Serial)(uint)parsed;
     }
 }

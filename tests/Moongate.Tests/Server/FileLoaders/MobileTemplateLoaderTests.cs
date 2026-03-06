@@ -11,6 +11,75 @@ namespace Moongate.Tests.Server.FileLoaders;
 public class MobileTemplateLoaderTests
 {
     [Test]
+    public async Task LoadAsync_WhenBaseMobileHasParams_ShouldInheritAndOverrideParams()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "params.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_orc",
+                "name": "Base Orc",
+                "body": "0x0011",
+                "params": {
+                  "title_suffix": { "type": "string", "value": "the grim" },
+                  "owner_id": { "type": "serial", "value": "0x00001000" }
+                }
+              },
+              {
+                "type": "mobile",
+                "id": "orc_warrior",
+                "base_mobile": "base_orc",
+                "name": "Orc Warrior",
+                "params": {
+                  "owner_id": { "type": "serial", "value": "0x00002000" },
+                  "marker_hue": { "type": "hue", "value": "0x044D" }
+                }
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("orc_warrior", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Params, Has.Count.EqualTo(3));
+                Assert.That(template.Params.ContainsKey("title_suffix"), Is.True);
+                Assert.That(template.Params["title_suffix"].Type, Is.EqualTo(ItemTemplateParamType.String));
+                Assert.That(template.Params["title_suffix"].Value, Is.EqualTo("the grim"));
+                Assert.That(template.Params["owner_id"].Type, Is.EqualTo(ItemTemplateParamType.Serial));
+                Assert.That(template.Params["owner_id"].Value, Is.EqualTo("0x00002000"));
+                Assert.That(template.Params["marker_hue"].Type, Is.EqualTo(ItemTemplateParamType.Hue));
+                Assert.That(template.Params["marker_hue"].Value, Is.EqualTo("0x044D"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseMobileIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();
@@ -256,75 +325,6 @@ public class MobileTemplateLoaderTests
                 Assert.That(definition?.Body, Is.EqualTo(0x11));
                 Assert.That(definition?.SkinHue.IsRange, Is.True);
                 Assert.That(definition?.Brain, Is.EqualTo("aggressive_orc"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task LoadAsync_WhenBaseMobileHasParams_ShouldInheritAndOverrideParams()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(
-            tempDirectory.Path,
-            DirectoryType.Data,
-            DirectoryType.Templates,
-            DirectoryType.Scripts,
-            DirectoryType.Save,
-            DirectoryType.Logs,
-            DirectoryType.Cache
-        );
-
-        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
-        Directory.CreateDirectory(mobilesDirectory);
-
-        var filePath = Path.Combine(mobilesDirectory, "params.json");
-        await File.WriteAllTextAsync(
-            filePath,
-            """
-            [
-              {
-                "type": "mobile",
-                "id": "base_orc",
-                "name": "Base Orc",
-                "body": "0x0011",
-                "params": {
-                  "title_suffix": { "type": "string", "value": "the grim" },
-                  "owner_id": { "type": "serial", "value": "0x00001000" }
-                }
-              },
-              {
-                "type": "mobile",
-                "id": "orc_warrior",
-                "base_mobile": "base_orc",
-                "name": "Orc Warrior",
-                "params": {
-                  "owner_id": { "type": "serial", "value": "0x00002000" },
-                  "marker_hue": { "type": "hue", "value": "0x044D" }
-                }
-              }
-            ]
-            """
-        );
-
-        var mobileTemplateService = new MobileTemplateService();
-        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
-
-        await loader.LoadAsync();
-
-        Assert.That(mobileTemplateService.TryGet("orc_warrior", out var template), Is.True);
-        Assert.That(template, Is.Not.Null);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(template!.Params, Has.Count.EqualTo(3));
-                Assert.That(template.Params.ContainsKey("title_suffix"), Is.True);
-                Assert.That(template.Params["title_suffix"].Type, Is.EqualTo(ItemTemplateParamType.String));
-                Assert.That(template.Params["title_suffix"].Value, Is.EqualTo("the grim"));
-                Assert.That(template.Params["owner_id"].Type, Is.EqualTo(ItemTemplateParamType.Serial));
-                Assert.That(template.Params["owner_id"].Value, Is.EqualTo("0x00002000"));
-                Assert.That(template.Params["marker_hue"].Type, Is.EqualTo(ItemTemplateParamType.Hue));
-                Assert.That(template.Params["marker_hue"].Value, Is.EqualTo("0x044D"));
             }
         );
     }

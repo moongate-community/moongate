@@ -133,6 +133,7 @@ public sealed class GameNetworkSession
             if (client is null)
             {
                 CompressionEnabled = false;
+
                 return;
             }
 

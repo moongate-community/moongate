@@ -6,7 +6,7 @@ public static class StressRunOptionsParser
 {
     public static bool TryParse(string[] args, out StressRunOptions options, out string? error)
     {
-        options = new StressRunOptions();
+        options = new();
         error = null;
 
         var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -47,7 +47,7 @@ public static class StressRunOptionsParser
             !TryGetInt(values, "ramp-up-per-second", 10, 1, 10_000, out var rampUp, out error) ||
             !TryGetInt(values, "move-interval-ms", 300, 50, 10_000, out var moveIntervalMs, out error))
         {
-            options = new StressRunOptions();
+            options = new();
 
             return false;
         }
@@ -65,12 +65,12 @@ public static class StressRunOptionsParser
         {
             error = $"Invalid --http value '{httpBaseAddressRaw}'.";
 
-            options = new StressRunOptions();
+            options = new();
 
             return false;
         }
 
-        options = new StressRunOptions
+        options = new()
         {
             Host = host,
             Port = port,
@@ -91,27 +91,25 @@ public static class StressRunOptionsParser
     }
 
     public static string Usage()
-    {
-        return """
-               Usage:
-                 dotnet run --project tools/Moongate.Stress -- [options]
+        => """
+           Usage:
+             dotnet run --project tools/Moongate.Stress -- [options]
 
-               Options:
-                 --host <host>                       Default: 127.0.0.1
-                 --port <port>                       Default: 2593
-                 --http <url>                        Default: http://localhost:8088
-                 --clients <count>                   Default: 100
-                 --duration <seconds>                Default: 300
-                 --ramp-up-per-second <count>        Default: 10
-                 --move-interval-ms <ms>             Default: 300
-                 --user-prefix <prefix>              Default: stress
-                 --user-password <password>          Default: StressPwd#123
-                 --user-role <Regular|Counselor|GameMaster|Administrator>
-                 --admin-username <name>             Optional (used when JWT is enabled)
-                 --admin-password <password>         Optional (used when JWT is enabled)
-                 --verbose                            Verbose client logs
-               """;
-    }
+           Options:
+             --host <host>                       Default: 127.0.0.1
+             --port <port>                       Default: 2593
+             --http <url>                        Default: http://localhost:8088
+             --clients <count>                   Default: 100
+             --duration <seconds>                Default: 300
+             --ramp-up-per-second <count>        Default: 10
+             --move-interval-ms <ms>             Default: 300
+             --user-prefix <prefix>              Default: stress
+             --user-password <password>          Default: StressPwd#123
+             --user-role <Regular|Counselor|GameMaster|Administrator>
+             --admin-username <name>             Optional (used when JWT is enabled)
+             --admin-password <password>         Optional (used when JWT is enabled)
+             --verbose                            Verbose client logs
+           """;
 
     private static string GetString(IDictionary<string, string> values, string key, string fallback)
     {

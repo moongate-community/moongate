@@ -2,11 +2,11 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.Server.Interfaces.Services.Movement;
-using Moongate.Server.Interfaces.Services.Events;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using MoonSharp.Interpreter;
@@ -74,6 +74,18 @@ public sealed class MobileModule
                    );
     }
 
+    private static void RegisterLuaTypeIfNeeded()
+    {
+        if (_isLuaMobileProxyTypeRegistered)
+        {
+            return;
+        }
+
+        var type = typeof(LuaMobileProxy);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
+        _isLuaMobileProxyTypeRegistered = true;
+    }
+
     private UOMobileEntity? TryResolveRuntimeMobile(Serial mobileId)
     {
         if (_spatialWorldService is null)
@@ -92,17 +104,5 @@ public sealed class MobileModule
         }
 
         return null;
-    }
-
-    private static void RegisterLuaTypeIfNeeded()
-    {
-        if (_isLuaMobileProxyTypeRegistered)
-        {
-            return;
-        }
-
-        var type = typeof(LuaMobileProxy);
-        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
-        _isLuaMobileProxyTypeRegistered = true;
     }
 }

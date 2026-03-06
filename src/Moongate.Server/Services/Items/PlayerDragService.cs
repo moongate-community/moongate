@@ -14,9 +14,7 @@ public sealed class PlayerDragService : IPlayerDragService
     private readonly ConcurrentDictionary<long, PlayerDragState> _states = new();
 
     public void Clear(long sessionId)
-    {
-        _states.TryRemove(sessionId, out _);
-    }
+        => _states.TryRemove(sessionId, out _);
 
     public void SetPending(
         long sessionId,
@@ -25,9 +23,7 @@ public sealed class PlayerDragService : IPlayerDragService
         Serial sourceContainerId,
         Point3D sourceLocation
     )
-    {
-        _states[sessionId] = new(itemId, amount, sourceContainerId, sourceLocation);
-    }
+        => _states[sessionId] = new(itemId, amount, sourceContainerId, sourceLocation);
 
     public bool TryConsume(long sessionId, Serial itemId, out PlayerDragState state)
     {

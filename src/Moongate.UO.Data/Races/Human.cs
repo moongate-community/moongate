@@ -12,24 +12,20 @@ public class Human : Race
         : base(raceID, raceIndex, "Human", "Humans", 400, 401, 402, 403) { }
 
     public override int ClipHairHue(int hue)
-    {
-        return hue switch
+        => hue switch
         {
             < 1102 => 1102,
             > 1149 => 1149,
             _      => hue
         };
-    }
 
     public override int ClipSkinHue(int hue)
-    {
-        return hue switch
+        => hue switch
         {
             < 1002 => 1002,
             > 1058 => 1058,
             _      => hue
         };
-    }
 
     public override int RandomFacialHair(bool female)
     {
@@ -44,8 +40,7 @@ public class Human : Race
     }
 
     public override int RandomHair(bool female) // Random hair doesn't include baldness
-    {
-        return RandomUtils.Random(9) switch
+        => RandomUtils.Random(9) switch
         {
             0 => 0x203B, // Short
             1 => 0x203C, // Long
@@ -57,7 +52,6 @@ public class Human : Race
             7 => 0x204A, // Krisna
             _ => female ? 0x2046 : 0x2048
         };
-    }
 
     public override int RandomHairHue()
         => RandomUtils.Random(1102, 48);

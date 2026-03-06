@@ -130,35 +130,35 @@ public struct Body
         }
     }
 
-    public bool IsMonster =>
-        Types is not null &&
-        BodyID >= 0 &&
-        BodyID < Types.Length &&
-        Types[BodyID] == UOBodyType.Monster;
+    public bool IsMonster
+        => Types is not null &&
+           BodyID >= 0 &&
+           BodyID < Types.Length &&
+           Types[BodyID] == UOBodyType.Monster;
 
-    public bool IsAnimal =>
-        Types is not null &&
-        BodyID >= 0 &&
-        BodyID < Types.Length &&
-        Types[BodyID] == UOBodyType.Animal;
+    public bool IsAnimal
+        => Types is not null &&
+           BodyID >= 0 &&
+           BodyID < Types.Length &&
+           Types[BodyID] == UOBodyType.Animal;
 
-    public bool IsEmpty =>
-        Types is not null &&
-        BodyID >= 0 &&
-        BodyID < Types.Length &&
-        Types[BodyID] == UOBodyType.Empty;
+    public bool IsEmpty
+        => Types is not null &&
+           BodyID >= 0 &&
+           BodyID < Types.Length &&
+           Types[BodyID] == UOBodyType.Empty;
 
-    public bool IsSea =>
-        Types is not null &&
-        BodyID >= 0 &&
-        BodyID < Types.Length &&
-        Types[BodyID] == UOBodyType.Sea;
+    public bool IsSea
+        => Types is not null &&
+           BodyID >= 0 &&
+           BodyID < Types.Length &&
+           Types[BodyID] == UOBodyType.Sea;
 
-    public bool IsEquipment =>
-        Types is not null &&
-        BodyID >= 0 &&
-        BodyID < Types.Length &&
-        Types[BodyID] == UOBodyType.Equipment;
+    public bool IsEquipment
+        => Types is not null &&
+           BodyID >= 0 &&
+           BodyID < Types.Length &&
+           Types[BodyID] == UOBodyType.Equipment;
 
 #region Stygian Abyss
 

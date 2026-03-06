@@ -12,8 +12,7 @@ namespace Moongate.Persistence.Data.Internal;
 internal static class SnapshotMapper
 {
     public static UOAccountEntity ToAccountEntity(AccountSnapshot snapshot)
-    {
-        return new()
+        => new()
         {
             Id = (Serial)snapshot.Id,
             Username = snapshot.Username,
@@ -27,11 +26,9 @@ internal static class SnapshotMapper
             LastLoginUtc = new(snapshot.LastLoginUtcTicks, DateTimeKind.Utc),
             CharacterIds = [.. snapshot.CharacterIds.Select(id => (Serial)id)]
         };
-    }
 
     public static AccountSnapshot ToAccountSnapshot(UOAccountEntity entity)
-    {
-        return new()
+        => new()
         {
             Id = (uint)entity.Id,
             Username = entity.Username,
@@ -45,7 +42,6 @@ internal static class SnapshotMapper
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks,
             CharacterIds = [.. entity.CharacterIds.Select(serial => (uint)serial)]
         };
-    }
 
     public static UOItemEntity ToItemEntity(ItemSnapshot snapshot)
     {
@@ -240,7 +236,7 @@ internal static class SnapshotMapper
 
         foreach (var pair in entity.CustomProperties)
         {
-            customProps[propIndex++] = new ItemCustomPropertySnapshot
+            customProps[propIndex++] = new()
             {
                 Key = pair.Key,
                 Type = (byte)pair.Value.Type,

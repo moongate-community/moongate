@@ -32,7 +32,9 @@ public sealed class StressReportWriter
         Console.WriteLine($"Unexpected disconnect: {metrics.UnexpectedDisconnects}");
         Console.WriteLine($"Moves sent:            {metrics.MovesSent}");
         Console.WriteLine($"Moves acked:           {metrics.MovesAcked}");
-        Console.WriteLine($"ACK p50/p95/p99 (ms):  {metrics.AckLatencyP50Ms:F2}/{metrics.AckLatencyP95Ms:F2}/{metrics.AckLatencyP99Ms:F2}");
+        Console.WriteLine(
+            $"ACK p50/p95/p99 (ms):  {metrics.AckLatencyP50Ms:F2}/{metrics.AckLatencyP95Ms:F2}/{metrics.AckLatencyP99Ms:F2}"
+        );
         Console.WriteLine($"Duration (s):          {metrics.DurationSeconds}");
         Console.WriteLine($"PASSED:                {result.Passed}");
 

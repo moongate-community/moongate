@@ -56,16 +56,6 @@ public sealed class LightService : ILightService
         _worldStartUtc = parsedWorldStart.ToUniversalTime();
     }
 
-    public Task StartAsync()
-    {
-        _timerService.RegisterTimer("light_update", TimeSpan.FromSeconds(10), ProcessLight, TimeSpan.FromSeconds(10), true);
-
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync()
-        => Task.CompletedTask;
-
     public int ComputeGlobalLightLevel(DateTime? utcNow = null)
     {
         if (_forcedGlobalLightLevel.HasValue)
@@ -101,7 +91,7 @@ public sealed class LightService : ILightService
         var totalMinutes = (int)((now - _worldStartUtc).TotalSeconds / _secondsPerUoMinute);
         totalMinutes += mapId * 320;
         totalMinutes += location.X / 16;
-        var normalizedMinutes = ((totalMinutes % (24 * 60)) + (24 * 60)) % (24 * 60);
+        var normalizedMinutes = (totalMinutes % (24 * 60) + 24 * 60) % (24 * 60);
         var hour = normalizedMinutes / 60;
         var minute = normalizedMinutes % 60;
 
@@ -119,6 +109,26 @@ public sealed class LightService : ILightService
             ProcessLight();
         }
     }
+
+    public Task StartAsync()
+    {
+        _timerService.RegisterTimer("light_update", TimeSpan.FromSeconds(10), ProcessLight, TimeSpan.FromSeconds(10), true);
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+        => Task.CompletedTask;
+
+    private static int ComputeLightLevelFromHourMinute(int hour, int minute)
+        => hour switch
+        {
+            < 4  => NightLevel,
+            < 6  => NightLevel + ((hour - 4) * 60 + minute) * (DayLevel - NightLevel) / 120,
+            < 22 => DayLevel,
+            < 24 => DayLevel + ((hour - 22) * 60 + minute) * (NightLevel - DayLevel) / 120,
+            _    => NightLevel
+        };
 
     private void ProcessLight()
     {
@@ -143,9 +153,12 @@ public sealed class LightService : ILightService
 
             _lastGlobalLightBySessionId[session.SessionId] = globalLight;
             var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
-            var personalLightLevel = (LightLevelType)(byte)DefaultPersonalLightLevel;
+            var personalLightLevel = (LightLevelType)DefaultPersonalLightLevel;
             _outgoingPacketQueue.Enqueue(session.SessionId, new OverallLightLevelPacket(globalLightLevel));
-            _outgoingPacketQueue.Enqueue(session.SessionId, new PersonalLightLevelPacket(personalLightLevel, session.Character));
+            _outgoingPacketQueue.Enqueue(
+                session.SessionId,
+                new PersonalLightLevelPacket(personalLightLevel, session.Character)
+            );
         }
 
         if (_lastGlobalLightBySessionId.Count == 0)
@@ -161,17 +174,5 @@ public sealed class LightService : ILightService
         {
             _lastGlobalLightBySessionId.Remove(staleSessionId);
         }
-    }
-
-    private static int ComputeLightLevelFromHourMinute(int hour, int minute)
-    {
-        return hour switch
-        {
-            < 4  => NightLevel,
-            < 6  => NightLevel + ((hour - 4) * 60 + minute) * (DayLevel - NightLevel) / 120,
-            < 22 => DayLevel,
-            < 24 => DayLevel + ((hour - 22) * 60 + minute) * (NightLevel - DayLevel) / 120,
-            _    => NightLevel
-        };
     }
 }

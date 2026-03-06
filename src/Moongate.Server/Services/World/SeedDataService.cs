@@ -26,9 +26,6 @@ public class SeedDataService : ISeedDataService
         _locationCatalogService = locationCatalogService;
     }
 
-    public IReadOnlyList<SignEntry> GetSignsByMap(int mapId)
-        => _signDataService.GetEntriesByMap(mapId);
-
     public IReadOnlyList<DecorationEntry> GetDecorationsByMap(int mapId)
         => _decorationDataService.GetEntriesByMap(mapId);
 
@@ -37,4 +34,7 @@ public class SeedDataService : ISeedDataService
 
     public IReadOnlyList<WorldLocationEntry> GetLocations()
         => _locationCatalogService.GetAllLocations();
+
+    public IReadOnlyList<SignEntry> GetSignsByMap(int mapId)
+        => _signDataService.GetEntriesByMap(mapId);
 }

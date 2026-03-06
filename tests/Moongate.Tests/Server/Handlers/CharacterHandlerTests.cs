@@ -150,23 +150,6 @@ public sealed class CharacterHandlerTests
         );
     }
 
-    private static void EnsureMapRegistered()
-    {
-        if (Map.GetMap(0) is null)
-        {
-            _ = Map.RegisterMap(
-                0,
-                0,
-                0,
-                6144,
-                4096,
-                SeasonType.Summer,
-                "Felucca",
-                MapRules.FeluccaRules
-            );
-        }
-    }
-
     private static byte[] BuildCharacterCreationPayload()
     {
         var writer = new SpanWriter(106, true);
@@ -210,5 +193,22 @@ public sealed class CharacterHandlerTests
         writer.Dispose();
 
         return payload;
+    }
+
+    private static void EnsureMapRegistered()
+    {
+        if (Map.GetMap(0) is null)
+        {
+            _ = Map.RegisterMap(
+                0,
+                0,
+                0,
+                6144,
+                4096,
+                SeasonType.Summer,
+                "Felucca",
+                MapRules.FeluccaRules
+            );
+        }
     }
 }

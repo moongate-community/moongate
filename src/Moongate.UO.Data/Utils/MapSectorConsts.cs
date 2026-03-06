@@ -13,8 +13,8 @@ public class MapSectorConsts
     public const int SectorSize = 32;
 
     /// <summary>
-    /// Bit shift for fast division/multiplication by <see cref="SectorSize"/>.
-    /// Derived automatically from <see cref="SectorSize"/> to keep a single source of truth.
+    /// Bit shift for fast division/multiplication by <see cref="SectorSize" />.
+    /// Derived automatically from <see cref="SectorSize" /> to keep a single source of truth.
     /// </summary>
     public static readonly int SectorShift = ComputeSectorShift();
 

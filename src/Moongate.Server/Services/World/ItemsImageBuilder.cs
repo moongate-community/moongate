@@ -52,6 +52,7 @@ public sealed class ItemsImageBuilder : IWorldGenerator
             {
                 skipped++;
                 logCallback?.Invoke($"Skipping template '{template.Id}': invalid itemId '{template.ItemId}'.");
+
                 continue;
             }
 
@@ -62,6 +63,7 @@ public sealed class ItemsImageBuilder : IWorldGenerator
                 if (image is null)
                 {
                     skipped++;
+
                     continue;
                 }
 
@@ -90,6 +92,27 @@ public sealed class ItemsImageBuilder : IWorldGenerator
         return Task.CompletedTask;
     }
 
+    private static string SanitizeFileName(string templateId)
+    {
+        if (string.IsNullOrWhiteSpace(templateId))
+        {
+            return "unknown";
+        }
+
+        var invalidCharacters = Path.GetInvalidFileNameChars();
+        var buffer = templateId.ToCharArray();
+
+        for (var i = 0; i < buffer.Length; i++)
+        {
+            if (invalidCharacters.Contains(buffer[i]))
+            {
+                buffer[i] = '_';
+            }
+        }
+
+        return new(buffer);
+    }
+
     private static bool TryParseItemId(string itemIdText, out int itemId)
     {
         itemId = 0;
@@ -112,26 +135,5 @@ public sealed class ItemsImageBuilder : IWorldGenerator
         }
 
         return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out itemId);
-    }
-
-    private static string SanitizeFileName(string templateId)
-    {
-        if (string.IsNullOrWhiteSpace(templateId))
-        {
-            return "unknown";
-        }
-
-        var invalidCharacters = Path.GetInvalidFileNameChars();
-        var buffer = templateId.ToCharArray();
-
-        for (var i = 0; i < buffer.Length; i++)
-        {
-            if (invalidCharacters.Contains(buffer[i]))
-            {
-                buffer[i] = '_';
-            }
-        }
-
-        return new(buffer);
     }
 }

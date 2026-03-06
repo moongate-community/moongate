@@ -1,4 +1,3 @@
-using Moongate.Server.Data.World;
 using Moongate.Server.Services.World;
 using Moongate.UO.Data.Geometry;
 
@@ -12,18 +11,18 @@ public class DoorDataServiceTests
         var service = new DoorDataService();
         service.SetEntries(
             [
-                new DoorComponentEntry(
-                    Category: 0,
-                    Piece1: 0x0679,
-                    Piece2: 0x067B,
-                    Piece3: 0x0675,
-                    Piece4: 0x0677,
-                    Piece5: 0x067D,
-                    Piece6: 0x067F,
-                    Piece7: 0x0681,
-                    Piece8: 0x0683,
-                    FeatureMask: 0,
-                    Comment: "Metal Door"
+                new(
+                    0,
+                    0x0679,
+                    0x067B,
+                    0x0675,
+                    0x0677,
+                    0x067D,
+                    0x067F,
+                    0x0681,
+                    0x0683,
+                    0,
+                    "Metal Door"
                 )
             ]
         );

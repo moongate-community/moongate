@@ -36,13 +36,6 @@ public class ItemModuleTests
             return Task.FromResult((Serial)1u);
         }
 
-        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-        {
-            _ = itemTemplateId;
-
-            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
-        }
-
         public Task<bool> DeleteItemAsync(Serial itemId)
         {
             _ = itemId;
@@ -50,7 +43,12 @@ public class ItemModuleTests
             return Task.FromResult(true);
         }
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
         {
             _ = itemId;
             _ = location;
@@ -84,9 +82,6 @@ public class ItemModuleTests
             return Task.FromResult(ItemToReturn);
         }
 
-        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
-            => Task.FromResult((ItemToReturn is not null, ItemToReturn));
-
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
         {
             _ = containerId;
@@ -111,6 +106,16 @@ public class ItemModuleTests
 
             return Task.FromResult(true);
         }
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+        {
+            _ = itemTemplateId;
+
+            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
+        }
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((ItemToReturn is not null, ItemToReturn));
 
         public Task UpsertItemAsync(UOItemEntity item)
         {

@@ -14,7 +14,7 @@ public static class DoorGenerationFacingExtensions
         /// <summary>
         /// Converts a door generation facing to the equivalent world direction.
         /// </summary>
-        /// <returns>Mapped <see cref="DirectionType"/> value.</returns>
+        /// <returns>Mapped <see cref="DirectionType" /> value.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when the facing value is unknown.</exception>
         public DirectionType ToDirectionType()
             => facing switch

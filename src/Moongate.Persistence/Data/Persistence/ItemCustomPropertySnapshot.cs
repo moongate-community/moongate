@@ -5,8 +5,8 @@ namespace Moongate.Persistence.Data.Persistence;
 /// <summary>
 /// Serialized typed custom property for an item.
 /// </summary>
-[MessagePackObject(keyAsPropertyName: true)]
-public sealed partial class ItemCustomPropertySnapshot
+[MessagePackObject(true)]
+public sealed class ItemCustomPropertySnapshot
 {
     public string Key { get; set; } = null!;
 

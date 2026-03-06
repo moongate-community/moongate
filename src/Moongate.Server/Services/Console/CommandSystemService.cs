@@ -4,8 +4,10 @@ using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Console;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Types;
@@ -31,8 +33,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         IConsoleUiService consoleUiService,
         IGameEventBusService gameEventBusService,
         IOutgoingPacketQueue outgoingPacketQueue,
-        Moongate.Server.Interfaces.Services.Lifecycle.IServerLifetimeService? _ = null,
-        Moongate.Server.Interfaces.Services.Accounting.IAccountService? __ = null
+        IServerLifetimeService? _ = null,
+        IAccountService? __ = null
     )
     {
         _consoleUiService = consoleUiService;
@@ -46,15 +48,13 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         GameSession? session = null,
         CancellationToken cancellationToken = default
     )
-    {
-        await ExecuteInternalAsync(
-            commandWithArgs,
-            source,
-            session,
-            (_, level, message, args) => WriteCommandOutput(source, session, level, message, args),
-            cancellationToken
-        );
-    }
+        => await ExecuteInternalAsync(
+               commandWithArgs,
+               source,
+               session,
+               (_, level, message, args) => WriteCommandOutput(source, session, level, message, args),
+               cancellationToken
+           );
 
     public async Task<IReadOnlyList<string>> ExecuteCommandWithOutputAsync(
         string commandWithArgs,
@@ -80,6 +80,157 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
         );
 
         return outputLines;
+    }
+
+    public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+    {
+        if (commandWithArgs.Length == 0)
+        {
+            return _commands.Keys
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+        }
+
+        var firstSpaceIndex = commandWithArgs.IndexOf(' ');
+
+        if (firstSpaceIndex < 0)
+        {
+            return _commands.Keys
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .Where(key => key.StartsWith(commandWithArgs, StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+        }
+
+        var commandToken = commandWithArgs[..firstSpaceIndex];
+
+        if (!_commands.TryGetValue(commandToken, out var commandDefinition))
+        {
+            return _commands.Keys
+                            .Distinct(StringComparer.OrdinalIgnoreCase)
+                            .Where(key => key.StartsWith(commandToken, StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
+                            .ToArray();
+        }
+
+        if (commandDefinition.AutocompleteProvider is null)
+        {
+            return [];
+        }
+
+        var argumentText = commandWithArgs[(firstSpaceIndex + 1)..];
+        var endsWithWhitespace = commandWithArgs.Length > 0 && char.IsWhiteSpace(commandWithArgs[^1]);
+        var arguments = argumentText.Split(
+            ' ',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+        );
+
+        var context = new CommandAutocompleteContext
+        {
+            CommandName = commandToken,
+            Arguments = arguments,
+            EndsWithWhitespace = endsWithWhitespace
+        };
+
+        var providerSuggestions = commandDefinition.AutocompleteProvider(context);
+
+        if (providerSuggestions.Count == 0)
+        {
+            return [];
+        }
+
+        var prefix = "";
+        var stableArgs = arguments;
+
+        if (!endsWithWhitespace && arguments.Length > 0)
+        {
+            prefix = arguments[^1];
+            stableArgs = arguments[..^1];
+        }
+
+        return providerSuggestions
+               .Where(static suggestion => !string.IsNullOrWhiteSpace(suggestion))
+               .Where(suggestion => suggestion.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+               .Select(suggestion => BuildAutocompleteLine(commandToken, stableArgs, suggestion))
+               .Distinct(StringComparer.OrdinalIgnoreCase)
+               .OrderBy(static suggestion => suggestion, StringComparer.OrdinalIgnoreCase)
+               .ToArray();
+    }
+
+    public IReadOnlyList<CommandDefinition> GetRegisteredCommands()
+        => _commands.Values
+                    .Distinct()
+                    .OrderBy(static definition => definition.Name, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
+    public async Task HandleAsync(CommandEnteredEvent gameEvent, CancellationToken cancellationToken = default)
+        => await ExecuteCommandAsync(
+               gameEvent.CommandText,
+               gameEvent.Source,
+               gameEvent.GameSession,
+               cancellationToken
+           );
+
+    public void RegisterCommand(
+        string commandName,
+        Func<CommandSystemContext, Task> handler,
+        string description = "",
+        CommandSourceType source = CommandSourceType.Console,
+        AccountType minimumAccountType = AccountType.Administrator,
+        Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
+    )
+    {
+        if (string.IsNullOrWhiteSpace(commandName))
+        {
+            throw new ArgumentException("Command name is required.", nameof(commandName));
+        }
+
+        var aliases = commandName.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var commandDefinition = new CommandDefinition
+        {
+            Name = aliases[0].Trim().ToLowerInvariant(),
+            Description = description,
+            Handler = handler,
+            Source = source,
+            MinimumAccountType = minimumAccountType,
+            AutocompleteProvider = autocompleteProvider
+        };
+
+        foreach (var alias in aliases)
+        {
+            var normalizedAlias = alias.Trim().ToLowerInvariant();
+
+            if (!_commands.TryAdd(normalizedAlias, commandDefinition))
+            {
+                _logger.Warning("Command '{CommandName}' is already registered.", normalizedAlias);
+
+                continue;
+            }
+
+            _logger.Debug("Registered command {CommandName}", normalizedAlias);
+        }
+    }
+
+    public Task StartAsync()
+    {
+        _gameEventBusService.RegisterListener(this);
+        _logger.Information("Command system started with {CommandCount} command aliases.", _commands.Count);
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+        => Task.CompletedTask;
+
+    private static string BuildAutocompleteLine(string commandToken, string[] stableArgs, string suggestion)
+    {
+        if (stableArgs.Length == 0)
+        {
+            return $"{commandToken} {suggestion}";
+        }
+
+        return $"{commandToken} {string.Join(' ', stableArgs)} {suggestion}";
     }
 
     private async Task ExecuteInternalAsync(
@@ -188,159 +339,6 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
                 [command]
             );
         }
-    }
-
-    public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
-    {
-        if (commandWithArgs.Length == 0)
-        {
-            return _commands.Keys
-                            .Distinct(StringComparer.OrdinalIgnoreCase)
-                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
-                            .ToArray();
-        }
-
-        var firstSpaceIndex = commandWithArgs.IndexOf(' ');
-
-        if (firstSpaceIndex < 0)
-        {
-            return _commands.Keys
-                            .Distinct(StringComparer.OrdinalIgnoreCase)
-                            .Where(key => key.StartsWith(commandWithArgs, StringComparison.OrdinalIgnoreCase))
-                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
-                            .ToArray();
-        }
-
-        var commandToken = commandWithArgs[..firstSpaceIndex];
-
-        if (!_commands.TryGetValue(commandToken, out var commandDefinition))
-        {
-            return _commands.Keys
-                            .Distinct(StringComparer.OrdinalIgnoreCase)
-                            .Where(key => key.StartsWith(commandToken, StringComparison.OrdinalIgnoreCase))
-                            .OrderBy(static k => k, StringComparer.OrdinalIgnoreCase)
-                            .ToArray();
-        }
-
-        if (commandDefinition.AutocompleteProvider is null)
-        {
-            return [];
-        }
-
-        var argumentText = commandWithArgs[(firstSpaceIndex + 1)..];
-        var endsWithWhitespace = commandWithArgs.Length > 0 && char.IsWhiteSpace(commandWithArgs[^1]);
-        var arguments = argumentText.Split(
-            ' ',
-            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
-        );
-
-        var context = new CommandAutocompleteContext
-        {
-            CommandName = commandToken,
-            Arguments = arguments,
-            EndsWithWhitespace = endsWithWhitespace
-        };
-
-        var providerSuggestions = commandDefinition.AutocompleteProvider(context);
-
-        if (providerSuggestions.Count == 0)
-        {
-            return [];
-        }
-
-        var prefix = "";
-        var stableArgs = arguments;
-
-        if (!endsWithWhitespace && arguments.Length > 0)
-        {
-            prefix = arguments[^1];
-            stableArgs = arguments[..^1];
-        }
-
-        return providerSuggestions
-               .Where(static suggestion => !string.IsNullOrWhiteSpace(suggestion))
-               .Where(suggestion => suggestion.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
-               .Select(suggestion => BuildAutocompleteLine(commandToken, stableArgs, suggestion))
-               .Distinct(StringComparer.OrdinalIgnoreCase)
-               .OrderBy(static suggestion => suggestion, StringComparer.OrdinalIgnoreCase)
-               .ToArray();
-    }
-
-    public async Task HandleAsync(CommandEnteredEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await ExecuteCommandAsync(
-            gameEvent.CommandText,
-            gameEvent.Source,
-            gameEvent.GameSession,
-            cancellationToken
-        );
-    }
-
-    public void RegisterCommand(
-        string commandName,
-        Func<CommandSystemContext, Task> handler,
-        string description = "",
-        CommandSourceType source = CommandSourceType.Console,
-        AccountType minimumAccountType = AccountType.Administrator,
-        Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
-    )
-    {
-        if (string.IsNullOrWhiteSpace(commandName))
-        {
-            throw new ArgumentException("Command name is required.", nameof(commandName));
-        }
-
-        var aliases = commandName.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var commandDefinition = new CommandDefinition
-        {
-            Name = aliases[0].Trim().ToLowerInvariant(),
-            Description = description,
-            Handler = handler,
-            Source = source,
-            MinimumAccountType = minimumAccountType,
-            AutocompleteProvider = autocompleteProvider
-        };
-
-        foreach (var alias in aliases)
-        {
-            var normalizedAlias = alias.Trim().ToLowerInvariant();
-
-            if (!_commands.TryAdd(normalizedAlias, commandDefinition))
-            {
-                _logger.Warning("Command '{CommandName}' is already registered.", normalizedAlias);
-
-                continue;
-            }
-
-            _logger.Debug("Registered command {CommandName}", normalizedAlias);
-        }
-    }
-
-    public IReadOnlyList<CommandDefinition> GetRegisteredCommands()
-        => _commands.Values
-                    .Distinct()
-                    .OrderBy(static definition => definition.Name, StringComparer.OrdinalIgnoreCase)
-                    .ToArray();
-
-    public Task StartAsync()
-    {
-        _gameEventBusService.RegisterListener(this);
-        _logger.Information("Command system started with {CommandCount} command aliases.", _commands.Count);
-
-        return Task.CompletedTask;
-    }
-
-    public Task StopAsync()
-        => Task.CompletedTask;
-
-    private static string BuildAutocompleteLine(string commandToken, string[] stableArgs, string suggestion)
-    {
-        if (stableArgs.Length == 0)
-        {
-            return $"{commandToken} {suggestion}";
-        }
-
-        return $"{commandToken} {string.Join(' ', stableArgs)} {suggestion}";
     }
 
     private static AccountType ResolveInvokerAccountType(CommandSourceType source, GameSession? session)

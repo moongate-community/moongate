@@ -17,8 +17,8 @@ public sealed class GameEventBusService : IGameEventBusService
 
         var typedList = _listeners.TryGetValue(typeof(TEvent), out var typed) ? typed : null;
         var globalList = typeof(TEvent) != typeof(IGameEvent) && _listeners.TryGetValue(typeof(IGameEvent), out var global)
-            ? global
-            : null;
+                             ? global
+                             : null;
 
         var typedCount = 0;
         var globalCount = 0;
@@ -107,6 +107,21 @@ public sealed class GameEventBusService : IGameEventBusService
         }
     }
 
+    public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
+    {
+        var listeners = _listeners.GetOrAdd(typeof(TEvent), static _ => []);
+
+        lock (listeners)
+        {
+            if (listeners.Contains(listener))
+            {
+                return;
+            }
+
+            listeners.Add(listener);
+        }
+    }
+
     private async Task DispatchListenerSafeAsync<TEvent>(
         object listenerObject,
         TEvent gameEvent,
@@ -133,20 +148,4 @@ public sealed class GameEventBusService : IGameEventBusService
             _logger.Error(ex, "Game event listener failed for event type {EventType}", typeof(TEvent).Name);
         }
     }
-
-    public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
-    {
-        var listeners = _listeners.GetOrAdd(typeof(TEvent), static _ => []);
-
-        lock (listeners)
-        {
-            if (listeners.Contains(listener))
-            {
-                return;
-            }
-
-            listeners.Add(listener);
-        }
-    }
-
 }

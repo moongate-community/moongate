@@ -95,32 +95,6 @@ public class GeneralInformationHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_ShouldPublishTargetedSpellCastEvent_ForSubcommand2D()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var handler = new GeneralInformationHandler(new BasePacketListenerTestOutgoingPacketQueue(), eventBus);
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-        var packet = GeneralInformationPacket.Create(
-            GeneralInformationSubcommandType.CastTargetedSpell,
-            new byte[] { 0x00, 0x2D, 0x00, 0x00, 0x00, 0x05 }
-        );
-
-        var handled = await handler.HandlePacketAsync(session, packet);
-        var gameEvent = eventBus.Events.OfType<TargetedSpellCastEvent>().Single();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(gameEvent.SpellId, Is.EqualTo((ushort)0x002D));
-                Assert.That(gameEvent.TargetSerial, Is.EqualTo((Serial)0x00000005u));
-            }
-        );
-    }
-
-    [Test]
     public async Task HandlePacketAsync_ShouldPublishTargetedSkillUseEvent_ForSubcommand2E()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -142,6 +116,32 @@ public class GeneralInformationHandlerTests
                 Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(gameEvent.SkillId, Is.EqualTo((ushort)0x000F));
                 Assert.That(gameEvent.TargetSerial, Is.EqualTo((Serial)0x00000007u));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldPublishTargetedSpellCastEvent_ForSubcommand2D()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new GeneralInformationHandler(new BasePacketListenerTestOutgoingPacketQueue(), eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = GeneralInformationPacket.Create(
+            GeneralInformationSubcommandType.CastTargetedSpell,
+            new byte[] { 0x00, 0x2D, 0x00, 0x00, 0x00, 0x05 }
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+        var gameEvent = eventBus.Events.OfType<TargetedSpellCastEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(gameEvent.SpellId, Is.EqualTo((ushort)0x002D));
+                Assert.That(gameEvent.TargetSerial, Is.EqualTo((Serial)0x00000005u));
             }
         );
     }

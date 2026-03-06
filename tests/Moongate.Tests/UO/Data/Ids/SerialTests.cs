@@ -6,8 +6,7 @@ public class SerialTests
 {
     [Test]
     public void Flags_ShouldExposeValidRangeSemantics()
-    {
-        Assert.Multiple(
+        => Assert.Multiple(
             () =>
             {
                 Assert.That(Serial.Zero.IsValid, Is.False);
@@ -17,7 +16,6 @@ public class SerialTests
                 Assert.That(new Serial(Serial.MobileStart).IsMobile, Is.True);
             }
         );
-    }
 
     [Test]
     public void IsItem_WhenValueIsMaxItemSerial_ShouldBeTrue()
@@ -69,9 +67,7 @@ public class SerialTests
 
     [Test]
     public void Parse_WhenInvalidString_ShouldThrowFormatException()
-    {
-        Assert.That(() => Serial.Parse("invalid"), Throws.TypeOf<FormatException>());
-    }
+        => Assert.That(() => Serial.Parse("invalid"), Throws.TypeOf<FormatException>());
 
     [Test]
     public void ToString_ShouldFormatAsEightDigitHex()

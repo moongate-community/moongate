@@ -164,6 +164,7 @@ public class MovementHandler : BasePacketListener
         {
             session.MoveCredit = 0;
             session.MoveTime = now;
+
             return false;
         }
 
@@ -208,11 +209,12 @@ public class MovementHandler : BasePacketListener
 
         if (!task.IsCompletedSuccessfully)
         {
-            task.AsTask().ContinueWith(
-                static t => Log.ForContext<MovementHandler>()
-                               .Error(t.Exception, "MobilePositionChangedEvent publish failed"),
-                TaskContinuationOptions.OnlyOnFaulted
-            );
+            task.AsTask()
+                .ContinueWith(
+                    static t => Log.ForContext<MovementHandler>()
+                                   .Error(t.Exception, "MobilePositionChangedEvent publish failed"),
+                    TaskContinuationOptions.OnlyOnFaulted
+                );
         }
     }
 }

@@ -51,10 +51,8 @@ public class HueSpecTests
 
     [Test]
     public void ParseFromString_ShouldThrow_OnInvalidValue()
-    {
-        Assert.That(
+        => Assert.That(
             () => HueSpec.ParseFromString("random(10:20)"),
             Throws.TypeOf<FormatException>()
         );
-    }
 }

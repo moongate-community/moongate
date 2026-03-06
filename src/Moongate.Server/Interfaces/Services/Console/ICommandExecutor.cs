@@ -8,13 +8,13 @@ namespace Moongate.Server.Interfaces.Services.Console;
 public interface ICommandExecutor
 {
     /// <summary>
+    /// Optional autocomplete provider for command arguments.
+    /// </summary>
+    Func<CommandAutocompleteContext, IReadOnlyList<string>>? AutocompleteProvider => null;
+
+    /// <summary>
     /// Executes the command for the given context.
     /// </summary>
     /// <param name="context">Execution context.</param>
     Task ExecuteCommandAsync(CommandSystemContext context);
-
-    /// <summary>
-    /// Optional autocomplete provider for command arguments.
-    /// </summary>
-    Func<CommandAutocompleteContext, IReadOnlyList<string>>? AutocompleteProvider => null;
 }

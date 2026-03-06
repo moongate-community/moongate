@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Moongate.Server.Http.Data;
 using Moongate.UO.Data.Templates.Items;

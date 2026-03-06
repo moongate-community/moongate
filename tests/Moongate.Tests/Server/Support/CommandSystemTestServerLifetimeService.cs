@@ -9,7 +9,5 @@ public sealed class CommandSystemTestServerLifetimeService : IServerLifetimeServ
     public bool IsShutdownRequested { get; private set; }
 
     public void RequestShutdown()
-    {
-        IsShutdownRequested = true;
-    }
+        => IsShutdownRequested = true;
 }

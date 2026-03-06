@@ -23,21 +23,6 @@ public class WeatherFactoryTests
     }
 
     [Test]
-    public void CreateSnow_ShouldUseExpectedDefaults()
-    {
-        var packet = WeatherFactory.CreateSnow();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(packet.Type, Is.EqualTo(WeatherType.Snow));
-                Assert.That(packet.EffectCount, Is.EqualTo(SetWeatherPacket.MaximumEffectsOnScreen));
-                Assert.That(packet.Temperature, Is.EqualTo(unchecked((byte)-15)));
-            }
-        );
-    }
-
-    [Test]
     public void CreateClear_ShouldDisableWeatherEffects()
     {
         var packet = WeatherFactory.CreateClear();
@@ -76,6 +61,21 @@ public class WeatherFactoryTests
                 Assert.That(packet.Type, Is.EqualTo(WeatherType.Storm));
                 Assert.That(packet.EffectCount, Is.EqualTo((byte)64));
                 Assert.That(packet.Temperature, Is.EqualTo((byte)12));
+            }
+        );
+    }
+
+    [Test]
+    public void CreateSnow_ShouldUseExpectedDefaults()
+    {
+        var packet = WeatherFactory.CreateSnow();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.Type, Is.EqualTo(WeatherType.Snow));
+                Assert.That(packet.EffectCount, Is.EqualTo(SetWeatherPacket.MaximumEffectsOnScreen));
+                Assert.That(packet.Temperature, Is.EqualTo(unchecked((byte)-15)));
             }
         );
     }

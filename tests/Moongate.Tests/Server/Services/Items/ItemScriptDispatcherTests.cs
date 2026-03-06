@@ -28,13 +28,15 @@ public class ItemScriptDispatcherTests
         public Task<Serial> CreateItemAsync(UOItemEntity item)
             => throw new NotSupportedException();
 
-        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-            => throw new NotSupportedException();
-
         public Task<bool> DeleteItemAsync(Serial itemId)
             => throw new NotSupportedException();
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
             => throw new NotSupportedException();
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -53,6 +55,9 @@ public class ItemScriptDispatcherTests
             => throw new NotSupportedException();
 
         public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
             => throw new NotSupportedException();
 
         public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
@@ -95,7 +100,7 @@ public class ItemScriptDispatcherTests
         );
         var context = new ItemScriptContext(
             null,
-            new UOItemEntity
+            new()
             {
                 ScriptId = "items.healing-potion"
             },
@@ -145,7 +150,7 @@ public class ItemScriptDispatcherTests
         );
         var context = new ItemScriptContext(
             null,
-            new UOItemEntity
+            new()
             {
                 ScriptId = "items.healing_potion"
             },
@@ -161,34 +166,6 @@ public class ItemScriptDispatcherTests
                 Assert.That(dispatched, Is.True);
                 Assert.That(result.Success, Is.True);
                 Assert.That(result.Data, Is.EqualTo("double"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task DispatchAsync_ShouldReturnFalse_WhenHookIsMissing()
-    {
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var dispatcher = new ItemScriptDispatcher(
-            scriptEngine,
-            new ItemScriptDispatcherTestItemService(),
-            new FakeGameNetworkSessionService()
-        );
-        var context = new ItemScriptContext(
-            null,
-            new UOItemEntity
-            {
-                ScriptId = "items.healing_potion"
-            },
-            string.Empty
-        );
-
-        var dispatched = await dispatcher.DispatchAsync(context);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dispatched, Is.False);
             }
         );
     }
@@ -215,11 +192,62 @@ public class ItemScriptDispatcherTests
         );
         var context = new ItemScriptContext(
             null,
-            new UOItemEntity
+            new()
             {
                 ScriptId = "items.healing_potion"
             },
             "double_click"
+        );
+
+        var dispatched = await dispatcher.DispatchAsync(context);
+
+        Assert.That(dispatched, Is.False);
+    }
+
+    [Test]
+    public async Task DispatchAsync_ShouldReturnFalse_WhenHookIsMissing()
+    {
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+        var context = new ItemScriptContext(
+            null,
+            new()
+            {
+                ScriptId = "items.healing_potion"
+            },
+            string.Empty
+        );
+
+        var dispatched = await dispatcher.DispatchAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task DispatchAsync_ShouldReturnFalse_WhenMoonSharpRuntimeIsUnavailable()
+    {
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+        var context = new ItemScriptContext(
+            null,
+            new()
+            {
+                ScriptId = "items.healing_potion"
+            },
+            "single_click"
         );
 
         var dispatched = await dispatcher.DispatchAsync(context);
@@ -258,7 +286,7 @@ public class ItemScriptDispatcherTests
         );
         var context = new ItemScriptContext(
             null,
-            new UOItemEntity
+            new()
             {
                 ScriptId = "none",
                 Name = "Brick"
@@ -280,26 +308,37 @@ public class ItemScriptDispatcherTests
     }
 
     [Test]
-    public async Task DispatchAsync_ShouldReturnFalse_WhenMoonSharpRuntimeIsUnavailable()
+    public async Task HasHook_ShouldReturnFalse_WhenHookFunctionIsMissing()
     {
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript("potion = { }");
+
         var dispatcher = new ItemScriptDispatcher(
             scriptEngine,
             new ItemScriptDispatcherTestItemService(),
             new FakeGameNetworkSessionService()
         );
-        var context = new ItemScriptContext(
-            null,
-            new UOItemEntity
+
+        var hasHook = dispatcher.HasHook(
+            new()
             {
-                ScriptId = "items.healing_potion"
+                ScriptId = "none",
+                Name = "Potion"
             },
-            "single_click"
+            "double_click"
         );
 
-        var dispatched = await dispatcher.DispatchAsync(context);
-
-        Assert.That(dispatched, Is.False);
+        Assert.That(hasHook, Is.False);
     }
 
     [Test]
@@ -333,7 +372,7 @@ public class ItemScriptDispatcherTests
         );
 
         var hasHook = dispatcher.HasHook(
-            new UOItemEntity
+            new()
             {
                 ScriptId = "none",
                 Name = "Potion"
@@ -342,39 +381,5 @@ public class ItemScriptDispatcherTests
         );
 
         Assert.That(hasHook, Is.True);
-    }
-
-    [Test]
-    public async Task HasHook_ShouldReturnFalse_WhenHookFunctionIsMissing()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDirectory = directories[DirectoryType.Scripts];
-        Directory.CreateDirectory(scriptsDirectory);
-        var scriptEngine = new LuaScriptEngineService(
-            directories,
-            [],
-            new Container(),
-            new(temp.Path, scriptsDirectory, "0.1.0")
-        );
-        await scriptEngine.StartAsync();
-        scriptEngine.ExecuteScript("potion = { }");
-
-        var dispatcher = new ItemScriptDispatcher(
-            scriptEngine,
-            new ItemScriptDispatcherTestItemService(),
-            new FakeGameNetworkSessionService()
-        );
-
-        var hasHook = dispatcher.HasHook(
-            new UOItemEntity
-            {
-                ScriptId = "none",
-                Name = "Potion"
-            },
-            "double_click"
-        );
-
-        Assert.That(hasHook, Is.False);
     }
 }

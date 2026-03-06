@@ -2,8 +2,8 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.UO.Data.Geometry;
-using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
@@ -38,6 +38,14 @@ internal sealed class SpatialEntityIndex
         _onMobileAddedToWorld = onMobileAddedToWorld;
     }
 
+    public void AddOrUpdateItem(UOItemEntity item, int mapId)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        var (sectorX, sectorY) = GetSectorCoordinates(item.Location);
+        EnsureSectorLoaded(mapId, sectorX, sectorY);
+        AddOrUpdateItemInternal(item, mapId, sectorX, sectorY);
+    }
+
     public bool AddOrUpdateMobile(UOMobileEntity mobile)
     {
         ArgumentNullException.ThrowIfNull(mobile);
@@ -58,38 +66,54 @@ internal sealed class SpatialEntityIndex
         }
     }
 
-    public void AddOrUpdateItem(UOItemEntity item, int mapId)
+    public List<MapSector> GetActiveSectors()
     {
-        ArgumentNullException.ThrowIfNull(item);
-        var (sectorX, sectorY) = GetSectorCoordinates(item.Location);
-        EnsureSectorLoaded(mapId, sectorX, sectorY);
-        AddOrUpdateItemInternal(item, mapId, sectorX, sectorY);
+        lock (_sync)
+        {
+            return [.. _mapIndices.Values.SelectMany(static mapIndex => mapIndex.Sectors)];
+        }
     }
 
-    public void MoveItem(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
+    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
     {
-        ArgumentNullException.ThrowIfNull(item);
-        item.Location = newLocation;
-        _ = MoveEntity(item.Id, item, mapId, oldLocation, newLocation);
-    }
+        var clampedRadius = Math.Max(0, radius);
+        var sectors = GetSectorCoordinatesInRadius(centerSectorX, centerSectorY, clampedRadius);
 
-    public SpatialEntityMoveResult MoveMobile(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
-    {
-        ArgumentNullException.ThrowIfNull(mobile);
-        mobile.Location = newLocation;
-        var mapId = mobile.MapId;
-        var (oldSectorX, oldSectorY) = GetSectorCoordinates(oldLocation);
-        var (newSectorX, newSectorY) = GetSectorCoordinates(newLocation);
-        var sectorChanged = MoveEntity(mobile.Id, mobile, mapId, oldLocation, newLocation);
+        foreach (var (x, y) in sectors)
+        {
+            EnsureSectorLoaded(mapId, x, y);
+        }
 
-        return new(
-            sectorChanged,
-            mapId,
-            oldSectorX,
-            oldSectorY,
-            newSectorX,
-            newSectorY
-        );
+        lock (_sync)
+        {
+            if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
+            {
+                return [];
+            }
+
+            var results = new List<UOMobileEntity>();
+            var seen = new HashSet<Serial>();
+
+            foreach (var (x, y) in sectors)
+            {
+                var sector = mapIndex.GetSector(x, y);
+
+                if (sector is null)
+                {
+                    continue;
+                }
+
+                foreach (var mobile in sector.GetMobiles())
+                {
+                    if (seen.Add(mobile.Id))
+                    {
+                        results.Add(mobile);
+                    }
+                }
+            }
+
+            return results;
+        }
     }
 
     public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
@@ -178,48 +202,6 @@ internal sealed class SpatialEntityIndex
         }
     }
 
-    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
-    {
-        var clampedRadius = Math.Max(0, radius);
-        var sectors = GetSectorCoordinatesInRadius(centerSectorX, centerSectorY, clampedRadius);
-
-        foreach (var (x, y) in sectors)
-        {
-            EnsureSectorLoaded(mapId, x, y);
-        }
-
-        lock (_sync)
-        {
-            if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
-            {
-                return [];
-            }
-
-            var results = new List<UOMobileEntity>();
-            var seen = new HashSet<Serial>();
-
-            foreach (var (x, y) in sectors)
-            {
-                var sector = mapIndex.GetSector(x, y);
-
-                if (sector is null)
-                {
-                    continue;
-                }
-
-                foreach (var mobile in sector.GetMobiles())
-                {
-                    if (seen.Add(mobile.Id))
-                    {
-                        results.Add(mobile);
-                    }
-                }
-            }
-
-            return results;
-        }
-    }
-
     public MapSector? GetSectorByLocation(int mapId, Point3D location)
     {
         var (sectorX, sectorY) = GetSectorCoordinates(location);
@@ -233,34 +215,6 @@ internal sealed class SpatialEntityIndex
             }
 
             return mapIndex.GetSector(sectorX, sectorY);
-        }
-    }
-
-    public T? TryGetEntity<T>(Serial serial) where T : class, IPositionEntity
-    {
-        lock (_sync)
-        {
-            if (!_entityLocations.TryGetValue(serial, out var location))
-            {
-                return null;
-            }
-
-            if (!_mapIndices.TryGetValue(location.MapId, out var mapIndex))
-            {
-                return null;
-            }
-
-            var sector = mapIndex.GetSector(location.SectorX, location.SectorY);
-
-            return sector?.GetEntity<T>(serial);
-        }
-    }
-
-    public List<MapSector> GetActiveSectors()
-    {
-        lock (_sync)
-        {
-            return [.. _mapIndices.Values.SelectMany(static mapIndex => mapIndex.Sectors)];
         }
     }
 
@@ -284,6 +238,60 @@ internal sealed class SpatialEntityIndex
         }
     }
 
+    public void MoveItem(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        item.Location = newLocation;
+        _ = MoveEntity(item.Id, item, mapId, oldLocation, newLocation);
+    }
+
+    public SpatialEntityMoveResult MoveMobile(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+        mobile.Location = newLocation;
+        var mapId = mobile.MapId;
+        var (oldSectorX, oldSectorY) = GetSectorCoordinates(oldLocation);
+        var (newSectorX, newSectorY) = GetSectorCoordinates(newLocation);
+        var sectorChanged = MoveEntity(mobile.Id, mobile, mapId, oldLocation, newLocation);
+
+        return new(
+            sectorChanged,
+            mapId,
+            oldSectorX,
+            oldSectorY,
+            newSectorX,
+            newSectorY
+        );
+    }
+
+    public void RemoveEntity(Serial serial)
+    {
+        lock (_sync)
+        {
+            RemoveEntityUnsafe(serial);
+        }
+    }
+
+    public T? TryGetEntity<T>(Serial serial) where T : class, IPositionEntity
+    {
+        lock (_sync)
+        {
+            if (!_entityLocations.TryGetValue(serial, out var location))
+            {
+                return null;
+            }
+
+            if (!_mapIndices.TryGetValue(location.MapId, out var mapIndex))
+            {
+                return null;
+            }
+
+            var sector = mapIndex.GetSector(location.SectorX, location.SectorY);
+
+            return sector?.GetEntity<T>(serial);
+        }
+    }
+
     public async Task WarmupAroundSectorAsync(
         int mapId,
         int centerSectorX,
@@ -303,14 +311,6 @@ internal sealed class SpatialEntityIndex
             {
                 await EnsureSectorLoadedAsync(mapId, x, y, cancellationToken);
             }
-        }
-    }
-
-    public void RemoveEntity(Serial serial)
-    {
-        lock (_sync)
-        {
-            RemoveEntityUnsafe(serial);
         }
     }
 
@@ -339,73 +339,6 @@ internal sealed class SpatialEntityIndex
 
             return isNew;
         }
-    }
-
-    private bool MoveEntity(Serial serial, object entity, int mapId, Point3D oldLocation, Point3D newLocation)
-    {
-        var (oldX, oldY) = GetSectorCoordinates(oldLocation);
-        var (newX, newY) = GetSectorCoordinates(newLocation);
-
-        lock (_sync)
-        {
-            if (oldX == newX && oldY == newY)
-            {
-                _entityLocations[serial] = new() { MapId = mapId, SectorX = newX, SectorY = newY };
-
-                return false;
-            }
-
-            if (_mapIndices.TryGetValue(mapId, out var mapIndex))
-            {
-                var oldSector = mapIndex.GetSector(oldX, oldY);
-                var newSector = mapIndex.GetOrCreateSector(mapId, newX, newY);
-
-                switch (entity)
-                {
-                    case UOMobileEntity mobile:
-                        oldSector?.RemoveEntity(mobile);
-                        newSector.AddEntity(mobile);
-
-                        break;
-                    case UOItemEntity item:
-                        oldSector?.RemoveEntity(item);
-                        newSector.AddEntity(item);
-
-                        break;
-                }
-            }
-            else
-            {
-                var sector = GetOrCreateSectorUnsafe(mapId, newX, newY);
-
-                switch (entity)
-                {
-                    case UOMobileEntity mobile:
-                        sector.AddEntity(mobile);
-
-                        break;
-                    case UOItemEntity item:
-                        sector.AddEntity(item);
-
-                        break;
-                }
-            }
-
-            _entityLocations[serial] = new() { MapId = mapId, SectorX = newX, SectorY = newY };
-        }
-
-        return true;
-    }
-
-    private MapSector GetOrCreateSectorUnsafe(int mapId, int sectorX, int sectorY)
-    {
-        if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
-        {
-            mapIndex = new();
-            _mapIndices[mapId] = mapIndex;
-        }
-
-        return mapIndex.GetOrCreateSector(mapId, sectorX, sectorY);
     }
 
     private void EnsureSectorLoaded(int mapId, int sectorX, int sectorY)
@@ -482,6 +415,54 @@ internal sealed class SpatialEntityIndex
         }
     }
 
+    private MapSector GetOrCreateSectorUnsafe(int mapId, int sectorX, int sectorY)
+    {
+        if (!_mapIndices.TryGetValue(mapId, out var mapIndex))
+        {
+            mapIndex = new();
+            _mapIndices[mapId] = mapIndex;
+        }
+
+        return mapIndex.GetOrCreateSector(mapId, sectorX, sectorY);
+    }
+
+    private static (int X, int Y) GetSectorCoordinates(Point3D location)
+        => (location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+
+    private static List<(int X, int Y)> GetSectorCoordinatesInRadius(int centerSectorX, int centerSectorY, int radius)
+    {
+        var sectors = new List<(int X, int Y)>();
+
+        for (var x = centerSectorX - radius; x <= centerSectorX + radius; x++)
+        {
+            for (var y = centerSectorY - radius; y <= centerSectorY + radius; y++)
+            {
+                sectors.Add((x, y));
+            }
+        }
+
+        return sectors;
+    }
+
+    private static List<(int X, int Y)> GetSectorsInRange(Point3D location, int range)
+    {
+        var sectors = new List<(int X, int Y)>();
+        var minX = (location.X - range) >> MapSectorConsts.SectorShift;
+        var maxX = (location.X + range) >> MapSectorConsts.SectorShift;
+        var minY = (location.Y - range) >> MapSectorConsts.SectorShift;
+        var maxY = (location.Y + range) >> MapSectorConsts.SectorShift;
+
+        for (var x = minX; x <= maxX; x++)
+        {
+            for (var y = minY; y <= maxY; y++)
+            {
+                sectors.Add((x, y));
+            }
+        }
+
+        return sectors;
+    }
+
     private async Task LoadSectorEntitiesAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -520,6 +501,62 @@ internal sealed class SpatialEntityIndex
         }
     }
 
+    private bool MoveEntity(Serial serial, object entity, int mapId, Point3D oldLocation, Point3D newLocation)
+    {
+        var (oldX, oldY) = GetSectorCoordinates(oldLocation);
+        var (newX, newY) = GetSectorCoordinates(newLocation);
+
+        lock (_sync)
+        {
+            if (oldX == newX && oldY == newY)
+            {
+                _entityLocations[serial] = new() { MapId = mapId, SectorX = newX, SectorY = newY };
+
+                return false;
+            }
+
+            if (_mapIndices.TryGetValue(mapId, out var mapIndex))
+            {
+                var oldSector = mapIndex.GetSector(oldX, oldY);
+                var newSector = mapIndex.GetOrCreateSector(mapId, newX, newY);
+
+                switch (entity)
+                {
+                    case UOMobileEntity mobile:
+                        oldSector?.RemoveEntity(mobile);
+                        newSector.AddEntity(mobile);
+
+                        break;
+                    case UOItemEntity item:
+                        oldSector?.RemoveEntity(item);
+                        newSector.AddEntity(item);
+
+                        break;
+                }
+            }
+            else
+            {
+                var sector = GetOrCreateSectorUnsafe(mapId, newX, newY);
+
+                switch (entity)
+                {
+                    case UOMobileEntity mobile:
+                        sector.AddEntity(mobile);
+
+                        break;
+                    case UOItemEntity item:
+                        sector.AddEntity(item);
+
+                        break;
+                }
+            }
+
+            _entityLocations[serial] = new() { MapId = mapId, SectorX = newX, SectorY = newY };
+        }
+
+        return true;
+    }
+
     private void RemoveEntityUnsafe(Serial serial)
     {
         if (!_entityLocations.TryGetValue(serial, out var location))
@@ -549,42 +586,5 @@ internal sealed class SpatialEntityIndex
         }
 
         _entityLocations.Remove(serial);
-    }
-
-    private static (int X, int Y) GetSectorCoordinates(Point3D location)
-        => (location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
-
-    private static List<(int X, int Y)> GetSectorsInRange(Point3D location, int range)
-    {
-        var sectors = new List<(int X, int Y)>();
-        var minX = (location.X - range) >> MapSectorConsts.SectorShift;
-        var maxX = (location.X + range) >> MapSectorConsts.SectorShift;
-        var minY = (location.Y - range) >> MapSectorConsts.SectorShift;
-        var maxY = (location.Y + range) >> MapSectorConsts.SectorShift;
-
-        for (var x = minX; x <= maxX; x++)
-        {
-            for (var y = minY; y <= maxY; y++)
-            {
-                sectors.Add((x, y));
-            }
-        }
-
-        return sectors;
-    }
-
-    private static List<(int X, int Y)> GetSectorCoordinatesInRadius(int centerSectorX, int centerSectorY, int radius)
-    {
-        var sectors = new List<(int X, int Y)>();
-
-        for (var x = centerSectorX - radius; x <= centerSectorX + radius; x++)
-        {
-            for (var y = centerSectorY - radius; y <= centerSectorY + radius; y++)
-            {
-                sectors.Add((x, y));
-            }
-        }
-
-        return sectors;
     }
 }

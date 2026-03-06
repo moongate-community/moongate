@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using Moongate.Stress.Data;
@@ -18,13 +17,21 @@ public sealed class HttpAccountBootstrapper : IAccountBootstrapper
         _options = options;
     }
 
+    private sealed class HttpUserDto
+    {
+        public string Username { get; } = string.Empty;
+    }
+
+    public static string BuildUsername(string prefix, int index)
+        => $"{prefix}_{index:0000}";
+
     public async Task EnsureUsersAsync(CancellationToken cancellationToken = default)
     {
         var jwtToken = await TryAuthenticateAsync(cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(jwtToken))
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new("Bearer", jwtToken);
         }
 
         var existingUserNames = await GetExistingUserNamesAsync(cancellationToken);
@@ -42,8 +49,79 @@ public sealed class HttpAccountBootstrapper : IAccountBootstrapper
         }
     }
 
-    public static string BuildUsername(string prefix, int index)
-        => $"{prefix}_{index:0000}";
+    private async Task CreateUserAsync(string username, CancellationToken cancellationToken)
+    {
+        var payload = JsonSerializer.Serialize(
+            new
+            {
+                username,
+                password = _options.UserPassword,
+                email = $"{username}@stress.local",
+                role = _options.UserRole
+            }
+        );
+
+        using var request = new StringContent(payload, Encoding.UTF8, "application/json");
+        using var response = await _httpClient.PostAsync("/api/users/", request, cancellationToken);
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized ||
+            response.StatusCode == HttpStatusCode.Forbidden)
+        {
+            var authHint = string.IsNullOrWhiteSpace(_options.AdminUsername) ||
+                           string.IsNullOrWhiteSpace(_options.AdminPassword)
+                               ? "Missing admin credentials. Pass --admin-username and --admin-password."
+                               : "Admin credentials were provided but were rejected.";
+
+            throw new InvalidOperationException($"Cannot create user '{username}' ({(int)response.StatusCode}). {authHint}");
+        }
+
+        if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            return;
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException(
+                $"Cannot create user '{username}' ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync(cancellationToken)}"
+            );
+        }
+    }
+
+    private async Task<HashSet<string>> GetExistingUserNamesAsync(CancellationToken cancellationToken)
+    {
+        using var response = await _httpClient.GetAsync("/api/users/", cancellationToken);
+
+        if (response.StatusCode == HttpStatusCode.Unauthorized ||
+            response.StatusCode == HttpStatusCode.Forbidden)
+        {
+            var authHint = string.IsNullOrWhiteSpace(_options.AdminUsername) ||
+                           string.IsNullOrWhiteSpace(_options.AdminPassword)
+                               ? "Missing admin credentials. Pass --admin-username and --admin-password."
+                               : "Admin credentials were provided but were rejected.";
+
+            throw new InvalidOperationException($"Cannot query existing users ({(int)response.StatusCode}). {authHint}");
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new InvalidOperationException(
+                $"Cannot query existing users ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync(cancellationToken)}"
+            );
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var users = await JsonSerializer.DeserializeAsync<List<HttpUserDto>>(stream, cancellationToken: cancellationToken);
+
+        if (users is null)
+        {
+            return [];
+        }
+
+        return users.Select(static user => user.Username)
+                    .Where(static username => !string.IsNullOrWhiteSpace(username))
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
 
     private async Task<string?> TryAuthenticateAsync(CancellationToken cancellationToken)
     {
@@ -84,87 +162,6 @@ public sealed class HttpAccountBootstrapper : IAccountBootstrapper
         }
 
         return token;
-    }
-
-    private async Task<HashSet<string>> GetExistingUserNamesAsync(CancellationToken cancellationToken)
-    {
-        using var response = await _httpClient.GetAsync("/api/users/", cancellationToken);
-
-        if (response.StatusCode == HttpStatusCode.Unauthorized ||
-            response.StatusCode == HttpStatusCode.Forbidden)
-        {
-            var authHint = string.IsNullOrWhiteSpace(_options.AdminUsername) ||
-                           string.IsNullOrWhiteSpace(_options.AdminPassword)
-                               ? "Missing admin credentials. Pass --admin-username and --admin-password."
-                               : "Admin credentials were provided but were rejected.";
-            throw new InvalidOperationException(
-                $"Cannot query existing users ({(int)response.StatusCode}). {authHint}"
-            );
-        }
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new InvalidOperationException(
-                $"Cannot query existing users ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync(cancellationToken)}"
-            );
-        }
-
-        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        var users = await JsonSerializer.DeserializeAsync<List<HttpUserDto>>(stream, cancellationToken: cancellationToken);
-
-        if (users is null)
-        {
-            return [];
-        }
-
-        return users.Select(static user => user.Username)
-                    .Where(static username => !string.IsNullOrWhiteSpace(username))
-                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
-    }
-
-    private async Task CreateUserAsync(string username, CancellationToken cancellationToken)
-    {
-        var payload = JsonSerializer.Serialize(
-            new
-            {
-                username,
-                password = _options.UserPassword,
-                email = $"{username}@stress.local",
-                role = _options.UserRole
-            }
-        );
-
-        using var request = new StringContent(payload, Encoding.UTF8, "application/json");
-        using var response = await _httpClient.PostAsync("/api/users/", request, cancellationToken);
-
-        if (response.StatusCode == HttpStatusCode.Unauthorized ||
-            response.StatusCode == HttpStatusCode.Forbidden)
-        {
-            var authHint = string.IsNullOrWhiteSpace(_options.AdminUsername) ||
-                           string.IsNullOrWhiteSpace(_options.AdminPassword)
-                               ? "Missing admin credentials. Pass --admin-username and --admin-password."
-                               : "Admin credentials were provided but were rejected.";
-            throw new InvalidOperationException(
-                $"Cannot create user '{username}' ({(int)response.StatusCode}). {authHint}"
-            );
-        }
-
-        if (response.StatusCode == HttpStatusCode.Conflict)
-        {
-            return;
-        }
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new InvalidOperationException(
-                $"Cannot create user '{username}' ({(int)response.StatusCode}): {await response.Content.ReadAsStringAsync(cancellationToken)}"
-            );
-        }
-    }
-
-    private sealed class HttpUserDto
-    {
-        public string Username { get; set; } = string.Empty;
     }
 
     private static string? TryExtractToken(string rawJson)

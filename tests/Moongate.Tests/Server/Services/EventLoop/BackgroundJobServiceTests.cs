@@ -9,7 +9,7 @@ public class BackgroundJobServiceTests
     {
         using var service = new BackgroundJobService();
         var counter = 0;
-        service.Start(workerCount: 1);
+        service.Start(1);
 
         service.EnqueueBackground(() => Interlocked.Increment(ref counter));
 
@@ -20,37 +20,11 @@ public class BackgroundJobServiceTests
     }
 
     [Test]
-    public async Task ExecutePendingOnGameLoop_ShouldRunPostedActionsOnlyWhenDrained()
-    {
-        using var service = new BackgroundJobService();
-        var counter = 0;
-        service.Start(workerCount: 1);
-        service.PostToGameLoop(() => Interlocked.Increment(ref counter));
-        service.PostToGameLoop(() => Interlocked.Increment(ref counter));
-
-        Assert.That(counter, Is.Zero);
-
-        var executedOne = service.ExecutePendingOnGameLoop(maxActions: 1);
-        var executedTwo = service.ExecutePendingOnGameLoop(maxActions: 10);
-
-        await service.StopAsync();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(executedOne, Is.EqualTo(1));
-                Assert.That(executedTwo, Is.EqualTo(1));
-                Assert.That(counter, Is.EqualTo(2));
-            }
-        );
-    }
-
-    [Test]
     public async Task EnqueueBackground_WhenJobThrows_ShouldContinueProcessingNextJobs()
     {
         using var service = new BackgroundJobService();
         var counter = 0;
-        service.Start(workerCount: 1);
+        service.Start(1);
 
         service.EnqueueBackground(
             () =>
@@ -67,11 +41,37 @@ public class BackgroundJobServiceTests
     }
 
     [Test]
+    public async Task ExecutePendingOnGameLoop_ShouldRunPostedActionsOnlyWhenDrained()
+    {
+        using var service = new BackgroundJobService();
+        var counter = 0;
+        service.Start(1);
+        service.PostToGameLoop(() => Interlocked.Increment(ref counter));
+        service.PostToGameLoop(() => Interlocked.Increment(ref counter));
+
+        Assert.That(counter, Is.Zero);
+
+        var executedOne = service.ExecutePendingOnGameLoop(1);
+        var executedTwo = service.ExecutePendingOnGameLoop(10);
+
+        await service.StopAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(executedOne, Is.EqualTo(1));
+                Assert.That(executedTwo, Is.EqualTo(1));
+                Assert.That(counter, Is.EqualTo(2));
+            }
+        );
+    }
+
+    [Test]
     public async Task RunBackgroundAndPostResult_ShouldPostResultToGameLoop()
     {
         using var service = new BackgroundJobService();
         var result = 0;
-        service.Start(workerCount: 1);
+        service.Start(1);
 
         service.RunBackgroundAndPostResult(
             () => 42,
@@ -98,12 +98,13 @@ public class BackgroundJobServiceTests
     {
         using var service = new BackgroundJobService();
         Exception? captured = null;
-        service.Start(workerCount: 1);
+        service.Start(1);
 
         service.RunBackgroundAndPostResultAsync<int>(
             async () =>
             {
                 await Task.Delay(10);
+
                 throw new InvalidOperationException("boom");
             },
             _ => Assert.Fail("Result callback should not run"),

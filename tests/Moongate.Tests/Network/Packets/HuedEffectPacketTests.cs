@@ -69,14 +69,14 @@ public class HuedEffectPacketTests
             (Serial)0x01010101u,
             (Serial)0x02020202u,
             0x7777,
-            new Point3D(100, 200, -30),
-            new Point3D(300, 400, 30),
-            speed: 3,
-            duration: 8,
-            fixedDirection: false,
-            explode: true,
-            hue: 0x12345678,
-            renderMode: 0x7ABCDEF0
+            new(100, 200, -30),
+            new(300, 400, 30),
+            3,
+            8,
+            false,
+            true,
+            0x12345678,
+            0x7ABCDEF0
         );
 
         var data = Write(packet);

@@ -39,9 +39,7 @@ public class FileLoaderService : IFileLoaderService
     }
 
     public void Dispose()
-    {
-        _fileLoaders.Clear();
-    }
+        => _fileLoaders.Clear();
 
     public async Task ExecuteLoadersAsync()
     {

@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Incoming.UI;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.UO.Data.Ids;
 using MoonSharp.Interpreter;
 using Serilog;
 
@@ -49,7 +50,7 @@ public sealed class GumpScriptDispatcherService : IGumpScriptDispatcherService
                 new Dictionary<string, object?>
                 {
                     ["session_id"] = session.SessionId,
-                    ["character_id"] = session.CharacterId == Moongate.UO.Data.Ids.Serial.Zero
+                    ["character_id"] = session.CharacterId == Serial.Zero
                                            ? null
                                            : (uint)session.CharacterId,
                     ["gump_id"] = packet.GumpId,
@@ -78,4 +79,3 @@ public sealed class GumpScriptDispatcherService : IGumpScriptDispatcherService
         }
     }
 }
-

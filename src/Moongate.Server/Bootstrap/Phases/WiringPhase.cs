@@ -23,6 +23,12 @@ internal sealed class WiringPhase : IBootstrapPhase
         RegisterCommands(context);
     }
 
+    private static void RegisterCommands(BootstrapContext context)
+    {
+        var commandSystemService = context.Container.Resolve<ICommandSystemService>();
+        BootstrapConsoleCommandRegistration.RegisterCommands(context.Container, commandSystemService);
+    }
+
     private static void RegisterFileLoaders(BootstrapContext context)
     {
         var fileLoaderService = context.Container.Resolve<IFileLoaderService>();
@@ -30,18 +36,8 @@ internal sealed class WiringPhase : IBootstrapPhase
     }
 
     private static void RegisterGameEventListeners(BootstrapContext context)
-    {
-        BootstrapGameEventListenerRegistration.Subscribe(context.Container);
-    }
+        => BootstrapGameEventListenerRegistration.Subscribe(context.Container);
 
     private static void RegisterPacketHandlers(BootstrapContext context)
-    {
-        BootstrapPacketHandlerRegistration.Register(context.Container);
-    }
-
-    private static void RegisterCommands(BootstrapContext context)
-    {
-        var commandSystemService = context.Container.Resolve<ICommandSystemService>();
-        BootstrapConsoleCommandRegistration.RegisterCommands(context.Container, commandSystemService);
-    }
+        => BootstrapPacketHandlerRegistration.Register(context.Container);
 }

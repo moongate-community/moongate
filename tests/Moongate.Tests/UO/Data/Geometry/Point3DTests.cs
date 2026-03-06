@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Geometry;
 using Moongate.UO.Data.Types;
@@ -6,6 +7,17 @@ namespace Moongate.Tests.UO.Data.Geometry;
 
 public class Point3DTests
 {
+    [Test]
+    public void CompareTo_WithNullInterfacePoint_ShouldReturnGreaterThanZero()
+    {
+        var point = new Point3D(1, 1, 1);
+        IPoint3D? other = null;
+
+        var result = point.CompareTo(other!);
+
+        Assert.That(result, Is.GreaterThan(0));
+    }
+
     [Test]
     public void DirectionConversion_ShouldMapToExpectedOffset()
     {
@@ -64,6 +76,15 @@ public class Point3DTests
     }
 
     [Test]
+    public void Parse_WithProvider_ShouldUseProviderForNumbers()
+    {
+        var provider = CultureInfo.InvariantCulture;
+        var point = Point3D.Parse("(10, 20, -5)", provider);
+
+        Assert.That(point, Is.EqualTo(new Point3D(10, 20, -5)));
+    }
+
+    [Test]
     public void Parse_WithValidInput_ShouldReturnExpectedPoint()
     {
         var point = Point3D.Parse("(10, 20, -5)");
@@ -105,25 +126,5 @@ public class Point3DTests
                 Assert.That(point, Is.EqualTo(default(Point3D)));
             }
         );
-    }
-
-    [Test]
-    public void CompareTo_WithNullInterfacePoint_ShouldReturnGreaterThanZero()
-    {
-        var point = new Point3D(1, 1, 1);
-        IPoint3D? other = null;
-
-        var result = point.CompareTo(other!);
-
-        Assert.That(result, Is.GreaterThan(0));
-    }
-
-    [Test]
-    public void Parse_WithProvider_ShouldUseProviderForNumbers()
-    {
-        var provider = System.Globalization.CultureInfo.InvariantCulture;
-        var point = Point3D.Parse("(10, 20, -5)", provider);
-
-        Assert.That(point, Is.EqualTo(new Point3D(10, 20, -5)));
     }
 }

@@ -34,11 +34,11 @@ internal sealed class ConsoleCommandRegistrationModel : IEquatable<ConsoleComman
             return false;
         }
 
-        return ExecutorTypeName == other.ExecutorTypeName
-               && CommandName == other.CommandName
-               && Description == other.Description
-               && SourceValue == other.SourceValue
-               && MinimumAccountTypeValue == other.MinimumAccountTypeValue;
+        return ExecutorTypeName == other.ExecutorTypeName &&
+               CommandName == other.CommandName &&
+               Description == other.Description &&
+               SourceValue == other.SourceValue &&
+               MinimumAccountTypeValue == other.MinimumAccountTypeValue;
     }
 
     public override bool Equals(object? obj)

@@ -27,6 +27,7 @@ public class ToolTipHandler : BasePacketListener
     private readonly ConcurrentDictionary<Serial, CachedItemTooltip> _itemTooltipCache = [];
     private readonly ILogger _logger = Log.ForContext<ToolTipHandler>();
     private readonly IPersistenceService _persistenceService;
+
     private readonly record struct CachedItemTooltip(int ItemHashCode, ObjectPropertyList PacketTemplate);
 
     public ToolTipHandler(
@@ -128,24 +129,6 @@ public class ToolTipHandler : BasePacketListener
         return null;
     }
 
-    private void ReplaceCachedTooltip(Serial serial, CachedItemTooltip updated)
-    {
-        if (_itemTooltipCache.TryGetValue(serial, out var previous))
-        {
-            previous.PacketTemplate.Dispose();
-        }
-
-        _itemTooltipCache[serial] = updated;
-    }
-
-    private void RemoveAndDisposeCachedTooltip(Serial serial)
-    {
-        if (_itemTooltipCache.TryRemove(serial, out var removed))
-        {
-            removed.PacketTemplate.Dispose();
-        }
-    }
-
     private async Task<bool> HandleMegaClilocPacketAsync(GameSession session, MegaClilocPacket clilocPacket)
     {
         if (!clilocPacket.IsClientRequest || clilocPacket.RequestedSerials.Count == 0)
@@ -166,6 +149,24 @@ public class ToolTipHandler : BasePacketListener
         }
 
         return true;
+    }
+
+    private void RemoveAndDisposeCachedTooltip(Serial serial)
+    {
+        if (_itemTooltipCache.TryRemove(serial, out var removed))
+        {
+            removed.PacketTemplate.Dispose();
+        }
+    }
+
+    private void ReplaceCachedTooltip(Serial serial, CachedItemTooltip updated)
+    {
+        if (_itemTooltipCache.TryGetValue(serial, out var previous))
+        {
+            previous.PacketTemplate.Dispose();
+        }
+
+        _itemTooltipCache[serial] = updated;
     }
 
     private async Task<UOMobileEntity?> ResolveMobileAsync(GameSession session, Serial serial)

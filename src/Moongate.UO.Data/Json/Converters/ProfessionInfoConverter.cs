@@ -17,7 +17,5 @@ public class ProfessionInfoConverter : JsonConverter<ProfessionInfo>
     }
 
     public override void Write(Utf8JsonWriter writer, ProfessionInfo value, JsonSerializerOptions options)
-    {
-        writer.WriteNumberValue(value.ID);
-    }
+        => writer.WriteNumberValue(value.ID);
 }

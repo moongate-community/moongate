@@ -28,20 +28,18 @@ public sealed class SendTargetCommand : ICommandExecutor
     }
 
     public async Task ExecuteCommandAsync(CommandSystemContext context)
-    {
-        await _gameEventBusService.PublishAsync(
-            new TargetRequestCursorEvent(
-                context.SessionId,
-                TargetCursorSelectionType.SelectLocation,
-                TargetCursorType.Helpful,
-                callback =>
-                {
-                    context.Print(
-                        "Target cursor callback invoked with selection: {0}",
-                        callback.Packet.Location
-                    );
-                }
-            )
-        );
-    }
+        => await _gameEventBusService.PublishAsync(
+               new TargetRequestCursorEvent(
+                   context.SessionId,
+                   TargetCursorSelectionType.SelectLocation,
+                   TargetCursorType.Helpful,
+                   callback =>
+                   {
+                       context.Print(
+                           "Target cursor callback invoked with selection: {0}",
+                           callback.Packet.Location
+                       );
+                   }
+               )
+           );
 }

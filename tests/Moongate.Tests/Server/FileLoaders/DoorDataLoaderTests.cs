@@ -9,6 +9,28 @@ namespace Moongate.Tests.Server.FileLoaders;
 
 public class DoorDataLoaderTests
 {
+    private sealed class TestDoorDataService : IDoorDataService
+    {
+        public List<DoorComponentEntry> Entries { get; } = [];
+
+        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
+            => Entries;
+
+        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
+
+        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
+        {
+            _ = itemId;
+            definition = default;
+
+            return false;
+        }
+    }
+
     [Test]
     public async Task LoadAsync_ShouldParseDoorsComponentsFile()
     {
@@ -61,27 +83,5 @@ public class DoorDataLoaderTests
         var loader = new DoorDataLoader(directories, service);
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
-    }
-
-    private sealed class TestDoorDataService : IDoorDataService
-    {
-        public List<DoorComponentEntry> Entries { get; } = [];
-
-        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries)
-        {
-            Entries.Clear();
-            Entries.AddRange(entries);
-        }
-
-        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
-            => Entries;
-
-        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
-        {
-            _ = itemId;
-            definition = default;
-
-            return false;
-        }
     }
 }

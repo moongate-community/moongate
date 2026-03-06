@@ -5,8 +5,8 @@ namespace Moongate.Persistence.Data.Persistence;
 /// <summary>
 /// Serialized account state used inside world snapshots and journal payloads.
 /// </summary>
-[MessagePackObject(keyAsPropertyName: true)]
-public sealed partial class AccountSnapshot
+[MessagePackObject(true)]
+public sealed class AccountSnapshot
 {
     public uint Id { get; set; }
 

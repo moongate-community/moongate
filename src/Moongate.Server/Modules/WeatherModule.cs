@@ -17,15 +17,11 @@ public sealed class WeatherModule
         _lightService = lightService;
     }
 
-    [ScriptFunction("set_global_light", "Forces global light level for all players (0-255).")]
-    public void SetGlobalLight(int level)
-    {
-        _lightService.SetGlobalLightOverride(level, true);
-    }
-
     [ScriptFunction("clear_global_light", "Clears forced global light level and restores dynamic cycle.")]
     public void ClearGlobalLight()
-    {
-        _lightService.SetGlobalLightOverride(null, true);
-    }
+        => _lightService.SetGlobalLightOverride(null);
+
+    [ScriptFunction("set_global_light", "Forces global light level for all players (0-255).")]
+    public void SetGlobalLight(int level)
+        => _lightService.SetGlobalLightOverride(level);
 }

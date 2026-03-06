@@ -259,12 +259,10 @@ public class MapSector
     /// Extracts serial from an entity
     /// </summary>
     private Serial GetEntitySerial(IPositionEntity entity)
-    {
-        return entity switch
+        => entity switch
         {
             UOMobileEntity mobile => mobile.Id,
             UOItemEntity item     => item.Id,
             _                     => Serial.MinusOne
         };
-    }
 }

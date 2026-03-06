@@ -8,14 +8,14 @@ namespace Moongate.Server.Interfaces.Services.World;
 public interface ILocationCatalogService
 {
     /// <summary>
-    /// Replaces all current location entries.
-    /// </summary>
-    /// <param name="locations">Locations to persist in memory.</param>
-    void SetLocations(IReadOnlyList<WorldLocationEntry> locations);
-
-    /// <summary>
     /// Returns all loaded location entries.
     /// </summary>
     /// <returns>Loaded locations.</returns>
     IReadOnlyList<WorldLocationEntry> GetAllLocations();
+
+    /// <summary>
+    /// Replaces all current location entries.
+    /// </summary>
+    /// <param name="locations">Locations to persist in memory.</param>
+    void SetLocations(IReadOnlyList<WorldLocationEntry> locations);
 }

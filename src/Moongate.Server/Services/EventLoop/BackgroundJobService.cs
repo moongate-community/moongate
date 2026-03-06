@@ -18,61 +18,11 @@ public sealed class BackgroundJobService : IBackgroundJobService, IDisposable
     private bool _running;
     private bool _stopped;
 
-    public void Start(int? workerCount = null)
+    public void Dispose()
     {
-        if (_running)
-        {
-            return;
-        }
-
-        if (_stopped)
-        {
-            throw new InvalidOperationException("Background job service has already been stopped.");
-        }
-
-        var resolvedWorkerCount = workerCount ?? Math.Max(1, Environment.ProcessorCount / 2);
-
-        if (resolvedWorkerCount <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(workerCount));
-        }
-
-        _cancellationTokenSource = new();
-        _running = true;
-
-        for (var i = 0; i < resolvedWorkerCount; i++)
-        {
-            _workers.Add(Task.Run(() => WorkerLoopAsync(_cancellationTokenSource.Token), _cancellationTokenSource.Token));
-        }
-    }
-
-    public async Task StopAsync()
-    {
-        if (_stopped)
-        {
-            return;
-        }
-
-        _stopped = true;
-        _running = false;
-
-        if (_cancellationTokenSource is null)
-        {
-            return;
-        }
-
-        _cancellationTokenSource.Cancel();
-
-        for (var i = 0; i < _workers.Count; i++)
-        {
-            _signal.Release();
-        }
-
-        try
-        {
-            await Task.WhenAll(_workers);
-        }
-        catch (OperationCanceledException) { }
+        StopAsync().GetAwaiter().GetResult();
+        _cancellationTokenSource?.Dispose();
+        _signal.Dispose();
     }
 
     public void EnqueueBackground(Action job)
@@ -100,6 +50,38 @@ public sealed class BackgroundJobService : IBackgroundJobService, IDisposable
 
         _backgroundJobs.Enqueue(job);
         _signal.Release();
+    }
+
+    public int ExecutePendingOnGameLoop(int maxActions = 100)
+    {
+        if (maxActions <= 0)
+        {
+            return 0;
+        }
+
+        var executed = 0;
+
+        while (executed < maxActions && _gameLoopActions.TryDequeue(out var action))
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Game loop callback failed.");
+            }
+
+            executed++;
+        }
+
+        return executed;
+    }
+
+    public void PostToGameLoop(Action action)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+        _gameLoopActions.Enqueue(action);
     }
 
     public void RunBackgroundAndPostResult<TResult>(
@@ -162,43 +144,61 @@ public sealed class BackgroundJobService : IBackgroundJobService, IDisposable
         );
     }
 
-    public void PostToGameLoop(Action action)
+    public void Start(int? workerCount = null)
     {
-        ArgumentNullException.ThrowIfNull(action);
-        _gameLoopActions.Enqueue(action);
-    }
-
-    public int ExecutePendingOnGameLoop(int maxActions = 100)
-    {
-        if (maxActions <= 0)
+        if (_running)
         {
-            return 0;
+            return;
         }
 
-        var executed = 0;
-
-        while (executed < maxActions && _gameLoopActions.TryDequeue(out var action))
+        if (_stopped)
         {
-            try
-            {
-                action();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Game loop callback failed.");
-            }
-
-            executed++;
+            throw new InvalidOperationException("Background job service has already been stopped.");
         }
 
-        return executed;
+        var resolvedWorkerCount = workerCount ?? Math.Max(1, Environment.ProcessorCount / 2);
+
+        if (resolvedWorkerCount <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(workerCount));
+        }
+
+        _cancellationTokenSource = new();
+        _running = true;
+
+        for (var i = 0; i < resolvedWorkerCount; i++)
+        {
+            _workers.Add(Task.Run(() => WorkerLoopAsync(_cancellationTokenSource.Token), _cancellationTokenSource.Token));
+        }
     }
 
-    public void Dispose()
+    public async Task StopAsync()
     {
-        StopAsync().GetAwaiter().GetResult();
-        _cancellationTokenSource?.Dispose();
-        _signal.Dispose();
+        if (_stopped)
+        {
+            return;
+        }
+
+        _stopped = true;
+        _running = false;
+
+        if (_cancellationTokenSource is null)
+        {
+            return;
+        }
+
+        _cancellationTokenSource.Cancel();
+
+        for (var i = 0; i < _workers.Count; i++)
+        {
+            _signal.Release();
+        }
+
+        try
+        {
+            await Task.WhenAll(_workers);
+        }
+        catch (OperationCanceledException) { }
     }
 
     private async Task WorkerLoopAsync(CancellationToken cancellationToken)

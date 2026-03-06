@@ -8,6 +8,31 @@ namespace Moongate.Tests.Persistence;
 public class SnapshotMapperTests
 {
     [Test]
+    public void ToMobileSnapshot_ShouldPreserveCustomProperties()
+    {
+        var entity = new UOMobileEntity
+        {
+            Id = (Serial)0x102u,
+            Name = "props",
+            Location = new(0, 0, 0)
+        };
+        entity.SetCustomProperty(
+            "test_key",
+            new()
+            {
+                Type = ItemCustomPropertyType.Integer,
+                IntegerValue = 42
+            }
+        );
+
+        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
+        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+
+        Assert.That(restored.CustomProperties.Count, Is.EqualTo(1));
+        Assert.That(restored.CustomProperties["test_key"].IntegerValue, Is.EqualTo(42));
+    }
+
+    [Test]
     public void ToMobileSnapshot_ShouldPreserveEquippedItems_InLayerOrder()
     {
         var entity = new UOMobileEntity
@@ -26,23 +51,25 @@ public class SnapshotMapperTests
         var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
         var restored = SnapshotMapper.ToMobileEntity(snapshot);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(snapshot.EquippedLayers.Length, Is.EqualTo(3));
-            Assert.That(snapshot.EquippedItemIds.Length, Is.EqualTo(3));
-
-            // Verify ordering by layer key (ascending)
-            for (var i = 1; i < snapshot.EquippedLayers.Length; i++)
+        Assert.Multiple(
+            () =>
             {
-                Assert.That(snapshot.EquippedLayers[i], Is.GreaterThanOrEqualTo(snapshot.EquippedLayers[i - 1]));
-            }
+                Assert.That(snapshot.EquippedLayers.Length, Is.EqualTo(3));
+                Assert.That(snapshot.EquippedItemIds.Length, Is.EqualTo(3));
 
-            // Verify round-trip
-            Assert.That(restored.EquippedItemIds.Count, Is.EqualTo(3));
-            Assert.That(restored.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo((Serial)0x200u));
-            Assert.That(restored.EquippedItemIds[ItemLayerType.Shoes], Is.EqualTo((Serial)0x201u));
-            Assert.That(restored.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo((Serial)0x202u));
-        });
+                // Verify ordering by layer key (ascending)
+                for (var i = 1; i < snapshot.EquippedLayers.Length; i++)
+                {
+                    Assert.That(snapshot.EquippedLayers[i], Is.GreaterThanOrEqualTo(snapshot.EquippedLayers[i - 1]));
+                }
+
+                // Verify round-trip
+                Assert.That(restored.EquippedItemIds.Count, Is.EqualTo(3));
+                Assert.That(restored.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo((Serial)0x200u));
+                Assert.That(restored.EquippedItemIds[ItemLayerType.Shoes], Is.EqualTo((Serial)0x201u));
+                Assert.That(restored.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo((Serial)0x202u));
+            }
+        );
     }
 
     [Test]
@@ -57,32 +84,12 @@ public class SnapshotMapperTests
 
         var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(snapshot.EquippedLayers, Is.Empty);
-            Assert.That(snapshot.EquippedItemIds, Is.Empty);
-        });
-    }
-
-    [Test]
-    public void ToMobileSnapshot_ShouldPreserveCustomProperties()
-    {
-        var entity = new UOMobileEntity
-        {
-            Id = (Serial)0x102u,
-            Name = "props",
-            Location = new(0, 0, 0)
-        };
-        entity.SetCustomProperty("test_key", new()
-        {
-            Type = ItemCustomPropertyType.Integer,
-            IntegerValue = 42
-        });
-
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
-
-        Assert.That(restored.CustomProperties.Count, Is.EqualTo(1));
-        Assert.That(restored.CustomProperties["test_key"].IntegerValue, Is.EqualTo(42));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshot.EquippedLayers, Is.Empty);
+                Assert.That(snapshot.EquippedItemIds, Is.Empty);
+            }
+        );
     }
 }

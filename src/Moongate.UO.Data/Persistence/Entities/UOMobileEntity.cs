@@ -196,6 +196,12 @@ public class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
+    /// Clears all custom properties.
+    /// </summary>
+    public void ClearCustomProperties()
+        => _customProperties.Clear();
+
+    /// <summary>
     /// Equips an item and updates both persisted references and runtime cache.
     /// </summary>
     /// <param name="layer">Target item layer.</param>
@@ -345,40 +351,65 @@ public class UOMobileEntity : IMobileEntity
         Stamina = Math.Min(Stamina, MaxStamina);
     }
 
+    /// <summary>
+    /// Removes a custom property by key.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
+    public bool RemoveCustomProperty(string key)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        return _customProperties.Remove(key);
+    }
+
     public void SetBody(Body body)
         => BaseBody = body;
 
-    public override string ToString()
-        => $"Mobile(Id={Id}, IsPlayer={IsPlayer}, Location={Location})";
+    /// <summary>
+    /// Sets a boolean custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Boolean value.</param>
+    public void SetCustomBoolean(string key, bool value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Boolean,
+                BooleanValue = value
+            }
+        );
 
     /// <summary>
-    /// Tries to get runtime equipped-item reference for a layer.
+    /// Sets a double custom property.
     /// </summary>
-    /// <param name="layer">Equipment layer.</param>
-    /// <param name="itemReference">Resolved runtime reference when found.</param>
-    /// <returns><c>true</c> when runtime reference is available.</returns>
-    public bool TryGetEquippedReference(ItemLayerType layer, out ItemReference itemReference)
-        => _equippedItemReferences.TryGetValue(layer, out itemReference);
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Double value.</param>
+    public void SetCustomDouble(string key, double value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Double,
+                DoubleValue = value
+            }
+        );
 
     /// <summary>
-    /// Unequips an item layer and optionally clears metadata on a provided item instance.
+    /// Sets an integer custom property.
     /// </summary>
-    /// <param name="layer">Layer to unequip.</param>
-    /// <param name="item">Optional equipped item instance to clear metadata on.</param>
-    /// <returns><c>true</c> when a layer entry existed and was removed.</returns>
-    public bool UnequipItem(ItemLayerType layer, UOItemEntity? item = null)
-    {
-        var removed = EquippedItemIds.Remove(layer);
-        _equippedItemReferences.Remove(layer);
-
-        if (removed && item is not null)
-        {
-            item.EquippedMobileId = Serial.Zero;
-            item.EquippedLayer = null;
-        }
-
-        return removed;
-    }
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value.</param>
+    public void SetCustomInteger(string key, long value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Integer,
+                IntegerValue = value
+            }
+        );
 
     /// <summary>
     /// Sets or replaces a typed custom property.
@@ -393,82 +424,12 @@ public class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
-    /// Removes a custom property by key.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
-    public bool RemoveCustomProperty(string key)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-
-        return _customProperties.Remove(key);
-    }
-
-    /// <summary>
-    /// Clears all custom properties.
-    /// </summary>
-    public void ClearCustomProperties()
-        => _customProperties.Clear();
-
-    /// <summary>
-    /// Sets an integer custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Integer value.</param>
-    public void SetCustomInteger(string key, long value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.Integer,
-                IntegerValue = value
-            }
-        );
-    }
-
-    /// <summary>
-    /// Sets a boolean custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Boolean value.</param>
-    public void SetCustomBoolean(string key, bool value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.Boolean,
-                BooleanValue = value
-            }
-        );
-    }
-
-    /// <summary>
-    /// Sets a double custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Double value.</param>
-    public void SetCustomDouble(string key, double value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.Double,
-                DoubleValue = value
-            }
-        );
-    }
-
-    /// <summary>
     /// Sets a string custom property.
     /// </summary>
     /// <param name="key">Property key.</param>
     /// <param name="value">String value.</param>
     public void SetCustomString(string key, string? value)
-    {
-        SetCustomProperty(
+        => SetCustomProperty(
             key,
             new()
             {
@@ -476,27 +437,9 @@ public class UOMobileEntity : IMobileEntity
                 StringValue = value
             }
         );
-    }
 
-    /// <summary>
-    /// Tries to get an integer custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Integer value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomInteger(string key, out long value)
-    {
-        value = 0;
-
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
-        {
-            return false;
-        }
-
-        value = property.IntegerValue;
-
-        return true;
-    }
+    public override string ToString()
+        => $"Mobile(Id={Id}, IsPlayer={IsPlayer}, Location={Location})";
 
     /// <summary>
     /// Tries to get a boolean custom property.
@@ -539,6 +482,26 @@ public class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
+    /// Tries to get an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomInteger(string key, out long value)
+    {
+        value = 0;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
+        {
+            return false;
+        }
+
+        value = property.IntegerValue;
+
+        return true;
+    }
+
+    /// <summary>
     /// Tries to get a string custom property.
     /// </summary>
     /// <param name="key">Property key.</param>
@@ -556,5 +519,34 @@ public class UOMobileEntity : IMobileEntity
         value = property.StringValue;
 
         return true;
+    }
+
+    /// <summary>
+    /// Tries to get runtime equipped-item reference for a layer.
+    /// </summary>
+    /// <param name="layer">Equipment layer.</param>
+    /// <param name="itemReference">Resolved runtime reference when found.</param>
+    /// <returns><c>true</c> when runtime reference is available.</returns>
+    public bool TryGetEquippedReference(ItemLayerType layer, out ItemReference itemReference)
+        => _equippedItemReferences.TryGetValue(layer, out itemReference);
+
+    /// <summary>
+    /// Unequips an item layer and optionally clears metadata on a provided item instance.
+    /// </summary>
+    /// <param name="layer">Layer to unequip.</param>
+    /// <param name="item">Optional equipped item instance to clear metadata on.</param>
+    /// <returns><c>true</c> when a layer entry existed and was removed.</returns>
+    public bool UnequipItem(ItemLayerType layer, UOItemEntity? item = null)
+    {
+        var removed = EquippedItemIds.Remove(layer);
+        _equippedItemReferences.Remove(layer);
+
+        if (removed && item is not null)
+        {
+            item.EquippedMobileId = Serial.Zero;
+            item.EquippedLayer = null;
+        }
+
+        return removed;
     }
 }

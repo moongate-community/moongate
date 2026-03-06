@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Threading;
 using Moongate.Network.Client;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -14,17 +13,21 @@ public sealed class GameLoopBlockingOutboundPacketSender : IOutboundPacketSender
 
     public ConcurrentQueue<OutgoingGamePacket> SentPackets { get; } = new();
 
-    public bool WaitForFirstSendStart(TimeSpan timeout)
-        => _firstSendStarted.Wait(timeout);
+    public int SendCalls => Volatile.Read(ref _sendCalls);
+
+    public void Dispose()
+    {
+        _firstSendStarted.Dispose();
+        _sendGate.Dispose();
+    }
 
     public void ReleaseBlockedSend()
         => _sendGate.Set();
 
-    public int SendCalls => Volatile.Read(ref _sendCalls);
-
     public bool Send(MoongateTCPClient client, OutgoingGamePacket outgoingPacket)
     {
         var currentCall = Interlocked.Increment(ref _sendCalls);
+
         if (currentCall == 1)
         {
             _firstSendStarted.Set();
@@ -32,6 +35,7 @@ public sealed class GameLoopBlockingOutboundPacketSender : IOutboundPacketSender
         }
 
         SentPackets.Enqueue(outgoingPacket);
+
         return true;
     }
 
@@ -42,9 +46,6 @@ public sealed class GameLoopBlockingOutboundPacketSender : IOutboundPacketSender
     )
         => Task.FromResult(Send(client, outgoingPacket));
 
-    public void Dispose()
-    {
-        _firstSendStarted.Dispose();
-        _sendGate.Dispose();
-    }
+    public bool WaitForFirstSendStart(TimeSpan timeout)
+        => _firstSendStarted.Wait(timeout);
 }

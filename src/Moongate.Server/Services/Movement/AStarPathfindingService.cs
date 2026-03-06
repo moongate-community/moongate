@@ -76,7 +76,7 @@ public sealed class AStarPathfindingService : IPathfindingService
                 return false;
             }
 
-            if (current == targetLocation || (current.X == targetLocation.X && current.Y == targetLocation.Y))
+            if (current == targetLocation || current.X == targetLocation.X && current.Y == targetLocation.Y)
             {
                 path = ReconstructPath(cameFrom, current);
 
@@ -119,28 +119,6 @@ public sealed class AStarPathfindingService : IPathfindingService
         return false;
     }
 
-    private bool TryResolveNeighbor(UOMobileEntity sourceMobile, Point3D from, DirectionType direction, out Point3D to)
-    {
-        var probe = new UOMobileEntity
-        {
-            Id = sourceMobile.Id,
-            MapId = sourceMobile.MapId,
-            Location = from,
-            Direction = direction
-        };
-
-        return _movementValidationService.TryResolveMove(probe, direction, out to);
-    }
-
-    private static int MoveCost(DirectionType direction)
-    {
-        var baseDirection = Point3D.GetBaseDirection(direction);
-
-        return baseDirection is DirectionType.NorthEast or DirectionType.SouthEast or DirectionType.SouthWest or DirectionType.NorthWest
-                   ? DiagonalCost
-                   : CardinalCost;
-    }
-
     private static int Heuristic(Point3D from, Point3D to)
     {
         var dx = Math.Abs(from.X - to.X);
@@ -149,6 +127,18 @@ public sealed class AStarPathfindingService : IPathfindingService
         var straight = Math.Abs(dx - dy);
 
         return diagonal * DiagonalCost + straight * CardinalCost;
+    }
+
+    private static int MoveCost(DirectionType direction)
+    {
+        var baseDirection = Point3D.GetBaseDirection(direction);
+
+        return baseDirection is DirectionType.NorthEast or
+                                DirectionType.SouthEast or
+                                DirectionType.SouthWest or
+                                DirectionType.NorthWest
+                   ? DiagonalCost
+                   : CardinalCost;
     }
 
     private static IReadOnlyList<DirectionType> ReconstructPath(
@@ -167,5 +157,18 @@ public sealed class AStarPathfindingService : IPathfindingService
         reversedDirections.Reverse();
 
         return reversedDirections;
+    }
+
+    private bool TryResolveNeighbor(UOMobileEntity sourceMobile, Point3D from, DirectionType direction, out Point3D to)
+    {
+        var probe = new UOMobileEntity
+        {
+            Id = sourceMobile.Id,
+            MapId = sourceMobile.MapId,
+            Location = from,
+            Direction = direction
+        };
+
+        return _movementValidationService.TryResolveMove(probe, direction, out to);
     }
 }

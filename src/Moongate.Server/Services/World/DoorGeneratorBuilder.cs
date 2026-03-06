@@ -81,6 +81,66 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     public IReadOnlyList<DoorGenerationPlacementRecord> LastGeneratedDoors { get; private set; } =
         Array.Empty<DoorGenerationPlacementRecord>();
 
+    /// <summary>
+    /// Generates and spawns door candidates around a center point within a square radius.
+    /// </summary>
+    /// <param name="mapId">Target map id.</param>
+    /// <param name="center">Center location.</param>
+    /// <param name="radius">Radius in tiles.</param>
+    /// <param name="logCallback">Optional progress callback.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Number of spawned door candidates.</returns>
+    public async Task<int> GenerateAroundAsync(
+        int mapId,
+        Point3D center,
+        int radius,
+        Action<string>? logCallback = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _nextDoorPairGroupId = 1;
+
+        if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
+        {
+            logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
+
+            return 0;
+        }
+
+        var clampedRadius = Math.Max(1, radius);
+        var startX = Math.Max(0, center.X - clampedRadius);
+        var startY = Math.Max(0, center.Y - clampedRadius);
+        var endX = Math.Min(width, center.X + clampedRadius + 1);
+        var endY = Math.Min(height, center.Y + clampedRadius + 1);
+
+        var region = new Rectangle2D(new(startX, startY), new(endX, endY));
+        var placements = new List<DoorGenerationPlacementRecord>();
+        var occupiedDoorTiles = new HashSet<(int X, int Y, int Z)>();
+
+        logCallback?.Invoke(
+            $"Scanning doors around player on map {mapId} in area [{startX},{startY}] -> [{endX - 1},{endY - 1}] (radius={clampedRadius})."
+        );
+
+        var generated = AnalyzeRegion(
+            mapId,
+            region,
+            width,
+            height,
+            occupiedDoorTiles,
+            placements,
+            cancellationToken
+        );
+
+        LastGeneratedDoorCount = generated;
+        LastGeneratedPerMap = new Dictionary<int, int> { [mapId] = generated };
+        LastGeneratedDoors = placements;
+
+        await SpawnGeneratedDoorsAsync(placements);
+        logCallback?.Invoke($"Door generation around player completed. Candidates: {generated}.");
+
+        return generated;
+    }
+
     /// <inheritdoc />
     public async Task GenerateAsync(Action<string>? logCallback = null, CancellationToken cancellationToken = default)
     {
@@ -130,72 +190,12 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         _logger.Information("Door generation analysis completed. Total candidates: {DoorCount}", total);
         logCallback?.Invoke($"Door generation completed. Total candidates: {total}.");
 
-        if (_itemService is null )
+        if (_itemService is null)
         {
             return;
         }
 
         await SpawnGeneratedDoorsAsync(placements);
-    }
-
-    /// <summary>
-    /// Generates and spawns door candidates around a center point within a square radius.
-    /// </summary>
-    /// <param name="mapId">Target map id.</param>
-    /// <param name="center">Center location.</param>
-    /// <param name="radius">Radius in tiles.</param>
-    /// <param name="logCallback">Optional progress callback.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Number of spawned door candidates.</returns>
-    public async Task<int> GenerateAroundAsync(
-        int mapId,
-        Point3D center,
-        int radius,
-        Action<string>? logCallback = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _nextDoorPairGroupId = 1;
-
-        if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
-        {
-            logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
-
-            return 0;
-        }
-
-        var clampedRadius = Math.Max(1, radius);
-        var startX = Math.Max(0, center.X - clampedRadius);
-        var startY = Math.Max(0, center.Y - clampedRadius);
-        var endX = Math.Min(width, center.X + clampedRadius + 1);
-        var endY = Math.Min(height, center.Y + clampedRadius + 1);
-
-        var region = new Rectangle2D(new Point2D(startX, startY), new Point2D(endX, endY));
-        var placements = new List<DoorGenerationPlacementRecord>();
-        var occupiedDoorTiles = new HashSet<(int X, int Y, int Z)>();
-
-        logCallback?.Invoke(
-            $"Scanning doors around player on map {mapId} in area [{startX},{startY}] -> [{endX - 1},{endY - 1}] (radius={clampedRadius})."
-        );
-
-        var generated = AnalyzeRegion(
-            mapId,
-            region,
-            width,
-            height,
-            occupiedDoorTiles,
-            placements,
-            cancellationToken
-        );
-
-        LastGeneratedDoorCount = generated;
-        LastGeneratedPerMap = new Dictionary<int, int> { [mapId] = generated };
-        LastGeneratedDoors = placements;
-
-        await SpawnGeneratedDoorsAsync(placements);
-        logCallback?.Invoke($"Door generation around player completed. Candidates: {generated}.");
-
-        return generated;
     }
 
     private int AnalyzeRegion(
@@ -305,38 +305,62 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         return generated;
     }
 
-    private bool TryFindFrameAt(
+    private bool CanAddCandidate(
         int mapId,
-        int x,
-        int y,
-        int z,
         int mapWidth,
         int mapHeight,
-        HashSet<int> frameSet,
-        out int frameZ
+        HashSet<(int X, int Y, int Z)> occupiedDoorTiles,
+        int x,
+        int y,
+        int z
     )
     {
-        frameZ = 0;
-
-        if (!IsInsideMap(x, y, mapWidth, mapHeight))
+        if (!IsInsideMap(x, y, mapWidth, mapHeight) ||
+            IsExcludedDoorLocation(mapId, x, y) ||
+            !_tileQueryService.CanFit(
+                mapId,
+                x,
+                y,
+                z,
+                16,
+                false,
+                false
+            ) ||
+            occupiedDoorTiles.Contains((x, y, z)))
         {
             return false;
         }
 
-        foreach (var tile in _tileQueryService.GetStaticTiles(mapId, x, y))
+        return true;
+    }
+
+    private static bool IsExcludedDoorLocation(int mapId, int x, int y)
+    {
+        if (y == 1743 && x is >= 1343 and <= 1344)
         {
-            if (!frameSet.Contains(tile.ID))
-            {
-                continue;
-            }
+            return true;
+        }
 
-            if (Math.Abs(tile.Z - z) > 1)
-            {
-                continue;
-            }
+        if (y == 1679 && x is >= 1392 and <= 1393)
+        {
+            return true;
+        }
 
-            frameZ = tile.Z;
+        if (x == 1320 && y is >= 1618 and <= 1640)
+        {
+            return true;
+        }
 
+        if (x == 1383 && y is >= 1642 and <= 1643)
+        {
+            return true;
+        }
+
+        // Ilshenar ruins exclusion from ModernUO.
+        if (mapId == 2 &&
+            (x is >= 644 and <= 670 && y is >= 925 and <= 941 ||
+             x == 985 && y == 994))
+        {
             return true;
         }
 
@@ -348,7 +372,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     private async Task SpawnGeneratedDoorsAsync(IReadOnlyList<DoorGenerationPlacementRecord> placements)
     {
-        if (_itemService is null )
+        if (_itemService is null)
         {
             return;
         }
@@ -442,63 +466,38 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         return 2;
     }
 
-    private bool CanAddCandidate(
+    private bool TryFindFrameAt(
         int mapId,
-        int mapWidth,
-        int mapHeight,
-        HashSet<(int X, int Y, int Z)> occupiedDoorTiles,
         int x,
         int y,
-        int z
+        int z,
+        int mapWidth,
+        int mapHeight,
+        HashSet<int> frameSet,
+        out int frameZ
     )
     {
-        if (!IsInsideMap(x, y, mapWidth, mapHeight) ||
-            IsExcludedDoorLocation(mapId, x, y) ||
-            !_tileQueryService.CanFit(
-                mapId,
-                x,
-                y,
-                z,
-                16,
-                checkBlocksFit: false,
-                checkMobiles: false,
-                requireSurface: true
-            ) ||
-            occupiedDoorTiles.Contains((x, y, z)))
+        frameZ = 0;
+
+        if (!IsInsideMap(x, y, mapWidth, mapHeight))
         {
             return false;
         }
 
-        return true;
-    }
-
-    private static bool IsExcludedDoorLocation(int mapId, int x, int y)
-    {
-        if (y == 1743 && x is >= 1343 and <= 1344)
+        foreach (var tile in _tileQueryService.GetStaticTiles(mapId, x, y))
         {
-            return true;
-        }
+            if (!frameSet.Contains(tile.ID))
+            {
+                continue;
+            }
 
-        if (y == 1679 && x is >= 1392 and <= 1393)
-        {
-            return true;
-        }
+            if (Math.Abs(tile.Z - z) > 1)
+            {
+                continue;
+            }
 
-        if (x == 1320 && y is >= 1618 and <= 1640)
-        {
-            return true;
-        }
+            frameZ = tile.Z;
 
-        if (x == 1383 && y is >= 1642 and <= 1643)
-        {
-            return true;
-        }
-
-        // Ilshenar ruins exclusion from ModernUO.
-        if (mapId == 2 &&
-            ((x is >= 644 and <= 670 && y is >= 925 and <= 941) ||
-             (x == 985 && y == 994)))
-        {
             return true;
         }
 

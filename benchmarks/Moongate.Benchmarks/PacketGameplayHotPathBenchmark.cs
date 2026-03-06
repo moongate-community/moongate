@@ -1,10 +1,7 @@
 using BenchmarkDotNet.Attributes;
-using Moongate.Network.Packets.Incoming.Interaction;
-using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Spans;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -18,6 +15,7 @@ public class PacketGameplayHotPathBenchmark
 
     private readonly byte[] _moveRequestPacketBuffer = [0x02, 0x81, 0x24, 0x00, 0x00, 0x00, 0x01];
     private readonly byte[] _pickUpItemPacketBuffer = [0x07, 0x40, 0x00, 0x00, 0x42, 0x01, 0xF4];
+
     private readonly byte[] _dropItemPacketBuffer =
     [
         0x08,
@@ -40,14 +38,6 @@ public class PacketGameplayHotPathBenchmark
 
     private ObjectInformationPacket _objectInformationPacket = null!;
     private DraggingOfItemPacket _draggingOfItemPacket = null!;
-
-    [Benchmark]
-    public bool ParseMoveRequestPacket()
-        => ParsePacket(0x02, _moveRequestPacketBuffer);
-
-    [Benchmark]
-    public bool ParsePickUpItemPacket()
-        => ParsePacket(0x07, _pickUpItemPacketBuffer);
 
     [Benchmark]
     public bool ParseDropItemPacket()
@@ -74,20 +64,38 @@ public class PacketGameplayHotPathBenchmark
     }
 
     [Benchmark]
-    public int WriteObjectInformationPacket()
+    public bool ParseMoveRequestPacket()
+        => ParsePacket(0x02, _moveRequestPacketBuffer);
+
+    [Benchmark]
+    public bool ParsePickUpItemPacket()
+        => ParsePacket(0x07, _pickUpItemPacketBuffer);
+
+    [GlobalSetup]
+    public void Setup()
     {
-        var writer = new SpanWriter(64, true);
+        PacketTable.Register(_registry);
 
-        try
+        var item = new UOItemEntity
         {
-            _objectInformationPacket.Write(ref writer);
+            Id = (Serial)0x4000_0042,
+            ItemId = 0x0EED,
+            Amount = 500,
+            Hue = 0,
+            Direction = DirectionType.North,
+            Location = new(3472, 2592, 0)
+        };
 
-            return writer.BytesWritten;
-        }
-        finally
-        {
-            writer.Dispose();
-        }
+        _objectInformationPacket = new(item);
+        _draggingOfItemPacket = new(
+            0x0EED,
+            0,
+            500,
+            (Serial)0x4000_0010,
+            new(90, 110, 0),
+            (Serial)0x0000_0002,
+            new(3472, 2592, 0)
+        );
     }
 
     [Benchmark]
@@ -107,31 +115,21 @@ public class PacketGameplayHotPathBenchmark
         }
     }
 
-    [GlobalSetup]
-    public void Setup()
+    [Benchmark]
+    public int WriteObjectInformationPacket()
     {
-        PacketTable.Register(_registry);
+        var writer = new SpanWriter(64, true);
 
-        var item = new UOItemEntity
+        try
         {
-            Id = (Serial)0x4000_0042,
-            ItemId = 0x0EED,
-            Amount = 500,
-            Hue = 0,
-            Direction = DirectionType.North,
-            Location = new Point3D(3472, 2592, 0)
-        };
+            _objectInformationPacket.Write(ref writer);
 
-        _objectInformationPacket = new(item);
-        _draggingOfItemPacket = new(
-            itemId: 0x0EED,
-            hue: 0,
-            stackCount: 500,
-            sourceId: (Serial)0x4000_0010,
-            sourceLocation: new Point3D(90, 110, 0),
-            targetId: (Serial)0x0000_0002,
-            targetLocation: new Point3D(3472, 2592, 0)
-        );
+            return writer.BytesWritten;
+        }
+        finally
+        {
+            writer.Dispose();
+        }
     }
 
     private bool ParsePacket(byte opCode, byte[] payload)

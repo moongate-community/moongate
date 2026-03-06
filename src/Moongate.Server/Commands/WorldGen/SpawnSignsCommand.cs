@@ -10,15 +10,13 @@ using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Maps;
-using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Commands.WorldGen;
 
 [RegisterConsoleCommand(
     "spawn_signs",
     "Run signs generation immediately. Usage: .spawn_signs",
-    CommandSourceType.Console | CommandSourceType.InGame,
-    AccountType.Administrator
+    CommandSourceType.Console | CommandSourceType.InGame
 )]
 public class SpawnSignsCommand : ICommandExecutor
 {

@@ -76,6 +76,20 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
         );
     }
 
+    private readonly record struct TickWorkBreakdown(
+        int InboundCount,
+        int GameLoopCallbacksCount,
+        int TimerCount,
+        int OutboundCount,
+        TimeSpan InboundElapsed,
+        TimeSpan GameLoopCallbacksElapsed,
+        TimeSpan TimerElapsed,
+        TimeSpan OutboundElapsed
+    )
+    {
+        public int TotalWorkUnits => InboundCount + GameLoopCallbacksCount + TimerCount + OutboundCount;
+    }
+
     public void Dispose()
     {
         if (!_cancellationTokenSource.IsCancellationRequested)
@@ -256,7 +270,6 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
                     _messageBusService.CurrentQueueDepth,
                     _outgoingPacketQueue.CurrentQueueDepth
                 );
-
             }
 
             lock (_metricsSync)
@@ -282,6 +295,7 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
         while (!_outboundCancellationTokenSource.IsCancellationRequested)
         {
             _outboundWorkSignal.WaitOne(_idleSleepMilliseconds);
+
             if (_outboundCancellationTokenSource.IsCancellationRequested)
             {
                 break;
@@ -290,25 +304,12 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
             while (_outgoingPacketQueue.CurrentQueueDepth > 0)
             {
                 var drained = DrainOutgoingPacketQueue();
+
                 if (drained == 0)
                 {
                     break;
                 }
             }
         }
-    }
-
-    private readonly record struct TickWorkBreakdown(
-        int InboundCount,
-        int GameLoopCallbacksCount,
-        int TimerCount,
-        int OutboundCount,
-        TimeSpan InboundElapsed,
-        TimeSpan GameLoopCallbacksElapsed,
-        TimeSpan TimerElapsed,
-        TimeSpan OutboundElapsed
-    )
-    {
-        public int TotalWorkUnits => InboundCount + GameLoopCallbacksCount + TimerCount + OutboundCount;
     }
 }

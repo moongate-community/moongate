@@ -10,8 +10,8 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
@@ -116,8 +116,8 @@ public class MobileHandler
     public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
-        var mobileEntity = ResolveCharacterFromSession(gameEvent.SessionId, gameEvent.CharacterId)
-                           ?? await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+        var mobileEntity = ResolveCharacterFromSession(gameEvent.SessionId, gameEvent.CharacterId) ??
+                           await _characterService.GetCharacterAsync(gameEvent.CharacterId);
 
         if (mobileEntity is null)
         {
@@ -137,12 +137,17 @@ public class MobileHandler
     public Task StopAsync()
         => Task.CompletedTask;
 
-    private Task UpdatePlayerForMobileMovedOrCreated(
-        UOMobileEntity mobileEntity,
-        int mapId,
-        bool isNew
-    )
-        => _dispatchEventsService.DispatchMobileUpdateAsync(mobileEntity, mapId, _mobileSyncRange, isNew);
+    private UOMobileEntity? ResolveCharacterFromSession(long sessionId, Serial characterId)
+    {
+        if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var session) &&
+            session.Character is not null &&
+            session.SessionId == sessionId)
+        {
+            return session.Character;
+        }
+
+        return null;
+    }
 
     private async Task SyncSectorSnapshotForEnteringPlayerAsync(
         UOMobileEntity mobileEntity,
@@ -258,7 +263,7 @@ public class MobileHandler
     {
         var targetSector = _spatialWorldService.GetSectorByLocation(
             mapId,
-            new Point3D(
+            new(
                 sectorX << MapSectorConsts.SectorShift,
                 sectorY << MapSectorConsts.SectorShift,
                 z
@@ -300,18 +305,6 @@ public class MobileHandler
         }
     }
 
-    private UOMobileEntity? ResolveCharacterFromSession(long sessionId, Serial characterId)
-    {
-        if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var session) &&
-            session.Character is not null &&
-            session.SessionId == sessionId)
-        {
-            return session.Character;
-        }
-
-        return null;
-    }
-
     private UOMobileEntity? TryResolveMobileFromSpatial(MobilePositionChangedEvent gameEvent)
     {
         var nearby = _spatialWorldService.GetNearbyMobiles(gameEvent.NewLocation, 2, gameEvent.MapId);
@@ -345,4 +338,11 @@ public class MobileHandler
             new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
         );
     }
+
+    private Task UpdatePlayerForMobileMovedOrCreated(
+        UOMobileEntity mobileEntity,
+        int mapId,
+        bool isNew
+    )
+        => _dispatchEventsService.DispatchMobileUpdateAsync(mobileEntity, mapId, _mobileSyncRange, isNew);
 }

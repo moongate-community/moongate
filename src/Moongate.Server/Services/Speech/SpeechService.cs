@@ -87,6 +87,7 @@ public sealed class SpeechService : ISpeechService
     )
     {
         var chatName = session.Character?.Name;
+
         if (string.IsNullOrWhiteSpace(chatName))
         {
             chatName = $"User{session.SessionId}";

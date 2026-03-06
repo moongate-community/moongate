@@ -19,4 +19,3 @@ public interface IGumpScriptDispatcherService
     /// </summary>
     bool TryDispatch(GameSession session, GumpMenuSelectionPacket packet);
 }
-

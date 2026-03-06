@@ -49,15 +49,13 @@ public class PlayerTargetService
     }
 
     public async Task HandleAsync(TargetRequestCursorEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await SendTargetCursorInternalAsync(
-            gameEvent.SessionId,
-            gameEvent.Callback,
-            gameEvent.SelectionType,
-            gameEvent.CursorType,
-            false
-        );
-    }
+        => await SendTargetCursorInternalAsync(
+               gameEvent.SessionId,
+               gameEvent.Callback,
+               gameEvent.SelectionType,
+               gameEvent.CursorType,
+               false
+           );
 
     public async Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
     {

@@ -115,9 +115,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new WarModePacket(character));
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
-        var globalLight = _lightService?.ComputeGlobalLightLevel(character.MapId, character.Location) ?? (int)LightLevelType.Day;
+        var globalLight = _lightService?.ComputeGlobalLightLevel(character.MapId, character.Location) ??
+                          (int)LightLevelType.Day;
         var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
-        var personalLightLevel = (LightLevelType)(byte)0;
+        var personalLightLevel = (LightLevelType)0;
         Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
         Enqueue(session, new PersonalLightLevelPacket(personalLightLevel, character));
         Enqueue(session, new SeasonPacket(character.Map.Season));
@@ -150,19 +151,6 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         {
             return HandleRequestWarModeAsync(session, requestWarModePacket);
         }
-
-        return true;
-    }
-
-    private bool HandleRequestWarModeAsync(GameSession session, RequestWarModePacket requestWarModePacket)
-    {
-        if (session.Character is null)
-        {
-            return true;
-        }
-
-        session.Character.IsWarMode = requestWarModePacket.IsWarMode;
-        Enqueue(session, new WarModePacket(session.Character));
 
         return true;
     }
@@ -201,4 +189,16 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         return true;
     }
 
+    private bool HandleRequestWarModeAsync(GameSession session, RequestWarModePacket requestWarModePacket)
+    {
+        if (session.Character is null)
+        {
+            return true;
+        }
+
+        session.Character.IsWarMode = requestWarModePacket.IsWarMode;
+        Enqueue(session, new WarModePacket(session.Character));
+
+        return true;
+    }
 }

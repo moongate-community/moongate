@@ -1,17 +1,17 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
+using Moongate.Core.Types;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
@@ -159,12 +159,12 @@ internal static class MoongateHttpRouteExtensions
             }
 
             sessionsGroup.MapGet(
-                            "/active",
-                            (CancellationToken cancellationToken) => HandleGetActiveSessions(context, cancellationToken)
-                        )
-                        .WithName("SessionsGetActive")
-                        .WithSummary("Returns currently active in-game sessions.")
-                        .Produces<IReadOnlyList<MoongateHttpActiveSession>>();
+                             "/active",
+                             (CancellationToken cancellationToken) => HandleGetActiveSessions(context, cancellationToken)
+                         )
+                         .WithName("SessionsGetActive")
+                         .WithSummary("Returns currently active in-game sessions.")
+                         .Produces<IReadOnlyList<MoongateHttpActiveSession>>();
         }
 
         if (context.CommandSystemService is not null)
@@ -177,17 +177,17 @@ internal static class MoongateHttpRouteExtensions
             }
 
             commandsGroup.MapPost(
-                            "/execute",
-                            (
-                                MoongateHttpExecuteCommandRequest request,
-                                CancellationToken cancellationToken
-                            ) => HandleExecuteCommand(context, request, cancellationToken)
-                        )
-                        .WithName("CommandsExecute")
-                        .WithSummary("Executes a console command and returns final output lines.")
-                        .Accepts<MoongateHttpExecuteCommandRequest>("application/json")
-                        .Produces<MoongateHttpExecuteCommandResponse>()
-                        .Produces(StatusCodes.Status400BadRequest);
+                             "/execute",
+                             (
+                                 MoongateHttpExecuteCommandRequest request,
+                                 CancellationToken cancellationToken
+                             ) => HandleExecuteCommand(context, request, cancellationToken)
+                         )
+                         .WithName("CommandsExecute")
+                         .WithSummary("Executes a console command and returns final output lines.")
+                         .Accepts<MoongateHttpExecuteCommandRequest>("application/json")
+                         .Produces<MoongateHttpExecuteCommandResponse>()
+                         .Produces(StatusCodes.Status400BadRequest);
         }
 
         if (context.ItemTemplateService is not null || context.ArtService is not null)
@@ -341,98 +341,6 @@ internal static class MoongateHttpRouteExtensions
                    : TypedResults.NotFound();
     }
 
-    private static IResult HandleGetUserById(
-        MoongateHttpRouteContext context,
-        string accountId,
-        CancellationToken cancellationToken
-    )
-    {
-        _ = cancellationToken;
-        var parsedId = ParseAccountIdOrNull(accountId);
-
-        if (!parsedId.HasValue)
-        {
-            return TypedResults.BadRequest("invalid accountId");
-        }
-
-        var account = context.AccountService!
-                             .GetAccountAsync(parsedId.Value)
-                             .GetAwaiter()
-                             .GetResult();
-
-        if (account is null)
-        {
-            return TypedResults.NotFound();
-        }
-
-        return TypedResults.Ok(MapAccountToHttpUser(account));
-    }
-
-    private static IResult HandleGetUsers(
-        MoongateHttpRouteContext context,
-        CancellationToken cancellationToken
-    )
-    {
-        var accounts = context.AccountService!
-                              .GetAccountsAsync(cancellationToken)
-                              .GetAwaiter()
-                              .GetResult();
-        var users = accounts.Select(MapAccountToHttpUser).ToList();
-
-        return TypedResults.Ok((IReadOnlyList<MoongateHttpUser>)users);
-    }
-
-    private static IResult HandleServerVersion(CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-
-        var response = new MoongateHttpServerVersion
-        {
-            Version = VersionUtils.Version,
-            Codename = VersionUtils.Codename
-        };
-
-        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpServerVersion);
-    }
-
-    private static IResult HandleHealth(CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-
-        return TypedResults.Text("ok");
-    }
-
-    private static IResult HandleGetActiveSessions(MoongateHttpRouteContext context, CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-
-        var sessions = context.GameNetworkSessionService!.GetAll()
-                             .Where(session => session.AccountId.Value != 0 && session.CharacterId.Value != 0)
-                             .OrderBy(session => session.SessionId)
-                             .Select(
-                                 session =>
-                                 {
-                                     var account = context.AccountService?
-                                                          .GetAccountAsync(session.AccountId)
-                                                          .GetAwaiter()
-                                                          .GetResult();
-
-                                     return new MoongateHttpActiveSession
-                                     {
-                                         SessionId = session.SessionId,
-                                         AccountId = session.AccountId.Value.ToString(),
-                                         Username = account?.Username ?? string.Empty,
-                                         AccountType = session.AccountType.ToString(),
-                                         CharacterId = session.CharacterId.Value.ToString(),
-                                         CharacterName = session.Character?.Name ?? string.Empty
-                                     };
-                                 }
-                             )
-                             .ToList();
-
-        return TypedResults.Ok((IReadOnlyList<MoongateHttpActiveSession>)sessions);
-    }
-
     private static IResult HandleExecuteCommand(
         MoongateHttpRouteContext context,
         MoongateHttpExecuteCommandRequest request,
@@ -463,6 +371,38 @@ internal static class MoongateHttpRouteExtensions
         };
 
         return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpExecuteCommandResponse);
+    }
+
+    private static IResult HandleGetActiveSessions(MoongateHttpRouteContext context, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        var sessions = context.GameNetworkSessionService!.GetAll()
+                              .Where(session => session.AccountId.Value != 0 && session.CharacterId.Value != 0)
+                              .OrderBy(session => session.SessionId)
+                              .Select(
+                                  session =>
+                                  {
+                                      var account = context.AccountService
+                                                           ?
+                                                           .GetAccountAsync(session.AccountId)
+                                                           .GetAwaiter()
+                                                           .GetResult();
+
+                                      return new MoongateHttpActiveSession
+                                      {
+                                          SessionId = session.SessionId,
+                                          AccountId = session.AccountId.Value.ToString(),
+                                          Username = account?.Username ?? string.Empty,
+                                          AccountType = session.AccountType.ToString(),
+                                          CharacterId = session.CharacterId.Value.ToString(),
+                                          CharacterName = session.Character?.Name ?? string.Empty
+                                      };
+                                  }
+                              )
+                              .ToList();
+
+        return TypedResults.Ok((IReadOnlyList<MoongateHttpActiveSession>)sessions);
     }
 
     private static IResult HandleGetItemTemplateById(
@@ -504,7 +444,7 @@ internal static class MoongateHttpRouteExtensions
             return TypedResults.BadRequest("itemId must be in 0x... format");
         }
 
-        var itemsImageDirectory = Path.Combine(context.DirectoriesConfig[Moongate.Core.Types.DirectoryType.Images], "items");
+        var itemsImageDirectory = Path.Combine(context.DirectoriesConfig[DirectoryType.Images], "items");
         Directory.CreateDirectory(itemsImageDirectory);
 
         var normalizedHex = itemId.ToString("X4", CultureInfo.InvariantCulture);
@@ -592,6 +532,54 @@ internal static class MoongateHttpRouteExtensions
         return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpItemTemplatePage);
     }
 
+    private static IResult HandleGetUserById(
+        MoongateHttpRouteContext context,
+        string accountId,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+        var parsedId = ParseAccountIdOrNull(accountId);
+
+        if (!parsedId.HasValue)
+        {
+            return TypedResults.BadRequest("invalid accountId");
+        }
+
+        var account = context.AccountService!
+                             .GetAccountAsync(parsedId.Value)
+                             .GetAwaiter()
+                             .GetResult();
+
+        if (account is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        return TypedResults.Ok(MapAccountToHttpUser(account));
+    }
+
+    private static IResult HandleGetUsers(
+        MoongateHttpRouteContext context,
+        CancellationToken cancellationToken
+    )
+    {
+        var accounts = context.AccountService!
+                              .GetAccountsAsync(cancellationToken)
+                              .GetAwaiter()
+                              .GetResult();
+        var users = accounts.Select(MapAccountToHttpUser).ToList();
+
+        return TypedResults.Ok((IReadOnlyList<MoongateHttpUser>)users);
+    }
+
+    private static IResult HandleHealth(CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        return TypedResults.Text("ok");
+    }
+
     private static IResult HandleLogin(
         MoongateHttpRouteContext context,
         MoongateHttpLoginRequest request,
@@ -662,6 +650,19 @@ internal static class MoongateHttpRouteExtensions
 
     private static IResult HandleRoot()
         => TypedResults.Text("Moongate HTTP Service is running.");
+
+    private static IResult HandleServerVersion(CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        var response = new MoongateHttpServerVersion
+        {
+            Version = VersionUtils.Version,
+            Codename = VersionUtils.Codename
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpServerVersion);
+    }
 
     private static IResult HandleUpdateUser(
         MoongateHttpRouteContext context,

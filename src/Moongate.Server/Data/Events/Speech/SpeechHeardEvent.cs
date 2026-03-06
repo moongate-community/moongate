@@ -1,4 +1,3 @@
-using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Server.Data.Events.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;

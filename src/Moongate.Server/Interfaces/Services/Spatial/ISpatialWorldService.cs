@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Session;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Server.Data.Session;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -14,6 +14,25 @@ namespace Moongate.Server.Interfaces.Services.Spatial;
 /// </summary>
 public interface ISpatialWorldService
 {
+    /// <summary>
+    /// Adds or updates an item position in the spatial index.
+    /// </summary>
+    /// <param name="item">Item entity.</param>
+    /// <param name="mapId">Owning map id.</param>
+    void AddOrUpdateItem(UOItemEntity item, int mapId);
+
+    /// <summary>
+    /// Adds or updates a mobile position in the spatial index.
+    /// </summary>
+    /// <param name="mobile">Mobile entity.</param>
+    void AddOrUpdateMobile(UOMobileEntity mobile);
+
+    /// <summary>
+    /// Adds a region definition used for spatial region lookup and music mapping.
+    /// </summary>
+    /// <param name="region">Region definition.</param>
+    void AddRegion(JsonRegion region);
+
     /// <summary>
     /// Broadcasts a packet to player sessions within range on a map.
     /// </summary>
@@ -55,8 +74,8 @@ public interface ISpatialWorldService
     {
         var clampedRadius = Math.Max(0, sectorRadius);
         var centerLocation = new Point3D(
-            (centerSectorX << MapSectorConsts.SectorShift) + (MapSectorConsts.SectorSize / 2),
-            (centerSectorY << MapSectorConsts.SectorShift) + (MapSectorConsts.SectorSize / 2),
+            (centerSectorX << MapSectorConsts.SectorShift) + MapSectorConsts.SectorSize / 2,
+            (centerSectorY << MapSectorConsts.SectorShift) + MapSectorConsts.SectorSize / 2,
             0
         );
         var tileRange = clampedRadius * MapSectorConsts.SectorSize;
@@ -93,45 +112,22 @@ public interface ISpatialWorldService
     }
 
     /// <summary>
-    /// Returns the configured sector radius for live update broadcasts.
+    /// Returns all currently active sectors loaded in the spatial index.
     /// </summary>
-    int GetUpdateBroadcastSectorRadius()
-        => 3;
+    /// <returns>Loaded sectors across all maps.</returns>
+    List<MapSector> GetActiveSectors();
 
     /// <summary>
-    /// Adds or updates an item position in the spatial index.
-    /// </summary>
-    /// <param name="item">Item entity.</param>
-    /// <param name="mapId">Owning map id.</param>
-    void AddOrUpdateItem(UOItemEntity item, int mapId);
-
-    /// <summary>
-    /// Adds or updates a mobile position in the spatial index.
-    /// </summary>
-    /// <param name="mobile">Mobile entity.</param>
-    void AddOrUpdateMobile(UOMobileEntity mobile);
-
-    /// <summary>
-    /// Adds a region definition used for spatial region lookup and music mapping.
-    /// </summary>
-    /// <param name="region">Region definition.</param>
-    void AddRegion(JsonRegion region);
-
-    /// <summary>
-    /// Returns a region by its configured id.
-    /// </summary>
-    /// <param name="regionId">Region id.</param>
-    /// <returns>The matching region or <see langword="null" /> if not found.</returns>
-    JsonRegion? GetRegionById(int regionId);
-
-    /// <summary>
-    /// Resolves the highest-priority region for a world position.
+    /// Returns all mobiles currently indexed in a square sector range around a center sector.
     /// </summary>
     /// <param name="mapId">Map id.</param>
-    /// <param name="location">World location.</param>
-    /// <returns>Resolved region or <see langword="null" /> when none matches.</returns>
-    JsonRegion? ResolveRegion(int mapId, Point3D location)
-        => null;
+    /// <param name="centerSectorX">Center sector X coordinate.</param>
+    /// <param name="centerSectorY">Center sector Y coordinate.</param>
+    /// <param name="radius">
+    /// Sector radius (0 = only center sector). Default is <c>2</c>, aligned to player default view range (18 tiles).
+    /// </param>
+    /// <returns>Mobiles in the sector range.</returns>
+    List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2);
 
     /// <summary>
     /// Resolves music id for a world location.
@@ -179,22 +175,11 @@ public interface ISpatialWorldService
     List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY);
 
     /// <summary>
-    /// Returns all mobiles currently indexed in a square sector range around a center sector.
+    /// Returns a region by its configured id.
     /// </summary>
-    /// <param name="mapId">Map id.</param>
-    /// <param name="centerSectorX">Center sector X coordinate.</param>
-    /// <param name="centerSectorY">Center sector Y coordinate.</param>
-    /// <param name="radius">
-    /// Sector radius (0 = only center sector). Default is <c>2</c>, aligned to player default view range (18 tiles).
-    /// </param>
-    /// <returns>Mobiles in the sector range.</returns>
-    List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2);
-
-    /// <summary>
-    /// Returns all currently active sectors loaded in the spatial index.
-    /// </summary>
-    /// <returns>Loaded sectors across all maps.</returns>
-    List<MapSector> GetActiveSectors();
+    /// <param name="regionId">Region id.</param>
+    /// <returns>The matching region or <see langword="null" /> if not found.</returns>
+    JsonRegion? GetRegionById(int regionId);
 
     /// <summary>
     /// Resolves the sector containing the specified world location.
@@ -209,6 +194,12 @@ public interface ISpatialWorldService
     /// </summary>
     /// <returns>Sector stats.</returns>
     SectorSystemStats GetStats();
+
+    /// <summary>
+    /// Returns the configured sector radius for live update broadcasts.
+    /// </summary>
+    int GetUpdateBroadcastSectorRadius()
+        => 3;
 
     /// <summary>
     /// Moves an item in the spatial index.
@@ -232,4 +223,13 @@ public interface ISpatialWorldService
     /// </summary>
     /// <param name="serial">Entity serial.</param>
     void RemoveEntity(Serial serial);
+
+    /// <summary>
+    /// Resolves the highest-priority region for a world position.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="location">World location.</param>
+    /// <returns>Resolved region or <see langword="null" /> when none matches.</returns>
+    JsonRegion? ResolveRegion(int mapId, Point3D location)
+        => null;
 }

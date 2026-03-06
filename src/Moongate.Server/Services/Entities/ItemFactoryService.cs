@@ -31,34 +31,6 @@ public sealed class ItemFactoryService : IItemFactoryService
     }
 
     /// <inheritdoc />
-    public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition)
-    {
-        definition = null;
-
-        if (string.IsNullOrWhiteSpace(itemTemplateId))
-        {
-            return false;
-        }
-
-        var normalizedTemplateId = itemTemplateId.Trim();
-
-        if (_itemTemplateService.TryGet(normalizedTemplateId, out definition))
-        {
-            return true;
-        }
-
-        var snakeCaseTemplateId = normalizedTemplateId.ToSnakeCase();
-
-        if (!string.Equals(snakeCaseTemplateId, normalizedTemplateId, StringComparison.Ordinal) &&
-            _itemTemplateService.TryGet(snakeCaseTemplateId, out definition))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /// <inheritdoc />
     public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(itemTemplateId);
@@ -85,8 +57,6 @@ public sealed class ItemFactoryService : IItemFactoryService
             EquippedMobileId = Serial.Zero,
             EquippedLayer = null
         };
-
-
 
         var itemFromTile = TileData.ItemTable[item.ItemId];
 
@@ -136,6 +106,87 @@ public sealed class ItemFactoryService : IItemFactoryService
         };
     }
 
+    /// <inheritdoc />
+    public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition)
+    {
+        definition = null;
+
+        if (string.IsNullOrWhiteSpace(itemTemplateId))
+        {
+            return false;
+        }
+
+        var normalizedTemplateId = itemTemplateId.Trim();
+
+        if (_itemTemplateService.TryGet(normalizedTemplateId, out definition))
+        {
+            return true;
+        }
+
+        var snakeCaseTemplateId = normalizedTemplateId.ToSnakeCase();
+
+        if (!string.Equals(snakeCaseTemplateId, normalizedTemplateId, StringComparison.Ordinal) &&
+            _itemTemplateService.TryGet(snakeCaseTemplateId, out definition))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        foreach (var (key, param) in template.Params)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new InvalidOperationException(
+                    $"Item template '{template.Id}' has an invalid params entry with an empty key."
+                );
+            }
+
+            var normalizedKey = key.Trim();
+
+            switch (param.Type)
+            {
+                case ItemTemplateParamType.String:
+                    item.SetCustomString(normalizedKey, param.Value);
+
+                    break;
+                case ItemTemplateParamType.Serial:
+                    if (!Serial.TryParse(param.Value, null, out var serial))
+                    {
+                        throw new InvalidOperationException(
+                            $"Item template '{template.Id}' has invalid serial param '{normalizedKey}' = '{param.Value}'."
+                        );
+                    }
+
+                    item.SetCustomInteger(normalizedKey, serial.Value);
+
+                    break;
+                case ItemTemplateParamType.Hue:
+                    try
+                    {
+                        var resolvedHue = HueSpec.ParseFromString(param.Value).Resolve();
+                        item.SetCustomInteger(normalizedKey, resolvedHue);
+                    }
+                    catch (FormatException exception)
+                    {
+                        throw new InvalidOperationException(
+                            $"Item template '{template.Id}' has invalid hue param '{normalizedKey}' = '{param.Value}'.",
+                            exception
+                        );
+                    }
+
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Item template '{template.Id}' has unsupported param type '{param.Type}' for key '{normalizedKey}'."
+                    );
+            }
+        }
+    }
+
     private static int ParseItemId(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -169,56 +220,4 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
     }
-
-    private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
-    {
-        foreach (var (key, param) in template.Params)
-        {
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                throw new InvalidOperationException(
-                    $"Item template '{template.Id}' has an invalid params entry with an empty key."
-                );
-            }
-
-            var normalizedKey = key.Trim();
-
-            switch (param.Type)
-            {
-                case ItemTemplateParamType.String:
-                    item.SetCustomString(normalizedKey, param.Value);
-                    break;
-                case ItemTemplateParamType.Serial:
-                    if (!Serial.TryParse(param.Value, null, out var serial))
-                    {
-                        throw new InvalidOperationException(
-                            $"Item template '{template.Id}' has invalid serial param '{normalizedKey}' = '{param.Value}'."
-                        );
-                    }
-
-                    item.SetCustomInteger(normalizedKey, serial.Value);
-                    break;
-                case ItemTemplateParamType.Hue:
-                    try
-                    {
-                        var resolvedHue = HueSpec.ParseFromString(param.Value).Resolve();
-                        item.SetCustomInteger(normalizedKey, resolvedHue);
-                    }
-                    catch (FormatException exception)
-                    {
-                        throw new InvalidOperationException(
-                            $"Item template '{template.Id}' has invalid hue param '{normalizedKey}' = '{param.Value}'.",
-                            exception
-                        );
-                    }
-
-                    break;
-                default:
-                    throw new InvalidOperationException(
-                        $"Item template '{template.Id}' has unsupported param type '{param.Type}' for key '{normalizedKey}'."
-                    );
-            }
-        }
-    }
-
 }

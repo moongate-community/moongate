@@ -17,9 +17,7 @@ public class HashUtilsTests
 
     [Test]
     public void HashPassword_WhenPasswordIsEmpty_ShouldThrowArgumentException()
-    {
-        Assert.That(() => HashUtils.HashPassword(string.Empty), Throws.TypeOf<ArgumentException>());
-    }
+        => Assert.That(() => HashUtils.HashPassword(string.Empty), Throws.TypeOf<ArgumentException>());
 
     [Test]
     public void VerifyPassword_WhenHashFormatIsInvalid_ShouldReturnFalse()

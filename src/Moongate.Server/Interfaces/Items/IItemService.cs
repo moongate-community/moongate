@@ -39,13 +39,6 @@ public interface IItemService
     Task<Serial> CreateItemAsync(UOItemEntity item);
 
     /// <summary>
-    /// Creates an item from template and persists it.
-    /// </summary>
-    /// <param name="itemTemplateId">Item template identifier.</param>
-    /// <returns>The created and persisted item entity.</returns>
-    Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId);
-
-    /// <summary>
     /// Deletes an item by serial identifier.
     /// </summary>
     /// <param name="itemId">Item serial identifier.</param>
@@ -92,15 +85,6 @@ public interface IItemService
     Task<UOItemEntity?> GetItemAsync(Serial itemId);
 
     /// <summary>
-    /// Tries to load an item entity by serial identifier.
-    /// </summary>
-    /// <param name="itemId">Item serial identifier.</param>
-    /// <returns>
-    /// Tuple result where <c>Found</c> indicates success and <c>Item</c> carries the loaded entity.
-    /// </returns>
-    Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId);
-
-    /// <summary>
     /// Loads all items contained by the specified container serial.
     /// </summary>
     /// <param name="containerId">Container item serial identifier.</param>
@@ -134,6 +118,22 @@ public interface IItemService
         int mapId,
         long sessionId = 0
     );
+
+    /// <summary>
+    /// Creates an item from template and persists it.
+    /// </summary>
+    /// <param name="itemTemplateId">Item template identifier.</param>
+    /// <returns>The created and persisted item entity.</returns>
+    Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId);
+
+    /// <summary>
+    /// Tries to load an item entity by serial identifier.
+    /// </summary>
+    /// <param name="itemId">Item serial identifier.</param>
+    /// <returns>
+    /// Tuple result where <c>Found</c> indicates success and <c>Item</c> carries the loaded entity.
+    /// </returns>
+    Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId);
 
     /// <summary>
     /// Inserts or updates an existing item.

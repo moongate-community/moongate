@@ -21,9 +21,9 @@ public sealed class LuaUserDataRegistrationGenerator : IIncrementalGenerator
         );
 
         var collected = candidates
-            .Where(static model => model is not null)
-            .Collect()
-            .Combine(context.CompilationProvider.Select(static (compilation, _) => compilation.AssemblyName));
+                        .Where(static model => model is not null)
+                        .Collect()
+                        .Combine(context.CompilationProvider.Select(static (compilation, _) => compilation.AssemblyName));
 
         context.RegisterSourceOutput(
             collected,
@@ -37,10 +37,10 @@ public sealed class LuaUserDataRegistrationGenerator : IIncrementalGenerator
                 }
 
                 var registrations = payload.Left
-                    .Where(static model => model is not null)
-                    .Distinct()
-                    .OrderBy(static model => model.TypeName, StringComparer.Ordinal)
-                    .ToArray();
+                                           .Where(static model => model is not null)
+                                           .Distinct()
+                                           .OrderBy(static model => model.TypeName, StringComparer.Ordinal)
+                                           .ToArray();
 
                 var source = BuildSource(registrations);
                 productionContext.AddSource(
@@ -94,8 +94,8 @@ public sealed class LuaUserDataRegistrationGenerator : IIncrementalGenerator
 
         var fullTypeName = typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         var normalizedTypeName = fullTypeName.StartsWith("global::", StringComparison.Ordinal)
-            ? fullTypeName.Substring("global::".Length)
-            : fullTypeName;
+                                     ? fullTypeName.Substring("global::".Length)
+                                     : fullTypeName;
 
         return new(normalizedTypeName);
     }

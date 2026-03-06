@@ -90,6 +90,9 @@ public sealed class DoorService : IDoorService
         return true;
     }
 
+    private bool IsSupportedDoor(UOItemEntity item)
+        => item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
+
     private async Task<bool> ToggleCoreAsync(UOItemEntity item)
     {
         if (!_doorDataService.TryGetToggleDefinition(item.ItemId, out var state))
@@ -98,7 +101,7 @@ public sealed class DoorService : IDoorService
         }
 
         var targetLocation = state.IsClosed
-                                 ? new Point3D(
+                                 ? new(
                                      item.Location.X + state.Offset.X,
                                      item.Location.Y + state.Offset.Y,
                                      item.Location.Z + state.Offset.Z
@@ -122,10 +125,5 @@ public sealed class DoorService : IDoorService
         _spatialWorldService.AddOrUpdateItem(item, item.MapId);
 
         return true;
-    }
-
-    private bool IsSupportedDoor(UOItemEntity item)
-    {
-        return item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
     }
 }

@@ -173,98 +173,6 @@ public sealed class MobileService : IMobileService
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile, cancellationToken);
     }
 
-    private async Task TryEquipTemplateItemAsync(
-        UOMobileEntity mobile,
-        ItemLayerType layer,
-        string itemTemplateId,
-        CancellationToken cancellationToken
-    )
-    {
-        if (string.IsNullOrWhiteSpace(itemTemplateId))
-        {
-            return;
-        }
-
-        try
-        {
-            var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
-            item.MapId = mobile.MapId;
-            mobile.AddEquippedItem(layer, item);
-
-            if (layer == ItemLayerType.Backpack)
-            {
-                mobile.BackpackId = item.Id;
-            }
-
-            await _persistenceService.UnitOfWork.Items.UpsertAsync(item, cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.Warning(
-                ex,
-                "Failed to equip template item {ItemTemplateId} on mobile {MobileId} (layer={Layer})",
-                itemTemplateId,
-                mobile.Id,
-                layer
-            );
-        }
-    }
-
-    private static MobileWeightedEquipmentItemTemplate? SelectRandomEquipment(MobileRandomEquipmentPoolTemplate pool)
-    {
-        if (pool.Items.Count == 0)
-        {
-            return null;
-        }
-
-        var validItems = pool.Items.Where(static item => item.Weight > 0).ToArray();
-
-        if (validItems.Length == 0)
-        {
-            return null;
-        }
-
-        var totalWeight = validItems.Sum(static item => item.Weight);
-        var roll = Random.Shared.Next(1, totalWeight + 1);
-        var accumulator = 0;
-
-        foreach (var item in validItems)
-        {
-            accumulator += item.Weight;
-
-            if (roll <= accumulator)
-            {
-                return item;
-            }
-        }
-
-        return validItems[^1];
-    }
-
-    private void RegisterBrainIfConfigured(string templateId, UOMobileEntity mobile)
-    {
-        if (!_mobileTemplateService.TryGet(templateId, out var definition) || definition is null)
-        {
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(definition.Brain))
-        {
-            mobile.BrainId = null;
-            return;
-        }
-
-        var resolvedBrainId = definition.Brain.Trim();
-
-        if (string.Equals(resolvedBrainId, "none", StringComparison.OrdinalIgnoreCase))
-        {
-            mobile.BrainId = null;
-            return;
-        }
-
-        mobile.BrainId = resolvedBrainId;
-    }
-
     private async Task HydrateMobileEquipmentRuntimeAsync(
         UOMobileEntity mobile,
         CancellationToken cancellationToken = default
@@ -315,5 +223,99 @@ public sealed class MobileService : IMobileService
         }
 
         mobile.HydrateEquipmentRuntime(equippedItems);
+    }
+
+    private void RegisterBrainIfConfigured(string templateId, UOMobileEntity mobile)
+    {
+        if (!_mobileTemplateService.TryGet(templateId, out var definition) || definition is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(definition.Brain))
+        {
+            mobile.BrainId = null;
+
+            return;
+        }
+
+        var resolvedBrainId = definition.Brain.Trim();
+
+        if (string.Equals(resolvedBrainId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            mobile.BrainId = null;
+
+            return;
+        }
+
+        mobile.BrainId = resolvedBrainId;
+    }
+
+    private static MobileWeightedEquipmentItemTemplate? SelectRandomEquipment(MobileRandomEquipmentPoolTemplate pool)
+    {
+        if (pool.Items.Count == 0)
+        {
+            return null;
+        }
+
+        var validItems = pool.Items.Where(static item => item.Weight > 0).ToArray();
+
+        if (validItems.Length == 0)
+        {
+            return null;
+        }
+
+        var totalWeight = validItems.Sum(static item => item.Weight);
+        var roll = Random.Shared.Next(1, totalWeight + 1);
+        var accumulator = 0;
+
+        foreach (var item in validItems)
+        {
+            accumulator += item.Weight;
+
+            if (roll <= accumulator)
+            {
+                return item;
+            }
+        }
+
+        return validItems[^1];
+    }
+
+    private async Task TryEquipTemplateItemAsync(
+        UOMobileEntity mobile,
+        ItemLayerType layer,
+        string itemTemplateId,
+        CancellationToken cancellationToken
+    )
+    {
+        if (string.IsNullOrWhiteSpace(itemTemplateId))
+        {
+            return;
+        }
+
+        try
+        {
+            var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
+            item.MapId = mobile.MapId;
+            mobile.AddEquippedItem(layer, item);
+
+            if (layer == ItemLayerType.Backpack)
+            {
+                mobile.BackpackId = item.Id;
+            }
+
+            await _persistenceService.UnitOfWork.Items.UpsertAsync(item, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(
+                ex,
+                "Failed to equip template item {ItemTemplateId} on mobile {MobileId} (layer={Layer})",
+                itemTemplateId,
+                mobile.Id,
+                layer
+            );
+        }
     }
 }

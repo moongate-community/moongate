@@ -39,13 +39,13 @@ public sealed class UoStressClient : IStressClient
         _username = HttpAccountBootstrapper.BuildUsername(options.UserPrefix, clientIndex);
         _password = options.UserPassword;
         _characterName = BuildCharacterName(_username);
-        _random = new Random(unchecked(Environment.TickCount * 397) ^ clientIndex);
+        _random = new(unchecked(Environment.TickCount * 397) ^ clientIndex);
     }
 
+    private readonly record struct LoginRedirect(string Host, int Port, uint SessionKey);
+
     public async ValueTask DisposeAsync()
-    {
-        await Task.CompletedTask;
-    }
+        => await Task.CompletedTask;
 
     public async Task RunAsync(CancellationToken cancellationToken = default)
     {
@@ -81,48 +81,24 @@ public sealed class UoStressClient : IStressClient
         }
     }
 
-    private async Task<LoginRedirect> RunLoginStageAsync(CancellationToken cancellationToken)
+    private static void Append(List<byte> pending, byte[] source, int count)
     {
-        using var loginClient = new TcpClient();
-        await loginClient.ConnectAsync(_options.Host, _options.Port, cancellationToken);
-        loginClient.NoDelay = true;
-
-        using var stream = loginClient.GetStream();
-
-        await stream.WriteAsync(UoPacketWriter.LoginSeed((uint)_random.Next(1, int.MaxValue)), cancellationToken);
-        await stream.WriteAsync(UoPacketWriter.AccountLogin(_username, _password), cancellationToken);
-
-        var pending = new List<byte>(8192);
-        var buffer = new byte[8192];
-
-        while (!cancellationToken.IsCancellationRequested)
+        for (var i = 0; i < count; i++)
         {
-            var read = await stream.ReadAsync(buffer, cancellationToken);
+            pending.Add(source[i]);
+        }
+    }
 
-            if (read <= 0)
-            {
-                throw new IOException("Login socket closed before redirect packet.");
-            }
+    private static string BuildCharacterName(string username)
+    {
+        var candidate = username.Replace("_", string.Empty, StringComparison.Ordinal);
 
-            Append(pending, buffer, read);
-
-            while (TryExtractRawPacket(pending, out var packet))
-            {
-                var opcode = packet[0];
-
-                if (opcode == 0xA8)
-                {
-                    await stream.WriteAsync(UoPacketWriter.ServerSelect(0), cancellationToken);
-                }
-
-                if (opcode == 0x8C)
-                {
-                    return ParseRedirect(packet);
-                }
-            }
+        if (candidate.Length > 30)
+        {
+            candidate = candidate[..30];
         }
 
-        throw new OperationCanceledException();
+        return candidate;
     }
 
     private async Task<bool> EnterGameAsync(NetworkStream stream, uint sessionKey, CancellationToken cancellationToken)
@@ -147,7 +123,10 @@ public sealed class UoStressClient : IStressClient
                 sentLoginCharacter = true;
             }
 
-            if (!gotLoginConfirm && sentLoginCharacter && !sentCharacterCreation && DateTime.UtcNow > loginDeadline.AddSeconds(-7))
+            if (!gotLoginConfirm &&
+                sentLoginCharacter &&
+                !sentCharacterCreation &&
+                DateTime.UtcNow > loginDeadline.AddSeconds(-7))
             {
                 await stream.WriteAsync(UoPacketWriter.CharacterCreation(_characterName), cancellationToken);
                 sentCharacterCreation = true;
@@ -269,12 +248,59 @@ public sealed class UoStressClient : IStressClient
         }
     }
 
-    private static void Append(List<byte> pending, byte[] source, int count)
+    private static LoginRedirect ParseRedirect(IReadOnlyList<byte> packet)
     {
-        for (var i = 0; i < count; i++)
+        var ipRaw = BinaryPrimitives.ReadUInt32LittleEndian(new[] { packet[1], packet[2], packet[3], packet[4] });
+        var ipBytes = BitConverter.GetBytes(ipRaw);
+        var ip = new IPAddress(ipBytes);
+        var port = BinaryPrimitives.ReadUInt16BigEndian(new[] { packet[5], packet[6] });
+        var sessionKey = BinaryPrimitives.ReadUInt32BigEndian(new[] { packet[7], packet[8], packet[9], packet[10] });
+
+        return new(ip.ToString(), port, sessionKey);
+    }
+
+    private async Task<LoginRedirect> RunLoginStageAsync(CancellationToken cancellationToken)
+    {
+        using var loginClient = new TcpClient();
+        await loginClient.ConnectAsync(_options.Host, _options.Port, cancellationToken);
+        loginClient.NoDelay = true;
+
+        using var stream = loginClient.GetStream();
+
+        await stream.WriteAsync(UoPacketWriter.LoginSeed((uint)_random.Next(1, int.MaxValue)), cancellationToken);
+        await stream.WriteAsync(UoPacketWriter.AccountLogin(_username, _password), cancellationToken);
+
+        var pending = new List<byte>(8192);
+        var buffer = new byte[8192];
+
+        while (!cancellationToken.IsCancellationRequested)
         {
-            pending.Add(source[i]);
+            var read = await stream.ReadAsync(buffer, cancellationToken);
+
+            if (read <= 0)
+            {
+                throw new IOException("Login socket closed before redirect packet.");
+            }
+
+            Append(pending, buffer, read);
+
+            while (TryExtractRawPacket(pending, out var packet))
+            {
+                var opcode = packet[0];
+
+                if (opcode == 0xA8)
+                {
+                    await stream.WriteAsync(UoPacketWriter.ServerSelect(0), cancellationToken);
+                }
+
+                if (opcode == 0x8C)
+                {
+                    return ParseRedirect(packet);
+                }
+            }
         }
+
+        throw new OperationCanceledException();
     }
 
     private static bool TryExtractRawPacket(List<byte> pending, out byte[] packet)
@@ -293,6 +319,7 @@ public sealed class UoStressClient : IStressClient
         {
             case 0x8C:
                 requiredLength = 11;
+
                 break;
             case 0xA8:
                 if (pending.Count < 3)
@@ -301,6 +328,7 @@ public sealed class UoStressClient : IStressClient
                 }
 
                 requiredLength = BinaryPrimitives.ReadUInt16BigEndian(new[] { pending[1], pending[2] });
+
                 break;
             default:
                 if (pending.Count < 3)
@@ -309,6 +337,7 @@ public sealed class UoStressClient : IStressClient
                 }
 
                 requiredLength = BinaryPrimitives.ReadUInt16BigEndian(new[] { pending[1], pending[2] });
+
                 break;
         }
 
@@ -322,29 +351,4 @@ public sealed class UoStressClient : IStressClient
 
         return true;
     }
-
-    private static LoginRedirect ParseRedirect(IReadOnlyList<byte> packet)
-    {
-        var ipRaw = BinaryPrimitives.ReadUInt32LittleEndian(new[] { packet[1], packet[2], packet[3], packet[4] });
-        var ipBytes = BitConverter.GetBytes(ipRaw);
-        var ip = new IPAddress(ipBytes);
-        var port = BinaryPrimitives.ReadUInt16BigEndian(new[] { packet[5], packet[6] });
-        var sessionKey = BinaryPrimitives.ReadUInt32BigEndian(new[] { packet[7], packet[8], packet[9], packet[10] });
-
-        return new LoginRedirect(ip.ToString(), port, sessionKey);
-    }
-
-    private static string BuildCharacterName(string username)
-    {
-        var candidate = username.Replace("_", string.Empty, StringComparison.Ordinal);
-
-        if (candidate.Length > 30)
-        {
-            candidate = candidate[..30];
-        }
-
-        return candidate;
-    }
-
-    private readonly record struct LoginRedirect(string Host, int Port, uint SessionKey);
 }

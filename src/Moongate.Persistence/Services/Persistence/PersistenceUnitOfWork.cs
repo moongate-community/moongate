@@ -63,6 +63,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         }
     }
 
+    public void Dispose()
+    {
+        _journalService.Dispose();
+        _snapshotService.Dispose();
+    }
+
     public async ValueTask InitializeAsync(CancellationToken cancellationToken = default)
     {
         _logger.Verbose("Persistence initialize requested");
@@ -151,12 +157,6 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         await _snapshotService.SaveAsync(snapshot, cancellationToken);
         await _journalService.ResetAsync(cancellationToken);
         _logger.Verbose("Persistence snapshot-save completed LastSequenceId={LastSequenceId}", snapshot.LastSequenceId);
-    }
-
-    public void Dispose()
-    {
-        _journalService.Dispose();
-        _snapshotService.Dispose();
     }
 
     private void ApplyEntry(JournalEntry entry)

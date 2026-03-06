@@ -17,22 +17,6 @@ public sealed class DiceModuleTests
     }
 
     [Test]
-    public void TryRoll_WithValidExpression_ShouldReturnSuccessAndValue()
-    {
-        var module = new DiceModule();
-
-        var (ok, value) = module.TryRoll("2d1+1");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ok, Is.True);
-                Assert.That(value, Is.EqualTo(3));
-            }
-        );
-    }
-
-    [Test]
     public void TryRoll_WithInvalidExpression_ShouldReturnFailure()
     {
         var module = new DiceModule();
@@ -44,6 +28,22 @@ public sealed class DiceModuleTests
             {
                 Assert.That(ok, Is.False);
                 Assert.That(value, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public void TryRoll_WithValidExpression_ShouldReturnSuccessAndValue()
+    {
+        var module = new DiceModule();
+
+        var (ok, value) = module.TryRoll("2d1+1");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(value, Is.EqualTo(3));
             }
         );
     }

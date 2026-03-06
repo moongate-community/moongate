@@ -1,6 +1,5 @@
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -45,6 +44,5 @@ public class WhereCommand : ICommandExecutor
                 $"You are at X: {character.Location.X}, Y: {character.Location.Y}, Z: {character.Location.Z} on map {Map.GetMap(character.MapId).Name}."
             );
         }
-
     }
 }

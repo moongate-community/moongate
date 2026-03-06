@@ -3,7 +3,6 @@ using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Commands;
@@ -14,8 +13,7 @@ namespace Moongate.Server.Commands;
 [RegisterConsoleCommand(
     "broadcast|bc",
     "Send a server message to all active sessions. Usage: broadcast <message>",
-    CommandSourceType.Console | CommandSourceType.InGame,
-    AccountType.Administrator
+    CommandSourceType.Console | CommandSourceType.InGame
 )]
 public sealed class BroadcastCommand : ICommandExecutor
 {

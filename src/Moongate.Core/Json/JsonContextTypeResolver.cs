@@ -40,10 +40,8 @@ public static class JsonContextTypeResolver
     /// <typeparam name="TBase">The base type to filter by.</typeparam>
     /// <returns>A collection of types that inherit from TBase.</returns>
     public static IEnumerable<Type> GetRegisteredTypes<TBase>(JsonSerializerContext context)
-    {
-        return GetRegisteredTypes(context)
+        => GetRegisteredTypes(context)
             .Where(t => typeof(TBase).IsAssignableFrom(t));
-    }
 
     /// <summary>
     /// Gets all registered types with their corresponding JsonTypeInfo.

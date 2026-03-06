@@ -41,7 +41,7 @@ public sealed class SmtpEmailSender : IEmailSender
 
         using var mail = new MailMessage
         {
-            From = new MailAddress(message.From),
+            From = new(message.From),
             Subject = message.Subject,
             Body = message.TextBody ?? string.Empty,
             IsBodyHtml = false

@@ -72,9 +72,7 @@ public abstract class BaseGameNetworkPacket : IGameNetworkPacket
     /// </summary>
     /// <param name="writer">Destination writer.</param>
     public virtual void Write(ref SpanWriter writer)
-    {
-        throw new NotImplementedException();
-    }
+        => throw new NotImplementedException();
 
     /// <summary>
     /// Parses packet-specific payload after opcode validation.

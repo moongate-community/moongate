@@ -8,12 +8,6 @@ namespace Moongate.Server.Interfaces.Services.World;
 public interface IDecorationDataService
 {
     /// <summary>
-    /// Replaces all currently loaded decoration entries.
-    /// </summary>
-    /// <param name="entries">Decoration entries.</param>
-    void SetEntries(IReadOnlyList<DecorationEntry> entries);
-
-    /// <summary>
     /// Returns all loaded decoration entries.
     /// </summary>
     /// <returns>All decoration entries.</returns>
@@ -25,4 +19,10 @@ public interface IDecorationDataService
     /// <param name="mapId">Map id.</param>
     /// <returns>Entries for that map.</returns>
     IReadOnlyList<DecorationEntry> GetEntriesByMap(int mapId);
+
+    /// <summary>
+    /// Replaces all currently loaded decoration entries.
+    /// </summary>
+    /// <param name="entries">Decoration entries.</param>
+    void SetEntries(IReadOnlyList<DecorationEntry> entries);
 }

@@ -6,10 +6,9 @@ namespace Moongate.Tests.Server.Services.World;
 
 public class DoorGenerationFacingExtensionsTests
 {
-    [TestCase(DoorGenerationFacing.WestCW, DirectionType.West)]
-    [TestCase(DoorGenerationFacing.EastCCW, DirectionType.East)]
-    [TestCase(DoorGenerationFacing.SouthCW, DirectionType.South)]
-    [TestCase(DoorGenerationFacing.NorthCCW, DirectionType.North)]
+    [TestCase(DoorGenerationFacing.WestCW, DirectionType.West), TestCase(DoorGenerationFacing.EastCCW, DirectionType.East),
+     TestCase(DoorGenerationFacing.SouthCW, DirectionType.South),
+     TestCase(DoorGenerationFacing.NorthCCW, DirectionType.North)]
     public void ToDirectionType_ShouldMapKnownFacingValues(DoorGenerationFacing facing, DirectionType expected)
     {
         var direction = facing.ToDirectionType();
@@ -19,17 +18,13 @@ public class DoorGenerationFacingExtensionsTests
 
     [Test]
     public void ToDirectionType_ShouldThrow_WhenFacingIsUnknown()
-    {
-        Assert.That(
+        => Assert.That(
             () => ((DoorGenerationFacing)255).ToDirectionType(),
             Throws.TypeOf<ArgumentOutOfRangeException>()
         );
-    }
 
-    [TestCase(DoorGenerationFacing.WestCW, 0x0675, 0x0675)]
-    [TestCase(DoorGenerationFacing.EastCCW, 0x0675, 0x0677)]
-    [TestCase(DoorGenerationFacing.SouthCW, 0x0675, 0x067D)]
-    [TestCase(DoorGenerationFacing.NorthCCW, 0x0675, 0x067F)]
+    [TestCase(DoorGenerationFacing.WestCW, 0x0675, 0x0675), TestCase(DoorGenerationFacing.EastCCW, 0x0675, 0x0677),
+     TestCase(DoorGenerationFacing.SouthCW, 0x0675, 0x067D), TestCase(DoorGenerationFacing.NorthCCW, 0x0675, 0x067F)]
     public void ToItemId_ShouldMapFacingUsingDoorStride(
         DoorGenerationFacing facing,
         int baseItemId,
@@ -43,10 +38,8 @@ public class DoorGenerationFacingExtensionsTests
 
     [Test]
     public void ToItemId_ShouldThrow_WhenFacingIsUnknown()
-    {
-        Assert.That(
+        => Assert.That(
             () => ((DoorGenerationFacing)255).ToItemId(0x0675),
             Throws.TypeOf<ArgumentOutOfRangeException>()
         );
-    }
 }

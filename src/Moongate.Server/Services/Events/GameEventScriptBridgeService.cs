@@ -30,9 +30,7 @@ public class GameEventScriptBridgeService : IGameEventScriptBridgeService, IGame
         _scriptEngineService.CallFunction(scriptFunctionName, gameEvent);
     }
 
-    public async Task StartAsync()
-    {
-    }
+    public async Task StartAsync() { }
 
     public async Task StopAsync() { }
 

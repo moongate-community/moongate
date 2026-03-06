@@ -29,9 +29,7 @@ public class DiceNotationTests
 
     [Test]
     public void Parse_WhenKeepIsNotAppliedToDice_ShouldThrowInvalidSyntaxException()
-    {
-        Assert.That(() => Dice.Parse("1k1"), Throws.TypeOf<InvalidSyntaxException>());
-    }
+        => Assert.That(() => Dice.Parse("1k1"), Throws.TypeOf<InvalidSyntaxException>());
 
     [Test]
     public void Roll_ForSimpleDiceExpression_ShouldAlwaysStayWithinBounds()
@@ -48,19 +46,13 @@ public class DiceNotationTests
 
     [Test]
     public void Roll_WhenDieHasZeroSides_ShouldThrowImpossibleDieException()
-    {
-        Assert.That(() => Dice.Roll("1d0"), Throws.TypeOf<ImpossibleDieException>());
-    }
+        => Assert.That(() => Dice.Roll("1d0"), Throws.TypeOf<ImpossibleDieException>());
 
     [Test]
     public void Roll_WhenKeepValueIsInvalid_ShouldThrowInvalidChooseException()
-    {
-        Assert.That(() => Dice.Roll("2d6k3"), Throws.TypeOf<InvalidChooseException>());
-    }
+        => Assert.That(() => Dice.Roll("2d6k3"), Throws.TypeOf<InvalidChooseException>());
 
     [Test]
     public void Roll_WhenMultiplicityIsNegative_ShouldThrowInvalidMultiplicityException()
-    {
-        Assert.That(() => Dice.Roll("-1d6"), Throws.TypeOf<InvalidMultiplicityException>());
-    }
+        => Assert.That(() => Dice.Roll("-1d6"), Throws.TypeOf<InvalidMultiplicityException>());
 }

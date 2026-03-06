@@ -12,10 +12,34 @@ public class PacketDispatchServiceTests
 {
     private PacketDispatchService _service;
 
-    [SetUp]
-    public void SetUp()
+    private sealed class TestPacketListener : IPacketListener
     {
-        _service = new PacketDispatchService();
+        public int CallCount { get; private set; }
+
+        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        {
+            CallCount++;
+
+            return Task.FromResult(true);
+        }
+    }
+
+    private sealed class ThrowingPacketListener : IPacketListener
+    {
+        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+            => throw new InvalidOperationException("Test exception");
+    }
+
+    private sealed class TestGameNetworkPacket : IGameNetworkPacket
+    {
+        public byte OpCode => 0x02;
+
+        public int Length => 0;
+
+        public bool TryParse(ReadOnlySpan<byte> data)
+            => true;
+
+        public void Write(ref SpanWriter writer) { }
     }
 
     [Test]
@@ -25,10 +49,31 @@ public class PacketDispatchServiceTests
         _service.AddPacketListener(0x02, listener);
 
         var packet = new IncomingGamePacket(
-            Session: null,
-            PacketId: 0x02,
-            Packet: new TestGameNetworkPacket(),
-            Timestamp: 0
+            null,
+            0x02,
+            new TestGameNetworkPacket(),
+            0
+        );
+
+        var result = _service.NotifyPacketListeners(packet);
+
+        Assert.That(result, Is.True);
+        Assert.That(listener.CallCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void NotifyPacketListeners_WhenListenerThrows_ShouldContinueToNextListener()
+    {
+        var throwingListener = new ThrowingPacketListener();
+        var listener = new TestPacketListener();
+        _service.AddPacketListener(0x02, throwingListener);
+        _service.AddPacketListener(0x02, listener);
+
+        var packet = new IncomingGamePacket(
+            null,
+            0x02,
+            new TestGameNetworkPacket(),
+            0
         );
 
         var result = _service.NotifyPacketListeners(packet);
@@ -41,10 +86,10 @@ public class PacketDispatchServiceTests
     public void NotifyPacketListeners_WhenNoListeners_ShouldReturnFalse()
     {
         var packet = new IncomingGamePacket(
-            Session: null,
-            PacketId: 0x02,
-            Packet: new TestGameNetworkPacket(),
-            Timestamp: 0
+            null,
+            0x02,
+            new TestGameNetworkPacket(),
+            0
         );
 
         var result = _service.NotifyPacketListeners(packet);
@@ -61,10 +106,10 @@ public class PacketDispatchServiceTests
         _service.AddPacketListener(0x02, listener2);
 
         var packet = new IncomingGamePacket(
-            Session: null,
-            PacketId: 0x02,
-            Packet: new TestGameNetworkPacket(),
-            Timestamp: 0
+            null,
+            0x02,
+            new TestGameNetworkPacket(),
+            0
         );
 
         var result = _service.NotifyPacketListeners(packet);
@@ -74,59 +119,7 @@ public class PacketDispatchServiceTests
         Assert.That(listener2.CallCount, Is.EqualTo(1));
     }
 
-    [Test]
-    public void NotifyPacketListeners_WhenListenerThrows_ShouldContinueToNextListener()
-    {
-        var throwingListener = new ThrowingPacketListener();
-        var listener = new TestPacketListener();
-        _service.AddPacketListener(0x02, throwingListener);
-        _service.AddPacketListener(0x02, listener);
-
-        var packet = new IncomingGamePacket(
-            Session: null,
-            PacketId: 0x02,
-            Packet: new TestGameNetworkPacket(),
-            Timestamp: 0
-        );
-
-        var result = _service.NotifyPacketListeners(packet);
-
-        Assert.That(result, Is.True);
-        Assert.That(listener.CallCount, Is.EqualTo(1));
-    }
-
-    private sealed class TestPacketListener : IPacketListener
-    {
-        public int CallCount { get; private set; }
-
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
-        {
-            CallCount++;
-            return Task.FromResult(true);
-        }
-    }
-
-    private sealed class ThrowingPacketListener : IPacketListener
-    {
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
-        {
-            throw new InvalidOperationException("Test exception");
-        }
-    }
-
-    private sealed class TestGameNetworkPacket : IGameNetworkPacket
-    {
-        public byte OpCode => 0x02;
-
-        public int Length => 0;
-
-        public bool TryParse(ReadOnlySpan<byte> data)
-        {
-            return true;
-        }
-
-        public void Write(ref SpanWriter writer)
-        {
-        }
-    }
+    [SetUp]
+    public void SetUp()
+        => _service = new();
 }

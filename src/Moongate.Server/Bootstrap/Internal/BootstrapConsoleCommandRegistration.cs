@@ -8,13 +8,13 @@ namespace Moongate.Server.Bootstrap.Internal;
 /// </summary>
 internal static partial class BootstrapConsoleCommandRegistration
 {
-    public static void RegisterServices(Container container)
-        => RegisterServicesGenerated(container);
-
     public static void RegisterCommands(Container container, ICommandSystemService commandSystemService)
         => RegisterCommandsGenerated(container, commandSystemService);
 
-    static partial void RegisterServicesGenerated(Container container);
+    public static void RegisterServices(Container container)
+        => RegisterServicesGenerated(container);
 
     static partial void RegisterCommandsGenerated(Container container, ICommandSystemService commandSystemService);
+
+    static partial void RegisterServicesGenerated(Container container);
 }

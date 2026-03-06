@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
@@ -41,6 +42,7 @@ public class DoorDataLoader : IFileLoader
 
         using var reader = new StreamReader(filePath);
         var lineNumber = 0;
+
         while (await reader.ReadLineAsync() is { } line)
         {
             lineNumber++;
@@ -59,6 +61,7 @@ public class DoorDataLoader : IFileLoader
             if (!TryParseLine(trimmed, out var entry))
             {
                 errors.Add($"Invalid doors.txt row at line {lineNumber}: '{line}'.");
+
                 continue;
             }
 
@@ -79,12 +82,24 @@ public class DoorDataLoader : IFileLoader
         _logger.Information("Loaded {Count} door component entries from {Path}.", entries.Count, filePath);
     }
 
+    private static bool TryParseInt(string value, out int result)
+    {
+        var trimmed = value.Trim();
+
+        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return int.TryParse(trimmed[2..], NumberStyles.HexNumber, null, out result);
+        }
+
+        return int.TryParse(trimmed, out result);
+    }
+
     private static bool TryParseLine(string line, out DoorComponentEntry entry)
     {
         var tokens = line.Split(
-            separator: (char[]?)null,
-            count: 11,
-            options: StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+            (char[]?)null,
+            11,
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
         );
 
         if (tokens.Length != 11)
@@ -125,17 +140,5 @@ public class DoorDataLoader : IFileLoader
         );
 
         return true;
-    }
-
-    private static bool TryParseInt(string value, out int result)
-    {
-        var trimmed = value.Trim();
-
-        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-        {
-            return int.TryParse(trimmed[2..], System.Globalization.NumberStyles.HexNumber, null, out result);
-        }
-
-        return int.TryParse(trimmed, out result);
     }
 }
