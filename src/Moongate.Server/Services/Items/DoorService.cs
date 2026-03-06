@@ -101,16 +101,16 @@ public sealed class DoorService : IDoorService
         }
 
         var targetLocation = state.IsClosed
-                                 ? new(
-                                     item.Location.X + state.Offset.X,
-                                     item.Location.Y + state.Offset.Y,
-                                     item.Location.Z + state.Offset.Z
-                                 )
-                                 : new Point3D(
-                                     item.Location.X - state.Offset.X,
-                                     item.Location.Y - state.Offset.Y,
-                                     item.Location.Z - state.Offset.Z
-                                 );
+            ? new Point3D(
+                item.Location.X + state.Offset.X,
+                item.Location.Y + state.Offset.Y,
+                item.Location.Z + state.Offset.Z
+            )
+            : new Point3D(
+                item.Location.X - state.Offset.X,
+                item.Location.Y - state.Offset.Y,
+                item.Location.Z - state.Offset.Z
+            );
 
         var moved = await _itemService.MoveItemToWorldAsync(item.Id, targetLocation, item.MapId);
 
@@ -119,7 +119,6 @@ public sealed class DoorService : IDoorService
             return false;
         }
 
-        item.Location = targetLocation;
         item.ItemId = state.NextItemId;
         await _itemService.UpsertItemAsync(item);
         _spatialWorldService.AddOrUpdateItem(item, item.MapId);
