@@ -302,7 +302,14 @@ public sealed class SpatialWorldService
 
     public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        var character = await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+        var character = ResolveCharacterFromSession(gameEvent.SessionId, gameEvent.CharacterId)
+                        ?? await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+
+        if (character is null)
+        {
+            return;
+        }
+
         var sectorX = character.Location.X >> MapSectorConsts.SectorShift;
         var sectorY = character.Location.Y >> MapSectorConsts.SectorShift;
         var warmupRadius = Math.Max(0, _spatialConfig.SectorWarmupRadius);
@@ -435,6 +442,18 @@ public sealed class SpatialWorldService
 
         mobile.MapId = gameEvent.MapId;
         OnMobileMoved(mobile, gameEvent.OldLocation, gameEvent.NewLocation);
+    }
+
+    private UOMobileEntity? ResolveCharacterFromSession(long sessionId, Serial characterId)
+    {
+        if (_gameNetworkSessionService.TryGet(sessionId, out var session) &&
+            session.Character is not null &&
+            session.CharacterId == characterId)
+        {
+            return session.Character;
+        }
+
+        return null;
     }
 
     private UOMobileEntity? TryResolveMobileFromSpatial(Serial mobileId)

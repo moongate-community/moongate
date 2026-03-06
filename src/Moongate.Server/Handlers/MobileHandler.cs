@@ -116,7 +116,8 @@ public class MobileHandler
     public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
-        var mobileEntity = await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+        var mobileEntity = ResolveCharacterFromSession(gameEvent.SessionId, gameEvent.CharacterId)
+                           ?? await _characterService.GetCharacterAsync(gameEvent.CharacterId);
 
         if (mobileEntity is null)
         {
@@ -262,6 +263,18 @@ public class MobileHandler
         }
 
         return Task.CompletedTask;
+    }
+
+    private UOMobileEntity? ResolveCharacterFromSession(long sessionId, Serial characterId)
+    {
+        if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var session) &&
+            session.Character is not null &&
+            session.SessionId == sessionId)
+        {
+            return session.Character;
+        }
+
+        return null;
     }
 
     private UOMobileEntity? TryResolveMobileFromSpatial(MobilePositionChangedEvent gameEvent)

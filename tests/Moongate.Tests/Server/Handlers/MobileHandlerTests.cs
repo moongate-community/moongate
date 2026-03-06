@@ -107,6 +107,30 @@ public sealed class MobileHandlerTests
             => Task.FromResult(true);
     }
 
+    private sealed class MobileHandlerTestNullCharacterService : ICharacterService
+    {
+        public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
+            => Task.FromResult(true);
+
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+            => Task.FromResult(character.Id);
+
+        public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+            => Task.CompletedTask;
+
+        public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
+            => Task.FromResult<UOItemEntity?>(null);
+
+        public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
+            => Task.FromResult<UOMobileEntity?>(null);
+
+        public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
+            => Task.FromResult(new List<UOMobileEntity>());
+
+        public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
+            => Task.FromResult(true);
+    }
+
     private sealed class MobileHandlerTestSpatialWorldService : ISpatialWorldService
     {
         public List<UOMobileEntity> PlayersInSector { get; set; } = [];
@@ -554,6 +578,76 @@ public sealed class MobileHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldResolveCharacterFromSessionWithoutPersistence()
+    {
+        var characterId = (Serial)0x00005000u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+
+        var character = CreatePlayer(characterId);
+        character.Location = new(132, 132, 0);
+        character.MapId = 1;
+
+        var session = CreateSession(characterId);
+        session.Character = character;
+        sessions.Add(session);
+
+        var centerSectorX = character.Location.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = character.Location.Y >> MapSectorConsts.SectorShift;
+        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
+        centerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000050u,
+                Name = "session-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = character.Location,
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+        {
+            var key = (1, location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+            return spatial.SectorsByCoordinate.TryGetValue(key, out var sector) ? sector : null;
+        };
+
+        var nullCharacterService = new MobileHandlerTestNullCharacterService();
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            nullCharacterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new MoongateConfig()
+        );
+
+        await handler.HandleAsync(
+            new PlayerCharacterLoggedInEvent(
+                session.SessionId,
+                (Serial)0x01u,
+                characterId
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets.All(packet => packet.SessionId == session.SessionId), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldSendSectorSnapshotToEnteringPlayer()
     {
         var movingPlayerId = (Serial)0x00004000u;
@@ -590,6 +684,7 @@ public sealed class MobileHandlerTests
         var character = CreatePlayer(movingPlayerId);
         character.Location = spawnLocation;
         character.MapId = 1;
+        movingSession.Character = character;
         var characterService = new MobileHandlerTestCharacterService(character);
         var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(

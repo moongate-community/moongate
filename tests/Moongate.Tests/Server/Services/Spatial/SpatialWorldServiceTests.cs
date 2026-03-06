@@ -857,6 +857,26 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_PlayerCharacterLoggedIn_ShouldResolveCharacterFromSessionWithoutPersistence()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false }
+        );
+        var character = CreateMobile(0x780, 130, 130, 0, true);
+        var session = CreateSession(character);
+        sessions.Add(session);
+
+        await service.HandleAsync(new PlayerCharacterLoggedInEvent(session.SessionId, (Serial)0x01u, character.Id));
+
+        var nearby = service.GetNearbyMobiles(character.Location, 5, 0);
+        Assert.That(nearby.Select(static mobile => mobile.Id), Contains.Item(character.Id));
+    }
+
+    [Test]
     public void OnMobileMoved_ShouldUpdateRangeQueriesAcrossSectors()
     {
         var sessions = new FakeGameNetworkSessionService();
