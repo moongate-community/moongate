@@ -17,6 +17,9 @@ namespace Moongate.Server.Services.EventLoop;
 /// </summary>
 public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopMetricsSource, IDisposable
 {
+    private const int MaxInboundPacketsPerTick = 128;
+    private const int MaxOutboundPacketsPerTick = 1024;
+    private const double SlowTickThresholdMilliseconds = 250;
     private static readonly bool UseFastTimestampMath = Stopwatch.Frequency % 1000 == 0;
     private static readonly ulong FrequencyInMilliseconds = (ulong)Stopwatch.Frequency / 1000;
     private readonly CancellationTokenSource _cancellationTokenSource = new();
@@ -31,8 +34,11 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     private readonly bool _idleCpuEnabled;
     private readonly int _idleSleepMilliseconds;
     private readonly Lock _metricsSync = new();
+    private readonly CancellationTokenSource _outboundCancellationTokenSource = new();
+    private readonly AutoResetEvent _outboundWorkSignal = new(false);
 
     private Thread? _loopThread;
+    private Thread? _outboundThread;
     private long _tickCount;
     private TimeSpan _uptime;
     private double _averageTickMs;
@@ -70,6 +76,20 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
         );
     }
 
+    private readonly record struct TickWorkBreakdown(
+        int InboundCount,
+        int GameLoopCallbacksCount,
+        int TimerCount,
+        int OutboundCount,
+        TimeSpan InboundElapsed,
+        TimeSpan GameLoopCallbacksElapsed,
+        TimeSpan TimerElapsed,
+        TimeSpan OutboundElapsed
+    )
+    {
+        public int TotalWorkUnits => InboundCount + GameLoopCallbacksCount + TimerCount + OutboundCount;
+    }
+
     public void Dispose()
     {
         if (!_cancellationTokenSource.IsCancellationRequested)
@@ -77,7 +97,15 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
             _cancellationTokenSource.Cancel();
         }
 
+        if (!_outboundCancellationTokenSource.IsCancellationRequested)
+        {
+            _outboundCancellationTokenSource.Cancel();
+        }
+
+        _outboundWorkSignal.Set();
         _cancellationTokenSource.Dispose();
+        _outboundCancellationTokenSource.Dispose();
+        _outboundWorkSignal.Dispose();
         GC.SuppressFinalize(this);
     }
 
@@ -101,10 +129,16 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     public override Task StartAsync()
     {
         _backgroundJobService.Start();
+        _outboundThread = new(RunOutboundLoop)
+        {
+            IsBackground = true,
+            Name = "Moongate-OutboundWriter"
+        };
+        _outboundThread.Start();
         _loopThread = new(RunLoop)
         {
             IsBackground = true,
-            Name = "GameLoop"
+            Name = "Moongate-GameLoop"
         };
         _loopThread.Start();
 
@@ -118,6 +152,15 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
             _cancellationTokenSource.Cancel();
         }
 
+        if (!_outboundCancellationTokenSource.IsCancellationRequested)
+        {
+            _outboundCancellationTokenSource.Cancel();
+        }
+
+        _outboundWorkSignal.Set();
+        _loopThread?.Join();
+        _outboundThread?.Join();
+
         await _backgroundJobService.StopAsync();
     }
 
@@ -125,19 +168,14 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     {
         var drained = 0;
 
-        while (_outgoingPacketQueue.TryDequeue(out var outgoingPacket))
+        while (drained < MaxOutboundPacketsPerTick && _outgoingPacketQueue.TryDequeue(out var outgoingPacket))
         {
             if (
                 !_gameNetworkSessionService.TryGet(outgoingPacket.SessionId, out var session) ||
                 session.NetworkSession.Client is not { } client
             )
             {
-                _logger.Warning(
-                    "Skipping outbound packet 0x{OpCode:X2}: session {SessionId} is not connected.",
-                    outgoingPacket.Packet.OpCode,
-                    outgoingPacket.SessionId
-                );
-
+                // Hot path: per-packet logging here can dominate tick time under stress.
                 continue;
             }
 
@@ -153,7 +191,7 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
     {
         var drained = 0;
 
-        while (_messageBusService.TryReadIncomingPacket(out var gamePacket))
+        while (drained < MaxInboundPacketsPerTick && _messageBusService.TryReadIncomingPacket(out var gamePacket))
         {
             _packetDispatchService.NotifyPacketListeners(gamePacket);
             drained++;
@@ -172,14 +210,35 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
         return (long)((UInt128)Stopwatch.GetTimestamp() * 1000 / (ulong)Stopwatch.Frequency);
     }
 
-    private int ProcessTick(long timestampMilliseconds)
+    private TickWorkBreakdown ProcessTick(long timestampMilliseconds)
     {
+        var inboundStart = Stopwatch.GetTimestamp();
         var inbound = DrainPacketQueue();
-        var gameLoopCallbacks = _backgroundJobService.ExecutePendingOnGameLoop();
-        var timerTicks = _timerService.UpdateTicksDelta(timestampMilliseconds);
-        var outbound = DrainOutgoingPacketQueue();
+        var inboundElapsed = Stopwatch.GetElapsedTime(inboundStart);
 
-        return inbound + gameLoopCallbacks + timerTicks + outbound;
+        var gameLoopCallbacksStart = Stopwatch.GetTimestamp();
+        var gameLoopCallbacks = _backgroundJobService.ExecutePendingOnGameLoop();
+        var gameLoopCallbacksElapsed = Stopwatch.GetElapsedTime(gameLoopCallbacksStart);
+
+        var timerStart = Stopwatch.GetTimestamp();
+        var timerTicks = _timerService.UpdateTicksDelta(timestampMilliseconds);
+        var timerElapsed = Stopwatch.GetElapsedTime(timerStart);
+
+        if (_outgoingPacketQueue.CurrentQueueDepth > 0)
+        {
+            _outboundWorkSignal.Set();
+        }
+
+        return new(
+            inbound,
+            gameLoopCallbacks,
+            timerTicks,
+            0,
+            inboundElapsed,
+            gameLoopCallbacksElapsed,
+            timerElapsed,
+            TimeSpan.Zero
+        );
     }
 
     private void RunLoop()
@@ -189,9 +248,29 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
             var tickStart = Stopwatch.GetTimestamp();
             var timestampMilliseconds = GetTimestampMilliseconds();
 
-            var workUnits = ProcessTick(timestampMilliseconds);
+            var breakdown = ProcessTick(timestampMilliseconds);
+            var workUnits = breakdown.TotalWorkUnits;
 
             var elapsed = Stopwatch.GetElapsedTime(tickStart);
+
+            if (elapsed.TotalMilliseconds >= SlowTickThresholdMilliseconds)
+            {
+                _logger.Warning(
+                    "Slow game tick: Total={TotalMs:0.###}ms Inbound={InboundMs:0.###}ms Background={BackgroundMs:0.###}ms Timer={TimerMs:0.###}ms Outbound={OutboundMs:0.###}ms WorkUnits={WorkUnits} (in={InboundCount}, bg={BackgroundCount}, timer={TimerCount}, out={OutboundCount}) Queues(in={InboundQueue}, out={OutboundQueue})",
+                    elapsed.TotalMilliseconds,
+                    breakdown.InboundElapsed.TotalMilliseconds,
+                    breakdown.GameLoopCallbacksElapsed.TotalMilliseconds,
+                    breakdown.TimerElapsed.TotalMilliseconds,
+                    breakdown.OutboundElapsed.TotalMilliseconds,
+                    workUnits,
+                    breakdown.InboundCount,
+                    breakdown.GameLoopCallbacksCount,
+                    breakdown.TimerCount,
+                    breakdown.OutboundCount,
+                    _messageBusService.CurrentQueueDepth,
+                    _outgoingPacketQueue.CurrentQueueDepth
+                );
+            }
 
             lock (_metricsSync)
             {
@@ -207,6 +286,29 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
             {
                 Thread.Sleep(_idleSleepMilliseconds);
                 Interlocked.Increment(ref _idleSleepCount);
+            }
+        }
+    }
+
+    private void RunOutboundLoop()
+    {
+        while (!_outboundCancellationTokenSource.IsCancellationRequested)
+        {
+            _outboundWorkSignal.WaitOne(_idleSleepMilliseconds);
+
+            if (_outboundCancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
+
+            while (_outgoingPacketQueue.CurrentQueueDepth > 0)
+            {
+                var drained = DrainOutgoingPacketQueue();
+
+                if (drained == 0)
+                {
+                    break;
+                }
             }
         }
     }

@@ -29,9 +29,21 @@ public sealed class TimerModule
             TimeSpan.FromMilliseconds(delayMs),
             CreateSafeCallback(name, callback),
             TimeSpan.FromMilliseconds(delayMs),
-            repeat: false
+            false
         );
     }
+
+    [ScriptFunction("cancel", "Cancels a timer by timer id.")]
+    public bool Cancel(string timerId)
+        => !string.IsNullOrWhiteSpace(timerId) && _timerService.UnregisterTimer(timerId);
+
+    [ScriptFunction("cancel_all", "Cancels all registered timers.")]
+    public void CancelAll()
+        => _timerService.UnregisterAllTimers();
+
+    [ScriptFunction("cancel_by_name", "Cancels all timers with the same logical name and returns removed count.")]
+    public int CancelByName(string name)
+        => string.IsNullOrWhiteSpace(name) ? 0 : _timerService.UnregisterTimersByName(name);
 
     [ScriptFunction("every", "Registers a repeating timer and returns its timer id.")]
     public string Every(string name, int intervalMs, Closure callback, int? delayMs = null)
@@ -50,23 +62,22 @@ public sealed class TimerModule
             TimeSpan.FromMilliseconds(intervalMs),
             CreateSafeCallback(name, callback),
             TimeSpan.FromMilliseconds(resolvedDelay),
-            repeat: true
+            true
         );
     }
 
-    [ScriptFunction("cancel", "Cancels a timer by timer id.")]
-    public bool Cancel(string timerId)
-        => !string.IsNullOrWhiteSpace(timerId) && _timerService.UnregisterTimer(timerId);
-
-    [ScriptFunction("cancel_by_name", "Cancels all timers with the same logical name and returns removed count.")]
-    public int CancelByName(string name)
-        => string.IsNullOrWhiteSpace(name) ? 0 : _timerService.UnregisterTimersByName(name);
-
-    [ScriptFunction("cancel_all", "Cancels all registered timers.")]
-    public void CancelAll()
-    {
-        _timerService.UnregisterAllTimers();
-    }
+    private Action CreateSafeCallback(string timerName, Closure callback)
+        => () =>
+           {
+               try
+               {
+                   callback.OwnerScript.Call(callback);
+               }
+               catch (Exception ex)
+               {
+                   _logger.Error(ex, "Lua timer callback failed. TimerName={TimerName}", timerName);
+               }
+           };
 
     private bool IsValidRegistration(string name, int milliseconds, Closure callback)
     {
@@ -76,20 +87,5 @@ public sealed class TimerModule
         }
 
         return true;
-    }
-
-    private Action CreateSafeCallback(string timerName, Closure callback)
-    {
-        return () =>
-        {
-            try
-            {
-                callback.OwnerScript.Call(callback);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Lua timer callback failed. TimerName={TimerName}", timerName);
-            }
-        };
     }
 }

@@ -27,9 +27,7 @@ public static class MegaClilocBuilder
         => list.Add(CommonClilocIds.Insured);
 
     public static void AddSkillBonus(ObjectPropertyList list, string skillName, int bonus)
-    {
-        list.Add(CommonClilocIds.SkillBonus, $"{skillName}\t{(bonus > 0 ? $"+{bonus}" : bonus.ToString())}");
-    }
+        => list.Add(CommonClilocIds.SkillBonus, $"{skillName}\t{(bonus > 0 ? $"+{bonus}" : bonus.ToString())}");
 
     public static void AddSlayer(ObjectPropertyList list, string slayerType)
         => list.Add(CommonClilocIds.Slayer, slayerType);
@@ -38,9 +36,7 @@ public static class MegaClilocBuilder
         => list.Add(CommonClilocIds.SpellChanneling);
 
     public static void AddUsesRemaining(ObjectPropertyList list, int uses)
-    {
-        list.Add(CommonClilocIds.UsesRemaining, uses);
-    }
+        => list.Add(CommonClilocIds.UsesRemaining, uses);
 
     /// <summary>
     /// Creates a tooltip for armor

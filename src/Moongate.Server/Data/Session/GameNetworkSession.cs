@@ -105,7 +105,8 @@ public sealed class GameNetworkSession
         lock (_stateSync)
         {
             CompressionEnabled = false;
-            Client.RemoveMiddleware<CompressionMiddleware>();
+            var client = Client;
+            client?.RemoveMiddleware<CompressionMiddleware>();
         }
     }
 
@@ -127,11 +128,20 @@ public sealed class GameNetworkSession
     {
         lock (_stateSync)
         {
+            var client = Client;
+
+            if (client is null)
+            {
+                CompressionEnabled = false;
+
+                return;
+            }
+
             CompressionEnabled = true;
 
-            if (!Client.ContainsMiddleware<CompressionMiddleware>())
+            if (!client.ContainsMiddleware<CompressionMiddleware>())
             {
-                Client.AddMiddleware(new CompressionMiddleware());
+                client.AddMiddleware(new CompressionMiddleware());
             }
         }
     }

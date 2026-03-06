@@ -38,22 +38,20 @@ public sealed class OrionCommand : ICommandExecutor
     }
 
     public async Task ExecuteCommandAsync(CommandSystemContext context)
-    {
-        await _gameEventBusService.PublishAsync(
-            new TargetRequestCursorEvent(
-                context.SessionId,
-                TargetCursorSelectionType.SelectLocation,
-                TargetCursorType.Helpful,
-                callback =>
-                {
-                    var mobile = _mobileService.SpawnFromTemplateAsync("orione", callback.Packet.Location, 1)
-                                               .GetAwaiter()
-                                               .GetResult();
+        => await _gameEventBusService.PublishAsync(
+               new TargetRequestCursorEvent(
+                   context.SessionId,
+                   TargetCursorSelectionType.SelectLocation,
+                   TargetCursorType.Helpful,
+                   callback =>
+                   {
+                       var mobile = _mobileService.SpawnFromTemplateAsync("orione", callback.Packet.Location, 1)
+                                                  .GetAwaiter()
+                                                  .GetResult();
 
-                    _spatialWorldService.AddOrUpdateMobile(mobile);
-                    context.Print("Orion the cat: {0}", callback.Packet.Location);
-                }
-            )
-        );
-    }
+                       _spatialWorldService.AddOrUpdateMobile(mobile);
+                       context.Print("Orion the cat: {0}", callback.Packet.Location);
+                   }
+               )
+           );
 }

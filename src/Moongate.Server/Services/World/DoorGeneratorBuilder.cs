@@ -1,6 +1,5 @@
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Movement;
-using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
@@ -56,54 +55,6 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         0x0200, 0x0203, 0x0207, 0x0209
     ];
 
-    private static readonly IReadOnlyList<DoorGenerationMapSpec> DefaultMapSpecs =
-    [
-        new(
-            1,
-            [
-                new(new Point2D(250, 750), new Point2D(775, 1330)),
-                new(new Point2D(525, 2095), new Point2D(925, 2430)),
-                new(new Point2D(1025, 2155), new Point2D(1265, 2310)),
-                new(new Point2D(1635, 2430), new Point2D(1705, 2508)),
-                new(new Point2D(1775, 2605), new Point2D(2165, 2975)),
-                new(new Point2D(1055, 3520), new Point2D(1570, 4075)),
-                new(new Point2D(2860, 3310), new Point2D(3120, 3630)),
-                new(new Point2D(2470, 1855), new Point2D(3950, 3045)),
-                new(new Point2D(3425, 990), new Point2D(3900, 1455)),
-                new(new Point2D(4175, 735), new Point2D(4840, 1600)),
-                new(new Point2D(2375, 330), new Point2D(3100, 1045)),
-                new(new Point2D(2100, 1090), new Point2D(2310, 1450)),
-                new(new Point2D(1495, 1400), new Point2D(1550, 1475)),
-                new(new Point2D(1085, 1520), new Point2D(1415, 1910)),
-                new(new Point2D(1410, 1500), new Point2D(1745, 1795)),
-                new(new Point2D(5120, 2300), new Point2D(6143, 4095))
-            ]
-        ),
-        new(
-            0,
-            [
-                new(new Point2D(250, 750), new Point2D(775, 1330)),
-                new(new Point2D(525, 2095), new Point2D(925, 2430)),
-                new(new Point2D(1025, 2155), new Point2D(1265, 2310)),
-                new(new Point2D(1635, 2430), new Point2D(1705, 2508)),
-                new(new Point2D(1775, 2605), new Point2D(2165, 2975)),
-                new(new Point2D(1055, 3520), new Point2D(1570, 4075)),
-                new(new Point2D(2860, 3310), new Point2D(3120, 3630)),
-                new(new Point2D(2470, 1855), new Point2D(3950, 3045)),
-                new(new Point2D(3425, 990), new Point2D(3900, 1455)),
-                new(new Point2D(4175, 735), new Point2D(4840, 1600)),
-                new(new Point2D(2375, 330), new Point2D(3100, 1045)),
-                new(new Point2D(2100, 1090), new Point2D(2310, 1450)),
-                new(new Point2D(1495, 1400), new Point2D(1550, 1475)),
-                new(new Point2D(1085, 1520), new Point2D(1415, 1910)),
-                new(new Point2D(1410, 1500), new Point2D(1745, 1795)),
-                new(new Point2D(5120, 2300), new Point2D(6143, 4095))
-            ]
-        ),
-        new(2, [new(new Point2D(0, 0), new Point2D(288 * 8, 200 * 8))]),
-        new(3, [new(new Point2D(0, 0), new Point2D(320 * 8, 256 * 8))])
-    ];
-
     private readonly ILogger _logger = Log.ForContext<DoorGeneratorBuilder>();
     private readonly IReadOnlyList<DoorGenerationMapSpec> _mapSpecs;
     private readonly IMovementTileQueryService _tileQueryService;
@@ -112,24 +63,14 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     public DoorGeneratorBuilder(
         IMovementTileQueryService tileQueryService,
-        ISpatialWorldService spatialWorldService,
         IItemService itemService,
-        IReadOnlyList<DoorGenerationMapSpec>? mapSpecs = null
+        IDoorGenerationMapSpecProvider doorGenerationMapSpecProvider
     )
     {
         _tileQueryService = tileQueryService;
         _itemService = itemService;
-        _mapSpecs = mapSpecs is null || mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
+        _mapSpecs = doorGenerationMapSpecProvider.GetMapSpecs();
     }
-
-    // public DoorGeneratorBuilder(
-    //     IMovementTileQueryService tileQueryService,
-    //     IReadOnlyList<DoorGenerationMapSpec>? mapSpecs
-    // )
-    // {
-    //     _tileQueryService = tileQueryService;
-    //     _mapSpecs = mapSpecs is null || mapSpecs.Count == 0 ? DefaultMapSpecs : mapSpecs;
-    // }
 
     public string Name => "doors";
 
@@ -139,6 +80,66 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     public IReadOnlyList<DoorGenerationPlacementRecord> LastGeneratedDoors { get; private set; } =
         Array.Empty<DoorGenerationPlacementRecord>();
+
+    /// <summary>
+    /// Generates and spawns door candidates around a center point within a square radius.
+    /// </summary>
+    /// <param name="mapId">Target map id.</param>
+    /// <param name="center">Center location.</param>
+    /// <param name="radius">Radius in tiles.</param>
+    /// <param name="logCallback">Optional progress callback.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Number of spawned door candidates.</returns>
+    public async Task<int> GenerateAroundAsync(
+        int mapId,
+        Point3D center,
+        int radius,
+        Action<string>? logCallback = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _nextDoorPairGroupId = 1;
+
+        if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
+        {
+            logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
+
+            return 0;
+        }
+
+        var clampedRadius = Math.Max(1, radius);
+        var startX = Math.Max(0, center.X - clampedRadius);
+        var startY = Math.Max(0, center.Y - clampedRadius);
+        var endX = Math.Min(width, center.X + clampedRadius + 1);
+        var endY = Math.Min(height, center.Y + clampedRadius + 1);
+
+        var region = new Rectangle2D(new(startX, startY), new(endX, endY));
+        var placements = new List<DoorGenerationPlacementRecord>();
+        var occupiedDoorTiles = new HashSet<(int X, int Y, int Z)>();
+
+        logCallback?.Invoke(
+            $"Scanning doors around player on map {mapId} in area [{startX},{startY}] -> [{endX - 1},{endY - 1}] (radius={clampedRadius})."
+        );
+
+        var generated = AnalyzeRegion(
+            mapId,
+            region,
+            width,
+            height,
+            occupiedDoorTiles,
+            placements,
+            cancellationToken
+        );
+
+        LastGeneratedDoorCount = generated;
+        LastGeneratedPerMap = new Dictionary<int, int> { [mapId] = generated };
+        LastGeneratedDoors = placements;
+
+        await SpawnGeneratedDoorsAsync(placements);
+        logCallback?.Invoke($"Door generation around player completed. Candidates: {generated}.");
+
+        return generated;
+    }
 
     /// <inheritdoc />
     public async Task GenerateAsync(Action<string>? logCallback = null, CancellationToken cancellationToken = default)
@@ -189,72 +190,12 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         _logger.Information("Door generation analysis completed. Total candidates: {DoorCount}", total);
         logCallback?.Invoke($"Door generation completed. Total candidates: {total}.");
 
-        if (_itemService is null )
+        if (_itemService is null)
         {
             return;
         }
 
         await SpawnGeneratedDoorsAsync(placements);
-    }
-
-    /// <summary>
-    /// Generates and spawns door candidates around a center point within a square radius.
-    /// </summary>
-    /// <param name="mapId">Target map id.</param>
-    /// <param name="center">Center location.</param>
-    /// <param name="radius">Radius in tiles.</param>
-    /// <param name="logCallback">Optional progress callback.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Number of spawned door candidates.</returns>
-    public async Task<int> GenerateAroundAsync(
-        int mapId,
-        Point3D center,
-        int radius,
-        Action<string>? logCallback = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _nextDoorPairGroupId = 1;
-
-        if (!_tileQueryService.TryGetMapBounds(mapId, out var width, out var height))
-        {
-            logCallback?.Invoke($"Cannot scan doors around player: map {mapId} bounds unavailable.");
-
-            return 0;
-        }
-
-        var clampedRadius = Math.Max(1, radius);
-        var startX = Math.Max(0, center.X - clampedRadius);
-        var startY = Math.Max(0, center.Y - clampedRadius);
-        var endX = Math.Min(width, center.X + clampedRadius + 1);
-        var endY = Math.Min(height, center.Y + clampedRadius + 1);
-
-        var region = new Rectangle2D(new Point2D(startX, startY), new Point2D(endX, endY));
-        var placements = new List<DoorGenerationPlacementRecord>();
-        var occupiedDoorTiles = new HashSet<(int X, int Y, int Z)>();
-
-        logCallback?.Invoke(
-            $"Scanning doors around player on map {mapId} in area [{startX},{startY}] -> [{endX - 1},{endY - 1}] (radius={clampedRadius})."
-        );
-
-        var generated = AnalyzeRegion(
-            mapId,
-            region,
-            width,
-            height,
-            occupiedDoorTiles,
-            placements,
-            cancellationToken
-        );
-
-        LastGeneratedDoorCount = generated;
-        LastGeneratedPerMap = new Dictionary<int, int> { [mapId] = generated };
-        LastGeneratedDoors = placements;
-
-        await SpawnGeneratedDoorsAsync(placements);
-        logCallback?.Invoke($"Door generation around player completed. Candidates: {generated}.");
-
-        return generated;
     }
 
     private int AnalyzeRegion(
@@ -364,38 +305,62 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         return generated;
     }
 
-    private bool TryFindFrameAt(
+    private bool CanAddCandidate(
         int mapId,
-        int x,
-        int y,
-        int z,
         int mapWidth,
         int mapHeight,
-        HashSet<int> frameSet,
-        out int frameZ
+        HashSet<(int X, int Y, int Z)> occupiedDoorTiles,
+        int x,
+        int y,
+        int z
     )
     {
-        frameZ = 0;
-
-        if (!IsInsideMap(x, y, mapWidth, mapHeight))
+        if (!IsInsideMap(x, y, mapWidth, mapHeight) ||
+            IsExcludedDoorLocation(mapId, x, y) ||
+            !_tileQueryService.CanFit(
+                mapId,
+                x,
+                y,
+                z,
+                16,
+                false,
+                false
+            ) ||
+            occupiedDoorTiles.Contains((x, y, z)))
         {
             return false;
         }
 
-        foreach (var tile in _tileQueryService.GetStaticTiles(mapId, x, y))
+        return true;
+    }
+
+    private static bool IsExcludedDoorLocation(int mapId, int x, int y)
+    {
+        if (y == 1743 && x is >= 1343 and <= 1344)
         {
-            if (!frameSet.Contains(tile.ID))
-            {
-                continue;
-            }
+            return true;
+        }
 
-            if (Math.Abs(tile.Z - z) > 1)
-            {
-                continue;
-            }
+        if (y == 1679 && x is >= 1392 and <= 1393)
+        {
+            return true;
+        }
 
-            frameZ = tile.Z;
+        if (x == 1320 && y is >= 1618 and <= 1640)
+        {
+            return true;
+        }
 
+        if (x == 1383 && y is >= 1642 and <= 1643)
+        {
+            return true;
+        }
+
+        // Ilshenar ruins exclusion from ModernUO.
+        if (mapId == 2 &&
+            (x is >= 644 and <= 670 && y is >= 925 and <= 941 ||
+             x == 985 && y == 994))
+        {
             return true;
         }
 
@@ -407,7 +372,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     private async Task SpawnGeneratedDoorsAsync(IReadOnlyList<DoorGenerationPlacementRecord> placements)
     {
-        if (_itemService is null )
+        if (_itemService is null)
         {
             return;
         }
@@ -501,78 +466,41 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
         return 2;
     }
 
-    private bool CanAddCandidate(
+    private bool TryFindFrameAt(
         int mapId,
-        int mapWidth,
-        int mapHeight,
-        HashSet<(int X, int Y, int Z)> occupiedDoorTiles,
         int x,
         int y,
-        int z
+        int z,
+        int mapWidth,
+        int mapHeight,
+        HashSet<int> frameSet,
+        out int frameZ
     )
     {
-        if (!IsInsideMap(x, y, mapWidth, mapHeight) ||
-            IsExcludedDoorLocation(mapId, x, y) ||
-            !_tileQueryService.CanFit(
-                mapId,
-                x,
-                y,
-                z,
-                16,
-                checkBlocksFit: false,
-                checkMobiles: false,
-                requireSurface: true
-            ) ||
-            occupiedDoorTiles.Contains((x, y, z)))
+        frameZ = 0;
+
+        if (!IsInsideMap(x, y, mapWidth, mapHeight))
         {
             return false;
         }
 
-        return true;
-    }
-
-    private static bool IsExcludedDoorLocation(int mapId, int x, int y)
-    {
-        if (y == 1743 && x is >= 1343 and <= 1344)
+        foreach (var tile in _tileQueryService.GetStaticTiles(mapId, x, y))
         {
-            return true;
-        }
+            if (!frameSet.Contains(tile.ID))
+            {
+                continue;
+            }
 
-        if (y == 1679 && x is >= 1392 and <= 1393)
-        {
-            return true;
-        }
+            if (Math.Abs(tile.Z - z) > 1)
+            {
+                continue;
+            }
 
-        if (x == 1320 && y is >= 1618 and <= 1640)
-        {
-            return true;
-        }
+            frameZ = tile.Z;
 
-        if (x == 1383 && y is >= 1642 and <= 1643)
-        {
-            return true;
-        }
-
-        // Ilshenar ruins exclusion from ModernUO.
-        if (mapId == 2 &&
-            ((x is >= 644 and <= 670 && y is >= 925 and <= 941) ||
-             (x == 985 && y == 994)))
-        {
             return true;
         }
 
         return false;
     }
 }
-
-public readonly record struct DoorGenerationMapSpec(
-    int MapId,
-    IReadOnlyList<Rectangle2D> Regions
-);
-
-public readonly record struct DoorGenerationPlacementRecord(
-    int MapId,
-    Point3D Location,
-    DoorGenerationFacing Facing,
-    int? PairGroupId = null
-);

@@ -22,19 +22,109 @@ namespace Moongate.Tests.Server.Handlers;
 
 public class MovementHandlerTests
 {
-    private static MovementHandler CreateHandler(
-        BasePacketListenerTestOutgoingPacketQueue queue,
-        NetworkServiceTestGameEventBusService gameEventBus,
-        TestMovementTileQueryService? tileQuery = null,
-        ISpatialWorldService? spatialWorldService = null
-    )
+    private sealed class TestMovementTileQueryService : IMovementTileQueryService
     {
-        var movementValidationService = new MovementValidationService(
-            tileQuery ?? new TestMovementTileQueryService(),
-            spatialWorldService ?? new TestMovementSpatialWorldService()
-        );
+        public bool HasMapBounds { get; set; }
 
-        return new MovementHandler(queue, gameEventBus, movementValidationService);
+        public int Width { get; set; } = 6144;
+
+        public int Height { get; set; } = 4096;
+
+        public Dictionary<(int X, int Y), LandTile> LandTiles { get; } = [];
+
+        public Dictionary<(int X, int Y), List<StaticTile>> StaticTiles { get; } = [];
+
+        public IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y)
+            => StaticTiles.TryGetValue((x, y), out var configured) ? configured : Array.Empty<StaticTile>();
+
+        public bool TryGetLandTile(int mapId, int x, int y, out LandTile landTile)
+        {
+            if (LandTiles.TryGetValue((x, y), out var configured))
+            {
+                landTile = configured;
+
+                return true;
+            }
+
+            landTile = new(0, 0);
+
+            return true;
+        }
+
+        public bool TryGetMapBounds(int mapId, out int width, out int height)
+        {
+            width = Width;
+            height = Height;
+
+            return HasMapBounds;
+        }
+    }
+
+    private sealed class TestMovementSpatialWorldService : ISpatialWorldService
+    {
+        public List<UOMobileEntity> GetNearbyMobilesResult { get; } = [];
+
+        public void AddOrUpdateItem(UOItemEntity item, int mapId)
+            => throw new NotImplementedException();
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile)
+            => throw new NotImplementedException();
+
+        public void AddRegion(JsonRegion region)
+            => throw new NotImplementedException();
+
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+            => throw new NotImplementedException();
+
+        public List<MapSector> GetActiveSectors()
+            => throw new NotImplementedException();
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
+            => throw new NotImplementedException();
+
+        public int GetMusic(int mapId, Point3D location)
+            => throw new NotImplementedException();
+
+        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
+            => throw new NotImplementedException();
+
+        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
+            => GetNearbyMobilesResult;
+
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
+            => throw new NotImplementedException();
+
+        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+            => throw new NotImplementedException();
+
+        public JsonRegion? GetRegionById(int regionId)
+            => throw new NotImplementedException();
+
+        public MapSector? GetSectorByLocation(int mapId, Point3D location)
+            => throw new NotImplementedException();
+
+        public SectorSystemStats GetStats()
+            => throw new NotImplementedException();
+
+        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
+            => throw new NotImplementedException();
+
+        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
+            => throw new NotImplementedException();
+
+        public void RemoveEntity(Serial serial)
+            => throw new NotImplementedException();
     }
 
     [Test]
@@ -322,51 +412,6 @@ public class MovementHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_ShouldThrottle_WhenMoveTimeIsFarAhead()
-    {
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var handler = CreateHandler(queue, gameEventBus);
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000001,
-            MoveSequence = 1,
-            MoveTime = Environment.TickCount64 + 2000,
-            MoveCredit = 0,
-            Character = new()
-            {
-                Id = (Serial)0x00000001,
-                Location = new(1200, 1300, 7),
-                Direction = DirectionType.East
-            }
-        };
-
-        var packet = new MoveRequestPacket
-        {
-            Direction = DirectionType.East,
-            Sequence = 1,
-            FastWalkKey = 0x01020305
-        };
-
-        _ = await handler.HandlePacketAsync(session, packet);
-        var dequeued = queue.TryDequeue(out var outbound);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dequeued, Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<MoveDenyPacket>());
-                Assert.That(session.MoveSequence, Is.EqualTo(1));
-                var deny = (MoveDenyPacket)outbound.Packet;
-                Assert.That(deny.X, Is.EqualTo(1200));
-                Assert.That(deny.Y, Is.EqualTo(1300));
-                Assert.That(deny.Z, Is.EqualTo(7));
-            }
-        );
-    }
-
-    [Test]
     public async Task HandlePacketAsync_ShouldSendDenyAndResetSequence_WhenMoveIsBlockedByMap()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -413,103 +458,63 @@ public class MovementHandlerTests
         );
     }
 
-    private sealed class TestMovementTileQueryService : IMovementTileQueryService
+    [Test]
+    public async Task HandlePacketAsync_ShouldThrottle_WhenMoveTimeIsFarAhead()
     {
-        public bool HasMapBounds { get; set; }
-
-        public int Width { get; set; } = 6144;
-
-        public int Height { get; set; } = 4096;
-
-        public Dictionary<(int X, int Y), LandTile> LandTiles { get; } = [];
-
-        public Dictionary<(int X, int Y), List<StaticTile>> StaticTiles { get; } = [];
-
-        public bool TryGetMapBounds(int mapId, out int width, out int height)
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = CreateHandler(queue, gameEventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
         {
-            width = Width;
-            height = Height;
-
-            return HasMapBounds;
-        }
-
-        public bool TryGetLandTile(int mapId, int x, int y, out LandTile landTile)
-        {
-            if (LandTiles.TryGetValue((x, y), out var configured))
+            CharacterId = (Serial)0x00000001,
+            MoveSequence = 1,
+            MoveTime = Environment.TickCount64 + 2000,
+            MoveCredit = 0,
+            Character = new()
             {
-                landTile = configured;
-
-                return true;
+                Id = (Serial)0x00000001,
+                Location = new(1200, 1300, 7),
+                Direction = DirectionType.East
             }
+        };
 
-            landTile = new LandTile(0, 0);
+        var packet = new MoveRequestPacket
+        {
+            Direction = DirectionType.East,
+            Sequence = 1,
+            FastWalkKey = 0x01020305
+        };
 
-            return true;
-        }
+        _ = await handler.HandlePacketAsync(session, packet);
+        var dequeued = queue.TryDequeue(out var outbound);
 
-        public IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y)
-            => StaticTiles.TryGetValue((x, y), out var configured) ? configured : Array.Empty<StaticTile>();
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<MoveDenyPacket>());
+                Assert.That(session.MoveSequence, Is.EqualTo(1));
+                var deny = (MoveDenyPacket)outbound.Packet;
+                Assert.That(deny.X, Is.EqualTo(1200));
+                Assert.That(deny.Y, Is.EqualTo(1300));
+                Assert.That(deny.Z, Is.EqualTo(7));
+            }
+        );
     }
 
-    private sealed class TestMovementSpatialWorldService : ISpatialWorldService
+    private static MovementHandler CreateHandler(
+        BasePacketListenerTestOutgoingPacketQueue queue,
+        NetworkServiceTestGameEventBusService gameEventBus,
+        TestMovementTileQueryService? tileQuery = null,
+        ISpatialWorldService? spatialWorldService = null
+    )
     {
-        public List<UOMobileEntity> GetNearbyMobilesResult { get; } = [];
+        var movementValidationService = new MovementValidationService(
+            tileQuery ?? new TestMovementTileQueryService(),
+            spatialWorldService ?? new TestMovementSpatialWorldService()
+        );
 
-        public Task<int> BroadcastToPlayersAsync(
-            IGameNetworkPacket packet,
-            int mapId,
-            Point3D location,
-            int? range = null,
-            long? excludeSessionId = null
-        )
-            => throw new NotImplementedException();
-
-        public void AddOrUpdateItem(UOItemEntity item, int mapId)
-            => throw new NotImplementedException();
-
-        public void AddOrUpdateMobile(UOMobileEntity mobile)
-            => throw new NotImplementedException();
-
-        public void AddRegion(JsonRegion region)
-            => throw new NotImplementedException();
-
-        public JsonRegion? GetRegionById(int regionId)
-            => throw new NotImplementedException();
-
-        public int GetMusic(int mapId, Point3D location)
-            => throw new NotImplementedException();
-
-        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
-            => throw new NotImplementedException();
-
-        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
-            => GetNearbyMobilesResult;
-
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
-            => throw new NotImplementedException();
-
-        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
-            => throw new NotImplementedException();
-
-        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
-            => throw new NotImplementedException();
-
-        public List<MapSector> GetActiveSectors()
-            => throw new NotImplementedException();
-
-        public MapSector? GetSectorByLocation(int mapId, Point3D location)
-            => throw new NotImplementedException();
-
-        public SectorSystemStats GetStats()
-            => throw new NotImplementedException();
-
-        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
-            => throw new NotImplementedException();
-
-        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
-            => throw new NotImplementedException();
-
-        public void RemoveEntity(Serial serial)
-            => throw new NotImplementedException();
+        return new(queue, gameEventBus, movementValidationService);
     }
 }

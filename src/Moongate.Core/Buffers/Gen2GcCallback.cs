@@ -75,10 +75,9 @@ internal sealed class Gen2GcCallback : CriticalFinalizerObject
     /// rescheduled for the next Gen 2 GC, otherwise the callback stops.
     /// </summary>
     public static void Register(Func<bool> callback)
-    {
+
         // Create an unreachable object that remembers the callback function and target object.
-        new Gen2GcCallback(callback);
-    }
+        => new Gen2GcCallback(callback);
 
     /// <summary>
     /// Schedule 'callback' to be called in the next GC.  If the callback returns true it is
@@ -87,8 +86,7 @@ internal sealed class Gen2GcCallback : CriticalFinalizerObject
     /// or the target object dies.
     /// </summary>
     public static void Register(Func<object, bool> callback, object targetObj)
-    {
+
         // Create a unreachable object that remembers the callback function and target object.
-        new Gen2GcCallback(callback, targetObj);
-    }
+        => new Gen2GcCallback(callback, targetObj);
 }

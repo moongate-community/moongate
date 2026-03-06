@@ -7,8 +7,8 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Speech;
-using Moongate.Tests.Server.Support;
 using Moongate.Server.Types.Commands;
+using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -36,6 +36,22 @@ public class SpeechServiceTests
             return excludeSession is null
                        ? [.. PlayersInRange]
                        : [.. PlayersInRange.Where(session => session != excludeSession)];
+        }
+    }
+
+    private sealed class TestMobileSpokeEventListener : IGameEventListener<MobileSpokeEvent>
+    {
+        public int EventCount { get; private set; }
+
+        public MobileSpokeEvent LastEvent { get; private set; }
+
+        public Task HandleAsync(MobileSpokeEvent gameEvent, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            EventCount++;
+            LastEvent = gameEvent;
+
+            return Task.CompletedTask;
         }
     }
 
@@ -280,10 +296,10 @@ public class SpeechServiceTests
             Name = "orion",
             MapId = 1,
             BaseBody = 0x00C9,
-            Location = new Point3D(100, 200, 0)
+            Location = new(100, 200, 0)
         };
 
-        var recipients = await speechService.SpeakAsMobileAsync(npc, "Meow!", 12);
+        var recipients = await speechService.SpeakAsMobileAsync(npc, "Meow!");
         var dequeuedA = outgoingPacketQueue.TryDequeue(out var packetA);
         var dequeuedB = outgoingPacketQueue.TryDequeue(out var packetB);
 
@@ -301,20 +317,5 @@ public class SpeechServiceTests
                 Assert.That(listener.LastEvent.Text, Is.EqualTo("Meow!"));
             }
         );
-    }
-
-    private sealed class TestMobileSpokeEventListener : IGameEventListener<MobileSpokeEvent>
-    {
-        public int EventCount { get; private set; }
-
-        public MobileSpokeEvent LastEvent { get; private set; }
-
-        public Task HandleAsync(MobileSpokeEvent gameEvent, CancellationToken cancellationToken = default)
-        {
-            _ = cancellationToken;
-            EventCount++;
-            LastEvent = gameEvent;
-            return Task.CompletedTask;
-        }
     }
 }

@@ -381,9 +381,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     /// Executes the engine ready function from bootstrap scripts.
     /// </summary>
     public void ExecuteEngineReady()
-    {
-        ExecuteFunctionFromBootstrap(OnEngineRunFunctionName);
-    }
+        => ExecuteFunctionFromBootstrap(OnEngineRunFunctionName);
 
     /// <summary>
     /// Executes a Lua function and returns the result.
@@ -494,9 +492,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     /// </summary>
     /// <param name="script">The script to execute.</param>
     public void ExecuteScript(string script)
-    {
-        ExecuteScript(script, null);
-    }
+        => ExecuteScript(script, null);
 
     /// <summary>
     /// Executes a script from a file.
@@ -768,8 +764,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     }
 
     private static object? ConvertFromLua(DynValue dynValue, Type targetType)
-    {
-        return dynValue.Type switch
+        => dynValue.Type switch
         {
             DataType.Nil     => null,
             DataType.Boolean => dynValue.Boolean,
@@ -778,7 +773,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             DataType.Table   => dynValue.ToObject(),
             _                => dynValue.ToObject()
         };
-    }
 
     private DynValue ConvertToLua(object? value)
         => value == null ? DynValue.Nil : DynValue.FromObject(LuaScript, value);
@@ -960,8 +954,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         Justification = "Lua params-array conversion requires runtime element type resolution by reflection."
     )]
     private DynValue CreateMethodClosure(object instance, MethodInfo method)
-    {
-        return DynValue.NewCallback(
+        => DynValue.NewCallback(
             (context, args) =>
             {
                 try
@@ -1021,7 +1014,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                 }
             }
         );
-    }
 
     private Table CreateModuleTable(
         object instance,
@@ -1056,18 +1048,15 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     }
 
     private void CreateNameResolver()
-    {
-        _nameResolver = name => name.ToSnakeCase();
+        => _nameResolver = name => name.ToSnakeCase();
 
-        // _nameResolver = _scriptEngineConfig.ScriptNameConversion switch
-        // {
-        //     ScriptNameConversion.CamelCase  => name => name.ToCamelCase(),
-        //     ScriptNameConversion.PascalCase => name => name.ToPascalCase(),
-        //     ScriptNameConversion.SnakeCase  => name => name.ToSnakeCase(),
-        //     _                               => _nameResolver
-        // };
-    }
-
+    // _nameResolver = _scriptEngineConfig.ScriptNameConversion switch
+    // {
+    //     ScriptNameConversion.CamelCase  => name => name.ToCamelCase(),
+    //     ScriptNameConversion.PascalCase => name => name.ToPascalCase(),
+    //     ScriptNameConversion.SnakeCase  => name => name.ToSnakeCase(),
+    //     _                               => _nameResolver
+    // };
     private Script CreateOptimizedEngine()
     {
         var script = new Script
@@ -1086,9 +1075,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     }
 
     private void ExecuteBootFunction()
-    {
-        ExecuteFunctionFromBootstrap(OnReadyFunctionName);
-    }
+        => ExecuteFunctionFromBootstrap(OnReadyFunctionName);
 
     private void ExecuteBootstrap()
     {

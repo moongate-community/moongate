@@ -63,13 +63,13 @@ public class GraphicalEffectPacketTests
             (Serial)0x01020304u,
             (Serial)0xA0B0C0D0u,
             0x3344,
-            new Point3D(1200, 1300, 10),
-            new Point3D(1400, 1500, -10),
+            new(1200, 1300, 10),
+            new(1400, 1500, -10),
             7,
             9,
             0xBEEF,
-            adjustDirectionDuringAnimation: false,
-            explodeOnImpact: true
+            false,
+            true
         );
 
         var data = Write(packet);

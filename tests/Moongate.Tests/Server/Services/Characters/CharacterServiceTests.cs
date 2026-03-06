@@ -89,63 +89,6 @@ public class CharacterServiceTests
     }
 
     [Test]
-    public async Task CreateCharacterAsync_ShouldCreateStarterBackpackAndHardcodedItems()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var service = CreateCharacterService(
-            persistence,
-            new()
-        );
-
-        var createdId = await service.CreateCharacterAsync(
-                            new()
-                            {
-                                Name = "starter-mobile",
-                                AccountId = (Serial)0x00000150,
-                                IsPlayer = true
-                            }
-                        );
-
-        var savedCharacter = await persistence.UnitOfWork.Mobiles.GetByIdAsync(createdId);
-        var allItems = await persistence.UnitOfWork.Items.GetAllAsync();
-        var equippedLayers = savedCharacter!.EquippedItemIds.Keys.ToHashSet();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(savedCharacter.BackpackId.IsItem, Is.True);
-                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Backpack));
-                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Shirt));
-                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Pants));
-                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Shoes));
-                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Bank));
-                Assert.That(allItems.Count, Is.GreaterThanOrEqualTo(6));
-                Assert.That(
-                    allItems.Any(item => item.ItemId == 0x0EED && item.ParentContainerId == savedCharacter.BackpackId),
-                    Is.True
-                );
-                Assert.That(
-                    allItems.Any(
-                        item => item.ItemId == 0x09A8 &&
-                                item.EquippedMobileId == savedCharacter.Id &&
-                                item.EquippedLayer == ItemLayerType.Bank
-                    ),
-                    Is.True
-                );
-                Assert.That(
-                    allItems.Any(
-                        item => item.ItemId == 0x09A8 &&
-                                item.EquippedLayer == ItemLayerType.Bank &&
-                                item.GumpId == 0x0042
-                    ),
-                    Is.True
-                );
-            }
-        );
-    }
-
-    [Test]
     public async Task ApplyStarterEquipmentHuesAsync_ShouldUpdateShirtAndPantsHues_WhenEquippedItemsExist()
     {
         using var temp = new TempDirectory();
@@ -207,6 +150,63 @@ public class CharacterServiceTests
                 Assert.That(reloadedPants, Is.Not.Null);
                 Assert.That(reloadedShirt!.Hue, Is.EqualTo(0x0888));
                 Assert.That(reloadedPants!.Hue, Is.EqualTo(0x0999));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateCharacterAsync_ShouldCreateStarterBackpackAndHardcodedItems()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new()
+        );
+
+        var createdId = await service.CreateCharacterAsync(
+                            new()
+                            {
+                                Name = "starter-mobile",
+                                AccountId = (Serial)0x00000150,
+                                IsPlayer = true
+                            }
+                        );
+
+        var savedCharacter = await persistence.UnitOfWork.Mobiles.GetByIdAsync(createdId);
+        var allItems = await persistence.UnitOfWork.Items.GetAllAsync();
+        var equippedLayers = savedCharacter!.EquippedItemIds.Keys.ToHashSet();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(savedCharacter.BackpackId.IsItem, Is.True);
+                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Backpack));
+                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Shirt));
+                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Pants));
+                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Shoes));
+                Assert.That(equippedLayers, Does.Contain(ItemLayerType.Bank));
+                Assert.That(allItems.Count, Is.GreaterThanOrEqualTo(6));
+                Assert.That(
+                    allItems.Any(item => item.ItemId == 0x0EED && item.ParentContainerId == savedCharacter.BackpackId),
+                    Is.True
+                );
+                Assert.That(
+                    allItems.Any(
+                        item => item.ItemId == 0x09A8 &&
+                                item.EquippedMobileId == savedCharacter.Id &&
+                                item.EquippedLayer == ItemLayerType.Bank
+                    ),
+                    Is.True
+                );
+                Assert.That(
+                    allItems.Any(
+                        item => item.ItemId == 0x09A8 &&
+                                item.EquippedLayer == ItemLayerType.Bank &&
+                                item.GumpId == 0x0042
+                    ),
+                    Is.True
+                );
             }
         );
     }
@@ -302,6 +302,60 @@ public class CharacterServiceTests
         Assert.That(character!.TryGetEquippedReference(ItemLayerType.Shirt, out var reference), Is.True);
         Assert.That(reference.ItemId, Is.EqualTo(0x1517));
         Assert.That(reference.Hue, Is.EqualTo(0x0444));
+    }
+
+    [Test]
+    public async Task GetCharacterAsync_ShouldHydrateInferredItems_WhenEquippedMobileIdDoesNotMatch()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(persistence, new());
+        var characterId = (Serial)0x00000270;
+        var shirtId = (Serial)0x40000071;
+        var pantsId = (Serial)0x40000072;
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = characterId,
+                Name = "inferred-equipment",
+                IsPlayer = true,
+                EquippedItemIds =
+                {
+                    [ItemLayerType.Shirt] = shirtId,
+                    [ItemLayerType.Pants] = pantsId
+                }
+            }
+        );
+
+        // Shirt has correct EquippedMobileId — found by batch query
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = shirtId,
+                ItemId = 0x1517,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Shirt
+            }
+        );
+
+        // Pants has WRONG EquippedMobileId — NOT found by batch query, needs inference
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = pantsId,
+                ItemId = 0x152E,
+                EquippedMobileId = (Serial)0x00000999
+            }
+        );
+
+        var character = await service.GetCharacterAsync(characterId);
+
+        Assert.That(character, Is.Not.Null);
+        Assert.That(character!.TryGetEquippedReference(ItemLayerType.Shirt, out var shirtRef), Is.True);
+        Assert.That(character.TryGetEquippedReference(ItemLayerType.Pants, out var pantsRef), Is.True);
+        Assert.That(shirtRef.ItemId, Is.EqualTo(0x1517));
+        Assert.That(pantsRef.ItemId, Is.EqualTo(0x152E));
     }
 
     [Test]

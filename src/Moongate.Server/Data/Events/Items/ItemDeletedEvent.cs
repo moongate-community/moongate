@@ -35,4 +35,3 @@ public readonly record struct ItemDeletedEvent(
             mapId
         ) { }
 }
-

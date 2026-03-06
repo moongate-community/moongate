@@ -16,6 +16,7 @@ namespace Moongate.Network.Packets.Outgoing.System;
 public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, IDisposable
 {
     private readonly List<Entry> _entries = [];
+
     private static readonly uint[] StringNumbers =
     {
         1042971, // ~1_NOTHING~
@@ -44,14 +45,10 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
     }
 
     public void Add(uint clilocId)
-    {
-        AddEntry(clilocId, null);
-    }
+        => AddEntry(clilocId, null);
 
     public void Add(uint clilocId, string argument)
-    {
-        AddEntry(clilocId, argument);
-    }
+        => AddEntry(clilocId, argument);
 
     public void Add(string text)
     {
@@ -60,57 +57,10 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
     }
 
     public void Add(uint clilocId, int value)
-    {
-        AddEntry(clilocId, value.ToString(CultureInfo.InvariantCulture));
-    }
+        => AddEntry(clilocId, value.ToString(CultureInfo.InvariantCulture));
 
     public void Add(uint clilocId, double value)
-    {
-        AddEntry(clilocId, value.ToString(CultureInfo.InvariantCulture));
-    }
-
-    public bool Replace(uint clilocId, string? argument)
-    {
-        var index = _entries.FindLastIndex(entry => entry.ClilocId == clilocId);
-
-        if (index < 0)
-        {
-            AddEntry(clilocId, argument);
-
-            return false;
-        }
-
-        _entries[index] = new(clilocId, argument);
-        RebuildPayloadFromEntries();
-
-        return true;
-    }
-
-    public bool Replace(uint clilocId, int value)
-        => Replace(clilocId, value.ToString(CultureInfo.InvariantCulture));
-
-    public bool Replace(uint clilocId, double value)
-        => Replace(clilocId, value.ToString(CultureInfo.InvariantCulture));
-
-    public bool Replace(uint clilocId)
-        => Replace(clilocId, argument: null);
-
-    public bool Replace(uint oldClilocId, uint newClilocId, string? argument = null)
-    {
-        var index = _entries.FindLastIndex(entry => entry.ClilocId == oldClilocId);
-
-        if (index < 0)
-        {
-            AddEntry(newClilocId, argument);
-
-            return false;
-        }
-
-        _entries[index] = new(newClilocId, argument);
-        RebuildPayloadFromEntries();
-
-        return true;
-    }
+        => AddEntry(clilocId, value.ToString(CultureInfo.InvariantCulture));
 
     public ObjectPropertyList Clone()
     {
@@ -145,6 +95,49 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         }
     }
 
+    public bool Replace(uint clilocId, string? argument)
+    {
+        var index = _entries.FindLastIndex(entry => entry.ClilocId == clilocId);
+
+        if (index < 0)
+        {
+            AddEntry(clilocId, argument);
+
+            return false;
+        }
+
+        _entries[index] = new(clilocId, argument);
+        RebuildPayloadFromEntries();
+
+        return true;
+    }
+
+    public bool Replace(uint clilocId, int value)
+        => Replace(clilocId, value.ToString(CultureInfo.InvariantCulture));
+
+    public bool Replace(uint clilocId, double value)
+        => Replace(clilocId, value.ToString(CultureInfo.InvariantCulture));
+
+    public bool Replace(uint clilocId)
+        => Replace(clilocId, null);
+
+    public bool Replace(uint oldClilocId, uint newClilocId, string? argument = null)
+    {
+        var index = _entries.FindLastIndex(entry => entry.ClilocId == oldClilocId);
+
+        if (index < 0)
+        {
+            AddEntry(newClilocId, argument);
+
+            return false;
+        }
+
+        _entries[index] = new(newClilocId, argument);
+        RebuildPayloadFromEntries();
+
+        return true;
+    }
+
     public override void Write(ref SpanWriter writer)
     {
         if (_buffer == null)
@@ -163,6 +156,17 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
 
     protected override bool ParsePayload(ref SpanReader reader)
         => false;
+
+    private void AddEntry(uint clilocId, string? argument)
+    {
+        if (clilocId == 0)
+        {
+            return;
+        }
+
+        _entries.Add(new(clilocId, argument));
+        WriteEntry(clilocId, argument);
+    }
 
     private void AddHash(int val)
     {
@@ -189,15 +193,27 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         }
     }
 
-    private void AddEntry(uint clilocId, string? argument)
+    private void RebuildPayloadFromEntries()
     {
-        if (clilocId == 0)
-        {
-            return;
-        }
+        ResetPayloadBuffer();
 
-        _entries.Add(new(clilocId, argument));
-        WriteEntry(clilocId, argument);
+        foreach (var entry in _entries)
+        {
+            WriteEntry(entry.ClilocId, entry.Argument);
+        }
+    }
+
+    private void ResetPayloadBuffer()
+    {
+        Header = 0;
+        _hash = 0;
+        _bufferPos = 0;
+        var writer = new SpanWriter(_buffer);
+        writer.Write((ushort)0x0001);
+        writer.Write(Serial.Value);
+        writer.Write((ushort)0x0000);
+        writer.Write(Serial.Value);
+        _bufferPos = writer.Position;
     }
 
     private void WriteEntry(uint clilocId, string? argument)
@@ -236,28 +252,5 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         writer.Write(Encoding.Unicode.GetBytes(argument));
 
         _bufferPos += writer.Position;
-    }
-
-    private void RebuildPayloadFromEntries()
-    {
-        ResetPayloadBuffer();
-
-        foreach (var entry in _entries)
-        {
-            WriteEntry(entry.ClilocId, entry.Argument);
-        }
-    }
-
-    private void ResetPayloadBuffer()
-    {
-        Header = 0;
-        _hash = 0;
-        _bufferPos = 0;
-        var writer = new SpanWriter(_buffer);
-        writer.Write((ushort)0x0001);
-        writer.Write(Serial.Value);
-        writer.Write((ushort)0x0000);
-        writer.Write(Serial.Value);
-        _bufferPos = writer.Position;
     }
 }

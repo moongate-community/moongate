@@ -10,11 +10,9 @@ public class GeneralInformationPacketBuilderTests
 {
     [Test]
     public void Create_ShouldThrow_WhenPayloadInvalid()
-    {
-        Assert.Throws<ArgumentException>(
+        => Assert.Throws<ArgumentException>(
             () => GeneralInformationPacketBuilder.Create(GeneralInformationSubcommandType.SetCursorHueSetMap, [])
         );
-    }
 
     [Test]
     public void CreateMountSpeed_ShouldBuildExpectedPacket()

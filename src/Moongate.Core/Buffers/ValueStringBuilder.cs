@@ -428,9 +428,7 @@ public ref struct ValueStringBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Reset()
-    {
-        Length = 0;
-    }
+        => Length = 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()

@@ -14,7 +14,7 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 {
     private readonly BinaryJournalService _journalService;
     private readonly ILogger _logger = Log.ForContext<PersistenceUnitOfWork>();
-    private readonly MemoryPackSnapshotService _snapshotService;
+    private readonly MessagePackSnapshotService _snapshotService;
     private readonly PersistenceStateStore _stateStore = new();
 
     public PersistenceUnitOfWork(PersistenceOptions options)
@@ -61,6 +61,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 
             return (Serial)_stateStore.LastMobileId;
         }
+    }
+
+    public void Dispose()
+    {
+        _journalService.Dispose();
+        _snapshotService.Dispose();
     }
 
     public async ValueTask InitializeAsync(CancellationToken cancellationToken = default)
@@ -151,12 +157,6 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         await _snapshotService.SaveAsync(snapshot, cancellationToken);
         await _journalService.ResetAsync(cancellationToken);
         _logger.Verbose("Persistence snapshot-save completed LastSequenceId={LastSequenceId}", snapshot.LastSequenceId);
-    }
-
-    public void Dispose()
-    {
-        _journalService.Dispose();
-        _snapshotService.Dispose();
     }
 
     private void ApplyEntry(JournalEntry entry)

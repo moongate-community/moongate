@@ -1,25 +1,27 @@
 using System.Net.Sockets;
+using System.Reflection;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Incoming.UI;
-using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
-using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Modules;
@@ -33,7 +35,6 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
-using Moongate.Server.Data.World;
 
 namespace Moongate.Tests.Scripting;
 
@@ -200,13 +201,6 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(true);
         }
 
-        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
-        {
-            _ = character;
-
-            return Task.FromResult((Serial)1u);
-        }
-
         public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
         {
             _ = characterId;
@@ -214,6 +208,13 @@ public class LuaScriptEngineServiceTests
             _ = pantsHue;
 
             return Task.CompletedTask;
+        }
+
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+        {
+            _ = character;
+
+            return Task.FromResult((Serial)1u);
         }
 
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
@@ -274,13 +275,6 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult((Serial)1u);
         }
 
-        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-        {
-            _ = itemTemplateId;
-
-            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
-        }
-
         public Task<bool> DeleteItemAsync(Serial itemId)
         {
             _ = itemId;
@@ -288,7 +282,12 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(true);
         }
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
         {
             _ = itemId;
             _ = location;
@@ -322,14 +321,6 @@ public class LuaScriptEngineServiceTests
             return Task.FromResult(itemId == ExistingItemId ? ItemToReturn : null);
         }
 
-        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
-        {
-            LastRequestedItemId = itemId;
-            var item = itemId == ExistingItemId ? ItemToReturn : null;
-
-            return Task.FromResult((item is not null, item));
-        }
-
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
         {
             _ = containerId;
@@ -353,6 +344,21 @@ public class LuaScriptEngineServiceTests
             _ = mapId;
 
             return Task.FromResult(true);
+        }
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+        {
+            _ = itemTemplateId;
+
+            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
+        }
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+        {
+            LastRequestedItemId = itemId;
+            var item = itemId == ExistingItemId ? ItemToReturn : null;
+
+            return Task.FromResult((item is not null, item));
         }
 
         public Task UpsertItemAsync(UOItemEntity item)
@@ -386,7 +392,13 @@ public class LuaScriptEngineServiceTests
 
         public void ProcessTick() { }
 
-        public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
+        public string RegisterTimer(
+            string name,
+            TimeSpan interval,
+            Action callback,
+            TimeSpan? delay = null,
+            bool repeat = false
+        )
         {
             LastName = name;
             LastInterval = interval;
@@ -425,11 +437,11 @@ public class LuaScriptEngineServiceTests
     {
         public IReadOnlyList<WorldLocationEntry> Locations { get; set; } = [];
 
-        public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
-            => Locations = locations;
-
         public IReadOnlyList<WorldLocationEntry> GetAllLocations()
             => Locations;
+
+        public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
+            => Locations = locations;
     }
 
     [Test]
@@ -595,6 +607,82 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
+    public async Task StartAsync_WhenFileWatcherIsDisabled_ShouldNotCreateWatcher()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false),
+            []
+        );
+
+        await service.StartAsync();
+
+        var watcherField = typeof(LuaScriptEngineService).GetField(
+            "_watcher",
+            BindingFlags.Instance | BindingFlags.NonPublic
+        );
+        var watcher = watcherField?.GetValue(service);
+
+        Assert.That(watcher, Is.Null);
+    }
+
+    [Test]
+    public async Task StartAsync_WithCommandModule_ShouldExecuteCommandAndReturnOutput()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var commandSystemService = new LuaScriptEngineServiceTestsCommandSystemService
+        {
+            ExecuteOutput = ["line one", "line two"]
+        };
+        var container = new Container();
+        container.RegisterInstance<ICommandSystemService>(commandSystemService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(CommandModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local output = command.execute("help", 1)
+                return output[1] == "line one" and output[2] == "line two"
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+                Assert.That(commandSystemService.LastExecutedCommandText, Is.EqualTo("help"));
+                Assert.That(commandSystemService.LastExecuteSource, Is.EqualTo(CommandSourceType.InGame));
+            }
+        );
+    }
+
+    [Test]
     public async Task StartAsync_WithCommandModule_ShouldRegisterLuaCommand()
     {
         using var temp = new TempDirectory();
@@ -667,7 +755,7 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
-    public async Task StartAsync_WithCommandModule_ShouldExecuteCommandAndReturnOutput()
+    public async Task StartAsync_WithGumpModule_ShouldBuildExtendedLayoutFromLuaBuilder()
     {
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
@@ -676,17 +764,10 @@ public class LuaScriptEngineServiceTests
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
 
-        var commandSystemService = new LuaScriptEngineServiceTestsCommandSystemService
-        {
-            ExecuteOutput = ["line one", "line two"]
-        };
-        var container = new Container();
-        container.RegisterInstance<ICommandSystemService>(commandSystemService);
-
         var service = new LuaScriptEngineService(
             dirs,
-            [new(typeof(CommandModule))],
-            container,
+            [new(typeof(GumpModule))],
+            new Container(),
             new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
@@ -696,19 +777,42 @@ public class LuaScriptEngineServiceTests
         var result = service.ExecuteFunction(
             """
             (function()
-                local output = command.execute("help", 1)
-                return output[1] == "line one" and output[2] == "line two"
+                local g = gump.create()
+                g:page(0)
+                g:group(2)
+                g:alpha_region(1, 2, 3, 4)
+                g:image(5, 6, 1000, 10)
+                g:image_tiled(7, 8, 9, 10, 2000)
+                g:item(11, 12, 3000, 20)
+                g:label_cropped(13, 14, 15, 16, 0, "crop")
+                g:html(17, 18, 19, 20, "<b>x</b>", true, false)
+                g:text_entry(21, 22, 23, 24, 0, 1, "txt")
+                g:text_entry_limited(25, 26, 27, 28, 0, 2, "lim", 8)
+                g:radio(29, 30, 31, 32, 3, true)
+                g:tool_tip(101)
+                return g:build_layout()
             end)()
             """
         );
 
+        Assert.That(result.Success, Is.True);
         Assert.Multiple(
             () =>
             {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo(true));
-                Assert.That(commandSystemService.LastExecutedCommandText, Is.EqualTo("help"));
-                Assert.That(commandSystemService.LastExecuteSource, Is.EqualTo(CommandSourceType.InGame));
+                Assert.That(result.Data, Is.TypeOf<string>());
+                var layout = (string)result.Data!;
+                Assert.That(layout, Does.Contain("{ page 0 }"));
+                Assert.That(layout, Does.Contain("{ group 2 }"));
+                Assert.That(layout, Does.Contain("{ checkertrans 1 2 3 4 }"));
+                Assert.That(layout, Does.Contain("{ gumppic 5 6 1000 hue=10 }"));
+                Assert.That(layout, Does.Contain("{ gumppictiled 7 8 9 10 2000 }"));
+                Assert.That(layout, Does.Contain("{ tilepichue 11 12 3000 20 }"));
+                Assert.That(layout, Does.Contain("{ croppedtext 13 14 15 16 0 0 }"));
+                Assert.That(layout, Does.Contain("{ htmlgump 17 18 19 20 1 1 0 }"));
+                Assert.That(layout, Does.Contain("{ textentry 21 22 23 24 0 1 2 }"));
+                Assert.That(layout, Does.Contain("{ textentrylimited 25 26 27 28 0 2 3 8 }"));
+                Assert.That(layout, Does.Contain("{ radio 29 30 31 32 1 3 }"));
+                Assert.That(layout, Does.Contain("{ tooltip 101 }"));
             }
         );
     }
@@ -753,103 +857,6 @@ public class LuaScriptEngineServiceTests
                     result.Data,
                     Is.EqualTo("{ resizepic 0 0 9200 300 200 } { text 80 15 1152 0 } { text 30 50 0 1 }")
                 );
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WithGumpModule_ShouldExposeTextEntriesFromLua()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(GumpModule))],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            """
-            (function()
-                local g = gump.create()
-                g:text(10, 10, 0, "First")
-                g:text(10, 25, 0, "Second")
-                local texts = g:build_texts()
-                return texts[1] .. "|" .. texts[2]
-            end)()
-            """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo("First|Second"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WithGumpModule_ShouldSendCompressedGumpToSession()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000022u
-        };
-        sessionService.Add(session);
-
-        var container = new Container();
-        container.RegisterInstance<IOutgoingPacketQueue>(queue);
-        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(GumpModule))],
-            container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            $"""
-             (function()
-                 local g = gump.create()
-                 g:resize_pic(0, 0, 9200, 220, 120)
-                 g:text(20, 20, 0, "Brick test gump")
-                 return gump.send({session.SessionId}, g, {(uint)session.CharacterId}, 0xB001, 120, 80)
-             end)()
-             """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo(true));
-                Assert.That(queue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
             }
         );
     }
@@ -920,6 +927,270 @@ public class LuaScriptEngineServiceTests
                 Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
                 var gump = (CompressedGumpPacket)outbound.Packet;
                 Assert.That(gump.GumpId, Is.EqualTo(0xB10D));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldExposeTextEntriesFromLua()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local g = gump.create()
+                g:text(10, 10, 0, "First")
+                g:text(10, 25, 0, "Second")
+                local texts = g:build_texts()
+                return texts[1] .. "|" .. texts[2]
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("First|Second"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldInterpolateLayoutTextFromContext()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "gumps", "test_ctx.lua"),
+            """
+            return {
+              ui = {
+                { type = "label", x = 20, y = 20, hue = 0, text = "Hello $ctx.name" },
+                { type = "html", x = 20, y = 40, width = 200, height = 40, text = "<CENTER>Level $ctx.level</CENTER>", background = true, scrollbar = false }
+              }
+            }
+            """
+        );
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000044u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var sendResult = service.ExecuteFunction(
+            "(function()\n" +
+            "  local layout = require(\"gumps/test_ctx\")\n" +
+            "  local ctx = {}\n" +
+            "  ctx.name = \"Orion\"\n" +
+            "  ctx.level = 42\n" +
+            $"  return gump.send_layout({session.SessionId}, layout, {(uint)session.CharacterId}, 0xB20C, 100, 80, ctx)\n" +
+            "end)()"
+        );
+
+        Assert.That(sendResult.Success, Is.True);
+        Assert.That(sendResult.Data, Is.EqualTo(true));
+        Assert.That(queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var gump = (CompressedGumpPacket)outbound.Packet;
+        Assert.That(gump.TextLines, Is.EqualTo(new[] { "Hello Orion", "<CENTER>Level 42</CENTER>" }));
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldSendCompressedGumpToSession()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000022u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            $"""
+             (function()
+                 local g = gump.create()
+                 g:resize_pic(0, 0, 9200, 220, 120)
+                 g:text(20, 20, 0, "Brick test gump")
+                 return gump.send({session.SessionId}, g, {(uint)session.CharacterId}, 0xB001, 120, 80)
+             end)()
+             """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGumpModule_ShouldSendExtendedLayoutFromFile()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "gumps", "test_extended.lua"),
+            """
+            return {
+              ui = {
+                { type = "page", index = 0 },
+                { type = "group", id = 1 },
+                { type = "background", x = 0, y = 0, gump_id = 9200, width = 300, height = 200 },
+                { type = "alpha_region", x = 10, y = 10, width = 280, height = 180 },
+                { type = "image", x = 12, y = 12, gump_id = 10440, hue = 1152 },
+                { type = "image_tiled", x = 20, y = 30, width = 120, height = 20, gump_id = 2624 },
+                { type = "item", x = 220, y = 40, item_id = 3854, hue = 1109 },
+                { type = "label", x = 20, y = 55, hue = 0, text = "Welcome" },
+                { type = "label_cropped", x = 20, y = 75, width = 130, height = 20, hue = 0, text = "Cropped" },
+                { type = "html", x = 20, y = 100, width = 180, height = 60, text = "<CENTER>Hello</CENTER>", background = true, scrollbar = true },
+                { type = "checkbox", x = 210, y = 100, inactive_id = 210, active_id = 211, switch_id = 1, initial_state = true },
+                { type = "radio", x = 210, y = 125, inactive_id = 208, active_id = 209, switch_id = 2, initial_state = false },
+                { type = "text_entry", x = 20, y = 165, width = 140, height = 20, hue = 0, entry_id = 7, text = "abc" },
+                { type = "text_entry_limited", x = 170, y = 165, width = 120, height = 20, hue = 0, entry_id = 8, text = "def", size = 16 },
+                { type = "tooltip", number = 101 },
+                { type = "button_page", x = 250, y = 10, normal_id = 4005, pressed_id = 4007, page_id = 1 }
+              }
+            }
+            """
+        );
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000033u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var sendResult = service.ExecuteFunction(
+            $"""
+             (function()
+                 local layout = require("gumps/test_extended")
+                 return gump.send_layout({session.SessionId}, layout, {(uint)session.CharacterId}, 0xB20B, 200, 120)
+             end)()
+             """
+        );
+
+        Assert.That(sendResult.Success, Is.True);
+        Assert.That(sendResult.Data, Is.EqualTo(true));
+        Assert.That(queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var gump = (CompressedGumpPacket)outbound.Packet;
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gump.Layout, Does.Contain("{ page 0 }"));
+                Assert.That(gump.Layout, Does.Contain("{ group 1 }"));
+                Assert.That(gump.Layout, Does.Contain("{ resizepic 0 0 9200 300 200 }"));
+                Assert.That(gump.Layout, Does.Contain("{ checkertrans 10 10 280 180 }"));
+                Assert.That(gump.Layout, Does.Contain("{ gumppic 12 12 10440 hue=1152 }"));
+                Assert.That(gump.Layout, Does.Contain("{ gumppictiled 20 30 120 20 2624 }"));
+                Assert.That(gump.Layout, Does.Contain("{ tilepichue 220 40 3854 1109 }"));
+                Assert.That(gump.Layout, Does.Contain("{ text 20 55 0 0 }"));
+                Assert.That(gump.Layout, Does.Contain("{ croppedtext 20 75 130 20 0 1 }"));
+                Assert.That(gump.Layout, Does.Contain("{ htmlgump 20 100 180 60 2 1 1 }"));
+                Assert.That(gump.Layout, Does.Contain("{ checkbox 210 100 210 211 1 1 }"));
+                Assert.That(gump.Layout, Does.Contain("{ radio 210 125 208 209 0 2 }"));
+                Assert.That(gump.Layout, Does.Contain("{ textentry 20 165 140 20 0 7 3 }"));
+                Assert.That(gump.Layout, Does.Contain("{ textentrylimited 170 165 120 20 0 8 4 16 }"));
+                Assert.That(gump.Layout, Does.Contain("{ tooltip 101 }"));
+                Assert.That(gump.Layout, Does.Contain("{ button 250 10 4005 4007 0 1 0 }"));
+                Assert.That(
+                    gump.TextLines,
+                    Is.EqualTo(new[] { "Welcome", "Cropped", "<CENTER>Hello</CENTER>", "abc", "def" })
+                );
             }
         );
     }
@@ -1023,7 +1294,7 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
-    public async Task StartAsync_WithGumpModule_ShouldSendExtendedLayoutFromFile()
+    public async Task StartAsync_WithLocationModule_ShouldExposeCatalogQueries()
     {
         using var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
@@ -1031,110 +1302,23 @@ public class LuaScriptEngineServiceTests
         var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
-        Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
 
-        await File.WriteAllTextAsync(
-            Path.Combine(scriptsDir, "gumps", "test_extended.lua"),
-            """
-            return {
-              ui = {
-                { type = "page", index = 0 },
-                { type = "group", id = 1 },
-                { type = "background", x = 0, y = 0, gump_id = 9200, width = 300, height = 200 },
-                { type = "alpha_region", x = 10, y = 10, width = 280, height = 180 },
-                { type = "image", x = 12, y = 12, gump_id = 10440, hue = 1152 },
-                { type = "image_tiled", x = 20, y = 30, width = 120, height = 20, gump_id = 2624 },
-                { type = "item", x = 220, y = 40, item_id = 3854, hue = 1109 },
-                { type = "label", x = 20, y = 55, hue = 0, text = "Welcome" },
-                { type = "label_cropped", x = 20, y = 75, width = 130, height = 20, hue = 0, text = "Cropped" },
-                { type = "html", x = 20, y = 100, width = 180, height = 60, text = "<CENTER>Hello</CENTER>", background = true, scrollbar = true },
-                { type = "checkbox", x = 210, y = 100, inactive_id = 210, active_id = 211, switch_id = 1, initial_state = true },
-                { type = "radio", x = 210, y = 125, inactive_id = 208, active_id = 209, switch_id = 2, initial_state = false },
-                { type = "text_entry", x = 20, y = 165, width = 140, height = 20, hue = 0, entry_id = 7, text = "abc" },
-                { type = "text_entry_limited", x = 170, y = 165, width = 120, height = 20, hue = 0, entry_id = 8, text = "def", size = 16 },
-                { type = "tooltip", number = 101 },
-                { type = "button_page", x = 250, y = 10, normal_id = 4005, pressed_id = 4007, page_id = 1 }
-              }
-            }
-            """
-        );
-
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
+        var locationCatalogService = new LuaScriptEngineServiceTestsLocationCatalogService
         {
-            CharacterId = (Serial)0x00000033u
+            Locations =
+            [
+                new(0, "Felucca", "cities/britain", "Britain", new(1496, 1628, 20)),
+                new(1, "Trammel", "cities/moonglow", "Moonglow", new(2000, 1280, 5))
+            ]
         };
-        sessionService.Add(session);
 
         var container = new Container();
-        container.RegisterInstance<IOutgoingPacketQueue>(queue);
-        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<ILocationCatalogService>(locationCatalogService);
 
         var service = new LuaScriptEngineService(
             dirs,
-            [new(typeof(GumpModule))],
+            [new(typeof(LocationModule))],
             container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var sendResult = service.ExecuteFunction(
-            $"""
-             (function()
-                 local layout = require("gumps/test_extended")
-                 return gump.send_layout({session.SessionId}, layout, {(uint)session.CharacterId}, 0xB20B, 200, 120)
-             end)()
-             """
-        );
-
-        Assert.That(sendResult.Success, Is.True);
-        Assert.That(sendResult.Data, Is.EqualTo(true));
-        Assert.That(queue.TryDequeue(out var outbound), Is.True);
-        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-
-        var gump = (CompressedGumpPacket)outbound.Packet;
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(gump.Layout, Does.Contain("{ page 0 }"));
-                Assert.That(gump.Layout, Does.Contain("{ group 1 }"));
-                Assert.That(gump.Layout, Does.Contain("{ resizepic 0 0 9200 300 200 }"));
-                Assert.That(gump.Layout, Does.Contain("{ checkertrans 10 10 280 180 }"));
-                Assert.That(gump.Layout, Does.Contain("{ gumppic 12 12 10440 hue=1152 }"));
-                Assert.That(gump.Layout, Does.Contain("{ gumppictiled 20 30 120 20 2624 }"));
-                Assert.That(gump.Layout, Does.Contain("{ tilepichue 220 40 3854 1109 }"));
-                Assert.That(gump.Layout, Does.Contain("{ text 20 55 0 0 }"));
-                Assert.That(gump.Layout, Does.Contain("{ croppedtext 20 75 130 20 0 1 }"));
-                Assert.That(gump.Layout, Does.Contain("{ htmlgump 20 100 180 60 2 1 1 }"));
-                Assert.That(gump.Layout, Does.Contain("{ checkbox 210 100 210 211 1 1 }"));
-                Assert.That(gump.Layout, Does.Contain("{ radio 210 125 208 209 0 2 }"));
-                Assert.That(gump.Layout, Does.Contain("{ textentry 20 165 140 20 0 7 3 }"));
-                Assert.That(gump.Layout, Does.Contain("{ textentrylimited 170 165 120 20 0 8 4 16 }"));
-                Assert.That(gump.Layout, Does.Contain("{ tooltip 101 }"));
-                Assert.That(gump.Layout, Does.Contain("{ button 250 10 4005 4007 0 1 0 }"));
-                Assert.That(gump.TextLines, Is.EqualTo(new[] { "Welcome", "Cropped", "<CENTER>Hello</CENTER>", "abc", "def" }));
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WithGumpModule_ShouldBuildExtendedLayoutFromLuaBuilder()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(GumpModule))],
-            new Container(),
             new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
@@ -1144,109 +1328,33 @@ public class LuaScriptEngineServiceTests
         var result = service.ExecuteFunction(
             """
             (function()
-                local g = gump.create()
-                g:page(0)
-                g:group(2)
-                g:alpha_region(1, 2, 3, 4)
-                g:image(5, 6, 1000, 10)
-                g:image_tiled(7, 8, 9, 10, 2000)
-                g:item(11, 12, 3000, 20)
-                g:label_cropped(13, 14, 15, 16, 0, "crop")
-                g:html(17, 18, 19, 20, "<b>x</b>", true, false)
-                g:text_entry(21, 22, 23, 24, 0, 1, "txt")
-                g:text_entry_limited(25, 26, 27, 28, 0, 2, "lim", 8)
-                g:radio(29, 30, 31, 32, 3, true)
-                g:tool_tip(101)
-                return g:build_layout()
+                local count = location.count()
+                local first = location.get(1)
+                local second = location.get(2)
+                local missing = location.get(3)
+                local byName = location.find("moonglow")
+
+                return count == 2
+                    and first ~= nil
+                    and first.name == "Britain"
+                    and first.map_id == 0
+                    and second ~= nil
+                    and second.map_id == 1
+                    and missing == nil
+                    and byName ~= nil
+                    and byName.location_x == 2000
+                    and byName.location_z == 5
             end)()
             """
         );
 
-        Assert.That(result.Success, Is.True);
         Assert.Multiple(
             () =>
             {
-                Assert.That(result.Data, Is.TypeOf<string>());
-                var layout = (string)result.Data!;
-                Assert.That(layout, Does.Contain("{ page 0 }"));
-                Assert.That(layout, Does.Contain("{ group 2 }"));
-                Assert.That(layout, Does.Contain("{ checkertrans 1 2 3 4 }"));
-                Assert.That(layout, Does.Contain("{ gumppic 5 6 1000 hue=10 }"));
-                Assert.That(layout, Does.Contain("{ gumppictiled 7 8 9 10 2000 }"));
-                Assert.That(layout, Does.Contain("{ tilepichue 11 12 3000 20 }"));
-                Assert.That(layout, Does.Contain("{ croppedtext 13 14 15 16 0 0 }"));
-                Assert.That(layout, Does.Contain("{ htmlgump 17 18 19 20 1 1 0 }"));
-                Assert.That(layout, Does.Contain("{ textentry 21 22 23 24 0 1 2 }"));
-                Assert.That(layout, Does.Contain("{ textentrylimited 25 26 27 28 0 2 3 8 }"));
-                Assert.That(layout, Does.Contain("{ radio 29 30 31 32 1 3 }"));
-                Assert.That(layout, Does.Contain("{ tooltip 101 }"));
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
             }
         );
-    }
-
-    [Test]
-    public async Task StartAsync_WithGumpModule_ShouldInterpolateLayoutTextFromContext()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-        Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
-
-        await File.WriteAllTextAsync(
-            Path.Combine(scriptsDir, "gumps", "test_ctx.lua"),
-            """
-            return {
-              ui = {
-                { type = "label", x = 20, y = 20, hue = 0, text = "Hello $ctx.name" },
-                { type = "html", x = 20, y = 40, width = 200, height = 40, text = "<CENTER>Level $ctx.level</CENTER>", background = true, scrollbar = false }
-              }
-            }
-            """
-        );
-
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000044u
-        };
-        sessionService.Add(session);
-
-        var container = new Container();
-        container.RegisterInstance<IOutgoingPacketQueue>(queue);
-        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(GumpModule))],
-            container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var sendResult = service.ExecuteFunction(
-            "(function()\n" +
-            "  local layout = require(\"gumps/test_ctx\")\n" +
-            "  local ctx = {}\n" +
-            "  ctx.name = \"Orion\"\n" +
-            "  ctx.level = 42\n" +
-            $"  return gump.send_layout({session.SessionId}, layout, {(uint)session.CharacterId}, 0xB20C, 100, 80, ctx)\n" +
-            "end)()"
-        );
-
-        Assert.That(sendResult.Success, Is.True);
-        Assert.That(sendResult.Data, Is.EqualTo(true));
-        Assert.That(queue.TryDequeue(out var outbound), Is.True);
-        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-
-        var gump = (CompressedGumpPacket)outbound.Packet;
-        Assert.That(gump.TextLines, Is.EqualTo(new[] { "Hello Orion", "<CENTER>Level 42</CENTER>" }));
     }
 
     [Test]
@@ -1407,70 +1515,6 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
-    public async Task StartAsync_WithLocationModule_ShouldExposeCatalogQueries()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var locationCatalogService = new LuaScriptEngineServiceTestsLocationCatalogService
-        {
-            Locations =
-            [
-                new(0, "Felucca", "cities/britain", "Britain", new(1496, 1628, 20)),
-                new(1, "Trammel", "cities/moonglow", "Moonglow", new(2000, 1280, 5))
-            ]
-        };
-
-        var container = new Container();
-        container.RegisterInstance<ILocationCatalogService>(locationCatalogService);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(LocationModule))],
-            container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            """
-            (function()
-                local count = location.count()
-                local first = location.get(1)
-                local second = location.get(2)
-                local missing = location.get(3)
-                local byName = location.find("moonglow")
-
-                return count == 2
-                    and first ~= nil
-                    and first.name == "Britain"
-                    and first.map_id == 0
-                    and second ~= nil
-                    and second.map_id == 1
-                    and missing == nil
-                    and byName ~= nil
-                    and byName.location_x == 2000
-                    and byName.location_z == 5
-            end)()
-            """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo(true));
-            }
-        );
-    }
-
-    [Test]
     public async Task StartAsync_WithTimerModule_ShouldRegisterNamedTimerFromLua()
     {
         using var temp = new TempDirectory();
@@ -1529,52 +1573,6 @@ public class LuaScriptEngineServiceTests
         Assert.That(name, Is.EqualTo("hello_world_method"));
     }
 
-    [Test]
-    public async Task StartAsync_WhenFileWatcherIsDisabled_ShouldNotCreateWatcher()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0", EnableFileWatcher: false),
-            []
-        );
-
-        await service.StartAsync();
-
-        var watcherField = typeof(LuaScriptEngineService).GetField(
-            "_watcher",
-            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
-        );
-        var watcher = watcherField?.GetValue(service);
-
-        Assert.That(watcher, Is.Null);
-    }
-
-    private static LuaScriptEngineService CreateService(string rootPath)
-    {
-        var dirs = new DirectoriesConfig(rootPath, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = rootPath;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-
-        return new(
-            dirs,
-            [],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-    }
-
     private static byte[] BuildGumpResponsePacket(uint serial, uint gumpId, uint buttonId)
     {
         using var ms = new MemoryStream();
@@ -1596,6 +1594,26 @@ public class LuaScriptEngineServiceTests
         return bytes;
     }
 
+    private static LuaScriptEngineService CreateService(string rootPath)
+    {
+        var dirs = new DirectoriesConfig(rootPath, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = rootPath;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+
+        return new(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+    }
+
+    private static void WriteInt32BE(BinaryWriter writer, int value)
+        => WriteUInt32BE(writer, unchecked((uint)value));
+
     private static void WriteUInt32BE(BinaryWriter writer, uint value)
     {
         writer.Write((byte)(value >> 24));
@@ -1603,7 +1621,4 @@ public class LuaScriptEngineServiceTests
         writer.Write((byte)(value >> 8));
         writer.Write((byte)value);
     }
-
-    private static void WriteInt32BE(BinaryWriter writer, int value)
-        => WriteUInt32BE(writer, unchecked((uint)value));
 }

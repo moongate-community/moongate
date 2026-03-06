@@ -36,15 +36,15 @@ public class ItemServiceTests
             };
         }
 
+        public UOItemEntity GetNewBackpack()
+            => throw new NotSupportedException();
+
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
         {
             template = null;
 
             return false;
         }
-
-        public UOItemEntity GetNewBackpack()
-            => throw new NotSupportedException();
     }
 
     [Test]
@@ -165,30 +165,6 @@ public class ItemServiceTests
                 Assert.That(saved, Is.Not.Null);
                 Assert.That(saved!.ItemId, Is.EqualTo(0x0EED));
                 Assert.That(saved.Amount, Is.EqualTo(25));
-            }
-        );
-    }
-
-    [Test]
-    public async Task SpawnFromTemplateAsync_ShouldCreateAndPersistItemFromTemplate()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
-
-        var item = await service.SpawnFromTemplateAsync("brick");
-        var persisted = await persistence.UnitOfWork.Items.GetByIdAsync(item.Id);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(itemFactory.LastTemplateId, Is.EqualTo("brick"));
-                Assert.That(item.Id, Is.EqualTo((Serial)0x40000077u));
-                Assert.That(persisted, Is.Not.Null);
-                Assert.That(persisted!.Name, Is.EqualTo("Template Item"));
-                Assert.That(persisted.ItemId, Is.EqualTo(0x1F9E));
             }
         );
     }
@@ -361,7 +337,7 @@ public class ItemServiceTests
             }
         );
 
-        var items = await service.GetGroundItemsInSectorAsync(1, 8, 8);
+        var items = await service.GetGroundItemsInSectorAsync(1, 4, 4);
 
         Assert.That(items, Has.Count.EqualTo(1));
         Assert.That(items[0].MapId, Is.EqualTo(1));
@@ -468,53 +444,6 @@ public class ItemServiceTests
     }
 
     [Test]
-    public async Task TryToGetItemAsync_ShouldReturnFoundAndItem_WhenItemExists()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
-        var itemId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = itemId,
-                ItemId = 0x0EED,
-                Amount = 100
-            }
-        );
-
-        var result = await service.TryToGetItemAsync(itemId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Found, Is.True);
-                Assert.That(result.Item, Is.Not.Null);
-                Assert.That(result.Item!.Id, Is.EqualTo(itemId));
-            }
-        );
-    }
-
-    [Test]
-    public async Task TryToGetItemAsync_ShouldReturnNotFoundAndNull_WhenItemMissing()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
-
-        var result = await service.TryToGetItemAsync((Serial)0x4000FFFFu);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Found, Is.False);
-                Assert.That(result.Item, Is.Null);
-            }
-        );
-    }
-
-    [Test]
     public async Task GetItemsInContainerAsync_ShouldReturnOnlyMatchingItems()
     {
         using var temp = new TempDirectory();
@@ -550,6 +479,59 @@ public class ItemServiceTests
 
         Assert.That(items, Has.Count.EqualTo(1));
         Assert.That(items[0].Id, Is.EqualTo(containedItemId));
+    }
+
+    [Test]
+    public async Task MoveItemToContainerAsync_ShouldPreserveExistingContainedItems_WhenContainerReferencesAreNotHydrated()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var backpackId = persistence.UnitOfWork.AllocateNextItemId();
+        var goldId = persistence.UnitOfWork.AllocateNextItemId();
+        var pantsId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = backpackId,
+                ItemId = 0x0E75,
+                ContainedItemIds = []
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = goldId,
+                ItemId = 0x0EED,
+                Amount = 100,
+                ParentContainerId = backpackId,
+                ContainerPosition = new(20, 20)
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = pantsId,
+                ItemId = 0x152E,
+                ParentContainerId = Serial.Zero
+            }
+        );
+
+        var moved = await service.MoveItemToContainerAsync(pantsId, backpackId, new(45, 55));
+        var hydratedBackpack = await service.GetItemAsync(backpackId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moved, Is.True);
+                Assert.That(hydratedBackpack, Is.Not.Null);
+                Assert.That(hydratedBackpack!.Items.Select(item => item.Id), Contains.Item(goldId));
+                Assert.That(hydratedBackpack.Items.Select(item => item.Id), Contains.Item(pantsId));
+            }
+        );
     }
 
     [Test]
@@ -619,59 +601,6 @@ public class ItemServiceTests
     }
 
     [Test]
-    public async Task MoveItemToContainerAsync_ShouldPreserveExistingContainedItems_WhenContainerReferencesAreNotHydrated()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
-        var backpackId = persistence.UnitOfWork.AllocateNextItemId();
-        var goldId = persistence.UnitOfWork.AllocateNextItemId();
-        var pantsId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = backpackId,
-                ItemId = 0x0E75,
-                ContainedItemIds = []
-            }
-        );
-
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = goldId,
-                ItemId = 0x0EED,
-                Amount = 100,
-                ParentContainerId = backpackId,
-                ContainerPosition = new(20, 20)
-            }
-        );
-
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = pantsId,
-                ItemId = 0x152E,
-                ParentContainerId = Serial.Zero
-            }
-        );
-
-        var moved = await service.MoveItemToContainerAsync(pantsId, backpackId, new(45, 55));
-        var hydratedBackpack = await service.GetItemAsync(backpackId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(moved, Is.True);
-                Assert.That(hydratedBackpack, Is.Not.Null);
-                Assert.That(hydratedBackpack!.Items.Select(item => item.Id), Contains.Item(goldId));
-                Assert.That(hydratedBackpack.Items.Select(item => item.Id), Contains.Item(pantsId));
-            }
-        );
-    }
-
-    [Test]
     public async Task MoveItemToWorldAsync_ShouldDetachAndSetLocation()
     {
         using var temp = new TempDirectory();
@@ -724,6 +653,77 @@ public class ItemServiceTests
                 Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(movedEvent.NewContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(movedEvent.MapId, Is.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
+    public async Task SpawnFromTemplateAsync_ShouldCreateAndPersistItemFromTemplate()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+
+        var item = await service.SpawnFromTemplateAsync("brick");
+        var persisted = await persistence.UnitOfWork.Items.GetByIdAsync(item.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemFactory.LastTemplateId, Is.EqualTo("brick"));
+                Assert.That(item.Id, Is.EqualTo((Serial)0x40000077u));
+                Assert.That(persisted, Is.Not.Null);
+                Assert.That(persisted!.Name, Is.EqualTo("Template Item"));
+                Assert.That(persisted.ItemId, Is.EqualTo(0x1F9E));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryToGetItemAsync_ShouldReturnFoundAndItem_WhenItemExists()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = itemId,
+                ItemId = 0x0EED,
+                Amount = 100
+            }
+        );
+
+        var result = await service.TryToGetItemAsync(itemId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Found, Is.True);
+                Assert.That(result.Item, Is.Not.Null);
+                Assert.That(result.Item!.Id, Is.EqualTo(itemId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryToGetItemAsync_ShouldReturnNotFoundAndNull_WhenItemMissing()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+
+        var result = await service.TryToGetItemAsync((Serial)0x4000FFFFu);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Found, Is.False);
+                Assert.That(result.Item, Is.Null);
             }
         );
     }

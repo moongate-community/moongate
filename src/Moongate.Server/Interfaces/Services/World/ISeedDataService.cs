@@ -8,13 +8,6 @@ namespace Moongate.Server.Interfaces.Services.World;
 public interface ISeedDataService
 {
     /// <summary>
-    /// Returns all signs for a map.
-    /// </summary>
-    /// <param name="mapId">Map id.</param>
-    /// <returns>Sign entries for the map.</returns>
-    IReadOnlyList<SignEntry> GetSignsByMap(int mapId);
-
-    /// <summary>
     /// Returns all decoration entries for a map.
     /// </summary>
     /// <param name="mapId">Map id.</param>
@@ -22,8 +15,21 @@ public interface ISeedDataService
     IReadOnlyList<DecorationEntry> GetDecorationsByMap(int mapId);
 
     /// <summary>
+    /// Returns all loaded door component entries.
+    /// </summary>
+    /// <returns>Door component entries.</returns>
+    IReadOnlyList<DoorComponentEntry> GetDoors();
+
+    /// <summary>
     /// Returns all known world locations.
     /// </summary>
     /// <returns>World location entries.</returns>
     IReadOnlyList<WorldLocationEntry> GetLocations();
+
+    /// <summary>
+    /// Returns all signs for a map.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <returns>Sign entries for the map.</returns>
+    IReadOnlyList<SignEntry> GetSignsByMap(int mapId);
 }

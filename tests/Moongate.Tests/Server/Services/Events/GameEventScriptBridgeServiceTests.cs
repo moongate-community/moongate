@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Support;
@@ -10,9 +9,8 @@ public class GameEventScriptBridgeServiceTests
     [Test]
     public async Task HandleAsync_ShouldExecuteScriptCallback_WithSnakeCaseEventName()
     {
-        var eventBus = new GameEventScriptBridgeTestGameEventBusService();
         var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
-        var service = new GameEventScriptBridgeService(eventBus, scriptEngine);
+        var service = new GameEventScriptBridgeService(scriptEngine);
         var gameEvent = new PlayerConnectedEvent(42, "127.0.0.1:2593", 100);
 
         await service.HandleAsync(gameEvent);
@@ -23,24 +21,19 @@ public class GameEventScriptBridgeServiceTests
     }
 
     [Test]
-    public async Task StartAsync_ShouldRegisterGlobalGameEventListener()
+    public void StartAsync_ShouldCompleteWithoutErrors()
     {
-        var eventBus = new GameEventScriptBridgeTestGameEventBusService();
         var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
-        var service = new GameEventScriptBridgeService(eventBus, scriptEngine);
+        var service = new GameEventScriptBridgeService(scriptEngine);
 
-        await service.StartAsync();
-
-        Assert.That(eventBus.LastRegisteredEventType, Is.EqualTo(typeof(IGameEvent)));
-        Assert.That(eventBus.LastRegisteredListener, Is.SameAs(service));
+        Assert.DoesNotThrowAsync(async () => await service.StartAsync());
     }
 
     [Test]
     public void StopAsync_ShouldCompleteWithoutErrors()
     {
-        var eventBus = new GameEventScriptBridgeTestGameEventBusService();
         var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
-        var service = new GameEventScriptBridgeService(eventBus, scriptEngine);
+        var service = new GameEventScriptBridgeService(scriptEngine);
 
         Assert.DoesNotThrowAsync(async () => await service.StopAsync());
     }

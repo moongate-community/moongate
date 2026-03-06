@@ -5,7 +5,6 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -77,7 +76,7 @@ public sealed class AddItemBackpackCommand : ICommandExecutor
         try
         {
             var item = await _itemService.SpawnFromTemplateAsync(templateId);
-            var moved = await _itemService.MoveItemToContainerAsync(item.Id, backpackId, new Point2D(1, 1), context.SessionId);
+            var moved = await _itemService.MoveItemToContainerAsync(item.Id, backpackId, new(1, 1), context.SessionId);
 
             if (!moved)
             {

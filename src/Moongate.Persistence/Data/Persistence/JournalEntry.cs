@@ -1,4 +1,4 @@
-using MemoryPack;
+using MessagePack;
 using Moongate.Persistence.Types;
 
 namespace Moongate.Persistence.Data.Persistence;
@@ -6,8 +6,8 @@ namespace Moongate.Persistence.Data.Persistence;
 /// <summary>
 /// Journal record appended for every persisted mutation.
 /// </summary>
-[MemoryPackable]
-public sealed partial class JournalEntry
+[MessagePackObject(true)]
+public sealed class JournalEntry
 {
     public long SequenceId { get; set; }
 

@@ -62,6 +62,38 @@ public sealed class ScribanEmailTemplateService : BaseMoongateService, IEmailTem
         return result;
     }
 
+    private static async Task<string> RenderTemplateFileAsync(
+        string path,
+        IReadOnlyDictionary<string, object?> model,
+        string websiteUrl,
+        CancellationToken cancellationToken
+    )
+    {
+        var source = await File.ReadAllTextAsync(path, cancellationToken);
+        var template = Template.Parse(source, path);
+
+        if (template.HasErrors)
+        {
+            var firstError = template.Messages.Count > 0
+                                 ? template.Messages[0].Message
+                                 : "unknown parse error";
+
+            throw new InvalidOperationException($"Invalid email template '{path}': {firstError}");
+        }
+
+        var scriptObject = new ScriptObject();
+        scriptObject["websiteUrl"] = websiteUrl;
+
+        foreach (var (key, value) in model)
+        {
+            scriptObject[key] = value;
+        }
+        var context = new TemplateContext();
+        context.PushGlobal(scriptObject);
+
+        return await template.RenderAsync(context);
+    }
+
     private string ResolveTemplatePath(string templateId, string locale, string suffix)
     {
         if (string.IsNullOrWhiteSpace(templateId))
@@ -87,36 +119,5 @@ public sealed class ScribanEmailTemplateService : BaseMoongateService, IEmailTem
             $"Email template file not found for '{templateId}' and suffix '{suffix}'.",
             localePath
         );
-    }
-
-    private static async Task<string> RenderTemplateFileAsync(
-        string path,
-        IReadOnlyDictionary<string, object?> model,
-        string websiteUrl,
-        CancellationToken cancellationToken
-    )
-    {
-        var source = await File.ReadAllTextAsync(path, cancellationToken);
-        var template = Template.Parse(source, path);
-
-        if (template.HasErrors)
-        {
-            var firstError = template.Messages.Count > 0
-                                 ? template.Messages[0].Message
-                                 : "unknown parse error";
-            throw new InvalidOperationException($"Invalid email template '{path}': {firstError}");
-        }
-
-        var scriptObject = new ScriptObject();
-        scriptObject["websiteUrl"] = websiteUrl;
-
-        foreach (var (key, value) in model)
-        {
-            scriptObject[key] = value;
-        }
-        var context = new TemplateContext();
-        context.PushGlobal(scriptObject);
-
-        return await template.RenderAsync(context);
     }
 }

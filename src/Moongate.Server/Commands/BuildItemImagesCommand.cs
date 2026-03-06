@@ -3,7 +3,6 @@ using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Commands;
 
@@ -13,8 +12,7 @@ namespace Moongate.Server.Commands;
 [RegisterConsoleCommand(
     "build_item_images|.build_item_images",
     "Generate item art images into images/items. Usage: .build_item_images",
-    CommandSourceType.Console | CommandSourceType.InGame,
-    AccountType.Administrator
+    CommandSourceType.Console | CommandSourceType.InGame
 )]
 public sealed class BuildItemImagesCommand : ICommandExecutor
 {

@@ -5,6 +5,7 @@ using Moongate.Server.Attributes;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Json.Context;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Serilog;
 
@@ -76,6 +77,7 @@ public sealed class MobileTemplateLoader : IFileLoader
             }
 
             var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
+
             foreach (var mobileTemplate in mobileTemplates)
             {
                 NormalizeTitleAndName(mobileTemplate);
@@ -266,13 +268,42 @@ public sealed class MobileTemplateLoader : IFileLoader
                                     )
                                     .ToList();
         }
+
+        child.Params = MergeParams(parent.Params, child.Params);
     }
+
+    private static ItemTemplateParamDefinition CloneParam(ItemTemplateParamDefinition param)
+        => new()
+        {
+            Type = param.Type,
+            Value = param.Value
+        };
 
     private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
 
     private static int InheritInt(int childValue, int parentValue, int defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
+
+    private static Dictionary<string, ItemTemplateParamDefinition> MergeParams(
+        Dictionary<string, ItemTemplateParamDefinition> parentParams,
+        Dictionary<string, ItemTemplateParamDefinition> childParams
+    )
+    {
+        var merged = new Dictionary<string, ItemTemplateParamDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, param) in parentParams)
+        {
+            merged[key] = CloneParam(param);
+        }
+
+        foreach (var (key, param) in childParams)
+        {
+            merged[key] = CloneParam(param);
+        }
+
+        return merged;
+    }
 
     private static void NormalizeTitleAndName(MobileTemplateDefinition template)
     {

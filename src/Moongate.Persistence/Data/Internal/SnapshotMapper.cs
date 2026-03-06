@@ -12,8 +12,7 @@ namespace Moongate.Persistence.Data.Internal;
 internal static class SnapshotMapper
 {
     public static UOAccountEntity ToAccountEntity(AccountSnapshot snapshot)
-    {
-        return new()
+        => new()
         {
             Id = (Serial)snapshot.Id,
             Username = snapshot.Username,
@@ -27,11 +26,9 @@ internal static class SnapshotMapper
             LastLoginUtc = new(snapshot.LastLoginUtcTicks, DateTimeKind.Utc),
             CharacterIds = [.. snapshot.CharacterIds.Select(id => (Serial)id)]
         };
-    }
 
     public static AccountSnapshot ToAccountSnapshot(UOAccountEntity entity)
-    {
-        return new()
+        => new()
         {
             Id = (uint)entity.Id,
             Username = entity.Username,
@@ -45,7 +42,6 @@ internal static class SnapshotMapper
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks,
             CharacterIds = [.. entity.CharacterIds.Select(serial => (uint)serial)]
         };
-    }
 
     public static UOItemEntity ToItemEntity(ItemSnapshot snapshot)
     {
@@ -200,12 +196,56 @@ internal static class SnapshotMapper
             entity.EquippedItemIds[(ItemLayerType)snapshot.EquippedLayers[i]] = (Serial)snapshot.EquippedItemIds[i];
         }
 
+        if (snapshot.CustomProperties is { Length: > 0 })
+        {
+            foreach (var customProperty in snapshot.CustomProperties)
+            {
+                entity.SetCustomProperty(
+                    customProperty.Key,
+                    new()
+                    {
+                        Type = (ItemCustomPropertyType)customProperty.Type,
+                        IntegerValue = customProperty.IntegerValue,
+                        BooleanValue = customProperty.BooleanValue,
+                        DoubleValue = customProperty.DoubleValue,
+                        StringValue = customProperty.StringValue
+                    }
+                );
+            }
+        }
+
         return entity;
     }
 
     public static MobileSnapshot ToMobileSnapshot(UOMobileEntity entity)
     {
-        var equipped = entity.EquippedItemIds.OrderBy(static pair => (int)pair.Key).ToArray();
+        var equippedCount = entity.EquippedItemIds.Count;
+        var layers = new byte[equippedCount];
+        var itemIds = new uint[equippedCount];
+        var index = 0;
+
+        foreach (var pair in entity.EquippedItemIds.OrderBy(static pair => (int)pair.Key))
+        {
+            layers[index] = (byte)pair.Key;
+            itemIds[index] = (uint)pair.Value;
+            index++;
+        }
+
+        var customProps = new ItemCustomPropertySnapshot[entity.CustomProperties.Count];
+        var propIndex = 0;
+
+        foreach (var pair in entity.CustomProperties)
+        {
+            customProps[propIndex++] = new()
+            {
+                Key = pair.Key,
+                Type = (byte)pair.Value.Type,
+                IntegerValue = pair.Value.IntegerValue,
+                BooleanValue = pair.Value.BooleanValue,
+                DoubleValue = pair.Value.DoubleValue,
+                StringValue = pair.Value.StringValue
+            };
+        }
 
         return new()
         {
@@ -249,8 +289,9 @@ internal static class SnapshotMapper
             Luck = entity.Luck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,
             BackpackId = (uint)entity.BackpackId,
-            EquippedLayers = [.. equipped.Select(static pair => (byte)pair.Key)],
-            EquippedItemIds = [.. equipped.Select(static pair => (uint)pair.Value)],
+            EquippedLayers = layers,
+            EquippedItemIds = itemIds,
+            CustomProperties = customProps,
             IsWarMode = entity.IsWarMode,
             IsHidden = entity.IsHidden,
             IsFrozen = entity.IsFrozen,

@@ -83,7 +83,13 @@ public sealed class TeleportCommand : ICommandExecutor
             )
         );
 
-        context.Print("Teleported to map {0} at ({1}, {2}, {3}).", mapId, targetLocation.X, targetLocation.Y, targetLocation.Z);
+        context.Print(
+            "Teleported to map {0} at ({1}, {2}, {3}).",
+            mapId,
+            targetLocation.X,
+            targetLocation.Y,
+            targetLocation.Z
+        );
     }
 
     private static bool TryParseArguments(string[] arguments, out int mapId, out Point3D location)

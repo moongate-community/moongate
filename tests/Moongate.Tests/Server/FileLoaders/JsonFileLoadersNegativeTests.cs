@@ -12,6 +12,20 @@ namespace Moongate.Tests.Server.FileLoaders;
 
 public class JsonFileLoadersNegativeTests
 {
+    private sealed class NullWeatherService : IWeatherService
+    {
+        public WeatherSnapshot GenerateSnapshot(JsonWeather weather, Random? random = null)
+            => default;
+
+        public void SetWeatherTypes(List<JsonWeather> weatherTypes) { }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+    }
+
     [Test]
     public void ContainersDataLoader_WhenJsonIsInvalid_ShouldThrowJsonException()
     {
@@ -44,19 +58,5 @@ public class JsonFileLoadersNegativeTests
         var loader = new WeatherDataLoader(directories, new NullWeatherService());
 
         Assert.ThrowsAsync<DirectoryNotFoundException>(async () => await loader.LoadAsync());
-    }
-
-    private sealed class NullWeatherService : IWeatherService
-    {
-        public Task StartAsync()
-            => Task.CompletedTask;
-
-        public Task StopAsync()
-            => Task.CompletedTask;
-
-        public void SetWeatherTypes(List<JsonWeather> weatherTypes) { }
-
-        public WeatherSnapshot GenerateSnapshot(JsonWeather weather, Random? random = null)
-            => default;
     }
 }

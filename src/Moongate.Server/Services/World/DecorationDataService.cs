@@ -12,19 +12,6 @@ public class DecorationDataService : IDecorationDataService
     private List<DecorationEntry> _entries = [];
     private Dictionary<int, List<DecorationEntry>> _entriesByMap = [];
 
-    public void SetEntries(IReadOnlyList<DecorationEntry> entries)
-    {
-        lock (_sync)
-        {
-            _entries = [..entries];
-            _entriesByMap = entries.GroupBy(static entry => entry.MapId)
-                                   .ToDictionary(
-                                        static grouping => grouping.Key,
-                                        static grouping => grouping.ToList()
-                                    );
-        }
-    }
-
     public IReadOnlyList<DecorationEntry> GetAllEntries()
     {
         lock (_sync)
@@ -43,6 +30,19 @@ public class DecorationDataService : IDecorationDataService
             }
 
             return [..entries];
+        }
+    }
+
+    public void SetEntries(IReadOnlyList<DecorationEntry> entries)
+    {
+        lock (_sync)
+        {
+            _entries = [..entries];
+            _entriesByMap = entries.GroupBy(static entry => entry.MapId)
+                                   .ToDictionary(
+                                       static grouping => grouping.Key,
+                                       static grouping => grouping.ToList()
+                                   );
         }
     }
 }

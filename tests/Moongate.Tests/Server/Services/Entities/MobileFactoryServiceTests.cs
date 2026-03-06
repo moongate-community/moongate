@@ -44,35 +44,81 @@ public class MobileFactoryServiceTests
         }
     }
 
-    [TestCase(null)]
-    [TestCase("")]
-    [TestCase(" ")]
-    public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateIdIsInvalid(string? templateId)
+    [Test]
+    public async Task CreateMobileFromTemplate_ShouldApplyTypedParamsToCustomProperties()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "param_mobile",
+                Name = "Param Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Params = new()
+                {
+                    ["title_suffix"] = new() { Type = ItemTemplateParamType.String, Value = "the brave" },
+                    ["owner_id"] = new() { Type = ItemTemplateParamType.Serial, Value = "0x00001234" },
+                    ["marker_hue"] = new() { Type = ItemTemplateParamType.Hue, Value = "0x044D" }
+                }
+            }
+        );
         var nameService = new TestNameService();
         var service = new MobileFactoryService(templateService, nameService, persistence);
 
-        Assert.That(
-            () => service.CreateMobileFromTemplate(templateId!),
-            Throws.InstanceOf<ArgumentException>()
+        var mobile = service.CreateMobileFromTemplate("param_mobile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
+                Assert.That(titleSuffix, Is.EqualTo("the brave"));
+                Assert.That(mobile.TryGetCustomInteger("owner_id", out var ownerId), Is.True);
+                Assert.That(ownerId, Is.EqualTo(0x00001234));
+                Assert.That(mobile.TryGetCustomInteger("marker_hue", out var markerHue), Is.True);
+                Assert.That(markerHue, Is.EqualTo(0x044D));
+            }
         );
     }
 
     [Test]
-    public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateIsMissing()
+    public async Task CreateMobileFromTemplate_ShouldClampHits_WhenMaxHitsIsLower()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "boss",
+                Name = "Boss",
+                Category = "boss",
+                Description = "boss",
+                Body = 0x0011,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Hits = 120,
+                MaxHits = 80
+            }
+        );
         var nameService = new TestNameService();
         var service = new MobileFactoryService(templateService, nameService, persistence);
 
-        Assert.That(
-            () => service.CreateMobileFromTemplate("missing_template"),
-            Throws.TypeOf<InvalidOperationException>()
+        var mobile = service.CreateMobileFromTemplate("boss");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MaxHits, Is.EqualTo(80));
+                Assert.That(mobile.Hits, Is.EqualTo(50));
+            }
         );
     }
 
@@ -134,7 +180,7 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
-    public async Task CreateMobileFromTemplate_ShouldUseTemplateName_WhenGeneratedNameIsEmpty()
+    public async Task CreateMobileFromTemplate_ShouldThrow_WhenSerialParamIsInvalid()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
@@ -142,25 +188,57 @@ public class MobileFactoryServiceTests
         templateService.Upsert(
             new()
             {
-                Id = "human_vendor",
-                Name = "Human Vendor",
-                Category = "human",
-                Description = "vendor",
+                Id = "invalid_serial_param_mobile",
+                Name = "Invalid Serial Param Mobile",
+                Category = "test",
+                Description = "test",
                 Body = 0x0190,
-                SkinHue = HueSpec.FromValue(1000),
-                HairHue = HueSpec.FromValue(1109),
-                HairStyle = 8251
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Params = new()
+                {
+                    ["owner_id"] = new() { Type = ItemTemplateParamType.Serial, Value = "bad-serial" }
+                }
             }
         );
-        var nameService = new TestNameService
-        {
-            NextGeneratedName = string.Empty
-        };
+        var nameService = new TestNameService();
         var service = new MobileFactoryService(templateService, nameService, persistence);
 
-        var mobile = service.CreateMobileFromTemplate("human_vendor");
+        Assert.That(
+            () => service.CreateMobileFromTemplate("invalid_serial_param_mobile"),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("invalid serial param")
+        );
+    }
 
-        Assert.That(mobile.Name, Is.EqualTo("Human Vendor"));
+    [TestCase(null), TestCase(""), TestCase(" ")]
+    public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateIdIsInvalid(string? templateId)
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        var nameService = new TestNameService();
+        var service = new MobileFactoryService(templateService, nameService, persistence);
+
+        Assert.That(
+            () => service.CreateMobileFromTemplate(templateId!),
+            Throws.InstanceOf<ArgumentException>()
+        );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        var nameService = new TestNameService();
+        var service = new MobileFactoryService(templateService, nameService, persistence);
+
+        Assert.That(
+            () => service.CreateMobileFromTemplate("missing_template"),
+            Throws.TypeOf<InvalidOperationException>()
+        );
     }
 
     [Test]
@@ -195,7 +273,7 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
-    public async Task CreateMobileFromTemplate_ShouldClampHits_WhenMaxHitsIsLower()
+    public async Task CreateMobileFromTemplate_ShouldUseTemplateName_WhenGeneratedNameIsEmpty()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
@@ -203,30 +281,25 @@ public class MobileFactoryServiceTests
         templateService.Upsert(
             new()
             {
-                Id = "boss",
-                Name = "Boss",
-                Category = "boss",
-                Description = "boss",
-                Body = 0x0011,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
-                Hits = 120,
-                MaxHits = 80
+                Id = "human_vendor",
+                Name = "Human Vendor",
+                Category = "human",
+                Description = "vendor",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(1000),
+                HairHue = HueSpec.FromValue(1109),
+                HairStyle = 8251
             }
         );
-        var nameService = new TestNameService();
+        var nameService = new TestNameService
+        {
+            NextGeneratedName = string.Empty
+        };
         var service = new MobileFactoryService(templateService, nameService, persistence);
 
-        var mobile = service.CreateMobileFromTemplate("boss");
+        var mobile = service.CreateMobileFromTemplate("human_vendor");
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.MaxHits, Is.EqualTo(80));
-                Assert.That(mobile.Hits, Is.EqualTo(50));
-            }
-        );
+        Assert.That(mobile.Name, Is.EqualTo("Human Vendor"));
     }
 
     [Test]

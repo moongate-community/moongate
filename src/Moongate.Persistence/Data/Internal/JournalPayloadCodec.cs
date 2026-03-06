@@ -1,4 +1,4 @@
-using MemoryPack;
+using MessagePack;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -11,26 +11,26 @@ namespace Moongate.Persistence.Data.Internal;
 internal static class JournalPayloadCodec
 {
     public static UOAccountEntity DecodeAccount(byte[] payload)
-        => SnapshotMapper.ToAccountEntity(MemoryPackSerializer.Deserialize<AccountSnapshot>(payload)!);
+        => SnapshotMapper.ToAccountEntity(MessagePackSerializer.Deserialize<AccountSnapshot>(payload)!);
 
     public static UOItemEntity DecodeItem(byte[] payload)
-        => SnapshotMapper.ToItemEntity(MemoryPackSerializer.Deserialize<ItemSnapshot>(payload)!);
+        => SnapshotMapper.ToItemEntity(MessagePackSerializer.Deserialize<ItemSnapshot>(payload)!);
 
     public static UOMobileEntity DecodeMobile(byte[] payload)
-        => SnapshotMapper.ToMobileEntity(MemoryPackSerializer.Deserialize<MobileSnapshot>(payload)!);
+        => SnapshotMapper.ToMobileEntity(MessagePackSerializer.Deserialize<MobileSnapshot>(payload)!);
 
     public static Serial DecodeSerial(byte[] payload)
-        => (Serial)MemoryPackSerializer.Deserialize<uint>(payload);
+        => (Serial)MessagePackSerializer.Deserialize<uint>(payload);
 
     public static byte[] EncodeAccount(UOAccountEntity account)
-        => MemoryPackSerializer.Serialize(SnapshotMapper.ToAccountSnapshot(account));
+        => MessagePackSerializer.Serialize(SnapshotMapper.ToAccountSnapshot(account));
 
     public static byte[] EncodeItem(UOItemEntity item)
-        => MemoryPackSerializer.Serialize(SnapshotMapper.ToItemSnapshot(item));
+        => MessagePackSerializer.Serialize(SnapshotMapper.ToItemSnapshot(item));
 
     public static byte[] EncodeMobile(UOMobileEntity mobile)
-        => MemoryPackSerializer.Serialize(SnapshotMapper.ToMobileSnapshot(mobile));
+        => MessagePackSerializer.Serialize(SnapshotMapper.ToMobileSnapshot(mobile));
 
     public static byte[] EncodeSerial(Serial id)
-        => MemoryPackSerializer.Serialize((uint)id);
+        => MessagePackSerializer.Serialize((uint)id);
 }

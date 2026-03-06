@@ -21,7 +21,7 @@ public sealed class JsonRegionConverter : JsonConverter<JsonRegion>
     }
 
     public override void Write(Utf8JsonWriter writer, JsonRegion value, JsonSerializerOptions options)
-        => JsonSerializer.Serialize(writer, (object)value, value.GetType(), options);
+        => JsonSerializer.Serialize(writer, value, value.GetType(), options);
 
     private static Type ResolveRegionType(JsonElement root)
     {
@@ -35,14 +35,14 @@ public sealed class JsonRegionConverter : JsonConverter<JsonRegion>
 
         return typeName switch
         {
-            "BaseRegion" => typeof(JsonBaseRegion),
-            "TownRegion" => typeof(JsonTownRegion),
-            "DungeonRegion" => typeof(JsonDungeonRegion),
-            "GuardedRegion" => typeof(JsonGuardedRegion),
-            "NoHousingRegion" => typeof(JsonNoHousingRegion),
+            "BaseRegion"       => typeof(JsonBaseRegion),
+            "TownRegion"       => typeof(JsonTownRegion),
+            "DungeonRegion"    => typeof(JsonDungeonRegion),
+            "GuardedRegion"    => typeof(JsonGuardedRegion),
+            "NoHousingRegion"  => typeof(JsonNoHousingRegion),
             "GreenAcresRegion" => typeof(JsonGreenAcresRegion),
-            "JailRegion" => typeof(JsonJailRegion),
-            _ => typeof(JsonRegion)
+            "JailRegion"       => typeof(JsonJailRegion),
+            _                  => typeof(JsonRegion)
         };
     }
 }

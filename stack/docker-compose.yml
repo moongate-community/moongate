@@ -11,14 +11,16 @@ services:
       - /Users/squid/moongate/save:/app/save
       - /Users/squid/moongate/scripts:/app/scripts
       - /Users/squid/moongate/templates:/app/templates
+      - /Users/squid/moongate/email:/app/email
       - /Users/squid/moongate/logs:/app/logs
-      - /Users/squid/uo:/uo:ro
+      - /Users/squid/uo:/uo
     ports:
       - "2593:2593"
       - "8088:8088"
     environment:
       - MOONGATE_ROOT_DIRECTORY=/app
       - MOONGATE_UO_DIRECTORY=/uo
+      - MOONGATE_HTTP__WEBSITE_URL=http://localhost:8088
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8088
     networks:
@@ -32,12 +34,12 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=15d'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
     ports:
       - "9090:9090"
     networks:
@@ -73,6 +75,5 @@ networks:
     driver: bridge
 
 volumes:
-  moongate_logs:
   prometheus_data:
   grafana_data:

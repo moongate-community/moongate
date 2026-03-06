@@ -15,20 +15,25 @@ public class BootstrapGameEventListenerRegistrationTests
         var serverAssembly = typeof(MobileHandler).Assembly;
 
         var moongateServiceListeners = serverAssembly.GetTypes()
-            .Where(
-                type => !type.IsAbstract
-                        && !type.IsInterface
-                        && typeof(IMoongateService).IsAssignableFrom(type)
-                        && type.GetInterfaces().Any(IsGameEventListenerInterface)
-            )
-            .ToArray();
+                                                     .Where(
+                                                         type => !type.IsAbstract &&
+                                                                 !type.IsInterface &&
+                                                                 typeof(IMoongateService).IsAssignableFrom(type) &&
+                                                                 type.GetInterfaces().Any(IsGameEventListenerInterface)
+                                                     )
+                                                     .ToArray();
 
         var missingAttribute = moongateServiceListeners
-            .Where(
-                type => type.GetCustomAttributes(typeof(RegisterGameEventListenerAttribute), false).Length == 0
-            )
-            .Select(static type => type.FullName)
-            .ToArray();
+                               .Where(
+                                   type => type.GetCustomAttributes(
+                                                   typeof(RegisterGameEventListenerAttribute),
+                                                   false
+                                               )
+                                               .Length ==
+                                           0
+                               )
+                               .Select(static type => type.FullName)
+                               .ToArray();
 
         Assert.That(
             missingAttribute,
@@ -38,10 +43,16 @@ public class BootstrapGameEventListenerRegistrationTests
     }
 
     [Test]
-    public void MobileHandler_ShouldImplementIMoongateService()
+    public void MobileHandler_ShouldHaveDefaultPriority()
     {
-        Assert.That(typeof(IMoongateService).IsAssignableFrom(typeof(MobileHandler)), Is.True);
+        var attribute = GetAttribute<MobileHandler>();
+
+        Assert.That(attribute.Priority, Is.EqualTo(200));
     }
+
+    [Test]
+    public void MobileHandler_ShouldImplementIMoongateService()
+        => Assert.That(typeof(IMoongateService).IsAssignableFrom(typeof(MobileHandler)), Is.True);
 
     [Test]
     public void MobileHandler_ShouldNotDependOnIGameEventBusService()
@@ -75,20 +86,12 @@ public class BootstrapGameEventListenerRegistrationTests
         Assert.That(attribute.Priority, Is.EqualTo(200));
     }
 
-    [Test]
-    public void MobileHandler_ShouldHaveDefaultPriority()
-    {
-        var attribute = GetAttribute<MobileHandler>();
-
-        Assert.That(attribute.Priority, Is.EqualTo(200));
-    }
-
     private static RegisterGameEventListenerAttribute GetAttribute<T>()
     {
         var attribute = typeof(T)
-            .GetCustomAttributes(typeof(RegisterGameEventListenerAttribute), false)
-            .Cast<RegisterGameEventListenerAttribute>()
-            .SingleOrDefault();
+                        .GetCustomAttributes(typeof(RegisterGameEventListenerAttribute), false)
+                        .Cast<RegisterGameEventListenerAttribute>()
+                        .SingleOrDefault();
 
         Assert.That(attribute, Is.Not.Null, $"{typeof(T).Name} should have [RegisterGameEventListener]");
 
@@ -96,6 +99,5 @@ public class BootstrapGameEventListenerRegistrationTests
     }
 
     private static bool IsGameEventListenerInterface(Type interfaceType)
-        => interfaceType.IsGenericType
-           && interfaceType.GetGenericTypeDefinition() == typeof(IGameEventListener<>);
+        => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IGameEventListener<>);
 }

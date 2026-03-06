@@ -4,7 +4,7 @@ This page documents the **actual** binary persistence format currently implement
 
 ## Serialization Technology
 
-- Serializer: `MemoryPack`
+- Serializer: `MessagePack-CSharp` (source-generated contracts)
 - Snapshot container: `WorldSnapshot`
 - Journal payload item: `JournalEntry`
 
@@ -23,7 +23,7 @@ Write behavior:
 Read behavior:
 
 - If snapshot stream is empty: returns `null`
-- Otherwise: deserializes `WorldSnapshot` with MemoryPack
+- Otherwise: deserializes `WorldSnapshot` with MessagePack
 
 There is no trailing checksum block in the snapshot file.
 
@@ -43,7 +43,7 @@ Each record layout in the file:
 
 Where:
 
-- `payload` is `MemoryPackSerializer.Serialize(entry)`
+- `payload` is `MessagePackSerializer.Serialize(entry)`
 - `checksum` is computed from `payload`
 
 ## Journal Validation Rules

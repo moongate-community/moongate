@@ -3,10 +3,12 @@ using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -45,6 +47,8 @@ public class ItemHandler
 
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IPlayerDragService _playerDragService;
+    private readonly IItemScriptDispatcher? _itemScriptDispatcher;
+    private readonly ICharacterService? _characterService;
 
     private readonly ISpatialWorldService _spatialWorldService;
 
@@ -55,7 +59,9 @@ public class ItemHandler
         IGameNetworkSessionService gameNetworkSessionService,
         IPlayerDragService playerDragService,
         ISpatialWorldService spatialWorldService,
-        IMobileService mobileService
+        IMobileService mobileService,
+        IItemScriptDispatcher? itemScriptDispatcher = null,
+        ICharacterService? characterService = null
     ) : base(outgoingPacketQueue)
     {
         _itemService = itemService;
@@ -63,8 +69,120 @@ public class ItemHandler
         _playerDragService = playerDragService;
         _spatialWorldService = spatialWorldService;
         _mobileService = mobileService;
+        _itemScriptDispatcher = itemScriptDispatcher;
+        _characterService = characterService;
         {
             _gameEventBusService = gameEventBusService;
+        }
+    }
+
+    public async Task HandleAsync(ItemMovedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        if (gameEvent.NewContainerId == Serial.Zero)
+        {
+            return;
+        }
+
+        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        {
+            var container = await _itemService.GetItemAsync(gameEvent.NewContainerId);
+
+            if (container is null)
+            {
+                return;
+            }
+
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
+        }
+    }
+
+    public async Task HandleAsync(ItemAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+        var item = await _itemService.GetItemAsync(gameEvent.ItemId);
+
+        if (item is null)
+        {
+            return;
+        }
+
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            new ObjectInformationPacket(item),
+            gameEvent.MapId,
+            item.Location
+        );
+    }
+
+    public async Task HandleAsync(ItemDeletedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        if (gameEvent.OldContainerId == Serial.Zero)
+        {
+            return;
+        }
+
+        // Fast path: check if source session owns the container (personal backpack)
+        if (gameEvent.SessionId > 0 && _gameNetworkSessionService.TryGet(gameEvent.SessionId, out var sourceSession))
+        {
+            var sourceCharacter = sourceSession.Character;
+
+            if (sourceCharacter is not null &&
+                (sourceCharacter.BackpackId == gameEvent.OldContainerId ||
+                 sourceCharacter.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var sourceBackpackId) &&
+                 sourceBackpackId == gameEvent.OldContainerId))
+            {
+                var container = await _itemService.GetItemAsync(gameEvent.OldContainerId);
+
+                if (container is not null)
+                {
+                    Enqueue(sourceSession.SessionId, new DrawContainerAndAddItemCombinedPacket(container));
+                }
+
+                return;
+            }
+        }
+
+        // Slow path: shared container — scan all sessions
+        var targetSessionIds = new HashSet<long>();
+
+        if (gameEvent.SessionId > 0 && _gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        {
+            targetSessionIds.Add(session.SessionId);
+        }
+
+        foreach (var otherSession in _gameNetworkSessionService.GetAll())
+        {
+            var character = otherSession.Character;
+
+            if (character is null)
+            {
+                continue;
+            }
+
+            if (character.BackpackId == gameEvent.OldContainerId ||
+                character.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId) &&
+                equippedBackpackId == gameEvent.OldContainerId)
+            {
+                targetSessionIds.Add(otherSession.SessionId);
+            }
+        }
+
+        if (targetSessionIds.Count == 0)
+        {
+            return;
+        }
+
+        var sharedContainer = await _itemService.GetItemAsync(gameEvent.OldContainerId);
+
+        if (sharedContainer is null)
+        {
+            return;
+        }
+
+        foreach (var sessionId in targetSessionIds)
+        {
+            Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(sharedContainer));
         }
     }
 
@@ -98,141 +216,82 @@ public class ItemHandler
         return true;
     }
 
-    private async Task<bool> HandleDropWearItemAsync(GameSession session, DropWearItemPacket dropWearItemPacket)
+    private async Task DispatchItemWearChange(Serial characterId)
     {
-        if (session.Character is null || session.CharacterId == Serial.Zero)
+        var mobile = await _mobileService.GetAsync(characterId);
+
+        if (mobile is null)
         {
-            return false;
+            return;
         }
 
-        if (dropWearItemPacket.PlayerSerial != session.CharacterId)
+        var equippedItems = new List<UOItemEntity>();
+
+        foreach (var itemId in mobile.EquippedItemIds.Values)
         {
-            _logger.Warning(
-                "DropWear rejected Session={SessionId} ItemId={ItemId}: target player mismatch packet={PacketPlayerId} session={SessionPlayerId}",
-                session.SessionId,
-                dropWearItemPacket.ItemSerial,
-                dropWearItemPacket.PlayerSerial,
-                session.CharacterId
-            );
-
-            return false;
-        }
-
-        if (!IsValidWearLayer(dropWearItemPacket.Layer))
-        {
-            _logger.Warning(
-                "DropWear rejected Session={SessionId} ItemId={ItemId}: invalid requested layer {Layer}",
-                session.SessionId,
-                dropWearItemPacket.ItemSerial,
-                dropWearItemPacket.Layer
-            );
-
-            return false;
-        }
-
-        await _itemService.EquipItemAsync(
-            dropWearItemPacket.ItemSerial,
-            session.CharacterId,
-            dropWearItemPacket.Layer
-        );
-
-        await DispatchItemWearChange(session.CharacterId);
-
-        return true;
-    }
-
-    private async Task<bool> HandleDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
-    {
-        if (doubleClickPacket.TargetSerial.IsMobile)
-        {
-            return true;
-        }
-
-        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, doubleClickPacket.TargetSerial);
-
-        if (!canInteract)
-        {
-            return true;
-        }
-
-        await _gameEventBusService.PublishAsync(
-            new ItemDoubleClickEvent(
-                session.SessionId,
-                doubleClickPacket.TargetSerial
-            )
-        );
-
-        var item = resolvedItem ?? await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
-
-        if (item is null)
-        {
-            return true;
-        }
-
-        if (item.IsContainer)
-        {
-            var container = await _itemService.GetItemAsync(item.Id);
-
-            if (container is not null)
+            if (itemId == Serial.Zero)
             {
-                Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
+                continue;
+            }
+
+            var equippedItem = await _itemService.GetItemAsync(itemId);
+
+            if (equippedItem is null)
+            {
+                continue;
+            }
+
+            equippedItems.Add(equippedItem);
+        }
+
+        mobile.HydrateEquipmentRuntime(equippedItems);
+
+        var sector = _spatialWorldService.GetSectorByLocation(mobile.MapId, mobile.Location);
+
+        var sessionIdsToNotify = new HashSet<long>();
+
+        if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var sourceSession))
+        {
+            sessionIdsToNotify.Add(sourceSession.SessionId);
+        }
+
+        if (sector is null)
+        {
+            foreach (var sessionId in sessionIdsToNotify)
+            {
+                EnqueueVisibleWornItemsForSession(sessionId, mobile);
+            }
+
+            return;
+        }
+
+        var updateRadius = _spatialWorldService.GetUpdateBroadcastSectorRadius();
+
+        for (var sectorX = sector.SectorX - updateRadius;
+             sectorX <= sector.SectorX + updateRadius;
+             sectorX++)
+        {
+            for (var sectorY = sector.SectorY - updateRadius;
+                 sectorY <= sector.SectorY + updateRadius;
+                 sectorY++)
+            {
+                var players = _spatialWorldService.GetPlayersInSector(mobile.MapId, sectorX, sectorY);
+
+                foreach (var player in players)
+                {
+                    if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
+                    {
+                        sessionIdsToNotify.Add(session.SessionId);
+                    }
+                }
             }
         }
 
-        return true;
-    }
-
-    private async Task<bool> HandleSingleClickAsync(GameSession session, SingleClickPacket singleClickPacket)
-    {
-        var (canInteract, _) = await ValidateGroundItemInteractionAsync(session, singleClickPacket.TargetSerial);
-
-        if (!canInteract)
+        foreach (var sessionId in sessionIdsToNotify)
         {
-            return true;
+            EnqueueVisibleWornItemsForSession(sessionId, mobile);
         }
-
-        await _gameEventBusService.PublishAsync(
-            new ItemSingleClickEvent(
-                session.SessionId,
-                singleClickPacket.TargetSerial
-            )
-        );
-
-        return true;
     }
-
-    private async Task<(bool CanInteract, UOItemEntity? Item)> ValidateGroundItemInteractionAsync(
-        GameSession session,
-        Serial itemId
-    )
-    {
-        var item = await _itemService.GetItemAsync(itemId);
-
-        if (item is null || !IsGroundItem(item) || session.AccountType >= AccountType.GameMaster)
-        {
-            return (true, item);
-        }
-
-        var character = session.Character;
-
-        if (character is null ||
-            character.MapId != item.MapId ||
-            !character.Location.InRange(item.Location, GroundItemInteractionRange))
-        {
-            _logger.Debug(
-                "Item interaction rejected Session={SessionId} ItemId={ItemId}: out of range for ground item",
-                session.SessionId,
-                itemId
-            );
-
-            return (false, item);
-        }
-
-        return (true, item);
-    }
-
-    private static bool IsGroundItem(UOItemEntity item)
-        => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;
 
     private async Task DropItemInContainerAsync(GameSession session, DropItemPacket dropItemPacket)
     {
@@ -321,6 +380,72 @@ public class ItemHandler
         Enqueue(session, new DrawContainerAndAddItemCombinedPacket(sourceContainer));
     }
 
+    private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
+        => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => Enqueue(sessionId, packet));
+
+    private async Task<bool> HandleDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
+    {
+        if (doubleClickPacket.TargetSerial.IsMobile)
+        {
+            await _gameEventBusService.PublishAsync(
+                new MobileDoubleClickEvent(
+                    session.SessionId,
+                    doubleClickPacket.TargetSerial
+                )
+            );
+
+            if (_characterService is null)
+            {
+                return true;
+            }
+
+            var mobile = await _characterService.GetCharacterAsync(doubleClickPacket.TargetSerial);
+
+            if (mobile is null)
+            {
+                return true;
+            }
+
+            if (mobile.Body is { IsAnimal: false, IsMonster: false })
+            {
+                Enqueue(session, new PaperdollPacket(mobile));
+            }
+
+            return true;
+        }
+
+        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, doubleClickPacket.TargetSerial);
+
+        if (!canInteract)
+        {
+            return true;
+        }
+
+        var item = resolvedItem ?? await _itemService.GetItemAsync(doubleClickPacket.TargetSerial);
+
+        if (item is null)
+        {
+            return true;
+        }
+
+        if (_itemScriptDispatcher?.HasHook(item, "double_click") != false)
+        {
+            await _gameEventBusService.PublishAsync(
+                new ItemDoubleClickEvent(
+                    session.SessionId,
+                    doubleClickPacket.TargetSerial
+                )
+            );
+        }
+
+        if (item.IsContainer)
+        {
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
+        }
+
+        return true;
+    }
+
     private async Task<bool> HandleDropItemAsync(GameSession session, DropItemPacket dropItemPacket)
     {
         if (!_playerDragService.TryGet(session.SessionId, out var dragState) ||
@@ -345,6 +470,49 @@ public class ItemHandler
 
         await DropItemOnGroundAsync(session, dropItemPacket);
         _playerDragService.Clear(session.SessionId);
+
+        return true;
+    }
+
+    private async Task<bool> HandleDropWearItemAsync(GameSession session, DropWearItemPacket dropWearItemPacket)
+    {
+        if (session.Character is null || session.CharacterId == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (dropWearItemPacket.PlayerSerial != session.CharacterId)
+        {
+            _logger.Warning(
+                "DropWear rejected Session={SessionId} ItemId={ItemId}: target player mismatch packet={PacketPlayerId} session={SessionPlayerId}",
+                session.SessionId,
+                dropWearItemPacket.ItemSerial,
+                dropWearItemPacket.PlayerSerial,
+                session.CharacterId
+            );
+
+            return false;
+        }
+
+        if (!IsValidWearLayer(dropWearItemPacket.Layer))
+        {
+            _logger.Warning(
+                "DropWear rejected Session={SessionId} ItemId={ItemId}: invalid requested layer {Layer}",
+                session.SessionId,
+                dropWearItemPacket.ItemSerial,
+                dropWearItemPacket.Layer
+            );
+
+            return false;
+        }
+
+        await _itemService.EquipItemAsync(
+            dropWearItemPacket.ItemSerial,
+            session.CharacterId,
+            dropWearItemPacket.Layer
+        );
+
+        await DispatchItemWearChange(session.CharacterId);
 
         return true;
     }
@@ -426,87 +594,35 @@ public class ItemHandler
         return true;
     }
 
-    public async Task HandleAsync(ItemMovedEvent gameEvent, CancellationToken cancellationToken = default)
+    private async Task<bool> HandleSingleClickAsync(GameSession session, SingleClickPacket singleClickPacket)
     {
-        if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
+        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, singleClickPacket.TargetSerial);
+
+        if (!canInteract)
         {
-            var item = await _itemService.GetItemAsync(gameEvent.NewContainerId);
-
-            if (item is null)
-            {
-                return;
-            }
-
-            var container = await _itemService.GetItemAsync(gameEvent.NewContainerId);
-
-            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
+            return true;
         }
+
+        if (resolvedItem is null)
+        {
+            return true;
+        }
+
+        if (_itemScriptDispatcher?.HasHook(resolvedItem, "single_click") != false)
+        {
+            await _gameEventBusService.PublishAsync(
+                new ItemSingleClickEvent(
+                    session.SessionId,
+                    singleClickPacket.TargetSerial
+                )
+            );
+        }
+
+        return true;
     }
 
-    private async Task DispatchItemWearChange(Serial characterId)
-    {
-        var mobile = await _mobileService.GetAsync(characterId);
-
-        if (mobile is null)
-        {
-            return;
-        }
-
-        var equippedItems = new List<UOItemEntity>();
-
-        foreach (var itemId in mobile.EquippedItemIds.Values)
-        {
-            if (itemId == Serial.Zero)
-            {
-                continue;
-            }
-
-            var equippedItem = await _itemService.GetItemAsync(itemId);
-
-            if (equippedItem is null)
-            {
-                continue;
-            }
-
-            equippedItems.Add(equippedItem);
-        }
-
-        mobile.HydrateEquipmentRuntime(equippedItems);
-
-        var sector = _spatialWorldService.GetSectorByLocation(mobile.MapId, mobile.Location);
-
-        var sessionIdsToNotify = new HashSet<long>();
-
-        if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var sourceSession))
-        {
-            sessionIdsToNotify.Add(sourceSession.SessionId);
-        }
-
-        if (sector is null)
-        {
-            foreach (var sessionId in sessionIdsToNotify)
-            {
-                EnqueueVisibleWornItemsForSession(sessionId, mobile);
-            }
-
-            return;
-        }
-
-        var players = _spatialWorldService.GetPlayersInSector(mobile.MapId, sector.SectorX, sector.SectorY);
-
-        foreach (var player in players)
-        {
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                sessionIdsToNotify.Add(session.SessionId);
-            }
-        }
-
-        foreach (var sessionId in sessionIdsToNotify)
-        {
-            EnqueueVisibleWornItemsForSession(sessionId, mobile);
-        }
-    }
+    private static bool IsGroundItem(UOItemEntity item)
+        => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;
 
     private static bool IsValidWearLayer(ItemLayerType layer)
     {
@@ -518,77 +634,33 @@ public class ItemHandler
         return layer is not ItemLayerType.Backpack and not ItemLayerType.Bank;
     }
 
-    private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
-        => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => Enqueue(sessionId, packet));
-
-    public async Task HandleAsync(ItemAddedInSectorEvent gameEvent, CancellationToken cancellationToken = default)
+    private async Task<(bool CanInteract, UOItemEntity? Item)> ValidateGroundItemInteractionAsync(
+        GameSession session,
+        Serial itemId
+    )
     {
-        var players = _spatialWorldService.GetPlayersInSector(gameEvent.MapId, gameEvent.SectorX, gameEvent.SectorY);
+        var item = await _itemService.GetItemAsync(itemId);
 
-        foreach (var player in players)
+        if (item is null || !IsGroundItem(item) || session.AccountType >= AccountType.GameMaster)
         {
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                var item = await _itemService.GetItemAsync(gameEvent.ItemId);
-
-                if (item is null)
-                {
-                    continue;
-                }
-
-                Enqueue(session, new ObjectInformationPacket(item));
-            }
-        }
-    }
-
-    public async Task HandleAsync(ItemDeletedEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        _ = cancellationToken;
-
-        if (gameEvent.OldContainerId == Serial.Zero)
-        {
-            return;
+            return (true, item);
         }
 
-        var targetSessionIds = new HashSet<long>();
+        var character = session.Character;
 
-        if (gameEvent.SessionId > 0 && _gameNetworkSessionService.TryGet(gameEvent.SessionId, out var sourceSession))
+        if (character is null ||
+            character.MapId != item.MapId ||
+            !character.Location.InRange(item.Location, GroundItemInteractionRange))
         {
-            targetSessionIds.Add(sourceSession.SessionId);
+            _logger.Debug(
+                "Item interaction rejected Session={SessionId} ItemId={ItemId}: out of range for ground item",
+                session.SessionId,
+                itemId
+            );
+
+            return (false, item);
         }
 
-        foreach (var session in _gameNetworkSessionService.GetAll())
-        {
-            var character = session.Character;
-
-            if (character is null)
-            {
-                continue;
-            }
-
-            if (character.BackpackId == gameEvent.OldContainerId ||
-                (character.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId) &&
-                 equippedBackpackId == gameEvent.OldContainerId))
-            {
-                targetSessionIds.Add(session.SessionId);
-            }
-        }
-
-        if (targetSessionIds.Count == 0)
-        {
-            return;
-        }
-
-        var container = await _itemService.GetItemAsync(gameEvent.OldContainerId);
-
-        if (container is null)
-        {
-            return;
-        }
-
-        foreach (var sessionId in targetSessionIds)
-        {
-            Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(container));
-        }
+        return (true, item);
     }
 }

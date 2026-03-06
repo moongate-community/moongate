@@ -68,6 +68,19 @@ public class CharacterService : ICharacterService
         return true;
     }
 
+    public async Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
+    {
+        var character = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(characterId);
+
+        if (character is null)
+        {
+            return;
+        }
+
+        await ApplyEquippedItemHueAsync(character, ItemLayerType.Shirt, shirtHue);
+        await ApplyEquippedItemHueAsync(character, ItemLayerType.Pants, pantsHue);
+    }
+
     public async Task<Serial> CreateCharacterAsync(UOMobileEntity character)
     {
         character.Id = _persistenceService.UnitOfWork.AllocateNextMobileId();
@@ -87,19 +100,6 @@ public class CharacterService : ICharacterService
         _logger.Debug("Created character {CharacterName}", character.Name);
 
         return character.Id;
-    }
-
-    public async Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
-    {
-        var character = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(characterId);
-
-        if (character is null)
-        {
-            return;
-        }
-
-        await ApplyEquippedItemHueAsync(character, ItemLayerType.Shirt, shirtHue);
-        await ApplyEquippedItemHueAsync(character, ItemLayerType.Pants, pantsHue);
     }
 
     public async Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
@@ -225,6 +225,24 @@ public class CharacterService : ICharacterService
         return true;
     }
 
+    private async Task ApplyEquippedItemHueAsync(UOMobileEntity character, ItemLayerType layer, short hue)
+    {
+        if (!character.EquippedItemIds.TryGetValue(layer, out var itemId))
+        {
+            return;
+        }
+
+        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+
+        if (item is null)
+        {
+            return;
+        }
+
+        item.Hue = hue;
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+    }
+
     private static UOItemEntity CloneItem(UOItemEntity item)
         => new()
         {
@@ -246,24 +264,6 @@ public class CharacterService : ICharacterService
 
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);
-
-    private async Task ApplyEquippedItemHueAsync(UOMobileEntity character, ItemLayerType layer, short hue)
-    {
-        if (!character.EquippedItemIds.TryGetValue(layer, out var itemId))
-        {
-            return;
-        }
-
-        var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
-
-        if (item is null)
-        {
-            return;
-        }
-
-        item.Hue = hue;
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-    }
 
     private async Task EnsureStarterContainerItemAsync(UOMobileEntity character, UOItemEntity item)
     {
@@ -352,26 +352,54 @@ public class CharacterService : ICharacterService
                                 static item => item
                             );
 
-        var hydratedItems = equippedItems.ToDictionary(static item => item.Id, static item => item);
-        var inferredItems = new List<UOItemEntity>(character.EquippedItemIds.Count);
+        var hydratedIds = new HashSet<Serial>(equippedItems.Count);
 
-        foreach (var (layer, itemId) in character.EquippedItemIds)
+        foreach (var item in equippedItems)
         {
-            if (hydratedItems.ContainsKey(itemId))
+            hydratedIds.Add(item.Id);
+        }
+
+        // Collect IDs not found by the batch query
+        var missingIds = new HashSet<Serial>();
+
+        foreach (var (_, itemId) in character.EquippedItemIds)
+        {
+            if (!hydratedIds.Contains(itemId))
             {
-                continue;
+                missingIds.Add(itemId);
             }
+        }
 
-            var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+        if (missingIds.Count == 0)
+        {
+            character.HydrateEquipmentRuntime(equippedItems);
 
-            if (item is null)
+            return;
+        }
+
+        // Single batch query for ALL missing items instead of N individual GetByIdAsync calls
+        var missingItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                               item => missingIds.Contains(item.Id),
+                               static item => item
+                           );
+
+        var inferredItems = new List<UOItemEntity>(missingItems.Count);
+
+        foreach (var item in missingItems)
+        {
+            foreach (var (layer, itemId) in character.EquippedItemIds)
             {
-                continue;
-            }
+                if (itemId != item.Id)
+                {
+                    continue;
+                }
 
-            item.EquippedMobileId = character.Id;
-            item.EquippedLayer = layer;
-            inferredItems.Add(item);
+                item.EquippedMobileId = character.Id;
+                item.EquippedLayer = layer;
+                inferredItems.Add(item);
+
+                break;
+            }
         }
 
         if (inferredItems.Count > 0)

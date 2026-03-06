@@ -30,7 +30,7 @@ public class MoongateHttpServiceActiveSessionsEndpointTests
         inGameSession.AccountId = (Serial)7;
         inGameSession.AccountType = AccountType.Administrator;
         inGameSession.CharacterId = (Serial)15;
-        inGameSession.Character = new UOMobileEntity
+        inGameSession.Character = new()
         {
             Id = (Serial)15,
             Name = "AdminPlayer"
@@ -69,7 +69,7 @@ public class MoongateHttpServiceActiveSessionsEndpointTests
                 Port = port,
                 IsOpenApiEnabled = false
             },
-            accountService: accountService,
+            accountService,
             gameNetworkSessionService: sessionService
         );
 

@@ -196,19 +196,25 @@ public class MovementHandler : BasePacketListener
 
         session.LastMobilePositionEventTimestamp = now;
 
-        _gameEventBusService
-            .PublishAsync(
-                new MobilePositionChangedEvent(
-                    session.SessionId,
-                    session.Character.Id,
-                    session.Character.MapId,
-                    session.Character.MapId,
-                    oldLocation,
-                    newLocation
-                )
-            )
-            .AsTask()
-            .GetAwaiter()
-            .GetResult();
+        var gameEvent = new MobilePositionChangedEvent(
+            session.SessionId,
+            session.Character.Id,
+            session.Character.MapId,
+            session.Character.MapId,
+            oldLocation,
+            newLocation
+        );
+
+        var task = _gameEventBusService.PublishAsync(gameEvent);
+
+        if (!task.IsCompletedSuccessfully)
+        {
+            task.AsTask()
+                .ContinueWith(
+                    static t => Log.ForContext<MovementHandler>()
+                                   .Error(t.Exception, "MobilePositionChangedEvent publish failed"),
+                    TaskContinuationOptions.OnlyOnFaulted
+                );
+        }
     }
 }

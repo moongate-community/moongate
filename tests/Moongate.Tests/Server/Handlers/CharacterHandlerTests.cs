@@ -1,6 +1,5 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Outgoing.World;
@@ -104,50 +103,6 @@ public sealed class CharacterHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_MobileDoubleClick_ShouldPublishMobileDoubleClickEvent()
-    {
-        EnsureMapRegistered();
-
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var characterService = new MovementHandlerTestCharacterService();
-        var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var gameNetworkSessionService = new FakeGameNetworkSessionService();
-        var handler = new CharacterHandler(
-            queue,
-            characterService,
-            entityFactoryService,
-            eventBus,
-            gameNetworkSessionService,
-            new RegionDataLoaderTestSpatialWorldService()
-        );
-
-        var packet = new DoubleClickPacket
-        {
-            TargetSerial = (Serial)0x00000099u
-        };
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            AccountId = (Serial)0x01020304,
-            AccountType = AccountType.Regular
-        };
-
-        var handled = await handler.HandlePacketAsync(session, packet);
-        var gameEvent = eventBus.Events.OfType<MobileDoubleClickEvent>().SingleOrDefault();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(gameEvent.MobileSerial, Is.EqualTo((Serial)0x00000099u));
-            }
-        );
-    }
-
-    [Test]
     public async Task HandlePacketAsync_RequestWarMode_ShouldUpdateCharacterAndEnqueueWarModePacket()
     {
         EnsureMapRegistered();
@@ -195,23 +150,6 @@ public sealed class CharacterHandlerTests
         );
     }
 
-    private static void EnsureMapRegistered()
-    {
-        if (Map.GetMap(0) is null)
-        {
-            _ = Map.RegisterMap(
-                0,
-                0,
-                0,
-                6144,
-                4096,
-                SeasonType.Summer,
-                "Felucca",
-                MapRules.FeluccaRules
-            );
-        }
-    }
-
     private static byte[] BuildCharacterCreationPayload()
     {
         var writer = new SpanWriter(106, true);
@@ -255,5 +193,22 @@ public sealed class CharacterHandlerTests
         writer.Dispose();
 
         return payload;
+    }
+
+    private static void EnsureMapRegistered()
+    {
+        if (Map.GetMap(0) is null)
+        {
+            _ = Map.RegisterMap(
+                0,
+                0,
+                0,
+                6144,
+                4096,
+                SeasonType.Summer,
+                "Felucca",
+                MapRules.FeluccaRules
+            );
+        }
     }
 }

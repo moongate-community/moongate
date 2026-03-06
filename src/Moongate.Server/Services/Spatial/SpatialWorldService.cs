@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
@@ -23,7 +23,6 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
 using Serilog;
-using Serilog.Core;
 
 namespace Moongate.Server.Services.Spatial;
 
@@ -64,35 +63,6 @@ public sealed class SpatialWorldService
         _spatialConfig = moongateConfig.Spatial ?? new();
         _entityIndex = new(itemService, mobileService, _spatialConfig, OnMobileAddedToWorld);
         _regionResolver = new();
-
-    }
-
-    public Task<int> BroadcastToPlayersAsync(
-        IGameNetworkPacket packet,
-        int mapId,
-        Point3D location,
-        int? range = null,
-        long? excludeSessionId = null
-    )
-    {
-        ArgumentNullException.ThrowIfNull(packet);
-        var resolvedRange = Math.Max(0, range ?? _spatialConfig.SectorEnterSyncRadius);
-        GameSession? excludedSession = null;
-
-        if (excludeSessionId.HasValue &&
-            _gameNetworkSessionService.TryGet(excludeSessionId.Value, out var session))
-        {
-            excludedSession = session;
-        }
-
-        var recipients = GetPlayersInRange(location, resolvedRange, mapId, excludedSession);
-
-        foreach (var recipient in recipients)
-        {
-            _outgoingPacketQueue.Enqueue(recipient.SessionId, packet);
-        }
-
-        return Task.FromResult(recipients.Count);
     }
 
     public void AddOrUpdateItem(UOItemEntity item, int mapId)
@@ -104,8 +74,6 @@ public sealed class SpatialWorldService
 
         PublishEvent(new ItemAddedInSectorEvent(item.Id, mapId, sectorX, sectorY));
     }
-
-
 
     public void AddOrUpdateMobile(UOMobileEntity mobile)
     {
@@ -125,8 +93,99 @@ public sealed class SpatialWorldService
     public void AddRegion(JsonRegion region)
         => _regionResolver.AddRegion(region);
 
-    public JsonRegion? GetRegionById(int regionId)
-        => _regionResolver.GetRegionById(regionId);
+    public Task<int> BroadcastToPlayersAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        int? range = null,
+        long? excludeSessionId = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(packet);
+        var excludedSession = ResolveExcludedSession(excludeSessionId);
+
+        List<GameSession> recipients;
+
+        if (range.HasValue)
+        {
+            recipients = GetPlayersInRange(location, Math.Max(0, range.Value), mapId, excludedSession);
+        }
+        else
+        {
+            var sectorX = location.X >> MapSectorConsts.SectorShift;
+            var sectorY = location.Y >> MapSectorConsts.SectorShift;
+            recipients = GetPlayersInSectorRange(
+                mapId,
+                sectorX,
+                sectorY,
+                Math.Max(0, _spatialConfig.SectorEnterSyncRadius),
+                excludedSession
+            );
+        }
+
+        foreach (var recipient in recipients)
+        {
+            _outgoingPacketQueue.Enqueue(recipient.SessionId, packet);
+        }
+
+        return Task.FromResult(recipients.Count);
+    }
+
+    public Task<int> BroadcastToPlayersInSectorRangeAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int sectorRadius = 0,
+        long? excludeSessionId = null
+    )
+    {
+        ArgumentNullException.ThrowIfNull(packet);
+        var excludedSession = ResolveExcludedSession(excludeSessionId);
+        var recipients = GetPlayersInSectorRange(
+            mapId,
+            centerSectorX,
+            centerSectorY,
+            Math.Max(0, sectorRadius),
+            excludedSession
+        );
+
+        foreach (var recipient in recipients)
+        {
+            _outgoingPacketQueue.Enqueue(recipient.SessionId, packet);
+        }
+
+        return Task.FromResult(recipients.Count);
+    }
+
+    public Task<int> BroadcastToPlayersInUpdateRadiusAsync(
+        IGameNetworkPacket packet,
+        int mapId,
+        Point3D location,
+        long? excludeSessionId = null
+    )
+    {
+        var sectorX = location.X >> MapSectorConsts.SectorShift;
+        var sectorY = location.Y >> MapSectorConsts.SectorShift;
+
+        return BroadcastToPlayersInSectorRangeAsync(
+            packet,
+            mapId,
+            sectorX,
+            sectorY,
+            GetUpdateBroadcastSectorRadius(),
+            excludeSessionId
+        );
+    }
+
+    public List<MapSector> GetActiveSectors()
+        => _entityIndex.GetActiveSectors();
+
+    public SectorSystemStats GetMetricsSnapshot()
+        => GetStats();
+
+    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
+        => _entityIndex.GetMobilesInSectorRange(mapId, centerSectorX, centerSectorY, radius);
 
     public int GetMusic(int mapId, Point3D location)
         => _regionResolver.GetMusic(mapId, location);
@@ -139,17 +198,13 @@ public sealed class SpatialWorldService
 
     public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
     {
-        var players = GetNearbyMobiles(location, range, mapId).Where(static mobile => mobile.IsPlayer).ToList();
-        var sessions = _gameNetworkSessionService.GetAll();
-        var sessionsByCharacter = sessions
-                                  .Where(static session => session.Character is not null)
-                                  .ToDictionary(static session => session.Character!.Id, static session => session);
+        var players = GetNearbyMobiles(location, range, mapId).Where(static mobile => mobile.IsPlayer);
+        var sessionsByCharacter = BuildSessionsByCharacterMap(excludeSession);
         var result = new List<GameSession>();
 
         foreach (var player in players)
         {
-            if (sessionsByCharacter.TryGetValue(player.Id, out var session) &&
-                session != excludeSession)
+            if (sessionsByCharacter.TryGetValue(player.Id, out var session))
             {
                 result.Add(session);
             }
@@ -161,11 +216,8 @@ public sealed class SpatialWorldService
     public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
         => _entityIndex.GetPlayersInSector(mapId, sectorX, sectorY);
 
-    public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
-        => _entityIndex.GetMobilesInSectorRange(mapId, centerSectorX, centerSectorY, radius);
-
-    public List<MapSector> GetActiveSectors()
-        => _entityIndex.GetActiveSectors();
+    public JsonRegion? GetRegionById(int regionId)
+        => _regionResolver.GetRegionById(regionId);
 
     public MapSector? GetSectorByLocation(int mapId, Point3D location)
         => _entityIndex.GetSectorByLocation(mapId, location);
@@ -173,8 +225,8 @@ public sealed class SpatialWorldService
     public SectorSystemStats GetStats()
         => _entityIndex.GetStats();
 
-    public SectorSystemStats GetMetricsSnapshot()
-        => GetStats();
+    public int GetUpdateBroadcastSectorRadius()
+        => Math.Max(0, _spatialConfig.SectorUpdateBroadcastRadius);
 
     public Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
@@ -198,7 +250,14 @@ public sealed class SpatialWorldService
 
     public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        var character = await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+        var character = ResolveCharacterFromSession(gameEvent.SessionId, gameEvent.CharacterId) ??
+                        await _characterService.GetCharacterAsync(gameEvent.CharacterId);
+
+        if (character is null)
+        {
+            return;
+        }
+
         var sectorX = character.Location.X >> MapSectorConsts.SectorShift;
         var sectorY = character.Location.Y >> MapSectorConsts.SectorShift;
         var warmupRadius = Math.Max(0, _spatialConfig.SectorWarmupRadius);
@@ -251,16 +310,12 @@ public sealed class SpatialWorldService
             return;
         }
 
-        var players = GetPlayersInSector(mapId, sector.SectorX, sector.SectorY);
         var dropPacket = new ObjectInformationPacket(item);
-
-        foreach (var player in players)
-        {
-            if (_gameNetworkSessionService.TryGetByCharacterId(player.Id, out var session))
-            {
-                _outgoingPacketQueue.Enqueue(session.SessionId, dropPacket);
-            }
-        }
+        await BroadcastToPlayersInUpdateRadiusAsync(
+            dropPacket,
+            mapId,
+            gameEvent.NewLocation
+        );
     }
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
@@ -284,6 +339,11 @@ public sealed class SpatialWorldService
                     move.NewSectorY
                 )
             );
+
+            if (mobile.IsPlayer)
+            {
+                WarmupSectorsFireAndForget(move.MapId, move.NewSectorX, move.NewSectorY);
+            }
         }
 
         if (!mobile.IsPlayer)
@@ -313,8 +373,58 @@ public sealed class SpatialWorldService
     public void RemoveEntity(Serial serial)
         => _entityIndex.RemoveEntity(serial);
 
-    private void OnMobileAddedToWorld(UOMobileEntity mobile)
-        => PublishEvent(new MobileAddedInWorldEvent(mobile, mobile.BrainId));
+    public JsonRegion? ResolveRegion(int mapId, Point3D location)
+        => _regionResolver.ResolveRegion(mapId, location);
+
+    private Dictionary<Serial, GameSession> BuildSessionsByCharacterMap(GameSession? excludeSession)
+    {
+        var sessions = _gameNetworkSessionService.GetAll();
+        var map = new Dictionary<Serial, GameSession>();
+
+        foreach (var session in sessions)
+        {
+            if (session.Character is not null && session != excludeSession)
+            {
+                map[session.Character.Id] = session;
+            }
+        }
+
+        return map;
+    }
+
+    private List<GameSession> GetPlayersInSectorRange(
+        int mapId,
+        int centerSectorX,
+        int centerSectorY,
+        int sectorRadius,
+        GameSession? excludeSession
+    )
+    {
+        var sessionsByCharacter = BuildSessionsByCharacterMap(excludeSession);
+        var result = new List<GameSession>();
+        var seenSessionIds = new HashSet<long>();
+
+        for (var sectorX = centerSectorX - sectorRadius; sectorX <= centerSectorX + sectorRadius; sectorX++)
+        {
+            for (var sectorY = centerSectorY - sectorRadius; sectorY <= centerSectorY + sectorRadius; sectorY++)
+            {
+                var players = GetPlayersInSector(mapId, sectorX, sectorY);
+
+                foreach (var player in players)
+                {
+                    if (!sessionsByCharacter.TryGetValue(player.Id, out var session) ||
+                        !seenSessionIds.Add(session.SessionId))
+                    {
+                        continue;
+                    }
+
+                    result.Add(session);
+                }
+            }
+        }
+
+        return result;
+    }
 
     private async Task HandleNpcPositionChangedAsync(
         MobilePositionChangedEvent gameEvent,
@@ -337,21 +447,63 @@ public sealed class SpatialWorldService
         OnMobileMoved(mobile, gameEvent.OldLocation, gameEvent.NewLocation);
     }
 
-    private UOMobileEntity? TryResolveMobileFromSpatial(Serial mobileId)
-    {
-        foreach (var sector in _entityIndex.GetActiveSectors())
-        {
-            var mobile = sector.GetEntity<UOMobileEntity>(mobileId);
+    private void OnMobileAddedToWorld(UOMobileEntity mobile)
+        => PublishEvent(new MobileAddedInWorldEvent(mobile, mobile.BrainId));
 
-            if (mobile is not null)
-            {
-                return mobile;
-            }
+    private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
+    {
+        var task = _gameEventBusService.PublishAsync(gameEvent);
+
+        if (!task.IsCompletedSuccessfully)
+        {
+            task.AsTask()
+                .ContinueWith(
+                    static t => Log.ForContext<SpatialWorldService>()
+                                   .Error(t.Exception, "Event publish failed for {EventType}", typeof(TEvent).Name),
+                    TaskContinuationOptions.OnlyOnFaulted
+                );
+        }
+    }
+
+    private UOMobileEntity? ResolveCharacterFromSession(long sessionId, Serial characterId)
+    {
+        if (_gameNetworkSessionService.TryGet(sessionId, out var session) &&
+            session.Character is not null &&
+            session.CharacterId == characterId)
+        {
+            return session.Character;
         }
 
         return null;
     }
 
-    private void PublishEvent<TEvent>(TEvent gameEvent) where TEvent : IGameEvent
-        => _gameEventBusService.PublishAsync(gameEvent).AsTask().GetAwaiter().GetResult();
+    private GameSession? ResolveExcludedSession(long? excludeSessionId)
+    {
+        if (!excludeSessionId.HasValue)
+        {
+            return null;
+        }
+
+        return _gameNetworkSessionService.TryGet(excludeSessionId.Value, out var session)
+                   ? session
+                   : null;
+    }
+
+    private UOMobileEntity? TryResolveMobileFromSpatial(Serial mobileId)
+        => _entityIndex.TryGetEntity<UOMobileEntity>(mobileId);
+
+    private void WarmupSectorsFireAndForget(int mapId, int sectorX, int sectorY)
+    {
+        var warmupRadius = Math.Max(0, _spatialConfig.SectorWarmupRadius);
+        var task = _entityIndex.WarmupAroundSectorAsync(mapId, sectorX, sectorY, warmupRadius, CancellationToken.None);
+
+        if (!task.IsCompletedSuccessfully)
+        {
+            task.ContinueWith(
+                static t => Log.ForContext<SpatialWorldService>()
+                               .Error(t.Exception, "Sector warmup failed"),
+                TaskContinuationOptions.OnlyOnFaulted
+            );
+        }
+    }
 }

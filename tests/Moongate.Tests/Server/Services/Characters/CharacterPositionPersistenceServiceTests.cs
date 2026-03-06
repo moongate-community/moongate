@@ -98,8 +98,8 @@ public sealed class CharacterPositionPersistenceServiceTests
                     session.CharacterId,
                     1,
                     1,
-                    new(15, 100, 0),
-                    new(16, 100, 0)
+                    new(95, 100, 0),
+                    new(96, 100, 0)
                 )
             );
 
@@ -108,7 +108,7 @@ public sealed class CharacterPositionPersistenceServiceTests
             Assert.That(persistedAfterThrottle, Is.Not.Null);
             Assert.That(persistedAfterThrottle!.Location, Is.EqualTo(new Point3D(101, 100, 0)));
             Assert.That(persistedAfterSectorChange, Is.Not.Null);
-            Assert.That(persistedAfterSectorChange!.Location, Is.EqualTo(new Point3D(16, 100, 0)));
+            Assert.That(persistedAfterSectorChange!.Location, Is.EqualTo(new Point3D(96, 100, 0)));
         }
         finally
         {

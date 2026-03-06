@@ -1,7 +1,6 @@
 using BenchmarkDotNet.Attributes;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Packets;
@@ -31,110 +30,20 @@ public class SpatialWorldServiceBenchmark
     [Params(500, 2000)]
     public int MobileCount { get; set; }
 
-    [Benchmark]
-    public int AddOrUpdateMobiles()
-    {
-        for (var i = 0; i < _mobiles.Count; i++)
-        {
-            _service.AddOrUpdateMobile(_mobiles[i]);
-        }
-
-        return _service.GetStats().TotalEntities;
-    }
-
-    [Benchmark]
-    public int MoveMobilesAcrossSectors()
-    {
-        for (var i = 0; i < _moves.Count; i++)
-        {
-            var move = _moves[i];
-            _service.OnMobileMoved(move.Mobile, move.OldLocation, move.NewLocation);
-        }
-
-        return _service.GetStats().TotalSectors;
-    }
-
-    [Benchmark]
-    public int GetPlayersInHotSector()
-    {
-        var players = _service.GetPlayersInSector(0, 217, 162);
-
-        return players.Count;
-    }
-
-    [GlobalSetup]
-    public void Setup()
-    {
-        _service = new(
-            new EmptyGameNetworkSessionService(),
-            new NoOpGameEventBusService(),
-            new NoOpCharacterService(),
-            new NoOpItemService(),
-            new NoOpMobileService(),
-            new NoOpOutgoingPacketQueue(),
-            new()
-            {
-                Spatial = new()
-                {
-                    LazySectorItemLoadEnabled = false,
-                    LazySectorEntityLoadRadius = 0,
-                    SectorWarmupRadius = 0,
-                    SectorEnterSyncRadius = 3
-                }
-            }
-        );
-
-        _mobiles.Clear();
-        _moves.Clear();
-
-        var side = (int)Math.Ceiling(Math.Sqrt(MobileCount));
-        var index = 0;
-
-        for (var x = 0; x < side && index < MobileCount; x++)
-        {
-            for (var y = 0; y < side && index < MobileCount; y++)
-            {
-                var oldLocation = new Point3D(3470 + x, 2590 + y, 0);
-                var mobile = new UOMobileEntity
-                {
-                    Id = (Serial)(uint)(index + 1),
-                    Name = $"player_{index}",
-                    IsPlayer = true,
-                    MapId = 0,
-                    Location = oldLocation,
-                    Direction = DirectionType.North
-                };
-
-                _mobiles.Add(mobile);
-                _moves.Add((mobile, oldLocation, new Point3D(oldLocation.X + 1, oldLocation.Y, oldLocation.Z)));
-                index++;
-            }
-        }
-
-        for (var i = 0; i < _mobiles.Count; i++)
-        {
-            _service.AddOrUpdateMobile(_mobiles[i]);
-        }
-    }
-
     private sealed class NoOpGameEventBusService : IGameEventBusService
     {
         public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
             where TEvent : IGameEvent
             => ValueTask.CompletedTask;
 
-        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
-        {
-        }
+        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent { }
     }
 
     private sealed class NoOpOutgoingPacketQueue : IOutgoingPacketQueue
     {
         public int CurrentQueueDepth => 0;
 
-        public void Enqueue(long sessionId, IGameNetworkPacket packet)
-        {
-        }
+        public void Enqueue(long sessionId, IGameNetworkPacket packet) { }
 
         public bool TryDequeue(out OutgoingGamePacket gamePacket)
         {
@@ -148,9 +57,7 @@ public class SpatialWorldServiceBenchmark
     {
         public int Count => 0;
 
-        public void Clear()
-        {
-        }
+        public void Clear() { }
 
         public IReadOnlyCollection<GameSession> GetAll()
             => [];
@@ -216,7 +123,8 @@ public class SpatialWorldServiceBenchmark
             int sectorX,
             int sectorY,
             CancellationToken cancellationToken = default
-        ) => Task.FromResult(new List<UOMobileEntity>());
+        )
+            => Task.FromResult(new List<UOMobileEntity>());
 
         public Task<UOMobileEntity> SpawnFromTemplateAsync(
             string templateId,
@@ -224,14 +132,15 @@ public class SpatialWorldServiceBenchmark
             int mapId,
             Serial? accountId = null,
             CancellationToken cancellationToken = default
-        ) => Task.FromResult(
-            new UOMobileEntity
-            {
-                Id = (Serial)(uint)1,
-                MapId = mapId,
-                Location = location
-            }
-        );
+        )
+            => Task.FromResult(
+                new UOMobileEntity
+                {
+                    Id = (Serial)(uint)1,
+                    MapId = mapId,
+                    Location = location
+                }
+            );
     }
 
     private sealed class NoOpItemService : IItemService
@@ -245,9 +154,6 @@ public class SpatialWorldServiceBenchmark
         public Task<Serial> CreateItemAsync(UOItemEntity item)
             => Task.FromResult(Serial.Zero);
 
-        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-            => Task.FromResult(new UOItemEntity());
-
         public Task<bool> DeleteItemAsync(Serial itemId)
             => Task.FromResult(false);
 
@@ -256,7 +162,8 @@ public class SpatialWorldServiceBenchmark
             Point3D location,
             int mapId,
             long sessionId = 0
-        ) => Task.FromResult<DropItemToGroundResult?>(null);
+        )
+            => Task.FromResult<DropItemToGroundResult?>(null);
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
             => Task.FromResult(false);
@@ -267,9 +174,6 @@ public class SpatialWorldServiceBenchmark
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
             => Task.FromResult<UOItemEntity?>(null);
 
-        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
-            => Task.FromResult((false, (UOItemEntity?)null));
-
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => Task.FromResult(new List<UOItemEntity>());
 
@@ -279,10 +183,102 @@ public class SpatialWorldServiceBenchmark
         public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => Task.FromResult(false);
 
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => Task.FromResult(new UOItemEntity());
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((false, (UOItemEntity?)null));
+
         public Task UpsertItemAsync(UOItemEntity item)
             => Task.CompletedTask;
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+    }
+
+    [Benchmark]
+    public int AddOrUpdateMobiles()
+    {
+        for (var i = 0; i < _mobiles.Count; i++)
+        {
+            _service.AddOrUpdateMobile(_mobiles[i]);
+        }
+
+        return _service.GetStats().TotalEntities;
+    }
+
+    [Benchmark]
+    public int GetPlayersInHotSector()
+    {
+        var players = _service.GetPlayersInSector(0, 217, 162);
+
+        return players.Count;
+    }
+
+    [Benchmark]
+    public int MoveMobilesAcrossSectors()
+    {
+        for (var i = 0; i < _moves.Count; i++)
+        {
+            var move = _moves[i];
+            _service.OnMobileMoved(move.Mobile, move.OldLocation, move.NewLocation);
+        }
+
+        return _service.GetStats().TotalSectors;
+    }
+
+    [GlobalSetup]
+    public void Setup()
+    {
+        _service = new(
+            new EmptyGameNetworkSessionService(),
+            new NoOpGameEventBusService(),
+            new NoOpCharacterService(),
+            new NoOpItemService(),
+            new NoOpMobileService(),
+            new NoOpOutgoingPacketQueue(),
+            new()
+            {
+                Spatial = new()
+                {
+                    LazySectorItemLoadEnabled = false,
+                    LazySectorEntityLoadRadius = 0,
+                    SectorWarmupRadius = 0,
+                    SectorEnterSyncRadius = 3
+                }
+            }
+        );
+
+        _mobiles.Clear();
+        _moves.Clear();
+
+        var side = (int)Math.Ceiling(Math.Sqrt(MobileCount));
+        var index = 0;
+
+        for (var x = 0; x < side && index < MobileCount; x++)
+        {
+            for (var y = 0; y < side && index < MobileCount; y++)
+            {
+                var oldLocation = new Point3D(3470 + x, 2590 + y, 0);
+                var mobile = new UOMobileEntity
+                {
+                    Id = (Serial)(uint)(index + 1),
+                    Name = $"player_{index}",
+                    IsPlayer = true,
+                    MapId = 0,
+                    Location = oldLocation,
+                    Direction = DirectionType.North
+                };
+
+                _mobiles.Add(mobile);
+                _moves.Add((mobile, oldLocation, new(oldLocation.X + 1, oldLocation.Y, oldLocation.Z)));
+                index++;
+            }
+        }
+
+        for (var i = 0; i < _mobiles.Count; i++)
+        {
+            _service.AddOrUpdateMobile(_mobiles[i]);
+        }
     }
 }

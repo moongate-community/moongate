@@ -54,50 +54,6 @@ public class NetworkServiceTests
     }
 
     [Test]
-    public void OnClientDisconnected_ShouldPublishCachedRemoteEndPointFromSession()
-    {
-        var messageBus = new NetworkServiceTestMessageBusService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var sessions = new GameNetworkSessionService();
-        using var service = new NetworkService(
-            messageBus,
-            eventBus,
-            new PacketDispatchService(),
-            sessions,
-            new()
-            {
-                RootDirectory = Path.GetTempPath(),
-                LogLevel = LogLevelType.Debug,
-                LogPacketData = false
-            }
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = sessions.GetOrCreate(client);
-        var remoteEndPointProperty = typeof(GameNetworkSession).GetProperty(nameof(GameNetworkSession.RemoteEndPoint));
-
-        Assert.That(remoteEndPointProperty, Is.Not.Null);
-        remoteEndPointProperty!.SetValue(session.NetworkSession, "203.0.113.5:2593");
-
-        var method = typeof(NetworkService).GetMethod(
-            "OnClientDisconnected",
-            BindingFlags.Instance | BindingFlags.NonPublic
-        );
-
-        Assert.That(method, Is.Not.Null);
-        method!.Invoke(service, [null, new MoongateTCPClientEventArgs(client)]);
-
-        var disconnectedEvent = eventBus.Events.OfType<PlayerDisconnectedEvent>().FirstOrDefault();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(disconnectedEvent.SessionId, Is.EqualTo(client.SessionId));
-                Assert.That(disconnectedEvent.RemoteEndPoint, Is.EqualTo("203.0.113.5:2593"));
-            }
-        );
-    }
-
-    [Test]
     public void OnClientData_WhenFixedPacketArrives_ShouldEnqueueTypedGamePacket()
     {
         var messageBus = new NetworkServiceTestMessageBusService();
@@ -525,6 +481,50 @@ public class NetworkServiceTests
                 Assert.That(parsedPacket.Packet, Is.TypeOf<AccountLoginPacket>());
                 Assert.That(messageBus.Packets.Count, Is.EqualTo(1));
                 Assert.That(messageBus.Packets[0].PacketId, Is.EqualTo(0x80));
+            }
+        );
+    }
+
+    [Test]
+    public void OnClientDisconnected_ShouldPublishCachedRemoteEndPointFromSession()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = sessions.GetOrCreate(client);
+        var remoteEndPointProperty = typeof(GameNetworkSession).GetProperty(nameof(GameNetworkSession.RemoteEndPoint));
+
+        Assert.That(remoteEndPointProperty, Is.Not.Null);
+        remoteEndPointProperty!.SetValue(session.NetworkSession, "203.0.113.5:2593");
+
+        var method = typeof(NetworkService).GetMethod(
+            "OnClientDisconnected",
+            BindingFlags.Instance | BindingFlags.NonPublic
+        );
+
+        Assert.That(method, Is.Not.Null);
+        method!.Invoke(service, [null, new MoongateTCPClientEventArgs(client)]);
+
+        var disconnectedEvent = eventBus.Events.OfType<PlayerDisconnectedEvent>().FirstOrDefault();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(disconnectedEvent.SessionId, Is.EqualTo(client.SessionId));
+                Assert.That(disconnectedEvent.RemoteEndPoint, Is.EqualTo("203.0.113.5:2593"));
             }
         );
     }

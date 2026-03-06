@@ -12,15 +12,13 @@ using Moongate.Server.Types.Commands;
 using Moongate.Server.Types.World;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Templates.Items;
-using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Commands.WorldGen;
 
 [RegisterConsoleCommand(
     "spawn_decorations",
     "Run door world generation immediately. Usage: .spawn_doors",
-    CommandSourceType.Console | CommandSourceType.InGame,
-    AccountType.Administrator
+    CommandSourceType.Console | CommandSourceType.InGame
 )]
 public class SpawnDecorationsCommand : ICommandExecutor
 {
@@ -77,7 +75,7 @@ public class SpawnDecorationsCommand : ICommandExecutor
 
         foreach (var decoration in decorations)
         {
-            if (_itemFactoryService.TryGetItemTemplate(decoration.TypeName, out var _))
+            if (_itemFactoryService.TryGetItemTemplate(decoration.TypeName, out _))
             {
                 var item = _itemFactoryService.CreateItemFromTemplate(decoration.TypeName);
 

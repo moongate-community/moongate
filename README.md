@@ -128,6 +128,16 @@ The project is actively in development and already includes:
 - Region music mapped as typed `MusicName` and resolved by `MapId` + position.
 - Minimal email stack with Scriban templates and SMTP sender (`Moongate.Email`), wired through `IEmailService`.
 - Basic/timid A* pathfinding service is available (`IPathfindingService` / `AStarPathfindingService`) and already used by Lua mobile movement primitives (`MoveTowards`).
+- Light cycle is now isolated in `ILightService`/`LightService` (separate from weather), including global override commands exposed to Lua.
+- Lua command scripts are organized under `moongate_data/scripts/commands/gm` (one command per file, imported from `init.lua`).
+
+## Recent Development Highlights
+
+- Persistence serialization was migrated to MessagePack-CSharp source-generated contracts to resolve NativeAOT runtime instability.
+- Outbound packet sending was split into a dedicated networking thread path to reduce game-loop contention.
+- Spatial/game-loop hot paths received allocation-focused optimizations across login, packet dispatch, event bus, and persistence mapping.
+- Light cycle logic was extracted from `WeatherService` into dedicated `ILightService`/`LightService`.
+- New Lua GM command scripts were added under `moongate_data/scripts/commands/gm` (`.eclipse`, `.set_world_light`, `.teleports`).
 
 ## Spatial Chunk Strategy
 
@@ -158,7 +168,9 @@ Moongate uses a world-generation pipeline based on `IWorldGenerator`.
   - targeted execution by name (`GenerateAsync("doors")`),
   - optional progress callback (`Action<string>`) for logs/progress output.
 - Door generation is implemented as `DoorGeneratorBuilder` (`Name = "doors"`), with hardcoded scan regions (ModernUO-style) and `CanFit` filtering before accepting candidate placements.
-- Current output is a generated placement record list (`MapId`, `Location`, `Facing`) used for debug/integration; item instantiation is intentionally decoupled.
+- Generated doors are persisted as world items and include facing/link metadata for runtime behavior.
+- Doors now support live open/close behavior on double-click through Lua + `DoorService`.
+- ORA LE PORTE SI APRONO!! :D :D
 
 Manual trigger:
 
@@ -219,7 +231,7 @@ Moongate uses a lightweight file-based persistence model implemented in `src/Moo
 
 - Snapshot file (`world.snapshot.bin`) for full world state checkpoints.
 - Append-only journal (`world.journal.bin`) for incremental operations between snapshots.
-- MemoryPack binary serialization for compact and fast read/write.
+- MessagePack-CSharp (source-generated) binary serialization for compact and fast read/write.
 - Per-operation checksums in journal entries to detect truncated/corrupted tails.
 - Runtime file-lock mode for snapshot/journal handles (`PersistenceOptions.EnableFileLock`, default: enabled).
 - Thread-safe repositories for accounts, mobiles, and items.
@@ -235,6 +247,13 @@ Runtime behavior:
 - During runtime, repositories append operations to journal.
 - On save/stop, `SaveSnapshotAsync()` writes a new snapshot and resets the journal.
 - With file-lock mode enabled, snapshot/journal handles remain open for process lifetime and prevent concurrent writers.
+
+NativeAOT note (post-mortem):
+
+- We hit an insidious NativeAOT crash (`Segmentation fault: 11`) during persistence save.
+- Root cause: the previous MemoryPack-based snapshot/journal path crashed under AOT in our runtime scenario.
+- Resolution: full persistence serializer migration from MemoryPack to MessagePack-CSharp source-generated contracts (`MessagePackObject`), covering both snapshot and journal payloads.
+- Result: AOT startup + first admin account creation + save cycle now complete without crash.
 
 Storage location:
 
@@ -543,6 +562,9 @@ Supported config env variables:
   - `MOONGATE_SPATIAL__SECTOR_WARMUP_RADIUS`
   - `MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS`
   - `MOONGATE_SPATIAL__LAZY_SECTOR_ENTITY_LOAD_RADIUS`
+  - `MOONGATE_SPATIAL__SECTOR_UPDATE_BROADCAST_RADIUS`
+  - `MOONGATE_SPATIAL__LIGHT_WORLD_START_UTC`
+  - `MOONGATE_SPATIAL__LIGHT_SECONDS_PER_UO_MINUTE`
 - Scripting:
   - `MOONGATE_SCRIPTING__ENABLE_FILE_WATCHER`
 - Email:
@@ -575,6 +597,9 @@ services:
       MOONGATE_HTTP__IS_OPEN_API_ENABLED: "true"
       MOONGATE_HTTP__JWT__SIGNING_KEY: "change-me"
       MOONGATE_SPATIAL__SECTOR_ENTER_SYNC_RADIUS: "3"
+      MOONGATE_SPATIAL__SECTOR_UPDATE_BROADCAST_RADIUS: "3"
+      MOONGATE_SPATIAL__LIGHT_WORLD_START_UTC: "1997-09-01T00:00:00Z"
+      MOONGATE_SPATIAL__LIGHT_SECONDS_PER_UO_MINUTE: "5"
       MOONGATE_PERSISTENCE__SAVE_INTERVAL_SECONDS: "60"
       MOONGATE_EMAIL__IS_ENABLED: "true"
       MOONGATE_EMAIL__SMTP__HOST: "smtp.example.com"
@@ -764,12 +789,12 @@ end
 
 Notes:
 
-- `brain` in the mobile template maps to `scripts/ai/<brain>.lua` (or explicit script path if configured in registry).
+- `brain` in mobile templates is treated as a brain id.
+- Scripts are loaded from `moongate_data/scripts/**` (usually via `require(...)` in `init.lua`).
 - `brain_loop` is resumed by the runner and can control next wake time via `coroutine.yield(ms)`.
 - `on_event` is invoked with `(eventType, fromSerial, eventObject)`.
 - Current event type emitted by the brain runner: `speech_heard`.
 - `eventObject` contains: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, and `location` (`x`, `y`, `z`).
-- Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
 
 ### Visual Effects From Lua
 
@@ -804,9 +829,15 @@ Dispatch convention:
 - If `scriptId == "none"`: fallback table resolution from item name
 - First candidate: `<normalized_item_name>`
 - Second candidate: `items_<normalized_item_name>`
-- Hook candidates:
-- `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
-- `double_click` -> `on_double_click`, `OnDoubleClick`
+- Hook names:
+- `single_click` -> `on_click`
+- `double_click` -> `on_double_click`
+
+GM Lua command examples shipped today:
+
+- `moongate_data/scripts/commands/gm/eclipse.lua` -> `.eclipse`
+- `moongate_data/scripts/commands/gm/set_world_light.lua` -> `.set_world_light <0-255>`
+- `moongate_data/scripts/commands/gm/teleports.lua` -> `.teleports`
 
 Example:
 
@@ -1015,6 +1046,42 @@ Latest comparison snapshot (`2026-02-23`, `net10.0`, Apple `M4 Max`, `osx-arm64`
 Detailed report:
 
 - `BenchmarkDotNet.Artifacts/results/aot-vs-jit.md`
+
+## Stress Test (Socket UO, Black-Box)
+
+Use the dedicated stress runner to validate server stability with real UO socket clients.
+
+Scenario target (default):
+
+- `100` concurrent clients
+- `300s` duration
+- account bootstrap via HTTP users API
+- login + enter world + continuous movement loop
+- SLO checks:
+  - login success rate `>= 99%`
+  - unexpected disconnects `= 0`
+  - movement ACK p95 `< 200ms`
+
+Run:
+
+```bash
+dotnet run --project tools/Moongate.Stress -- \
+  --host 127.0.0.1 --port 2593 \
+  --http http://localhost:8088 \
+  --clients 100 --duration 300 --ramp-up-per-second 10
+```
+
+When JWT protection is enabled on `/api/users`, provide admin credentials:
+
+```bash
+dotnet run --project tools/Moongate.Stress -- \
+  --admin-username admin --admin-password your_password
+```
+
+Output:
+
+- console summary with pass/fail and SLO violations
+- JSON report at `artifacts/stress/latest.json`
 
 ## Docker
 

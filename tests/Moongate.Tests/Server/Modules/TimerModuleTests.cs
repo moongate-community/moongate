@@ -33,11 +33,15 @@ public sealed class TimerModuleTests
         public bool UnregisterAllCalled { get; private set; }
 
         public void ProcessTick()
-        {
-            ProcessedTicksCount++;
-        }
+            => ProcessedTicksCount++;
 
-        public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
+        public string RegisterTimer(
+            string name,
+            TimeSpan interval,
+            Action callback,
+            TimeSpan? delay = null,
+            bool repeat = false
+        )
         {
             LastName = name;
             LastInterval = interval;
@@ -49,9 +53,7 @@ public sealed class TimerModuleTests
         }
 
         public void UnregisterAllTimers()
-        {
-            UnregisterAllCalled = true;
-        }
+            => UnregisterAllCalled = true;
 
         public bool UnregisterTimer(string timerId)
         {
@@ -102,28 +104,18 @@ public sealed class TimerModuleTests
     }
 
     [Test]
-    public void Every_ShouldRegisterRepeatingTimerAndReturnTimerId()
+    public void Callback_WhenInvoked_ShouldExecuteLuaClosure()
     {
-        var timerService = new TimerModuleTestTimerService
-        {
-            NextTimerId = "timer-every"
-        };
+        var timerService = new TimerModuleTestTimerService();
         var module = new TimerModule(timerService);
         var script = new Script();
-        var callback = script.DoString("return function() end").Function;
+        script.DoString("counter = 0");
+        var callback = script.DoString("return function() counter = counter + 1 end").Function;
 
-        var timerId = module.Every("test_every", 1000, callback, 500);
+        _ = module.After("test_callback", 10, callback);
+        timerService.LastCallback!.Invoke();
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(timerId, Is.EqualTo("timer-every"));
-                Assert.That(timerService.LastName, Is.EqualTo("test_every"));
-                Assert.That(timerService.LastInterval, Is.EqualTo(TimeSpan.FromMilliseconds(1000)));
-                Assert.That(timerService.LastDelay, Is.EqualTo(TimeSpan.FromMilliseconds(500)));
-                Assert.That(timerService.LastRepeat, Is.True);
-            }
-        );
+        Assert.That(script.Globals.Get("counter").Number, Is.EqualTo(1));
     }
 
     [Test]
@@ -147,6 +139,17 @@ public sealed class TimerModuleTests
     }
 
     [Test]
+    public void CancelAll_ShouldForwardToTimerService()
+    {
+        var timerService = new TimerModuleTestTimerService();
+        var module = new TimerModule(timerService);
+
+        module.CancelAll();
+
+        Assert.That(timerService.UnregisterAllCalled, Is.True);
+    }
+
+    [Test]
     public void CancelByName_ShouldForwardToTimerService()
     {
         var timerService = new TimerModuleTestTimerService
@@ -167,28 +170,27 @@ public sealed class TimerModuleTests
     }
 
     [Test]
-    public void CancelAll_ShouldForwardToTimerService()
+    public void Every_ShouldRegisterRepeatingTimerAndReturnTimerId()
     {
-        var timerService = new TimerModuleTestTimerService();
-        var module = new TimerModule(timerService);
-
-        module.CancelAll();
-
-        Assert.That(timerService.UnregisterAllCalled, Is.True);
-    }
-
-    [Test]
-    public void Callback_WhenInvoked_ShouldExecuteLuaClosure()
-    {
-        var timerService = new TimerModuleTestTimerService();
+        var timerService = new TimerModuleTestTimerService
+        {
+            NextTimerId = "timer-every"
+        };
         var module = new TimerModule(timerService);
         var script = new Script();
-        script.DoString("counter = 0");
-        var callback = script.DoString("return function() counter = counter + 1 end").Function;
+        var callback = script.DoString("return function() end").Function;
 
-        _ = module.After("test_callback", 10, callback);
-        timerService.LastCallback!.Invoke();
+        var timerId = module.Every("test_every", 1000, callback, 500);
 
-        Assert.That(script.Globals.Get("counter").Number, Is.EqualTo(1));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(timerId, Is.EqualTo("timer-every"));
+                Assert.That(timerService.LastName, Is.EqualTo("test_every"));
+                Assert.That(timerService.LastInterval, Is.EqualTo(TimeSpan.FromMilliseconds(1000)));
+                Assert.That(timerService.LastDelay, Is.EqualTo(TimeSpan.FromMilliseconds(500)));
+                Assert.That(timerService.LastRepeat, Is.True);
+            }
+        );
     }
 }

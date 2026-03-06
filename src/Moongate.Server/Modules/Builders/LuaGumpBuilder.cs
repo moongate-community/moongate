@@ -10,6 +10,13 @@ public sealed class LuaGumpBuilder
     private readonly StringBuilder _layout = new();
     private readonly List<string> _texts = [];
 
+    public LuaGumpBuilder AlphaRegion(int x, int y, int width, int height)
+    {
+        AppendToken($"{{ checkertrans {x} {y} {width} {height} }}");
+
+        return this;
+    }
+
     public string BuildLayout()
         => _layout.ToString();
 
@@ -19,20 +26,6 @@ public sealed class LuaGumpBuilder
     public LuaGumpBuilder Button(int x, int y, int normalId, int pressedId, int buttonId)
     {
         AppendToken($"{{ button {x} {y} {normalId} {pressedId} 1 0 {buttonId} }}");
-
-        return this;
-    }
-
-    public LuaGumpBuilder Page(int pageId = 0)
-    {
-        AppendToken($"{{ page {pageId} }}");
-
-        return this;
-    }
-
-    public LuaGumpBuilder Group(int groupId)
-    {
-        AppendToken($"{{ group {groupId} }}");
 
         return this;
     }
@@ -51,19 +44,23 @@ public sealed class LuaGumpBuilder
         return this;
     }
 
-    public LuaGumpBuilder Radio(int x, int y, int inactiveId, int activeId, int switchId, bool initialState = false)
+    public LuaGumpBuilder Group(int groupId)
     {
-        AppendToken($"{{ radio {x} {y} {inactiveId} {activeId} {(initialState ? 1 : 0)} {switchId} }}");
+        AppendToken($"{{ group {groupId} }}");
 
         return this;
     }
 
-    public LuaGumpBuilder AlphaRegion(int x, int y, int width, int height)
-    {
-        AppendToken($"{{ checkertrans {x} {y} {width} {height} }}");
-
-        return this;
-    }
+    public LuaGumpBuilder Html(
+        int x,
+        int y,
+        int width,
+        int height,
+        string text,
+        bool background = true,
+        bool scrollbar = false
+    )
+        => HtmlLocalized(x, y, width, height, text, background, scrollbar);
 
     public LuaGumpBuilder HtmlLocalized(
         int x,
@@ -80,19 +77,6 @@ public sealed class LuaGumpBuilder
         AppendToken($"{{ htmlgump {x} {y} {width} {height} {index} {(background ? 1 : 0)} {(scrollbar ? 1 : 0)} }}");
 
         return this;
-    }
-
-    public LuaGumpBuilder Html(
-        int x,
-        int y,
-        int width,
-        int height,
-        string text,
-        bool background = true,
-        bool scrollbar = false
-    )
-    {
-        return HtmlLocalized(x, y, width, height, text, background, scrollbar);
     }
 
     public LuaGumpBuilder Image(int x, int y, int gumpId, int hue = 0)
@@ -139,6 +123,50 @@ public sealed class LuaGumpBuilder
         return this;
     }
 
+    public LuaGumpBuilder NoClose()
+    {
+        AppendToken("{ noclose }");
+
+        return this;
+    }
+
+    public LuaGumpBuilder NoMove()
+    {
+        AppendToken("{ nomove }");
+
+        return this;
+    }
+
+    public LuaGumpBuilder Page(int pageId = 0)
+    {
+        AppendToken($"{{ page {pageId} }}");
+
+        return this;
+    }
+
+    public LuaGumpBuilder Radio(int x, int y, int inactiveId, int activeId, int switchId, bool initialState = false)
+    {
+        AppendToken($"{{ radio {x} {y} {inactiveId} {activeId} {(initialState ? 1 : 0)} {switchId} }}");
+
+        return this;
+    }
+
+    public LuaGumpBuilder ResizePic(int x, int y, int gumpId, int width, int height)
+    {
+        AppendToken($"{{ resizepic {x} {y} {gumpId} {width} {height} }}");
+
+        return this;
+    }
+
+    public LuaGumpBuilder Text(int x, int y, int hue, string text)
+    {
+        var index = _texts.Count;
+        _texts.Add(text ?? string.Empty);
+        AppendToken($"{{ text {x} {y} {hue} {index} }}");
+
+        return this;
+    }
+
     public LuaGumpBuilder TextEntry(int x, int y, int width, int height, int hue, int entryId, string text)
     {
         var index = _texts.Count;
@@ -160,36 +188,6 @@ public sealed class LuaGumpBuilder
     public LuaGumpBuilder ToolTip(int number)
     {
         AppendToken($"{{ tooltip {number} }}");
-
-        return this;
-    }
-
-    public LuaGumpBuilder NoClose()
-    {
-        AppendToken("{ noclose }");
-
-        return this;
-    }
-
-    public LuaGumpBuilder NoMove()
-    {
-        AppendToken("{ nomove }");
-
-        return this;
-    }
-
-    public LuaGumpBuilder ResizePic(int x, int y, int gumpId, int width, int height)
-    {
-        AppendToken($"{{ resizepic {x} {y} {gumpId} {width} {height} }}");
-
-        return this;
-    }
-
-    public LuaGumpBuilder Text(int x, int y, int hue, string text)
-    {
-        var index = _texts.Count;
-        _texts.Add(text ?? string.Empty);
-        AppendToken($"{{ text {x} {y} {hue} {index} }}");
 
         return this;
     }

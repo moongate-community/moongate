@@ -19,19 +19,19 @@ public interface ICharacterService
     Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId);
 
     /// <summary>
-    /// Creates and persists a new character, returning the allocated character serial.
-    /// </summary>
-    /// <param name="character">Character entity to create.</param>
-    /// <returns>The created character serial identifier.</returns>
-    Task<Serial> CreateCharacterAsync(UOMobileEntity character);
-
-    /// <summary>
     /// Applies starter shirt and pants hues to a created character when the corresponding equipment exists.
     /// </summary>
     /// <param name="characterId">Character serial identifier.</param>
     /// <param name="shirtHue">Shirt hue from character creation.</param>
     /// <param name="pantsHue">Pants hue from character creation.</param>
     Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue);
+
+    /// <summary>
+    /// Creates and persists a new character, returning the allocated character serial.
+    /// </summary>
+    /// <param name="character">Character entity to create.</param>
+    /// <returns>The created character serial identifier.</returns>
+    Task<Serial> CreateCharacterAsync(UOMobileEntity character);
 
     /// <summary>
     /// Loads the character backpack with contained items for outbound packet serialization.

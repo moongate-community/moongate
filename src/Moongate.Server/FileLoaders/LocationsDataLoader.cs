@@ -4,10 +4,10 @@ using Moongate.Core.Types;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Json.Locations;
-using Moongate.UO.Data.Geometry;
 using Serilog;
 
 namespace Moongate.Server.FileLoaders;
@@ -97,9 +97,6 @@ public class LocationsDataLoader : IFileLoader
         return Task.CompletedTask;
     }
 
-    private static bool TryResolveMapId(string fileName, out int mapId)
-        => MapIdByFileName.TryGetValue(fileName.Trim(), out mapId);
-
     private static void FlattenCategory(
         int mapId,
         string mapName,
@@ -109,9 +106,8 @@ public class LocationsDataLoader : IFileLoader
     )
     {
         var categoryName = category.Name?.Trim() ?? string.Empty;
-        var categoryPath = string.IsNullOrWhiteSpace(parentPath)
-                               ? categoryName
-                               : string.IsNullOrWhiteSpace(categoryName) ? parentPath : $"{parentPath} / {categoryName}";
+        var categoryPath = string.IsNullOrWhiteSpace(parentPath) ? categoryName :
+                           string.IsNullOrWhiteSpace(categoryName) ? parentPath : $"{parentPath} / {categoryName}";
 
         foreach (var location in category.Locations)
         {
@@ -142,4 +138,7 @@ public class LocationsDataLoader : IFileLoader
 
         return true;
     }
+
+    private static bool TryResolveMapId(string fileName, out int mapId)
+        => MapIdByFileName.TryGetValue(fileName.Trim(), out mapId);
 }

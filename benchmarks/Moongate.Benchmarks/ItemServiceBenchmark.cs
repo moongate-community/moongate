@@ -1,12 +1,9 @@
 using BenchmarkDotNet.Attributes;
 using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Server.Data.Events.Base;
-using Moongate.Server.Data.Items;
-using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Services.Items;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -24,119 +21,13 @@ public class ItemServiceBenchmark : IDisposable
     private Serial _movingItemId;
     private Serial _dropItemId;
 
-    [Benchmark(OperationsPerInvoke = 100)]
-    public int MoveItemBetweenContainers()
-    {
-        var success = 0;
-        var toA = false;
-
-        for (var i = 0; i < 100; i++)
-        {
-            var targetContainer = toA ? _containerAId : _containerBId;
-            var moved = _itemService
-                        .MoveItemToContainerAsync(_movingItemId, targetContainer, new Point2D(i % 40, i % 30))
-                        .GetAwaiter()
-                        .GetResult();
-
-            if (moved)
-            {
-                success++;
-            }
-
-            toA = !toA;
-        }
-
-        return success;
-    }
-
-    [Benchmark(OperationsPerInvoke = 100)]
-    public int DropItemToGroundFromContainer()
-    {
-        var success = 0;
-
-        for (var i = 0; i < 100; i++)
-        {
-            _itemService
-                .MoveItemToContainerAsync(_dropItemId, _containerAId, new Point2D(1, 1))
-                .GetAwaiter()
-                .GetResult();
-
-            var dropped = _itemService
-                          .DropItemToGroundAsync(_dropItemId, new Point3D(1450 + (i % 8), 1670 + (i % 8), 0), mapId: 0)
-                          .GetAwaiter()
-                          .GetResult();
-
-            if (dropped is not null)
-            {
-                success++;
-            }
-        }
-
-        return success;
-    }
-
-    [GlobalSetup]
-    public async Task Setup()
-    {
-        _persistenceService = new();
-        _itemService = new(_persistenceService, new NoOpGameEventBusService());
-
-        _containerAId = (Serial)0x4000_0010;
-        _containerBId = (Serial)0x4000_0020;
-        _movingItemId = (Serial)0x4000_0100;
-        _dropItemId = (Serial)0x4000_0200;
-
-        var containerA = CreateContainer(_containerAId, 0x0E75);
-        var containerB = CreateContainer(_containerBId, 0x0E76);
-        var movingItem = CreateItem(_movingItemId, 0x0E21);
-        var dropItem = CreateItem(_dropItemId, 0x0EED);
-
-        containerA.AddItem(movingItem, new(1, 1));
-        containerA.AddItem(dropItem, new(2, 2));
-
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(containerA);
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(containerB);
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(movingItem);
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(dropItem);
-    }
-
-    private static UOItemEntity CreateContainer(Serial id, int itemId)
-        => new()
-        {
-            Id = id,
-            ItemId = itemId,
-            IsStackable = false,
-            Location = new Point3D(1450, 1670, 0),
-            MapId = 0,
-            Amount = 1,
-            Hue = 0,
-            Direction = DirectionType.North,
-            ScriptId = "bench_container"
-        };
-
-    private static UOItemEntity CreateItem(Serial id, int itemId)
-        => new()
-        {
-            Id = id,
-            ItemId = itemId,
-            IsStackable = false,
-            Location = new Point3D(0, 0, 0),
-            MapId = 0,
-            Amount = 1,
-            Hue = 0,
-            Direction = DirectionType.North,
-            ScriptId = "bench_item"
-        };
-
     private sealed class NoOpGameEventBusService : IGameEventBusService
     {
         public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
             where TEvent : IGameEvent
             => ValueTask.CompletedTask;
 
-        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
-        {
-        }
+        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent { }
     }
 
     private sealed class InMemoryPersistenceService : IPersistenceService
@@ -148,9 +39,7 @@ public class ItemServiceBenchmark : IDisposable
 
         public IPersistenceUnitOfWork UnitOfWork { get; }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public Task SaveAsync(CancellationToken cancellationToken = default)
             => Task.CompletedTask;
@@ -297,7 +186,8 @@ public class ItemServiceBenchmark : IDisposable
         public ValueTask<bool> ExistsAsync(
             Func<UOAccountEntity, bool> predicate,
             CancellationToken cancellationToken = default
-        ) => ValueTask.FromResult(_accounts.Values.Any(predicate));
+        )
+            => ValueTask.FromResult(_accounts.Values.Any(predicate));
 
         public ValueTask<IReadOnlyCollection<UOAccountEntity>> GetAllAsync(CancellationToken cancellationToken = default)
             => ValueTask.FromResult<IReadOnlyCollection<UOAccountEntity>>(_accounts.Values.ToList());
@@ -343,4 +233,108 @@ public class ItemServiceBenchmark : IDisposable
         _persistenceService.Dispose();
         GC.SuppressFinalize(this);
     }
+
+    [Benchmark(OperationsPerInvoke = 100)]
+    public int DropItemToGroundFromContainer()
+    {
+        var success = 0;
+
+        for (var i = 0; i < 100; i++)
+        {
+            _itemService
+                .MoveItemToContainerAsync(_dropItemId, _containerAId, new(1, 1))
+                .GetAwaiter()
+                .GetResult();
+
+            var dropped = _itemService
+                          .DropItemToGroundAsync(_dropItemId, new(1450 + i % 8, 1670 + i % 8, 0), 0)
+                          .GetAwaiter()
+                          .GetResult();
+
+            if (dropped is not null)
+            {
+                success++;
+            }
+        }
+
+        return success;
+    }
+
+    [Benchmark(OperationsPerInvoke = 100)]
+    public int MoveItemBetweenContainers()
+    {
+        var success = 0;
+        var toA = false;
+
+        for (var i = 0; i < 100; i++)
+        {
+            var targetContainer = toA ? _containerAId : _containerBId;
+            var moved = _itemService
+                        .MoveItemToContainerAsync(_movingItemId, targetContainer, new(i % 40, i % 30))
+                        .GetAwaiter()
+                        .GetResult();
+
+            if (moved)
+            {
+                success++;
+            }
+
+            toA = !toA;
+        }
+
+        return success;
+    }
+
+    [GlobalSetup]
+    public async Task Setup()
+    {
+        _persistenceService = new();
+        _itemService = new(_persistenceService, new NoOpGameEventBusService());
+
+        _containerAId = (Serial)0x4000_0010;
+        _containerBId = (Serial)0x4000_0020;
+        _movingItemId = (Serial)0x4000_0100;
+        _dropItemId = (Serial)0x4000_0200;
+
+        var containerA = CreateContainer(_containerAId, 0x0E75);
+        var containerB = CreateContainer(_containerBId, 0x0E76);
+        var movingItem = CreateItem(_movingItemId, 0x0E21);
+        var dropItem = CreateItem(_dropItemId, 0x0EED);
+
+        containerA.AddItem(movingItem, new(1, 1));
+        containerA.AddItem(dropItem, new(2, 2));
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(containerA);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(containerB);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(movingItem);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(dropItem);
+    }
+
+    private static UOItemEntity CreateContainer(Serial id, int itemId)
+        => new()
+        {
+            Id = id,
+            ItemId = itemId,
+            IsStackable = false,
+            Location = new(1450, 1670, 0),
+            MapId = 0,
+            Amount = 1,
+            Hue = 0,
+            Direction = DirectionType.North,
+            ScriptId = "bench_container"
+        };
+
+    private static UOItemEntity CreateItem(Serial id, int itemId)
+        => new()
+        {
+            Id = id,
+            ItemId = itemId,
+            IsStackable = false,
+            Location = new(0, 0, 0),
+            MapId = 0,
+            Amount = 1,
+            Hue = 0,
+            Direction = DirectionType.North,
+            ScriptId = "bench_item"
+        };
 }

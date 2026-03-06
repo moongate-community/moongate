@@ -1,6 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Interfaces.Services.Events;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Modules;
@@ -39,19 +38,21 @@ public sealed class EffectModule
         }
 
         return _dispatchEventsService.DispatchMobileEffectAsync(
-            mapId,
-            new Point3D(x, y, z),
-            (ushort)Math.Min(itemId, ushort.MaxValue),
-            (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
-            (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
-            hue,
-            renderMode,
-            (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
-            (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
-            (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
-            (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
-            (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
-        ).GetAwaiter().GetResult();
+                                         mapId,
+                                         new(x, y, z),
+                                         (ushort)Math.Min(itemId, ushort.MaxValue),
+                                         (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
+                                         (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
+                                         hue,
+                                         renderMode,
+                                         (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
+                                         (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
+                                         (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
+                                         (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
+                                         (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
+                                     )
+                                     .GetAwaiter()
+                                     .GetResult();
     }
 
     [ScriptFunction("send_to_player", "Sends a location effect to a single character id.")]
@@ -111,18 +112,20 @@ public sealed class EffectModule
         }
 
         return _dispatchEventsService.DispatchEffectToPlayerAsync(
-            (Serial)characterId,
-            new Point3D(x, y, z),
-            (ushort)Math.Min(itemId, ushort.MaxValue),
-            (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
-            (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
-            hue,
-            renderMode,
-            (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
-            (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
-            (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
-            (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
-            (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
-        ).GetAwaiter().GetResult();
+                                         (Serial)characterId,
+                                         new(x, y, z),
+                                         (ushort)Math.Min(itemId, ushort.MaxValue),
+                                         (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
+                                         (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
+                                         hue,
+                                         renderMode,
+                                         (ushort)Math.Clamp(effect, ushort.MinValue, ushort.MaxValue),
+                                         (ushort)Math.Clamp(explodeEffect, ushort.MinValue, ushort.MaxValue),
+                                         (ushort)Math.Clamp(explodeSound, ushort.MinValue, ushort.MaxValue),
+                                         (byte)Math.Clamp(layer, byte.MinValue, byte.MaxValue),
+                                         (ushort)Math.Clamp(unknown3, ushort.MinValue, ushort.MaxValue)
+                                     )
+                                     .GetAwaiter()
+                                     .GetResult();
     }
 }

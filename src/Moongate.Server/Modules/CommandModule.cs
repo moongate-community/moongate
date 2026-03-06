@@ -29,6 +29,30 @@ public sealed class CommandModule
         AccountType MinimumAccountType
     );
 
+    [ScriptFunction("execute", "Executes a registered command and returns output lines.")]
+    public Table Execute(string commandText, int source = (int)CommandSourceType.Console)
+    {
+        if (string.IsNullOrWhiteSpace(commandText))
+        {
+            throw new ArgumentException("Command text cannot be empty.", nameof(commandText));
+        }
+
+        var normalizedSource = NormalizeExecutionSource(source);
+        var output = _commandSystemService.ExecuteCommandWithOutputAsync(commandText, normalizedSource)
+                                          .GetAwaiter()
+                                          .GetResult();
+
+        var table = new Table(new());
+        var index = 1;
+
+        foreach (var line in output)
+        {
+            table[index++] = line;
+        }
+
+        return table;
+    }
+
     [ScriptFunction("register", "Registers a command handler from Lua.")]
     public void Register(string name, Closure handler, Table? options = null)
     {
@@ -43,6 +67,7 @@ public sealed class CommandModule
             context =>
             {
                 var luaContext = new LuaCommandContext(context);
+
                 try
                 {
                     handler.OwnerScript.Call(handler, UserData.Create(luaContext));
@@ -61,29 +86,6 @@ public sealed class CommandModule
             configuration.Source,
             configuration.MinimumAccountType
         );
-    }
-
-    [ScriptFunction("execute", "Executes a registered command and returns output lines.")]
-    public Table Execute(string commandText, int source = (int)CommandSourceType.Console)
-    {
-        if (string.IsNullOrWhiteSpace(commandText))
-        {
-            throw new ArgumentException("Command text cannot be empty.", nameof(commandText));
-        }
-
-        var normalizedSource = NormalizeExecutionSource(source);
-        var output = _commandSystemService.ExecuteCommandWithOutputAsync(commandText, normalizedSource)
-                                          .GetAwaiter()
-                                          .GetResult();
-
-        var table = new Table(new Script());
-        var index = 1;
-        foreach (var line in output)
-        {
-            table[index++] = line;
-        }
-
-        return table;
     }
 
     private static CommandSourceType NormalizeExecutionSource(int source)

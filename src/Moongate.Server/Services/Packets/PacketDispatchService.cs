@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Moongate.Network.Packets.Registry;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Interfaces.Listener;
@@ -12,6 +13,8 @@ namespace Moongate.Server.Services.Packets;
 /// </summary>
 public class PacketDispatchService : IPacketDispatchService
 {
+    private const double SlowOpcodeDispatchThresholdMilliseconds = 100;
+    private const double SlowListenerDispatchThresholdMilliseconds = 50;
     private static readonly PacketRegistry _packetRegistry = CreatePacketRegistry();
     private readonly ILogger _logger = Log.ForContext<PacketDispatchService>();
     private readonly ConcurrentDictionary<byte, List<IPacketListener>> _packetListeners = new();
@@ -50,20 +53,50 @@ public class PacketDispatchService : IPacketDispatchService
             return false;
         }
 
-        IPacketListener[] snapshot;
+        int listenerCount;
 
         lock (listeners)
         {
-            if (listeners.Count == 0)
-            {
-                return false;
-            }
-
-            snapshot = listeners.ToArray();
+            listenerCount = listeners.Count;
         }
 
-        var tasks = snapshot.Select(l => NotifyListenerSafeAsync(opCode, gamePacket, l));
-        Task.WhenAll(tasks).GetAwaiter().GetResult();
+        if (listenerCount == 0)
+        {
+            return false;
+        }
+
+        var dispatchStart = Stopwatch.GetTimestamp();
+
+        for (var i = 0; i < listenerCount; i++)
+        {
+            IPacketListener listener;
+
+            lock (listeners)
+            {
+                if (i >= listeners.Count)
+                {
+                    break;
+                }
+
+                listener = listeners[i];
+            }
+
+            NotifyListenerSafe(opCode, gamePacket, listener);
+        }
+
+        var dispatchElapsed = Stopwatch.GetElapsedTime(dispatchStart);
+
+        if (dispatchElapsed.TotalMilliseconds >= SlowOpcodeDispatchThresholdMilliseconds)
+        {
+            _logger.Warning(
+                "Slow packet dispatch opcode=0x{OpCode:X2} listeners={ListenerCount} elapsed={ElapsedMs:0.###}ms session={SessionId} packet={PacketType}",
+                opCode,
+                listenerCount,
+                dispatchElapsed.TotalMilliseconds,
+                gamePacket.Session?.SessionId ?? 0,
+                gamePacket.Packet.GetType().Name
+            );
+        }
 
         return true;
     }
@@ -76,15 +109,38 @@ public class PacketDispatchService : IPacketDispatchService
         return registry;
     }
 
-    private async Task NotifyListenerSafeAsync(byte opCode, IncomingGamePacket gamePacket, IPacketListener listener)
+    private void NotifyListenerSafe(byte opCode, IncomingGamePacket gamePacket, IPacketListener listener)
     {
+        var listenerStart = Stopwatch.GetTimestamp();
+
         try
         {
-            _ = await listener.HandlePacketAsync(gamePacket.Session, gamePacket.Packet);
+            var task = listener.HandlePacketAsync(gamePacket.Session, gamePacket.Packet);
+
+            if (!task.IsCompletedSuccessfully)
+            {
+                task.GetAwaiter().GetResult();
+            }
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Listener failed for packet opcode 0x{OpCode:X2}", opCode);
+        }
+        finally
+        {
+            var elapsed = Stopwatch.GetElapsedTime(listenerStart);
+
+            if (elapsed.TotalMilliseconds >= SlowListenerDispatchThresholdMilliseconds)
+            {
+                _logger.Warning(
+                    "Slow packet listener opcode=0x{OpCode:X2} listener={ListenerType} elapsed={ElapsedMs:0.###}ms session={SessionId} packet={PacketType}",
+                    opCode,
+                    listener.GetType().FullName,
+                    elapsed.TotalMilliseconds,
+                    gamePacket.Session?.SessionId ?? 0,
+                    gamePacket.Packet.GetType().Name
+                );
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Moongate.Server.Services.Console.Internal.Logging;
 /// </summary>
 public sealed class ConsoleUiSerilogSink : ILogEventSink
 {
-    private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}";
+    private const string OutputTemplate = "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{Exception}";
 
     private readonly IConsoleUiService _consoleUiService;
     private readonly MessageTemplateTextFormatter _formatter = new(OutputTemplate, CultureInfo.InvariantCulture);

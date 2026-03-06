@@ -6,18 +6,6 @@ namespace Moongate.Server.Interfaces.Services.EvenLoop;
 public interface IBackgroundJobService
 {
     /// <summary>
-    /// Starts the background workers.
-    /// </summary>
-    /// <param name="workerCount">Optional number of workers. Uses default when null.</param>
-    void Start(int? workerCount = null);
-
-    /// <summary>
-    /// Stops all workers and waits for worker termination.
-    /// </summary>
-    /// <returns>Completion task.</returns>
-    Task StopAsync();
-
-    /// <summary>
     /// Enqueues a synchronous background action.
     /// </summary>
     /// <param name="job">Action to execute in a worker.</param>
@@ -28,6 +16,19 @@ public interface IBackgroundJobService
     /// </summary>
     /// <param name="job">Task-producing action to execute in a worker.</param>
     void EnqueueBackground(Func<Task> job);
+
+    /// <summary>
+    /// Executes pending game-loop callbacks up to the provided limit.
+    /// </summary>
+    /// <param name="maxActions">Maximum callbacks to execute.</param>
+    /// <returns>Executed callbacks count.</returns>
+    int ExecutePendingOnGameLoop(int maxActions = 100);
+
+    /// <summary>
+    /// Enqueues an action to be executed on the game loop thread.
+    /// </summary>
+    /// <param name="action">Action to execute in the game loop phase.</param>
+    void PostToGameLoop(Action action);
 
     /// <summary>
     /// Runs a background job and posts its result callback to game loop.
@@ -56,15 +57,14 @@ public interface IBackgroundJobService
     );
 
     /// <summary>
-    /// Enqueues an action to be executed on the game loop thread.
+    /// Starts the background workers.
     /// </summary>
-    /// <param name="action">Action to execute in the game loop phase.</param>
-    void PostToGameLoop(Action action);
+    /// <param name="workerCount">Optional number of workers. Uses default when null.</param>
+    void Start(int? workerCount = null);
 
     /// <summary>
-    /// Executes pending game-loop callbacks up to the provided limit.
+    /// Stops all workers and waits for worker termination.
     /// </summary>
-    /// <param name="maxActions">Maximum callbacks to execute.</param>
-    /// <returns>Executed callbacks count.</returns>
-    int ExecutePendingOnGameLoop(int maxActions = 100);
+    /// <returns>Completion task.</returns>
+    Task StopAsync();
 }

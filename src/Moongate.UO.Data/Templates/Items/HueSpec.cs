@@ -1,6 +1,6 @@
+using System.Globalization;
 using Moongate.Core.Random;
 using ShaiRandom.Generators;
-using System.Globalization;
 
 namespace Moongate.UO.Data.Templates.Items;
 
@@ -21,6 +21,19 @@ public readonly record struct HueSpec
     public int Max { get; }
 
     public bool IsRange { get; }
+
+    public static HueSpec FromRange(int min, int max)
+    {
+        if (min > max)
+        {
+            throw new ArgumentOutOfRangeException(nameof(min), "min cannot be greater than max");
+        }
+
+        return new(min, max, true);
+    }
+
+    public static HueSpec FromValue(int value)
+        => new(value, value, false);
 
     public static HueSpec ParseFromString(string value)
     {
@@ -63,19 +76,6 @@ public readonly record struct HueSpec
 
         throw new FormatException($"Invalid hue value: {value}");
     }
-
-    public static HueSpec FromRange(int min, int max)
-    {
-        if (min > max)
-        {
-            throw new ArgumentOutOfRangeException(nameof(min), "min cannot be greater than max");
-        }
-
-        return new(min, max, true);
-    }
-
-    public static HueSpec FromValue(int value)
-        => new(value, value, false);
 
     public int Resolve(IEnhancedRandom? rng = null)
     {

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
@@ -8,12 +9,14 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using MoonSharp.Interpreter;
 using Serilog;
 
 namespace Moongate.Server.Services.Items;
 
 [RegisterGameEventListener]
+
 /// <summary>
 /// Resolves and invokes Lua callbacks for item script hooks.
 /// </summary>
@@ -25,6 +28,7 @@ public sealed partial class ItemScriptDispatcher
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly Script? _luaScript;
     private readonly bool _supportsMoonSharpRuntime;
+    private readonly ConcurrentDictionary<string, bool> _hookAvailabilityCache = new(StringComparer.Ordinal);
 
     public ItemScriptDispatcher(
         IScriptEngineService scriptEngineService,
@@ -57,32 +61,19 @@ public sealed partial class ItemScriptDispatcher
 
         try
         {
-            var payload = BuildLuaContextPayload(context);
-
-            foreach (var tableName in ResolveTableCandidates(context))
+            if (!TryResolveHookFunction(
+                    ResolveTableCandidates(context.Item),
+                    ResolveHookCandidates(context.Hook),
+                    out var hookFunction
+                ))
             {
-                var scriptTable = ResolveScriptTable(tableName);
-                if (scriptTable is null)
-                {
-                    continue;
-                }
-
-                foreach (var hook in ResolveHookCandidates(context.Hook))
-                {
-                    var hookFunction = ResolveTableFunction(scriptTable, hook);
-
-                    if (hookFunction is null)
-                    {
-                        continue;
-                    }
-
-                    _luaScript.Call(hookFunction, payload);
-
-                    return Task.FromResult(true);
-                }
+                return Task.FromResult(false);
             }
 
-            return Task.FromResult(false);
+            var payload = BuildLuaContextPayload(context);
+            _luaScript.Call(hookFunction!, payload);
+
+            return Task.FromResult(true);
         }
         catch (Exception ex)
         {
@@ -97,74 +88,43 @@ public sealed partial class ItemScriptDispatcher
         }
     }
 
-    private static IEnumerable<string> ResolveHookCandidates(string hook)
+    public async Task HandleAsync(ItemSingleClickEvent gameEvent, CancellationToken cancellationToken = default)
+        => await HandleItemEvent(true, gameEvent.ItemSerial, gameEvent.SessionId);
+
+    public async Task HandleAsync(ItemDoubleClickEvent gameEvent, CancellationToken cancellationToken = default)
+        => await HandleItemEvent(false, gameEvent.ItemSerial, gameEvent.SessionId);
+
+    public bool HasHook(UOItemEntity item, string hook)
     {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!_supportsMoonSharpRuntime || _luaScript is null || string.IsNullOrWhiteSpace(hook))
+        {
+            return false;
+        }
+
         var normalizedHook = NormalizeToken(hook);
+        var scriptIdentity = ResolveScriptIdentity(item);
+        var cacheKey = $"{scriptIdentity}|{normalizedHook}";
 
-        if (normalizedHook == "single_click")
+        if (_hookAvailabilityCache.TryGetValue(cacheKey, out var cached))
         {
-            return ["on_click", "OnClick", "on_single_click", "OnSingleClick"];
+            return cached;
         }
 
-        if (normalizedHook == "double_click")
-        {
-            return ["on_double_click", "OnDoubleClick"];
-        }
+        var hasHook = TryResolveHookFunction(
+            ResolveTableCandidates(item),
+            ResolveHookCandidates(hook),
+            out _
+        );
 
-        var pascal = ToPascalCase(normalizedHook);
-        if (normalizedHook.StartsWith("on_", StringComparison.Ordinal))
-        {
-            return [normalizedHook, pascal];
-        }
+        _hookAvailabilityCache[cacheKey] = hasHook;
 
-        return [$"on_{normalizedHook}", $"On{pascal}", normalizedHook];
-    }
-
-    private static IEnumerable<string> ResolveTableCandidates(ItemScriptContext context)
-    {
-        var scriptId = context.Item.ScriptId?.Trim();
-
-        if (!string.IsNullOrWhiteSpace(scriptId) &&
-            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
-        {
-            yield return NormalizeToken(scriptId);
-            yield break;
-        }
-
-        var normalizedName = NormalizeToken(context.Item.Name ?? string.Empty);
-
-        if (!string.Equals(normalizedName, "unknown", StringComparison.Ordinal))
-        {
-            yield return normalizedName;
-            yield return $"items_{normalizedName}";
-        }
-    }
-
-    private DynValue? ResolveScriptTable(string tableName)
-    {
-        if (_luaScript is null)
-        {
-            return null;
-        }
-
-        return _luaScript.Globals.Get(tableName) is { Type: DataType.Table } table ? table : null;
-    }
-
-    private static DynValue? ResolveTableFunction(DynValue table, string functionName)
-    {
-        if (table.Type != DataType.Table || table.Table is null)
-        {
-            return null;
-        }
-
-        var function = table.Table.Get(functionName);
-
-        return function.Type == DataType.Function ? function : null;
+        return hasHook;
     }
 
     private static Dictionary<string, object?> BuildLuaContextPayload(ItemScriptContext context)
-    {
-        return new()
+        => new()
         {
             ["hook"] = context.Hook,
             ["session_id"] = context.Session?.SessionId,
@@ -187,7 +147,22 @@ public sealed partial class ItemScriptDispatcher
                 }
             }
         };
+
+    private async Task HandleItemEvent(bool isSingleClick, Serial itemId, long sessionId)
+    {
+        var (Found, Item) = await _itemService.TryToGetItemAsync(itemId);
+
+        if (Found)
+        {
+            if (_gameNetworkSessionService.TryGet(sessionId, out var session))
+            {
+                await DispatchAsync(new(session, Item, isSingleClick ? "single_click" : "double_click"));
+            }
+        }
     }
+
+    [GeneratedRegex("[^a-zA-Z0-9]+", RegexOptions.Compiled)]
+    private static partial Regex NonAlphaNumericRegex();
 
     private static string NormalizeToken(string token)
     {
@@ -199,8 +174,87 @@ public sealed partial class ItemScriptDispatcher
         return string.IsNullOrWhiteSpace(normalized) ? "unknown" : normalized;
     }
 
-    [GeneratedRegex("[^a-zA-Z0-9]+", RegexOptions.Compiled)]
-    private static partial Regex NonAlphaNumericRegex();
+    private static IEnumerable<string> ResolveHookCandidates(string hook)
+    {
+        var normalizedHook = NormalizeToken(hook);
+
+        if (normalizedHook == "single_click")
+        {
+            return ["on_click", "OnClick", "on_single_click", "OnSingleClick"];
+        }
+
+        if (normalizedHook == "double_click")
+        {
+            return ["on_double_click", "OnDoubleClick"];
+        }
+
+        var pascal = ToPascalCase(normalizedHook);
+
+        if (normalizedHook.StartsWith("on_", StringComparison.Ordinal))
+        {
+            return [normalizedHook, pascal];
+        }
+
+        return [$"on_{normalizedHook}", $"On{pascal}", normalizedHook];
+    }
+
+    private static string ResolveScriptIdentity(UOItemEntity item)
+    {
+        var scriptId = item.ScriptId?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(scriptId) &&
+            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"sid:{NormalizeToken(scriptId)}";
+        }
+
+        var normalizedName = NormalizeToken(item.Name ?? string.Empty);
+
+        return $"name:{normalizedName}";
+    }
+
+    private DynValue? ResolveScriptTable(string tableName)
+    {
+        if (_luaScript is null)
+        {
+            return null;
+        }
+
+        return _luaScript.Globals.Get(tableName) is { Type: DataType.Table } table ? table : null;
+    }
+
+    private static IEnumerable<string> ResolveTableCandidates(UOItemEntity item)
+    {
+        var scriptId = item.ScriptId?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(scriptId) &&
+            !string.Equals(scriptId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            yield return NormalizeToken(scriptId);
+
+            yield break;
+        }
+
+        var normalizedName = NormalizeToken(item.Name ?? string.Empty);
+
+        if (!string.Equals(normalizedName, "unknown", StringComparison.Ordinal))
+        {
+            yield return normalizedName;
+            yield return $"items_{normalizedName}";
+        }
+    }
+
+    private static DynValue? ResolveTableFunction(DynValue table, string functionName)
+    {
+        if (table.Type != DataType.Table || table.Table is null)
+        {
+            return null;
+        }
+
+        var function = table.Table.Get(functionName);
+
+        return function.Type == DataType.Function ? function : null;
+    }
 
     private static string ToPascalCase(string token)
     {
@@ -216,35 +270,47 @@ public sealed partial class ItemScriptDispatcher
             return "Unknown";
         }
 
-        return string.Concat(parts.Select(
-            static part => part.Length == 1
-                               ? part.ToUpperInvariant()
-                               : char.ToUpperInvariant(part[0]) + part[1..].ToLowerInvariant()
-        ));
+        return string.Concat(
+            parts.Select(
+                static part => part.Length == 1
+                                   ? part.ToUpperInvariant()
+                                   : char.ToUpperInvariant(part[0]) + part[1..].ToLowerInvariant()
+            )
+        );
     }
 
-    public async Task HandleAsync(ItemSingleClickEvent gameEvent, CancellationToken cancellationToken = default)
+    private bool TryResolveHookFunction(
+        IEnumerable<string> tableCandidates,
+        IEnumerable<string> hookCandidates,
+        out DynValue? hookFunction
+    )
     {
-        await HandleItemEvent(true, gameEvent.ItemSerial, gameEvent.SessionId);
-    }
+        hookFunction = null;
 
-    public async Task HandleAsync(ItemDoubleClickEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await HandleItemEvent(false, gameEvent.ItemSerial, gameEvent.SessionId);
-    }
-
-    private async Task HandleItemEvent(bool isSingleClick, Serial itemId, long sessionId)
-    {
-        var (Found, Item) = await _itemService.TryToGetItemAsync(itemId);
-
-        if (Found)
+        foreach (var tableName in tableCandidates)
         {
-            if (_gameNetworkSessionService.TryGet(sessionId, out var session))
+            var scriptTable = ResolveScriptTable(tableName);
+
+            if (scriptTable is null)
             {
-                await DispatchAsync(
-                    new ItemScriptContext(session, Item, isSingleClick ? "single_click" : "double_click")
-                );
+                continue;
+            }
+
+            foreach (var hookName in hookCandidates)
+            {
+                var resolvedFunction = ResolveTableFunction(scriptTable, hookName);
+
+                if (resolvedFunction is null)
+                {
+                    continue;
+                }
+
+                hookFunction = resolvedFunction;
+
+                return true;
             }
         }
+
+        return false;
     }
 }

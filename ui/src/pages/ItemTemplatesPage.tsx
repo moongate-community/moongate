@@ -22,6 +22,7 @@ interface ItemTemplateSummary {
   name: string
   category: string
   itemId: string
+  params?: Record<string, { type: number; value: string }>
 }
 
 interface ItemTemplatePage {
@@ -269,6 +270,7 @@ export function ItemTemplatesPage() {
             <TableColumn>NAME</TableColumn>
             <TableColumn>CATEGORY</TableColumn>
             <TableColumn>ITEM ID</TableColumn>
+            <TableColumn>PARAMS</TableColumn>
           </TableHeader>
           <TableBody
             items={result.items}
@@ -307,6 +309,9 @@ export function ItemTemplatesPage() {
                   >
                     {item.itemId}
                   </Chip>
+                </TableCell>
+                <TableCell>
+                  <span className="text-[rgba(185,187,211,0.8)]">{Object.keys(item.params ?? {}).length}</span>
                 </TableCell>
               </TableRow>
             )}

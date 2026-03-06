@@ -9,14 +9,6 @@ namespace Moongate.Server.Interfaces.Services.Entities;
 public interface IItemFactoryService
 {
     /// <summary>
-    /// Tries to resolve an item template by id.
-    /// </summary>
-    /// <param name="itemTemplateId">Item template identifier.</param>
-    /// <param name="definition">Resolved template when found.</param>
-    /// <returns><see langword="true" /> when template exists; otherwise <see langword="false" />.</returns>
-    bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition);
-
-    /// <summary>
     /// Creates an item entity from an item template id.
     /// </summary>
     /// <param name="itemTemplateId">Item template identifier.</param>
@@ -28,4 +20,12 @@ public interface IItemFactoryService
     /// </summary>
     /// <returns>Initialized backpack item entity with allocated serial.</returns>
     UOItemEntity GetNewBackpack();
+
+    /// <summary>
+    /// Tries to resolve an item template by id.
+    /// </summary>
+    /// <param name="itemTemplateId">Item template identifier.</param>
+    /// <param name="definition">Resolved template when found.</param>
+    /// <returns><see langword="true" /> when template exists; otherwise <see langword="false" />.</returns>
+    bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition);
 }

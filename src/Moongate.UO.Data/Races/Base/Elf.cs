@@ -60,8 +60,7 @@ public class Elf : Race
         => 0;
 
     public override int RandomHair(bool female) // Random hair doesn't include baldness
-    {
-        return RandomUtils.Random(8) switch
+        => RandomUtils.Random(8) switch
         {
             0 => 0x2FC0,                   // Long Feather
             1 => 0x2FC1,                   // Short
@@ -72,7 +71,6 @@ public class Elf : Race
             6 => female ? 0x2FCC : 0x2FBF, // Flower or Mid-long
             _ => female ? 0x2FD0 : 0x2FCD
         };
-    }
 
     public override int RandomHairHue()
         => m_HairHues.RandomElement();

@@ -37,4 +37,3 @@ public sealed class GumpHandler : BasePacketListener
         return Task.FromResult(true);
     }
 }
-

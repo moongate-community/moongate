@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Moongate.Core.Json;
 using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Json;
@@ -7,7 +8,6 @@ using Moongate.UO.Data.Json.Names;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Skills;
-using System.Text.Json;
 
 namespace Moongate.Tests.UO.Data.Json;
 
@@ -81,6 +81,38 @@ public class MoongateUOJsonSerializationContextTests
     }
 
     [Test]
+    public void Deserialize_RegionParent_ShouldResolveParentMapId()
+    {
+        const string json = """
+                            [
+                              {
+                                "$type": "TownRegion",
+                                "Map": "Trammel",
+                                "Name": "Child",
+                                "Parent": { "Name": "Britain", "Map": "Felucca" },
+                                "Area": [ { "x1": 1, "y1": 1, "x2": 2, "y2": 2 } ]
+                              }
+                            ]
+                            """;
+
+        var regions = JsonSerializer.Deserialize(
+            json,
+            MoongateUOJsonSerializationContext.Default.JsonRegionArray
+        );
+        var town = regions![0] as JsonTownRegion;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(town, Is.Not.Null);
+                Assert.That(town!.MapId, Is.EqualTo(1));
+                Assert.That(town.Parent, Is.Not.Null);
+                Assert.That(town.Parent!.MapId, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
     public void Deserialize_Regions_ShouldMaterializePolymorphicRegionTypes()
     {
         const string json = """
@@ -110,38 +142,6 @@ public class MoongateUOJsonSerializationContextTests
                 Assert.That(regions[4], Is.TypeOf<JsonGreenAcresRegion>());
                 Assert.That(regions[5], Is.TypeOf<JsonJailRegion>());
                 Assert.That(regions[0].MapId, Is.EqualTo(0));
-            }
-        );
-    }
-
-    [Test]
-    public void Deserialize_RegionParent_ShouldResolveParentMapId()
-    {
-        const string json = """
-                            [
-                              {
-                                "$type": "TownRegion",
-                                "Map": "Trammel",
-                                "Name": "Child",
-                                "Parent": { "Name": "Britain", "Map": "Felucca" },
-                                "Area": [ { "x1": 1, "y1": 1, "x2": 2, "y2": 2 } ]
-                              }
-                            ]
-                            """;
-
-        var regions = JsonSerializer.Deserialize(
-            json,
-            MoongateUOJsonSerializationContext.Default.JsonRegionArray
-        );
-        var town = regions![0] as JsonTownRegion;
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(town, Is.Not.Null);
-                Assert.That(town!.MapId, Is.EqualTo(1));
-                Assert.That(town.Parent, Is.Not.Null);
-                Assert.That(town.Parent!.MapId, Is.EqualTo(0));
             }
         );
     }

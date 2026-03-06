@@ -1,6 +1,5 @@
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
-using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
@@ -28,7 +27,6 @@ namespace Moongate.Server.Handlers;
 
 [RegisterGameEventListener,
  RegisterPacketHandler(PacketDefinition.CharacterCreationPacket),
- RegisterPacketHandler(PacketDefinition.DoubleClickPacket),
  RegisterPacketHandler(PacketDefinition.RequestWarModePacket)
 ]
 
@@ -44,6 +42,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly ILightService? _lightService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -51,7 +50,8 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IEntityFactoryService entityFactoryService,
         IGameEventBusService gameEventBusService,
         IGameNetworkSessionService gameNetworkSessionService,
-        ISpatialWorldService spatialWorldService
+        ISpatialWorldService spatialWorldService,
+        ILightService? lightService = null
     ) : base(outgoingPacketQueue)
     {
         _characterService = characterService;
@@ -59,6 +59,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _lightService = lightService;
 
         _gameEventBusService.RegisterListener(this);
     }
@@ -114,8 +115,12 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new WarModePacket(character));
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
-        Enqueue(session, new OverallLightLevelPacket(LightLevelType.Day));
-        Enqueue(session, new PersonalLightLevelPacket(LightLevelType.Day, character));
+        var globalLight = _lightService?.ComputeGlobalLightLevel(character.MapId, character.Location) ??
+                          (int)LightLevelType.Day;
+        var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
+        var personalLightLevel = (LightLevelType)0;
+        Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
+        Enqueue(session, new PersonalLightLevelPacket(personalLightLevel, character));
         Enqueue(session, new SeasonPacket(character.Map.Season));
 
         Enqueue(session, new LoginCompletePacket());
@@ -142,54 +147,9 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
             return await HandleCharacterCreationPacketAsync(session, characterCreationPacket);
         }
 
-        if (packet is DoubleClickPacket doubleClickPacket)
-        {
-            return await HandleMobileDoubleClickAsync(session, doubleClickPacket);
-        }
-
         if (packet is RequestWarModePacket requestWarModePacket)
         {
             return HandleRequestWarModeAsync(session, requestWarModePacket);
-        }
-
-        return true;
-    }
-
-    private bool HandleRequestWarModeAsync(GameSession session, RequestWarModePacket requestWarModePacket)
-    {
-        if (session.Character is null)
-        {
-            return true;
-        }
-
-        session.Character.IsWarMode = requestWarModePacket.IsWarMode;
-        Enqueue(session, new WarModePacket(session.Character));
-
-        return true;
-    }
-
-    private async Task<bool> HandleMobileDoubleClickAsync(GameSession session, DoubleClickPacket doubleClickPacket)
-    {
-        if (doubleClickPacket.TargetSerial.IsMobile)
-        {
-            await _gameEventBusService.PublishAsync(
-                new MobileDoubleClickEvent(
-                    session.SessionId,
-                    doubleClickPacket.TargetSerial
-                )
-            );
-
-            var mobile = await _characterService.GetCharacterAsync(doubleClickPacket.TargetSerial);
-
-            if (mobile is null)
-            {
-                return true;
-            }
-
-            if (mobile.Body is { IsAnimal: false, IsMonster: false })
-            {
-                Enqueue(session, new PaperdollPacket(mobile));
-            }
         }
 
         return true;
@@ -225,6 +185,19 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         await _characterService.AddCharacterToAccountAsync(session.AccountId, newCharacter);
 
         await HandleCharacterLoggedIn(session, newCharacter);
+
+        return true;
+    }
+
+    private bool HandleRequestWarModeAsync(GameSession session, RequestWarModePacket requestWarModePacket)
+    {
+        if (session.Character is null)
+        {
+            return true;
+        }
+
+        session.Character.IsWarMode = requestWarModePacket.IsWarMode;
+        Enqueue(session, new WarModePacket(session.Character));
 
         return true;
     }

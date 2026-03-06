@@ -1,11 +1,10 @@
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Commands;
@@ -51,7 +50,7 @@ public sealed class AddItemCommand : ICommandExecutor
                 return Task.CompletedTask;
             }
 
-            _itemService.MoveItemToContainerAsync(item.Id, player.BackpackId, new Point2D(1, 1), context.SessionId)
+            _itemService.MoveItemToContainerAsync(item.Id, player.BackpackId, new(1, 1), context.SessionId)
                         .GetAwaiter()
                         .GetResult();
             context.Print("Added a brick to your backpack.");

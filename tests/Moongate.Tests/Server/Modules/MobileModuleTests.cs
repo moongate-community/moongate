@@ -4,8 +4,8 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
-using Moongate.Tests.Server.Support;
 using Moongate.Tests.Server.Services.Spatial;
+using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -111,13 +111,6 @@ public class MobileModuleTests
             return Task.FromResult(true);
         }
 
-        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
-        {
-            _ = character;
-
-            return Task.FromResult((Serial)1u);
-        }
-
         public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
         {
             _ = characterId;
@@ -125,6 +118,13 @@ public class MobileModuleTests
             _ = pantsHue;
 
             return Task.CompletedTask;
+        }
+
+        public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+        {
+            _ = character;
+
+            return Task.FromResult((Serial)1u);
         }
 
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)

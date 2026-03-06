@@ -8,38 +8,29 @@ namespace Moongate.Tests.Server.Services.Spatial;
 
 public class WeatherServiceTests
 {
-    [Test]
-    public void GenerateSnapshot_ShouldResolveRainValues()
+    private sealed class NullTimerService : ITimerService
     {
-        var service = CreateService();
-        var weather = new JsonWeather
-        {
-            Id = 1,
-            Name = "Rainland",
-            MinTemp = 10,
-            MaxTemp = 10,
-            RainChance = 100,
-            RainIntensity = new() { Min = 5, Max = 5 },
-            RainTempDrop = 2
-        };
+        public void ProcessTick() { }
 
-        var snapshot = service.GenerateSnapshot(weather, new Random(42));
+        public string RegisterTimer(
+            string name,
+            TimeSpan interval,
+            Action callback,
+            TimeSpan? delay = null,
+            bool repeat = false
+        )
+            => Guid.NewGuid().ToString("N");
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(snapshot.WeatherId, Is.EqualTo(1));
-                Assert.That(snapshot.WeatherName, Is.EqualTo("Rainland"));
-                Assert.That(snapshot.BaseTemperature, Is.EqualTo(10));
-                Assert.That(snapshot.AdjustedTemperature, Is.EqualTo(10));
-                Assert.That(snapshot.Condition, Is.EqualTo(JsonWeatherCondition.Rain));
-                Assert.That(snapshot.EffectIntensity, Is.EqualTo(5));
-                Assert.That(snapshot.TemperatureDrop, Is.EqualTo(2));
-                Assert.That(snapshot.EffectiveTemperature, Is.EqualTo(8));
-                Assert.That(snapshot.Type, Is.EqualTo(WeatherType.Rain));
-                Assert.That(snapshot.EffectCount, Is.EqualTo((byte)5));
-            }
-        );
+        public void UnregisterAllTimers() { }
+
+        public bool UnregisterTimer(string timerId)
+            => false;
+
+        public int UnregisterTimersByName(string name)
+            => 0;
+
+        public int UpdateTicksDelta(long timestampMilliseconds)
+            => 0;
     }
 
     [Test]
@@ -56,7 +47,7 @@ public class WeatherServiceTests
             ColdIntensity = 3
         };
 
-        var snapshot = service.GenerateSnapshot(weather, new Random(10));
+        var snapshot = service.GenerateSnapshot(weather, new(10));
 
         Assert.Multiple(
             () =>
@@ -84,7 +75,7 @@ public class WeatherServiceTests
             StormTempDrop = 1
         };
 
-        var snapshot = service.GenerateSnapshot(weather, new Random(5));
+        var snapshot = service.GenerateSnapshot(weather, new(5));
 
         Assert.Multiple(
             () =>
@@ -97,29 +88,44 @@ public class WeatherServiceTests
         );
     }
 
-    private sealed class NullTimerService : ITimerService
+    [Test]
+    public void GenerateSnapshot_ShouldResolveRainValues()
     {
-        public void ProcessTick() { }
+        var service = CreateService();
+        var weather = new JsonWeather
+        {
+            Id = 1,
+            Name = "Rainland",
+            MinTemp = 10,
+            MaxTemp = 10,
+            RainChance = 100,
+            RainIntensity = new() { Min = 5, Max = 5 },
+            RainTempDrop = 2
+        };
 
-        public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
-            => Guid.NewGuid().ToString("N");
+        var snapshot = service.GenerateSnapshot(weather, new(42));
 
-        public void UnregisterAllTimers() { }
-
-        public bool UnregisterTimer(string timerId)
-            => false;
-
-        public int UnregisterTimersByName(string name)
-            => 0;
-
-        public int UpdateTicksDelta(long timestampMilliseconds)
-            => 0;
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshot.WeatherId, Is.EqualTo(1));
+                Assert.That(snapshot.WeatherName, Is.EqualTo("Rainland"));
+                Assert.That(snapshot.BaseTemperature, Is.EqualTo(10));
+                Assert.That(snapshot.AdjustedTemperature, Is.EqualTo(10));
+                Assert.That(snapshot.Condition, Is.EqualTo(JsonWeatherCondition.Rain));
+                Assert.That(snapshot.EffectIntensity, Is.EqualTo(5));
+                Assert.That(snapshot.TemperatureDrop, Is.EqualTo(2));
+                Assert.That(snapshot.EffectiveTemperature, Is.EqualTo(8));
+                Assert.That(snapshot.Type, Is.EqualTo(WeatherType.Rain));
+                Assert.That(snapshot.EffectCount, Is.EqualTo((byte)5));
+            }
+        );
     }
 
-    private static WeatherService CreateService()
+    private static WeatherService CreateService(RegionDataLoaderTestSpatialWorldService? spatial = null)
         => new(
             new NullTimerService(),
-            new RegionDataLoaderTestSpatialWorldService(),
+            spatial ?? new RegionDataLoaderTestSpatialWorldService(),
             new BasePacketListenerTestOutgoingPacketQueue(),
             new FakeGameNetworkSessionService()
         );

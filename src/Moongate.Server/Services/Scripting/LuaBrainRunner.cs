@@ -52,36 +52,61 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
-    public override Task StartAsync()
+    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
     {
-        if (!string.IsNullOrWhiteSpace(_timerId))
+        lock (_syncRoot)
         {
-            return Task.CompletedTask;
+            if (_states.TryGetValue(mobileId, out var state))
+            {
+                state.PendingDeath.Enqueue(deathContext);
+            }
         }
+    }
 
-        _timerId = _timerService.RegisterTimer(
-            "lua_brain_runner",
-            TimeSpan.FromMilliseconds(DefaultTickMilliseconds),
-            TickCallback,
-            repeat: true
-        );
+    /// <inheritdoc />
+    public void EnqueueSpeech(SpeechHeardEvent gameEvent)
+    {
+        lock (_syncRoot)
+        {
+            if (_states.TryGetValue(gameEvent.ListenerNpcId, out var state))
+            {
+                state.PendingSpeech.Enqueue(gameEvent);
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+        EnqueueSpeech(gameEvent);
 
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public override Task StopAsync()
+    public Task HandleAsync(MobileAddedInWorldEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        if (!string.IsNullOrWhiteSpace(_timerId))
+        _ = cancellationToken;
+
+        if (gameEvent.Mobile.IsPlayer)
         {
-            _timerService.UnregisterTimer(_timerId);
-            _timerId = null;
+            return Task.CompletedTask;
         }
 
-        lock (_syncRoot)
+        var resolvedBrainId = gameEvent.BrainId;
+
+        if (string.IsNullOrWhiteSpace(resolvedBrainId))
         {
-            _states.Clear();
+            resolvedBrainId = gameEvent.Mobile.BrainId;
         }
+
+        if (string.IsNullOrWhiteSpace(resolvedBrainId))
+        {
+            return Task.CompletedTask;
+        }
+
+        Register(gameEvent.Mobile, resolvedBrainId);
 
         return Task.CompletedTask;
     }
@@ -130,70 +155,36 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
-    public void Unregister(Serial mobileId)
+    public override Task StartAsync()
     {
-        lock (_syncRoot)
+        if (!string.IsNullOrWhiteSpace(_timerId))
         {
-            _states.Remove(mobileId);
+            return Task.CompletedTask;
         }
-    }
 
-    /// <inheritdoc />
-    public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-    {
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(gameEvent.ListenerNpcId, out var state))
-            {
-                state.PendingSpeech.Enqueue(gameEvent);
-            }
-        }
-    }
-
-    /// <inheritdoc />
-    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
-    {
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(mobileId, out var state))
-            {
-                state.PendingDeath.Enqueue(deathContext);
-            }
-        }
-    }
-
-    /// <inheritdoc />
-    public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        _ = cancellationToken;
-        EnqueueSpeech(gameEvent);
+        _timerId = _timerService.RegisterTimer(
+            "lua_brain_runner",
+            TimeSpan.FromMilliseconds(DefaultTickMilliseconds),
+            TickCallback,
+            repeat: true
+        );
 
         return Task.CompletedTask;
     }
 
     /// <inheritdoc />
-    public Task HandleAsync(MobileAddedInWorldEvent gameEvent, CancellationToken cancellationToken = default)
+    public override Task StopAsync()
     {
-        _ = cancellationToken;
-
-        if (gameEvent.Mobile.IsPlayer)
+        if (!string.IsNullOrWhiteSpace(_timerId))
         {
-            return Task.CompletedTask;
+            _timerService.UnregisterTimer(_timerId);
+            _timerId = null;
         }
 
-        var resolvedBrainId = gameEvent.BrainId;
-
-        if (string.IsNullOrWhiteSpace(resolvedBrainId))
+        lock (_syncRoot)
         {
-            resolvedBrainId = gameEvent.Mobile.BrainId;
+            _states.Clear();
         }
-
-        if (string.IsNullOrWhiteSpace(resolvedBrainId))
-        {
-            return Task.CompletedTask;
-        }
-
-        Register(gameEvent.Mobile, resolvedBrainId);
 
         return Task.CompletedTask;
     }
@@ -253,10 +244,114 @@ public sealed class LuaBrainRunner
         return ValueTask.CompletedTask;
     }
 
-    private void TickCallback()
+    /// <inheritdoc />
+    public void Unregister(Serial mobileId)
     {
-        var nowMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        TickAllAsync(nowMilliseconds).AsTask().GetAwaiter().GetResult();
+        lock (_syncRoot)
+        {
+            _states.Remove(mobileId);
+        }
+    }
+
+    private static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
+        => new()
+        {
+            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
+            ["speaker_id"] = (uint)speech.SpeakerId,
+            ["text"] = speech.Text,
+            ["speech_type"] = (byte)speech.SpeechType,
+            ["map_id"] = speech.MapId,
+            ["location"] = new Dictionary<string, int>
+            {
+                ["x"] = speech.Location.X,
+                ["y"] = speech.Location.Y,
+                ["z"] = speech.Location.Z
+            }
+        };
+
+    private void DispatchPendingDeath(LuaBrainRuntimeState state)
+    {
+        if (_luaScript is null)
+        {
+            state.PendingDeath.Clear();
+
+            return;
+        }
+
+        while (state.PendingDeath.Count > 0)
+        {
+            var death = state.PendingDeath.Dequeue();
+            var byCharacter = death.ByCharacterId.HasValue
+                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
+                                  : DynValue.Nil;
+
+            if (state.OnEventFunction is not null)
+            {
+                _luaScript.Call(
+                    state.OnEventFunction,
+                    "death",
+                    byCharacter,
+                    death.Context
+                );
+
+                continue;
+            }
+
+            if (state.OnDeathFunction is null)
+            {
+                continue;
+            }
+
+            _luaScript.Call(
+                state.OnDeathFunction,
+                byCharacter,
+                death.Context
+            );
+        }
+    }
+
+    private void DispatchPendingSpeech(LuaBrainRuntimeState state)
+    {
+        if (_luaScript is null)
+        {
+            state.PendingSpeech.Clear();
+
+            return;
+        }
+
+        while (state.PendingSpeech.Count > 0)
+        {
+            var speech = state.PendingSpeech.Dequeue();
+
+            if (state.OnEventFunction is not null)
+            {
+                _luaScript.Call(
+                    state.OnEventFunction,
+                    "speech_heard",
+                    (uint)speech.SpeakerId,
+                    BuildSpeechEventPayload(speech)
+                );
+
+                continue;
+            }
+
+            if (state.OnSpeechFunction is null)
+            {
+                continue;
+            }
+
+            _luaScript.Call(
+                state.OnSpeechFunction,
+                (uint)speech.ListenerNpcId,
+                (uint)speech.SpeakerId,
+                speech.Text,
+                (byte)speech.SpeechType,
+                speech.MapId,
+                speech.Location.X,
+                speech.Location.Y,
+                speech.Location.Z
+            );
+        }
     }
 
     private void InitializeRuntimeState(LuaBrainRuntimeState state)
@@ -307,41 +402,62 @@ public sealed class LuaBrainRunner
         state.BrainCoroutine = _luaScript.CreateCoroutine(brainLoop).Coroutine;
     }
 
-    private long TickMoonSharpState(long nowMilliseconds, LuaBrainRuntimeState state)
+    private int ParseYieldDelay(DynValue yielded)
+    {
+        if (yielded.Type == DataType.Number)
+        {
+            var value = (int)Math.Round(yielded.Number);
+
+            return value <= 0 ? DefaultTickMilliseconds : value;
+        }
+
+        return DefaultTickMilliseconds;
+    }
+
+    private DynValue? ResolveBrainTable(string brainTableName)
     {
         if (_luaScript is null)
         {
-            return nowMilliseconds + DefaultTickMilliseconds;
+            return null;
         }
 
-        if (state.BrainCoroutine is null)
+        return _luaScript.Globals.Get(brainTableName) is { Type: DataType.Table } table ? table : null;
+    }
+
+    private string ResolveBrainTableName(string brainId)
+    {
+        if (_luaBrainRegistry.TryGet(brainId, out var definition) && definition is not null)
         {
-            state.IsFaulted = true;
-
-            return nowMilliseconds + FaultRetryMilliseconds;
+            return definition.BrainId.Trim();
         }
 
-        DispatchPendingSpeech(state);
-        DispatchPendingDeath(state);
+        return brainId;
+    }
 
-        if (state.BrainCoroutine.State == CoroutineState.Dead)
+    private static DynValue? ResolveTableFunction(DynValue table, params string[] functionNames)
+    {
+        if (table.Type != DataType.Table || table.Table is null)
         {
-            Unregister(state.MobileId);
-
-            return nowMilliseconds + DefaultTickMilliseconds;
+            return null;
         }
 
-        var result = state.BrainCoroutine.State == CoroutineState.NotStarted
-                         ? state.BrainCoroutine.Resume((uint)state.MobileId)
-                         : state.BrainCoroutine.Resume();
-        var delay = ParseYieldDelay(result);
-
-        if (state.BrainCoroutine.State == CoroutineState.Dead)
+        foreach (var functionName in functionNames)
         {
-            Unregister(state.MobileId);
+            var function = table.Table.Get(functionName);
+
+            if (function.Type == DataType.Function)
+            {
+                return function;
+            }
         }
 
-        return nowMilliseconds + delay;
+        return null;
+    }
+
+    private void TickCallback()
+    {
+        var nowMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        TickAllAsync(nowMilliseconds).AsTask().GetAwaiter().GetResult();
     }
 
     private void TickFallbackState(LuaBrainRuntimeState state)
@@ -390,158 +506,40 @@ public sealed class LuaBrainRunner
         _scriptEngineService.CallFunction("on_brain_tick", (uint)state.MobileId);
     }
 
-    private void DispatchPendingSpeech(LuaBrainRuntimeState state)
+    private long TickMoonSharpState(long nowMilliseconds, LuaBrainRuntimeState state)
     {
         if (_luaScript is null)
         {
-            state.PendingSpeech.Clear();
-
-            return;
+            return nowMilliseconds + DefaultTickMilliseconds;
         }
 
-        while (state.PendingSpeech.Count > 0)
+        if (state.BrainCoroutine is null)
         {
-            var speech = state.PendingSpeech.Dequeue();
+            state.IsFaulted = true;
 
-            if (state.OnEventFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnEventFunction,
-                    "speech_heard",
-                    (uint)speech.SpeakerId,
-                    BuildSpeechEventPayload(speech)
-                );
-
-                continue;
-            }
-
-            if (state.OnSpeechFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnSpeechFunction,
-                (uint)speech.ListenerNpcId,
-                (uint)speech.SpeakerId,
-                speech.Text,
-                (byte)speech.SpeechType,
-                speech.MapId,
-                speech.Location.X,
-                speech.Location.Y,
-                speech.Location.Z
-            );
-        }
-    }
-
-    private void DispatchPendingDeath(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingDeath.Clear();
-
-            return;
+            return nowMilliseconds + FaultRetryMilliseconds;
         }
 
-        while (state.PendingDeath.Count > 0)
+        DispatchPendingSpeech(state);
+        DispatchPendingDeath(state);
+
+        if (state.BrainCoroutine.State == CoroutineState.Dead)
         {
-            var death = state.PendingDeath.Dequeue();
-            var byCharacter = death.ByCharacterId.HasValue
-                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
-                                  : DynValue.Nil;
+            Unregister(state.MobileId);
 
-            if (state.OnEventFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnEventFunction,
-                    "death",
-                    byCharacter,
-                    death.Context
-                );
-
-                continue;
-            }
-
-            if (state.OnDeathFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnDeathFunction,
-                byCharacter,
-                death.Context
-            );
-        }
-    }
-
-    private static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
-    {
-        return new()
-        {
-            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
-            ["speaker_id"] = (uint)speech.SpeakerId,
-            ["text"] = speech.Text,
-            ["speech_type"] = (byte)speech.SpeechType,
-            ["map_id"] = speech.MapId,
-            ["location"] = new Dictionary<string, int>
-            {
-                ["x"] = speech.Location.X,
-                ["y"] = speech.Location.Y,
-                ["z"] = speech.Location.Z
-            }
-        };
-    }
-
-    private int ParseYieldDelay(DynValue yielded)
-    {
-        if (yielded.Type == DataType.Number)
-        {
-            var value = (int)Math.Round(yielded.Number);
-
-            return value <= 0 ? DefaultTickMilliseconds : value;
+            return nowMilliseconds + DefaultTickMilliseconds;
         }
 
-        return DefaultTickMilliseconds;
-    }
+        var result = state.BrainCoroutine.State == CoroutineState.NotStarted
+                         ? state.BrainCoroutine.Resume((uint)state.MobileId)
+                         : state.BrainCoroutine.Resume();
+        var delay = ParseYieldDelay(result);
 
-    private DynValue? ResolveBrainTable(string brainTableName)
-    {
-        if (_luaScript is null)
+        if (state.BrainCoroutine.State == CoroutineState.Dead)
         {
-            return null;
+            Unregister(state.MobileId);
         }
 
-        return _luaScript.Globals.Get(brainTableName) is { Type: DataType.Table } table ? table : null;
-    }
-
-    private static DynValue? ResolveTableFunction(DynValue table, params string[] functionNames)
-    {
-        if (table.Type != DataType.Table || table.Table is null)
-        {
-            return null;
-        }
-
-        foreach (var functionName in functionNames)
-        {
-            var function = table.Table.Get(functionName);
-
-            if (function.Type == DataType.Function)
-            {
-                return function;
-            }
-        }
-
-        return null;
-    }
-
-    private string ResolveBrainTableName(string brainId)
-    {
-        if (_luaBrainRegistry.TryGet(brainId, out var definition) && definition is not null)
-        {
-            return definition.BrainId.Trim();
-        }
-
-        return brainId;
+        return nowMilliseconds + delay;
     }
 }

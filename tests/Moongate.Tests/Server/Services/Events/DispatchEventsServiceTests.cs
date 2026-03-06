@@ -20,111 +20,122 @@ namespace Moongate.Tests.Server.Services.Events;
 
 public sealed class DispatchEventsServiceTests
 {
-    [Test]
-    public async Task HandleAsync_ForMobileWarModeChangedEvent_ShouldBroadcastMobileMovingPacket()
+    private sealed class DispatchEventsTestSpatialWorldService : ISpatialWorldService
     {
-        var spatial = new DispatchEventsTestSpatialWorldService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new DispatchEventsTestGameNetworkSessionService();
-        var service = new DispatchEventsService(spatial, queue, sessions);
-        var mobile = new UOMobileEntity
+        public int BroadcastCallCount { get; private set; }
+
+        public IGameNetworkPacket? LastPacket { get; private set; }
+
+        public int LastMapId { get; private set; }
+
+        public Point3D LastLocation { get; private set; } = Point3D.Zero;
+
+        public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile) { }
+
+        public void AddRegion(JsonRegion region) { }
+
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
         {
-            Id = (Serial)0x00000002u,
-            MapId = 1,
-            Location = new Point3D(111, 222, 7),
-            IsWarMode = true
-        };
+            _ = range;
+            _ = excludeSessionId;
+            BroadcastCallCount++;
+            LastPacket = packet;
+            LastMapId = mapId;
+            LastLocation = location;
 
-        await service.HandleAsync(new MobileWarModeChangedEvent(mobile));
+            return Task.FromResult(1);
+        }
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
-                Assert.That(spatial.LastMapId, Is.EqualTo(1));
-                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
-                Assert.That(spatial.LastPacket, Is.TypeOf<MobileMovingPacket>());
-            }
-        );
+        public List<MapSector> GetActiveSectors()
+            => [];
 
-        var packet = (MobileMovingPacket)spatial.LastPacket!;
-        Assert.That(packet.Mobile, Is.Not.Null);
-        Assert.That(packet.Mobile!.IsWarMode, Is.True);
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
+            => [];
+
+        public int GetMusic(int mapId, Point3D location)
+            => 0;
+
+        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
+            => [];
+
+        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
+            => [];
+
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
+            => [];
+
+        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+            => [];
+
+        public JsonRegion? GetRegionById(int regionId)
+            => null;
+
+        public MapSector? GetSectorByLocation(int mapId, Point3D location)
+            => null;
+
+        public SectorSystemStats GetStats()
+            => new();
+
+        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
+
+        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
+
+        public void RemoveEntity(Serial serial) { }
     }
 
-    [Test]
-    public async Task HandleAsync_ForMobilePlaySoundEvent_ShouldBroadcastPlaySoundPacket()
+    private sealed class DispatchEventsTestGameNetworkSessionService : IGameNetworkSessionService
     {
-        var spatial = new DispatchEventsTestSpatialWorldService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new DispatchEventsTestGameNetworkSessionService();
-        var service = new DispatchEventsService(spatial, queue, sessions);
-        var gameEvent = new MobilePlaySoundEvent(
-            mobileId: (Serial)0x00000002u,
-            mapId: 1,
-            location: new Point3D(111, 222, 7),
-            soundModel: 0x0210,
-            mode: 0x01,
-            unknown3: 0
-        );
+        public Dictionary<Serial, GameSession> Map { get; } = [];
 
-        await service.HandleAsync(gameEvent);
+        public int Count => Map.Count;
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
-                Assert.That(spatial.LastMapId, Is.EqualTo(1));
-                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
-                Assert.That(spatial.LastPacket, Is.TypeOf<PlaySoundEffectPacket>());
-            }
-        );
+        public void Clear()
+            => Map.Clear();
 
-        var packet = (PlaySoundEffectPacket)spatial.LastPacket!;
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(packet.Mode, Is.EqualTo(0x01));
-                Assert.That(packet.SoundModel, Is.EqualTo(0x0210));
-                Assert.That(packet.Unknown3, Is.EqualTo(0));
-                Assert.That(packet.Location, Is.EqualTo(new Point3D(111, 222, 7)));
-            }
-        );
-    }
+        public IReadOnlyCollection<GameSession> GetAll()
+            => [.. Map.Values];
 
-    [Test]
-    public async Task HandleAsync_ForPlaySoundToPlayerEvent_ShouldEnqueuePacketOnlyForTargetCharacterSession()
-    {
-        var spatial = new DispatchEventsTestSpatialWorldService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new DispatchEventsTestGameNetworkSessionService();
-        var targetCharacterId = (Serial)0x00000022u;
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        sessions.Map[targetCharacterId] = new GameSession(new(client))
+        public GameSession GetOrCreate(MoongateTCPClient client)
         {
-            CharacterId = targetCharacterId
-        };
-        var service = new DispatchEventsService(spatial, queue, sessions);
-        var gameEvent = new PlaySoundToPlayerEvent(
-            targetCharacterId,
-            new Point3D(50, 60, 7),
-            0x0201,
-            0x01,
-            0
-        );
+            _ = client;
 
-        await service.HandleAsync(gameEvent);
-        var dequeued = queue.TryDequeue(out var outbound);
+            throw new NotSupportedException();
+        }
 
-        Assert.Multiple(
-            () =>
+        public bool Remove(long sessionId)
+        {
+            var key = Map.FirstOrDefault(pair => pair.Value.SessionId == sessionId).Key;
+
+            if (key == Serial.Zero)
             {
-                Assert.That(dequeued, Is.True);
-                Assert.That(outbound.SessionId, Is.EqualTo(sessions.Map[targetCharacterId].SessionId));
-                Assert.That(outbound.Packet, Is.TypeOf<PlaySoundEffectPacket>());
-                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(0));
+                return false;
             }
-        );
+
+            return Map.Remove(key);
+        }
+
+        public bool TryGet(long sessionId, out GameSession session)
+        {
+            session = Map.Values.FirstOrDefault(value => value.SessionId == sessionId)!;
+
+            return session is not null;
+        }
+
+        public bool TryGetByCharacterId(Serial characterId, out GameSession session)
+            => Map.TryGetValue(characterId, out session!);
     }
 
     [Test]
@@ -135,12 +146,10 @@ public sealed class DispatchEventsServiceTests
         var sessions = new DispatchEventsTestGameNetworkSessionService();
         var service = new DispatchEventsService(spatial, queue, sessions);
         var gameEvent = new MobilePlayEffectEvent(
-            mobileId: (Serial)0x00000002u,
-            mapId: 1,
-            location: new Point3D(111, 222, 7),
-            itemId: 0x3728,
-            speed: 10,
-            duration: 10,
+            (Serial)0x00000002u,
+            1,
+            new(111, 222, 7),
+            0x3728,
             effect: 2023
         );
 
@@ -172,6 +181,76 @@ public sealed class DispatchEventsServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_ForMobilePlaySoundEvent_ShouldBroadcastPlaySoundPacket()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var gameEvent = new MobilePlaySoundEvent(
+            (Serial)0x00000002u,
+            1,
+            new(111, 222, 7),
+            0x0210
+        );
+
+        await service.HandleAsync(gameEvent);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
+                Assert.That(spatial.LastMapId, Is.EqualTo(1));
+                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(spatial.LastPacket, Is.TypeOf<PlaySoundEffectPacket>());
+            }
+        );
+
+        var packet = (PlaySoundEffectPacket)spatial.LastPacket!;
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.Mode, Is.EqualTo(0x01));
+                Assert.That(packet.SoundModel, Is.EqualTo(0x0210));
+                Assert.That(packet.Unknown3, Is.EqualTo(0));
+                Assert.That(packet.Location, Is.EqualTo(new Point3D(111, 222, 7)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobileWarModeChangedEvent_ShouldBroadcastMobileMovingPacket()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002u,
+            MapId = 1,
+            Location = new(111, 222, 7),
+            IsWarMode = true
+        };
+
+        await service.HandleAsync(new MobileWarModeChangedEvent(mobile));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
+                Assert.That(spatial.LastMapId, Is.EqualTo(1));
+                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(spatial.LastPacket, Is.TypeOf<MobileMovingPacket>());
+            }
+        );
+
+        var packet = (MobileMovingPacket)spatial.LastPacket!;
+        Assert.That(packet.Mobile, Is.Not.Null);
+        Assert.That(packet.Mobile!.IsWarMode, Is.True);
+    }
+
+    [Test]
     public async Task HandleAsync_ForPlayEffectToPlayerEvent_ShouldEnqueuePacketOnlyForTargetCharacterSession()
     {
         var spatial = new DispatchEventsTestSpatialWorldService();
@@ -179,17 +258,17 @@ public sealed class DispatchEventsServiceTests
         var sessions = new DispatchEventsTestGameNetworkSessionService();
         var targetCharacterId = (Serial)0x00000022u;
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        sessions.Map[targetCharacterId] = new GameSession(new(client))
+        sessions.Map[targetCharacterId] = new(new(client))
         {
             CharacterId = targetCharacterId
         };
         var service = new DispatchEventsService(spatial, queue, sessions);
         var gameEvent = new PlayEffectToPlayerEvent(
             targetCharacterId,
-            new Point3D(10, 20, 3),
-            itemId: 0x3728,
-            speed: 8,
-            duration: 12,
+            new(10, 20, 3),
+            0x3728,
+            8,
+            12,
             effect: 5023
         );
 
@@ -218,120 +297,36 @@ public sealed class DispatchEventsServiceTests
         );
     }
 
-    private sealed class DispatchEventsTestSpatialWorldService : ISpatialWorldService
+    [Test]
+    public async Task HandleAsync_ForPlaySoundToPlayerEvent_ShouldEnqueuePacketOnlyForTargetCharacterSession()
     {
-        public int BroadcastCallCount { get; private set; }
-
-        public IGameNetworkPacket? LastPacket { get; private set; }
-
-        public int LastMapId { get; private set; }
-
-        public Point3D LastLocation { get; private set; } = Point3D.Zero;
-
-        public Task<int> BroadcastToPlayersAsync(
-            IGameNetworkPacket packet,
-            int mapId,
-            Point3D location,
-            int? range = null,
-            long? excludeSessionId = null
-        )
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var targetCharacterId = (Serial)0x00000022u;
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        sessions.Map[targetCharacterId] = new(new(client))
         {
-            _ = range;
-            _ = excludeSessionId;
-            BroadcastCallCount++;
-            LastPacket = packet;
-            LastMapId = mapId;
-            LastLocation = location;
+            CharacterId = targetCharacterId
+        };
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var gameEvent = new PlaySoundToPlayerEvent(
+            targetCharacterId,
+            new(50, 60, 7),
+            0x0201
+        );
 
-            return Task.FromResult(1);
-        }
+        await service.HandleAsync(gameEvent);
+        var dequeued = queue.TryDequeue(out var outbound);
 
-        public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
-
-        public void AddOrUpdateMobile(UOMobileEntity mobile) { }
-
-        public void AddRegion(JsonRegion region) { }
-
-        public JsonRegion? GetRegionById(int regionId)
-            => null;
-
-        public int GetMusic(int mapId, Point3D location)
-            => 0;
-
-        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
-            => [];
-
-        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
-            => [];
-
-        public List<GameSession> GetPlayersInRange(
-            Point3D location,
-            int range,
-            int mapId,
-            GameSession? excludeSession = null
-        )
-            => [];
-
-        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
-            => [];
-
-        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
-            => [];
-
-        public List<MapSector> GetActiveSectors()
-            => [];
-
-        public MapSector? GetSectorByLocation(int mapId, Point3D location)
-            => null;
-
-        public SectorSystemStats GetStats()
-            => new();
-
-        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
-
-        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
-
-        public void RemoveEntity(Serial serial) { }
-    }
-
-    private sealed class DispatchEventsTestGameNetworkSessionService : IGameNetworkSessionService
-    {
-        public Dictionary<Serial, GameSession> Map { get; } = [];
-
-        public int Count => Map.Count;
-
-        public void Clear()
-            => Map.Clear();
-
-        public IReadOnlyCollection<GameSession> GetAll()
-            => [.. Map.Values];
-
-        public GameSession GetOrCreate(Moongate.Network.Client.MoongateTCPClient client)
-        {
-            _ = client;
-            throw new NotSupportedException();
-        }
-
-        public bool Remove(long sessionId)
-        {
-            var key = Map.FirstOrDefault(pair => pair.Value.SessionId == sessionId).Key;
-
-            if (key == Serial.Zero)
+        Assert.Multiple(
+            () =>
             {
-                return false;
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(sessions.Map[targetCharacterId].SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<PlaySoundEffectPacket>());
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(0));
             }
-
-            return Map.Remove(key);
-        }
-
-        public bool TryGet(long sessionId, out GameSession session)
-        {
-            session = Map.Values.FirstOrDefault(value => value.SessionId == sessionId)!;
-
-            return session is not null;
-        }
-
-        public bool TryGetByCharacterId(Serial characterId, out GameSession session)
-            => Map.TryGetValue(characterId, out session!);
+        );
     }
 }

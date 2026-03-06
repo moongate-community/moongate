@@ -43,6 +43,8 @@ public class UOItemEntity : IItemEntity
 
     public bool IsStackable { get; set; }
 
+    public bool IsDoor => TileData.ItemTable[ItemId][UOTileFlag.Door];
+
     public string ScriptId { get; set; }
 
     public ItemRarity Rarity { get; set; }
@@ -123,63 +125,10 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
-    /// Hydrates runtime contained-item references and in-memory child list from resolved entities.
+    /// Clears all custom properties.
     /// </summary>
-    /// <param name="containedItems">Resolved contained items for this container.</param>
-    public void HydrateContainedItemsRuntime(IEnumerable<UOItemEntity> containedItems)
-    {
-        ArgumentNullException.ThrowIfNull(containedItems);
-
-        _items.Clear();
-        _containedItemReferences.Clear();
-        ContainedItemIds.Clear();
-
-        foreach (var item in containedItems)
-        {
-            if (item.ParentContainerId != Id)
-            {
-                continue;
-            }
-
-            ContainedItemIds.Add(item.Id);
-            _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
-            item.Location = new(item.ContainerPosition.X, item.ContainerPosition.Y, 0);
-            _items.Add(item);
-        }
-    }
-
-    /// <summary>
-    /// Removes a contained item entry from this container.
-    /// </summary>
-    /// <param name="itemId">Contained item serial identifier.</param>
-    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
-    public bool RemoveItem(Serial itemId)
-    {
-        var removed = false;
-
-        for (var i = _items.Count - 1; i >= 0; i--)
-        {
-            if (_items[i].Id != itemId)
-            {
-                continue;
-            }
-
-            _items.RemoveAt(i);
-            removed = true;
-        }
-
-        if (ContainedItemIds.Remove(itemId))
-        {
-            removed = true;
-        }
-
-        _containedItemReferences.Remove(itemId);
-
-        return removed;
-    }
-
-    public override string ToString()
-        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
+    public void ClearCustomProperties()
+        => _customProperties.Clear();
 
     public override int GetHashCode()
     {
@@ -222,6 +171,229 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
+    /// Hydrates runtime contained-item references and in-memory child list from resolved entities.
+    /// </summary>
+    /// <param name="containedItems">Resolved contained items for this container.</param>
+    public void HydrateContainedItemsRuntime(IEnumerable<UOItemEntity> containedItems)
+    {
+        ArgumentNullException.ThrowIfNull(containedItems);
+
+        _items.Clear();
+        _containedItemReferences.Clear();
+        ContainedItemIds.Clear();
+
+        foreach (var item in containedItems)
+        {
+            if (item.ParentContainerId != Id)
+            {
+                continue;
+            }
+
+            ContainedItemIds.Add(item.Id);
+            _containedItemReferences[item.Id] = new(item.Id, item.ItemId, item.Hue);
+            item.Location = new(item.ContainerPosition.X, item.ContainerPosition.Y, 0);
+            _items.Add(item);
+        }
+    }
+
+    /// <summary>
+    /// Removes a custom property by key.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
+    public bool RemoveCustomProperty(string key)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+
+        return _customProperties.Remove(key);
+    }
+
+    /// <summary>
+    /// Removes a contained item entry from this container.
+    /// </summary>
+    /// <param name="itemId">Contained item serial identifier.</param>
+    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
+    public bool RemoveItem(Serial itemId)
+    {
+        var removed = false;
+
+        for (var i = _items.Count - 1; i >= 0; i--)
+        {
+            if (_items[i].Id != itemId)
+            {
+                continue;
+            }
+
+            _items.RemoveAt(i);
+            removed = true;
+        }
+
+        if (ContainedItemIds.Remove(itemId))
+        {
+            removed = true;
+        }
+
+        _containedItemReferences.Remove(itemId);
+
+        return removed;
+    }
+
+    /// <summary>
+    /// Sets a boolean custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Boolean value.</param>
+    public void SetCustomBoolean(string key, bool value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Boolean,
+                BooleanValue = value
+            }
+        );
+
+    /// <summary>
+    /// Sets a double custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Double value.</param>
+    public void SetCustomDouble(string key, double value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Double,
+                DoubleValue = value
+            }
+        );
+
+    /// <summary>
+    /// Sets an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value.</param>
+    public void SetCustomInteger(string key, long value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.Integer,
+                IntegerValue = value
+            }
+        );
+
+    /// <summary>
+    /// Sets or replaces a typed custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="property">Property value.</param>
+    public void SetCustomProperty(string key, ItemCustomProperty property)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(key);
+        ArgumentNullException.ThrowIfNull(property);
+        _customProperties[key] = property;
+    }
+
+    /// <summary>
+    /// Sets a string custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">String value.</param>
+    public void SetCustomString(string key, string? value)
+        => SetCustomProperty(
+            key,
+            new()
+            {
+                Type = ItemCustomPropertyType.String,
+                StringValue = value
+            }
+        );
+
+    public override string ToString()
+        => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
+
+    /// <summary>
+    /// Tries to get a boolean custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Boolean value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomBoolean(string key, out bool value)
+    {
+        value = false;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Boolean)
+        {
+            return false;
+        }
+
+        value = property.BooleanValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a double custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Double value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomDouble(string key, out double value)
+    {
+        value = 0;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Double)
+        {
+            return false;
+        }
+
+        value = property.DoubleValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get an integer custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Integer value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomInteger(string key, out long value)
+    {
+        value = 0;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
+        {
+            return false;
+        }
+
+        value = property.IntegerValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a string custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">String value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomString(string key, out string? value)
+    {
+        value = null;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.String)
+        {
+            return false;
+        }
+
+        value = property.StringValue;
+
+        return true;
+    }
+
+    /// <summary>
     /// Updates the container-local position for an item contained in this container.
     /// </summary>
     /// <param name="item">Contained item to update.</param>
@@ -250,178 +422,5 @@ public class UOItemEntity : IItemEntity
         }
 
         return false;
-    }
-
-    /// <summary>
-    /// Sets or replaces a typed custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="property">Property value.</param>
-    public void SetCustomProperty(string key, ItemCustomProperty property)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        ArgumentNullException.ThrowIfNull(property);
-        _customProperties[key] = property;
-    }
-
-    /// <summary>
-    /// Removes a custom property by key.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <returns><c>true</c> when removed; otherwise <c>false</c>.</returns>
-    public bool RemoveCustomProperty(string key)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-
-        return _customProperties.Remove(key);
-    }
-
-    /// <summary>
-    /// Clears all custom properties.
-    /// </summary>
-    public void ClearCustomProperties() => _customProperties.Clear();
-
-    /// <summary>
-    /// Sets an integer custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Integer value.</param>
-    public void SetCustomInteger(string key, long value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.Integer,
-                IntegerValue = value
-            }
-        );
-    }
-
-    /// <summary>
-    /// Sets a boolean custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Boolean value.</param>
-    public void SetCustomBoolean(string key, bool value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.Boolean,
-                BooleanValue = value
-            }
-        );
-    }
-
-    /// <summary>
-    /// Sets a double custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Double value.</param>
-    public void SetCustomDouble(string key, double value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.Double,
-                DoubleValue = value
-            }
-        );
-    }
-
-    /// <summary>
-    /// Sets a string custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">String value.</param>
-    public void SetCustomString(string key, string? value)
-    {
-        SetCustomProperty(
-            key,
-            new()
-            {
-                Type = ItemCustomPropertyType.String,
-                StringValue = value
-            }
-        );
-    }
-
-    /// <summary>
-    /// Tries to get an integer custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Integer value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomInteger(string key, out long value)
-    {
-        value = 0;
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Integer)
-        {
-            return false;
-        }
-
-        value = property.IntegerValue;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Tries to get a boolean custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Boolean value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomBoolean(string key, out bool value)
-    {
-        value = false;
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Boolean)
-        {
-            return false;
-        }
-
-        value = property.BooleanValue;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Tries to get a double custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Double value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomDouble(string key, out double value)
-    {
-        value = 0;
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.Double)
-        {
-            return false;
-        }
-
-        value = property.DoubleValue;
-
-        return true;
-    }
-
-    /// <summary>
-    /// Tries to get a string custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">String value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomString(string key, out string? value)
-    {
-        value = null;
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.String)
-        {
-            return false;
-        }
-
-        value = property.StringValue;
-
-        return true;
     }
 }

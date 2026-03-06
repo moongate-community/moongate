@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Events.Base;
 
 namespace Moongate.Server.Data.Events.Connections;
 

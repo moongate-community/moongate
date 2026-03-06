@@ -75,17 +75,50 @@ internal sealed class SpatialRegionResolver
         }
     }
 
-    private List<JsonRegion> GetCandidateRegionsUnsafe(int mapId, Point3D location)
+    private int CompareRegionOrderUnsafe(JsonRegion left, JsonRegion right)
     {
-        EnsureRegionIndexUnsafe();
-        var (sectorX, sectorY) = GetSectorCoordinates(location);
+        var byPriority = right.Priority.CompareTo(left.Priority);
 
-        if (_regionsBySector.TryGetValue((mapId, sectorX, sectorY), out var bySector))
+        if (byPriority != 0)
         {
-            return bySector;
+            return byPriority;
         }
 
-        return _regions;
+        var leftLevel = _regionChildLevels.TryGetValue(left, out var ll) ? ll : 0;
+        var rightLevel = _regionChildLevels.TryGetValue(right, out var rl) ? rl : 0;
+
+        return rightLevel.CompareTo(leftLevel);
+    }
+
+    private int ComputeChildLevelUnsafe(
+        JsonRegion region,
+        IReadOnlyDictionary<(int MapId, string Name), JsonRegion> byName,
+        HashSet<JsonRegion> visiting
+    )
+    {
+        if (_regionChildLevels.TryGetValue(region, out var cached))
+        {
+            return cached;
+        }
+
+        if (!visiting.Add(region))
+        {
+            return 0;
+        }
+
+        var level = 0;
+
+        if (region is JsonTownRegion town &&
+            town.Parent is not null &&
+            byName.TryGetValue((town.Parent.MapId, town.Parent.Name), out var parent))
+        {
+            level = ComputeChildLevelUnsafe(parent, byName, visiting) + 1;
+        }
+
+        visiting.Remove(region);
+        _regionChildLevels[region] = level;
+
+        return level;
     }
 
     private void EnsureRegionIndexUnsafe()
@@ -146,49 +179,17 @@ internal sealed class SpatialRegionResolver
         _regionIndexDirty = false;
     }
 
-    private int ComputeChildLevelUnsafe(
-        JsonRegion region,
-        IReadOnlyDictionary<(int MapId, string Name), JsonRegion> byName,
-        HashSet<JsonRegion> visiting
-    )
+    private List<JsonRegion> GetCandidateRegionsUnsafe(int mapId, Point3D location)
     {
-        if (_regionChildLevels.TryGetValue(region, out var cached))
+        EnsureRegionIndexUnsafe();
+        var (sectorX, sectorY) = GetSectorCoordinates(location);
+
+        if (_regionsBySector.TryGetValue((mapId, sectorX, sectorY), out var bySector))
         {
-            return cached;
+            return bySector;
         }
 
-        if (!visiting.Add(region))
-        {
-            return 0;
-        }
-
-        var level = 0;
-
-        if (region is JsonTownRegion town && town.Parent is not null &&
-            byName.TryGetValue((town.Parent.MapId, town.Parent.Name), out var parent))
-        {
-            level = ComputeChildLevelUnsafe(parent, byName, visiting) + 1;
-        }
-
-        visiting.Remove(region);
-        _regionChildLevels[region] = level;
-
-        return level;
-    }
-
-    private int CompareRegionOrderUnsafe(JsonRegion left, JsonRegion right)
-    {
-        var byPriority = right.Priority.CompareTo(left.Priority);
-
-        if (byPriority != 0)
-        {
-            return byPriority;
-        }
-
-        var leftLevel = _regionChildLevels.TryGetValue(left, out var ll) ? ll : 0;
-        var rightLevel = _regionChildLevels.TryGetValue(right, out var rl) ? rl : 0;
-
-        return rightLevel.CompareTo(leftLevel);
+        return _regions;
     }
 
     private static (int X, int Y) GetSectorCoordinates(Point3D location)

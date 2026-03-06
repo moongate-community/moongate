@@ -90,27 +90,6 @@ public sealed class ItemService : IItemService
         return item.Id;
     }
 
-    public async Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(itemTemplateId);
-
-        if (_itemFactoryService is null)
-        {
-            throw new InvalidOperationException("Item factory service is not configured for ItemService.");
-        }
-
-        var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-        _logger.Verbose(
-            "Spawned item {ItemId} from template {TemplateId} (ItemId=0x{TileId:X4})",
-            item.Id,
-            itemTemplateId,
-            item.ItemId
-        );
-
-        return item;
-    }
-
     public async Task<bool> DeleteItemAsync(Serial itemId)
     {
         var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
@@ -133,7 +112,7 @@ public sealed class ItemService : IItemService
         {
             await _gameEventBusService.PublishAsync(
                 new ItemDeletedEvent(
-                    sessionId: 0,
+                    0,
                     itemId,
                     oldContainerId,
                     oldLocation,
@@ -245,13 +224,6 @@ public sealed class ItemService : IItemService
     public Task<UOItemEntity?> GetItemAsync(Serial itemId)
         => GetItemHydratedAsync(itemId);
 
-    public async Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
-    {
-        var item = await GetItemHydratedAsync(itemId);
-
-        return (item is not null, item);
-    }
-
     public async Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
     {
         var items = await _persistenceService.UnitOfWork.Items.QueryAsync(
@@ -353,6 +325,34 @@ public sealed class ItemService : IItemService
         _logger.Debug("Moved item {ItemId} to world location {Location}", itemId, location);
 
         return true;
+    }
+
+    public async Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(itemTemplateId);
+
+        if (_itemFactoryService is null)
+        {
+            throw new InvalidOperationException("Item factory service is not configured for ItemService.");
+        }
+
+        var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Verbose(
+            "Spawned item {ItemId} from template {TemplateId} (ItemId=0x{TileId:X4})",
+            item.Id,
+            itemTemplateId,
+            item.ItemId
+        );
+
+        return item;
+    }
+
+    public async Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+    {
+        var item = await GetItemHydratedAsync(itemId);
+
+        return (item is not null, item);
     }
 
     public async Task UpsertItemAsync(UOItemEntity item)
@@ -487,6 +487,19 @@ public sealed class ItemService : IItemService
         return item;
     }
 
+    private ValueTask PublishItemMovedEventAsync(
+        long sessionId,
+        Serial itemId,
+        Serial oldContainerId,
+        Serial newContainerId,
+        Point3D oldLocation,
+        Point3D newLocation,
+        int mapId
+    )
+        => _gameEventBusService.PublishAsync(
+            new ItemMovedEvent(sessionId, itemId, oldContainerId, newContainerId, oldLocation, newLocation, mapId)
+        );
+
     private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
     {
         if (!mobile.EquippedItemIds.TryGetValue(layer, out var currentItemId) || currentItemId == Serial.Zero)
@@ -510,17 +523,4 @@ public sealed class ItemService : IItemService
             mobile.BackpackId = Serial.Zero;
         }
     }
-
-    private ValueTask PublishItemMovedEventAsync(
-        long sessionId,
-        Serial itemId,
-        Serial oldContainerId,
-        Serial newContainerId,
-        Point3D oldLocation,
-        Point3D newLocation,
-        int mapId
-    )
-        => _gameEventBusService.PublishAsync(
-            new ItemMovedEvent(sessionId, itemId, oldContainerId, newContainerId, oldLocation, newLocation, mapId)
-        );
 }

@@ -2,14 +2,13 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
-using Moongate.Server.Data.Scripting;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Services.Scripting;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -92,55 +91,30 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
-    public async Task TickAllAsync_WhenSpeechIsQueued_ShouldInvokeOnEventCallback()
+    public async Task HandleAsync_WhenMobileAddedInWorldWithBrain_ShouldRegisterAndTick()
     {
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptPath = Path.Combine(directories[DirectoryType.Scripts], "ai", "orc_warrior.lua");
-        Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
-        await File.WriteAllTextAsync(scriptPath, "function on_event() end");
-        var registry = new LuaBrainRegistryStub();
-        registry.Register(new() { BrainId = "orc_warrior", ScriptPath = scriptPath });
-        var runner = new LuaBrainRunner(timerService, scriptEngine, registry, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
-            Id = (Serial)0x50,
-            Name = "orc",
+            Id = (Serial)0x60,
+            Name = "orion",
+            BrainId = "orion",
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
 
-        runner.Register(npc, "orc_warrior");
-        await runner.HandleAsync(
-            new SpeechHeardEvent(
-                (Serial)0x50,
-                (Serial)0x02,
-                "hello",
-                ChatMessageType.Regular,
-                1,
-                new Point3D(101, 100, 0)
-            )
-        );
-
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
         await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
-        var eventCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_event");
-        var speechCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_speech");
+        var tickCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_brain_tick");
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(eventCall.FunctionName, Is.EqualTo("on_event"));
-                Assert.That(eventCall.Args.Length, Is.EqualTo(3));
-                Assert.That(eventCall.Args[0], Is.EqualTo("speech_heard"));
-                Assert.That(eventCall.Args[1], Is.EqualTo((uint)0x02));
-                Assert.That(eventCall.Args[2], Is.TypeOf<Dictionary<string, object>>());
-                Assert.That(speechCall.FunctionName, Is.EqualTo("on_speech"));
-                Assert.That(speechCall.Args.Length, Is.GreaterThanOrEqualTo(8));
-            }
-        );
+        Assert.That(tickCall.FunctionName, Is.EqualTo("on_brain_tick"));
+        Assert.That(tickCall.Args.Length, Is.EqualTo(1));
+        Assert.That(tickCall.Args[0], Is.EqualTo((uint)npc.Id));
     }
 
     [Test]
@@ -165,33 +139,6 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
-    public async Task HandleAsync_WhenMobileAddedInWorldWithBrain_ShouldRegisterAndTick()
-    {
-        using var temp = new TempDirectory();
-        var timerService = new LuaBrainRunnerTimerServiceSpy();
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
-        var npc = new UOMobileEntity
-        {
-            Id = (Serial)0x60,
-            Name = "orion",
-            BrainId = "orion",
-            MapId = 1,
-            Location = new Point3D(100, 100, 0)
-        };
-
-        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
-        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-
-        var tickCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_brain_tick");
-
-        Assert.That(tickCall.FunctionName, Is.EqualTo("on_brain_tick"));
-        Assert.That(tickCall.Args.Length, Is.EqualTo(1));
-        Assert.That(tickCall.Args[0], Is.EqualTo((uint)npc.Id));
-    }
-
-    [Test]
     public async Task TickAllAsync_WhenDeathIsQueued_ShouldInvokeOnDeathHooks()
     {
         using var temp = new TempDirectory();
@@ -205,18 +152,20 @@ public sealed class LuaBrainRunnerTests
             Name = "orion",
             BrainId = "orion",
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
         var deathContext = new LuaBrainDeathContext(
             (Serial)0x07,
-            new Dictionary<string, object?> { ["reason"] = "test" }
+            new() { ["reason"] = "test" }
         );
 
         await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
         runner.EnqueueDeath(npc.Id, deathContext);
         await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
-        var onEventCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "death"));
+        var onEventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "death")
+        );
         var onDeathCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_death");
 
         Assert.Multiple(
@@ -230,6 +179,58 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(onDeathCall.Args.Length, Is.EqualTo(2));
                 Assert.That(onDeathCall.Args[0], Is.EqualTo((uint)0x07));
                 Assert.That(onDeathCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenSpeechIsQueued_ShouldInvokeOnEventCallback()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptPath = Path.Combine(directories[DirectoryType.Scripts], "ai", "orc_warrior.lua");
+        Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
+        await File.WriteAllTextAsync(scriptPath, "function on_event() end");
+        var registry = new LuaBrainRegistryStub();
+        registry.Register(new() { BrainId = "orc_warrior", ScriptPath = scriptPath });
+        var runner = new LuaBrainRunner(timerService, scriptEngine, registry, directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x50,
+            Name = "orc",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        runner.Register(npc, "orc_warrior");
+        await runner.HandleAsync(
+            new SpeechHeardEvent(
+                (Serial)0x50,
+                (Serial)0x02,
+                "hello",
+                ChatMessageType.Regular,
+                1,
+                new(101, 100, 0)
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var eventCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_event");
+        var speechCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_speech");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(eventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(eventCall.Args.Length, Is.EqualTo(3));
+                Assert.That(eventCall.Args[0], Is.EqualTo("speech_heard"));
+                Assert.That(eventCall.Args[1], Is.EqualTo((uint)0x02));
+                Assert.That(eventCall.Args[2], Is.TypeOf<Dictionary<string, object>>());
+                Assert.That(speechCall.FunctionName, Is.EqualTo("on_speech"));
+                Assert.That(speechCall.Args.Length, Is.GreaterThanOrEqualTo(8));
             }
         );
     }

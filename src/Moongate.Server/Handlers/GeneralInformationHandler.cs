@@ -42,22 +42,40 @@ public class GeneralInformationHandler : BasePacketListener
         {
             case GeneralInformationSubcommandType.PartySystem:
                 await HandlePartySystemAsync(session, payload);
+
                 break;
             case GeneralInformationSubcommandType.StatLockChange:
                 await HandleStatLockChangeAsync(session, payload);
+
                 break;
             case GeneralInformationSubcommandType.UseTargetedItem:
                 await HandleUseTargetedItemAsync(session, payload);
+
                 break;
             case GeneralInformationSubcommandType.CastTargetedSpell:
                 await HandleCastTargetedSpellAsync(session, payload);
+
                 break;
             case GeneralInformationSubcommandType.UseTargetedSkill:
                 await HandleUseTargetedSkillAsync(session, payload);
+
                 break;
         }
 
         return true;
+    }
+
+    private ValueTask HandleCastTargetedSpellAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (payload.Length != 6)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var spellId = BinaryPrimitives.ReadUInt16BigEndian(payload);
+        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
+
+        return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
     }
 
     private ValueTask HandlePartySystemAsync(GameSession session, ReadOnlySpan<byte> payload)
@@ -69,6 +87,7 @@ public class GeneralInformationHandler : BasePacketListener
 
         var subcommand = payload[0];
         var subcommandPayload = payload.Length == 1 ? [] : payload[1..].ToArray();
+
         return _gameEventBusService.PublishAsync(
             new PartySystemCommandEvent(session.SessionId, subcommand, subcommandPayload)
         );
@@ -103,23 +122,8 @@ public class GeneralInformationHandler : BasePacketListener
 
         var itemSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload);
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[4..]);
-        return _gameEventBusService.PublishAsync(
-            new TargetedItemUseEvent(session.SessionId, itemSerial, targetSerial)
-        );
-    }
 
-    private ValueTask HandleCastTargetedSpellAsync(GameSession session, ReadOnlySpan<byte> payload)
-    {
-        if (payload.Length != 6)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        var spellId = BinaryPrimitives.ReadUInt16BigEndian(payload);
-        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
-        return _gameEventBusService.PublishAsync(
-            new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial)
-        );
+        return _gameEventBusService.PublishAsync(new TargetedItemUseEvent(session.SessionId, itemSerial, targetSerial));
     }
 
     private ValueTask HandleUseTargetedSkillAsync(GameSession session, ReadOnlySpan<byte> payload)
@@ -131,8 +135,7 @@ public class GeneralInformationHandler : BasePacketListener
 
         var skillId = BinaryPrimitives.ReadUInt16BigEndian(payload);
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
-        return _gameEventBusService.PublishAsync(
-            new TargetedSkillUseEvent(session.SessionId, skillId, targetSerial)
-        );
+
+        return _gameEventBusService.PublishAsync(new TargetedSkillUseEvent(session.SessionId, skillId, targetSerial));
     }
 }

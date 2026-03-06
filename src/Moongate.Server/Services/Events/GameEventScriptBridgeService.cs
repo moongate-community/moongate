@@ -15,12 +15,10 @@ public class GameEventScriptBridgeService : IGameEventScriptBridgeService, IGame
 {
     private readonly ILogger _logger = Log.ForContext<GameEventScriptBridgeService>();
 
-    private readonly IGameEventBusService _gameEventBusService;
     private readonly IScriptEngineService _scriptEngineService;
 
-    public GameEventScriptBridgeService(IGameEventBusService gameEventBusService, IScriptEngineService scriptEngineService)
+    public GameEventScriptBridgeService(IScriptEngineService scriptEngineService)
     {
-        _gameEventBusService = gameEventBusService;
         _scriptEngineService = scriptEngineService;
     }
 
@@ -32,11 +30,7 @@ public class GameEventScriptBridgeService : IGameEventScriptBridgeService, IGame
         _scriptEngineService.CallFunction(scriptFunctionName, gameEvent);
     }
 
-    public async Task StartAsync()
-    {
-        _logger.Debug("Subscribing to game events for script bridge...");
-        _gameEventBusService.RegisterListener(this);
-    }
+    public async Task StartAsync() { }
 
     public async Task StopAsync() { }
 

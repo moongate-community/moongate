@@ -1,12 +1,12 @@
-using MemoryPack;
+using MessagePack;
 
 namespace Moongate.Persistence.Data.Persistence;
 
 /// <summary>
 /// Serialized mobile state used inside world snapshots and journal payloads.
 /// </summary>
-[MemoryPackable]
-public sealed partial class MobileSnapshot
+[MessagePackObject(true)]
+public sealed class MobileSnapshot
 {
     public uint Id { get; set; }
 
@@ -91,6 +91,8 @@ public sealed partial class MobileSnapshot
     public byte[] EquippedLayers { get; set; } = [];
 
     public uint[] EquippedItemIds { get; set; } = [];
+
+    public ItemCustomPropertySnapshot[] CustomProperties { get; set; } = [];
 
     public bool IsWarMode { get; set; }
 

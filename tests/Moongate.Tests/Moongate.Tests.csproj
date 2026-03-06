@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\tools\Moongate.Stress\Moongate.Stress.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Persistence\Moongate.Persistence.csproj"/>

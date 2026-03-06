@@ -78,4 +78,6 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
     public decimal Weight { get; set; }
 
     public ItemRarity Rarity { get; set; } = ItemRarity.None;
+
+    public Dictionary<string, ItemTemplateParamDefinition> Params { get; set; } = [];
 }

@@ -297,23 +297,6 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
-    public async Task InitializeAsync_WhenFileLockEnabled_ShouldPreventSecondUnitOfWorkFromOpeningSameSaveFiles()
-    {
-        using var tempDirectory = new TempDirectory();
-        using var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, enableFileLock: true);
-        await firstUnitOfWork.InitializeAsync();
-
-        Assert.That(
-            async () =>
-            {
-                using var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, enableFileLock: true);
-                await secondUnitOfWork.InitializeAsync();
-            },
-            Throws.TypeOf<IOException>()
-        );
-    }
-
-    [Test]
     public async Task CountAsync_OnRepositories_ShouldReturnExpectedValues()
     {
         using var tempDirectory = new TempDirectory();
@@ -592,6 +575,23 @@ public class PersistenceUnitOfWorkTests
 
         Assert.That(await secondUnitOfWork.Accounts.GetByUsernameAsync("before-snapshot"), Is.Not.Null);
         Assert.That(await secondUnitOfWork.Accounts.GetByUsernameAsync("after-snapshot"), Is.Not.Null);
+    }
+
+    [Test]
+    public async Task InitializeAsync_WhenFileLockEnabled_ShouldPreventSecondUnitOfWorkFromOpeningSameSaveFiles()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, true);
+        await firstUnitOfWork.InitializeAsync();
+
+        Assert.That(
+            async () =>
+            {
+                using var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, true);
+                await secondUnitOfWork.InitializeAsync();
+            },
+            Throws.TypeOf<IOException>()
+        );
     }
 
     [Test]

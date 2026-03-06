@@ -18,10 +18,19 @@ public static class WeatherFactory
     public static SetWeatherPacket CreateClear(int temperature = 0)
         => Create(WeatherType.None, 0, temperature);
 
-    public static SetWeatherPacket CreateRain(int effectCount = SetWeatherPacket.MaximumEffectsOnScreen, int temperature = 15)
+    public static SetWeatherPacket CreateFromSnapshot(WeatherSnapshot snapshot)
+        => Create(snapshot.Type, snapshot.EffectCount, snapshot.EffectiveTemperature);
+
+    public static SetWeatherPacket CreateRain(
+        int effectCount = SetWeatherPacket.MaximumEffectsOnScreen,
+        int temperature = 15
+    )
         => Create(WeatherType.Rain, effectCount, temperature);
 
-    public static SetWeatherPacket CreateSnow(int effectCount = SetWeatherPacket.MaximumEffectsOnScreen, int temperature = -15)
+    public static SetWeatherPacket CreateSnow(
+        int effectCount = SetWeatherPacket.MaximumEffectsOnScreen,
+        int temperature = -15
+    )
         => Create(WeatherType.Snow, effectCount, temperature);
 
     public static SetWeatherPacket CreateStorm(
@@ -29,7 +38,4 @@ public static class WeatherFactory
         int temperature = 10
     )
         => Create(WeatherType.Storm, effectCount, temperature);
-
-    public static SetWeatherPacket CreateFromSnapshot(WeatherSnapshot snapshot)
-        => Create(snapshot.Type, snapshot.EffectCount, snapshot.EffectiveTemperature);
 }

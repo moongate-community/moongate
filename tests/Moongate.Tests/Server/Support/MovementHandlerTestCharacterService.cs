@@ -23,13 +23,6 @@ public sealed class MovementHandlerTestCharacterService : ICharacterService
         return Task.FromResult(true);
     }
 
-    public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
-    {
-        _ = character;
-
-        return Task.FromResult((Serial)1u);
-    }
-
     public Task ApplyStarterEquipmentHuesAsync(Serial characterId, short shirtHue, short pantsHue)
     {
         LastAppliedCharacterId = characterId;
@@ -38,6 +31,13 @@ public sealed class MovementHandlerTestCharacterService : ICharacterService
         ApplyStarterEquipmentHuesCalls++;
 
         return Task.CompletedTask;
+    }
+
+    public Task<Serial> CreateCharacterAsync(UOMobileEntity character)
+    {
+        _ = character;
+
+        return Task.FromResult((Serial)1u);
     }
 
     public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)

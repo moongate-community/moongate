@@ -27,25 +27,6 @@ public sealed class PlayerDragServiceTests
     }
 
     [Test]
-    public void TryConsume_ShouldRemoveState_WhenItemMatches()
-    {
-        var service = new PlayerDragService();
-        service.SetPending(10, (Serial)0x40000022u, 3, (Serial)0x40000002u, new(20, 40, 0));
-
-        var consumed = service.TryConsume(10, (Serial)0x40000022u, out var state);
-        var stillExists = service.TryGet(10, out _);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(consumed, Is.True);
-                Assert.That(state.ItemId, Is.EqualTo((Serial)0x40000022u));
-                Assert.That(stillExists, Is.False);
-            }
-        );
-    }
-
-    [Test]
     public void TryConsume_ShouldNotRemoveState_WhenItemDoesNotMatch()
     {
         var service = new PlayerDragService();
@@ -60,6 +41,25 @@ public sealed class PlayerDragServiceTests
                 Assert.That(consumed, Is.False);
                 Assert.That(stillExists, Is.True);
                 Assert.That(state.ItemId, Is.EqualTo((Serial)0x40000033u));
+            }
+        );
+    }
+
+    [Test]
+    public void TryConsume_ShouldRemoveState_WhenItemMatches()
+    {
+        var service = new PlayerDragService();
+        service.SetPending(10, (Serial)0x40000022u, 3, (Serial)0x40000002u, new(20, 40, 0));
+
+        var consumed = service.TryConsume(10, (Serial)0x40000022u, out var state);
+        var stillExists = service.TryGet(10, out _);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(consumed, Is.True);
+                Assert.That(state.ItemId, Is.EqualTo((Serial)0x40000022u));
+                Assert.That(stillExists, Is.False);
             }
         );
     }

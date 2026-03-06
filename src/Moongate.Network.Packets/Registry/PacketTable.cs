@@ -7,9 +7,7 @@ namespace Moongate.Network.Packets.Registry;
 public static partial class PacketTable
 {
     public static void Register(PacketRegistry registry)
-    {
-        RegisterGenerated(registry);
-    }
+        => RegisterGenerated(registry);
 
     static partial void RegisterGenerated(PacketRegistry registry);
 }

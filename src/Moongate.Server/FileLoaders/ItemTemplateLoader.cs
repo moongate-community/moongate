@@ -135,6 +135,8 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.Container = [..parent.Container];
         }
 
+        child.Params = MergeParams(parent.Params, child.Params);
+
         if (child.Hue.Equals(default))
         {
             child.Hue = parent.Hue;
@@ -166,11 +168,19 @@ public sealed class ItemTemplateLoader : IFileLoader
 
         child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);
         child.IsMovable = InheritBool(child.IsMovable, parent.IsMovable, Defaults.IsMovable);
+
         if (child.LootType == Defaults.LootType)
         {
             child.LootType = parent.LootType;
         }
     }
+
+    private static ItemTemplateParamDefinition CloneParam(ItemTemplateParamDefinition param)
+        => new()
+        {
+            Type = param.Type,
+            Value = param.Value
+        };
 
     private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
@@ -180,6 +190,26 @@ public sealed class ItemTemplateLoader : IFileLoader
 
     private static int InheritInt(int childValue, int parentValue, int defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
+
+    private static Dictionary<string, ItemTemplateParamDefinition> MergeParams(
+        Dictionary<string, ItemTemplateParamDefinition> parentParams,
+        Dictionary<string, ItemTemplateParamDefinition> childParams
+    )
+    {
+        var merged = new Dictionary<string, ItemTemplateParamDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, param) in parentParams)
+        {
+            merged[key] = CloneParam(param);
+        }
+
+        foreach (var (key, param) in childParams)
+        {
+            merged[key] = CloneParam(param);
+        }
+
+        return merged;
+    }
 
     private static void ResolveBaseItems(List<ItemTemplateDefinition> templates)
     {

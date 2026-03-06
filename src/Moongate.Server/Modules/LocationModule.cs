@@ -1,7 +1,7 @@
-using Moongate.Server.Data.World;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.World;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.World;
 using MoonSharp.Interpreter;
 
@@ -21,27 +21,6 @@ public sealed class LocationModule
     [ScriptFunction("count", "Returns the total number of loaded locations.")]
     public int Count()
         => _locationCatalogService.GetAllLocations().Count;
-
-    [ScriptFunction("get", "Gets a location by Lua index (1-based), or nil when out of range.")]
-    public LuaLocationProxy? Get(int index)
-    {
-        if (index <= 0)
-        {
-            return null;
-        }
-
-        var locations = _locationCatalogService.GetAllLocations();
-        var zeroIndex = index - 1;
-
-        if (zeroIndex >= locations.Count)
-        {
-            return null;
-        }
-
-        RegisterLuaTypeIfNeeded();
-
-        return new(locations[zeroIndex]);
-    }
 
     [ScriptFunction("find", "Finds the first location by name (case-insensitive), or nil.")]
     public LuaLocationProxy? Find(string name)
@@ -65,6 +44,7 @@ public sealed class LocationModule
 
             match = entry;
             found = true;
+
             break;
         }
 
@@ -76,6 +56,27 @@ public sealed class LocationModule
         RegisterLuaTypeIfNeeded();
 
         return new(match);
+    }
+
+    [ScriptFunction("get", "Gets a location by Lua index (1-based), or nil when out of range.")]
+    public LuaLocationProxy? Get(int index)
+    {
+        if (index <= 0)
+        {
+            return null;
+        }
+
+        var locations = _locationCatalogService.GetAllLocations();
+        var zeroIndex = index - 1;
+
+        if (zeroIndex >= locations.Count)
+        {
+            return null;
+        }
+
+        RegisterLuaTypeIfNeeded();
+
+        return new(locations[zeroIndex]);
     }
 
     private static void RegisterLuaTypeIfNeeded()

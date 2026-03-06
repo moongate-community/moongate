@@ -1,8 +1,8 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Data.World;
 using Moongate.Server.FileLoaders;
 using Moongate.Server.Interfaces.Services.World;
-using Moongate.Server.Data.World;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Ids;
 
@@ -10,6 +10,51 @@ namespace Moongate.Tests.Server.FileLoaders;
 
 public class DecorationDataLoaderTests
 {
+    private sealed class TestDecorationDataService : IDecorationDataService
+    {
+        public List<DecorationEntry> Entries { get; } = [];
+
+        public IReadOnlyList<DecorationEntry> GetAllEntries()
+            => Entries;
+
+        public IReadOnlyList<DecorationEntry> GetEntriesByMap(int mapId)
+            => [.. Entries.Where(entry => entry.MapId == mapId)];
+
+        public void SetEntries(IReadOnlyList<DecorationEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
+    }
+
+    [Test]
+    public async Task LoadAsync_ShouldDuplicateBritanniaEntriesForFeluccaAndTrammel()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var britanniaPath = Path.Combine(directories[DirectoryType.Data], "decoration", "Britannia");
+        Directory.CreateDirectory(britanniaPath);
+
+        const string cfg = """
+                           Static 0x0063
+                           1517 1670 20
+                           """;
+        await File.WriteAllTextAsync(Path.Combine(britanniaPath, "britain.cfg"), cfg);
+
+        var service = new TestDecorationDataService();
+        var loader = new DecorationDataLoader(directories, service);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(service.Entries, Has.Count.EqualTo(2));
+                Assert.That(service.Entries.Select(static entry => entry.MapId), Is.EquivalentTo(new[] { 0, 1 }));
+            }
+        );
+    }
+
     [Test]
     public async Task LoadAsync_ShouldParseCfgAndMapToFolderMapId()
     {
@@ -51,50 +96,5 @@ public class DecorationDataLoaderTests
                 Assert.That(service.Entries[2].ItemId, Is.EqualTo(Serial.Zero));
             }
         );
-    }
-
-    [Test]
-    public async Task LoadAsync_ShouldDuplicateBritanniaEntriesForFeluccaAndTrammel()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var britanniaPath = Path.Combine(directories[DirectoryType.Data], "decoration", "Britannia");
-        Directory.CreateDirectory(britanniaPath);
-
-        const string cfg = """
-                           Static 0x0063
-                           1517 1670 20
-                           """;
-        await File.WriteAllTextAsync(Path.Combine(britanniaPath, "britain.cfg"), cfg);
-
-        var service = new TestDecorationDataService();
-        var loader = new DecorationDataLoader(directories, service);
-
-        await loader.LoadAsync();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(service.Entries, Has.Count.EqualTo(2));
-                Assert.That(service.Entries.Select(static entry => entry.MapId), Is.EquivalentTo(new[] { 0, 1 }));
-            }
-        );
-    }
-
-    private sealed class TestDecorationDataService : IDecorationDataService
-    {
-        public List<DecorationEntry> Entries { get; } = [];
-
-        public void SetEntries(IReadOnlyList<DecorationEntry> entries)
-        {
-            Entries.Clear();
-            Entries.AddRange(entries);
-        }
-
-        public IReadOnlyList<DecorationEntry> GetAllEntries()
-            => Entries;
-
-        public IReadOnlyList<DecorationEntry> GetEntriesByMap(int mapId)
-            => [.. Entries.Where(entry => entry.MapId == mapId)];
     }
 }

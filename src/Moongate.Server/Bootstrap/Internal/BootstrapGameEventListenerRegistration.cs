@@ -30,6 +30,8 @@ internal static partial class BootstrapGameEventListenerRegistration
         gameEventBusService.RegisterListener(listener);
     }
 
+    static partial void RegisterServicesGenerated(Container container);
+
     private static TListener ResolveListener<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
         TListener
@@ -74,8 +76,6 @@ internal static partial class BootstrapGameEventListenerRegistration
 
         throw new InvalidOperationException($"Listener type '{typeof(TListener).FullName}' is not registered in DryIoc.");
     }
-
-    static partial void RegisterServicesGenerated(Container container);
 
     static partial void SubscribeGenerated(Container container);
 }

@@ -1,13 +1,12 @@
+using Microsoft.Extensions.Configuration;
 using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Bootstrap;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.UO.Data.Files;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Filters;
 
@@ -51,8 +50,8 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
         context.Logger.Debug("Loading configuration from moongate.json + MOONGATE_* environment variables.");
 
         var configuration = new ConfigurationBuilder()
-                            .AddJsonFile(configPath, optional: true, reloadOnChange: false)
-                            .AddEnvironmentVariables(prefix: "MOONGATE_")
+                            .AddJsonFile(configPath, true, false)
+                            .AddEnvironmentVariables("MOONGATE_")
                             .Build();
 
         configuration.Bind(context.Config);

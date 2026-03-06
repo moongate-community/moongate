@@ -18,7 +18,5 @@ public class StatJsonConverterTests
 
     [Test]
     public void Deserialize_ShouldThrow_OnUnknownValue()
-    {
-        Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Stat>("\"Foo\""));
-    }
+        => Assert.Throws<JsonException>(() => JsonSerializer.Deserialize<Stat>("\"Foo\""));
 }

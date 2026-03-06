@@ -9,29 +9,21 @@ namespace Moongate.Tests.Network.Packets;
 public class EffectsFactoryTests
 {
     [Test]
-    public void CreateMoving_ShouldBuildGraphicalEffectPacket()
+    public void CreateBoltEffect_ShouldBuildHuedEffectPacketWithExpectedDefaults()
     {
-        var source = new Point3D(10, 20, 5);
-        var target = new Point3D(30, 40, 0);
+        var location = new Point3D(200, 300, 15);
 
-        var packet = EffectsFactory.CreateMoving(
-            EffectsUtils.Fireball,
-            (Serial)1u,
-            (Serial)2u,
-            source,
-            target
-        );
+        var packet = EffectsFactory.CreateBoltEffect((Serial)0x20u, location, 0x12345678);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(packet.DirectionType, Is.EqualTo(EffectDirectionType.SourceToTarget));
-                Assert.That(packet.ItemId, Is.EqualTo(EffectsUtils.Fireball));
-                Assert.That(packet.SourceId, Is.EqualTo((Serial)1u));
-                Assert.That(packet.TargetId, Is.EqualTo((Serial)2u));
-                Assert.That(packet.SourceLocation, Is.EqualTo(source));
-                Assert.That(packet.TargetLocation, Is.EqualTo(target));
-                Assert.That(packet.AdjustDirectionDuringAnimation, Is.True);
+                Assert.That(packet.DirectionType, Is.EqualTo(EffectDirectionType.LightningStrike));
+                Assert.That(packet.ItemId, Is.EqualTo(0));
+                Assert.That(packet.Hue, Is.EqualTo(0x12345678));
+                Assert.That(packet.RenderMode, Is.EqualTo(0));
+                Assert.That(packet.FixedDirection, Is.False);
+                Assert.That(packet.Explode, Is.False);
             }
         );
     }
@@ -56,21 +48,29 @@ public class EffectsFactoryTests
     }
 
     [Test]
-    public void CreateBoltEffect_ShouldBuildHuedEffectPacketWithExpectedDefaults()
+    public void CreateMoving_ShouldBuildGraphicalEffectPacket()
     {
-        var location = new Point3D(200, 300, 15);
+        var source = new Point3D(10, 20, 5);
+        var target = new Point3D(30, 40, 0);
 
-        var packet = EffectsFactory.CreateBoltEffect((Serial)0x20u, location, hue: 0x12345678);
+        var packet = EffectsFactory.CreateMoving(
+            EffectsUtils.Fireball,
+            (Serial)1u,
+            (Serial)2u,
+            source,
+            target
+        );
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(packet.DirectionType, Is.EqualTo(EffectDirectionType.LightningStrike));
-                Assert.That(packet.ItemId, Is.EqualTo(0));
-                Assert.That(packet.Hue, Is.EqualTo(0x12345678));
-                Assert.That(packet.RenderMode, Is.EqualTo(0));
-                Assert.That(packet.FixedDirection, Is.False);
-                Assert.That(packet.Explode, Is.False);
+                Assert.That(packet.DirectionType, Is.EqualTo(EffectDirectionType.SourceToTarget));
+                Assert.That(packet.ItemId, Is.EqualTo(EffectsUtils.Fireball));
+                Assert.That(packet.SourceId, Is.EqualTo((Serial)1u));
+                Assert.That(packet.TargetId, Is.EqualTo((Serial)2u));
+                Assert.That(packet.SourceLocation, Is.EqualTo(source));
+                Assert.That(packet.TargetLocation, Is.EqualTo(target));
+                Assert.That(packet.AdjustDirectionDuringAnimation, Is.True);
             }
         );
     }

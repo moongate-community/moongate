@@ -19,16 +19,12 @@ public class PersistenceListenerHandler
     }
 
     public async Task HandleAsync(DatabaseSavingStartEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await _speechService.BroadcastFromServerAsync("Saving world...");
-    }
+        => await _speechService.BroadcastFromServerAsync("Saving world...");
 
     public async Task HandleAsync(DatabaseSavedEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        await _speechService.BroadcastFromServerAsync(
-            $"World saved in {gameEvent.ElapsedMilliseconds.Milliseconds()} seconds."
-        );
-    }
+        => await _speechService.BroadcastFromServerAsync(
+               $"World saved in {gameEvent.ElapsedMilliseconds.Milliseconds()} seconds."
+           );
 
     public Task StartAsync()
         => Task.CompletedTask;

@@ -16,7 +16,6 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Maps;
-using Moongate.UO.Data.Packets.Data;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Moongate.UO.Data.Version;
@@ -84,7 +83,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
                 );
                 Enqueue(
                     session,
-                    SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
+                    SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.Count}")
                 );
             }
 
@@ -135,7 +134,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
     {
         var packet = new ServerListPacket();
         packet.AddShard(
-            new GameServerEntry
+            new()
             {
                 Index = 0,
                 IpAddress = ipAddress,
@@ -148,7 +147,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleAccountLoginPacketAsync(GameSession session, AccountLoginPacket accountLoginPacket)
     {
-        _logger.Information(
+        _logger.Debug(
             "Received AccountLoginPacket from session {SessionId} with username {Username}",
             session.SessionId,
             accountLoginPacket.Account
@@ -168,7 +167,31 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         Enqueue(
             session,
-            CreateServerListPacket(_serverConfig.Game.ShardName, IPAddress.Parse(session.NetworkSession.LocalIpAddress))
+            CreateServerListPacket(_serverConfig.Game.ShardName, ResolveShardAddress(session))
+        );
+
+        return true;
+    }
+
+    private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
+    {
+        var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
+
+        if (string.IsNullOrWhiteSpace(rawVersion))
+        {
+            _logger.Debug("Received empty ClientVersionPacket from session {SessionId}", session.SessionId);
+
+            return true;
+        }
+
+        var clientVersion = new ClientVersion(rawVersion);
+        session.SetClientVersion(clientVersion);
+
+        _logger.Debug(
+            "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
+            session.SessionId,
+            clientVersion.SourceString,
+            clientVersion.Type
         );
 
         return true;
@@ -176,7 +199,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleGameLoginPacketAsync(GameSession session, GameLoginPacket gameLoginPacket)
     {
-        _logger.Information(
+        _logger.Debug(
             "Received GameLoginPacket from session {SessionId} with account name {AccountName}",
             session.SessionId,
             gameLoginPacket.AccountName
@@ -200,6 +223,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         characterListPacket.Cities.AddRange(StartingCities.AvailableStartingCities);
 
         var characters = await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        session.AccountCharactersCache = characters;
         characterListPacket.FillCharacters(characters);
 
         Enqueue(session, new SupportFeaturesPacket());
@@ -210,7 +234,9 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private async Task<bool> HandleLoginCharacterPacketAsync(GameSession session, LoginCharacterPacket loginCharacterPacket)
     {
-        var characters = await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        var characters = session.AccountCharactersCache ??
+                         await _characterService.GetCharactersForAccountAsync(session.AccountId);
+        session.AccountCharactersCache = characters;
 
         var character = characters.FirstOrDefault(c => c.Name == loginCharacterPacket.CharacterName);
 
@@ -234,7 +260,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private Task<bool> HandleLoginSeedPacketAsync(GameSession session, LoginSeedPacket packet)
     {
-        _logger.Information(
+        _logger.Debug(
             "Received LoginSeedPacket from session {SessionId} with seed {Seed} and client version {ClientVersion}",
             session.SessionId,
             packet.Seed,
@@ -252,7 +278,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
             var connectToServer = new ServerRedirectPacket
             {
-                IPAddress = IPAddress.Parse(session.NetworkSession.LocalIpAddress),
+                IPAddress = ResolveShardAddress(session),
                 Port = 2593,
                 SessionKey = (uint)sessionKey
             };
@@ -269,27 +295,21 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         }
     }
 
-    private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
+    private IPAddress ResolveShardAddress(GameSession session)
     {
-        var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
+        var rawAddress = session.NetworkSession.LocalIpAddress;
 
-        if (string.IsNullOrWhiteSpace(rawVersion))
+        if (!string.IsNullOrWhiteSpace(rawAddress) && IPAddress.TryParse(rawAddress, out var resolved))
         {
-            _logger.Debug("Received empty ClientVersionPacket from session {SessionId}", session.SessionId);
-
-            return true;
+            return resolved;
         }
 
-        var clientVersion = new ClientVersion(rawVersion);
-        session.SetClientVersion(clientVersion);
-
-        _logger.Information(
-            "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
+        _logger.Warning(
+            "Session {SessionId} has invalid LocalIpAddress '{LocalIpAddress}'. Falling back to loopback.",
             session.SessionId,
-            clientVersion.SourceString,
-            clientVersion.Type
+            rawAddress
         );
 
-        return true;
+        return IPAddress.Loopback;
     }
 }

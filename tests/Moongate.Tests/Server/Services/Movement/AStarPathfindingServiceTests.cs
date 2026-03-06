@@ -9,28 +9,21 @@ namespace Moongate.Tests.Server.Services.Movement;
 
 public sealed class AStarPathfindingServiceTests
 {
-    [Test]
-    public void TryFindPath_WhenStraightLineIsWalkable_ShouldReturnDirectPath()
+    private sealed class AStarPathfindingTestMovementValidationService : IMovementValidationService
     {
-        var movementValidationService = new AStarPathfindingTestMovementValidationService();
-        var service = new AStarPathfindingService(movementValidationService);
-        var mobile = new UOMobileEntity
+        public HashSet<(int X, int Y)> BlockedTiles { get; } = [];
+
+        public bool TryResolveMove(UOMobileEntity mobile, DirectionType direction, out Point3D newLocation)
         {
-            Id = (Serial)0x01u,
-            MapId = 1,
-            Location = new Point3D(100, 100, 0)
-        };
+            newLocation = mobile.Location.Move(direction);
 
-        var found = service.TryFindPath(mobile, new Point3D(103, 100, 0), out var path);
-
-        Assert.Multiple(
-            () =>
+            if (BlockedTiles.Contains((newLocation.X, newLocation.Y)))
             {
-                Assert.That(found, Is.True);
-                Assert.That(path, Is.Not.Empty);
-                Assert.That(path[0], Is.EqualTo(DirectionType.East));
+                return false;
             }
-        );
+
+            return true;
+        }
     }
 
     [Test]
@@ -43,10 +36,10 @@ public sealed class AStarPathfindingServiceTests
         {
             Id = (Serial)0x01u,
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
 
-        var found = service.TryFindPath(mobile, new Point3D(102, 100, 0), out var path);
+        var found = service.TryFindPath(mobile, new(102, 100, 0), out var path);
 
         Assert.Multiple(
             () =>
@@ -67,28 +60,35 @@ public sealed class AStarPathfindingServiceTests
         {
             Id = (Serial)0x01u,
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
 
-        var found = service.TryFindPath(mobile, new Point3D(500, 500, 0), out _, maxVisitedNodes: 1);
+        var found = service.TryFindPath(mobile, new(500, 500, 0), out _, 1);
 
         Assert.That(found, Is.False);
     }
 
-    private sealed class AStarPathfindingTestMovementValidationService : IMovementValidationService
+    [Test]
+    public void TryFindPath_WhenStraightLineIsWalkable_ShouldReturnDirectPath()
     {
-        public HashSet<(int X, int Y)> BlockedTiles { get; } = [];
-
-        public bool TryResolveMove(UOMobileEntity mobile, DirectionType direction, out Point3D newLocation)
+        var movementValidationService = new AStarPathfindingTestMovementValidationService();
+        var service = new AStarPathfindingService(movementValidationService);
+        var mobile = new UOMobileEntity
         {
-            newLocation = mobile.Location.Move(direction);
+            Id = (Serial)0x01u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
 
-            if (BlockedTiles.Contains((newLocation.X, newLocation.Y)))
+        var found = service.TryFindPath(mobile, new(103, 100, 0), out var path);
+
+        Assert.Multiple(
+            () =>
             {
-                return false;
+                Assert.That(found, Is.True);
+                Assert.That(path, Is.Not.Empty);
+                Assert.That(path[0], Is.EqualTo(DirectionType.East));
             }
-
-            return true;
-        }
+        );
     }
 }

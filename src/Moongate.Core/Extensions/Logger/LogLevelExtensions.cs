@@ -14,8 +14,7 @@ public static class LogLevelExtensions
     /// <param name="logLevel">The log level to convert.</param>
     /// <returns>The corresponding Serilog log event level.</returns>
     public static LogEventLevel ToSerilogLogLevel(this LogLevelType logLevel)
-    {
-        return logLevel switch
+        => logLevel switch
         {
             LogLevelType.Trace       => LogEventLevel.Verbose,
             LogLevelType.Debug       => LogEventLevel.Debug,
@@ -24,5 +23,4 @@ public static class LogLevelExtensions
             LogLevelType.Error       => LogEventLevel.Error,
             _                        => LogEventLevel.Information
         };
-    }
 }

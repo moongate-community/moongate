@@ -18,7 +18,8 @@ using Serilog;
 namespace Moongate.Server.Handlers;
 
 [RegisterGameEventListener, RegisterPacketHandler(0xD9)]
-public class PlayerHandler : BasePacketListener, IGameEventListener<PlayerEnteredRegionEvent>, IGameEventListener<PlayerExitedRegionEvent>
+public class PlayerHandler
+    : BasePacketListener, IGameEventListener<PlayerEnteredRegionEvent>, IGameEventListener<PlayerExitedRegionEvent>
 {
     private readonly ILogger _logger = Log.ForContext<PlayerHandler>();
 
@@ -39,14 +40,10 @@ public class PlayerHandler : BasePacketListener, IGameEventListener<PlayerEntere
     }
 
     public Task HandleAsync(PlayerEnteredRegionEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        return ProcessRegionAsync(gameEvent.MobileId, gameEvent.RegionId);
-    }
+        => ProcessRegionAsync(gameEvent.MobileId, gameEvent.RegionId);
 
     public Task HandleAsync(PlayerExitedRegionEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        return ProcessRegionAsync(gameEvent.MobileId, gameEvent.RegionId);
-    }
+        => ProcessRegionAsync(gameEvent.MobileId, gameEvent.RegionId);
 
     protected override Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {
@@ -55,7 +52,7 @@ public class PlayerHandler : BasePacketListener, IGameEventListener<PlayerEntere
             return Task.FromResult(true);
         }
 
-        session.HardwareInfo = new ClientHardwareInfo
+        session.HardwareInfo = new()
         {
             ClientInfoVersion = spyOnClientPacket.ClientInfoVersion,
             InstanceId = spyOnClientPacket.InstanceId,

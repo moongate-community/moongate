@@ -1,9 +1,8 @@
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Events.Speech;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -39,6 +38,13 @@ public sealed class SpeechServiceNpcDispatchTests
             return Task.CompletedTask;
         }
 
+        public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+        {
+            _ = commandWithArgs;
+
+            return [];
+        }
+
         public void RegisterCommand(
             string commandName,
             Func<CommandSystemContext, Task> handler,
@@ -56,13 +62,6 @@ public sealed class SpeechServiceNpcDispatchTests
             _ = autocompleteProvider;
         }
 
-        public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
-        {
-            _ = commandWithArgs;
-
-            return [];
-        }
-
         public Task StartAsync()
             => Task.CompletedTask;
 
@@ -73,6 +72,18 @@ public sealed class SpeechServiceNpcDispatchTests
     private sealed class SpeechServiceNpcDispatchSpatialWorldService : ISpatialWorldService
     {
         public List<UOMobileEntity> NearbyMobiles { get; } = [];
+
+        public void AddOrUpdateItem(UOItemEntity item, int mapId)
+        {
+            _ = item;
+            _ = mapId;
+        }
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile)
+            => NearbyMobiles.Add(mobile);
+
+        public void AddRegion(JsonRegion region)
+            => _ = region;
 
         public Task<int> BroadcastToPlayersAsync(
             IGameNetworkPacket packet,
@@ -91,23 +102,17 @@ public sealed class SpeechServiceNpcDispatchTests
             return Task.FromResult(0);
         }
 
-        public void AddOrUpdateItem(UOItemEntity item, int mapId)
+        public List<MapSector> GetActiveSectors()
+            => [];
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
         {
-            _ = item;
             _ = mapId;
-        }
+            _ = centerSectorX;
+            _ = centerSectorY;
+            _ = radius;
 
-        public void AddOrUpdateMobile(UOMobileEntity mobile)
-            => NearbyMobiles.Add(mobile);
-
-        public void AddRegion(JsonRegion region)
-            => _ = region;
-
-        public JsonRegion? GetRegionById(int regionId)
-        {
-            _ = regionId;
-
-            return null;
+            return [];
         }
 
         public int GetMusic(int mapId, Point3D location)
@@ -136,7 +141,12 @@ public sealed class SpeechServiceNpcDispatchTests
             return NearbyMobiles;
         }
 
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
         {
             _ = location;
             _ = range;
@@ -155,18 +165,12 @@ public sealed class SpeechServiceNpcDispatchTests
             return [];
         }
 
-        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
+        public JsonRegion? GetRegionById(int regionId)
         {
-            _ = mapId;
-            _ = centerSectorX;
-            _ = centerSectorY;
-            _ = radius;
+            _ = regionId;
 
-            return [];
+            return null;
         }
-
-        public List<MapSector> GetActiveSectors()
-            => [];
 
         public MapSector? GetSectorByLocation(int mapId, Point3D location)
         {
@@ -229,7 +233,7 @@ public sealed class SpeechServiceNpcDispatchTests
                 Name = "orc",
                 IsPlayer = false,
                 MapId = 1,
-                Location = new Point3D(100, 100, 0)
+                Location = new(100, 100, 0)
             }
         );
 
@@ -249,7 +253,7 @@ public sealed class SpeechServiceNpcDispatchTests
                 Id = (Serial)0x00000002,
                 Name = "player",
                 MapId = 1,
-                Location = new Point3D(101, 101, 0)
+                Location = new(101, 101, 0)
             },
             CharacterId = (Serial)0x00000002
         };

@@ -267,12 +267,11 @@ public ref struct RawInterpolatedStringHandler
     /// <summary>Grows the size of <see cref="_chars" />.</summary>
     [MethodImpl(MethodImplOptions.NoInlining)] // keep consumers as streamlined as possible
     private void Grow()
-    {
+
         // This method is called when the remaining space in _chars isn't sufficient to continue
         // the operation.  Thus, we need at least one character beyond _chars.Length.  GrowCore
         // will handle growing by more than that if possible.
-        GrowCore((uint)_chars.Length + 1);
-    }
+        => GrowCore((uint)_chars.Length + 1);
 
     /// <summary>Grow the size of <see cref="_chars" /> to at least the specified <paramref name="requiredMinCapacity" />.</summary>
     [MethodImpl(

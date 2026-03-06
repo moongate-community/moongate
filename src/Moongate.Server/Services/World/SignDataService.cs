@@ -12,19 +12,6 @@ public class SignDataService : ISignDataService
     private List<SignEntry> _entries = [];
     private Dictionary<int, List<SignEntry>> _entriesByMap = [];
 
-    public void SetEntries(IReadOnlyList<SignEntry> entries)
-    {
-        lock (_sync)
-        {
-            _entries = [..entries];
-            _entriesByMap = entries.GroupBy(static entry => entry.MapId)
-                                   .ToDictionary(
-                                        static grouping => grouping.Key,
-                                        static grouping => grouping.ToList()
-                                    );
-        }
-    }
-
     public IReadOnlyList<SignEntry> GetAllEntries()
     {
         lock (_sync)
@@ -43,6 +30,19 @@ public class SignDataService : ISignDataService
             }
 
             return [..entries];
+        }
+    }
+
+    public void SetEntries(IReadOnlyList<SignEntry> entries)
+    {
+        lock (_sync)
+        {
+            _entries = [..entries];
+            _entriesByMap = entries.GroupBy(static entry => entry.MapId)
+                                   .ToDictionary(
+                                       static grouping => grouping.Key,
+                                       static grouping => grouping.ToList()
+                                   );
         }
     }
 }

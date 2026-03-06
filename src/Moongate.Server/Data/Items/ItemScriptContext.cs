@@ -9,7 +9,7 @@ namespace Moongate.Server.Data.Items;
 public sealed class ItemScriptContext
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="ItemScriptContext"/> class.
+    /// Initializes a new instance of the <see cref="ItemScriptContext" /> class.
     /// </summary>
     /// <param name="session">Source game session when available.</param>
     /// <param name="item">Item target for the script hook.</param>
@@ -34,7 +34,7 @@ public sealed class ItemScriptContext
     public GameSession? Session { get; }
 
     /// <summary>
-    /// Gets source mobile character from <see cref="Session"/>, when available.
+    /// Gets source mobile character from <see cref="Session" />, when available.
     /// </summary>
     public UOMobileEntity? Mobile => Session?.Character;
 

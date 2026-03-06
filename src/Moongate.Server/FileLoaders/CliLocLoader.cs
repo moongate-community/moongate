@@ -15,7 +15,9 @@ namespace Moongate.Server.FileLoaders;
 [RegisterFileLoader(10)]
 public class CliLocLoader : IFileLoader
 {
-    private static byte[] _buffer = new byte[1024];
+    private const uint MythicHeaderXor = 0x8E2C9A3D;
+    private const int MaxExpectedMythicOutputLength = 64 * 1024 * 1024;
+    private const int MaxEntryLength = 64 * 1024;
 
     private readonly ILogger _logger = Log.ForContext<CliLocLoader>();
 
@@ -49,9 +51,26 @@ public class CliLocLoader : IFileLoader
             var buffer = new byte[fileStream.Length];
             _ = fileStream.Read(buffer, 0, buffer.Length);
 
-            var clilocData = decompress
-                                 ? MythicDecompress.Decompress(buffer)
-                                 : buffer;
+            var clilocData = buffer;
+
+            if (decompress && IsLikelyMythicCompressed(buffer))
+            {
+                try
+                {
+                    var decompressed = MythicDecompress.Decompress(buffer);
+
+                    if (decompressed.Length > 0)
+                    {
+                        clilocData = decompressed;
+                    }
+                }
+                catch
+                {
+                    // Some distributions ship cliloc as plain data.
+                    // Fallback to raw parsing to avoid startup failure on unexpected formats.
+                    clilocData = buffer;
+                }
+            }
 
             using (var reader = new BinaryReader(new MemoryStream(clilocData)))
             {
@@ -60,17 +79,35 @@ public class CliLocLoader : IFileLoader
 
                 while (reader.BaseStream.Length != reader.BaseStream.Position)
                 {
-                    var number = reader.ReadInt32();
-                    var flag = reader.ReadByte();
-                    int length = reader.ReadInt16();
+                    var remaining = reader.BaseStream.Length - reader.BaseStream.Position;
 
-                    if (length > _buffer.Length)
+                    if (remaining < 7)
                     {
-                        _buffer = new byte[(length + 1023) & ~1023];
+                        break;
                     }
 
-                    reader.Read(_buffer, 0, length);
-                    var text = Encoding.UTF8.GetString(_buffer, 0, length);
+                    var number = reader.ReadInt32();
+                    var flag = reader.ReadByte();
+                    var length = (int)reader.ReadUInt16();
+
+                    if (length <= 0 || length > MaxEntryLength)
+                    {
+                        break;
+                    }
+
+                    if (reader.BaseStream.Length - reader.BaseStream.Position < length)
+                    {
+                        break;
+                    }
+
+                    var textBuffer = reader.ReadBytes(length);
+
+                    if (textBuffer.Length != length)
+                    {
+                        break;
+                    }
+
+                    var text = Encoding.UTF8.GetString(textBuffer, 0, length);
 
                     var se = new StringEntry(number, text, flag);
                     entries.Add(se);
@@ -79,5 +116,18 @@ public class CliLocLoader : IFileLoader
         }
 
         return entries;
+    }
+
+    private static bool IsLikelyMythicCompressed(byte[] buffer)
+    {
+        if (buffer.Length <= 1028)
+        {
+            return false;
+        }
+
+        var header = BitConverter.ToUInt32(buffer, 0);
+        var expectedOutputLength = (int)(header ^ MythicHeaderXor);
+
+        return expectedOutputLength > 0 && expectedOutputLength <= MaxExpectedMythicOutputLength;
     }
 }

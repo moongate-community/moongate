@@ -81,4 +81,6 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
     public List<MobileEquipmentItemTemplate> FixedEquipment { get; set; } = [];
 
     public List<MobileRandomEquipmentPoolTemplate> RandomEquipment { get; set; } = [];
+
+    public Dictionary<string, ItemTemplateParamDefinition> Params { get; set; } = [];
 }

@@ -95,12 +95,14 @@ public sealed class NameService : INameService
     private string GenerateRandomNameFromAllPools()
     {
         var availablePools = _names.Values.Where(static pool => pool.Count > 0).ToArray();
+
         if (availablePools.Length == 0)
         {
             return string.Empty;
         }
 
         var selectedPool = availablePools[_random.Next(availablePools.Length)];
+
         lock (selectedPool)
         {
             return selectedPool.Count == 0 ? string.Empty : selectedPool[_random.Next(selectedPool.Count)];

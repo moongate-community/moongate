@@ -6,7 +6,6 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
 using Moongate.Server.Http.Data;
-using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
 
@@ -23,8 +22,8 @@ public class MoongateHttpServiceCommandsEndpointTests
         var commandService = new TestCommandSystemService
         {
             ExecuteCommandWithOutputAsyncImpl = (command, source, _, _) => Task.FromResult<IReadOnlyList<string>>(
-                [$"executed: {command}", $"source: {source}"]
-            )
+                                                    [$"executed: {command}", $"source: {source}"]
+                                                )
         };
 
         var service = new MoongateHttpService(

@@ -3,7 +3,32 @@
 Reference for the Moongate v2 Lua scripting API.
 
 > `definitions.lua` generated at startup is the source of truth for currently exported modules and signatures.
-> This page may include planned/high-level APIs in addition to runtime-available ones.
+> This page contains legacy/planned examples too. Always validate signatures against `moongate_data/scripts/definitions.lua`.
+
+## Current Runtime Baseline (Verified)
+
+The following modules are currently wired in runtime:
+
+- `log`
+- `command`
+- `speech`
+- `mobile`
+- `item`
+- `door`
+- `effect`
+- `gump`
+- `location`
+- `random`
+- `dice`
+- `timer`
+- `time`
+- `weather` (`set_global_light`, `clear_global_light`)
+
+Common shipped command scripts:
+
+- `moongate_data/scripts/commands/gm/eclipse.lua`
+- `moongate_data/scripts/commands/gm/set_world_light.lua`
+- `moongate_data/scripts/commands/gm/teleports.lua`
 
 ## Runtime Notes
 

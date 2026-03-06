@@ -213,9 +213,7 @@ public class STArrayPool<T> : ArrayPool<T>
     }
 
     private STArrayPoolStack<T> CreateBucketStack(int bucketIndex)
-    {
-        return _buckets[bucketIndex] = new(StackArraySize);
-    }
+        => _buckets[bucketIndex] = new(StackArraySize);
 
     private STArrayPoolBucket<T>[] InitializeBuckets()
     {

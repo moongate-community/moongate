@@ -10,4 +10,3 @@ public sealed class MoongateScriptingConfig
     /// </summary>
     public bool EnableFileWatcher { get; set; } = true;
 }
-

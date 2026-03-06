@@ -1,11 +1,11 @@
+using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.Server.Interfaces.Services.Movement;
-using Moongate.Server.Interfaces.Services.Events;
-using Moongate.Server.Data.Events.Spatial;
-using Moongate.Server.Data.Events.Speech;
-using Moongate.Server.Data.Events.Characters;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -60,24 +60,57 @@ public sealed class LuaMobileProxy
 
     public bool IsOnline => _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out _);
 
-    public bool IsAlive()
-        => _mobile.IsAlive;
+    public void CastSpell(int spellId)
 
-    public double GetHpPercent()
+        // TODO: Implement spell casting primitive for brain point 5.
+        => _ = spellId;
+
+    public void ClearTarget()
+        => _target = null;
+
+    public bool DisableWar()
     {
-        if (_mobile.MaxHits <= 0)
+        _mobile.IsWarMode = false;
+
+        if (_gameEventBusService is null)
         {
-            return 0;
+            return false;
         }
 
-        return Math.Clamp((double)_mobile.Hits / _mobile.MaxHits, 0, 1);
+        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+
+        return true;
     }
 
-    public bool HasTarget()
-        => _target is not null;
+    public int DistanceTo(LuaMobileProxy? target)
+    {
+        if (target is null)
+        {
+            return int.MaxValue;
+        }
 
-    public LuaMobileProxy? GetTarget()
-        => _target;
+        return (int)Math.Round(_mobile.Location.GetDistance(new(target.LocationX, target.LocationY, target.LocationZ)));
+    }
+
+    public bool EnableWar()
+    {
+        _mobile.IsWarMode = true;
+
+        if (_gameEventBusService is null)
+        {
+            return false;
+        }
+
+        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+
+        return true;
+    }
 
     public LuaMobileProxy? FindEnemy(int range)
     {
@@ -131,6 +164,30 @@ public sealed class LuaMobileProxy
         );
     }
 
+    public void Flee(LuaMobileProxy? from)
+
+        // TODO: Implement flee movement primitive for brain point 5.
+        => _ = from;
+
+    public double GetHpPercent()
+    {
+        if (_mobile.MaxHits <= 0)
+        {
+            return 0;
+        }
+
+        return Math.Clamp((double)_mobile.Hits / _mobile.MaxHits, 0, 1);
+    }
+
+    public LuaMobileProxy? GetTarget()
+        => _target;
+
+    public bool HasTarget()
+        => _target is not null;
+
+    public bool IsAlive()
+        => _mobile.IsAlive;
+
     public bool IsInRange(LuaMobileProxy? target, int range)
     {
         if (target is null || range < 0)
@@ -138,41 +195,7 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        return _mobile.Location.InRange(new Point3D(target.LocationX, target.LocationY, target.LocationZ), range);
-    }
-
-    public int DistanceTo(LuaMobileProxy? target)
-    {
-        if (target is null)
-        {
-            return int.MaxValue;
-        }
-
-        return (int)Math.Round(
-            _mobile.Location.GetDistance(new Point3D(target.LocationX, target.LocationY, target.LocationZ))
-        );
-    }
-
-    public void MoveTowards(LuaMobileProxy? target)
-    {
-        if (target is null || _movementValidationService is null || _pathfindingService is null)
-        {
-            return;
-        }
-
-        if (target.MapId != _mobile.MapId)
-        {
-            return;
-        }
-
-        var targetLocation = new Point3D(target.LocationX, target.LocationY, target.LocationZ);
-
-        if (!_pathfindingService.TryFindPath(_mobile, targetLocation, out var path) || path.Count == 0)
-        {
-            return;
-        }
-
-        Move(path[0]);
+        return _mobile.Location.InRange(new(target.LocationX, target.LocationY, target.LocationZ), range);
     }
 
     public bool Move(DirectionType direction)
@@ -217,89 +240,32 @@ public sealed class LuaMobileProxy
         return true;
     }
 
-    public bool Teleport(int mapId, int x, int y, int z)
+    public void MoveTowards(LuaMobileProxy? target)
     {
-        if (mapId < 0)
+        if (target is null || _movementValidationService is null || _pathfindingService is null)
         {
-            return false;
+            return;
         }
 
-        var oldLocation = _mobile.Location;
-        var oldMapId = _mobile.MapId;
-        var newLocation = new Point3D(x, y, z);
-
-        _mobile.MapId = mapId;
-        _mobile.Location = newLocation;
-
-        if (_gameEventBusService is not null && oldLocation != newLocation)
+        if (target.MapId != _mobile.MapId)
         {
-            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
-                                ? session.SessionId
-                                : -1;
-
-            _gameEventBusService.PublishAsync(
-                                    new MobilePositionChangedEvent(
-                                        sessionId,
-                                        _mobile.Id,
-                                        oldMapId,
-                                        _mobile.MapId,
-                                        oldLocation,
-                                        newLocation
-                                    )
-                                )
-                                .AsTask()
-                                .GetAwaiter()
-                                .GetResult();
+            return;
         }
 
-        return true;
-    }
+        var targetLocation = new Point3D(target.LocationX, target.LocationY, target.LocationZ);
 
-    public void Wander(int radius)
-
-        // TODO: Implement wandering movement primitive for brain point 5.
-        => _ = radius;
-
-    public void Flee(LuaMobileProxy? from)
-
-        // TODO: Implement flee movement primitive for brain point 5.
-        => _ = from;
-
-    public void WalkTo(int x, int y)
-    {
-        _ = x;
-        _ = y;
-    }
-
-    public void StopMoving() { }
-
-    public void Swing(LuaMobileProxy? target)
-
-        // TODO: Implement melee combat primitive for brain point 5.
-        => _ = target;
-
-    public void SetTarget(LuaMobileProxy? target)
-        => _target = target;
-
-    public void ClearTarget()
-        => _target = null;
-
-    public void CastSpell(int spellId)
-
-        // TODO: Implement spell casting primitive for brain point 5.
-        => _ = spellId;
-
-    public bool Say(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
+        if (!_pathfindingService.TryFindPath(_mobile, targetLocation, out var path) || path.Count == 0)
         {
-            return false;
+            return;
         }
 
-        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
-
-        return recipients > 0;
+        Move(path[0]);
     }
+
+    public void PlayAnimation(int animId)
+
+        // TODO: Implement animation primitive for brain point 5.
+        => _ = animId;
 
     public void PlaySound(int soundId)
     {
@@ -313,14 +279,24 @@ public sealed class LuaMobileProxy
                                     _mobile.Id,
                                     _mobile.MapId,
                                     _mobile.Location,
-                                    (ushort)Math.Min(soundId, ushort.MaxValue),
-                                    0x01,
-                                    0
+                                    (ushort)Math.Min(soundId, ushort.MaxValue)
                                 )
                             )
                             .AsTask()
                             .GetAwaiter()
                             .GetResult();
+    }
+
+    public bool Say(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
+
+        return recipients > 0;
     }
 
     public void SetEffect(
@@ -363,50 +339,70 @@ public sealed class LuaMobileProxy
                             .GetResult();
     }
 
-    public void PlayAnimation(int animId)
-
-        // TODO: Implement animation primitive for brain point 5.
-        => _ = animId;
-
-    public bool EnableWar()
-    {
-        _mobile.IsWarMode = true;
-
-        if (_gameEventBusService is null)
-        {
-            return false;
-        }
-
-        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
-                            .AsTask()
-                            .GetAwaiter()
-                            .GetResult();
-
-        return true;
-    }
-
-    public bool DisableWar()
-    {
-        _mobile.IsWarMode = false;
-
-        if (_gameEventBusService is null)
-        {
-            return false;
-        }
-
-        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
-                            .AsTask()
-                            .GetAwaiter()
-                            .GetResult();
-
-        return true;
-    }
+    public void SetTarget(LuaMobileProxy? target)
+        => _target = target;
 
     public bool SetWarMode(bool isEnabled)
         => isEnabled ? EnableWar() : DisableWar();
+
+    public void StopMoving() { }
 
     public void SummonUndead(int count)
 
         // TODO: Implement summon primitive for brain point 5.
         => _ = count;
+
+    public void Swing(LuaMobileProxy? target)
+
+        // TODO: Implement melee combat primitive for brain point 5.
+        => _ = target;
+
+    public bool Teleport(int mapId, int x, int y, int z)
+    {
+        if (mapId < 0)
+        {
+            return false;
+        }
+
+        var oldLocation = _mobile.Location;
+        var oldMapId = _mobile.MapId;
+        var newLocation = new Point3D(x, y, z);
+
+        _mobile.MapId = mapId;
+        _mobile.Location = newLocation;
+
+        if (_gameEventBusService is not null && oldLocation != newLocation)
+        {
+            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
+                                ? session.SessionId
+                                : -1;
+
+            _gameEventBusService.PublishAsync(
+                                    new MobilePositionChangedEvent(
+                                        sessionId,
+                                        _mobile.Id,
+                                        oldMapId,
+                                        _mobile.MapId,
+                                        oldLocation,
+                                        newLocation
+                                    )
+                                )
+                                .AsTask()
+                                .GetAwaiter()
+                                .GetResult();
+        }
+
+        return true;
+    }
+
+    public void WalkTo(int x, int y)
+    {
+        _ = x;
+        _ = y;
+    }
+
+    public void Wander(int radius)
+
+        // TODO: Implement wandering movement primitive for brain point 5.
+        => _ = radius;
 }

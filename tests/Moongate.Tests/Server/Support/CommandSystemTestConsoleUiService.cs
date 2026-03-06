@@ -14,14 +14,10 @@ public sealed class CommandSystemTestConsoleUiService : IConsoleUiService
     public char UnlockCharacter => '*';
 
     public void LockInput()
-    {
-        IsInputLocked = true;
-    }
+        => IsInputLocked = true;
 
     public void UnlockInput()
-    {
-        IsInputLocked = false;
-    }
+        => IsInputLocked = false;
 
     public void UpdateInput(string input) { }
 
@@ -30,7 +26,5 @@ public sealed class CommandSystemTestConsoleUiService : IConsoleUiService
         LogEventLevel level,
         IReadOnlyCollection<string>? highlightedValues = null
     )
-    {
-        Lines.Add((line, level));
-    }
+        => Lines.Add((line, level));
 }

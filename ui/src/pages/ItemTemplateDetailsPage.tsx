@@ -16,6 +16,20 @@ interface ItemTemplateDetail {
   goldValue?: string
   hue?: string
   gumpId?: string
+  params?: Record<string, { type: number; value: string }>
+}
+
+function itemTemplateParamTypeToLabel(type: number): string {
+  switch (type) {
+    case 0:
+      return 'string'
+    case 1:
+      return 'serial'
+    case 2:
+      return 'hue'
+    default:
+      return `unknown(${type})`
+  }
 }
 
 function parseHueNumber(hue?: string): number | null {
@@ -219,6 +233,28 @@ export function ItemTemplateDetailsPage() {
                   ))
                 )}
               </div>
+            </div>
+
+            <div className="rounded-lg border border-[rgba(106,165,218,0.12)] bg-[rgba(36,33,48,0.55)] px-3 py-3">
+              <p className="font-mono text-[10px] tracking-wider uppercase text-[rgba(185,187,211,0.6)] mb-2">Params</p>
+              {Object.keys(template.params ?? {}).length === 0 ? (
+                <span className="font-mono text-xs text-[rgba(185,187,211,0.7)]">No params.</span>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {Object.entries(template.params ?? {}).map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded border border-[rgba(106,165,218,0.12)] bg-[rgba(31,28,42,0.65)] px-2 py-1.5"
+                    >
+                      <span className="font-mono text-xs text-[#f9f4ed] break-all">{key}</span>
+                      <span className="font-mono text-[10px] uppercase tracking-wider text-[#6aa5da]">
+                        {itemTemplateParamTypeToLabel(value.type)}
+                      </span>
+                      <span className="font-mono text-xs text-[rgba(249,244,237,0.82)] break-all text-right">{value.value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

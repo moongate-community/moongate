@@ -6,7 +6,7 @@ namespace Moongate.Server.Attributes;
 /// <summary>
 /// Marks a command executor for source-generated console command registration.
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class)]
 public sealed class RegisterConsoleCommandAttribute : Attribute
 {
     /// <summary>
