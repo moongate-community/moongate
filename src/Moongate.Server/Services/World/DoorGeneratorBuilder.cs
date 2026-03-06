@@ -381,7 +381,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
         foreach (var placement in placements)
         {
-            var generatedDoor = await _itemService.SpawnFromTemplateAsync("door");
+            var generatedDoor = await _itemService.SpawnFromTemplateAsync("dark_wood_door");
 
             generatedDoor.Location = placement.Location;
             generatedDoor.MapId = placement.MapId;

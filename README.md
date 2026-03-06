@@ -381,7 +381,7 @@ Resolution model:
 - `src/Moongate.Server/Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
 - `benchmarks/Moongate.Benchmarks`: BenchmarkDotNet performance suite.
-- `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
+- `docs/`: documentation and project notes (plans, sprints, protocol notes, journal).
 
 ## Source Generators (AOT)
 
@@ -1149,7 +1149,7 @@ For full setup details, volumes, troubleshooting, and dashboard notes, see `stac
 
 ## Documentation
 
-Project documentation (Obsidian vault) is in `docs/`.
+Project documentation is in `docs/`.
 Published documentation is available at:
 
 - https://moongate-community.github.io/moongatev2/
