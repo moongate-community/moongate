@@ -14,25 +14,97 @@ public sealed class GameEventBusService : IGameEventBusService
         where TEvent : IGameEvent
     {
         _logger.Verbose("Publishing game event type {EventType} dump: {Value}", typeof(TEvent).Name, gameEvent);
-        var listeners = GetListenersSnapshot<TEvent>();
 
-        if (listeners.Length == 0)
+        var typedList = _listeners.TryGetValue(typeof(TEvent), out var typed) ? typed : null;
+        var globalList = typeof(TEvent) != typeof(IGameEvent) && _listeners.TryGetValue(typeof(IGameEvent), out var global)
+            ? global
+            : null;
+
+        var typedCount = 0;
+        var globalCount = 0;
+
+        if (typedList is not null)
+        {
+            lock (typedList)
+            {
+                typedCount = typedList.Count;
+            }
+        }
+
+        if (globalList is not null)
+        {
+            lock (globalList)
+            {
+                globalCount = globalList.Count;
+            }
+        }
+
+        var totalCount = typedCount + globalCount;
+
+        if (totalCount == 0)
         {
             return;
         }
 
-        var dispatchTasks = new Task[listeners.Length];
-
-        for (var i = 0; i < listeners.Length; i++)
+        // Single-listener fast path: no Task[] allocation
+        if (totalCount == 1)
         {
-            dispatchTasks[i] = DispatchListenerSafeAsync<TEvent>(
-                listeners[i],
-                gameEvent,
-                cancellationToken
-            );
+            object listener;
+
+            if (typedCount == 1)
+            {
+                lock (typedList!)
+                {
+                    listener = typedList[0];
+                }
+            }
+            else
+            {
+                lock (globalList!)
+                {
+                    listener = globalList[0];
+                }
+            }
+
+            await DispatchListenerSafeAsync(listener, gameEvent, cancellationToken);
+
+            return;
         }
 
-        await Task.WhenAll(dispatchTasks);
+        // Multi-listener path: parallel dispatch (preserves concurrency)
+        var tasks = new Task[totalCount];
+        var taskIndex = 0;
+
+        if (typedCount > 0)
+        {
+            lock (typedList!)
+            {
+                for (var i = 0; i < Math.Min(typedCount, typedList.Count); i++)
+                {
+                    tasks[taskIndex++] = DispatchListenerSafeAsync(typedList[i], gameEvent, cancellationToken);
+                }
+            }
+        }
+
+        if (globalCount > 0)
+        {
+            lock (globalList!)
+            {
+                for (var i = 0; i < Math.Min(globalCount, globalList.Count); i++)
+                {
+                    tasks[taskIndex++] = DispatchListenerSafeAsync(globalList[i], gameEvent, cancellationToken);
+                }
+            }
+        }
+
+        if (taskIndex < tasks.Length)
+        {
+            await Task.WhenAll(tasks.AsSpan(0, taskIndex).ToArray());
+        }
+        else
+        {
+            await Task.WhenAll(tasks);
+        }
     }
 
     private async Task DispatchListenerSafeAsync<TEvent>(
@@ -77,44 +149,4 @@ public sealed class GameEventBusService : IGameEventBusService
         }
     }
 
-    private object[] CopyListeners(Type eventType)
-    {
-        if (!_listeners.TryGetValue(eventType, out var listeners))
-        {
-            return [];
-        }
-
-        lock (listeners)
-        {
-            return listeners.Count == 0 ? [] : listeners.ToArray();
-        }
-    }
-
-    private object[] GetListenersSnapshot<TEvent>() where TEvent : IGameEvent
-    {
-        var typedListeners = CopyListeners(typeof(TEvent));
-
-        if (typeof(TEvent) == typeof(IGameEvent))
-        {
-            return typedListeners;
-        }
-
-        var globalListeners = CopyListeners(typeof(IGameEvent));
-
-        if (typedListeners.Length == 0)
-        {
-            return globalListeners;
-        }
-
-        if (globalListeners.Length == 0)
-        {
-            return typedListeners;
-        }
-
-        var snapshot = new object[typedListeners.Length + globalListeners.Length];
-        typedListeners.CopyTo(snapshot, 0);
-        globalListeners.CopyTo(snapshot, typedListeners.Length);
-
-        return snapshot;
-    }
 }
