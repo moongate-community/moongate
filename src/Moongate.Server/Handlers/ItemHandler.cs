@@ -466,16 +466,19 @@ public class ItemHandler
 
     public async Task HandleAsync(ItemMovedEvent gameEvent, CancellationToken cancellationToken = default)
     {
+        if (gameEvent.NewContainerId == Serial.Zero)
+        {
+            return;
+        }
+
         if (_gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
         {
-            var item = await _itemService.GetItemAsync(gameEvent.NewContainerId);
+            var container = await _itemService.GetItemAsync(gameEvent.NewContainerId);
 
-            if (item is null)
+            if (container is null)
             {
                 return;
             }
-
-            var container = await _itemService.GetItemAsync(gameEvent.NewContainerId);
 
             Enqueue(session, new DrawContainerAndAddItemCombinedPacket(container));
         }

@@ -789,6 +789,124 @@ public class ItemHandlerTests
         );
     }
 
+    [Test]
+    public async Task HandleAsync_ItemMovedEvent_ShouldLoadCorrectItemAndContainer()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+
+        var containerId = (Serial)0x40000001u;
+        var itemId = (Serial)0x40000050u;
+
+        itemService.ItemsById[containerId] = new()
+        {
+            Id = containerId,
+            ItemId = 0x0E75,
+            GumpId = 0x0042
+        };
+        itemService.ItemsById[itemId] = new()
+        {
+            Id = itemId,
+            ItemId = 0x0EED,
+            ParentContainerId = containerId
+        };
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000002u,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u
+            }
+        };
+        sessionService.Add(session);
+
+        await handler.HandleAsync(
+            new ItemMovedEvent(
+                sessionId: session.SessionId,
+                itemId: itemId,
+                oldContainerId: Serial.Zero,
+                newContainerId: containerId,
+                oldLocation: new Point3D(0, 0, 0),
+                newLocation: new Point3D(10, 10, 0),
+                mapId: 0
+            )
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<DrawContainerAndAddItemCombinedPacket>());
+                var draw = (DrawContainerAndAddItemCombinedPacket)outbound.Packet;
+                Assert.That(draw.Container, Is.Not.Null);
+                Assert.That(draw.Container!.Id, Is.EqualTo(containerId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ItemMovedEvent_WhenNoContainer_ShouldNotEnqueuePacket()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+
+        var itemId = (Serial)0x40000050u;
+        itemService.ItemsById[itemId] = new()
+        {
+            Id = itemId,
+            ItemId = 0x0EED
+        };
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000002u,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u
+            }
+        };
+        sessionService.Add(session);
+
+        await handler.HandleAsync(
+            new ItemMovedEvent(
+                sessionId: session.SessionId,
+                itemId: itemId,
+                oldContainerId: Serial.Zero,
+                newContainerId: Serial.Zero,
+                oldLocation: new Point3D(0, 0, 0),
+                newLocation: new Point3D(10, 10, 0),
+                mapId: 0
+            )
+        );
+
+        Assert.That(queue.TryDequeue(out _), Is.False);
+    }
+
     private sealed class ItemHandlerTestItemService : IItemService
     {
         public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
