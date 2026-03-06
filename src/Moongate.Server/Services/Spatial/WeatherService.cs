@@ -1,11 +1,8 @@
 using Moongate.Network.Packets.Outgoing.World;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
-using Moongate.UO.Data.Geometry;
-using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Weather;
@@ -15,83 +12,24 @@ namespace Moongate.Server.Services.Spatial;
 
 public class WeatherService : IWeatherService
 {
-    private const int DayLevel = 0;
-    private const int NightLevel = 12;
-    private const int DungeonLevel = 26;
-    private const int JailLevel = 9;
-    private const int DefaultPersonalLightLevel = 0;
-    private const double DefaultSecondsPerUoMinute = 5.0;
-    private static readonly DateTime DefaultWorldStartUtc = new(1997, 9, 1, 0, 0, 0, DateTimeKind.Utc);
-
     private readonly ITimerService _timerService;
-
-    private readonly ILogger _logger = Log.ForContext<WeatherService>();
-
-    private readonly List<JsonWeather> _weatherTypes = new();
-
-    private readonly IOutgoingPacketQueue _outgoingPacketQueue;
-
-    private readonly IGameNetworkSessionService _gameNetworkSessionService;
-
     private readonly ISpatialWorldService _spatialWorldService;
-    private readonly Dictionary<long, int> _lastGlobalLightBySessionId = [];
-    private readonly DateTime _worldStartUtc;
-    private readonly double _secondsPerUoMinute;
-    private int? _forcedGlobalLightLevel;
+    private readonly IOutgoingPacketQueue _outgoingPacketQueue;
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly ILogger _logger = Log.ForContext<WeatherService>();
+    private readonly List<JsonWeather> _weatherTypes = [];
 
     public WeatherService(
         ITimerService timerService,
         ISpatialWorldService spatialWorldService,
         IOutgoingPacketQueue outgoingPacketQueue,
-        IGameNetworkSessionService gameNetworkSessionService,
-        MoongateSpatialConfig? spatialConfig = null
+        IGameNetworkSessionService gameNetworkSessionService
     )
     {
         _timerService = timerService;
         _spatialWorldService = spatialWorldService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameNetworkSessionService = gameNetworkSessionService;
-
-        _secondsPerUoMinute = spatialConfig is { LightSecondsPerUoMinute: > 0 }
-                                  ? spatialConfig.LightSecondsPerUoMinute
-                                  : DefaultSecondsPerUoMinute;
-
-        if (!DateTime.TryParse(spatialConfig?.LightWorldStartUtc, out var parsedWorldStart))
-        {
-            _worldStartUtc = DefaultWorldStartUtc;
-
-            return;
-        }
-
-        _worldStartUtc = parsedWorldStart.ToUniversalTime();
-    }
-
-    private void OnWeatherCallBack()
-    {
-        var activeSectors = _spatialWorldService.GetActiveSectors();
-
-        foreach (var sector in activeSectors)
-        {
-            if (_weatherTypes.Count == 0)
-            {
-                _logger.Warning("No weather types available to generate weather snapshot.");
-
-                continue;
-            }
-
-            var randomWeather = _weatherTypes[Random.Shared.Next(_weatherTypes.Count)];
-            var snapshot = GenerateSnapshot(randomWeather);
-
-            var weatherPacket = WeatherFactory.CreateFromSnapshot(snapshot);
-
-            foreach (var mobile in sector.GetPlayers())
-            {
-                if (_gameNetworkSessionService.TryGetByCharacterId(mobile.Id, out var session))
-                {
-                    _outgoingPacketQueue.Enqueue(session.SessionId, weatherPacket);
-                }
-            }
-        }
     }
 
     public Task StartAsync()
@@ -104,58 +42,11 @@ public class WeatherService : IWeatherService
             true
         );
 
-        _timerService.RegisterTimer("light_update", TimeSpan.FromSeconds(10), ProcessLight, TimeSpan.FromSeconds(10), true);
-
         return Task.CompletedTask;
-    }
-
-    private void ProcessLight()
-    {
-        var activeSessionIds = new HashSet<long>();
-
-        foreach (var session in _gameNetworkSessionService.GetAll())
-        {
-            if (session.Character is null)
-            {
-                continue;
-            }
-
-            activeSessionIds.Add(session.SessionId);
-
-            var globalLight = ComputeGlobalLightLevel(session.Character.MapId, session.Character.Location);
-
-            if (_lastGlobalLightBySessionId.TryGetValue(session.SessionId, out var lastGlobalLight) &&
-                lastGlobalLight == globalLight)
-            {
-                continue;
-            }
-
-            _lastGlobalLightBySessionId[session.SessionId] = globalLight;
-            var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
-            var personalLightLevel = (LightLevelType)(byte)DefaultPersonalLightLevel;
-            _outgoingPacketQueue.Enqueue(session.SessionId, new OverallLightLevelPacket(globalLightLevel));
-            _outgoingPacketQueue.Enqueue(session.SessionId, new PersonalLightLevelPacket(personalLightLevel, session.Character));
-        }
-
-        if (_lastGlobalLightBySessionId.Count == 0)
-        {
-            return;
-        }
-
-        var staleSessionIds = _lastGlobalLightBySessionId.Keys
-                                                         .Where(sessionId => !activeSessionIds.Contains(sessionId))
-                                                         .ToList();
-
-        foreach (var staleSessionId in staleSessionIds)
-        {
-            _lastGlobalLightBySessionId.Remove(staleSessionId);
-        }
     }
 
     public Task StopAsync()
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 
     public void SetWeatherTypes(List<JsonWeather> weatherTypes)
     {
@@ -207,69 +98,30 @@ public class WeatherService : IWeatherService
         );
     }
 
-    public int ComputeGlobalLightLevel(DateTime? utcNow = null)
+    private void OnWeatherCallBack()
     {
-        if (_forcedGlobalLightLevel.HasValue)
+        var activeSectors = _spatialWorldService.GetActiveSectors();
+
+        foreach (var sector in activeSectors)
         {
-            return _forcedGlobalLightLevel.Value;
+            if (_weatherTypes.Count == 0)
+            {
+                _logger.Warning("No weather types available to generate weather snapshot.");
+
+                continue;
+            }
+
+            var randomWeather = _weatherTypes[Random.Shared.Next(_weatherTypes.Count)];
+            var snapshot = GenerateSnapshot(randomWeather);
+            var weatherPacket = WeatherFactory.CreateFromSnapshot(snapshot);
+
+            foreach (var mobile in sector.GetPlayers())
+            {
+                if (_gameNetworkSessionService.TryGetByCharacterId(mobile.Id, out var session))
+                {
+                    _outgoingPacketQueue.Enqueue(session.SessionId, weatherPacket);
+                }
+            }
         }
-
-        var now = utcNow?.ToUniversalTime() ?? DateTime.UtcNow;
-
-        return ComputeLightLevelFromHourMinute(now.Hour, now.Minute);
-    }
-
-    public int ComputeGlobalLightLevel(int mapId, Point3D location, DateTime? utcNow = null)
-    {
-        if (_forcedGlobalLightLevel.HasValue)
-        {
-            return _forcedGlobalLightLevel.Value;
-        }
-
-        var region = _spatialWorldService.ResolveRegion(mapId, location);
-
-        if (region is JsonDungeonRegion)
-        {
-            return DungeonLevel;
-        }
-
-        if (region is JsonJailRegion)
-        {
-            return JailLevel;
-        }
-
-        var now = utcNow?.ToUniversalTime() ?? DateTime.UtcNow;
-        var totalMinutes = (int)((now - _worldStartUtc).TotalSeconds / _secondsPerUoMinute);
-        totalMinutes += mapId * 320;
-        totalMinutes += location.X / 16;
-        var normalizedMinutes = ((totalMinutes % (24 * 60)) + (24 * 60)) % (24 * 60);
-        var hour = normalizedMinutes / 60;
-        var minute = normalizedMinutes % 60;
-
-        return ComputeLightLevelFromHourMinute(hour, minute);
-    }
-
-    public void SetGlobalLightOverride(int? lightLevel, bool applyImmediately = true)
-    {
-        _forcedGlobalLightLevel = lightLevel.HasValue
-                                      ? Math.Clamp(lightLevel.Value, 0, byte.MaxValue)
-                                      : null;
-
-        if (applyImmediately)
-        {
-            ProcessLight();
-        }
-    }
-
-    private static int ComputeLightLevelFromHourMinute(int hour, int minute)
-    {
-        return hour switch
-        {
-            < 4  => NightLevel,
-            < 6  => NightLevel + ((hour - 4) * 60 + minute) * (DayLevel - NightLevel) / 120,
-            < 22 => DayLevel,
-            < 24 => DayLevel + ((hour - 22) * 60 + minute) * (NightLevel - DayLevel) / 120,
-            _    => NightLevel
-        };
     }
 }

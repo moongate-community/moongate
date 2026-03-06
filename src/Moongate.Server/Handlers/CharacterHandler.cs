@@ -42,7 +42,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly ISpatialWorldService _spatialWorldService;
-    private readonly IWeatherService? _weatherService;
+    private readonly ILightService? _lightService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -51,7 +51,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IGameEventBusService gameEventBusService,
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService spatialWorldService,
-        IWeatherService? weatherService = null
+        ILightService? lightService = null
     ) : base(outgoingPacketQueue)
     {
         _characterService = characterService;
@@ -59,7 +59,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
-        _weatherService = weatherService;
+        _lightService = lightService;
 
         _gameEventBusService.RegisterListener(this);
     }
@@ -115,7 +115,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new WarModePacket(character));
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
-        var globalLight = _weatherService?.ComputeGlobalLightLevel(character.MapId, character.Location) ?? (int)LightLevelType.Day;
+        var globalLight = _lightService?.ComputeGlobalLightLevel(character.MapId, character.Location) ?? (int)LightLevelType.Day;
         var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
         var personalLightLevel = (LightLevelType)(byte)0;
         Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
