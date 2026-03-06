@@ -790,6 +790,78 @@ public class ItemHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_WhenItemDeletedFromOwnBackpack_ShouldEarlyExitWithoutScanningAllSessions()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+
+        var backpackId = (Serial)0x40000001u;
+        itemService.ItemsById[backpackId] = new()
+        {
+            Id = backpackId,
+            ItemId = 0x0E75,
+            GumpId = 0x0042
+        };
+
+        using var sourceClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sourceSession = new GameSession(new(sourceClient))
+        {
+            CharacterId = (Serial)0x00000002u,
+            Character = new()
+            {
+                Id = (Serial)0x00000002u,
+                BackpackId = backpackId
+            }
+        };
+        sessionService.Add(sourceSession);
+
+        // Add a second session that should NOT be scanned in the fast path
+        using var otherClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var otherSession = new GameSession(new(otherClient))
+        {
+            CharacterId = (Serial)0x00000003u,
+            Character = new()
+            {
+                Id = (Serial)0x00000003u,
+                BackpackId = (Serial)0x40000099u
+            }
+        };
+        sessionService.Add(otherSession);
+
+        await handler.HandleAsync(
+            new ItemDeletedEvent(
+                sessionId: sourceSession.SessionId,
+                itemId: (Serial)0x40000050u,
+                oldContainerId: backpackId,
+                oldLocation: new Point3D(10, 10, 0),
+                mapId: 0
+            )
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(sourceSession.SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<DrawContainerAndAddItemCombinedPacket>());
+                // Only one packet enqueued — the other session was not notified
+                Assert.That(queue.TryDequeue(out _), Is.False);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ItemMovedEvent_ShouldLoadCorrectItemAndContainer()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();

@@ -600,16 +600,38 @@ public class ItemHandler
             return;
         }
 
-        var targetSessionIds = new HashSet<long>();
-
+        // Fast path: check if source session owns the container (personal backpack)
         if (gameEvent.SessionId > 0 && _gameNetworkSessionService.TryGet(gameEvent.SessionId, out var sourceSession))
         {
-            targetSessionIds.Add(sourceSession.SessionId);
+            var sourceCharacter = sourceSession.Character;
+
+            if (sourceCharacter is not null &&
+                (sourceCharacter.BackpackId == gameEvent.OldContainerId ||
+                 (sourceCharacter.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var sourceBackpackId) &&
+                  sourceBackpackId == gameEvent.OldContainerId)))
+            {
+                var container = await _itemService.GetItemAsync(gameEvent.OldContainerId);
+
+                if (container is not null)
+                {
+                    Enqueue(sourceSession.SessionId, new DrawContainerAndAddItemCombinedPacket(container));
+                }
+
+                return;
+            }
         }
 
-        foreach (var session in _gameNetworkSessionService.GetAll())
+        // Slow path: shared container — scan all sessions
+        var targetSessionIds = new HashSet<long>();
+
+        if (gameEvent.SessionId > 0 && _gameNetworkSessionService.TryGet(gameEvent.SessionId, out var session))
         {
-            var character = session.Character;
+            targetSessionIds.Add(session.SessionId);
+        }
+
+        foreach (var otherSession in _gameNetworkSessionService.GetAll())
+        {
+            var character = otherSession.Character;
 
             if (character is null)
             {
@@ -620,7 +642,7 @@ public class ItemHandler
                 (character.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId) &&
                  equippedBackpackId == gameEvent.OldContainerId))
             {
-                targetSessionIds.Add(session.SessionId);
+                targetSessionIds.Add(otherSession.SessionId);
             }
         }
 
@@ -629,16 +651,16 @@ public class ItemHandler
             return;
         }
 
-        var container = await _itemService.GetItemAsync(gameEvent.OldContainerId);
+        var sharedContainer = await _itemService.GetItemAsync(gameEvent.OldContainerId);
 
-        if (container is null)
+        if (sharedContainer is null)
         {
             return;
         }
 
         foreach (var sessionId in targetSessionIds)
         {
-            Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(container));
+            Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(sharedContainer));
         }
     }
 }
