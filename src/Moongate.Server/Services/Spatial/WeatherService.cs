@@ -1,13 +1,12 @@
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Interfaces.Services.Spatial;
-using Moongate.Server.Interfaces.Services.Timing;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.UO.Data.Geometry;
-using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Json.Regions;
+using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Weather;
 using Serilog;
@@ -20,6 +19,7 @@ public class WeatherService : IWeatherService
     private const int NightLevel = 12;
     private const int DungeonLevel = 26;
     private const int JailLevel = 9;
+    private const int DefaultPersonalLightLevel = 0;
     private const double DefaultSecondsPerUoMinute = 5.0;
     private static readonly DateTime DefaultWorldStartUtc = new(1997, 9, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -53,12 +53,13 @@ public class WeatherService : IWeatherService
         _gameNetworkSessionService = gameNetworkSessionService;
 
         _secondsPerUoMinute = spatialConfig is { LightSecondsPerUoMinute: > 0 }
-            ? spatialConfig.LightSecondsPerUoMinute
-            : DefaultSecondsPerUoMinute;
+                                  ? spatialConfig.LightSecondsPerUoMinute
+                                  : DefaultSecondsPerUoMinute;
 
         if (!DateTime.TryParse(spatialConfig?.LightWorldStartUtc, out var parsedWorldStart))
         {
             _worldStartUtc = DefaultWorldStartUtc;
+
             return;
         }
 
@@ -103,7 +104,6 @@ public class WeatherService : IWeatherService
             true
         );
 
-
         _timerService.RegisterTimer("light_update", TimeSpan.FromSeconds(10), ProcessLight, TimeSpan.FromSeconds(10), true);
 
         return Task.CompletedTask;
@@ -112,6 +112,7 @@ public class WeatherService : IWeatherService
     private void ProcessLight()
     {
         var activeSessionIds = new HashSet<long>();
+
         foreach (var session in _gameNetworkSessionService.GetAll())
         {
             if (session.Character is null)
@@ -122,6 +123,7 @@ public class WeatherService : IWeatherService
             activeSessionIds.Add(session.SessionId);
 
             var globalLight = ComputeGlobalLightLevel(session.Character.MapId, session.Character.Location);
+
             if (_lastGlobalLightBySessionId.TryGetValue(session.SessionId, out var lastGlobalLight) &&
                 lastGlobalLight == globalLight)
             {
@@ -129,9 +131,10 @@ public class WeatherService : IWeatherService
             }
 
             _lastGlobalLightBySessionId[session.SessionId] = globalLight;
-            var lightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
-            _outgoingPacketQueue.Enqueue(session.SessionId, new OverallLightLevelPacket(lightLevel));
-            _outgoingPacketQueue.Enqueue(session.SessionId, new PersonalLightLevelPacket(lightLevel, session.Character));
+            var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
+            var personalLightLevel = (LightLevelType)(byte)DefaultPersonalLightLevel;
+            _outgoingPacketQueue.Enqueue(session.SessionId, new OverallLightLevelPacket(globalLightLevel));
+            _outgoingPacketQueue.Enqueue(session.SessionId, new PersonalLightLevelPacket(personalLightLevel, session.Character));
         }
 
         if (_lastGlobalLightBySessionId.Count == 0)
@@ -139,7 +142,10 @@ public class WeatherService : IWeatherService
             return;
         }
 
-        var staleSessionIds = _lastGlobalLightBySessionId.Keys.Where(sessionId => !activeSessionIds.Contains(sessionId)).ToList();
+        var staleSessionIds = _lastGlobalLightBySessionId.Keys
+                                                         .Where(sessionId => !activeSessionIds.Contains(sessionId))
+                                                         .ToList();
+
         foreach (var staleSessionId in staleSessionIds)
         {
             _lastGlobalLightBySessionId.Remove(staleSessionId);
@@ -209,6 +215,7 @@ public class WeatherService : IWeatherService
         }
 
         var now = utcNow?.ToUniversalTime() ?? DateTime.UtcNow;
+
         return ComputeLightLevelFromHourMinute(now.Hour, now.Minute);
     }
 
@@ -220,6 +227,7 @@ public class WeatherService : IWeatherService
         }
 
         var region = _spatialWorldService.ResolveRegion(mapId, location);
+
         if (region is JsonDungeonRegion)
         {
             return DungeonLevel;
@@ -244,8 +252,8 @@ public class WeatherService : IWeatherService
     public void SetGlobalLightOverride(int? lightLevel, bool applyImmediately = true)
     {
         _forcedGlobalLightLevel = lightLevel.HasValue
-            ? Math.Clamp(lightLevel.Value, 0, byte.MaxValue)
-            : null;
+                                      ? Math.Clamp(lightLevel.Value, 0, byte.MaxValue)
+                                      : null;
 
         if (applyImmediately)
         {

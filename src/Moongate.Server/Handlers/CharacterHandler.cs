@@ -115,10 +115,11 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new WarModePacket(character));
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
-        var globalLight = _weatherService?.ComputeGlobalLightLevel() ?? (int)LightLevelType.Day;
+        var globalLight = _weatherService?.ComputeGlobalLightLevel(character.MapId, character.Location) ?? (int)LightLevelType.Day;
         var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
+        var personalLightLevel = (LightLevelType)(byte)0;
         Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
-        Enqueue(session, new PersonalLightLevelPacket(globalLightLevel, character));
+        Enqueue(session, new PersonalLightLevelPacket(personalLightLevel, character));
         Enqueue(session, new SeasonPacket(character.Map.Season));
 
         Enqueue(session, new LoginCompletePacket());

@@ -402,6 +402,11 @@ public sealed class SpatialWorldService
                     move.NewSectorY
                 )
             );
+
+            if (mobile.IsPlayer)
+            {
+                WarmupSectorsFireAndForget(move.MapId, move.NewSectorX, move.NewSectorY);
+            }
         }
 
         if (!mobile.IsPlayer)
@@ -430,6 +435,21 @@ public sealed class SpatialWorldService
 
     public void RemoveEntity(Serial serial)
         => _entityIndex.RemoveEntity(serial);
+
+    private void WarmupSectorsFireAndForget(int mapId, int sectorX, int sectorY)
+    {
+        var warmupRadius = Math.Max(0, _spatialConfig.SectorWarmupRadius);
+        var task = _entityIndex.WarmupAroundSectorAsync(mapId, sectorX, sectorY, warmupRadius, CancellationToken.None);
+
+        if (!task.IsCompletedSuccessfully)
+        {
+            task.ContinueWith(
+                static t => Log.ForContext<SpatialWorldService>()
+                               .Error(t.Exception, "Sector warmup failed"),
+                TaskContinuationOptions.OnlyOnFaulted
+            );
+        }
+    }
 
     private void OnMobileAddedToWorld(UOMobileEntity mobile)
         => PublishEvent(new MobileAddedInWorldEvent(mobile, mobile.BrainId));
