@@ -193,23 +193,35 @@ public sealed class SpatialWorldService
 
     public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
     {
-        var players = GetNearbyMobiles(location, range, mapId).Where(static mobile => mobile.IsPlayer).ToList();
-        var sessions = _gameNetworkSessionService.GetAll();
-        var sessionsByCharacter = sessions
-                                  .Where(static session => session.Character is not null)
-                                  .ToDictionary(static session => session.Character!.Id, static session => session);
+        var players = GetNearbyMobiles(location, range, mapId).Where(static mobile => mobile.IsPlayer);
+        var sessionsByCharacter = BuildSessionsByCharacterMap(excludeSession);
         var result = new List<GameSession>();
 
         foreach (var player in players)
         {
-            if (sessionsByCharacter.TryGetValue(player.Id, out var session) &&
-                session != excludeSession)
+            if (sessionsByCharacter.TryGetValue(player.Id, out var session))
             {
                 result.Add(session);
             }
         }
 
         return result;
+    }
+
+    private Dictionary<Serial, GameSession> BuildSessionsByCharacterMap(GameSession? excludeSession)
+    {
+        var sessions = _gameNetworkSessionService.GetAll();
+        var map = new Dictionary<Serial, GameSession>();
+
+        foreach (var session in sessions)
+        {
+            if (session.Character is not null && session != excludeSession)
+            {
+                map[session.Character.Id] = session;
+            }
+        }
+
+        return map;
     }
 
     private GameSession? ResolveExcludedSession(long? excludeSessionId)
@@ -232,10 +244,7 @@ public sealed class SpatialWorldService
         GameSession? excludeSession
     )
     {
-        var sessions = _gameNetworkSessionService.GetAll();
-        var sessionsByCharacter = sessions
-                                  .Where(static session => session.Character is not null)
-                                  .ToDictionary(static session => session.Character!.Id, static session => session);
+        var sessionsByCharacter = BuildSessionsByCharacterMap(excludeSession);
         var result = new List<GameSession>();
         var seenSessionIds = new HashSet<long>();
 
@@ -248,7 +257,6 @@ public sealed class SpatialWorldService
                 foreach (var player in players)
                 {
                     if (!sessionsByCharacter.TryGetValue(player.Id, out var session) ||
-                        session == excludeSession ||
                         !seenSessionIds.Add(session.SessionId))
                     {
                         continue;
