@@ -194,6 +194,9 @@ public class SpatialWorldServiceBenchmark
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     [Benchmark]

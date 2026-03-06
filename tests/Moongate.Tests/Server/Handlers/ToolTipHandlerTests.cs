@@ -132,6 +132,14 @@ public class ToolTipHandlerTests
 
             return ValueTask.CompletedTask;
         }
+
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+        {
+            _ = items;
+            _ = cancellationToken;
+
+            return ValueTask.CompletedTask;
+        }
     }
 
     private sealed class TestMobileRepository : IMobileRepository

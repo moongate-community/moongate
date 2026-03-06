@@ -1,4 +1,5 @@
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Types.World;
@@ -59,16 +60,19 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
     private readonly IReadOnlyList<DoorGenerationMapSpec> _mapSpecs;
     private readonly IMovementTileQueryService _tileQueryService;
     private readonly IItemService? _itemService;
+    private readonly IItemFactoryService? _itemFactoryService;
     private int _nextDoorPairGroupId;
 
     public DoorGeneratorBuilder(
         IMovementTileQueryService tileQueryService,
         IItemService itemService,
+        IItemFactoryService itemFactoryService,
         IDoorGenerationMapSpecProvider doorGenerationMapSpecProvider
     )
     {
         _tileQueryService = tileQueryService;
         _itemService = itemService;
+        _itemFactoryService = itemFactoryService;
         _mapSpecs = doorGenerationMapSpecProvider.GetMapSpecs();
     }
 
@@ -372,16 +376,17 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
     private async Task SpawnGeneratedDoorsAsync(IReadOnlyList<DoorGenerationPlacementRecord> placements)
     {
-        if (_itemService is null)
+        if (_itemService is null || _itemFactoryService is null)
         {
             return;
         }
 
         var spawnedByPairGroup = new Dictionary<int, UOItemEntity>();
+        var allDoors = new List<UOItemEntity>(placements.Count);
 
         foreach (var placement in placements)
         {
-            var generatedDoor = await _itemService.SpawnFromTemplateAsync("dark_wood_door");
+            var generatedDoor = _itemFactoryService.CreateItemFromTemplate("dark_wood_door");
 
             generatedDoor.Location = placement.Location;
             generatedDoor.MapId = placement.MapId;
@@ -396,7 +401,6 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
                 {
                     generatedDoor.SetCustomInteger(DoorLinkSerialCustomFieldKey, linkedDoor.Id.Value);
                     linkedDoor.SetCustomInteger(DoorLinkSerialCustomFieldKey, generatedDoor.Id.Value);
-                    await _itemService.UpsertItemAsync(linkedDoor);
                 }
                 else
                 {
@@ -404,10 +408,10 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
                 }
             }
 
-            await _itemService.UpsertItemAsync(generatedDoor);
-
-            // _spatialWorldService.AddOrUpdateItem(generatedDoor, placement.MapId);
+            allDoors.Add(generatedDoor);
         }
+
+        await _itemService.BulkUpsertItemsAsync(allDoors);
     }
 
     private int TryAddCandidate(

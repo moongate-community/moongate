@@ -235,5 +235,8 @@ public sealed class SpawnDecorationsCommandTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 }

@@ -130,6 +130,31 @@ public sealed class ItemRepository : IItemRepository
         _logger.Verbose("Item upsert completed for Id={ItemId}", item.Id);
     }
 
+    public async ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+    {
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        _logger.Verbose("Item bulk upsert requested for Count={Count}", items.Count);
+        var entries = new List<JournalEntry>(items.Count);
+
+        lock (_stateStore.SyncRoot)
+        {
+            foreach (var item in items)
+            {
+                var clone = Clone(item);
+                _stateStore.ItemsById[clone.Id] = clone;
+                _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)clone.Id);
+                entries.Add(CreateEntry(PersistenceOperationType.UpsertItem, JournalPayloadCodec.EncodeItem(clone)));
+            }
+        }
+
+        await _journalService.AppendBatchAsync(entries, cancellationToken);
+        _logger.Verbose("Item bulk upsert completed for Count={Count}", items.Count);
+    }
+
     private static UOItemEntity Clone(UOItemEntity item)
         => SnapshotMapper.ToItemEntity(SnapshotMapper.ToItemSnapshot(item));
 

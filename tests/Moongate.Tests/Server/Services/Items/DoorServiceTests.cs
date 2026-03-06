@@ -96,6 +96,9 @@ public sealed class DoorServiceTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     private sealed class DoorServiceTestSpatialWorldService : ISpatialWorldService

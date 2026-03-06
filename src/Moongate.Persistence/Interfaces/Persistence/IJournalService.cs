@@ -13,6 +13,11 @@ public interface IJournalService
     ValueTask AppendAsync(JournalEntry entry, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Appends multiple journal entries in a single batched write.
+    /// </summary>
+    ValueTask AppendBatchAsync(IReadOnlyList<JournalEntry> entries, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Reads all valid journal entries in persistence order.
     /// </summary>
     ValueTask<IReadOnlyCollection<JournalEntry>> ReadAllAsync(CancellationToken cancellationToken = default);

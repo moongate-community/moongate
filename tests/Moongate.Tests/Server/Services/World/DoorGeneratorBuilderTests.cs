@@ -1,7 +1,9 @@
 using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.Server.Services.World;
 using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
@@ -93,6 +95,39 @@ public class DoorGeneratorBuilderTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+        {
+            UpsertedItems.AddRange(items);
+
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class FakeItemFactoryService : IItemFactoryService
+    {
+        private uint _nextSerial = 0x40001000;
+
+        public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
+            => new()
+            {
+                Id = (Serial)_nextSerial++,
+                Name = itemTemplateId,
+                ItemId = 0x0675,
+                Location = Point3D.Zero,
+                ScriptId = "none",
+                Direction = DirectionType.North
+            };
+
+        public UOItemEntity GetNewBackpack()
+            => throw new NotSupportedException();
+
+        public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition)
+        {
+            definition = null;
+
+            return false;
+        }
     }
 
     private sealed class FakeMovementTileQueryService : IMovementTileQueryService
@@ -300,6 +335,6 @@ public class DoorGeneratorBuilderTests
         };
         var specProvider = new FakeDoorGenerationMapSpecProvider(specs);
 
-        return new(tileQuery, itemService, specProvider);
+        return new(tileQuery, itemService, new FakeItemFactoryService(), specProvider);
     }
 }
