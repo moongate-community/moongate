@@ -12,6 +12,7 @@ namespace Moongate.Tests.Server.Support;
 public class RegionDataLoaderTestSpatialWorldService : ISpatialWorldService
 {
     public List<JsonRegion> AddedRegions { get; } = [];
+    public JsonRegion? ResolvedRegion { get; set; }
 
     public Task<int> BroadcastToPlayersAsync(
         IGameNetworkPacket packet,
@@ -31,6 +32,9 @@ public class RegionDataLoaderTestSpatialWorldService : ISpatialWorldService
 
     public JsonRegion? GetRegionById(int regionId)
         => AddedRegions.FirstOrDefault(region => region.Id == regionId);
+
+    public JsonRegion? ResolveRegion(int mapId, Point3D location)
+        => ResolvedRegion;
 
     public int GetMusic(int mapId, Point3D location)
         => 0;

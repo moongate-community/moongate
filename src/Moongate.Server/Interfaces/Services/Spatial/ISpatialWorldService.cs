@@ -125,6 +125,15 @@ public interface ISpatialWorldService
     JsonRegion? GetRegionById(int regionId);
 
     /// <summary>
+    /// Resolves the highest-priority region for a world position.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <param name="location">World location.</param>
+    /// <returns>Resolved region or <see langword="null" /> when none matches.</returns>
+    JsonRegion? ResolveRegion(int mapId, Point3D location)
+        => null;
+
+    /// <summary>
     /// Resolves music id for a world location.
     /// </summary>
     /// <param name="mapId">Target map id.</param>

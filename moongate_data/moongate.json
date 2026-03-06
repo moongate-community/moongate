@@ -1,6 +1,6 @@
 {
   "UODirectory": "~/uo",
-  "LogLevel": "Debug",
+  "LogLevel": "Information",
   "LogPacketData": false,
   "IsDeveloperMode": false,
   "Http": {
@@ -38,7 +38,9 @@
     "SectorWarmupRadius": 1,
     "SectorEnterSyncRadius": 3,
     "LazySectorEntityLoadRadius": 3,
-    "SectorUpdateBroadcastRadius": 3
+    "SectorUpdateBroadcastRadius": 3,
+    "LightWorldStartUtc": "1997-09-01T00:00:00Z",
+    "LightSecondsPerUoMinute": 5.0
   },
   "Scripting": {
     "EnableFileWatcher": true

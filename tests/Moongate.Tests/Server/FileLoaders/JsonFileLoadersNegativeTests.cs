@@ -58,5 +58,11 @@ public class JsonFileLoadersNegativeTests
 
         public WeatherSnapshot GenerateSnapshot(JsonWeather weather, Random? random = null)
             => default;
+
+        public int ComputeGlobalLightLevel(DateTime? utcNow = null)
+            => 0;
+
+        public int ComputeGlobalLightLevel(int mapId, Moongate.UO.Data.Geometry.Point3D location, DateTime? utcNow = null)
+            => 0;
     }
 }

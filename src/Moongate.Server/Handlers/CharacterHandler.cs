@@ -42,6 +42,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly IWeatherService? _weatherService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -49,7 +50,8 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IEntityFactoryService entityFactoryService,
         IGameEventBusService gameEventBusService,
         IGameNetworkSessionService gameNetworkSessionService,
-        ISpatialWorldService spatialWorldService
+        ISpatialWorldService spatialWorldService,
+        IWeatherService? weatherService = null
     ) : base(outgoingPacketQueue)
     {
         _characterService = characterService;
@@ -57,6 +59,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _weatherService = weatherService;
 
         _gameEventBusService.RegisterListener(this);
     }
@@ -112,8 +115,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new WarModePacket(character));
         Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
-        Enqueue(session, new OverallLightLevelPacket(LightLevelType.Day));
-        Enqueue(session, new PersonalLightLevelPacket(LightLevelType.Day, character));
+        var globalLight = _weatherService?.ComputeGlobalLightLevel() ?? (int)LightLevelType.Day;
+        var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
+        Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
+        Enqueue(session, new PersonalLightLevelPacket(globalLightLevel, character));
         Enqueue(session, new SeasonPacket(character.Map.Season));
 
         Enqueue(session, new LoginCompletePacket());

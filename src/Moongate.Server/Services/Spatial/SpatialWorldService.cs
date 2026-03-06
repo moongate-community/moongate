@@ -182,6 +182,9 @@ public sealed class SpatialWorldService
     public JsonRegion? GetRegionById(int regionId)
         => _regionResolver.GetRegionById(regionId);
 
+    public JsonRegion? ResolveRegion(int mapId, Point3D location)
+        => _regionResolver.ResolveRegion(mapId, location);
+
     public int GetMusic(int mapId, Point3D location)
         => _regionResolver.GetMusic(mapId, location);
 

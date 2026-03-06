@@ -33,4 +33,14 @@ public sealed class MoongateSpatialConfig
     /// A value of <c>3</c> sends updates to a 7x7 sector area centered on source sector.
     /// </summary>
     public int SectorUpdateBroadcastRadius { get; set; } = 3;
+
+    /// <summary>
+    /// Gets or sets the world start UTC timestamp used by in-game clock/light calculations.
+    /// </summary>
+    public string LightWorldStartUtc { get; set; } = "1997-09-01T00:00:00Z";
+
+    /// <summary>
+    /// Gets or sets real seconds equivalent to one UO minute for clock/light calculations.
+    /// </summary>
+    public double LightSecondsPerUoMinute { get; set; } = 5.0;
 }
