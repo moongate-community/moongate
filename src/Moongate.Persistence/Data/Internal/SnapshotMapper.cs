@@ -223,7 +223,33 @@ internal static class SnapshotMapper
 
     public static MobileSnapshot ToMobileSnapshot(UOMobileEntity entity)
     {
-        var equipped = entity.EquippedItemIds.OrderBy(static pair => (int)pair.Key).ToArray();
+        var equippedCount = entity.EquippedItemIds.Count;
+        var layers = new byte[equippedCount];
+        var itemIds = new uint[equippedCount];
+        var index = 0;
+
+        foreach (var pair in entity.EquippedItemIds.OrderBy(static pair => (int)pair.Key))
+        {
+            layers[index] = (byte)pair.Key;
+            itemIds[index] = (uint)pair.Value;
+            index++;
+        }
+
+        var customProps = new ItemCustomPropertySnapshot[entity.CustomProperties.Count];
+        var propIndex = 0;
+
+        foreach (var pair in entity.CustomProperties)
+        {
+            customProps[propIndex++] = new ItemCustomPropertySnapshot
+            {
+                Key = pair.Key,
+                Type = (byte)pair.Value.Type,
+                IntegerValue = pair.Value.IntegerValue,
+                BooleanValue = pair.Value.BooleanValue,
+                DoubleValue = pair.Value.DoubleValue,
+                StringValue = pair.Value.StringValue
+            };
+        }
 
         return new()
         {
@@ -267,22 +293,9 @@ internal static class SnapshotMapper
             Luck = entity.Luck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,
             BackpackId = (uint)entity.BackpackId,
-            EquippedLayers = [.. equipped.Select(static pair => (byte)pair.Key)],
-            EquippedItemIds = [.. equipped.Select(static pair => (uint)pair.Value)],
-            CustomProperties =
-            [
-                .. entity.CustomProperties.Select(
-                    static pair => new ItemCustomPropertySnapshot
-                    {
-                        Key = pair.Key,
-                        Type = (byte)pair.Value.Type,
-                        IntegerValue = pair.Value.IntegerValue,
-                        BooleanValue = pair.Value.BooleanValue,
-                        DoubleValue = pair.Value.DoubleValue,
-                        StringValue = pair.Value.StringValue
-                    }
-                )
-            ],
+            EquippedLayers = layers,
+            EquippedItemIds = itemIds,
+            CustomProperties = customProps,
             IsWarMode = entity.IsWarMode,
             IsHidden = entity.IsHidden,
             IsFrozen = entity.IsFrozen,
