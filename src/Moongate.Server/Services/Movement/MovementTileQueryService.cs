@@ -1,5 +1,6 @@
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
@@ -14,10 +15,15 @@ namespace Moongate.Server.Services.Movement;
 public sealed class MovementTileQueryService : IMovementTileQueryService
 {
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly IDoorDataService _doorDataService;
 
-    public MovementTileQueryService(ISpatialWorldService spatialWorldService)
+    public MovementTileQueryService(
+        ISpatialWorldService spatialWorldService,
+        IDoorDataService doorDataService
+    )
     {
         _spatialWorldService = spatialWorldService;
+        _doorDataService = doorDataService;
     }
 
     public bool CanFit(
@@ -140,6 +146,17 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
 
         var zTop = z + height;
         var hasSurface = false;
+        var queryLocation = new Point3D(x, y, z);
+        var worldItems = _spatialWorldService.GetNearbyItems(queryLocation, 0, map.MapID);
+        var hasOpenedDoorOnTile = worldItems.Any(
+            item =>
+                item.ParentContainerId == Serial.Zero &&
+                item.EquippedMobileId == Serial.Zero &&
+                item.Location.X == x &&
+                item.Location.Y == y &&
+                _doorDataService.TryGetToggleDefinition(item.ItemId, out var state) &&
+                !state.IsClosed
+        );
 
         var landTile = map.GetLandTile(x, y);
         GetAverageZ(map, x, y, out var lowZ, out var avgZ, out _);
@@ -160,6 +177,12 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
         foreach (var staticTile in staticBlock[x & 0x7][y & 0x7])
         {
             var itemData = TileData.ItemTable[NormalizeTileId(staticTile.ID, TileData.ItemTable.Length)];
+
+            if (hasOpenedDoorOnTile && itemData[UOTileFlag.Door])
+            {
+                continue;
+            }
+
             var isSurface = itemData[UOTileFlag.Surface];
             var isImpassable = itemData[UOTileFlag.Impassable];
             var blocksFit = false;
@@ -184,15 +207,18 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
             }
         }
 
-        var queryLocation = new Point3D(x, y, z);
-        var worldItems = _spatialWorldService.GetNearbyItems(queryLocation, 0, map.MapID);
-
         foreach (var item in worldItems)
         {
             if (item.ParentContainerId != Serial.Zero ||
                 item.EquippedMobileId != Serial.Zero ||
                 item.Location.X != x ||
                 item.Location.Y != y)
+            {
+                continue;
+            }
+
+            if (_doorDataService.TryGetToggleDefinition(item.ItemId, out var doorState) &&
+                !doorState.IsClosed)
             {
                 continue;
             }

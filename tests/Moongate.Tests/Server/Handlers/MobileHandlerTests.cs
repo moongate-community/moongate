@@ -368,8 +368,10 @@ public sealed class MobileHandlerTests
         // Move from sector (7,8) to adjacent sector (8,8) with radius 1
         // Old grid: (6,7)-(8,9) = 9 sectors
         // New grid: (7,7)-(9,9) = 9 sectors
-        // Overlap:  (7,7)-(8,9) = 6 sectors — should NOT be re-sent
-        // Delta:    (9,7),(9,8),(9,9) = 3 new sectors only
+        // Near-player sectors (within 1 of new center) are always re-synced
+        // because the UO client drops items beyond its visual range.
+        // Overlap sector (7,8) is near player → re-sent.
+        // Delta sector (9,8) is new → sent.
         var oldLocation = new Point3D(7 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0);
         var newLocation = new Point3D(8 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0);
 
@@ -450,8 +452,8 @@ public sealed class MobileHandlerTests
         Assert.Multiple(
             () =>
             {
-                // Only delta-item should be sent, NOT overlap-item
-                Assert.That(objectPackets, Has.Count.EqualTo(1));
+                // Both overlap-item (near player, always re-synced) and delta-item are sent
+                Assert.That(objectPackets, Has.Count.EqualTo(2));
                 Assert.That(
                     packets.All(packet => packet.SessionId == movingSession.SessionId),
                     Is.True

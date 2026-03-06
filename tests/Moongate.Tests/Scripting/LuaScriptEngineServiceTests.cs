@@ -374,6 +374,9 @@ public class LuaScriptEngineServiceTests
 
             return Task.CompletedTask;
         }
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     private sealed class LuaScriptEngineServiceTestsTimerService : ITimerService

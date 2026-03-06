@@ -91,6 +91,9 @@ public sealed class SpatialWorldServiceTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => throw new NotSupportedException();
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => throw new NotSupportedException();
     }
 
     private sealed class SpatialWorldServiceTestCharacterService : ICharacterService

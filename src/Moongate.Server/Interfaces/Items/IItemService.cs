@@ -146,4 +146,10 @@ public interface IItemService
     /// </summary>
     /// <param name="items">Item entities to persist.</param>
     Task UpsertItemsAsync(params UOItemEntity[] items);
+
+    /// <summary>
+    /// Inserts or updates multiple items in a single batched persistence operation.
+    /// </summary>
+    /// <param name="items">Item entities to persist.</param>
+    Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items);
 }

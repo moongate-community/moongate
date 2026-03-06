@@ -35,7 +35,7 @@ It targets a clean, modular architecture with strong packet tooling, determinist
 > - Discussions: https://github.com/moongate-community/moongatev2/discussions
 > - Matrix room: https://matrix.to/#/#moongate:matrix.org
 
-> Moongate is not a clone of ModernUO, RunUO, ServUO or any other emulator, and it does not aim to be. In fact, we owe a great deal of inspiration to these projects. Their legacy and technical achievements are invaluable, and this project would not exist without them. Thank you.
+> Moongate is not a clone of ModernUO, RunUO, ServUO or any other server, and it does not aim to be. In fact, we owe a great deal of inspiration to these projects. Their legacy and technical achievements are invaluable, and this project would not exist without them. Thank you.
 
 ## Acknowledgements
 
@@ -160,7 +160,7 @@ Why this choice:
 - Better cache locality for entity queries and network snapshot generation.
 - Simpler scalability path for high-concurrency shards.
 
-Compared to classic emulator approaches that rely mainly on repeated range-view scans, this model is intentionally closer to chunk-streaming systems (Minecraft-style): load/unload by sector boundaries with configurable warmup and sync radii.
+Compared to classic server approaches that rely mainly on repeated range-view scans, this model is intentionally closer to chunk-streaming systems (Minecraft-style): load/unload by sector boundaries with configurable warmup and sync radii.
 
 For a detailed internal status snapshot, see `docs/plans/status-2026-02-19.md`.
 
@@ -381,7 +381,7 @@ Resolution model:
 - `src/Moongate.Server/Http`: embedded ASP.NET Core host service used by the server bootstrap.
 - `tests/Moongate.Tests`: unit tests.
 - `benchmarks/Moongate.Benchmarks`: BenchmarkDotNet performance suite.
-- `docs/`: Obsidian knowledge base (plans, sprints, protocol notes, journal).
+- `docs/`: documentation and project notes (plans, sprints, protocol notes, journal).
 
 ## Source Generators (AOT)
 
@@ -1149,7 +1149,7 @@ For full setup details, volumes, troubleshooting, and dashboard notes, see `stac
 
 ## Documentation
 
-Project documentation (Obsidian vault) is in `docs/`.
+Project documentation is in `docs/`.
 Published documentation is available at:
 
 - https://moongate-community.github.io/moongatev2/

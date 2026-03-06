@@ -149,6 +149,9 @@ public class ItemHandlerTests
 
             return Task.CompletedTask;
         }
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     private sealed class ItemHandlerTestMobileService : IMobileService

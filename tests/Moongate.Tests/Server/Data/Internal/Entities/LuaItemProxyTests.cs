@@ -102,6 +102,9 @@ public sealed class LuaItemProxyTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     private sealed class LuaItemProxyTestSpatialWorldService : ISpatialWorldService

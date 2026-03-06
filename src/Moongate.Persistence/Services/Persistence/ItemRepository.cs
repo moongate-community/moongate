@@ -5,7 +5,6 @@ using Moongate.Persistence.Types;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
-using ZLinq;
 
 namespace Moongate.Persistence.Services.Persistence;
 
@@ -75,15 +74,22 @@ public sealed class ItemRepository : IItemRepository
         ArgumentNullException.ThrowIfNull(predicate);
         ArgumentNullException.ThrowIfNull(selector);
 
-        UOItemEntity[] snapshot;
+        var results = new List<TResult>();
 
         lock (_stateStore.SyncRoot)
         {
-            snapshot = [.. _stateStore.ItemsById.Values.Select(Clone)];
+            foreach (var item in _stateStore.ItemsById.Values)
+            {
+                if (!predicate(item))
+                {
+                    continue;
+                }
+
+                results.Add(selector(Clone(item)));
+            }
         }
 
-        var results = snapshot.AsValueEnumerable().Where(predicate).Select(selector).ToArray();
-        _logger.Verbose("Item query completed with Count={Count}", results.Length);
+        _logger.Verbose("Item query completed with Count={Count}", results.Count);
 
         return ValueTask.FromResult<IReadOnlyList<TResult>>(results);
     }
@@ -128,6 +134,49 @@ public sealed class ItemRepository : IItemRepository
 
         await _journalService.AppendAsync(entry, cancellationToken);
         _logger.Verbose("Item upsert completed for Id={ItemId}", item.Id);
+    }
+
+    public async ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+    {
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        _logger.Verbose("Item bulk upsert requested for Count={Count}", items.Count);
+
+        long baseSequenceId;
+
+        lock (_stateStore.SyncRoot)
+        {
+            foreach (var item in items)
+            {
+                _stateStore.ItemsById[item.Id] = item;
+                _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)item.Id);
+            }
+
+            baseSequenceId = _stateStore.LastSequenceId;
+            _stateStore.LastSequenceId += items.Count;
+        }
+
+        var entries = new List<JournalEntry>(items.Count);
+        var timestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        for (var i = 0; i < items.Count; i++)
+        {
+            entries.Add(
+                new()
+                {
+                    SequenceId = baseSequenceId + i + 1,
+                    TimestampUnixMilliseconds = timestampMs,
+                    OperationType = PersistenceOperationType.UpsertItem,
+                    Payload = JournalPayloadCodec.EncodeItem(items[i])
+                }
+            );
+        }
+
+        await _journalService.AppendBatchAsync(entries, cancellationToken);
+        _logger.Verbose("Item bulk upsert completed for Count={Count}", items.Count);
     }
 
     private static UOItemEntity Clone(UOItemEntity item)

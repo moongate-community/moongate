@@ -310,6 +310,14 @@ public class UOItemEntity : IItemEntity
             }
         );
 
+    /// <summary>
+    /// Sets a location custom property serialized as a point string.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Location value.</param>
+    public void SetCustomLocation(string key, Point3D value)
+        => SetCustomString(key, value.ToString());
+
     public override string ToString()
         => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
 
@@ -389,6 +397,31 @@ public class UOItemEntity : IItemEntity
         }
 
         value = property.StringValue;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a location custom property encoded as a point string.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Location value when found and valid.</param>
+    /// <returns><c>true</c> when found and parsed; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomLocation(string key, out Point3D value)
+    {
+        value = default;
+
+        if (!TryGetCustomString(key, out var stringValue) || string.IsNullOrWhiteSpace(stringValue))
+        {
+            return false;
+        }
+
+        if (!Point3D.TryParse(stringValue, null, out var parsed))
+        {
+            return false;
+        }
+
+        value = parsed;
 
         return true;
     }

@@ -104,6 +104,52 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
         );
     }
 
+    public async ValueTask AppendBatchAsync(IReadOnlyList<JournalEntry> entries, CancellationToken cancellationToken = default)
+    {
+        if (entries.Count == 0)
+        {
+            return;
+        }
+
+        using var buffer = new MemoryStream();
+        var lengthBytes = new byte[4];
+        var checksumBytes = new byte[4];
+
+        foreach (var entry in entries)
+        {
+            var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
+            var checksum = ChecksumUtils.Compute(payload);
+
+            BinaryPrimitives.WriteInt32LittleEndian(lengthBytes, payload.Length);
+            BinaryPrimitives.WriteUInt32LittleEndian(checksumBytes, checksum);
+
+            buffer.Write(lengthBytes);
+            buffer.Write(payload);
+            buffer.Write(checksumBytes);
+        }
+
+        var batchData = buffer.ToArray();
+
+        await _ioLock.WaitAsync(cancellationToken);
+
+        try
+        {
+            _journalStream.Position = _journalStream.Length;
+            await _journalStream.WriteAsync(batchData, cancellationToken);
+            await _journalStream.FlushAsync(cancellationToken);
+        }
+        finally
+        {
+            _ioLock.Release();
+        }
+
+        _logger.Verbose(
+            "Journal batch append completed Path={JournalPath} Count={Count}",
+            _journalFilePath,
+            entries.Count
+        );
+    }
+
     public void Dispose()
     {
         _journalStream.Dispose();

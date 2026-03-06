@@ -12,11 +12,10 @@
 - [[protocol/README|Protocol Notes]]
 - [[journal/2026-03-02|Session Journal (2026-03-02)]]
 - [[journal/README|Dev Journal]]
-- [[OBSIDIAN_SETUP|Obsidian Setup]]
 
 ## Vault Structure
 - `plans/`: roadmap, milestones, and planning notes
 - `sprints/`: sprint planning and execution notes
 - `protocol/`: UO protocol and packet notes
 - `journal/`: development session logs
-- `templates/`: reusable Obsidian note templates
+- `templates/`: reusable documentation templates

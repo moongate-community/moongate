@@ -88,6 +88,9 @@ public sealed class AddItemBackpackCommandTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     private sealed class AddItemBackpackTestGameNetworkSessionService : IGameNetworkSessionService

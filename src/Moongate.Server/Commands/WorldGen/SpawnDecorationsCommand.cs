@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Globalization;
 using Humanizer;
+using Moongate.Core.Extensions.Strings;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Items;
@@ -10,7 +12,10 @@ using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.Server.Types.World;
+using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 
 namespace Moongate.Server.Commands.WorldGen;
@@ -22,6 +27,14 @@ namespace Moongate.Server.Commands.WorldGen;
 )]
 public class SpawnDecorationsCommand : ICommandExecutor
 {
+    private static readonly Dictionary<string, string> CustomParameterAliases = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["PointDest"] = "point_dest",
+        ["SoundID"] = "sound_id",
+        ["SourceEffect"] = "source_effect",
+        ["DestEffect"] = "dest_effect"
+    };
+
     private readonly ISeedDataService _seedDataService;
     private readonly IBackgroundJobService _backgroundJobService;
 
@@ -75,41 +88,145 @@ public class SpawnDecorationsCommand : ICommandExecutor
 
         foreach (var decoration in decorations)
         {
-            if (_itemFactoryService.TryGetItemTemplate(decoration.TypeName, out _))
+            var found = _itemFactoryService.TryGetItemTemplate(decoration.TypeName, out _);
+
+            UOItemEntity item = null;
+
+            if (found)
             {
-                var item = _itemFactoryService.CreateItemFromTemplate(decoration.TypeName);
-
-                item.MapId = mapId;
-                item.Location = decoration.Location;
-
-                if (decoration.Parameters.Count > 0)
-                {
-                    if (decoration.Parameters.TryGetValue("Hue", out var hueValue))
-                    {
-                        var hue = HueSpec.ParseFromString(hueValue);
-                        item.Hue = hue.Resolve();
-                    }
-
-                    if (decoration.Parameters.TryGetValue("Facing", out var facingValue) &&
-                        Enum.TryParse<DoorGenerationFacing>(facingValue, true, out var facing))
-                    {
-                        item.Direction = facing.ToDirectionType();
-                        item.ItemId = facing.ToItemId(item.ItemId);
-                    }
-
-                    if (decoration.Parameters.TryGetValue("Name", out var nameValue))
-                    {
-                        item.Name = nameValue;
-                    }
-
-                    await _itemService.CreateItemAsync(item);
-                    spawnedCount++;
-                }
+                item = _itemFactoryService.CreateItemFromTemplate(decoration.TypeName);
             }
+            else
+            {
+                item = _itemFactoryService.CreateItemFromTemplate("static");
+            }
+
+            item.MapId = mapId;
+            item.Location = decoration.Location;
+
+            ApplyDecorationParameters(item, decoration.Parameters);
+
+            await _itemService.CreateItemAsync(item);
+            spawnedCount++;
         }
 
         context.Print(
             $"Finished spawning decorations for map {mapId}. Spawned {spawnedCount} decorations in {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds.Milliseconds().Humanize()} seconds."
         );
+    }
+
+    private static void ApplyDecorationParameters(UOItemEntity item, IReadOnlyDictionary<string, string> parameters)
+    {
+        if (parameters.Count == 0)
+        {
+            return;
+        }
+
+        if (parameters.TryGetValue("Hue", out var hueValue))
+        {
+            var hue = HueSpec.ParseFromString(hueValue);
+            item.Hue = hue.Resolve();
+        }
+
+        if (parameters.TryGetValue("Facing", out var facingValue) &&
+            Enum.TryParse<DoorGenerationFacing>(facingValue, true, out var facing))
+        {
+            item.Direction = facing.ToDirectionType();
+            item.ItemId = facing.ToItemId(item.ItemId);
+        }
+
+        if (parameters.TryGetValue("Name", out var nameValue))
+        {
+            item.Name = nameValue;
+        }
+
+        foreach (var (rawKey, rawValue) in parameters)
+        {
+            if (string.Equals(rawKey, "Hue", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(rawKey, "Facing", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(rawKey, "Name", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var key = NormalizeCustomKey(rawKey);
+            var value = rawValue.Trim();
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            if (string.Equals(rawKey, "PointDest", StringComparison.OrdinalIgnoreCase) &&
+                Point3D.TryParse(value, null, out var pointDest))
+            {
+                item.SetCustomLocation(key, pointDest);
+                continue;
+            }
+
+            if (string.Equals(rawKey, "Delay", StringComparison.OrdinalIgnoreCase) &&
+                TryParseDelayMilliseconds(value, out var delayMilliseconds))
+            {
+                item.SetCustomInteger("delay_ms", delayMilliseconds);
+                continue;
+            }
+
+            if (bool.TryParse(value, out var boolValue))
+            {
+                item.SetCustomBoolean(key, boolValue);
+                continue;
+            }
+
+            if (TryParseInteger(value, out var integerValue))
+            {
+                item.SetCustomInteger(key, integerValue);
+                continue;
+            }
+
+            if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var doubleValue))
+            {
+                item.SetCustomDouble(key, doubleValue);
+                continue;
+            }
+
+            item.SetCustomString(key, value);
+        }
+    }
+
+    private static string NormalizeCustomKey(string rawKey)
+    {
+        if (CustomParameterAliases.TryGetValue(rawKey, out var alias))
+        {
+            return alias;
+        }
+
+        return rawKey.ToSnakeCase();
+    }
+
+    private static bool TryParseDelayMilliseconds(string value, out long milliseconds)
+    {
+        milliseconds = 0;
+
+        if (!TimeSpan.TryParse(value, CultureInfo.InvariantCulture, out var delay))
+        {
+            return false;
+        }
+
+        milliseconds = (long)delay.TotalMilliseconds;
+
+        return true;
+    }
+
+    private static bool TryParseInteger(string value, out long parsed)
+    {
+        parsed = 0;
+
+        if (Serial.TryParse(value, CultureInfo.InvariantCulture, out var serial))
+        {
+            parsed = (long)(uint)serial;
+            return true;
+        }
+
+        return long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out parsed);
     }
 }

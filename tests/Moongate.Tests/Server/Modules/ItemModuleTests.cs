@@ -130,6 +130,9 @@ public class ItemModuleTests
 
             return Task.CompletedTask;
         }
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
     }
 
     [Test]

@@ -123,6 +123,9 @@ public class ItemServiceBenchmark : IDisposable
 
             return ValueTask.CompletedTask;
         }
+
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
     }
 
     private sealed class InMemoryMobileRepository : IMobileRepository

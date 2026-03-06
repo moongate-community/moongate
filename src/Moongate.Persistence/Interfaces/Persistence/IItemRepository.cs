@@ -41,4 +41,9 @@ public interface IItemRepository
     /// Inserts or updates an item.
     /// </summary>
     ValueTask UpsertAsync(UOItemEntity item, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Inserts or updates multiple items in a single batched operation.
+    /// </summary>
+    ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default);
 }

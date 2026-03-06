@@ -376,6 +376,21 @@ public sealed class ItemService : IItemService
         }
     }
 
+    public async Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        foreach (var item in items)
+        {
+            if (item.Id == Serial.Zero)
+            {
+                item.Id = _persistenceService.UnitOfWork.AllocateNextItemId();
+            }
+        }
+
+        await _persistenceService.UnitOfWork.Items.BulkUpsertAsync(items);
+    }
+
     private async Task DetachFromCurrentOwnerAsync(UOItemEntity item)
     {
         if (item.ParentContainerId != Serial.Zero)
