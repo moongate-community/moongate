@@ -458,6 +458,60 @@ public class CharacterServiceTests
         );
     }
 
+    [Test]
+    public async Task GetCharacterAsync_ShouldHydrateInferredItems_WhenEquippedMobileIdDoesNotMatch()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(persistence, new());
+        var characterId = (Serial)0x00000270;
+        var shirtId = (Serial)0x40000071;
+        var pantsId = (Serial)0x40000072;
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = characterId,
+                Name = "inferred-equipment",
+                IsPlayer = true,
+                EquippedItemIds =
+                {
+                    [ItemLayerType.Shirt] = shirtId,
+                    [ItemLayerType.Pants] = pantsId
+                }
+            }
+        );
+
+        // Shirt has correct EquippedMobileId — found by batch query
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = shirtId,
+                ItemId = 0x1517,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Shirt
+            }
+        );
+
+        // Pants has WRONG EquippedMobileId — NOT found by batch query, needs inference
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = pantsId,
+                ItemId = 0x152E,
+                EquippedMobileId = (Serial)0x00000999
+            }
+        );
+
+        var character = await service.GetCharacterAsync(characterId);
+
+        Assert.That(character, Is.Not.Null);
+        Assert.That(character!.TryGetEquippedReference(ItemLayerType.Shirt, out var shirtRef), Is.True);
+        Assert.That(character.TryGetEquippedReference(ItemLayerType.Pants, out var pantsRef), Is.True);
+        Assert.That(shirtRef.ItemId, Is.EqualTo(0x1517));
+        Assert.That(pantsRef.ItemId, Is.EqualTo(0x152E));
+    }
+
     private static CharacterService CreateCharacterService(
         PersistenceService persistenceService,
         GameEventScriptBridgeTestGameEventBusService gameEventBusService

@@ -352,26 +352,53 @@ public class CharacterService : ICharacterService
                                 static item => item
                             );
 
-        var hydratedItems = equippedItems.ToDictionary(static item => item.Id, static item => item);
-        var inferredItems = new List<UOItemEntity>(character.EquippedItemIds.Count);
+        var hydratedIds = new HashSet<Serial>(equippedItems.Count);
 
-        foreach (var (layer, itemId) in character.EquippedItemIds)
+        foreach (var item in equippedItems)
         {
-            if (hydratedItems.ContainsKey(itemId))
+            hydratedIds.Add(item.Id);
+        }
+
+        // Collect IDs not found by the batch query
+        var missingIds = new HashSet<Serial>();
+
+        foreach (var (_, itemId) in character.EquippedItemIds)
+        {
+            if (!hydratedIds.Contains(itemId))
             {
-                continue;
+                missingIds.Add(itemId);
             }
+        }
 
-            var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId);
+        if (missingIds.Count == 0)
+        {
+            character.HydrateEquipmentRuntime(equippedItems);
 
-            if (item is null)
+            return;
+        }
+
+        // Single batch query for ALL missing items instead of N individual GetByIdAsync calls
+        var missingItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+            item => missingIds.Contains(item.Id),
+            static item => item
+        );
+
+        var inferredItems = new List<UOItemEntity>(missingItems.Count);
+
+        foreach (var item in missingItems)
+        {
+            foreach (var (layer, itemId) in character.EquippedItemIds)
             {
-                continue;
-            }
+                if (itemId != item.Id)
+                {
+                    continue;
+                }
 
-            item.EquippedMobileId = character.Id;
-            item.EquippedLayer = layer;
-            inferredItems.Add(item);
+                item.EquippedMobileId = character.Id;
+                item.EquippedLayer = layer;
+                inferredItems.Add(item);
+                break;
+            }
         }
 
         if (inferredItems.Count > 0)
