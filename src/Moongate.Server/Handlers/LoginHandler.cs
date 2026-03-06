@@ -84,7 +84,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
                 );
                 Enqueue(
                     session,
-                    SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.GetAll().Count}")
+                    SpeechMessageFactory.CreateSystem($"Online players: {_gameNetworkSessionService.Count}")
                 );
             }
 
