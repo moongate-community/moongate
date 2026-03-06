@@ -39,4 +39,11 @@ public interface IWeatherService : IMoongateService
     /// <param name="utcNow">Optional UTC timestamp. Uses current UTC time when omitted.</param>
     /// <returns>Global light level byte (0 = day, higher = darker).</returns>
     int ComputeGlobalLightLevel(int mapId, Moongate.UO.Data.Geometry.Point3D location, DateTime? utcNow = null);
+
+    /// <summary>
+    /// Sets or clears a global light override for all connected players.
+    /// </summary>
+    /// <param name="lightLevel">Forced light level (0-255), or <c>null</c> to clear override.</param>
+    /// <param name="applyImmediately">When true, sends light update packets immediately.</param>
+    void SetGlobalLightOverride(int? lightLevel, bool applyImmediately = true);
 }

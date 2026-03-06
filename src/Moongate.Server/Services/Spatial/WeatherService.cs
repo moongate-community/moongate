@@ -37,6 +37,7 @@ public class WeatherService : IWeatherService
     private readonly Dictionary<long, int> _lastGlobalLightBySessionId = [];
     private readonly DateTime _worldStartUtc;
     private readonly double _secondsPerUoMinute;
+    private int? _forcedGlobalLightLevel;
 
     public WeatherService(
         ITimerService timerService,
@@ -202,12 +203,22 @@ public class WeatherService : IWeatherService
 
     public int ComputeGlobalLightLevel(DateTime? utcNow = null)
     {
+        if (_forcedGlobalLightLevel.HasValue)
+        {
+            return _forcedGlobalLightLevel.Value;
+        }
+
         var now = utcNow?.ToUniversalTime() ?? DateTime.UtcNow;
         return ComputeLightLevelFromHourMinute(now.Hour, now.Minute);
     }
 
     public int ComputeGlobalLightLevel(int mapId, Point3D location, DateTime? utcNow = null)
     {
+        if (_forcedGlobalLightLevel.HasValue)
+        {
+            return _forcedGlobalLightLevel.Value;
+        }
+
         var region = _spatialWorldService.ResolveRegion(mapId, location);
         if (region is JsonDungeonRegion)
         {
@@ -228,6 +239,18 @@ public class WeatherService : IWeatherService
         var minute = normalizedMinutes % 60;
 
         return ComputeLightLevelFromHourMinute(hour, minute);
+    }
+
+    public void SetGlobalLightOverride(int? lightLevel, bool applyImmediately = true)
+    {
+        _forcedGlobalLightLevel = lightLevel.HasValue
+            ? Math.Clamp(lightLevel.Value, 0, byte.MaxValue)
+            : null;
+
+        if (applyImmediately)
+        {
+            ProcessLight();
+        }
     }
 
     private static int ComputeLightLevelFromHourMinute(int hour, int minute)

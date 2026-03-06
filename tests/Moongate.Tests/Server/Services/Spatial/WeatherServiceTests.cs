@@ -127,6 +127,29 @@ public class WeatherServiceTests
     }
 
     [Test]
+    public void ComputeGlobalLightLevel_WithForcedOverride_ShouldReturnForcedLevel()
+    {
+        var service = CreateService();
+        service.SetGlobalLightOverride(26, applyImmediately: false);
+
+        var level = service.ComputeGlobalLightLevel(0, new(100, 100, 0), new DateTime(2026, 3, 6, 12, 0, 0, DateTimeKind.Utc));
+
+        Assert.That(level, Is.EqualTo(26));
+    }
+
+    [Test]
+    public void ComputeGlobalLightLevel_AfterClearingForcedOverride_ShouldReturnDynamicValue()
+    {
+        var service = CreateService();
+        service.SetGlobalLightOverride(26, applyImmediately: false);
+        service.SetGlobalLightOverride(null, applyImmediately: false);
+
+        var level = service.ComputeGlobalLightLevel(0, new(0, 0, 0), new DateTime(1997, 9, 1, 0, 0, 0, DateTimeKind.Utc));
+
+        Assert.That(level, Is.EqualTo(12));
+    }
+
+    [Test]
     public void GenerateSnapshot_ShouldResolveRainValues()
     {
         var service = CreateService();

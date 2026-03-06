@@ -64,5 +64,7 @@ public class JsonFileLoadersNegativeTests
 
         public int ComputeGlobalLightLevel(int mapId, Moongate.UO.Data.Geometry.Point3D location, DateTime? utcNow = null)
             => 0;
+
+        public void SetGlobalLightOverride(int? lightLevel, bool applyImmediately = true) { }
     }
 }
