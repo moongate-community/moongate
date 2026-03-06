@@ -1,3 +1,34 @@
+## [0.30.0](https://github.com/moongate-community/moongatev2/compare/v0.29.0...v0.30.0) (2026-03-06)
+
+### Features
+
+* expand sector updates and template params across server ([5fd65c0](https://github.com/moongate-community/moongatev2/commit/5fd65c03aaac77d66b0f37723fa755de2639b9dc))
+* **lua:** add eclipse command with global light override ([05194b8](https://github.com/moongate-community/moongatev2/commit/05194b8217b0539ad4be0a395eca220fba18b896))
+* **persistence:** migrate persistence serialization to MessagePack source-gen ([08f1d7a](https://github.com/moongate-community/moongatev2/commit/08f1d7a606d9381c64422490bb4b2018e9f716af))
+* port ModernUO-style light cycle with spatial/region overrides ([e134f0f](https://github.com/moongate-community/moongatev2/commit/e134f0f6a4ac29ceba7e47ad34966b7d7acde577))
+* **world:** add door data pipeline and runtime door toggling ([e7f2e79](https://github.com/moongate-community/moongatev2/commit/e7f2e79b7c36c4bdc01212e03e2b4eea9201b0d6))
+
+### Bug Fixes
+
+* **items:** correct ItemMovedEvent handler loading wrong entity ([b2539f8](https://github.com/moongate-community/moongatev2/commit/b2539f87a3cf81a150125c7d5d6f1bfa4e98389a))
+* remove player self-resync on movement and add teleports gump ([91dd4e0](https://github.com/moongate-community/moongatev2/commit/91dd4e0f6deef7dd24646e451c19aaef34d5a965))
+
+### Performance Improvements
+
+* **characters:** batch load missing equipment items instead of N+1 queries ([7cfdb0e](https://github.com/moongate-community/moongatev2/commit/7cfdb0e2cbbdd3d85c247019909824aaf8fb59a5))
+* **events:** reduce per-event allocations in GameEventBusService ([19c5aa9](https://github.com/moongate-community/moongatev2/commit/19c5aa95fae3c62efbd66ed11eeadb0d150aaa92))
+* **items:** add early exit for ItemDeletedEvent when source owns container ([7e9dbec](https://github.com/moongate-community/moongatev2/commit/7e9dbece00760735ba83e70d87923aa88d414eac))
+* **login:** eliminate redundant character loads during login ([998d5cd](https://github.com/moongate-community/moongatev2/commit/998d5cd9e04f3a63e53234224652664dbc953cb2))
+* **login:** use Count property instead of GetAll().Count to avoid array allocation ([7726461](https://github.com/moongate-community/moongatev2/commit/772646136737148fa05a710af7f3e2ff464e6835))
+* **mobile:** delta sector sync on movement + packet handler performance docs ([02a0d1c](https://github.com/moongate-community/moongatev2/commit/02a0d1cafc9badd8aa8ec36eceed6931df4c1370))
+* **movement:** convert event publishing to fire-and-forget instead of blocking ([c65c986](https://github.com/moongate-community/moongatev2/commit/c65c986523c22915156d352beb0cfe0bc5716385))
+* **packets:** remove sync-over-async and allocations from PacketDispatchService ([5723991](https://github.com/moongate-community/moongatev2/commit/57239919d4652c37e08b6c892cb3fc852c40a69a))
+* **persistence:** eliminate LINQ allocations in SnapshotMapper.ToMobileSnapshot ([7546b65](https://github.com/moongate-community/moongatev2/commit/7546b655befde1f7edd30279bf0893814263b217))
+* **spatial:** convert PublishEvent to fire-and-forget instead of blocking ([dc7d6c9](https://github.com/moongate-community/moongatev2/commit/dc7d6c9a1534c6aba0bcbef2099ee62f8394f4f7))
+* **spatial:** deduplicate session-to-character mapping in broadcast ([0b23056](https://github.com/moongate-community/moongatev2/commit/0b230569ac5b9f13e1d60bd2075159a684796ffd))
+* **spatial:** proactive sector warmup on player sector change ([e2236e2](https://github.com/moongate-community/moongatev2/commit/e2236e2c3a7c38311ce54d2e111f994b93975ef6))
+* **spatial:** use O(1) reverse lookup for NPC resolution instead of sector scan ([0b0ff33](https://github.com/moongate-community/moongatev2/commit/0b0ff3390c4514d79b8f818f267b4a856c40f247))
+
 ## [0.29.0](https://github.com/moongate-community/moongatev2/compare/v0.28.0...v0.29.0) (2026-03-05)
 
 ### Features
