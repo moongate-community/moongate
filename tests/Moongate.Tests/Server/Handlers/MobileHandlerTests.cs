@@ -578,6 +578,106 @@ public sealed class MobileHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenEnteringAdjacentSector_ShouldOnlySyncDeltaSectors()
+    {
+        var movingPlayerId = (Serial)0x00006000u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        // Move from sector (7,8) to adjacent sector (8,8) with radius 1
+        // Old grid: (6,7)-(8,9) = 9 sectors
+        // New grid: (7,7)-(9,9) = 9 sectors
+        // Overlap:  (7,7)-(8,9) = 6 sectors — should NOT be re-sent
+        // Delta:    (9,7),(9,8),(9,9) = 3 new sectors only
+        var oldLocation = new Point3D(7 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0);
+        var newLocation = new Point3D(8 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0);
+
+        var overlapSector = new MapSector(1, 7, 8);
+        overlapSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000060u,
+                Name = "overlap-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = new(7 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0),
+                MapId = 1
+            }
+        );
+
+        var deltaSector = new MapSector(1, 9, 8);
+        deltaSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000061u,
+                Name = "delta-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = new(9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0),
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, 7, 8)] = overlapSector;
+        spatial.SectorsByCoordinate[(1, 8, 8)] = new MapSector(1, 8, 8);
+        spatial.SectorsByCoordinate[(1, 9, 8)] = deltaSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+        {
+            var key = (1, location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+            return spatial.SectorsByCoordinate.TryGetValue(key, out var sector) ? sector : null;
+        };
+
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new MoongateConfig
+            {
+                Spatial = new MoongateSpatialConfig
+                {
+                    SectorEnterSyncRadius = 1
+                }
+            }
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+        var objectPackets = packets.Where(p => p.Packet is ObjectInformationPacket).ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                // Only delta-item should be sent, NOT overlap-item
+                Assert.That(objectPackets, Has.Count.EqualTo(1));
+                Assert.That(
+                    packets.All(packet => packet.SessionId == movingSession.SessionId),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldResolveCharacterFromSessionWithoutPersistence()
     {
         var characterId = (Serial)0x00005000u;

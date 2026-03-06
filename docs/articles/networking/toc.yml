@@ -1,5 +1,7 @@
 items:
   - name: Packet System
     href: packets.md
+  - name: Packet Handler Performance
+    href: packet-handler-performance.md
   - name: Protocol Reference
     href: protocol.md
