@@ -221,14 +221,22 @@ public class MovementHandler : BasePacketListener
         Point3D newLocation
     )
     {
-        if (oldLocation == newLocation || session.Character is null)
+        if (session.Character is null)
+        {
+            return;
+        }
+
+        var positionChanged = oldLocation != newLocation;
+        var mapChanged = oldMapId != mapId;
+
+        if (!positionChanged && !mapChanged)
         {
             return;
         }
 
         var now = Environment.TickCount64;
 
-        if (now - session.LastMobilePositionEventTimestamp < PositionEventThrottleMs)
+        if (!mapChanged && now - session.LastMobilePositionEventTimestamp < PositionEventThrottleMs)
         {
             return;
         }

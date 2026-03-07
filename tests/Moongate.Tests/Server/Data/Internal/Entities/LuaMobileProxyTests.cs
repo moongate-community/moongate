@@ -822,4 +822,39 @@ public sealed class LuaMobileProxyTests
             }
         );
     }
+
+    [Test]
+    public void Teleport_WhenOnlyMapChanges_ShouldPublishPositionEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService
+        );
+
+        var teleported = proxy.Teleport(2, 100, 200, 5);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(2));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.OldMapId, Is.EqualTo(1));
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.MapId, Is.EqualTo(2));
+            }
+        );
+    }
 }

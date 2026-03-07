@@ -206,6 +206,7 @@ public sealed class LuaMobileProxy
         }
 
         var oldLocation = _mobile.Location;
+        var oldMapId = _mobile.MapId;
 
         if (!_movementValidationService.TryResolveMove(_mobile, direction, out var newLocation))
         {
@@ -220,7 +221,6 @@ public sealed class LuaMobileProxy
             var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
                                 ? session.SessionId
                                 : -1;
-            var oldMapId = _mobile.MapId;
 
             _gameEventBusService.PublishAsync(
                                     new MobilePositionChangedEvent(
@@ -371,7 +371,7 @@ public sealed class LuaMobileProxy
         _mobile.MapId = mapId;
         _mobile.Location = newLocation;
 
-        if (_gameEventBusService is not null && oldLocation != newLocation)
+        if (_gameEventBusService is not null && (oldMapId != _mobile.MapId || oldLocation != newLocation))
         {
             var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
                                 ? session.SessionId

@@ -266,6 +266,8 @@ public class MovementHandlerTests
                 }
             );
         _ = queue.TryDequeue(out _);
+        session.MoveTime = Environment.TickCount64 - 2000;
+        session.MoveCredit = 1000;
 
         _ = await handler.HandlePacketAsync(
                 session,
@@ -277,6 +279,55 @@ public class MovementHandlerTests
             );
 
         Assert.That(gameEventBus.Events.OfType<MobilePositionChangedEvent>().ToList(), Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldNotThrottleMobilePositionChangedEvent_WhenMapChangesViaTeleporter()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var teleporters = new TestTeleportersDataService();
+        teleporters.SetEntries(
+            [
+                new(
+                    0,
+                    "Felucca",
+                    new(101, 100, 0),
+                    1,
+                    "Trammel",
+                    new(500, 500, 10),
+                    false
+                )
+            ]
+        );
+        var handler = CreateHandler(queue, gameEventBus, teleportersDataService: teleporters);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                MapId = 0,
+                Location = new(100, 100, 0),
+                Direction = DirectionType.East
+            },
+            LastMobilePositionEventTimestamp = Environment.TickCount64
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+        var events = gameEventBus.Events.OfType<MobilePositionChangedEvent>().ToList();
+        Assert.That(events, Has.Count.EqualTo(1));
+        Assert.That(events[0].OldMapId, Is.EqualTo(0));
+        Assert.That(events[0].MapId, Is.EqualTo(1));
+        Assert.That(events[0].NewLocation, Is.EqualTo(new Point3D(500, 500, 10)));
     }
 
     [Test]
