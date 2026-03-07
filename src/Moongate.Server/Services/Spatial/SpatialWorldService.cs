@@ -16,6 +16,7 @@ using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -307,12 +308,18 @@ public sealed class SpatialWorldService
             return;
         }
 
-        var dropPacket = new ObjectInformationPacket(item);
-        await BroadcastToPlayersInUpdateRadiusAsync(
-            dropPacket,
-            mapId,
-            gameEvent.NewLocation
-        );
+        var range = GetUpdateBroadcastSectorRadius() * MapSectorConsts.SectorSize;
+        var sessions = GetPlayersInRange(gameEvent.NewLocation, range, mapId);
+
+        foreach (var session in sessions)
+        {
+            if (!ItemVisibilityHelper.CanSessionSeeItem(session, item))
+            {
+                continue;
+            }
+
+            _outgoingPacketQueue.Enqueue(session.SessionId, new ObjectInformationPacket(item));
+        }
     }
 
     public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)

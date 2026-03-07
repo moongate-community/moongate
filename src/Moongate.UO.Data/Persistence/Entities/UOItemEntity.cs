@@ -49,6 +49,8 @@ public class UOItemEntity : IItemEntity
 
     public ItemRarity Rarity { get; set; }
 
+    public AccountType Visibility { get; set; } = AccountType.Regular;
+
     /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
@@ -147,6 +149,7 @@ public class UOItemEntity : IItemEntity
         hash.Add(IsStackable);
         hash.Add(ScriptId, StringComparer.Ordinal);
         hash.Add(Rarity);
+        hash.Add(Visibility);
         hash.Add(ParentContainerId);
         hash.Add(ContainerPosition);
         hash.Add(EquippedMobileId);

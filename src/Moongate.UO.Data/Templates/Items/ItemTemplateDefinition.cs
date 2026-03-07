@@ -71,6 +71,9 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
     [JsonConverter(typeof(JsonStringEnumConverter<LootType>))]
     public LootType LootType { get; set; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<AccountType>))]
+    public AccountType Visibility { get; set; } = AccountType.Regular;
+
     public string ScriptId { get; set; }
 
     public List<string> Tags { get; set; } = [];

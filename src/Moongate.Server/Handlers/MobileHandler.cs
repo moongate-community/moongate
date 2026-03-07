@@ -12,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
@@ -265,6 +266,11 @@ public class MobileHandler
         int z
     )
     {
+        if (!_gameNetworkSessionService.TryGet(sessionId, out var session))
+        {
+            return;
+        }
+
         var targetSector = _spatialWorldService.GetSectorByLocation(
             mapId,
             new(
@@ -282,7 +288,8 @@ public class MobileHandler
         foreach (var item in targetSector.GetItems())
         {
             if (item.ParentContainerId != Serial.Zero ||
-                item.EquippedMobileId != Serial.Zero)
+                item.EquippedMobileId != Serial.Zero ||
+                !ItemVisibilityHelper.CanSessionSeeItem(session, item))
             {
                 continue;
             }

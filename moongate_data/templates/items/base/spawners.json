@@ -1,0 +1,17 @@
+[
+  {
+    "type": "item",
+    "id": "spawn",
+    "name": "Spawn",
+    "category": "System",
+    "description": "Generic spawn controller item template.",
+    "tags": ["spawn", "spawner", "system"],
+    "itemId": "0x1F13",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": false,
+    "visibility": "GameMaster"
+  }
+]

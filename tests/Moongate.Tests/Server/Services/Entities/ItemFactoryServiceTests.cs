@@ -135,12 +135,43 @@ public class ItemFactoryServiceTests
                 Assert.That(item.Hue, Is.EqualTo(77));
                 Assert.That(item.Weight, Is.EqualTo(6));
                 Assert.That(item.Rarity, Is.EqualTo(ItemRarity.Legendary));
+                Assert.That(item.Visibility, Is.EqualTo(AccountType.Regular));
                 Assert.That(item.ScriptId, Is.EqualTo("items.test_item"));
                 Assert.That(item.Location, Is.EqualTo(Point3D.Zero));
                 Assert.That(item.ParentContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(item.EquippedLayer, Is.Null);
             }
         );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldMapVisibilityFromTemplate()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "gm_only_item",
+                Name = "GM Only Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x1517",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.gm_only_item",
+                Weight = 1,
+                Visibility = AccountType.GameMaster
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var item = service.CreateItemFromTemplate("gm_only_item");
+
+        Assert.That(item.Visibility, Is.EqualTo(AccountType.GameMaster));
     }
 
     [Test]

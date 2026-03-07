@@ -28,6 +28,8 @@ public sealed class ItemSnapshot
 
     public byte Rarity { get; set; }
 
+    public byte Visibility { get; set; }
+
     public int ItemId { get; set; }
 
     public int Hue { get; set; }

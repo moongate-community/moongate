@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
@@ -201,6 +202,7 @@ public class ItemHandlerTests
         public MapSector? Sector { get; set; }
 
         public List<UOMobileEntity> Players { get; } = [];
+        public List<GameSession> SessionsInRange { get; } = [];
 
         public void AddOrUpdateItem(UOItemEntity item, int mapId)
         {
@@ -280,9 +282,10 @@ public class ItemHandlerTests
             _ = location;
             _ = range;
             _ = mapId;
-            _ = excludeSession;
 
-            return [];
+            return excludeSession is null
+                       ? [.. SessionsInRange]
+                       : [.. SessionsInRange.Where(session => session != excludeSession)];
         }
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -423,6 +426,54 @@ public class ItemHandlerTests
                 Assert.That(draw.Container!.Id, Is.EqualTo(containerId));
             }
         );
+    }
+
+    [Test]
+    public async Task HandleAsync_ItemAddedInSectorEvent_ShouldFilterBySessionAccountType()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatial = new ItemHandlerTestSpatialWorldService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            spatial,
+            new ItemHandlerTestMobileService()
+        );
+
+        var itemId = (Serial)0x40000061u;
+        itemService.ItemsById[itemId] = new()
+        {
+            Id = itemId,
+            ItemId = 0x0EED,
+            Location = new(100, 100, 0),
+            MapId = 1,
+            Visibility = AccountType.GameMaster
+        };
+
+        using var regularClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var regularSession = new GameSession(new(regularClient))
+        {
+            CharacterId = (Serial)0x00000011u,
+            Character = new()
+            {
+                Id = (Serial)0x00000011u,
+                MapId = 1,
+                Location = new(100, 100, 0)
+            },
+            AccountType = AccountType.Regular
+        };
+        sessionService.Add(regularSession);
+        spatial.SessionsInRange.Add(regularSession);
+
+        await handler.HandleAsync(new ItemAddedInSectorEvent(itemId, 1, 6, 6));
+
+        Assert.That(queue.TryDequeue(out _), Is.False);
     }
 
     [Test]

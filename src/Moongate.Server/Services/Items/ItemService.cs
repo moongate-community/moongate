@@ -53,6 +53,7 @@ public sealed class ItemService : IItemService
             ScriptId = item.ScriptId,
             IsStackable = item.IsStackable,
             Rarity = item.Rarity,
+            Visibility = item.Visibility,
             ParentContainerId = item.ParentContainerId,
             ContainerPosition = item.ContainerPosition,
             EquippedMobileId = item.EquippedMobileId,

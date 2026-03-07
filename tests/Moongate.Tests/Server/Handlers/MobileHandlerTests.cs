@@ -842,6 +842,67 @@ public sealed class MobileHandlerTests
         );
     }
 
+    [Test]
+    public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldFilterItemsBySessionAccountType()
+    {
+        var playerId = (Serial)0x00004010u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var regularSession = CreateSession(playerId);
+        regularSession.AccountType = AccountType.Regular;
+        sessions.Add(regularSession);
+
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000071u,
+                Name = "gm-only-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Visibility = AccountType.GameMaster,
+                Location = spawnLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId);
+        character.Location = spawnLocation;
+        character.MapId = 1;
+        regularSession.Character = character;
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(character),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(new PlayerCharacterLoggedInEvent(regularSession.SessionId, (Serial)0x01u, playerId));
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.False);
+    }
+
     private static UOMobileEntity CreatePlayer(Serial id)
         => new()
         {

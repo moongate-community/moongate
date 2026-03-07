@@ -16,10 +16,12 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Listeners.Base;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
@@ -106,11 +108,18 @@ public class ItemHandler
             return;
         }
 
-        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
-            new ObjectInformationPacket(item),
-            gameEvent.MapId,
-            item.Location
-        );
+        var range = _spatialWorldService.GetUpdateBroadcastSectorRadius() * MapSectorConsts.SectorSize;
+        var sessions = _spatialWorldService.GetPlayersInRange(item.Location, range, gameEvent.MapId);
+
+        foreach (var session in sessions)
+        {
+            if (!ItemVisibilityHelper.CanSessionSeeItem(session, item))
+            {
+                continue;
+            }
+
+            Enqueue(session, new ObjectInformationPacket(item));
+        }
     }
 
     public async Task HandleAsync(ItemDeletedEvent gameEvent, CancellationToken cancellationToken = default)
