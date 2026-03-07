@@ -32,4 +32,18 @@ public interface ISeedDataService
     /// <param name="mapId">Map id.</param>
     /// <returns>Sign entries for the map.</returns>
     IReadOnlyList<SignEntry> GetSignsByMap(int mapId);
+
+    /// <summary>
+    /// Returns all spawn definitions for a map.
+    /// </summary>
+    /// <param name="mapId">Map id.</param>
+    /// <returns>Spawn definitions for the map.</returns>
+    IReadOnlyList<SpawnDefinitionEntry> GetSpawnsByMap(int mapId);
+
+    /// <summary>
+    /// Returns all teleporter definitions for a source map.
+    /// </summary>
+    /// <param name="mapId">Source map id.</param>
+    /// <returns>Teleporter definitions for the map.</returns>
+    IReadOnlyList<TeleporterEntry> GetTeleportersBySourceMap(int mapId);
 }

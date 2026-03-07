@@ -102,6 +102,12 @@ public sealed class SpawnDecorationsCommandTests
 
         public IReadOnlyList<SignEntry> GetSignsByMap(int mapId)
             => [];
+
+        public IReadOnlyList<SpawnDefinitionEntry> GetSpawnsByMap(int mapId)
+            => [];
+
+        public IReadOnlyList<TeleporterEntry> GetTeleportersBySourceMap(int mapId)
+            => [];
     }
 
     private sealed class ImmediateBackgroundJobService : IBackgroundJobService

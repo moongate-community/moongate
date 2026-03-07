@@ -195,9 +195,6 @@ public class MobileHandler
             $"Sector: {newSector.SectorX} {newSector.SectorY} Items: {itemCount} e Mobiles: {mobileCount}"
         );
 
-        var oldCenterX = oldSector?.SectorX ?? int.MinValue;
-        var oldCenterY = oldSector?.SectorY ?? int.MinValue;
-
         for (var sectorX = newSector.SectorX - _sectorEnterSyncRadius;
              sectorX <= newSector.SectorX + _sectorEnterSyncRadius;
              sectorX++)
@@ -206,19 +203,6 @@ public class MobileHandler
                  sectorY <= newSector.SectorY + _sectorEnterSyncRadius;
                  sectorY++)
             {
-                var isNearPlayer = Math.Abs(sectorX - newSector.SectorX) <= 1 &&
-                                   Math.Abs(sectorY - newSector.SectorY) <= 1;
-
-                if (!isNearPlayer &&
-                    oldSector is not null &&
-                    sectorX >= oldCenterX - _sectorEnterSyncRadius &&
-                    sectorX <= oldCenterX + _sectorEnterSyncRadius &&
-                    sectorY >= oldCenterY - _sectorEnterSyncRadius &&
-                    sectorY <= oldCenterY + _sectorEnterSyncRadius)
-                {
-                    continue;
-                }
-
                 SyncSingleSectorForPlayer(session.SessionId, mobileEntity, mapId, sectorX, sectorY, newLocation.Z);
             }
         }

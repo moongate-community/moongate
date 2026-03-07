@@ -98,6 +98,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ILocationCatalogService, LocationCatalogService>(Reuse.Singleton);
         container.Register<IDecorationDataService, DecorationDataService>(Reuse.Singleton);
         container.Register<ISignDataService, SignDataService>(Reuse.Singleton);
+        container.Register<ISpawnsDataService, SpawnsDataService>(Reuse.Singleton);
+        container.Register<ITeleportersDataService, TeleportersDataService>(Reuse.Singleton);
         container.Register<IDoorDataService, DoorDataService>(Reuse.Singleton);
         container.Register<ISeedDataService, SeedDataService>(Reuse.Singleton);
         container.RegisterDelegate(

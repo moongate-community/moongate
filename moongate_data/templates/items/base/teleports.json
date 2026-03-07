@@ -1,0 +1,106 @@
+[
+  {
+    "type": "item",
+    "id": "teleporter",
+    "name": "Teleporter",
+    "category": "Structure",
+    "description": "Generic teleporter template.",
+    "tags": ["teleport", "worldgen"],
+    "itemId": "0x1BC3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.teleport",
+    "isMovable": false
+  },
+  {
+    "type": "item",
+    "id": "moongate",
+    "name": "Moongate",
+    "category": "Structure",
+    "tags": ["moongate", "teleport", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x0F6C",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "keyword_teleporter",
+    "name": "Keyword Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "keyword", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x1BC3",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "skill_teleporter",
+    "name": "Skill Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "skill", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x1BC3",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "blue_ninja_quest_teleporter",
+    "name": "Blue Ninja Quest Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "quest", "ninja", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x051C",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "green_ninja_quest_teleporter",
+    "name": "Green Ninja Quest Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "quest", "ninja", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x051C",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "white_ninja_quest_teleporter",
+    "name": "White Ninja Quest Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "quest", "ninja", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x051C",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "khaldun_pit_teleporter",
+    "name": "Khaldun Pit Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "khaldun", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x053B",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "dark_tides_teleporter",
+    "name": "Dark Tides Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "quest", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x1822",
+    "scriptId": "items.teleport"
+  },
+  {
+    "type": "item",
+    "id": "uzeraan_turmoil_teleporter",
+    "name": "Uzeraan Turmoil Teleporter",
+    "category": "Structure",
+    "tags": ["teleport", "quest", "worldgen"],
+    "base_item": "teleporter",
+    "itemId": "0x1822",
+    "scriptId": "items.teleport"
+  }
+]
