@@ -5,6 +5,7 @@ require("commands.gm.teleports")
 require("items.apple")
 require("items.brick")
 require("items.door")
+require("items.teleport")
 
 function on_player_connected(p)
     log.info("Anvedi che s'e connesso un client")
