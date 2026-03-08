@@ -30,6 +30,14 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
   - Lua engine and script module integration.
 - `Moongate.UO.Data`
   - UO domain entities, enums, template models and shared data types.
+- `Moongate.Core`
+  - Shared types, geometry, buffers, compression, dice notation, JSON utilities, random, text encoding.
+- `Moongate.Abstractions`
+  - Base service contracts (`IMoongateService`), email abstractions, service priority types.
+- `Moongate.Email`
+  - Email pipeline: Scriban template rendering and SMTP/no-op senders.
+- `Moongate.Generators`
+  - 9 source generators for compile-time registration (packets, listeners, events, commands, metrics, scripts, file loaders, Lua user data, version metadata).
 
 ## Concurrency Model
 

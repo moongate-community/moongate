@@ -36,17 +36,34 @@ The scripting system is built on **MoonSharp**, a lightweight Lua interpreter fo
 
 ### Create Your First Script
 
-Create `scripts/init.lua`:
+Create `scripts/init.lua`. This file is the main entry point and uses `require` to load all
+script modules (AI brains, commands, item scripts):
 
 ```lua
--- Called when a player connects
-function on_player_connected(player)
-    log.info("Player connected: " .. player.Name)
+-- init.lua - main entry point
+-- Require AI brains
+require("ai/orion")
+
+-- Require GM commands
+require("commands/gm/eclipse")
+require("commands/gm/set_world_light")
+require("commands/gm/teleports")
+require("commands/gm/spawn_tools")
+
+-- Require item scripts
+require("items/apple")
+require("items/brick")
+require("items/door")
+require("items/teleport")
+
+-- Called when a player connects to the server
+function on_player_connected(p)
+    log.info("Player connected: " .. tostring(p.name))
 end
 
--- Called when a player disconnects
-function on_player_disconnected(player)
-    log.info("Player disconnected: " .. player.Name)
+-- Called when the scripting engine is ready
+function on_ready()
+    log.info("Scripts loaded and ready")
 end
 ```
 
@@ -168,21 +185,60 @@ NPC templates can bind a Lua brain through `brain`:
 ```json
 {
   "type": "mobile",
-  "id": "orc_warrior",
-  "name": "an orc warrior",
-  "body": "0x11",
-  "brain": "orc_warrior"
+  "id": "orione",
+  "body": "0x00C9",
+  "skinHue": 779,
+  "brain": "orion",
+  "name": "Orione",
+  "title": "a beautiful cat"
 }
 ```
 
-The value `brain: "orc_warrior"` resolves to `scripts/ai/orc_warrior.lua`.
+The value `brain: "orion"` resolves to `scripts/ai/orion.lua`.
 
-Minimal brain script:
+Real brain script (Orion the cat NPC):
 
 ```lua
+-- ai/orion.lua - coroutine-based NPC brain for a cat
+
+local MOVE_INTERVAL  = 1000  -- ms between random movements
+local SPEECH_INTERVAL = 2000 -- ms between random speech
+local SOUND_INTERVAL  = 3000 -- ms between random sounds
+
+local speeches = {
+    "Meow!",
+    "Purrr...",
+    "*stretches lazily*",
+    "*rubs against your leg*"
+}
+
+local last_move  = 0
+local last_speech = 0
+local last_sound  = 0
+
 function brain_loop(npc_id)
     while true do
-        -- Next wake time in milliseconds
+        local now = os.clock() * 1000
+
+        -- Random movement
+        if now - last_move >= MOVE_INTERVAL then
+            npc.random_move(npc_id)
+            last_move = now
+        end
+
+        -- Random speech from table
+        if now - last_speech >= SPEECH_INTERVAL then
+            local phrase = speeches[math.random(#speeches)]
+            npc.say(npc_id, phrase)
+            last_speech = now
+        end
+
+        -- Random sound effect
+        if now - last_sound >= SOUND_INTERVAL then
+            npc.play_sound(npc_id, 0xDB) -- cat sound
+            last_sound = now
+        end
+
         coroutine.yield(250)
     end
 end
@@ -194,8 +250,12 @@ function on_event(event_type, from_serial, event_obj)
 
     local text = event_obj.text
     if string.find(string.lower(text), "hello", 1, true) then
-        log.info("NPC " .. tostring(event_obj.listener_npc_id) .. " heard hello from " .. tostring(from_serial))
+        npc.say(event_obj.listener_npc_id, "Meow!")
     end
+end
+
+function on_death(npc_id)
+    log.info("Orion has died: " .. tostring(npc_id))
 end
 ```
 
@@ -221,27 +281,58 @@ Moongate supports item-scoped script dispatch through `IItemScriptDispatcher`.
     - `items_<normalized_item_name>`
   - hook resolves a function on that table
 
-Example:
+Dispatch example:
 
-- `scriptId`: `items.healing-potion`
-- resolved table: `items_healing_potion`
-- `single_click` tries: `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
+- `scriptId`: `apple` resolves table `apple`
 - `double_click` tries: `on_double_click`, `OnDoubleClick`
 
+### Apple (simple: delete item and send message)
+
 ```lua
-items_healing_potion = {
-    on_click = function(ctx)
-        log.info("Item hook fired for serial: " .. tostring(ctx.item.serial))
+-- items/apple.lua
+apple = {
+    on_double_click = function(ctx)
+        item.delete(ctx.item.serial)
+        speech.send_message(ctx.session_id, "You eat the apple.")
     end
 }
 ```
 
-Fallback example:
+### Door (toggle state with open/close sounds)
 
 ```lua
-brick = {
+-- items/door.lua
+door = {
     on_double_click = function(ctx)
-        log.info("Brick double click: " .. tostring(ctx.session_id))
+        local is_open = door.toggle(ctx.item.serial)
+        if is_open then
+            sound.play(ctx.session_id, 0xEA) -- open sound
+        else
+            sound.play(ctx.session_id, 0xEC) -- close sound
+        end
+    end
+}
+```
+
+### Teleport (metadata parsing, effects, optional delay)
+
+```lua
+-- items/teleport.lua
+teleport = {
+    on_double_click = function(ctx)
+        local meta = ctx.metadata
+        local dest_map = meta.dest_map
+        local dest = convert.parse_point3d(meta.dest_x, meta.dest_y, meta.dest_z)
+
+        -- Play departure effect and sound
+        effect.play_at(ctx.item.serial, 0x3728)
+        sound.play(ctx.session_id, 0x1FE)
+
+        -- Optional delay before teleport
+        timer.after(500, function()
+            mobile.teleport(ctx.mobile.serial, dest.x, dest.y, dest.z, dest_map)
+            sound.play(ctx.session_id, 0x1FE) -- arrival sound
+        end)
     end
 }
 ```
@@ -393,15 +484,30 @@ Scripts are loaded from:
 
 ```
 moongate_data/scripts/
-├── init.lua                      # Main entry point (requires command/item/brain files)
+├── init.lua
+├── ai/
+│   └── orion.lua
 ├── commands/
 │   └── gm/
-│       ├── eclipse.lua           # .eclipse
-│       ├── set_world_light.lua   # .set_world_light <0-255>
-│       └── teleports.lua         # .teleports
-├── ai/                           # NPC brain tables
-├── gumps/                        # Layout-driven gumps
-└── items/                        # Item script tables
+│       ├── eclipse.lua
+│       ├── set_world_light.lua
+│       ├── spawn_tools.lua
+│       └── teleports.lua
+├── gumps/
+│   ├── spawn_tools.lua
+│   └── teleports/
+│       ├── constants.lua
+│       ├── controller.lua
+│       ├── data.lua
+│       ├── state.lua
+│       ├── ui.lua
+│       ├── render.lua
+│       └── actions.lua
+└── items/
+    ├── apple.lua
+    ├── brick.lua
+    ├── door.lua
+    └── teleport.lua
 ```
 
 ## Editor Tooling
@@ -542,51 +648,86 @@ public void Script_OnPlayerConnected_CallsLogInfo()
 
 ## Examples
 
-### Custom Command
+### GM Command - Eclipse
 
 ```lua
--- scripts/commands/admin.lua
+-- commands/gm/eclipse.lua
+-- Activates eclipse mode: sets global darkness and broadcasts to all players
 
-function cmd_teleport(player, targetSerial)
-    if not player.IsAdmin then
-        player.send_message("You must be an admin!")
-        return
+commands_gm_eclipse = {
+    on_command = function(ctx)
+        weather.set_global_light(26)
+        speech.broadcast("Eclipse mode activated!")
+        log.info("Eclipse mode enabled by " .. tostring(ctx.mobile.serial))
     end
-    
-    local target = game.get_mobile(targetSerial)
-    if not target then
-        player.send_message("Target not found!")
-        return
-    end
-    
-    player.teleport(target.Position.X, target.Position.Y, target.Position.Z)
-    log.info("Admin " .. player.Name .. " teleported to " .. target.Name)
-end
+}
 ```
 
-### Custom NPC
+### GM Command - Set World Light
 
 ```lua
--- scripts/npcs/merchant.lua
+-- commands/gm/set_world_light.lua
+-- Usage: .set_world_light <0-255>
 
-local merchant = {
-    Name = "Bob the Merchant",
-    Body = 0x0190,
-    Hue = 0,
-    Speech = {
-        "Welcome to my shop!",
-        "Looking for good deals?",
-        "I have the best prices in Britannia!"
-    }
-}
-
-function on_speech(player, text)
-    for _, phrase in ipairs(merchant.Speech) do
-        if text:find(phrase, 1, true) then
-            player.send_message(merchant.Name .. ": " .. phrase)
+commands_gm_set_world_light = {
+    on_command = function(ctx)
+        local value = tonumber(ctx.args)
+        if value == nil or value < 0 or value > 255 then
+            speech.send_message(ctx.session_id, "Usage: .set_world_light <0-255>")
             return
         end
+        weather.set_global_light(value)
+        log.info("World light set to " .. tostring(value))
     end
+}
+```
+
+### NPC Brain - Orion the Cat
+
+```lua
+-- ai/orion.lua
+-- Coroutine-based brain for a cat NPC with random movement, speech, and sounds
+
+local MOVE_INTERVAL  = 1000
+local SPEECH_INTERVAL = 2000
+local SOUND_INTERVAL  = 3000
+
+local speeches = {
+    "Meow!",
+    "Purrr...",
+    "*stretches lazily*",
+    "*rubs against your leg*"
+}
+
+function brain_loop(npc_id)
+    local last_move, last_speech, last_sound = 0, 0, 0
+    while true do
+        local now = os.clock() * 1000
+        if now - last_move >= MOVE_INTERVAL then
+            npc.random_move(npc_id)
+            last_move = now
+        end
+        if now - last_speech >= SPEECH_INTERVAL then
+            npc.say(npc_id, speeches[math.random(#speeches)])
+            last_speech = now
+        end
+        if now - last_sound >= SOUND_INTERVAL then
+            npc.play_sound(npc_id, 0xDB)
+            last_sound = now
+        end
+        coroutine.yield(250)
+    end
+end
+
+function on_event(event_type, from_serial, event_obj)
+    if event_type ~= "speech_heard" or event_obj == nil then return end
+    if string.find(string.lower(event_obj.text), "hello", 1, true) then
+        npc.say(event_obj.listener_npc_id, "Meow!")
+    end
+end
+
+function on_death(npc_id)
+    log.info("Orion has died: " .. tostring(npc_id))
 end
 ```
 

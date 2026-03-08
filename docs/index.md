@@ -18,6 +18,10 @@ This is the main documentation portal for Moongate v2.
 - [Sessions](articles/architecture/sessions.md)
 - [Generators](articles/architecture/generators.md)
 - [Background Jobs](articles/architecture/background-jobs.md)
+- [Bootstrap System](articles/architecture/bootstrap.md)
+- [World Generation](articles/architecture/world-generation.md)
+- [Spatial System](articles/architecture/spatial-system.md)
+- [HTTP API](articles/architecture/http-api.md)
 
 ## Scripting
 
@@ -40,6 +44,7 @@ This is the main documentation portal for Moongate v2.
 ## Operations
 
 - [Stress Test](articles/operations/stress-test.md)
+- [Console Commands](articles/operations/console-commands.md)
 
 ## Development
 

@@ -23,12 +23,139 @@ The following modules are currently wired in runtime:
 - `timer`
 - `time`
 - `weather` (`set_global_light`, `clear_global_light`)
+- `map` (`to_id`)
+- `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
+
+16 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
 - `moongate_data/scripts/commands/gm/eclipse.lua`
 - `moongate_data/scripts/commands/gm/set_world_light.lua`
 - `moongate_data/scripts/commands/gm/teleports.lua`
+
+## Real Script Examples
+
+### Item Script: Apple
+
+```lua
+items_apple = {
+    on_double_click = function(ctx)
+        local ref = item.get(ctx.item.serial)
+        if ref then
+            ref:delete()
+        end
+        speech.send(ctx.session_id, "You eat the apple.")
+    end
+}
+```
+
+### Item Script: Door
+
+```lua
+items_door = {
+    on_double_click = function(ctx)
+        local toggled = door.toggle(ctx.item.serial)
+        local ref = item.get(ctx.item.serial)
+        if ref then
+            if toggled then
+                ref:play_sound(0xEA)
+            else
+                ref:play_sound(0xEC)
+            end
+        end
+    end
+}
+```
+
+### Item Script: Teleporter
+
+```lua
+items_teleport = {
+    on_double_click = function(ctx)
+        local meta = ctx.metadata or {}
+        local dest_map = meta.dest_map
+        local dest = convert.parse_point3d(meta.dest_x, meta.dest_y, meta.dest_z)
+        local delay = convert.parse_delay_ms(meta.delay or "0")
+
+        local mob = mobile.get(ctx.mobile_id)
+        if not mob then return end
+
+        local map_id = map.to_id(dest_map or mob.map_id)
+        effect.send_to_player(ctx.mobile_id, mob.location_x, mob.location_y, mob.location_z,
+            0x3728, 10, 10, 0, 0, 2023)
+        mob:play_sound(0x1FE)
+
+        if delay > 0 then
+            timer.after(delay, function()
+                mob:teleport(map_id, dest.x, dest.y, dest.z)
+            end)
+        else
+            mob:teleport(map_id, dest.x, dest.y, dest.z)
+        end
+    end
+}
+```
+
+### GM Command: Eclipse
+
+```lua
+command.register("eclipse", function(ctx)
+    weather.set_global_light(26)
+    speech.broadcast("The world goes dark...")
+end, { gm = true })
+```
+
+### NPC Brain: Orion (Cat)
+
+```lua
+local MOVE_INTERVAL = 1000
+local SPEECH_INTERVAL = 2000
+local SOUND_INTERVAL = 3000
+
+local messages = {
+    "Meow!", "Purrrr...", "Mrrrow!", "*rubs against your leg*"
+}
+
+orion = {}
+
+function orion.brain_loop(npc_id)
+    local mob = mobile.get(npc_id)
+    local last_move, last_speech, last_sound = 0, 0, 0
+
+    while true do
+        local now = time.now_ms()
+
+        if mob and mob:is_alive() then
+            if now - last_move >= MOVE_INTERVAL then
+                mob:wander(3)
+                last_move = now
+            end
+            if now - last_speech >= SPEECH_INTERVAL then
+                local msg = messages[random.int(1, #messages)]
+                mob:say(msg)
+                last_speech = now
+            end
+            if now - last_sound >= SOUND_INTERVAL then
+                mob:play_sound(0xDB)
+                last_sound = now
+            end
+        end
+
+        coroutine.yield(250)
+    end
+end
+
+function orion.on_event(event_type, from_serial, event_obj)
+    if event_type == "speech_heard" and event_obj then
+        local text = string.lower(event_obj.text or "")
+        if string.find(text, "hello", 1, true) then
+            local mob = mobile.get(event_obj.listener_npc_id)
+            if mob then mob:say("Meow!") end
+        end
+    end
+end
+```
 
 ## Runtime Notes
 

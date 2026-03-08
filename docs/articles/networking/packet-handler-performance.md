@@ -11,7 +11,7 @@ Client -> NetworkService -> PacketDispatchService -> IPacketListener (your handl
                            (synchronous dispatch)
 ```
 
-`PacketDispatchService` runs on the **game loop thread** and dispatches packets synchronously. If your handler blocks, the entire game loop stalls — no other packets are processed, no ticks advance.
+`PacketDispatchService` runs on the **game loop thread** and dispatches packets synchronously. If your handler blocks, the entire game loop stalls - no other packets are processed, no ticks advance.
 
 The outgoing path is separate: `IOutgoingPacketQueue` is a thread-safe queue drained by a dedicated send thread. Enqueuing packets is always non-blocking.
 
@@ -76,8 +76,8 @@ private void PublishEventFireAndForget<TEvent>(TEvent gameEvent) where TEvent : 
 ```
 
 **Why this works:**
-- `IsCompletedSuccessfully` — if the event bus completes synchronously (most single-listener events do), no allocation happens.
-- `ContinueWith(OnlyOnFaulted)` — only allocates a continuation if the task actually fails.
+- `IsCompletedSuccessfully` - if the event bus completes synchronously (most single-listener events do), no allocation happens.
+- `ContinueWith(OnlyOnFaulted)` - only allocates a continuation if the task actually fails.
 - The game loop returns immediately; event listeners run asynchronously.
 
 ## Rule 2: Enqueue Packets, Don't Send Directly
@@ -120,7 +120,7 @@ Sectors are warmed at login (`WarmupAroundSectorAsync`) and on sector change (`W
 
 ## Rule 4: Delta Sync on Sector Change
 
-When a player crosses a sector boundary, don't re-sync all sectors in the radius — only sync the NEW sectors that weren't visible before.
+When a player crosses a sector boundary, don't re-sync all sectors in the radius - only sync the NEW sectors that weren't visible before.
 
 ### Bad: Full re-sync every sector crossing
 
@@ -190,7 +190,7 @@ public class MyHandler : IGameEventListener<SomeGameEvent>
     {
         // This runs asynchronously from the game loop (if publisher used fire-and-forget).
         // You CAN await async operations here without blocking the game loop.
-        // But keep it fast — other listeners for the same event type run in parallel.
+        // But keep it fast - other listeners for the same event type run in parallel.
 
         return Task.CompletedTask;
     }

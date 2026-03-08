@@ -65,6 +65,20 @@ It contains these generators:
   - generated `Moongate.Server.Data.Version.VersionUtils`
   - strongly-typed version/codename values for runtime bootstrap usage
 
+### File Loader Registration Generator
+
+- Input: classes implementing `IFileLoader` decorated with `[RegisterFileLoader]`
+- Output:
+  - generated `BootstrapFileLoaderRegistration.RegisterGenerated(...)`
+  - compile-time registration of file loaders in DryIoc
+
+### Lua User Data Registration Generator
+
+- Input: classes decorated with `[MoonSharpUserData]` or similar Lua binding attributes
+- Output:
+  - generated Lua user data type registrations for MoonSharp engine
+  - compile-time binding of .NET types as Lua user data
+
 ## Runtime Flow
 
 1. Build compiles generators and emits generated C# files.
@@ -76,6 +90,8 @@ It contains these generators:
    - command executors are registered and bound from generated console command registration.
    - metric snapshots are mapped through generated mappers.
    - script modules are registered through generated script module registry.
+   - file loaders are registered through generated bootstrap file loader registration.
+   - Lua user data types are registered through generated Lua user data registry.
    - version/codename are read from generated `VersionUtils`.
 
 ## Notes

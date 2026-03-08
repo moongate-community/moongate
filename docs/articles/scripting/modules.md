@@ -15,12 +15,17 @@ The following modules are available in the default server runtime:
 - `speech`
 - `mobile`
 - `item`
+- `door`
+- `effect`
+- `gump`
+- `location`
 - `random`
 - `dice`
+- `timer`
 - `time`
-- `gump`
-- `effect`
-- `location`
+- `weather`
+- `map`
+- `convert`
 
 Effect module runtime helpers:
 
@@ -49,6 +54,29 @@ end
 local total = location.count()
 local first = location.get(1)       -- 1-based index, nil if out of range
 local by_name = location.find("Britain")
+```
+
+`map` runtime helpers:
+
+```lua
+map.to_id("felucca")    -- returns 0
+map.to_id("trammel")    -- returns 1
+map.to_id("ilshenar")   -- returns 2
+map.to_id("malas")      -- returns 3
+map.to_id("tokuno")     -- returns 4
+map.to_id("termur")     -- returns 5
+map.to_id("internal")   -- returns 0x7F
+map.to_id(0)            -- also accepts numeric input
+```
+
+`convert` runtime helpers:
+
+```lua
+convert.to_bool("true")         -- returns true
+convert.to_bool(1)              -- returns true
+convert.to_int("42")            -- returns 42
+convert.parse_delay_ms("500ms") -- returns 500
+convert.parse_point3d("100,200,0") -- returns {x=100, y=200, z=0}
 ```
 
 ## Creating a Module
