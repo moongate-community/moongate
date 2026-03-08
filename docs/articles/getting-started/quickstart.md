@@ -28,8 +28,8 @@ You must provide UO directory (CLI or env var).
 
 ```bash
 dotnet run --project src/Moongate.Server -- \
-  --rootDirectory ./moongate \
-  --uoDirectory /path/to/uo
+  --root-directory ./moongate \
+  --uo-directory /path/to/uo
 ```
 
 Or with env var:
@@ -118,7 +118,7 @@ docker run --rm -it \
 
 ## Troubleshooting
 
-- If startup fails with UO directory error, set `--uoDirectory` or `MOONGATE_UO_DIRECTORY`.
+- If startup fails with UO directory error, set `--uo-directory` or `MOONGATE_UO_DIRECTORY`.
 - If ports are busy, stop conflicting process or remap ports.
 
 ---
