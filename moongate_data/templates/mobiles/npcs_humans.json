@@ -172,7 +172,7 @@
   },
   {
     "type": "mobile",
-    "id": "regina_npc",
+    "id": "lilly",
     "base_mobile": "base_human_npc",
     "category": "npc",
     "description": "Noble town NPC inspired by ModernUO Regina quest character.",
