@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="DryIoc.dll" Version="5.4.3"/>
-        <PackageReference Include="Humanizer.Core" Version="3.0.8">
+        <PackageReference Include="Humanizer.Core" Version="3.0.10">
             <ExcludeAssets>buildTransitive;analyzers</ExcludeAssets>
         </PackageReference>
         <PackageReference Include="Serilog" Version="4.3.1"/>

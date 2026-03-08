@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Packets;
+using Moongate.Server.Data.World;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -11,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -143,6 +145,43 @@ public class SpatialWorldServiceBenchmark
             );
     }
 
+    private sealed class NoOpTeleportersDataService : ITeleportersDataService
+    {
+        public IReadOnlyList<TeleporterEntry> GetAllEntries()
+            => [];
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceMap(int mapId)
+            => [];
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
+            => [];
+
+        public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
+        {
+            entry = default;
+
+            return false;
+        }
+
+        public bool TryResolveTeleportDestination(
+            int mapId,
+            Point3D location,
+            out int destinationMapId,
+            out Point3D destinationLocation,
+            int maxHops = 4
+        )
+        {
+            _ = maxHops;
+            destinationMapId = mapId;
+            destinationLocation = location;
+
+            return false;
+        }
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+            => _ = entries;
+    }
+
     private sealed class NoOpItemService : IItemService
     {
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
@@ -240,6 +279,7 @@ public class SpatialWorldServiceBenchmark
             new NoOpItemService(),
             new NoOpMobileService(),
             new NoOpOutgoingPacketQueue(),
+            new NoOpTeleportersDataService(),
             new()
             {
                 Spatial = new()
