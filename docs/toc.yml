@@ -30,6 +30,8 @@
     href: articles/architecture/solution.md
   - name: Source Generators
     href: articles/architecture/generators.md
+  - name: Background Jobs
+    href: articles/architecture/background-jobs.md
 
 - name: Scripting
   href: articles/scripting/
@@ -58,6 +60,14 @@
     href: articles/networking/packets.md
   - name: Protocol Reference
     href: articles/networking/protocol.md
+  - name: Packet Handler Performance
+    href: articles/networking/packet-handler-performance.md
+
+- name: Operations
+  href: articles/operations/stress-test.md
+  items:
+  - name: Stress Test
+    href: articles/operations/stress-test.md
 
 - name: Development
   items:
