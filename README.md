@@ -83,9 +83,9 @@ UI default URL: `http://localhost:8088/`
 
 - **Character Creator at Docks**: character creation flow and initial spawn area.
   ![Character Creator at Docks](images/screenshots/screen_creator_at_docks.png)
-- **Door Open/Close Fix**: door behavior after open/close position correction.
+- **Door Open/Close Fix**: the bug is still there (damn doors).
   ![Door Open/Close Fix](images/screenshots/screen_door_bug.png)
-- **Orion Lua Brain**: scripted NPC behavior example (`orion.lua`) with speech loop.
+- **Orion Lua Brain**: scripted NPC behavior example (`orion.lua`) with speech loop (my cat is always hungry and always looking for food).
   ![Orion Lua Brain](images/screenshots/screen_orione_hungry_cat.png)
 - **Teleport Gump**: Lua-driven teleport UI and location workflow.
   ![Teleport Gump](images/screenshots/screen_teleport_gump.png)
