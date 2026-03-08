@@ -68,11 +68,27 @@ UI default URL: `http://localhost:8088/`
 - Doors support runtime open/close behavior and network updates.
 - AOT stability issue in persistence was resolved by moving to MessagePack-CSharp source-generated contracts.
 
-## UI Preview
+## Screenshots
 
-![UI Screen 1](images/ui/ui_screen1.png)
-![UI Screen 2](images/ui/ui_screen2.png)
-![UI Screen 3](images/ui/ui_screen_3.png)
+### Web Admin UI
+
+- **UI Screen 1**: login and initial admin entry point.
+  ![UI Screen 1](images/ui/ui_screen1.png)
+- **UI Screen 2**: authenticated dashboard and main navigation.
+  ![UI Screen 2](images/ui/ui_screen2.png)
+- **UI Screen 3**: item templates search with image previews.
+  ![UI Screen 3](images/ui/ui_screen_3.png)
+
+### In-Game Features
+
+- **Character Creator at Docks**: character creation flow and initial spawn area.
+  ![Character Creator at Docks](images/screenshots/screen_creator_at_docks.png)
+- **Door Open/Close Fix**: door behavior after open/close position correction.
+  ![Door Open/Close Fix](images/screenshots/screen_door_bug.png)
+- **Orion Lua Brain**: scripted NPC behavior example (`orion.lua`) with speech loop.
+  ![Orion Lua Brain](images/screenshots/screen_orione_hungry_cat.png)
+- **Teleport Gump**: Lua-driven teleport UI and location workflow.
+  ![Teleport Gump](images/screenshots/screen_teleport_gump.png)
 
 ## Documentation
 
