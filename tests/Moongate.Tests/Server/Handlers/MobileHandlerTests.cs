@@ -644,6 +644,97 @@ public sealed class MobileHandlerTests
     }
 
     [Test]
+    public async Task
+        HandleAsync_ForMobilePositionChanged_WhenSectorOverlapsOldRadius_ShouldStillResyncAllSectorsInNewRadius()
+    {
+        var movingPlayerId = (Serial)0x00003001u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(7 << MapSectorConsts.SectorShift, 7 << MapSectorConsts.SectorShift, 0);
+        var newLocation = new Point3D(8 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0);
+        var newCenterSector = new MapSector(1, 8, 8);
+        var overlappingFarSector = new MapSector(1, 6, 6); // overlap with old radius, distance > 1 from new center
+
+        overlappingFarSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000030u,
+                Name = "overlap-far-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = new(6 << MapSectorConsts.SectorShift, 6 << MapSectorConsts.SectorShift, 0),
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, 8, 8)] = newCenterSector;
+        spatial.SectorsByCoordinate[(1, 6, 6)] = overlappingFarSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               if (location == oldLocation)
+                                               {
+                                                   return new(1, 7, 7);
+                                               }
+
+                                               if (location == newLocation)
+                                               {
+                                                   return newCenterSector;
+                                               }
+
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var sector)
+                                                          ? sector
+                                                          : null;
+                                           };
+
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+            {
+                Spatial = new()
+                {
+                    SectorEnterSyncRadius = 2
+                }
+            }
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(
+            packets.Any(
+                packet => packet.Packet is ObjectInformationPacket objectInfoPacket &&
+                          objectInfoPacket.Serial == (Serial)0x40000030u
+            ),
+            Is.True
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldSendMapChangeToMovingPlayer()
     {
         var movingPlayerId = (Serial)0x00000999u;
@@ -840,6 +931,67 @@ public sealed class MobileHandlerTests
                 Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
             }
         );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldFilterItemsBySessionAccountType()
+    {
+        var playerId = (Serial)0x00004010u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var regularSession = CreateSession(playerId);
+        regularSession.AccountType = AccountType.Regular;
+        sessions.Add(regularSession);
+
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000071u,
+                Name = "gm-only-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Visibility = AccountType.GameMaster,
+                Location = spawnLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId);
+        character.Location = spawnLocation;
+        character.MapId = 1;
+        regularSession.Character = character;
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(character),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(new PlayerCharacterLoggedInEvent(regularSession.SessionId, (Serial)0x01u, playerId));
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.False);
     }
 
     private static UOMobileEntity CreatePlayer(Serial id)

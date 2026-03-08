@@ -3,6 +3,8 @@ using Moongate.UO.Data.Expansions;
 using Moongate.UO.Data.Json.Locations;
 using Moongate.UO.Data.Json.Names;
 using Moongate.UO.Data.Json.Regions;
+using Moongate.UO.Data.Json.Spawns;
+using Moongate.UO.Data.Json.Teleporters;
 using Moongate.UO.Data.Json.Weather;
 using Moongate.UO.Data.Skills;
 
@@ -29,7 +31,14 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(JsonJailRegion)),
  JsonSerializable(typeof(JsonRegionParent)),
  JsonSerializable(typeof(JsonWeatherWrap)),
- JsonSerializable(typeof(JsonProfessionsRoot))]
+ JsonSerializable(typeof(JsonProfessionsRoot)),
+ JsonSerializable(typeof(JsonSpawnDefinition[])),
+ JsonSerializable(typeof(JsonSpawnDefinition)),
+ JsonSerializable(typeof(JsonSpawnEntryDefinition[])),
+ JsonSerializable(typeof(JsonSpawnEntryDefinition)),
+ JsonSerializable(typeof(JsonTeleporterDefinition[])),
+ JsonSerializable(typeof(JsonTeleporterDefinition)),
+ JsonSerializable(typeof(JsonTeleporterEndpoint))]
 
 /// <summary>
 /// Represents MoongateUOJsonSerializationContext.

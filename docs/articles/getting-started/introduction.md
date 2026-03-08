@@ -84,27 +84,39 @@ Moongate v2 is **actively in development**. The following features are implement
 - [x] Packet framing/parsing (fixed and variable sizes)
 - [x] Attribute-based packet mapping with source generation
 - [x] Inbound message bus (`IMessageBusService`)
-- [x] Domain event bus with `PlayerConnectedEvent`, `PlayerDisconnectedEvent`
+- [x] Domain event bus with 43+ game event types
 - [x] Outbound event listeners
 - [x] Session split (transport vs gameplay context)
-- [x] Lua scripting runtime
-- [x] Embedded HTTP server with OpenAPI/Scalar
-- [x] Snapshot + Journal persistence
-- [x] Interactive console UI
-- [x] Timer wheel metrics
+- [x] Lua scripting runtime with 16 script modules
+- [x] Embedded HTTP server with OpenAPI/Scalar and JWT authentication
+- [x] Snapshot + Journal persistence with MessagePack serialization
+- [x] Interactive console UI with 19 console commands
+- [x] Timer wheel with metrics
 - [x] Unit tests for core systems
 - [x] Login handshake + character selection + character creation
-- [x] Movement request validation (`0x02`) with ACK/Deny flow
-- [x] Item interaction baseline (`0x07`, `0x08`, `0x13`, `0x09`, `0x06`)
-- [x] Target cursor request/response pipeline (`0x6C`)
-- [x] General Information (`0xBF`) core subcommands (`0x06`, `0x1A`, `0x2C`, `0x2D`, `0x2E`)
+- [x] Movement request validation with ACK/Deny flow
+- [x] Item interaction baseline (pickup, drop, equip, double-click, single-click)
+- [x] Target cursor request/response pipeline
+- [x] General Information (`0xBF`) core subcommands
 - [x] Sector-based world sync and lazy sector loading strategy
+- [x] World generation system (decorations, doors, signs, teleporters, spawns)
+- [x] NPC brain system with Lua coroutine-based AI
+- [x] Gump system (builder API and file-based layouts)
+- [x] Item script dispatcher with hook resolution
+- [x] A* pathfinding service
+- [x] Door system with toggle mechanics
+- [x] Weather and lighting system
+- [x] Visual effects system
+- [x] REST API for user management, sessions, metrics, and item templates
+- [x] React-based admin web UI
+- [x] Source generators: 9 generators for compile-time registration
+- [x] 24 file loaders for data asset management
+- [x] 3-phase bootstrap system
 
 ### Planned
 
 - [ ] Combat mechanics
 - [ ] Skill system
-- [ ] NPC AI
 - [ ] Item system completion (vendor/trade/economy semantics)
 - [ ] House/shelter system
 - [ ] Guild system

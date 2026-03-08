@@ -30,6 +30,16 @@
     href: articles/architecture/solution.md
   - name: Source Generators
     href: articles/architecture/generators.md
+  - name: Background Jobs
+    href: articles/architecture/background-jobs.md
+  - name: Bootstrap System
+    href: articles/architecture/bootstrap.md
+  - name: World Generation
+    href: articles/architecture/world-generation.md
+  - name: Spatial System
+    href: articles/architecture/spatial-system.md
+  - name: HTTP API
+    href: articles/architecture/http-api.md
 
 - name: Scripting
   href: articles/scripting/
@@ -58,6 +68,16 @@
     href: articles/networking/packets.md
   - name: Protocol Reference
     href: articles/networking/protocol.md
+  - name: Packet Handler Performance
+    href: articles/networking/packet-handler-performance.md
+
+- name: Operations
+  href: articles/operations/stress-test.md
+  items:
+  - name: Stress Test
+    href: articles/operations/stress-test.md
+  - name: Console Commands
+    href: articles/operations/console-commands.md
 
 - name: Development
   items:

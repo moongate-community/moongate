@@ -12,18 +12,24 @@ public class SeedDataService : ISeedDataService
     private readonly IDecorationDataService _decorationDataService;
     private readonly IDoorDataService _doorDataService;
     private readonly ILocationCatalogService _locationCatalogService;
+    private readonly ISpawnsDataService _spawnsDataService;
+    private readonly ITeleportersDataService _teleportersDataService;
 
     public SeedDataService(
         ISignDataService signDataService,
         IDecorationDataService decorationDataService,
         IDoorDataService doorDataService,
-        ILocationCatalogService locationCatalogService
+        ILocationCatalogService locationCatalogService,
+        ISpawnsDataService spawnsDataService,
+        ITeleportersDataService teleportersDataService
     )
     {
         _signDataService = signDataService;
         _decorationDataService = decorationDataService;
         _doorDataService = doorDataService;
         _locationCatalogService = locationCatalogService;
+        _spawnsDataService = spawnsDataService;
+        _teleportersDataService = teleportersDataService;
     }
 
     public IReadOnlyList<DecorationEntry> GetDecorationsByMap(int mapId)
@@ -37,4 +43,10 @@ public class SeedDataService : ISeedDataService
 
     public IReadOnlyList<SignEntry> GetSignsByMap(int mapId)
         => _signDataService.GetEntriesByMap(mapId);
+
+    public IReadOnlyList<SpawnDefinitionEntry> GetSpawnsByMap(int mapId)
+        => _spawnsDataService.GetEntriesByMap(mapId);
+
+    public IReadOnlyList<TeleporterEntry> GetTeleportersBySourceMap(int mapId)
+        => _teleportersDataService.GetEntriesBySourceMap(mapId);
 }

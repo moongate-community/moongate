@@ -1,21 +1,9 @@
-# Moongate Docs Home
+# Docs Home (Internal)
 
-## Navigation
-- [[plans/moongate-v2-development-plan|Moongate v2 - Development Plan]]
-- [[plans/status-2026-03-02|Current Status (2026-03-02)]]
-- [[plans/status-2026-02-23|Current Status (2026-02-23)]]
-- [[plans/status-2026-02-19|Current Status (2026-02-19)]]
-- [[sprints/README|Sprints]]
-- [[sprints/sprint-001|Sprint 001 - M0 Skeleton]]
-- [[sprints/sprint-001-kanban|Sprint 001 - Kanban]]
-- [[sprints/sprint-001-closeout-2026-02-18|Sprint 001 - Closeout (2026-02-18)]]
-- [[protocol/README|Protocol Notes]]
-- [[journal/2026-03-02|Session Journal (2026-03-02)]]
-- [[journal/README|Dev Journal]]
+Use `docs/index.md` as the canonical entry point.
 
-## Vault Structure
-- `plans/`: roadmap, milestones, and planning notes
-- `sprints/`: sprint planning and execution notes
-- `protocol/`: UO protocol and packet notes
-- `journal/`: development session logs
-- `templates/`: reusable documentation templates
+Quick links:
+
+- `docs/index.md`
+- `docs/toc.yml`
+- `docs/articles/**`

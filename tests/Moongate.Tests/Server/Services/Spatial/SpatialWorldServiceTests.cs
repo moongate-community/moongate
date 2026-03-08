@@ -5,12 +5,14 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.World;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -161,6 +163,64 @@ public sealed class SpatialWorldServiceTests
             CancellationToken cancellationToken = default
         )
             => throw new NotSupportedException();
+    }
+
+    private sealed class SpatialWorldServiceTestTeleportersDataService : ITeleportersDataService
+    {
+        public List<TeleporterEntry> Entries { get; } = [];
+
+        public IReadOnlyList<TeleporterEntry> GetAllEntries()
+            => Entries;
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceMap(int mapId)
+            => [.. Entries.Where(entry => entry.SourceMapId == mapId)];
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
+            => [
+                ..Entries.Where(
+                      entry =>
+                          entry.SourceMapId == mapId &&
+                          (entry.SourceLocation.X >> MapSectorConsts.SectorShift) == sectorX &&
+                          (entry.SourceLocation.Y >> MapSectorConsts.SectorShift) == sectorY
+                  )
+            ];
+
+        public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
+        {
+            entry = Entries.FirstOrDefault(candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location);
+
+            return entry != default;
+        }
+
+        public bool TryResolveTeleportDestination(
+            int mapId,
+            Point3D location,
+            out int destinationMapId,
+            out Point3D destinationLocation,
+            int maxHops = 4
+        )
+        {
+            _ = maxHops;
+
+            if (TryGetEntryAtLocation(mapId, location, out var entry))
+            {
+                destinationMapId = entry.DestinationMapId;
+                destinationLocation = entry.DestinationLocation;
+
+                return true;
+            }
+
+            destinationMapId = mapId;
+            destinationLocation = location;
+
+            return false;
+        }
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
     }
 
     [Test]
@@ -843,6 +903,40 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_NpcPositionChanged_OnTeleporterSource_ShouldMoveNpcToTeleportDestination()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var teleportersDataService = new SpatialWorldServiceTestTeleportersDataService();
+        teleportersDataService.SetEntries(
+            [
+                new(
+                    0,
+                    "Felucca",
+                    new(200, 200, 0),
+                    1,
+                    "Trammel",
+                    new(500, 500, 10),
+                    false
+                )
+            ]
+        );
+        var service = CreateService(
+            sessions,
+            eventBus,
+            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false },
+            teleportersDataService: teleportersDataService
+        );
+        var npc = CreateMobile(0x901, 100, 100, 0, false);
+        service.AddOrUpdateMobile(npc);
+
+        await service.HandleAsync(new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0)));
+
+        var nearby = service.GetNearbyMobiles(new(500, 500, 10), 5, 1);
+        Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
+    }
+
+    [Test]
     public async Task HandleAsync_PlayerCharacterLoggedIn_InRegion_ShouldPublishPlayerEnteredRegionEvent()
     {
         var sessions = new FakeGameNetworkSessionService();
@@ -1093,7 +1187,8 @@ public sealed class SpatialWorldServiceTests
         ICharacterService? characterService = null,
         MoongateSpatialConfig? spatialConfig = null,
         BasePacketListenerTestOutgoingPacketQueue? queue = null,
-        SpatialWorldServiceTestMobileService? mobileService = null
+        SpatialWorldServiceTestMobileService? mobileService = null,
+        ITeleportersDataService? teleportersDataService = null
     )
     {
         var config = new MoongateConfig
@@ -1108,6 +1203,7 @@ public sealed class SpatialWorldServiceTests
             itemService ?? new SpatialWorldServiceTestItemService(),
             mobileService ?? new SpatialWorldServiceTestMobileService(),
             queue ?? new BasePacketListenerTestOutgoingPacketQueue(),
+            teleportersDataService ?? new SpatialWorldServiceTestTeleportersDataService(),
             config
         );
     }

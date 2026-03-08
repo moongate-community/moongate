@@ -173,6 +173,11 @@ public sealed class ItemTemplateLoader : IFileLoader
         {
             child.LootType = parent.LootType;
         }
+
+        if (child.Visibility == Defaults.Visibility)
+        {
+            child.Visibility = parent.Visibility;
+        }
     }
 
     private static ItemTemplateParamDefinition CloneParam(ItemTemplateParamDefinition param)

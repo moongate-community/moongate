@@ -1,7 +1,9 @@
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.World;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.World;
 
@@ -85,6 +87,85 @@ public class SeedDataServiceTests
         }
     }
 
+    private sealed class InMemorySpawnsDataService : ISpawnsDataService
+    {
+        private readonly IReadOnlyList<SpawnDefinitionEntry> _entries;
+
+        public InMemorySpawnsDataService(IReadOnlyList<SpawnDefinitionEntry> entries)
+        {
+            _entries = entries;
+        }
+
+        public IReadOnlyList<SpawnDefinitionEntry> GetAllEntries()
+            => _entries;
+
+        public IReadOnlyList<SpawnDefinitionEntry> GetEntriesByMap(int mapId)
+            => [.. _entries.Where(entry => entry.MapId == mapId)];
+
+        public void SetEntries(IReadOnlyList<SpawnDefinitionEntry> entries)
+            => throw new NotSupportedException();
+    }
+
+    private sealed class InMemoryTeleportersDataService : ITeleportersDataService
+    {
+        private readonly IReadOnlyList<TeleporterEntry> _entries;
+
+        public InMemoryTeleportersDataService(IReadOnlyList<TeleporterEntry> entries)
+        {
+            _entries = entries;
+        }
+
+        public IReadOnlyList<TeleporterEntry> GetAllEntries()
+            => _entries;
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceMap(int mapId)
+            => [.. _entries.Where(entry => entry.SourceMapId == mapId)];
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
+            => [
+                .. _entries.Where(
+                      entry =>
+                          entry.SourceMapId == mapId &&
+                          (entry.SourceLocation.X >> MapSectorConsts.SectorShift) == sectorX &&
+                          (entry.SourceLocation.Y >> MapSectorConsts.SectorShift) == sectorY
+                  )
+            ];
+
+        public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
+        {
+            entry = _entries.FirstOrDefault(candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location);
+
+            return entry != default;
+        }
+
+        public bool TryResolveTeleportDestination(
+            int mapId,
+            Point3D location,
+            out int destinationMapId,
+            out Point3D destinationLocation,
+            int maxHops = 4
+        )
+        {
+            _ = maxHops;
+
+            if (TryGetEntryAtLocation(mapId, location, out var entry))
+            {
+                destinationMapId = entry.DestinationMapId;
+                destinationLocation = entry.DestinationLocation;
+
+                return true;
+            }
+
+            destinationMapId = mapId;
+            destinationLocation = location;
+
+            return false;
+        }
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+            => throw new NotSupportedException();
+    }
+
     [Test]
     public void GetDecorationsByMap_ShouldDelegateToDecorationDataService()
     {
@@ -104,8 +185,16 @@ public class SeedDataServiceTests
         var signDataService = new InMemorySignDataService([]);
         var decorationDataService = new InMemoryDecorationDataService(decorations);
         var doorDataService = new InMemoryDoorDataService([]);
+        var spawnsDataService = new InMemorySpawnsDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService([]);
-        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+        var service = new SeedDataService(
+            signDataService,
+            decorationDataService,
+            doorDataService,
+            locationCatalogService,
+            spawnsDataService,
+            new InMemoryTeleportersDataService([])
+        );
 
         var result = service.GetDecorationsByMap(1);
 
@@ -141,8 +230,16 @@ public class SeedDataServiceTests
         var signDataService = new InMemorySignDataService([]);
         var decorationDataService = new InMemoryDecorationDataService([]);
         var doorDataService = new InMemoryDoorDataService(doors);
+        var spawnsDataService = new InMemorySpawnsDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService([]);
-        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+        var service = new SeedDataService(
+            signDataService,
+            decorationDataService,
+            doorDataService,
+            locationCatalogService,
+            spawnsDataService,
+            new InMemoryTeleportersDataService([])
+        );
 
         var result = service.GetDoors();
 
@@ -166,8 +263,16 @@ public class SeedDataServiceTests
         var signDataService = new InMemorySignDataService([]);
         var decorationDataService = new InMemoryDecorationDataService([]);
         var doorDataService = new InMemoryDoorDataService([]);
+        var spawnsDataService = new InMemorySpawnsDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService(locations);
-        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+        var service = new SeedDataService(
+            signDataService,
+            decorationDataService,
+            doorDataService,
+            locationCatalogService,
+            spawnsDataService,
+            new InMemoryTeleportersDataService([])
+        );
 
         var result = service.GetLocations();
 
@@ -192,8 +297,16 @@ public class SeedDataServiceTests
         var signDataService = new InMemorySignDataService(signs);
         var decorationDataService = new InMemoryDecorationDataService([]);
         var doorDataService = new InMemoryDoorDataService([]);
+        var spawnsDataService = new InMemorySpawnsDataService([]);
         var locationCatalogService = new InMemoryLocationCatalogService([]);
-        var service = new SeedDataService(signDataService, decorationDataService, doorDataService, locationCatalogService);
+        var service = new SeedDataService(
+            signDataService,
+            decorationDataService,
+            doorDataService,
+            locationCatalogService,
+            spawnsDataService,
+            new InMemoryTeleportersDataService([])
+        );
 
         var map0 = service.GetSignsByMap(0);
         var map1 = service.GetSignsByMap(1);
@@ -205,6 +318,85 @@ public class SeedDataServiceTests
                 Assert.That(map0[0].Text, Is.EqualTo("#1016093"));
                 Assert.That(map1, Has.Count.EqualTo(1));
                 Assert.That(map1[0].Text, Is.EqualTo("Baker"));
+            }
+        );
+    }
+
+    [Test]
+    public void GetSpawnsByMap_ShouldDelegateToSpawnsDataService()
+    {
+        IReadOnlyList<SpawnDefinitionEntry> spawns =
+        [
+            new(
+                0,
+                "Felucca",
+                "shared/felucca",
+                "Outdoors.json",
+                Guid.Parse("001a5320-820c-4300-96f9-676e428b55be"),
+                "Spawner (213)",
+                new(4066, 569, 0),
+                8,
+                TimeSpan.FromMinutes(20),
+                TimeSpan.FromMinutes(20),
+                0,
+                80,
+                80,
+                [new("PolarBear", 8, 100)]
+            )
+        ];
+        var signDataService = new InMemorySignDataService([]);
+        var decorationDataService = new InMemoryDecorationDataService([]);
+        var doorDataService = new InMemoryDoorDataService([]);
+        var spawnsDataService = new InMemorySpawnsDataService(spawns);
+        var locationCatalogService = new InMemoryLocationCatalogService([]);
+        var service = new SeedDataService(
+            signDataService,
+            decorationDataService,
+            doorDataService,
+            locationCatalogService,
+            spawnsDataService,
+            new InMemoryTeleportersDataService([])
+        );
+
+        var result = service.GetSpawnsByMap(0);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Has.Count.EqualTo(1));
+                Assert.That(result[0].MapId, Is.EqualTo(0));
+                Assert.That(result[0].Entries, Has.Count.EqualTo(1));
+                Assert.That(result[0].Entries[0].Name, Is.EqualTo("PolarBear"));
+            }
+        );
+    }
+
+    [Test]
+    public void GetTeleportersBySourceMap_ShouldDelegateToTeleportersDataService()
+    {
+        IReadOnlyList<TeleporterEntry> teleporters =
+        [
+            new(0, "Felucca", new(311, 786, -24), 1, "Trammel", new(314, 784, 0), false)
+        ];
+
+        var service = new SeedDataService(
+            new InMemorySignDataService([]),
+            new InMemoryDecorationDataService([]),
+            new InMemoryDoorDataService([]),
+            new InMemoryLocationCatalogService([]),
+            new InMemorySpawnsDataService([]),
+            new InMemoryTeleportersDataService(teleporters)
+        );
+
+        var result = service.GetTeleportersBySourceMap(0);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Has.Count.EqualTo(1));
+                Assert.That(result[0].SourceMapId, Is.EqualTo(0));
+                Assert.That(result[0].DestinationMapId, Is.EqualTo(1));
+                Assert.That(result[0].Back, Is.False);
             }
         );
     }

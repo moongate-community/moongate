@@ -8,6 +8,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
@@ -34,16 +35,19 @@ public class MovementHandler : BasePacketListener
     private readonly ILogger _logger = Log.ForContext<MovementHandler>();
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IMovementValidationService _movementValidationService;
+    private readonly ITeleportersDataService _teleportersDataService;
 
     public MovementHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameEventBusService gameEventBusService,
-        IMovementValidationService movementValidationService
+        IMovementValidationService movementValidationService,
+        ITeleportersDataService teleportersDataService
     )
         : base(outgoingPacketQueue)
     {
         _gameEventBusService = gameEventBusService;
         _movementValidationService = movementValidationService;
+        _teleportersDataService = teleportersDataService;
     }
 
     protected override Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
@@ -95,6 +99,7 @@ public class MovementHandler : BasePacketListener
         var isFacingChangeOnly = currentDirection != requestedDirection;
 
         var previousLocation = session.Character.Location;
+        var previousMapId = session.Character.MapId;
 
         if (isFacingChangeOnly)
         {
@@ -125,6 +130,7 @@ public class MovementHandler : BasePacketListener
 
             session.Character.Location = newLocation;
             session.Character.Direction = moveRequestPacket.Direction;
+            TryApplyTeleporter(session);
         }
 
         var nextSequence = moveRequestPacket.Sequence + 1;
@@ -139,7 +145,13 @@ public class MovementHandler : BasePacketListener
         session.MoveTime +=
             isFacingChangeOnly ? TurnDelayMs : ComputeSpeedMs(session.IsMounted, moveRequestPacket.Direction);
 
-        TryPublishMobilePositionChangedEvent(session, previousLocation, session.Character.Location);
+        TryPublishMobilePositionChangedEvent(
+            session,
+            previousMapId,
+            session.Character.MapId,
+            previousLocation,
+            session.Character.Location
+        );
 
         return Task.FromResult(true);
     }
@@ -180,16 +192,51 @@ public class MovementHandler : BasePacketListener
         return false;
     }
 
-    private void TryPublishMobilePositionChangedEvent(GameSession session, Point3D oldLocation, Point3D newLocation)
+    private void TryApplyTeleporter(GameSession session)
     {
-        if (oldLocation == newLocation || session.Character is null)
+        if (session.Character is null)
+        {
+            return;
+        }
+
+        if (!_teleportersDataService.TryResolveTeleportDestination(
+                session.Character.MapId,
+                session.Character.Location,
+                out var destinationMapId,
+                out var destinationLocation
+            ))
+        {
+            return;
+        }
+
+        session.Character.MapId = destinationMapId;
+        session.Character.Location = destinationLocation;
+    }
+
+    private void TryPublishMobilePositionChangedEvent(
+        GameSession session,
+        int oldMapId,
+        int mapId,
+        Point3D oldLocation,
+        Point3D newLocation
+    )
+    {
+        if (session.Character is null)
+        {
+            return;
+        }
+
+        var positionChanged = oldLocation != newLocation;
+        var mapChanged = oldMapId != mapId;
+
+        if (!positionChanged && !mapChanged)
         {
             return;
         }
 
         var now = Environment.TickCount64;
 
-        if (now - session.LastMobilePositionEventTimestamp < PositionEventThrottleMs)
+        if (!mapChanged && now - session.LastMobilePositionEventTimestamp < PositionEventThrottleMs)
         {
             return;
         }
@@ -199,8 +246,8 @@ public class MovementHandler : BasePacketListener
         var gameEvent = new MobilePositionChangedEvent(
             session.SessionId,
             session.Character.Id,
-            session.Character.MapId,
-            session.Character.MapId,
+            oldMapId,
+            mapId,
             oldLocation,
             newLocation
         );

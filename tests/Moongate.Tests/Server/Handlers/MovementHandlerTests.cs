@@ -4,10 +4,12 @@ using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Movement;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.World;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Movement;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -17,6 +19,7 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Handlers;
 
@@ -127,6 +130,74 @@ public class MovementHandlerTests
             => throw new NotImplementedException();
     }
 
+    private sealed class TestTeleportersDataService : ITeleportersDataService
+    {
+        public List<TeleporterEntry> Entries { get; } = [];
+
+        public IReadOnlyList<TeleporterEntry> GetAllEntries()
+            => Entries;
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceMap(int mapId)
+            => [.. Entries.Where(entry => entry.SourceMapId == mapId)];
+
+        public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
+            => [
+                ..Entries.Where(
+                      entry =>
+                          entry.SourceMapId == mapId &&
+                          (entry.SourceLocation.X >> MapSectorConsts.SectorShift) == sectorX &&
+                          (entry.SourceLocation.Y >> MapSectorConsts.SectorShift) == sectorY
+                  )
+            ];
+
+        public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
+        {
+            foreach (var candidate in Entries)
+            {
+                if (candidate.SourceMapId == mapId && candidate.SourceLocation == location)
+                {
+                    entry = candidate;
+
+                    return true;
+                }
+            }
+
+            entry = default;
+
+            return false;
+        }
+
+        public bool TryResolveTeleportDestination(
+            int mapId,
+            Point3D location,
+            out int destinationMapId,
+            out Point3D destinationLocation,
+            int maxHops = 4
+        )
+        {
+            _ = maxHops;
+
+            if (TryGetEntryAtLocation(mapId, location, out var entry))
+            {
+                destinationMapId = entry.DestinationMapId;
+                destinationLocation = entry.DestinationLocation;
+
+                return true;
+            }
+
+            destinationMapId = mapId;
+            destinationLocation = location;
+
+            return false;
+        }
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
+    }
+
     [Test]
     public async Task HandlePacketAsync_ShouldAckAndAdvanceSequence_WhenSequenceIsValid()
     {
@@ -195,6 +266,8 @@ public class MovementHandlerTests
                 }
             );
         _ = queue.TryDequeue(out _);
+        session.MoveTime = Environment.TickCount64 - 2000;
+        session.MoveCredit = 1000;
 
         _ = await handler.HandlePacketAsync(
                 session,
@@ -206,6 +279,55 @@ public class MovementHandlerTests
             );
 
         Assert.That(gameEventBus.Events.OfType<MobilePositionChangedEvent>().ToList(), Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldNotThrottleMobilePositionChangedEvent_WhenMapChangesViaTeleporter()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var teleporters = new TestTeleportersDataService();
+        teleporters.SetEntries(
+            [
+                new(
+                    0,
+                    "Felucca",
+                    new(101, 100, 0),
+                    1,
+                    "Trammel",
+                    new(500, 500, 10),
+                    false
+                )
+            ]
+        );
+        var handler = CreateHandler(queue, gameEventBus, teleportersDataService: teleporters);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                MapId = 0,
+                Location = new(100, 100, 0),
+                Direction = DirectionType.East
+            },
+            LastMobilePositionEventTimestamp = Environment.TickCount64
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+        var events = gameEventBus.Events.OfType<MobilePositionChangedEvent>().ToList();
+        Assert.That(events, Has.Count.EqualTo(1));
+        Assert.That(events[0].OldMapId, Is.EqualTo(0));
+        Assert.That(events[0].MapId, Is.EqualTo(1));
+        Assert.That(events[0].NewLocation, Is.EqualTo(new Point3D(500, 500, 10)));
     }
 
     [Test]
@@ -412,6 +534,63 @@ public class MovementHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_ShouldTeleport_WhenLocationMatchesTeleporterSource()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var teleporters = new TestTeleportersDataService();
+        teleporters.SetEntries(
+            [
+                new(
+                    0,
+                    "Felucca",
+                    new(101, 100, 0),
+                    1,
+                    "Trammel",
+                    new(500, 500, 10),
+                    false
+                )
+            ]
+        );
+        var handler = CreateHandler(queue, gameEventBus, teleportersDataService: teleporters);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                MapId = 0,
+                Location = new(100, 100, 0),
+                Direction = DirectionType.East
+            }
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+
+        var gameEvent = gameEventBus.Events.OfType<MobilePositionChangedEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(session.Character, Is.Not.Null);
+                Assert.That(session.Character!.MapId, Is.EqualTo(1));
+                Assert.That(session.Character.Location, Is.EqualTo(new Point3D(500, 500, 10)));
+                Assert.That(gameEvent.OldMapId, Is.EqualTo(0));
+                Assert.That(gameEvent.MapId, Is.EqualTo(1));
+                Assert.That(gameEvent.NewLocation, Is.EqualTo(new Point3D(500, 500, 10)));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_ShouldSendDenyAndResetSequence_WhenMoveIsBlockedByMap()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -507,7 +686,8 @@ public class MovementHandlerTests
         BasePacketListenerTestOutgoingPacketQueue queue,
         NetworkServiceTestGameEventBusService gameEventBus,
         TestMovementTileQueryService? tileQuery = null,
-        ISpatialWorldService? spatialWorldService = null
+        ISpatialWorldService? spatialWorldService = null,
+        ITeleportersDataService? teleportersDataService = null
     )
     {
         var movementValidationService = new MovementValidationService(
@@ -515,6 +695,6 @@ public class MovementHandlerTests
             spatialWorldService ?? new TestMovementSpatialWorldService()
         );
 
-        return new(queue, gameEventBus, movementValidationService);
+        return new(queue, gameEventBus, movementValidationService, teleportersDataService ?? new TestTeleportersDataService());
     }
 }

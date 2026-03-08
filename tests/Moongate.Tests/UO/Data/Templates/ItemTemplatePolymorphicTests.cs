@@ -100,6 +100,7 @@ public class ItemTemplatePolymorphicTests
                 Assert.That(item.AmmoFx, Is.EqualTo(0x1BFE));
                 Assert.That(item.MaxRange, Is.EqualTo(8));
                 Assert.That(item.BaseRange, Is.EqualTo(2));
+                Assert.That(item.Visibility, Is.EqualTo(AccountType.Regular));
             }
         );
     }

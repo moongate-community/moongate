@@ -14,7 +14,7 @@ namespace Moongate.Server.Services.Packets;
 public class PacketDispatchService : IPacketDispatchService
 {
     private const double SlowOpcodeDispatchThresholdMilliseconds = 100;
-    private const double SlowListenerDispatchThresholdMilliseconds = 50;
+    private const double SlowListenerDispatchThresholdMilliseconds = 100;
     private static readonly PacketRegistry _packetRegistry = CreatePacketRegistry();
     private readonly ILogger _logger = Log.ForContext<PacketDispatchService>();
     private readonly ConcurrentDictionary<byte, List<IPacketListener>> _packetListeners = new();

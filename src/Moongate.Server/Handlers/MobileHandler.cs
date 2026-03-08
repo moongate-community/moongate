@@ -12,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
@@ -194,9 +195,6 @@ public class MobileHandler
             $"Sector: {newSector.SectorX} {newSector.SectorY} Items: {itemCount} e Mobiles: {mobileCount}"
         );
 
-        var oldCenterX = oldSector?.SectorX ?? int.MinValue;
-        var oldCenterY = oldSector?.SectorY ?? int.MinValue;
-
         for (var sectorX = newSector.SectorX - _sectorEnterSyncRadius;
              sectorX <= newSector.SectorX + _sectorEnterSyncRadius;
              sectorX++)
@@ -205,19 +203,6 @@ public class MobileHandler
                  sectorY <= newSector.SectorY + _sectorEnterSyncRadius;
                  sectorY++)
             {
-                var isNearPlayer = Math.Abs(sectorX - newSector.SectorX) <= 1 &&
-                                   Math.Abs(sectorY - newSector.SectorY) <= 1;
-
-                if (!isNearPlayer &&
-                    oldSector is not null &&
-                    sectorX >= oldCenterX - _sectorEnterSyncRadius &&
-                    sectorX <= oldCenterX + _sectorEnterSyncRadius &&
-                    sectorY >= oldCenterY - _sectorEnterSyncRadius &&
-                    sectorY <= oldCenterY + _sectorEnterSyncRadius)
-                {
-                    continue;
-                }
-
                 SyncSingleSectorForPlayer(session.SessionId, mobileEntity, mapId, sectorX, sectorY, newLocation.Z);
             }
         }
@@ -265,6 +250,11 @@ public class MobileHandler
         int z
     )
     {
+        if (!_gameNetworkSessionService.TryGet(sessionId, out var session))
+        {
+            return;
+        }
+
         var targetSector = _spatialWorldService.GetSectorByLocation(
             mapId,
             new(
@@ -282,7 +272,8 @@ public class MobileHandler
         foreach (var item in targetSector.GetItems())
         {
             if (item.ParentContainerId != Serial.Zero ||
-                item.EquippedMobileId != Serial.Zero)
+                item.EquippedMobileId != Serial.Zero ||
+                !ItemVisibilityHelper.CanSessionSeeItem(session, item))
             {
                 continue;
             }

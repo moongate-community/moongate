@@ -20,9 +20,12 @@ moongatev2/
 │   └── Moongate.UO.Data
 ├── tests/
 │   └── Moongate.Tests
-├── docs/
-├── scripts/
-└── stack/
+├── benchmarks/
+├── converters/
+├── tools/
+├── moongate_data/
+├── ui/
+└── docs/
 ```
 
 ## Module Summary
@@ -41,8 +44,12 @@ moongatev2/
   - unified source generators for:
     - packet table/definitions
     - packet listener bootstrap registration
+    - game event listener bootstrap registration
+    - console command registration
     - metrics snapshot mapping
     - script module registry
+    - file loader registration
+    - Lua user data registration
     - server version metadata (`VersionUtils`)
 - `Moongate.Persistence`
   - snapshot/journal storage and repositories.
@@ -67,6 +74,9 @@ Startup also handles:
 - UO directory validation
 - data asset copy bootstrap
 - packet listener registration
+- file loader registration
+- game event listener subscription
+- console command registration
 
 ---
 

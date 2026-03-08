@@ -2276,7 +2276,7 @@
   },
   {
     "type": "item",
-    "id": "teleporter",
+    "id": "teleporter_modernuo",
     "name": "Teleporter",
     "category": "Misc",
     "description": "Imported from ModernUO (Teleporter).",

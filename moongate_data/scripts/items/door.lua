@@ -7,7 +7,7 @@ items_door = {
             return
         end
 
-        local serial = tonumber(ctx.item.serial or 0)
+        local serial = convert.to_int(ctx.item.serial, 0)
         if serial == nil or serial == 0 then
             return
         end
@@ -26,7 +26,7 @@ items_door = {
             return
         end
 
-        local item_id = tonumber(item_proxy.item_id or 0)
+        local item_id = convert.to_int(item_proxy.item_id, 0)
         if item_id <= 0 then
             return
         end
