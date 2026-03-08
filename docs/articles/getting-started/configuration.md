@@ -15,17 +15,17 @@ Priority order:
 
 Current `Program` command signature supports:
 
-- `--showHeader` (`bool`, default `true`)
-- `--rootDirectory` (`string`)
-- `--uoDirectory` (`string`)
+- `--show-header` (`bool`, default `true`)
+- `--root-directory` (`string`)
+- `--uo-directory` (`string`)
 - `--loglevel` (`LogLevelType`, default `Debug`)
 
 Example:
 
 ```bash
 dotnet run --project src/Moongate.Server -- \
-  --rootDirectory /opt/moongate \
-  --uoDirectory /opt/uo \
+  --root-directory /opt/moongate \
+  --uo-directory /opt/uo \
   --loglevel Information
 ```
 

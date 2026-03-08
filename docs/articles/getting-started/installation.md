@@ -6,7 +6,7 @@ Install and run Moongate v2 with the current runtime requirements.
 
 - .NET SDK 10.0.x
 - Git
-- Ultima Online data directory (path passed with `--uoDirectory` or `MOONGATE_UO_DIRECTORY`)
+- Ultima Online data directory (path passed with `--uo-directory` or `MOONGATE_UO_DIRECTORY`)
 
 ## Clone And Build
 
@@ -21,8 +21,8 @@ dotnet build -c Release
 
 ```bash
 dotnet run --project src/Moongate.Server -- \
-  --rootDirectory ./moongate \
-  --uoDirectory /path/to/uo \
+  --root-directory ./moongate \
+  --uo-directory /path/to/uo \
   --loglevel Information
 ```
 
