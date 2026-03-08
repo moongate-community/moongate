@@ -169,5 +169,37 @@
     ],
     "randomEquipment": [],
     "title": "a suspicious man"
+  },
+  {
+    "type": "mobile",
+    "id": "regina_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Noble town NPC inspired by ModernUO Regina quest character.",
+    "tags": [
+      "npc",
+      "queen",
+      "noble",
+      "human"
+    ],
+    "body": "0x0191",
+    "brain": "town_citizen",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "backpack",
+        "layer": "Backpack"
+      },
+      {
+        "itemTemplateId": "queen_gilded_dress",
+        "layer": "OuterTorso"
+      },
+      {
+        "itemTemplateId": "queen_boots",
+        "layer": "Shoes"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "the Noble",
+    "name": "Lilly"
   }
 ]

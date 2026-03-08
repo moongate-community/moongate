@@ -1,0 +1,32 @@
+[
+  {
+    "type": "item",
+    "id": "queen_gilded_dress",
+    "base_item": "gilded_dress",
+    "name": "Queen Gilded Dress",
+    "category": "Royalty",
+    "description": "Royal outfit dress for queen/princess style NPCs.",
+    "hue": "1150",
+    "scriptId": "none",
+    "tags": [
+      "royalty",
+      "npc",
+      "clothing"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "queen_boots",
+    "base_item": "boots",
+    "name": "Queen Boots",
+    "category": "Royalty",
+    "description": "Royal outfit boots for queen/princess style NPCs.",
+    "hue": "0",
+    "scriptId": "none",
+    "tags": [
+      "royalty",
+      "npc",
+      "clothing"
+    ]
+  }
+]
