@@ -20,6 +20,8 @@ public sealed class SpawnService : ISpawnService
 {
     private const string TimerName = "spawn_runtime_tick";
     private const string SpawnOriginKey = "spawn_origin";
+    private const string SpawnWalkingRangeKey = "walking_range";
+    private const string SpawnHomeRangeKey = "home_range";
     private const string SpawnerIdKey = "spawner_id";
     private const int ScanIntervalMilliseconds = 3000;
     private const int TickIntervalMilliseconds = 1000;
@@ -116,10 +118,11 @@ public sealed class SpawnService : ISpawnService
             return;
         }
 
-        _ = ProcessTickAsync().ContinueWith(
-            _ => Interlocked.Exchange(ref _isTickRunning, 0),
-            TaskScheduler.Default
-        );
+        _ = ProcessTickAsync()
+            .ContinueWith(
+                _ => Interlocked.Exchange(ref _isTickRunning, 0),
+                TaskScheduler.Default
+            );
     }
 
     private async Task ProcessTickAsync()
@@ -139,9 +142,9 @@ public sealed class SpawnService : ISpawnService
             lock (_sync)
             {
                 dueStates = _states.Values
-                                  .Where(state => state.NextSpawnAt <= now)
-                                  .Select(state => state with { })
-                                  .ToList();
+                                   .Where(state => state.NextSpawnAt <= now)
+                                   .Select(state => state with { })
+                                   .ToList();
             }
 
             foreach (var state in dueStates)
@@ -222,19 +225,19 @@ public sealed class SpawnService : ISpawnService
         }
 
         var currentCount = _spatialWorldService.GetNearbyMobiles(
-                                            state.Location,
-                                            Math.Max(1, state.Definition.HomeRange),
-                                            state.MapId
-                                        )
-                                        .Count(
-                                            mobile => !mobile.IsPlayer &&
-                                                      mobile.TryGetCustomString(SpawnOriginKey, out var origin) &&
-                                                      string.Equals(
-                                                          origin,
-                                                          state.SpawnGuid.ToString("D"),
-                                                          StringComparison.OrdinalIgnoreCase
-                                                      )
-                                        );
+                                                   state.Location,
+                                                   Math.Max(1, state.Definition.HomeRange),
+                                                   state.MapId
+                                               )
+                                               .Count(
+                                                   mobile => !mobile.IsPlayer &&
+                                                             mobile.TryGetCustomString(SpawnOriginKey, out var origin) &&
+                                                             string.Equals(
+                                                                 origin,
+                                                                 state.SpawnGuid.ToString("D"),
+                                                                 StringComparison.OrdinalIgnoreCase
+                                                             )
+                                               );
 
         if (currentCount >= Math.Max(1, state.Definition.Count))
         {
@@ -261,6 +264,8 @@ public sealed class SpawnService : ISpawnService
                              accountId: null
                          );
             mobile.SetCustomString(SpawnOriginKey, state.SpawnGuid.ToString("D"));
+            mobile.SetCustomInteger(SpawnWalkingRangeKey, state.Definition.WalkingRange);
+            mobile.SetCustomInteger(SpawnHomeRangeKey, state.Definition.HomeRange);
             await _mobileService.CreateOrUpdateAsync(mobile);
             _spatialWorldService.AddOrUpdateMobile(mobile);
 

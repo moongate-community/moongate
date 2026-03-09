@@ -179,6 +179,16 @@ public sealed class LuaMobileProxy
         return Math.Clamp((double)_mobile.Hits / _mobile.MaxHits, 0, 1);
     }
 
+    public int GetWalkingRange()
+    {
+        if (_mobile.TryGetCustomInteger("walking_range", out var walkingRange))
+        {
+            return (int)Math.Clamp(walkingRange, int.MinValue, int.MaxValue);
+        }
+
+        return 0;
+    }
+
     public LuaMobileProxy? GetTarget()
         => _target;
 
