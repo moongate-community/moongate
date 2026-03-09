@@ -66,9 +66,17 @@ public sealed class CreateSpawnersCommand : ICommandExecutor
 
         foreach (var spawn in spawns)
         {
+            if (spawn.Guid == Guid.Empty)
+            {
+                context.PrintWarning("Skipping spawn '{0}' on map {1}: GUID is empty.", spawn.Name, spawn.MapId);
+
+                continue;
+            }
+
             var item = _entityFactoryService.CreateItemFromTemplate(SpawnerTemplateId);
             item.MapId = spawn.MapId;
             item.Location = spawn.Location;
+            item.Name = spawn.Name;
             item.SetCustomString("spawner_id", spawn.Guid.ToString("D"));
 
             await _itemService.CreateItemAsync(item);

@@ -1,9 +1,11 @@
 using Moongate.Core.Extensions.Strings;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Maps;
@@ -32,6 +34,7 @@ public sealed class SpawnService : ISpawnService
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IMobileService _mobileService;
     private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly IGameEventBusService _gameEventBusService;
     private readonly ISpawnsDataService _spawnsDataService;
     private readonly Lock _sync = new();
     private readonly Dictionary<Serial, RuntimeSpawnerState> _states = [];
@@ -45,7 +48,8 @@ public sealed class SpawnService : ISpawnService
         ISpatialWorldService spatialWorldService,
         ISpawnsDataService spawnsDataService,
         IMobileService mobileService,
-        IMobileTemplateService mobileTemplateService
+        IMobileTemplateService mobileTemplateService,
+        IGameEventBusService gameEventBusService
     )
     {
         _timerService = timerService;
@@ -53,6 +57,7 @@ public sealed class SpawnService : ISpawnService
         _spawnsDataService = spawnsDataService;
         _mobileService = mobileService;
         _mobileTemplateService = mobileTemplateService;
+        _gameEventBusService = gameEventBusService;
     }
 
     /// <inheritdoc />
@@ -141,10 +146,12 @@ public sealed class SpawnService : ISpawnService
 
             lock (_sync)
             {
-                dueStates = _states.Values
-                                   .Where(state => state.NextSpawnAt <= now)
-                                   .Select(state => state with { })
-                                   .ToList();
+                dueStates =
+                [
+                    .. _states.Values
+                              .Where(state => state.NextSpawnAt <= now)
+                              .Select(state => state with { })
+                ];
             }
 
             foreach (var state in dueStates)
@@ -177,14 +184,40 @@ public sealed class SpawnService : ISpawnService
                 }
 
                 if (!item.TryGetCustomString(SpawnerIdKey, out var spawnerIdRaw) ||
-                    string.IsNullOrWhiteSpace(spawnerIdRaw) ||
-                    !Guid.TryParse(spawnerIdRaw, out var spawnerGuid))
+                    string.IsNullOrWhiteSpace(spawnerIdRaw))
                 {
+                    continue;
+                }
+
+                if (!Guid.TryParse(spawnerIdRaw, out var spawnerGuid))
+                {
+                    _logger.Debug(
+                        "Skipping spawner item {ItemId}: invalid spawner_id '{SpawnerIdRaw}'.",
+                        item.Id,
+                        spawnerIdRaw
+                    );
+
+                    continue;
+                }
+
+                if (spawnerGuid == Guid.Empty)
+                {
+                    _logger.Debug(
+                        "Skipping spawner item {ItemId}: spawner_id is empty GUID.",
+                        item.Id
+                    );
+
                     continue;
                 }
 
                 if (!_definitionsByGuid.TryGetValue(spawnerGuid, out var definition))
                 {
+                    _logger.Debug(
+                        "Skipping spawner item {ItemId}: spawner_id {SpawnerGuid} not found in loaded definitions.",
+                        item.Id,
+                        spawnerGuid
+                    );
+
                     continue;
                 }
 
@@ -246,9 +279,9 @@ public sealed class SpawnService : ISpawnService
             return;
         }
 
-        var templateId = ResolveTemplateId(state.Definition.Entries);
+        var resolvedSpawnEntry = ResolveSpawnEntry(state.Definition.Entries);
 
-        if (templateId is null)
+        if (resolvedSpawnEntry is null)
         {
             Reschedule(state.SpawnerItemId, state.Definition, now);
 
@@ -257,23 +290,60 @@ public sealed class SpawnService : ISpawnService
 
         try
         {
-            var mobile = await _mobileService.SpawnFromTemplateAsync(
-                             templateId,
+            var (spawned, mobile) = await _mobileService.TrySpawnFromTemplateAsync(
+                                        resolvedSpawnEntry.TemplateId,
+                                        state.Location,
+                                        state.MapId,
+                                        accountId: null
+                                    );
+
+            if (!spawned)
+            {
+                mobile = await _mobileService.SpawnFromTemplateAsync(
+                             "generic_npc",
                              state.Location,
                              state.MapId,
                              accountId: null
                          );
+
+                _logger.Warning(
+                    "Failed to resolve template {TemplateId} for spawner {SpawnerGuid}. Spawned fallback mobile {MobileId} instead.",
+                    resolvedSpawnEntry.TemplateId,
+                    state.SpawnGuid,
+                    mobile.Id
+                );
+            }
+
             mobile.SetCustomString(SpawnOriginKey, state.SpawnGuid.ToString("D"));
             mobile.SetCustomInteger(SpawnWalkingRangeKey, state.Definition.WalkingRange);
             mobile.SetCustomInteger(SpawnHomeRangeKey, state.Definition.HomeRange);
             await _mobileService.CreateOrUpdateAsync(mobile);
             _spatialWorldService.AddOrUpdateMobile(mobile);
+            await _gameEventBusService.PublishAsync(
+                new MobileSpawnedFromSpawnerEvent(
+                    mobile,
+                    state.SpawnGuid,
+                    state.Definition.Name,
+                    state.Definition.SourceGroup,
+                    state.Definition.SourceFile,
+                    state.Definition.Location,
+                    state.Definition.Count,
+                    state.Definition.MinDelay,
+                    state.Definition.MaxDelay,
+                    state.Definition.Team,
+                    state.Definition.HomeRange,
+                    state.Definition.WalkingRange,
+                    resolvedSpawnEntry.Entry.Name,
+                    resolvedSpawnEntry.Entry.MaxCount,
+                    resolvedSpawnEntry.Entry.Probability
+                )
+            );
 
             _logger.Debug(
                 "Spawned mobile from spawner {SpawnerGuid}: MobileId={MobileId} Template={TemplateId}",
                 state.SpawnGuid,
                 mobile.Id,
-                templateId
+                resolvedSpawnEntry.TemplateId
             );
         }
         catch (Exception ex)
@@ -282,7 +352,7 @@ public sealed class SpawnService : ISpawnService
                 ex,
                 "Failed to spawn mobile from spawner {SpawnerGuid} using template {TemplateId}.",
                 state.SpawnGuid,
-                templateId
+                resolvedSpawnEntry.TemplateId
             );
         }
         finally
@@ -307,7 +377,7 @@ public sealed class SpawnService : ISpawnService
         }
     }
 
-    private string? ResolveTemplateId(IReadOnlyList<SpawnEntryDefinition> entries)
+    private ResolvedSpawnEntry? ResolveSpawnEntry(IReadOnlyList<SpawnEntryDefinition> entries)
     {
         if (entries.Count == 0)
         {
@@ -338,7 +408,7 @@ public sealed class SpawnService : ISpawnService
 
             if (resolved is not null)
             {
-                return resolved;
+                return new ResolvedSpawnEntry(resolved, entry);
             }
         }
 
@@ -348,7 +418,7 @@ public sealed class SpawnService : ISpawnService
 
             if (resolved is not null)
             {
-                return resolved;
+                return new ResolvedSpawnEntry(resolved, entry);
             }
         }
 
@@ -408,4 +478,6 @@ public sealed class SpawnService : ISpawnService
         SpawnDefinitionEntry Definition,
         long NextSpawnAt
     );
+
+    private sealed record ResolvedSpawnEntry(string TemplateId, SpawnEntryDefinition Entry);
 }

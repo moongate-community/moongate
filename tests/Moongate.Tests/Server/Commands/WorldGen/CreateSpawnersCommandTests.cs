@@ -73,6 +73,49 @@ public sealed class CreateSpawnersCommandTests
         );
     }
 
+    [Test]
+    public async Task ExecuteCommandAsync_ShouldSkipSpawner_WhenGuidIsEmpty()
+    {
+        var seedDataService = new CreateSpawnersTestSeedDataService(
+            [
+                new(
+                    0,
+                    "Felucca",
+                    "shared/felucca",
+                    "Outdoors.json",
+                    Guid.Empty,
+                    "Spawner (Invalid)",
+                    new(4066, 569, 0),
+                    1,
+                    TimeSpan.FromMinutes(20),
+                    TimeSpan.FromMinutes(20),
+                    0,
+                    10,
+                    10,
+                    [new("PolarBear", 1, 100)]
+                )
+            ]
+        );
+        var itemService = new CreateSpawnersTestItemService();
+        var command = new CreateSpawnersCommand(
+            new CreateSpawnersTestEntityFactoryService(),
+            seedDataService,
+            itemService,
+            new ImmediateBackgroundJobService()
+        );
+        var context = new CommandSystemContext(
+            "create_spawners 0",
+            ["0"],
+            CommandSourceType.Console,
+            0,
+            static (_, _) => { }
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(itemService.CreatedItems, Is.Empty);
+    }
+
     private sealed class CreateSpawnersTestSeedDataService : ISeedDataService
     {
         private readonly IReadOnlyList<SpawnDefinitionEntry> _spawns;

@@ -12,7 +12,10 @@ namespace Moongate.Server.Interfaces.Services.Scripting;
 /// Coordinates Lua brain execution and speech event delivery for NPCs.
 /// </summary>
 public interface ILuaBrainRunner
-    : IMoongateService, IGameEventListener<SpeechHeardEvent>, IGameEventListener<MobileAddedInWorldEvent>
+    : IMoongateService,
+      IGameEventListener<SpeechHeardEvent>,
+      IGameEventListener<MobileAddedInWorldEvent>,
+      IGameEventListener<MobileSpawnedFromSpawnerEvent>
 {
     /// <summary>
     /// Enqueues an NPC death hook payload for deferred brain processing.
@@ -26,6 +29,12 @@ public interface ILuaBrainRunner
     /// </summary>
     /// <param name="gameEvent">Speech event already filtered per target npc.</param>
     void EnqueueSpeech(SpeechHeardEvent gameEvent);
+
+    /// <summary>
+    /// Enqueues an NPC spawn context for deferred brain processing.
+    /// </summary>
+    /// <param name="gameEvent">Spawner event targeting the spawned mobile.</param>
+    void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent);
 
     /// <summary>
     /// Registers or updates a mobile brain runtime binding.

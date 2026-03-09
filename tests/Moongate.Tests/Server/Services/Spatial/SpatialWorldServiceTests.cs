@@ -163,6 +163,15 @@ public sealed class SpatialWorldServiceTests
             CancellationToken cancellationToken = default
         )
             => throw new NotSupportedException();
+
+        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => throw new NotSupportedException();
     }
 
     private sealed class SpatialWorldServiceTestTeleportersDataService : ITeleportersDataService
