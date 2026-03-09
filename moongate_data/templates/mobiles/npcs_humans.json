@@ -69,6 +69,35 @@
   },
   {
     "type": "mobile",
+    "id": "generic_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Generic human NPC template for ad-hoc spawns and tests.",
+    "tags": [
+      "npc",
+      "generic",
+      "human"
+    ],
+    "brain": "None",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "shoes",
+        "layer": "Shoes"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "a generic npc"
+  },
+  {
+    "type": "mobile",
     "id": "blacksmith_npc",
     "base_mobile": "base_human_npc",
     "category": "npc",
