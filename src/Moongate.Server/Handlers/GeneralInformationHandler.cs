@@ -12,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Handlers;
 
@@ -42,6 +43,10 @@ public class GeneralInformationHandler : BasePacketListener
         {
             case GeneralInformationSubcommandType.PartySystem:
                 await HandlePartySystemAsync(session, payload);
+
+                break;
+            case GeneralInformationSubcommandType.Action3DClient:
+                await HandleAction3DClientAsync(session, payload);
 
                 break;
             case GeneralInformationSubcommandType.StatLockChange:
@@ -76,6 +81,31 @@ public class GeneralInformationHandler : BasePacketListener
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
 
         return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
+    }
+
+    private ValueTask HandleAction3DClientAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (session.Character is null)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        if (
+            !AnimationUtils.TryReadClientAction3D(payload, out var action)
+            || !AnimationUtils.IsValidClientAction3DAnimation(action)
+        )
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        return _gameEventBusService.PublishAsync(
+            new MobilePlayAnimationEvent(
+                session.Character.Id,
+                session.Character.MapId,
+                session.Character.Location,
+                AnimationUtils.ClampActionToPacket(action)
+            )
+        );
     }
 
     private ValueTask HandlePartySystemAsync(GameSession session, ReadOnlySpan<byte> payload)

@@ -9,6 +9,7 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Data.Internal.Entities;
 
@@ -284,7 +285,7 @@ public sealed class LuaMobileProxy
                                     _mobile.Id,
                                     _mobile.MapId,
                                     _mobile.Location,
-                                    (short)Math.Min(animId, short.MaxValue)
+                                    AnimationUtils.ClampActionToPacket(animId)
                                 )
                             )
                             .AsTask()
