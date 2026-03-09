@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Network.Packets.Incoming.GeneralInformation;
 
@@ -16,7 +17,8 @@ internal static class GeneralInformationSubcommandRules
             GeneralInformationSubcommandType.WrestlingStun                => payload.IsEmpty,
             GeneralInformationSubcommandType.ClientLanguage               => payload.Length is 3 or 4,
             GeneralInformationSubcommandType.ClosedStatusGump             => payload.Length == 4,
-            GeneralInformationSubcommandType.Action3DClient               => payload.Length == 4,
+            GeneralInformationSubcommandType.Action3DClient => AnimationUtils.TryReadClientAction3D(payload, out var action)
+                                                               && AnimationUtils.IsValidClientAction3DAnimation(action),
             GeneralInformationSubcommandType.ClientType                   => true,
             GeneralInformationSubcommandType.MegaClilocRequest            => payload.Length >= 4,
             GeneralInformationSubcommandType.RequestPopupMenu             => payload.Length == 4,

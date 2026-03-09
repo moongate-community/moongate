@@ -23,7 +23,7 @@ local function find_command(button_id)
 end
 
 local function add_frame(ui)
-    table.insert(ui, { type = "resize_pic", x = 0, y = 0, gump_id = 9200, width = 460, height = 250 })
+    table.insert(ui, { type = "background", x = 0, y = 0, gump_id = 9200, width = 460, height = 250 })
     table.insert(ui, { type = "alpha_region", x = 12, y = 12, width = 436, height = 226 })
     table.insert(ui, { type = "label", x = 24, y = 20, hue = 1152, text = "Spawn Tools" })
     table.insert(ui, {
@@ -51,9 +51,6 @@ end
 
 local function build_layout(session_id, character_id)
     local sender_serial = tonumber(character_id) or 0
-    if sender_serial <= 0 then
-        sender_serial = tonumber(session_id) or 1
-    end
 
     local layout = { ui = {}, handlers = {} }
     local ui = layout.ui

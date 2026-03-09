@@ -71,7 +71,7 @@ public class GeneralInformationPacketTests
         yield return Case(GeneralInformationSubcommandType.WrestlingStun, []);
         yield return Case(GeneralInformationSubcommandType.ClientLanguage, [0x45, 0x4E, 0x55]);
         yield return Case(GeneralInformationSubcommandType.ClosedStatusGump, new byte[4]);
-        yield return Case(GeneralInformationSubcommandType.Action3DClient, new byte[4]);
+        yield return Case(GeneralInformationSubcommandType.Action3DClient, new byte[] { 0x00, 0x00, 0x00, 0x20 });
         yield return Case(GeneralInformationSubcommandType.ClientType, [0x0A, 0, 0, 0, 0]);
         yield return Case(GeneralInformationSubcommandType.MegaClilocRequest, new byte[8]);
         yield return Case(GeneralInformationSubcommandType.RequestPopupMenu, new byte[4]);

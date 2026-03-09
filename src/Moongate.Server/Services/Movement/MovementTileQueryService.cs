@@ -4,6 +4,7 @@ using Moongate.Server.Interfaces.Services.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 
@@ -127,6 +128,47 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
         return true;
     }
 
+    public static bool IsOpenedDoorCoveringTileForStaticCollision(
+        IReadOnlyList<UOItemEntity> worldItems,
+        int x,
+        int y,
+        IDoorDataService doorDataService
+    )
+    {
+        ArgumentNullException.ThrowIfNull(worldItems);
+        ArgumentNullException.ThrowIfNull(doorDataService);
+
+        for (var i = 0; i < worldItems.Count; i++)
+        {
+            var item = worldItems[i];
+
+            if (item.ParentContainerId != Serial.Zero || item.EquippedMobileId != Serial.Zero)
+            {
+                continue;
+            }
+
+            if (!doorDataService.TryGetToggleDefinition(item.ItemId, out var state) || state.IsClosed)
+            {
+                continue;
+            }
+
+            if (item.Location.X == x && item.Location.Y == y)
+            {
+                return true;
+            }
+
+            var closedX = item.Location.X - state.Offset.X;
+            var closedY = item.Location.Y - state.Offset.Y;
+
+            if (closedX == x && closedY == y)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private bool CanFitCore(
         Map map,
         int x,
@@ -148,15 +190,7 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
         var hasSurface = false;
         var queryLocation = new Point3D(x, y, z);
         var worldItems = _spatialWorldService.GetNearbyItems(queryLocation, 0, map.MapID);
-        var hasOpenedDoorOnTile = worldItems.Any(
-            item =>
-                item.ParentContainerId == Serial.Zero &&
-                item.EquippedMobileId == Serial.Zero &&
-                item.Location.X == x &&
-                item.Location.Y == y &&
-                _doorDataService.TryGetToggleDefinition(item.ItemId, out var state) &&
-                !state.IsClosed
-        );
+        var hasOpenedDoorOnTile = IsOpenedDoorCoveringTileForStaticCollision(worldItems, x, y, _doorDataService);
 
         var landTile = map.GetLandTile(x, y);
         GetAverageZ(map, x, y, out var lowZ, out var avgZ, out _);

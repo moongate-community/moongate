@@ -15,6 +15,7 @@ public interface ILuaBrainRunner
     : IMoongateService,
       IGameEventListener<SpeechHeardEvent>,
       IGameEventListener<MobileAddedInWorldEvent>,
+      IGameEventListener<MobilePositionChangedEvent>,
       IGameEventListener<MobileSpawnedFromSpawnerEvent>
 {
     /// <summary>
@@ -35,6 +36,14 @@ public interface ILuaBrainRunner
     /// </summary>
     /// <param name="gameEvent">Spawner event targeting the spawned mobile.</param>
     void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent);
+
+    /// <summary>
+    /// Enqueues an in-range notification when another mobile enters proximity.
+    /// </summary>
+    /// <param name="listenerNpcId">Npc id receiving the notification.</param>
+    /// <param name="sourceMobile">Source mobile that entered range.</param>
+    /// <param name="range">Resolved trigger range in tiles.</param>
+    void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3);
 
     /// <summary>
     /// Registers or updates a mobile brain runtime binding.

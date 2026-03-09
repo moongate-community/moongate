@@ -71,6 +71,158 @@ When `enableJwt` is true, protected endpoints require a Bearer token obtained fr
 | GET | `/api/item-templates/{id}` | Get item template by ID |
 | GET | `/api/item-templates/by-item-id/{itemId}/image` | Get item art image |
 
+## Functional Usage Examples
+
+Base URL used in examples:
+
+```bash
+BASE_URL="http://localhost:4080"
+```
+
+### Health + Version
+
+```bash
+curl -s "$BASE_URL/health"
+curl -s "$BASE_URL/api/version"
+```
+
+Expected:
+
+- `/health` returns plain text `ok`
+- `/api/version` returns JSON:
+
+```json
+{
+  "version": "x.y.z",
+  "codename": "..."
+}
+```
+
+### JWT Login (when enabled)
+
+```bash
+curl -s -X POST "$BASE_URL/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "admin",
+    "password": "admin"
+  }'
+```
+
+Response shape:
+
+```json
+{
+  "accessToken": "<jwt>",
+  "tokenType": "Bearer",
+  "expiresAtUtc": "2026-03-09T12:34:56+00:00",
+  "accountId": "1",
+  "username": "admin",
+  "role": "Administrator"
+}
+```
+
+If JWT is enabled, pass token:
+
+```bash
+TOKEN="<jwt>"
+AUTH_HEADER="Authorization: Bearer $TOKEN"
+```
+
+### Item Template Search (page/pageSize + name/tag)
+
+```bash
+curl -s "$BASE_URL/api/item-templates?page=1&pageSize=20&name=door&tag=flippable" \
+  -H "$AUTH_HEADER"
+```
+
+Response shape:
+
+```json
+{
+  "page": 1,
+  "pageSize": 20,
+  "totalCount": 123,
+  "items": [
+    {
+      "id": "dark_wood_door",
+      "name": "Dark Wood Door",
+      "category": "doors",
+      "itemId": 1692,
+      "params": {
+        "facing": { "type": "string", "value": "WestCW" }
+      }
+    }
+  ]
+}
+```
+
+Notes:
+
+- `page <= 0` is normalized to `1`
+- `pageSize <= 0` defaults to `50`
+- `pageSize` is clamped to max `200`
+
+### Item Template Image by `itemId`
+
+`itemId` must be in `0x...` format.
+
+```bash
+curl -s "$BASE_URL/api/item-templates/by-item-id/0x069C/image" \
+  -H "$AUTH_HEADER" \
+  --output item.png
+```
+
+Behavior:
+
+- if cached image exists under `images/items/`, returns it
+- otherwise generates PNG from art data and caches it
+- returns `404` if art entry does not exist
+
+### Active Sessions
+
+```bash
+curl -s "$BASE_URL/api/sessions/active" -H "$AUTH_HEADER"
+```
+
+Response shape:
+
+```json
+[
+  {
+    "sessionId": 2,
+    "accountId": "1",
+    "username": "admin",
+    "accountType": "Administrator",
+    "characterId": "2",
+    "characterName": "tommy"
+  }
+]
+```
+
+### Execute Console Command via HTTP
+
+```bash
+curl -s -X POST "$BASE_URL/api/commands/execute" \
+  -H "Content-Type: application/json" \
+  -H "$AUTH_HEADER" \
+  -d '{ "command": "spawn_doors" }'
+```
+
+Response shape:
+
+```json
+{
+  "success": true,
+  "command": "spawn_doors",
+  "outputLines": [
+    "Starting door generation...",
+    "Door generation finished in 36 seconds"
+  ],
+  "timestamp": 1772448523355
+}
+```
+
 ## Frontend UI
 
 When UI hosting is enabled (default), the server serves a React-based admin dashboard on `/`. The frontend source is in the `ui/` directory.

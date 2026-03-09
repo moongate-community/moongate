@@ -292,4 +292,154 @@ public sealed class LuaBrainRunnerTests
             }
         );
     }
+
+    [Test]
+    public async Task HandleAsync_WhenMobileMovesIntoNpcRange_ShouldInvokeOnEventInRange()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x500,
+            Name = "watcher",
+            BrainId = "watcher_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var source = new UOMobileEntity
+        {
+            Id = (Serial)0x600,
+            Name = "traveler",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(120, 100, 0)
+        };
+        runner.Register(npc, npc.BrainId);
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        source.Location = new(102, 100, 0);
+
+        await runner.HandleAsync(
+            new MobilePositionChangedEvent(
+                sessionId: 1,
+                mobileId: source.Id,
+                oldMapId: 1,
+                mapId: 1,
+                oldLocation: new(120, 100, 0),
+                newLocation: source.Location
+            )
+        );
+
+        await runner.TickAllAsync(now);
+
+        var eventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "in_range")
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(eventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(eventCall.Args.Length, Is.EqualTo(3));
+                Assert.That(eventCall.Args[1], Is.EqualTo((uint)source.Id));
+                Assert.That(eventCall.Args[2], Is.TypeOf<Dictionary<string, object>>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenMobileStaysInNpcRange_ShouldNotInvokeDuplicateInRange()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x510,
+            Name = "watcher",
+            BrainId = "watcher_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var source = new UOMobileEntity
+        {
+            Id = (Serial)0x610,
+            Name = "traveler",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(120, 100, 0)
+        };
+        runner.Register(npc, npc.BrainId);
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        source.Location = new(102, 100, 0);
+        await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(120, 100, 0), source.Location));
+        await runner.TickAllAsync(now);
+
+        source.Location = new(101, 100, 0);
+        await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(102, 100, 0), source.Location));
+        await runner.TickAllAsync(now + 1000);
+
+        var inRangeCalls = scriptEngine.Calls.Count(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "in_range")
+        );
+
+        Assert.That(inRangeCalls, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenMobileMovesOutNpcRange_ShouldInvokeOnEventOutRange()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x520,
+            Name = "watcher",
+            BrainId = "watcher_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var source = new UOMobileEntity
+        {
+            Id = (Serial)0x620,
+            Name = "traveler",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(102, 100, 0)
+        };
+        runner.Register(npc, npc.BrainId);
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        // Prime in-range state.
+        await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(120, 100, 0), source.Location));
+        await runner.TickAllAsync(now);
+
+        // Move out of range.
+        source.Location = new(120, 100, 0);
+        await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(102, 100, 0), source.Location));
+        await runner.TickAllAsync(now + 1000);
+
+        var eventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "out_range")
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(eventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(eventCall.Args.Length, Is.EqualTo(3));
+                Assert.That(eventCall.Args[1], Is.EqualTo((uint)source.Id));
+                Assert.That(eventCall.Args[2], Is.TypeOf<Dictionary<string, object>>());
+            }
+        );
+    }
 }

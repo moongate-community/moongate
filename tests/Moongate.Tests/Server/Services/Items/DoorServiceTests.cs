@@ -323,6 +323,33 @@ public sealed class DoorServiceTests
     }
 
     [Test]
+    public async Task ToggleAsync_WhenClosingPrimaryLinkedDoor_ShouldNotForceCloseLinkedDoor()
+    {
+        var firstDoor = CreateWorldItem((Serial)0x40000001u, 0x0686, new(99, 101, 0)); // opened
+        var secondDoor = CreateWorldItem((Serial)0x40000002u, 0x0688, new(111, 111, 0)); // opened
+        firstDoor.SetCustomInteger("door_link_serial", (uint)secondDoor.Id);
+        secondDoor.SetCustomInteger("door_link_serial", (uint)firstDoor.Id);
+
+        var itemService = new DoorServiceTestItemService(firstDoor, secondDoor);
+        var spatial = new DoorServiceTestSpatialWorldService();
+        var doorData = DoorServiceTestDoorDataService.CreateDefault();
+        var service = new DoorService(itemService, spatial, doorData);
+
+        var result = await service.ToggleAsync(firstDoor.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(firstDoor.ItemId, Is.EqualTo(0x0685));
+                Assert.That(firstDoor.Location, Is.EqualTo(new Point3D(100, 100, 0)));
+                Assert.That(secondDoor.ItemId, Is.EqualTo(0x0688));
+                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(111, 111, 0)));
+            }
+        );
+    }
+
+    [Test]
     public async Task ToggleAsync_WhenItemIsNotDoor_ShouldReturnFalse()
     {
         var item = CreateWorldItem((Serial)0x40000001u, 0x0EED, new(100, 100, 0));

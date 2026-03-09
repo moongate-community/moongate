@@ -14,6 +14,7 @@ using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
@@ -319,6 +320,7 @@ public sealed class LuaMobileProxyTests
     private sealed class LuaMobileProxyTestGameEventBusService : IGameEventBusService
     {
         public MobilePositionChangedEvent? LastMobilePositionChangedEvent { get; private set; }
+        public MobilePlayAnimationEvent? LastMobilePlayAnimationEvent { get; private set; }
         public MobilePlaySoundEvent? LastMobilePlaySoundEvent { get; private set; }
         public MobilePlayEffectEvent? LastMobilePlayEffectEvent { get; private set; }
         public MobileWarModeChangedEvent? LastMobileWarModeChangedEvent { get; private set; }
@@ -331,6 +333,10 @@ public sealed class LuaMobileProxyTests
             if (gameEvent is MobilePositionChangedEvent mobilePositionChangedEvent)
             {
                 LastMobilePositionChangedEvent = mobilePositionChangedEvent;
+            }
+            else if (gameEvent is MobilePlayAnimationEvent mobilePlayAnimationEvent)
+            {
+                LastMobilePlayAnimationEvent = mobilePlayAnimationEvent;
             }
             else if (gameEvent is MobilePlaySoundEvent mobilePlaySoundEvent)
             {
@@ -899,6 +905,74 @@ public sealed class LuaMobileProxyTests
                 Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
                 Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.OldMapId, Is.EqualTo(1));
                 Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.MapId, Is.EqualTo(2));
+            }
+        );
+    }
+
+    [Test]
+    public void UseAnimation_WithRawAction_ShouldPublishMobilePlayAnimationEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService
+        );
+
+        proxy.UseAnimation(32);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent!.Value.Action, Is.EqualTo((short)32));
+            }
+        );
+    }
+
+    [Test]
+    public void UseAnimation_WithIntentName_ShouldResolveAndPublishAnimation()
+    {
+        Body.Types = new UOBodyType[0x400];
+        Body.Types[0x0190] = UOBodyType.Human;
+
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5),
+            IsMounted = false,
+            BaseBody = 0x0190
+        };
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService
+        );
+
+        var ok = proxy.UseAnimation("swing_primary");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent!.Value.Action, Is.EqualTo((short)9));
             }
         );
     }

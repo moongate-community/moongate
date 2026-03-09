@@ -9,6 +9,7 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Data.Internal.Entities;
 
@@ -273,9 +274,75 @@ public sealed class LuaMobileProxy
     }
 
     public void PlayAnimation(int animId)
+    {
+        if (_gameEventBusService is null || animId < 0)
+        {
+            return;
+        }
 
-        // TODO: Implement animation primitive for brain point 5.
-        => _ = animId;
+        _gameEventBusService.PublishAsync(
+                                new MobilePlayAnimationEvent(
+                                    _mobile.Id,
+                                    _mobile.MapId,
+                                    _mobile.Location,
+                                    AnimationUtils.ClampActionToPacket(animId)
+                                )
+                            )
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+    }
+
+    public bool PlayAnimationIntent(string intentName)
+    {
+        if (!TryParseAnimationIntent(intentName, out var intent))
+        {
+            return false;
+        }
+
+        return PlayAnimationIntent(intent);
+    }
+
+    public bool PlayAnimationIntent(AnimationIntent intent)
+    {
+        if (_gameEventBusService is null)
+        {
+            return false;
+        }
+
+        if (!AnimationUtils.TryResolveAnimation(intent, _mobile.Body.Type, _mobile.IsMounted, out var animation))
+        {
+            return false;
+        }
+
+        _gameEventBusService.PublishAsync(
+                                new MobilePlayAnimationEvent(
+                                    _mobile.Id,
+                                    _mobile.MapId,
+                                    _mobile.Location,
+                                    animation.Action,
+                                    animation.FrameCount,
+                                    animation.RepeatCount,
+                                    animation.Forward,
+                                    animation.Repeat,
+                                    animation.Delay
+                                )
+                            )
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+
+        return true;
+    }
+
+    public void UseAnimation(int animId)
+        => PlayAnimation(animId);
+
+    public bool UseAnimation(string intentName)
+        => PlayAnimationIntent(intentName);
+
+    public bool UseAnimation(AnimationIntent intent)
+        => PlayAnimationIntent(intent);
 
     public void PlaySound(int soundId)
     {
@@ -415,4 +482,34 @@ public sealed class LuaMobileProxy
 
         // TODO: Implement wandering movement primitive for brain point 5.
         => _ = radius;
+
+    private static bool TryParseAnimationIntent(string intentName, out AnimationIntent intent)
+    {
+        intent = default;
+
+        if (string.IsNullOrWhiteSpace(intentName))
+        {
+            return false;
+        }
+
+        var normalized = intentName.Trim().Replace("-", "_").ToLowerInvariant();
+
+        return normalized switch
+        {
+            "bow"             => SetIntent(AnimationIntent.Bow, out intent),
+            "salute"          => SetIntent(AnimationIntent.Salute, out intent),
+            "swing"           => SetIntent(AnimationIntent.SwingPrimary, out intent),
+            "swing_primary"   => SetIntent(AnimationIntent.SwingPrimary, out intent),
+            "swing_secondary" => SetIntent(AnimationIntent.SwingSecondary, out intent),
+            "hurt"            => SetIntent(AnimationIntent.Hurt, out intent),
+            _                 => Enum.TryParse(intentName, true, out intent)
+        };
+    }
+
+    private static bool SetIntent(AnimationIntent value, out AnimationIntent intent)
+    {
+        intent = value;
+
+        return true;
+    }
 }
