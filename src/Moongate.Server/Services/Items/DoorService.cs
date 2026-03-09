@@ -78,9 +78,14 @@ public sealed class DoorService : IDoorService
             return true;
         }
 
+        if (!IsOpen(item))
+        {
+            return true;
+        }
+
         var linkedItem = await _itemService.GetItemAsync((Serial)(uint)linkedSerialValue);
 
-        if (linkedItem is null)
+        if (linkedItem is null || !IsSupportedDoor(linkedItem) || IsOpen(linkedItem))
         {
             return true;
         }
@@ -92,6 +97,16 @@ public sealed class DoorService : IDoorService
 
     private bool IsSupportedDoor(UOItemEntity item)
         => item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
+
+    private bool IsOpen(UOItemEntity item)
+    {
+        if (!_doorDataService.TryGetToggleDefinition(item.ItemId, out var state))
+        {
+            return false;
+        }
+
+        return !state.IsClosed;
+    }
 
     private async Task<bool> ToggleCoreAsync(UOItemEntity item)
     {

@@ -70,6 +70,26 @@ public sealed class SpawnService : ISpawnService
     }
 
     /// <inheritdoc />
+    public async Task<bool> TriggerAsync(Serial spawnerItemId, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        if (spawnerItemId == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (!TryResolveRuntimeState(spawnerItemId, out var state))
+        {
+            return false;
+        }
+
+        var now = Environment.TickCount64;
+
+        return await TrySpawnForStateAsync(state, now, forceSpawn: true);
+    }
+
+    /// <inheritdoc />
     public Task StartAsync()
     {
         BuildDefinitionIndex();
@@ -156,7 +176,7 @@ public sealed class SpawnService : ISpawnService
 
             foreach (var state in dueStates)
             {
-                await TrySpawnForStateAsync(state, now);
+                _ = await TrySpawnForStateAsync(state, now, forceSpawn: false);
             }
         }
         catch (Exception ex)
@@ -248,35 +268,22 @@ public sealed class SpawnService : ISpawnService
         }
     }
 
-    private async Task TrySpawnForStateAsync(RuntimeSpawnerState state, long now)
+    private async Task<bool> TrySpawnForStateAsync(RuntimeSpawnerState state, long now, bool forceSpawn)
     {
-        if (_spatialWorldService.GetPlayersInRange(state.Location, ActivationRange, state.MapId).Count == 0)
+        if (!forceSpawn && _spatialWorldService.GetPlayersInRange(state.Location, ActivationRange, state.MapId).Count == 0)
         {
             Reschedule(state.SpawnerItemId, state.Definition, now);
 
-            return;
+            return false;
         }
 
-        var currentCount = _spatialWorldService.GetNearbyMobiles(
-                                                   state.Location,
-                                                   Math.Max(1, state.Definition.HomeRange),
-                                                   state.MapId
-                                               )
-                                               .Count(
-                                                   mobile => !mobile.IsPlayer &&
-                                                             mobile.TryGetCustomString(SpawnOriginKey, out var origin) &&
-                                                             string.Equals(
-                                                                 origin,
-                                                                 state.SpawnGuid.ToString("D"),
-                                                                 StringComparison.OrdinalIgnoreCase
-                                                             )
-                                               );
+        var currentCount = CountSpawnedMobiles(state);
 
-        if (currentCount >= Math.Max(1, state.Definition.Count))
+        if (!forceSpawn && currentCount >= Math.Max(1, state.Definition.Count))
         {
             Reschedule(state.SpawnerItemId, state.Definition, now);
 
-            return;
+            return false;
         }
 
         var resolvedSpawnEntry = ResolveSpawnEntry(state.Definition.Entries);
@@ -285,8 +292,10 @@ public sealed class SpawnService : ISpawnService
         {
             Reschedule(state.SpawnerItemId, state.Definition, now);
 
-            return;
+            return false;
         }
+
+        var spawnedMobile = false;
 
         try
         {
@@ -338,6 +347,7 @@ public sealed class SpawnService : ISpawnService
                     resolvedSpawnEntry.Entry.Probability
                 )
             );
+            spawnedMobile = true;
 
             _logger.Debug(
                 "Spawned mobile from spawner {SpawnerGuid}: MobileId={MobileId} Template={TemplateId}",
@@ -359,6 +369,35 @@ public sealed class SpawnService : ISpawnService
         {
             Reschedule(state.SpawnerItemId, state.Definition, now);
         }
+
+        return spawnedMobile;
+    }
+
+    private int CountSpawnedMobiles(RuntimeSpawnerState state)
+    {
+        var range = Math.Max(1, state.Definition.HomeRange);
+        var spawnOrigin = state.SpawnGuid.ToString("D");
+        var count = 0;
+
+        foreach (var mobile in _spatialWorldService.GetNearbyMobiles(state.Location, range, state.MapId))
+        {
+            if (mobile.IsPlayer)
+            {
+                continue;
+            }
+
+            if (!mobile.TryGetCustomString(SpawnOriginKey, out var origin))
+            {
+                continue;
+            }
+
+            if (string.Equals(origin, spawnOrigin, StringComparison.OrdinalIgnoreCase))
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private void Reschedule(Serial spawnerItemId, SpawnDefinitionEntry definition, long now)
@@ -375,6 +414,90 @@ public sealed class SpawnService : ISpawnService
                 NextSpawnAt = now + ComputeNextDelayMilliseconds(definition)
             };
         }
+    }
+
+    private bool TryResolveRuntimeState(Serial spawnerItemId, out RuntimeSpawnerState state)
+    {
+        lock (_sync)
+        {
+            if (_states.TryGetValue(spawnerItemId, out state))
+            {
+                return true;
+            }
+        }
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            foreach (var item in sector.GetItems())
+            {
+                if (item.Id != spawnerItemId)
+                {
+                    continue;
+                }
+
+                if (!TryBuildStateFromItem(item, out state))
+                {
+                    return false;
+                }
+
+                lock (_sync)
+                {
+                    _states[spawnerItemId] = state;
+                }
+
+                return true;
+            }
+        }
+
+        state = default;
+
+        return false;
+    }
+
+    private bool TryBuildStateFromItem(UOItemEntity item, out RuntimeSpawnerState state)
+    {
+        state = default;
+
+        if (!item.TryGetCustomString(SpawnerIdKey, out var spawnerIdRaw) ||
+            string.IsNullOrWhiteSpace(spawnerIdRaw))
+        {
+            _logger.Debug("Cannot trigger spawner {ItemId}: missing spawner_id custom property.", item.Id);
+
+            return false;
+        }
+
+        if (!Guid.TryParse(spawnerIdRaw, out var spawnerGuid) || spawnerGuid == Guid.Empty)
+        {
+            _logger.Debug(
+                "Cannot trigger spawner {ItemId}: invalid spawner_id '{SpawnerIdRaw}'.",
+                item.Id,
+                spawnerIdRaw
+            );
+
+            return false;
+        }
+
+        if (!_definitionsByGuid.TryGetValue(spawnerGuid, out var definition))
+        {
+            _logger.Debug(
+                "Cannot trigger spawner {ItemId}: spawner_id {SpawnerGuid} not found in definitions.",
+                item.Id,
+                spawnerGuid
+            );
+
+            return false;
+        }
+
+        state = new(
+            item.Id,
+            spawnerGuid,
+            item.MapId,
+            item.Location,
+            definition,
+            Environment.TickCount64 + ComputeNextDelayMilliseconds(definition)
+        );
+
+        return true;
     }
 
     private ResolvedSpawnEntry? ResolveSpawnEntry(IReadOnlyList<SpawnEntryDefinition> entries)
@@ -405,6 +528,13 @@ public sealed class SpawnService : ISpawnService
             }
 
             var resolved = ResolveTemplateId(entry.Name);
+
+            // TODO: remove only for debug
+
+            if (string.IsNullOrEmpty(resolved))
+            {
+                resolved = "generic_npc";
+            }
 
             if (resolved is not null)
             {

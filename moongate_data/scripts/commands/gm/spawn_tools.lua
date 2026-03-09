@@ -6,7 +6,7 @@ command.register("spawn_tools", function(ctx)
         return
     end
 
-    local ok = spawn_tools.open(ctx.session_id, 0)
+    local ok = spawn_tools.open(ctx.session_id, ctx.character_id or 0)
     if not ok then
         ctx:print_error("Failed to open spawn tools gump.")
     end
