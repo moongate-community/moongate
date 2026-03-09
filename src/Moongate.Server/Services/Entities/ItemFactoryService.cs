@@ -19,6 +19,7 @@ namespace Moongate.Server.Services.Entities;
 public sealed class ItemFactoryService : IItemFactoryService
 {
     private const int BackpackItemId = 0x0E75;
+    private const string FlippableItemIdsKey = "flippable_item_ids";
 
     private readonly ILogger _logger = Log.ForContext<ItemFactoryService>();
     private readonly IItemTemplateService _itemTemplateService;
@@ -138,6 +139,11 @@ public sealed class ItemFactoryService : IItemFactoryService
 
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
     {
+        if (template.FlippableItemIds.Count > 0)
+        {
+            item.SetCustomString(FlippableItemIdsKey, string.Join(',', template.FlippableItemIds));
+        }
+
         foreach (var (key, param) in template.Params)
         {
             if (string.IsNullOrWhiteSpace(key))

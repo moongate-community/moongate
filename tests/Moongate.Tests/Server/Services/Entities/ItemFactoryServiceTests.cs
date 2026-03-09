@@ -62,6 +62,37 @@ public class ItemFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateItemFromTemplate_ShouldStoreFlippableItemIdsAsCustomProperty()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "door_item",
+                Name = "Door Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x0675",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.door",
+                Weight = 1,
+                FlippableItemIds = ["0x0675", "0x0676", "0x0677"]
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var item = service.CreateItemFromTemplate("door_item");
+
+        Assert.That(item.TryGetCustomString("flippable_item_ids", out var value), Is.True);
+        Assert.That(value, Is.EqualTo("0x0675,0x0676,0x0677"));
+    }
+
+    [Test]
     public async Task CreateItemFromTemplate_ShouldFallbackToTileNameAndWeight_WhenTemplateUsesDefaults()
     {
         using var temp = new TempDirectory();
