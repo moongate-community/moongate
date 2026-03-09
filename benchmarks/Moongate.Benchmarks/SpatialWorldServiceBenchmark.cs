@@ -143,6 +143,25 @@ public class SpatialWorldServiceBenchmark
                     Location = location
                 }
             );
+
+        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(
+                (
+                    true,
+                    (UOMobileEntity?)new UOMobileEntity
+                    {
+                        Id = (Serial)(uint)1,
+                        MapId = mapId,
+                        Location = location
+                    }
+                )
+            );
     }
 
     private sealed class NoOpTeleportersDataService : ITeleportersDataService
