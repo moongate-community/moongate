@@ -38,6 +38,10 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnSpawnFunction { get; set; }
 
+    public DynValue? OnInRangeFunction { get; set; }
+
+    public DynValue? OnOutRangeFunction { get; set; }
+
     public Serial MobileId => Mobile.Id;
 
     public Queue<SpeechHeardEvent> PendingSpeech { get; } = new();
@@ -45,4 +49,8 @@ public sealed class LuaBrainRuntimeState
     public Queue<LuaBrainDeathContext> PendingDeath { get; } = new();
 
     public Queue<MobileSpawnedFromSpawnerEvent> PendingSpawn { get; } = new();
+
+    public Queue<LuaBrainInRangeContext> PendingInRange { get; } = new();
+
+    public Queue<LuaBrainInRangeContext> PendingOutRange { get; } = new();
 }

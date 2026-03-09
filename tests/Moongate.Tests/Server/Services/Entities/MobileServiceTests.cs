@@ -116,6 +116,13 @@ public class MobileServiceTests
         public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
             => _ = gameEvent;
 
+        public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3)
+        {
+            _ = listenerNpcId;
+            _ = sourceMobile;
+            _ = range;
+        }
+
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = gameEvent;
@@ -133,6 +140,14 @@ public class MobileServiceTests
         }
 
         public Task HandleAsync(MobileSpawnedFromSpawnerEvent gameEvent, CancellationToken cancellationToken = default)
+        {
+            _ = gameEvent;
+            _ = cancellationToken;
+
+            return Task.CompletedTask;
+        }
+
+        public Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = gameEvent;
             _ = cancellationToken;
