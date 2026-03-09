@@ -63,4 +63,21 @@ public interface IMobileService
         Serial? accountId = null,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Tries to create and persist a mobile from template.
+    /// </summary>
+    /// <param name="templateId">Mobile template identifier.</param>
+    /// <param name="location">Spawn world position.</param>
+    /// <param name="mapId">Spawn map identifier.</param>
+    /// <param name="accountId">Optional owner account identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Tuple with success flag and spawned mobile when successful.</returns>
+    Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+        string templateId,
+        Point3D location,
+        int mapId,
+        Serial? accountId = null,
+        CancellationToken cancellationToken = default
+    );
 }

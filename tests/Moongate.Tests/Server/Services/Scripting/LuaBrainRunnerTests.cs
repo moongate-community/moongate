@@ -234,4 +234,62 @@ public sealed class LuaBrainRunnerTests
             }
         );
     }
+
+    [Test]
+    public async Task TickAllAsync_WhenSpawnIsQueued_ShouldInvokeOnSpawnCallback()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x70,
+            Name = "spawned_orc",
+            BrainId = "orc_warrior",
+            MapId = 1,
+            Location = new(150, 150, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
+        await runner.HandleAsync(
+            new MobileSpawnedFromSpawnerEvent(
+                npc,
+                Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                "Spawner (302)",
+                "Ilshenar",
+                "shrine-spawn",
+                new(66, 1171, -28),
+                1,
+                TimeSpan.FromMinutes(5),
+                TimeSpan.FromMinutes(10),
+                0,
+                5,
+                10,
+                "Nightmare",
+                1,
+                100
+            )
+        );
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var onSpawnCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_spawn");
+        var onEventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "spawn")
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(onSpawnCall.FunctionName, Is.EqualTo("on_spawn"));
+                Assert.That(onSpawnCall.Args.Length, Is.EqualTo(2));
+                Assert.That(onSpawnCall.Args[0], Is.EqualTo((uint)npc.Id));
+                Assert.That(onSpawnCall.Args[1], Is.TypeOf<Dictionary<string, object>>());
+                Assert.That(onEventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(onEventCall.Args.Length, Is.EqualTo(3));
+                Assert.That(onEventCall.Args[0], Is.EqualTo("spawn"));
+            }
+        );
+    }
 }

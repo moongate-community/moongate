@@ -674,6 +674,51 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
+    public void GetWalkingRange_WhenCustomPropertyExists_ShouldReturnValue()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        mobile.SetCustomInteger("walking_range", 10);
+
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        var walkingRange = proxy.GetWalkingRange();
+
+        Assert.That(walkingRange, Is.EqualTo(10));
+    }
+
+    [Test]
+    public void GetWalkingRange_WhenCustomPropertyMissing_ShouldReturnZero()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        var walkingRange = proxy.GetWalkingRange();
+
+        Assert.That(walkingRange, Is.EqualTo(0));
+    }
+
+    [Test]
     public void SetEffect_ShouldPublishMobilePlayEffectEvent()
     {
         var mobile = new UOMobileEntity

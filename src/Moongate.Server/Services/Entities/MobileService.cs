@@ -137,6 +137,30 @@ public sealed class MobileService : IMobileService
         return mobile;
     }
 
+    /// <inheritdoc />
+    public async Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+        string templateId,
+        Point3D location,
+        int mapId,
+        Serial? accountId = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (string.IsNullOrWhiteSpace(templateId))
+        {
+            return (false, null);
+        }
+
+        if (!_mobileTemplateService.TryGet(templateId, out var definition) || definition is null)
+        {
+            return (false, null);
+        }
+
+        var mobile = await SpawnFromTemplateAsync(templateId, location, mapId, accountId, cancellationToken);
+
+        return (true, mobile);
+    }
+
     private async Task ApplyTemplateEquipmentAsync(
         string templateId,
         UOMobileEntity mobile,

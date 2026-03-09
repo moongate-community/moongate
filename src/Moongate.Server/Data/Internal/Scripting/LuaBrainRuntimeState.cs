@@ -1,3 +1,4 @@
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -35,9 +36,13 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnDeathFunction { get; set; }
 
+    public DynValue? OnSpawnFunction { get; set; }
+
     public Serial MobileId => Mobile.Id;
 
     public Queue<SpeechHeardEvent> PendingSpeech { get; } = new();
 
     public Queue<LuaBrainDeathContext> PendingDeath { get; } = new();
+
+    public Queue<MobileSpawnedFromSpawnerEvent> PendingSpawn { get; } = new();
 }

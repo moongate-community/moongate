@@ -113,6 +113,9 @@ public class MobileServiceTests
         public void EnqueueSpeech(SpeechHeardEvent gameEvent)
             => _ = gameEvent;
 
+        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
+            => _ = gameEvent;
+
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = gameEvent;
@@ -122,6 +125,14 @@ public class MobileServiceTests
         }
 
         public Task HandleAsync(MobileAddedInWorldEvent gameEvent, CancellationToken cancellationToken = default)
+        {
+            _ = gameEvent;
+            _ = cancellationToken;
+
+            return Task.CompletedTask;
+        }
+
+        public Task HandleAsync(MobileSpawnedFromSpawnerEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = gameEvent;
             _ = cancellationToken;
@@ -358,6 +369,71 @@ public class MobileServiceTests
                 Assert.That(spawned.BrainId, Is.EqualTo("orc_warrior"));
                 Assert.That(saved.BrainId, Is.EqualTo("orc_warrior"));
                 Assert.That(luaBrainRunner.Registered, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySpawnFromTemplateAsync_ShouldReturnFalse_WhenTemplateDoesNotExist()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+
+        var result = await service.TrySpawnFromTemplateAsync("missing_template", new(10, 10, 0), 0);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Spawned, Is.False);
+                Assert.That(result.Mobile, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySpawnFromTemplateAsync_ShouldReturnSpawnedMobile_WhenTemplateExists()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var expectedId = persistence.UnitOfWork.AllocateNextMobileId();
+        var templateService = new TestMobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "orc",
+                Brain = "orc_warrior"
+            }
+        );
+        var luaBrainRunner = new TestLuaBrainRunner();
+        var factory = new TestMobileFactoryService
+        {
+            CreateFromTemplateImpl = (templateId, accountId) =>
+                                         new()
+                                         {
+                                             Id = expectedId,
+                                             Name = $"template:{templateId}",
+                                             AccountId = accountId ?? Serial.Zero
+                                         }
+        };
+        var itemFactory = new TestItemFactoryService();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+
+        var result = await service.TrySpawnFromTemplateAsync("orc", new(42, 66, 0), 1);
+        var persisted = await persistence.UnitOfWork.Mobiles.GetByIdAsync(expectedId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Spawned, Is.True);
+                Assert.That(result.Mobile, Is.Not.Null);
+                Assert.That(result.Mobile!.Id, Is.EqualTo(expectedId));
+                Assert.That(persisted, Is.Not.Null);
+                Assert.That(persisted!.Id, Is.EqualTo(expectedId));
             }
         );
     }

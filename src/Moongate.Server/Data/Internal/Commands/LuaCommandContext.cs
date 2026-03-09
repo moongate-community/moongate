@@ -29,4 +29,7 @@ public sealed class LuaCommandContext
 
     public void PrintError(string message, params object[] args)
         => _context.PrintError(message, args);
+
+    public void PrintWarning(string message, params object[] args)
+        => _context.PrintWarning(message, args);
 }

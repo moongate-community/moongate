@@ -49,6 +49,12 @@ public sealed class CommandSystemContext
         _printAction(formatted, LogEventLevel.Error);
     }
 
+    public void PrintWarning(string message, params object[] args)
+    {
+        var formatted = args.Length == 0 ? message : string.Format(message, args);
+        _printAction(formatted, LogEventLevel.Warning);
+    }
+
     protected long GetSessionId()
     {
         if (Source != CommandSourceType.InGame)

@@ -21,7 +21,11 @@ namespace Moongate.Server.Services.Scripting;
 /// </summary>
 [RegisterGameEventListener]
 public sealed class LuaBrainRunner
-    : BaseMoongateService, ILuaBrainRunner, IGameEventListener<SpeechHeardEvent>, IGameEventListener<MobileAddedInWorldEvent>
+    : BaseMoongateService,
+      ILuaBrainRunner,
+      IGameEventListener<SpeechHeardEvent>,
+      IGameEventListener<MobileAddedInWorldEvent>,
+      IGameEventListener<MobileSpawnedFromSpawnerEvent>
 {
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
@@ -76,6 +80,18 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
+    public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
+    {
+        lock (_syncRoot)
+        {
+            if (_states.TryGetValue(gameEvent.Mobile.Id, out var state))
+            {
+                state.PendingSpawn.Enqueue(gameEvent);
+            }
+        }
+    }
+
+    /// <inheritdoc />
     public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
@@ -112,6 +128,15 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
+    public Task HandleAsync(MobileSpawnedFromSpawnerEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+        EnqueueSpawn(gameEvent);
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
     public void Register(UOMobileEntity mobile, string brainId)
     {
         ArgumentNullException.ThrowIfNull(mobile);
@@ -143,6 +168,7 @@ public sealed class LuaBrainRunner
                 state.IsFaulted = false;
                 state.PendingSpeech.Clear();
                 state.PendingDeath.Clear();
+                state.PendingSpawn.Clear();
                 InitializeRuntimeState(state);
 
                 return;
@@ -269,6 +295,38 @@ public sealed class LuaBrainRunner
             }
         };
 
+    private static Dictionary<string, object> BuildSpawnEventPayload(MobileSpawnedFromSpawnerEvent spawn)
+        => new()
+        {
+            ["mobile_id"] = (uint)spawn.Mobile.Id,
+            ["spawner_guid"] = spawn.SpawnerGuid.ToString("D"),
+            ["spawner_name"] = spawn.SpawnerName,
+            ["source_group"] = spawn.SourceGroup,
+            ["source_file"] = spawn.SourceFile,
+            ["spawn_count"] = spawn.SpawnCount,
+            ["min_delay_ms"] = (int)spawn.MinDelay.TotalMilliseconds,
+            ["max_delay_ms"] = (int)spawn.MaxDelay.TotalMilliseconds,
+            ["team"] = spawn.Team,
+            ["home_range"] = spawn.HomeRange,
+            ["walking_range"] = spawn.WalkingRange,
+            ["entry_name"] = spawn.EntryName,
+            ["entry_max_count"] = spawn.EntryMaxCount,
+            ["entry_probability"] = spawn.EntryProbability,
+            ["map_id"] = spawn.Mobile.MapId,
+            ["location"] = new Dictionary<string, int>
+            {
+                ["x"] = spawn.Mobile.Location.X,
+                ["y"] = spawn.Mobile.Location.Y,
+                ["z"] = spawn.Mobile.Location.Z
+            },
+            ["spawner_location"] = new Dictionary<string, int>
+            {
+                ["x"] = spawn.SpawnerLocation.X,
+                ["y"] = spawn.SpawnerLocation.Y,
+                ["z"] = spawn.SpawnerLocation.Z
+            }
+        };
+
     private void DispatchPendingDeath(LuaBrainRuntimeState state)
     {
         if (_luaScript is null)
@@ -354,6 +412,45 @@ public sealed class LuaBrainRunner
         }
     }
 
+    private void DispatchPendingSpawn(LuaBrainRuntimeState state)
+    {
+        if (_luaScript is null)
+        {
+            state.PendingSpawn.Clear();
+
+            return;
+        }
+
+        while (state.PendingSpawn.Count > 0)
+        {
+            var spawn = state.PendingSpawn.Dequeue();
+            var payload = BuildSpawnEventPayload(spawn);
+
+            if (state.OnSpawnFunction is not null)
+            {
+                _luaScript.Call(
+                    state.OnSpawnFunction,
+                    (uint)state.MobileId,
+                    payload
+                );
+
+                continue;
+            }
+
+            if (state.OnEventFunction is null)
+            {
+                continue;
+            }
+
+            _luaScript.Call(
+                state.OnEventFunction,
+                "spawn",
+                0u,
+                payload
+            );
+        }
+    }
+
     private void InitializeRuntimeState(LuaBrainRuntimeState state)
     {
         if (!_supportsMoonSharpRuntime || _luaScript is null)
@@ -374,6 +471,7 @@ public sealed class LuaBrainRunner
             state.OnEventFunction = null;
             state.OnSpeechFunction = null;
             state.OnDeathFunction = null;
+            state.OnSpawnFunction = null;
             state.IsFaulted = true;
 
             return;
@@ -381,6 +479,7 @@ public sealed class LuaBrainRunner
 
         state.OnSpeechFunction = ResolveTableFunction(brainTable, "on_speech", "OnSpeech");
         state.OnDeathFunction = ResolveTableFunction(brainTable, "on_death", "OnDeath");
+        state.OnSpawnFunction = ResolveTableFunction(brainTable, "on_spawn", "OnSpawn");
         state.OnEventFunction = ResolveTableFunction(brainTable, "on_event", "OnEvent");
 
         var brainLoop = ResolveTableFunction(brainTable, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
@@ -462,6 +561,24 @@ public sealed class LuaBrainRunner
 
     private void TickFallbackState(LuaBrainRuntimeState state)
     {
+        while (state.PendingSpawn.Count > 0)
+        {
+            var spawn = state.PendingSpawn.Dequeue();
+            var payload = BuildSpawnEventPayload(spawn);
+
+            _scriptEngineService.CallFunction(
+                "on_spawn",
+                (uint)state.MobileId,
+                payload
+            );
+            _scriptEngineService.CallFunction(
+                "on_event",
+                "spawn",
+                0u,
+                payload
+            );
+        }
+
         while (state.PendingSpeech.Count > 0)
         {
             var speech = state.PendingSpeech.Dequeue();
@@ -522,6 +639,7 @@ public sealed class LuaBrainRunner
 
         DispatchPendingSpeech(state);
         DispatchPendingDeath(state);
+        DispatchPendingSpawn(state);
 
         if (state.BrainCoroutine.State == CoroutineState.Dead)
         {
