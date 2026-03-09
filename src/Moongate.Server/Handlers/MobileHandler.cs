@@ -92,14 +92,14 @@ public class MobileHandler
             return;
         }
 
+        TrySendMapChangeIfNeeded(mobileEntity, gameEvent);
+
         var sectorInfo = _spatialWorldService.GetSectorByLocation(gameEvent.MapId, gameEvent.NewLocation);
 
         if (sectorInfo is null)
         {
             return;
         }
-
-        TrySendMapChangeIfNeeded(mobileEntity, gameEvent);
         await UpdatePlayerForMobileMovedOrCreated(
             mobileEntity,
             gameEvent.MapId,

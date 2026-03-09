@@ -787,6 +787,59 @@ public sealed class MobileHandlerTests
     }
 
     [Test]
+    public async Task
+        HandleAsync_ForMobilePositionChanged_WhenMapChangesAndDestinationSectorMissing_ShouldStillSendMapChangeToMovingPlayer()
+    {
+        var movingPlayerId = (Serial)0x00000998u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = null,
+            SessionsInRange = []
+        };
+        var character = CreatePlayer(movingPlayerId);
+        character.MapId = 1;
+        var characterService = new MobileHandlerTestCharacterService(character);
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                0,
+                1,
+                new(200, 200, 0),
+                new(210, 210, 0)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
+                Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<ServerChangePacket>());
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldResolveCharacterFromSessionWithoutPersistence()
     {
         var characterId = (Serial)0x00005000u;
