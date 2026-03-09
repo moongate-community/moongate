@@ -273,9 +273,24 @@ public sealed class LuaMobileProxy
     }
 
     public void PlayAnimation(int animId)
+    {
+        if (_gameEventBusService is null || animId < 0)
+        {
+            return;
+        }
 
-        // TODO: Implement animation primitive for brain point 5.
-        => _ = animId;
+        _gameEventBusService.PublishAsync(
+                                new MobilePlayAnimationEvent(
+                                    _mobile.Id,
+                                    _mobile.MapId,
+                                    _mobile.Location,
+                                    (short)Math.Min(animId, short.MaxValue)
+                                )
+                            )
+                            .AsTask()
+                            .GetAwaiter()
+                            .GetResult();
+    }
 
     public void PlaySound(int soundId)
     {

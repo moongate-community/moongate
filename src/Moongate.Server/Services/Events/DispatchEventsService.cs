@@ -24,6 +24,7 @@ namespace Moongate.Server.Services.Events;
 public sealed class DispatchEventsService
     : IDispatchEventsService,
       IGameEventListener<MobileWarModeChangedEvent>,
+      IGameEventListener<MobilePlayAnimationEvent>,
       IGameEventListener<MobilePlaySoundEvent>,
       IGameEventListener<PlaySoundToPlayerEvent>,
       IGameEventListener<MobilePlayEffectEvent>,
@@ -157,6 +158,34 @@ public sealed class DispatchEventsService
         return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
     }
 
+    public Task<int> DispatchMobileAnimationAsync(
+        Serial mobileId,
+        int mapId,
+        Point3D location,
+        short action,
+        short frameCount = 5,
+        short repeatCount = 1,
+        bool forward = true,
+        bool repeat = false,
+        byte delay = 0,
+        int? range = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+        var packet = new MobileAnimationPacket(
+            mobileId,
+            action,
+            frameCount,
+            repeatCount,
+            forward,
+            repeat,
+            delay
+        );
+
+        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
+    }
+
     /// <inheritdoc />
     public Task<int> DispatchMobileSpeechAsync(
         UOMobileEntity speaker,
@@ -281,6 +310,21 @@ public sealed class DispatchEventsService
             gameEvent.Mobile.Location
         );
     }
+
+    public Task HandleAsync(MobilePlayAnimationEvent gameEvent, CancellationToken cancellationToken = default)
+        => DispatchMobileAnimationAsync(
+            gameEvent.MobileId,
+            gameEvent.MapId,
+            gameEvent.Location,
+            gameEvent.Action,
+            gameEvent.FrameCount,
+            gameEvent.RepeatCount,
+            gameEvent.Forward,
+            gameEvent.Repeat,
+            gameEvent.Delay,
+            null,
+            cancellationToken
+        );
 
     /// <inheritdoc />
     public Task HandleAsync(MobilePlaySoundEvent gameEvent, CancellationToken cancellationToken = default)
