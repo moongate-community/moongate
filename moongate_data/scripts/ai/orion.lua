@@ -34,16 +34,20 @@ function orion.brain_loop(npc_id)
             end
 
             if now - state.last_speech_ms >= SPEECH_INTERVAL_MS then
-                local index = random.int(1, #MESSAGES)
-                log.info("Orion says: {0}", MESSAGES[index])
-                npc:say(MESSAGES[index])
+                local message = random.element(MESSAGES)
+                if message ~= nil then
+                    log.info("Orion says: {0}", message)
+                    npc:say(message)
+                end
                 state.last_speech_ms = now
             end
 
             if now - state.last_sound_ms >= SOUND_INTERVAL_MS then
-                local sound_index = random.int(1, #SOUNDS)
-                npc:play_sound(SOUNDS[sound_index])
-                log.info("Orion plays sound with ID: {0}", SOUNDS[sound_index])
+                local sound_id = random.element(SOUNDS)
+                if sound_id ~= nil then
+                    npc:play_sound(sound_id)
+                    log.info("Orion plays sound with ID: {0}", sound_id)
+                end
                 state.last_sound_ms = now
             end
         end
