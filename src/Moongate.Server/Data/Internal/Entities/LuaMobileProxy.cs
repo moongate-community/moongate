@@ -335,6 +335,15 @@ public sealed class LuaMobileProxy
         return true;
     }
 
+    public void UseAnimation(int animId)
+        => PlayAnimation(animId);
+
+    public bool UseAnimation(string intentName)
+        => PlayAnimationIntent(intentName);
+
+    public bool UseAnimation(AnimationIntent intent)
+        => PlayAnimationIntent(intent);
+
     public void PlaySound(int soundId)
     {
         if (_gameEventBusService is null || soundId < 0)
