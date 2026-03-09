@@ -140,6 +140,10 @@ Special thanks:
 
 Data imported/adapted from ModernUO distribution is used in selected world datasets (decoration, locations, signs).
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/image?repos=moongate-community/moongatev2&type=date&legend=top-left)](https://www.star-history.com/?repos=moongate-community%2Fmoongatev2&type=date&legend=top-left)
+
 ## Contributing
 
 Contributions are welcome. Please open an issue/discussion first for non-trivial changes.
