@@ -101,6 +101,8 @@ public class SpawnDecorationsCommand : ICommandExecutor
                 item = _itemFactoryService.CreateItemFromTemplate("static");
             }
 
+
+
             item.MapId = mapId;
             item.Location = decoration.Location;
 
