@@ -179,6 +179,79 @@ public sealed class MovementTileQueryServiceTests
         Assert.That(canFit, Is.True);
     }
 
+    [Test]
+    public void CanFit_ShouldIgnoreStaticDoorAtClosedOrigin_WhenOpenedDoorMovedByOffset()
+    {
+        var mapId = RegisterTestMap();
+        var map = Map.GetMap(mapId)!;
+        var x = 24;
+        var y = 24;
+
+        var staticBlock = CreateEmptyStaticBlock();
+        staticBlock[x & 0x7][y & 0x7] =
+        [
+            new StaticTile((ushort)0x3100, (sbyte)0)
+            {
+                X = x & 0x7,
+                Y = y & 0x7
+            }
+        ];
+
+        map.Tiles.SetStaticBlock(x >> 3, y >> 3, staticBlock);
+
+        var spatial = new TestSpatialWorldService();
+        spatial.Items.Add(
+            new()
+            {
+                Id = (Serial)0x40000013u,
+                MapId = mapId,
+                // Door currently open and moved 1 tile east from its closed origin.
+                Location = new(x + 1, y, 0),
+                ItemId = 0x3000
+            }
+        );
+
+        var doorData = new TestDoorDataService();
+        doorData.Definitions[0x3000] = new(0x3000, 0x3001, false, new(1, 0, 0));
+        var service = new MovementTileQueryService(spatial, doorData);
+
+        var canFit = service.CanFit(
+            mapId,
+            x,
+            y,
+            0,
+            16,
+            false,
+            false
+        );
+
+        Assert.That(canFit, Is.True);
+    }
+
+    [Test]
+    public void IsOpenedDoorCoveringTileForStaticCollision_ShouldMatchDoorClosedOrigin_WhenDoorIsOpen()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000012u,
+            MapId = 0,
+            Location = new(11, 10, 0),
+            ItemId = 0x3000
+        };
+
+        var doorData = new TestDoorDataService();
+        doorData.Definitions[0x3000] = new(0x3000, 0x3001, false, new(1, 0, 0));
+
+        var result = MovementTileQueryService.IsOpenedDoorCoveringTileForStaticCollision(
+            [item],
+            10,
+            10,
+            doorData
+        );
+
+        Assert.That(result, Is.True);
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -220,5 +293,22 @@ public sealed class MovementTileQueryServiceTests
         );
 
         return index;
+    }
+
+    private static StaticTile[][][] CreateEmptyStaticBlock()
+    {
+        var block = new StaticTile[8][][];
+
+        for (var i = 0; i < 8; i++)
+        {
+            block[i] = new StaticTile[8][];
+
+            for (var j = 0; j < 8; j++)
+            {
+                block[i][j] = [];
+            }
+        }
+
+        return block;
     }
 }
