@@ -8,7 +8,6 @@ using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Geometry;
@@ -38,7 +37,6 @@ public sealed class LuaBrainRunner
     private readonly ITimerService _timerService;
     private readonly IScriptEngineService _scriptEngineService;
     private readonly ILuaBrainRegistry _luaBrainRegistry;
-    private readonly ISpatialWorldService _spatialWorldService;
     private readonly ILogger _logger = Log.ForContext<LuaBrainRunner>();
     private readonly Script? _luaScript;
     private readonly bool _supportsMoonSharpRuntime;
@@ -49,14 +47,12 @@ public sealed class LuaBrainRunner
         ITimerService timerService,
         IScriptEngineService scriptEngineService,
         ILuaBrainRegistry luaBrainRegistry,
-        ISpatialWorldService spatialWorldService,
         DirectoriesConfig directoriesConfig
     )
     {
         _timerService = timerService;
         _scriptEngineService = scriptEngineService;
         _luaBrainRegistry = luaBrainRegistry;
-        _spatialWorldService = spatialWorldService;
         _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
         _supportsMoonSharpRuntime = _luaScript is not null;
@@ -879,7 +875,7 @@ public sealed class LuaBrainRunner
 
         foreach (var state in snapshot)
         {
-            if (state.MobileId == resolvedSourceMobile!.Id || state.Mobile.MapId != resolvedSourceMobile.MapId)
+            if (state.MobileId == resolvedSourceMobile.Id || state.Mobile.MapId != resolvedSourceMobile.MapId)
             {
                 continue;
             }
@@ -942,9 +938,15 @@ public sealed class LuaBrainRunner
             }
         }
 
-        sourceMobile = _spatialWorldService.GetNearbyMobiles(location, 0, mapId)
-                                           .FirstOrDefault(mobile => mobile.Id == mobileId);
+        // Fallback without spatial query: enough for range notifications payload.
+        sourceMobile = new()
+        {
+            Id = mobileId,
+            MapId = mapId,
+            Location = location,
+            IsPlayer = true
+        };
 
-        return sourceMobile is not null;
+        return true;
     }
 }

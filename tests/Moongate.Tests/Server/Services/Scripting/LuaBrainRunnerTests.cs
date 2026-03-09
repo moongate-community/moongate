@@ -5,19 +5,12 @@ using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Scripting;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Json.Regions;
-using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Utils;
-using Moongate.Network.Packets.Interfaces;
-using Moongate.Server.Data.Session;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Scripting;
@@ -97,82 +90,14 @@ public sealed class LuaBrainRunnerTests
         }
     }
 
-    private sealed class LuaBrainRunnerSpatialWorldServiceStub : ISpatialWorldService
-    {
-        public List<UOMobileEntity> Mobiles { get; } = [];
-
-        public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
-
-        public void AddOrUpdateMobile(UOMobileEntity mobile)
-        {
-            var existing = Mobiles.FindIndex(existingMobile => existingMobile.Id == mobile.Id);
-
-            if (existing >= 0)
-            {
-                Mobiles[existing] = mobile;
-                return;
-            }
-
-            Mobiles.Add(mobile);
-        }
-
-        public void AddRegion(JsonRegion region) { }
-
-        public Task<int> BroadcastToPlayersAsync(
-            IGameNetworkPacket packet,
-            int mapId,
-            Point3D location,
-            int? range = null,
-            long? excludeSessionId = null
-        )
-            => Task.FromResult(0);
-
-        public List<MapSector> GetActiveSectors()
-            => [];
-
-        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
-            => [];
-
-        public int GetMusic(int mapId, Point3D location)
-            => 0;
-
-        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
-            => [];
-
-        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
-            => Mobiles.Where(mobile => mobile.MapId == mapId && mobile.Location.InRange(location, range)).ToList();
-
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
-            => [];
-
-        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
-            => [];
-
-        public JsonRegion? GetRegionById(int regionId)
-            => null;
-
-        public MapSector? GetSectorByLocation(int mapId, Point3D location)
-            => null;
-
-        public SectorSystemStats GetStats()
-            => new();
-
-        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
-
-        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
-
-        public void RemoveEntity(Serial serial) { }
-    }
-
     [Test]
     public async Task HandleAsync_WhenMobileAddedInWorldWithBrain_ShouldRegisterAndTick()
     {
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x60,
@@ -198,9 +123,8 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
 
         await runner.StartAsync();
         await runner.StopAsync();
@@ -220,9 +144,8 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x61,
@@ -266,14 +189,13 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptPath = Path.Combine(directories[DirectoryType.Scripts], "ai", "orc_warrior.lua");
         Directory.CreateDirectory(Path.GetDirectoryName(scriptPath)!);
         await File.WriteAllTextAsync(scriptPath, "function on_event() end");
         var registry = new LuaBrainRegistryStub();
         registry.Register(new() { BrainId = "orc_warrior", ScriptPath = scriptPath });
-        var runner = new LuaBrainRunner(timerService, scriptEngine, registry, spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, registry, directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x50,
@@ -319,9 +241,8 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x70,
@@ -378,9 +299,8 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x500,
@@ -397,13 +317,10 @@ public sealed class LuaBrainRunnerTests
             MapId = 1,
             Location = new(120, 100, 0)
         };
-        spatialWorldService.AddOrUpdateMobile(npc);
-        spatialWorldService.AddOrUpdateMobile(source);
         runner.Register(npc, npc.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         source.Location = new(102, 100, 0);
-        spatialWorldService.AddOrUpdateMobile(source);
 
         await runner.HandleAsync(
             new MobilePositionChangedEvent(
@@ -439,9 +356,8 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x510,
@@ -458,18 +374,14 @@ public sealed class LuaBrainRunnerTests
             MapId = 1,
             Location = new(120, 100, 0)
         };
-        spatialWorldService.AddOrUpdateMobile(npc);
-        spatialWorldService.AddOrUpdateMobile(source);
         runner.Register(npc, npc.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         source.Location = new(102, 100, 0);
-        spatialWorldService.AddOrUpdateMobile(source);
         await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(120, 100, 0), source.Location));
         await runner.TickAllAsync(now);
 
         source.Location = new(101, 100, 0);
-        spatialWorldService.AddOrUpdateMobile(source);
         await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(102, 100, 0), source.Location));
         await runner.TickAllAsync(now + 1000);
 
@@ -486,9 +398,8 @@ public sealed class LuaBrainRunnerTests
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
         var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var spatialWorldService = new LuaBrainRunnerSpatialWorldServiceStub();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), spatialWorldService, directories);
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
         var npc = new UOMobileEntity
         {
             Id = (Serial)0x520,
@@ -505,8 +416,6 @@ public sealed class LuaBrainRunnerTests
             MapId = 1,
             Location = new(102, 100, 0)
         };
-        spatialWorldService.AddOrUpdateMobile(npc);
-        spatialWorldService.AddOrUpdateMobile(source);
         runner.Register(npc, npc.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
@@ -516,7 +425,6 @@ public sealed class LuaBrainRunnerTests
 
         // Move out of range.
         source.Location = new(120, 100, 0);
-        spatialWorldService.AddOrUpdateMobile(source);
         await runner.HandleAsync(new MobilePositionChangedEvent(1, source.Id, 1, 1, new(102, 100, 0), source.Location));
         await runner.TickAllAsync(now + 1000);
 

@@ -766,11 +766,15 @@ public class LuaScriptEngineServiceTests
         var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(new BasePacketListenerTestOutgoingPacketQueue());
+        container.RegisterInstance<IGameNetworkSessionService>(new FakeGameNetworkSessionService());
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
 
         var service = new LuaScriptEngineService(
             dirs,
             [new(typeof(GumpModule))],
-            new Container(),
+            container,
             new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
@@ -829,11 +833,15 @@ public class LuaScriptEngineServiceTests
         var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(new BasePacketListenerTestOutgoingPacketQueue());
+        container.RegisterInstance<IGameNetworkSessionService>(new FakeGameNetworkSessionService());
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
 
         var service = new LuaScriptEngineService(
             dirs,
             [new(typeof(GumpModule))],
-            new Container(),
+            container,
             new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
@@ -943,11 +951,15 @@ public class LuaScriptEngineServiceTests
         var luarcDir = temp.Path;
         Directory.CreateDirectory(scriptsDir);
         Directory.CreateDirectory(luarcDir);
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(new BasePacketListenerTestOutgoingPacketQueue());
+        container.RegisterInstance<IGameNetworkSessionService>(new FakeGameNetworkSessionService());
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
 
         var service = new LuaScriptEngineService(
             dirs,
             [new(typeof(GumpModule))],
-            new Container(),
+            container,
             new(luarcDir, scriptsDir, "0.1.0"),
             []
         );
@@ -1010,6 +1022,7 @@ public class LuaScriptEngineServiceTests
         var container = new Container();
         container.RegisterInstance<IOutgoingPacketQueue>(queue);
         container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
 
         var service = new LuaScriptEngineService(
             dirs,
@@ -1062,6 +1075,7 @@ public class LuaScriptEngineServiceTests
         var container = new Container();
         container.RegisterInstance<IOutgoingPacketQueue>(queue);
         container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
 
         var service = new LuaScriptEngineService(
             dirs,
@@ -1145,6 +1159,7 @@ public class LuaScriptEngineServiceTests
         var container = new Container();
         container.RegisterInstance<IOutgoingPacketQueue>(queue);
         container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
 
         var service = new LuaScriptEngineService(
             dirs,

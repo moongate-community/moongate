@@ -8,6 +8,7 @@ using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Modules.Builders;
 using MoonSharp.Interpreter;
+using Serilog;
 
 namespace Moongate.Server.Modules;
 
@@ -19,15 +20,16 @@ namespace Moongate.Server.Modules;
 public sealed class GumpModule
 {
     private static readonly Regex ContextPlaceholderRegex = new(@"\$ctx\.([A-Za-z_][A-Za-z0-9_]*)", RegexOptions.Compiled);
+    private static readonly ILogger Logger = Log.ForContext<GumpModule>();
     private static bool _isBuilderTypeRegistered;
-    private readonly IOutgoingPacketQueue? _outgoingPacketQueue;
-    private readonly IGameNetworkSessionService? _gameNetworkSessionService;
-    private readonly IGumpScriptDispatcherService? _gumpScriptDispatcherService;
+    private readonly IOutgoingPacketQueue _outgoingPacketQueue;
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IGumpScriptDispatcherService _gumpScriptDispatcherService;
 
     public GumpModule(
-        IOutgoingPacketQueue? outgoingPacketQueue = null,
-        IGameNetworkSessionService? gameNetworkSessionService = null,
-        IGumpScriptDispatcherService? gumpScriptDispatcherService = null
+        IOutgoingPacketQueue outgoingPacketQueue,
+        IGameNetworkSessionService gameNetworkSessionService,
+        IGumpScriptDispatcherService gumpScriptDispatcherService
     )
     {
         _outgoingPacketQueue = outgoingPacketQueue;
@@ -71,7 +73,7 @@ public sealed class GumpModule
         uint y = 50
     )
     {
-        if (sessionId <= 0 || builder is null || _outgoingPacketQueue is null || _gameNetworkSessionService is null)
+        if (sessionId <= 0 || builder is null)
         {
             return false;
         }
@@ -432,15 +434,20 @@ public sealed class GumpModule
                     }
 
                     if (handlersTable is null || _gumpScriptDispatcherService is null)
-                    {
-                        return false;
-                    }
+                    { return false; }
 
                     var handlerValue = handlersTable.Get(onClickName);
 
                     if (handlerValue.Type != DataType.Function || handlerValue.Function is null)
                     {
-                        return false;
+                        Logger.Warning(
+                            "Gump onclick handler '{HandlerName}' ignored for gump {GumpId} button {ButtonId}: handler not found or not a function.",
+                            onClickName,
+                            gumpId,
+                            buttonId
+                        );
+
+                        return true;
                     }
 
                     _gumpScriptDispatcherService.RegisterHandler(gumpId, (uint)buttonId, handlerValue.Function);
