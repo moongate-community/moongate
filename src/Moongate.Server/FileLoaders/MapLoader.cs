@@ -28,7 +28,7 @@ public class MapLoader : IFileLoader
 
         Map.RegisterMap(5, 5, 5, 1280, 4096, SeasonType.Summer, "TerMur", MapRules.TrammelRules);
 
-        Map.RegisterMap(0x7F, 0x7F, 0, 1, 1, SeasonType.Spring, "Internal", MapRules.Internal);
+        Map.RegisterMap(0x7F, 0x7F, 0x7F, 1, 1, SeasonType.Spring, "Internal", MapRules.Internal);
 
         _logger.Information("Loaded {Count} maps", Map.MapCount);
     }
