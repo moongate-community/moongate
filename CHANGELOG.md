@@ -1,3 +1,34 @@
+## [0.32.0](https://github.com/moongate-community/moongatev2/compare/v0.31.0...v0.32.0) (2026-03-09)
+
+### Features
+
+* add generic_npc mobile template ([3c726dd](https://github.com/moongate-community/moongatev2/commit/3c726dd52dd2d61132237778e4adb664b68e8478))
+* add mobile animation event dispatch and packet support ([9719ad3](https://github.com/moongate-community/moongatev2/commit/9719ad32acf41362eb124136fe22046b07714bac))
+* add reload_template command and set lilly npc id ([4dfa023](https://github.com/moongate-community/moongatev2/commit/4dfa02376dad788b7988940be205a0e38fea2fd0))
+* add runtime spawn service for active sectors ([eac7144](https://github.com/moongate-community/moongatev2/commit/eac7144f5dd8814b82120d238d5568b518d11914))
+* add semantic animation intent mapping ([2010df1](https://github.com/moongate-community/moongatev2/commit/2010df17f169f6e5338511ad172faa14ffb32b73))
+* add spawn Lua module and update docs ([f060b3d](https://github.com/moongate-community/moongatev2/commit/f060b3da505055a3de28372967c4013fbe6d1dfb))
+* add spawner spawn events and harden spawn tools flow ([64d701e](https://github.com/moongate-community/moongatev2/commit/64d701ea40e6cb4940851bfd2a4daf9f54c97f55))
+* add use_animation helpers to LuaMobileProxy ([1375f3e](https://github.com/moongate-community/moongatev2/commit/1375f3e8e7744304f28ef2d6031bd9b358fd1015))
+* add Vega cat command and Lua brain ([26fdc97](https://github.com/moongate-community/moongatev2/commit/26fdc97719914896886d513bbd7c45a0f5561cb0))
+* **data:** add spawn tools gump and teleporter seed dataset ([c12a7fd](https://github.com/moongate-community/moongatev2/commit/c12a7fdaed33a65a615925783cd22a93f909dc32))
+* **items:** add account-based item visibility and spawner base template ([e705e88](https://github.com/moongate-community/moongatev2/commit/e705e88d2a83860ce1bd3b6fa26a24bdb4dd8072))
+* **lua-brain:** add in_range and out_range callbacks ([4b6a7b9](https://github.com/moongate-community/moongatev2/commit/4b6a7b9343c050331b9252f7df5d08b2fb3521d4))
+* pass spawner walking range to lua mobile brain ([a43f870](https://github.com/moongate-community/moongatev2/commit/a43f870c5fa47c51c0cf250710af690db6880443))
+* **scripting:** add map/convert modules and refactor teleport item script ([9310c73](https://github.com/moongate-community/moongatev2/commit/9310c73e44cf2cabf17b48fa4d61313dc39c8a27))
+* **templates:** add noble queen outfit and Lilly NPC ([9e1c5be](https://github.com/moongate-community/moongatev2/commit/9e1c5bebb2c38f77c4448a2deb7cc560f7881256))
+* **world:** import spawns and teleporters seed data with loaders/services ([5b73322](https://github.com/moongate-community/moongatev2/commit/5b73322ea8f0064b19f30f2c6cca2f325226a664))
+
+### Bug Fixes
+
+* align linked door toggle semantics and simplify spawn counting ([b77f641](https://github.com/moongate-community/moongatev2/commit/b77f641e3ce505ecc05b6ce6c8a9a7343097a93b))
+* **benchmarks:** update SpatialWorldService benchmark for teleporter dependency ([70b726c](https://github.com/moongate-community/moongatev2/commit/70b726c6a50e42e4ab023b82172f23ce9190a67b))
+* handle opened door offset for static collision checks ([0d40c49](https://github.com/moongate-community/moongatev2/commit/0d40c492ace6743b954d78ea0870da599ac448d7))
+* restore gump callback wiring and decouple lua brain runner ([f95fb89](https://github.com/moongate-community/moongatev2/commit/f95fb897b4f199dc20a9ee831807162337fc8b43))
+* send map change even when destination sector is missing ([72e9358](https://github.com/moongate-community/moongatev2/commit/72e93583c302cd989ef98b73b5eacbe861392ea5))
+* **teleport:** force position event on map-change and bypass throttle ([3f8a01d](https://github.com/moongate-community/moongatev2/commit/3f8a01ddb2a8e1a9675d5b343f470e0d01eba55e))
+* update benchmark mobile service stub for try spawn api ([09d169f](https://github.com/moongate-community/moongatev2/commit/09d169f68637edb20687b4eb96913811fccaa3f6))
+
 ## [0.31.0](https://github.com/moongate-community/moongatev2/compare/v0.30.0...v0.31.0) (2026-03-06)
 
 ### Features
