@@ -110,6 +110,101 @@ local count = server.get_player_count()
 log.info("Active players: " .. count)
 ```
 
+## Script Examples (NPC / Item / Gump / Command)
+
+### NPC Brain Example
+
+`mobileTemplate.brain = "orion"` resolves to table `orion` in `scripts/ai/orion.lua`.
+
+```lua
+orion = {}
+
+function orion.brain_loop(npc_id)
+    while true do
+        local npc = mobile.get(npc_id)
+        if npc ~= nil then
+            npc:move(random.direction())
+        end
+
+        coroutine.yield(250)
+    end
+end
+
+function orion.on_speech(ctx)
+    -- ctx.source_serial, ctx.text, ctx.range...
+end
+```
+
+### Item Script Example
+
+`item.script_id = "apple"` resolves to table `apple` in `scripts/items/apple.lua`.
+
+```lua
+apple = {
+    on_double_click = function(ctx)
+        if ctx == nil or ctx.item == nil then
+            return
+        end
+
+        local serial = convert.to_int(ctx.item.serial, 0)
+        if serial <= 0 then
+            return
+        end
+
+        local proxy = item.get(serial)
+        if proxy ~= nil and proxy:delete() and ctx.session_id ~= nil then
+            speech.send(ctx.session_id, "You eat the apple.")
+        end
+    end
+}
+```
+
+### Gump Script Example
+
+`gump.send_layout` with inline callback handlers.
+
+```lua
+local sample = {}
+
+function sample.open(session_id, character_id)
+    local layout = {
+        ui = {
+            { type = "background", x = 0, y = 0, gump_id = 9200, width = 320, height = 160 },
+            { type = "label", x = 24, y = 20, hue = 1152, text = "Spawn Tools" },
+            { type = "button", id = 101, x = 24, y = 52, normal_id = 4005, pressed_id = 4007, onclick = "on_spawn" }
+        },
+        handlers = {}
+    }
+
+    layout.handlers.on_spawn = function(ctx)
+        command.execute("spawn_doors", 1)
+        speech.send(ctx.session_id, "Spawn complete.")
+    end
+
+    return gump.send_layout(session_id, layout, character_id or 0, 0xB220, 120, 80)
+end
+
+return sample
+```
+
+### Lua Command Example
+
+Register a GM-only command in `scripts/commands/gm/eclipse.lua`.
+
+```lua
+command.register("eclipse", function(ctx)
+    weather.set_global_light(26)
+    speech.broadcast("The moon has blocked the sun.")
+
+    if ctx.session_id ~= nil and ctx.session_id > 0 then
+        ctx:print("Eclipse started.")
+    end
+end, {
+    description = "Starts a world eclipse and broadcasts a global message.",
+    minimum_account_type = "Administrator"
+})
+```
+
 ## Script Modules
 
 ### Defining Modules

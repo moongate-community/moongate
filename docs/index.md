@@ -26,6 +26,7 @@ This is the main documentation portal for Moongate v2.
 ## Scripting
 
 - [Scripting Overview](articles/scripting/overview.md)
+- [Gump Tutorial](articles/scripting/gump-tutorial.md)
 - [Script Modules](articles/scripting/modules.md)
 - [Lua API](articles/scripting/api.md)
 
@@ -45,6 +46,7 @@ This is the main documentation portal for Moongate v2.
 
 - [Stress Test](articles/operations/stress-test.md)
 - [Console Commands](articles/operations/console-commands.md)
+- [NativeAOT Troubleshooting](articles/operations/native-aot-troubleshooting.md)
 
 ## Development
 

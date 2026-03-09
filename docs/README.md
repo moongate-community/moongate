@@ -32,3 +32,16 @@ Open `http://localhost:8080`.
 
 Keep `README.md` concise and onboarding-focused.
 Keep detailed technical material under `docs/articles/**`.
+
+## Generated Artifacts Policy
+
+The following folders are generated output:
+
+- `docs/_site/` (DocFX static website output)
+- `docs/api/` (DocFX generated API YAML)
+
+Guidelines:
+
+- do not edit files inside these folders manually
+- update source docs/code first, then regenerate
+- include regenerated artifacts in commits only when intentionally refreshing published docs

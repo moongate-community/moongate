@@ -10,7 +10,7 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 1,
-    "scriptId": "none",
+    "scriptId": "items.spawn",
     "isMovable": false,
     "visibility": "GameMaster"
   }
