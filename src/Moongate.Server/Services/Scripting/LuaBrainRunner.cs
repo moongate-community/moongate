@@ -406,11 +406,18 @@ public sealed class LuaBrainRunner
                 if (state.IsFaulted)
                 {
                     // TODO: Brain fallback behavior (point 5 excluded for now).
-                    nextWake = nowMilliseconds + FaultRetryMilliseconds;
+                    nextWake = LuaBrainFaultPolicy.NextWakeAfterFault(nowMilliseconds, FaultRetryMilliseconds);
                 }
                 else if (_luaScript is not null)
                 {
-                    nextWake = TickMoonSharpState(nowMilliseconds, state);
+                    nextWake = LuaBrainTickExecutor.Tick(
+                        nowMilliseconds,
+                        _luaScript,
+                        state,
+                        DefaultTickMilliseconds,
+                        FaultRetryMilliseconds,
+                        Unregister
+                    );
                 }
                 else
                 {
@@ -420,7 +427,7 @@ public sealed class LuaBrainRunner
             catch (Exception ex)
             {
                 state.IsFaulted = true;
-                nextWake = nowMilliseconds + FaultRetryMilliseconds;
+                nextWake = LuaBrainFaultPolicy.NextWakeAfterFault(nowMilliseconds, FaultRetryMilliseconds);
                 _logger.Error(ex, "Lua brain tick failed for mobile {MobileId}", state.MobileId);
             }
 
@@ -513,208 +520,6 @@ public sealed class LuaBrainRunner
             }
         };
 
-    private void DispatchPendingDeath(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingDeath.Clear();
-
-            return;
-        }
-
-        while (state.PendingDeath.Count > 0)
-        {
-            var death = state.PendingDeath.Dequeue();
-            var byCharacter = death.ByCharacterId.HasValue
-                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
-                                  : DynValue.Nil;
-
-            if (state.OnEventFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnEventFunction,
-                    "death",
-                    byCharacter,
-                    death.Context
-                );
-
-                continue;
-            }
-
-            if (state.OnDeathFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnDeathFunction,
-                byCharacter,
-                death.Context
-            );
-        }
-    }
-
-    private void DispatchPendingSpeech(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingSpeech.Clear();
-
-            return;
-        }
-
-        while (state.PendingSpeech.Count > 0)
-        {
-            var speech = state.PendingSpeech.Dequeue();
-
-            if (state.OnEventFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnEventFunction,
-                    "speech_heard",
-                    (uint)speech.SpeakerId,
-                    BuildSpeechEventPayload(speech)
-                );
-
-                continue;
-            }
-
-            if (state.OnSpeechFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnSpeechFunction,
-                (uint)speech.ListenerNpcId,
-                (uint)speech.SpeakerId,
-                speech.Text,
-                (byte)speech.SpeechType,
-                speech.MapId,
-                speech.Location.X,
-                speech.Location.Y,
-                speech.Location.Z
-            );
-        }
-    }
-
-    private void DispatchPendingSpawn(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingSpawn.Clear();
-
-            return;
-        }
-
-        while (state.PendingSpawn.Count > 0)
-        {
-            var spawn = state.PendingSpawn.Dequeue();
-            var payload = BuildSpawnEventPayload(spawn);
-
-            if (state.OnSpawnFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnSpawnFunction,
-                    (uint)state.MobileId,
-                    payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnEventFunction,
-                "spawn",
-                0u,
-                payload
-            );
-        }
-    }
-
-    private void DispatchPendingInRange(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingInRange.Clear();
-
-            return;
-        }
-
-        while (state.PendingInRange.Count > 0)
-        {
-            var inRange = state.PendingInRange.Dequeue();
-
-            if (state.OnInRangeFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnInRangeFunction,
-                    (uint)state.MobileId,
-                    (uint)inRange.SourceMobileId,
-                    inRange.Payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnEventFunction,
-                "in_range",
-                (uint)inRange.SourceMobileId,
-                inRange.Payload
-            );
-        }
-    }
-
-    private void DispatchPendingOutRange(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingOutRange.Clear();
-
-            return;
-        }
-
-        while (state.PendingOutRange.Count > 0)
-        {
-            var outRange = state.PendingOutRange.Dequeue();
-
-            if (state.OnOutRangeFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnOutRangeFunction,
-                    (uint)state.MobileId,
-                    (uint)outRange.SourceMobileId,
-                    outRange.Payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnEventFunction,
-                "out_range",
-                (uint)outRange.SourceMobileId,
-                outRange.Payload
-            );
-        }
-    }
-
     private void InitializeRuntimeState(LuaBrainRuntimeState state)
     {
         if (_luaScript is null)
@@ -769,18 +574,6 @@ public sealed class LuaBrainRunner
         }
 
         state.BrainCoroutine = _luaScript.CreateCoroutine(brainLoop).Coroutine;
-    }
-
-    private int ParseYieldDelay(DynValue yielded)
-    {
-        if (yielded.Type == DataType.Number)
-        {
-            var value = (int)Math.Round(yielded.Number);
-
-            return value <= 0 ? DefaultTickMilliseconds : value;
-        }
-
-        return DefaultTickMilliseconds;
     }
 
     private string ResolveBrainTableName(string brainId)
@@ -895,46 +688,6 @@ public sealed class LuaBrainRunner
         }
 
         _scriptEngineService.CallFunction("on_brain_tick", (uint)state.MobileId);
-    }
-
-    private long TickMoonSharpState(long nowMilliseconds, LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            return nowMilliseconds + DefaultTickMilliseconds;
-        }
-
-        if (state.BrainCoroutine is null)
-        {
-            state.IsFaulted = true;
-
-            return nowMilliseconds + FaultRetryMilliseconds;
-        }
-
-        DispatchPendingSpeech(state);
-        DispatchPendingDeath(state);
-        DispatchPendingSpawn(state);
-        DispatchPendingInRange(state);
-        DispatchPendingOutRange(state);
-
-        if (state.BrainCoroutine.State == CoroutineState.Dead)
-        {
-            Unregister(state.MobileId);
-
-            return nowMilliseconds + DefaultTickMilliseconds;
-        }
-
-        var result = state.BrainCoroutine.State == CoroutineState.NotStarted
-                         ? state.BrainCoroutine.Resume((uint)state.MobileId)
-                         : state.BrainCoroutine.Resume();
-        var delay = ParseYieldDelay(result);
-
-        if (state.BrainCoroutine.State == CoroutineState.Dead)
-        {
-            Unregister(state.MobileId);
-        }
-
-        return nowMilliseconds + delay;
     }
 
     private void NotifyInRangeForAddedMobile(UOMobileEntity sourceMobile)
