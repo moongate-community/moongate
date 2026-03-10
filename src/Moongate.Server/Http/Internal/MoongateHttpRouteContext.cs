@@ -5,6 +5,7 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.UO.Data.Interfaces.Art;
+using Moongate.UO.Data.Interfaces.Maps;
 using Moongate.UO.Data.Interfaces.Templates;
 
 namespace Moongate.Server.Http.Internal;
@@ -23,7 +24,8 @@ internal sealed class MoongateHttpRouteContext
         IItemTemplateService? itemTemplateService,
         IArtService? artService,
         IGameNetworkSessionService? gameNetworkSessionService,
-        ICommandSystemService? commandSystemService
+        ICommandSystemService? commandSystemService,
+        IMapImageService? mapImageService
     )
     {
         JwtOptions = jwtOptions;
@@ -35,6 +37,7 @@ internal sealed class MoongateHttpRouteContext
         ArtService = artService;
         GameNetworkSessionService = gameNetworkSessionService;
         CommandSystemService = commandSystemService;
+        MapImageService = mapImageService;
     }
 
     public IAccountService? AccountService { get; }
@@ -54,4 +57,6 @@ internal sealed class MoongateHttpRouteContext
     public IGameNetworkSessionService? GameNetworkSessionService { get; }
 
     public ICommandSystemService? CommandSystemService { get; }
+
+    public IMapImageService? MapImageService { get; }
 }

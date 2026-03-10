@@ -18,6 +18,7 @@ using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Metrics.Data;
 using Moongate.UO.Data.Interfaces.Art;
+using Moongate.UO.Data.Interfaces.Maps;
 using Moongate.UO.Data.Interfaces.Templates;
 using Serilog;
 using Serilog.Core;
@@ -42,6 +43,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly IArtService? _artService;
     private readonly IGameNetworkSessionService? _gameNetworkSessionService;
     private readonly ICommandSystemService? _commandSystemService;
+    private readonly IMapImageService? _mapImageService;
     private readonly bool _isUiEnabled;
     private readonly string? _uiDistPath;
 
@@ -54,7 +56,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
         IItemTemplateService? itemTemplateService = null,
         IArtService? artService = null,
         IGameNetworkSessionService? gameNetworkSessionService = null,
-        ICommandSystemService? commandSystemService = null
+        ICommandSystemService? commandSystemService = null,
+        IMapImageService? mapImageService = null
     )
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -78,6 +81,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _artService = artService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _commandSystemService = commandSystemService;
+        _mapImageService = mapImageService;
         _isUiEnabled = options.IsUiEnabled;
         _uiDistPath = options.UiDistPath;
 
@@ -138,7 +142,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
             _itemTemplateService,
             _artService,
             _gameNetworkSessionService,
-            _commandSystemService
+            _commandSystemService,
+            _mapImageService
         );
 
         app.MapMoongateHttpRoutes(routeContext);
