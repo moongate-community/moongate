@@ -67,6 +67,7 @@ UI default URL: `http://localhost:8088/`
 - World generation pipeline uses named generators (`IWorldGenerator`) and command-triggered runs (example: doors).
 - Doors support runtime open/close behavior and network updates.
 - AOT stability issue in persistence was resolved by moving to MessagePack-CSharp source-generated contracts.
+- Mobile domain model was refactored to remove `Level` and `Experience` from `UOMobileEntity` (they are not part of the base UO mobile model).
 
 ## Screenshots
 

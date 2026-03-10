@@ -108,10 +108,6 @@ public class UOMobileEntity : IMobileEntity
 
     public int MaxStamina { get; set; }
 
-    public int Level { get; set; } = 1;
-
-    public long Experience { get; set; }
-
     public int SkillPoints { get; set; }
 
     public int StatPoints { get; set; }

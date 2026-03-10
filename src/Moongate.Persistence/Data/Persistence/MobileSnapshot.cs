@@ -66,10 +66,6 @@ public sealed class MobileSnapshot
 
     public int MaxStamina { get; set; }
 
-    public int Level { get; set; }
-
-    public long Experience { get; set; }
-
     public int SkillPoints { get; set; }
 
     public int StatPoints { get; set; }

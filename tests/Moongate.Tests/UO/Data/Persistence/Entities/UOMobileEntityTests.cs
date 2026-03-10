@@ -76,14 +76,6 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void DefaultLevel_ShouldBeOne()
-    {
-        var mobile = new UOMobileEntity();
-
-        Assert.That(mobile.Level, Is.EqualTo(1));
-    }
-
-    [Test]
     public void EquipItem_ShouldPopulatePersistedIdsAndRuntimeReference()
     {
         var mobile = new UOMobileEntity

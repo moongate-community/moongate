@@ -6,6 +6,7 @@
     "category": "GameMaster",
     "description": "Container used by .gm_body command.",
     "itemId": "0x0E76",
+    "containerLayoutId": "bag",
     "hue": "0",
     "goldValue": "0",
     "weight": 1,
