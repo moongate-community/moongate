@@ -294,6 +294,77 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
+    public async Task TickAllAsync_WhenMultiplePendingEventsAreQueued_ShouldDispatchAllInSingleTick()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x900,
+            Name = "orion",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
+        await runner.HandleAsync(
+            new SpeechHeardEvent(
+                npc.Id,
+                (Serial)0x02,
+                "hello",
+                ChatMessageType.Regular,
+                1,
+                new(101, 100, 0)
+            )
+        );
+        await runner.HandleAsync(
+            new MobileSpawnedFromSpawnerEvent(
+                npc,
+                Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                "Spawner (test)",
+                "Spawner (test)",
+                "test-group",
+                new(66, 1171, -28),
+                1,
+                TimeSpan.FromMinutes(1),
+                TimeSpan.FromMinutes(2),
+                0,
+                5,
+                10,
+                "Nightmare",
+                1,
+                100
+            )
+        );
+        runner.EnqueueDeath(
+            npc.Id,
+            new LuaBrainDeathContext((Serial)0x07, new() { ["reason"] = "test" })
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var onEventNames = scriptEngine.Calls
+                                       .Where(call => call.FunctionName == "on_event")
+                                       .Select(call => call.Args[0]?.ToString())
+                                       .ToList();
+        var brainTickCalls = scriptEngine.Calls.Count(call => call.FunctionName == "on_brain_tick");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(onEventNames.Count(name => string.Equals(name, "speech_heard", StringComparison.Ordinal)), Is.EqualTo(1));
+                Assert.That(onEventNames.Count(name => string.Equals(name, "spawn", StringComparison.Ordinal)), Is.EqualTo(1));
+                Assert.That(onEventNames.Count(name => string.Equals(name, "death", StringComparison.Ordinal)), Is.EqualTo(1));
+                Assert.That(brainTickCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_WhenMobileMovesIntoNpcRange_ShouldInvokeOnEventInRange()
     {
         using var temp = new TempDirectory();
