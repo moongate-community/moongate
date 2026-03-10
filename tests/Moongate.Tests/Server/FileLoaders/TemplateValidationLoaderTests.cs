@@ -1,6 +1,7 @@
 using Moongate.Server.FileLoaders;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.SellProfiles;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 
@@ -13,6 +14,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
 
         itemService.Upsert(
             new()
@@ -31,7 +33,7 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService);
+        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService);
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
@@ -41,6 +43,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
 
         mobileService.Upsert(
             new()
@@ -63,7 +66,7 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService);
+        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService);
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
@@ -73,6 +76,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
         ContainerLayoutSystem.ContainerSizesById["backpack"] = new("backpack", 7, 4, "Backpack");
 
         itemService.Upsert(
@@ -114,9 +118,67 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService);
+        sellProfileService.Upsert(
+            new()
+            {
+                Id = "basic_vendor",
+                Name = "Basic Vendor",
+                Category = "vendor",
+                Description = "basic",
+                VendorItems =
+                [
+                    new()
+                    {
+                        ItemTemplateId = "item.shirt",
+                        Price = 50
+                    }
+                ]
+            }
+        );
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "vendor_orc",
+                Name = "Vendor Orc",
+                Category = "vendors",
+                Description = "vendor",
+                Body = 0x11,
+                SkinHue = HueSpec.FromValue(779),
+                HairHue = HueSpec.FromValue(0),
+                SellProfileId = "basic_vendor"
+            }
+        );
+
+        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService);
 
         Assert.That(async () => await loader.LoadAsync(), Throws.Nothing);
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileReferencesMissingSellProfile_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "vendor_missing_profile",
+                Name = "Vendor",
+                Category = "vendors",
+                Description = "vendor",
+                Body = 0x11,
+                SkinHue = HueSpec.FromValue(779),
+                HairHue = HueSpec.FromValue(0),
+                SellProfileId = "missing_profile"
+            }
+        );
+
+        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService);
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
 
     [SetUp]

@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Mobiles;
+using Moongate.UO.Data.Templates.SellProfiles;
 
 namespace Moongate.UO.Data.Json.Context;
 
@@ -19,7 +20,11 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(MobileWeightedEquipmentItemTemplate[])),
  JsonSerializable(typeof(LootTemplateDefinitionBase[])),
  JsonSerializable(typeof(LootTemplateDefinition[])),
- JsonSerializable(typeof(LootTemplateEntry[]))]
+ JsonSerializable(typeof(LootTemplateEntry[])),
+ JsonSerializable(typeof(SellProfileTemplateDefinitionBase[])),
+ JsonSerializable(typeof(SellProfileTemplateDefinition[])),
+ JsonSerializable(typeof(SellProfileVendorItemDefinition[])),
+ JsonSerializable(typeof(SellProfileAcceptedItemDefinition[]))]
 
 /// <summary>
 /// Represents MoongateUOTemplateJsonContext.

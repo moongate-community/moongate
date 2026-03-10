@@ -167,6 +167,11 @@ public sealed class MobileTemplateLoader : IFileLoader
             child.Brain = parent.Brain;
         }
 
+        if (string.IsNullOrWhiteSpace(child.SellProfileId))
+        {
+            child.SellProfileId = parent.SellProfileId;
+        }
+
         if (child.Sounds.Count == 0 && parent.Sounds.Count > 0)
         {
             child.Sounds = new(parent.Sounds);

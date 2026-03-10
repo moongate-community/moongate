@@ -18,19 +18,23 @@ namespace Moongate.Server.Services.Entities;
 /// </summary>
 public sealed class MobileFactoryService : IMobileFactoryService
 {
+    private const string SellProfileIdKey = "sell_profile_id";
     private readonly IMobileTemplateService _mobileTemplateService;
     private readonly INameService _nameService;
     private readonly IPersistenceService _persistenceService;
+    private readonly ISellProfileTemplateService? _sellProfileTemplateService;
 
     public MobileFactoryService(
         IMobileTemplateService mobileTemplateService,
         INameService nameService,
-        IPersistenceService persistenceService
+        IPersistenceService persistenceService,
+        ISellProfileTemplateService? sellProfileTemplateService = null
     )
     {
         _mobileTemplateService = mobileTemplateService;
         _nameService = nameService;
         _persistenceService = persistenceService;
+        _sellProfileTemplateService = sellProfileTemplateService;
     }
 
     /// <inheritdoc />
@@ -91,6 +95,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             mobile.Hits = Math.Min(mobile.Hits, mobile.MaxHits);
         }
 
+        BindSellProfile(mobile, template);
         ApplyTemplateParams(mobile, template);
 
         return mobile;
@@ -195,5 +200,23 @@ public sealed class MobileFactoryService : IMobileFactoryService
                     );
             }
         }
+    }
+
+    private void BindSellProfile(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (string.IsNullOrWhiteSpace(template.SellProfileId))
+        {
+            return;
+        }
+
+        if (_sellProfileTemplateService is null ||
+            !_sellProfileTemplateService.TryGet(template.SellProfileId, out _))
+        {
+            throw new InvalidOperationException(
+                $"Mobile template '{template.Id}' references missing sell profile '{template.SellProfileId}'."
+            );
+        }
+
+        mobile.SetCustomString(SellProfileIdKey, template.SellProfileId);
     }
 }

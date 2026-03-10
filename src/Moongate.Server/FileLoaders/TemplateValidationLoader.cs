@@ -4,6 +4,7 @@ using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
+using Moongate.UO.Data.Templates.SellProfiles;
 using Serilog;
 
 namespace Moongate.Server.FileLoaders;
@@ -17,14 +18,17 @@ public sealed class TemplateValidationLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<TemplateValidationLoader>();
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly ISellProfileTemplateService _sellProfileTemplateService;
 
     public TemplateValidationLoader(
         IItemTemplateService itemTemplateService,
-        IMobileTemplateService mobileTemplateService
+        IMobileTemplateService mobileTemplateService,
+        ISellProfileTemplateService sellProfileTemplateService
     )
     {
         _itemTemplateService = itemTemplateService;
         _mobileTemplateService = mobileTemplateService;
+        _sellProfileTemplateService = sellProfileTemplateService;
     }
 
     public Task LoadAsync()
@@ -32,6 +36,7 @@ public sealed class TemplateValidationLoader : IFileLoader
         var errors = new List<string>();
 
         ValidateItems(errors);
+        ValidateSellProfiles(errors);
         ValidateMobiles(errors);
 
         if (errors.Count == 0)
@@ -142,8 +147,78 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Mobile template '{mobile.Id}' has invalid body: {mobile.Body}.");
             }
 
+            if (!string.IsNullOrWhiteSpace(mobile.SellProfileId) &&
+                !_sellProfileTemplateService.TryGet(mobile.SellProfileId, out _))
+            {
+                errors.Add(
+                    $"Mobile template '{mobile.Id}' references missing sell profile '{mobile.SellProfileId}'."
+                );
+            }
+
             ValidateFixedEquipment(mobile, errors);
             ValidateRandomEquipment(mobile, errors);
+        }
+    }
+
+    private void ValidateSellProfiles(List<string> errors)
+    {
+        foreach (var sellProfile in _sellProfileTemplateService.GetAll())
+        {
+            ValidateSellProfileVendorItems(sellProfile, errors);
+            ValidateSellProfileAcceptedItems(sellProfile, errors);
+        }
+    }
+
+    private void ValidateSellProfileAcceptedItems(SellProfileTemplateDefinition sellProfile, List<string> errors)
+    {
+        foreach (var acceptedItem in sellProfile.AcceptedItems)
+        {
+            if (acceptedItem.Price < 0)
+            {
+                errors.Add(
+                    $"Sell profile '{sellProfile.Id}' has accepted item with negative price ({acceptedItem.Price})."
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(acceptedItem.ItemTemplateId) &&
+                !_itemTemplateService.TryGet(acceptedItem.ItemTemplateId, out _))
+            {
+                errors.Add(
+                    $"Sell profile '{sellProfile.Id}' references missing accepted item template '{acceptedItem.ItemTemplateId}'."
+                );
+            }
+        }
+    }
+
+    private void ValidateSellProfileVendorItems(SellProfileTemplateDefinition sellProfile, List<string> errors)
+    {
+        foreach (var vendorItem in sellProfile.VendorItems)
+        {
+            if (string.IsNullOrWhiteSpace(vendorItem.ItemTemplateId))
+            {
+                errors.Add($"Sell profile '{sellProfile.Id}' has vendor item with empty itemTemplateId.");
+
+                continue;
+            }
+
+            if (!_itemTemplateService.TryGet(vendorItem.ItemTemplateId, out _))
+            {
+                errors.Add(
+                    $"Sell profile '{sellProfile.Id}' references missing vendor item template '{vendorItem.ItemTemplateId}'."
+                );
+            }
+
+            if (vendorItem.Price < 0)
+            {
+                errors.Add($"Sell profile '{sellProfile.Id}' vendor item '{vendorItem.ItemTemplateId}' has negative price.");
+            }
+
+            if (vendorItem.MaxStock < 0)
+            {
+                errors.Add(
+                    $"Sell profile '{sellProfile.Id}' vendor item '{vendorItem.ItemTemplateId}' has negative maxStock."
+                );
+            }
         }
     }
 

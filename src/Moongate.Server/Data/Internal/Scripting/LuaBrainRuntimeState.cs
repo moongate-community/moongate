@@ -42,6 +42,10 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnOutRangeFunction { get; set; }
 
+    public DynValue? OnGetContextMenusFunction { get; set; }
+
+    public DynValue? OnSelectedContextMenuFunction { get; set; }
+
     public Serial MobileId => Mobile.Id;
 
     public Queue<SpeechHeardEvent> PendingSpeech { get; } = new();

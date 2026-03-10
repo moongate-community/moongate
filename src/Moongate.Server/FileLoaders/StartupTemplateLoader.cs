@@ -11,7 +11,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Loads startup templates from <c>templates/startup</c> into <see cref="IStartupTemplateService" />.
 /// </summary>
-[RegisterFileLoader(14)]
+[RegisterFileLoader(25)]
 public sealed class StartupTemplateLoader : IFileLoader
 {
     private readonly ILogger _logger = Log.ForContext<StartupTemplateLoader>();

@@ -3,6 +3,13 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.Network.Packets.Outgoing.World;
 
+public readonly record struct PopupContextMenuEntry(
+    ushort EntryTag,
+    int ClilocId,
+    ushort Flags = 0,
+    ushort? Hue = null
+);
+
 /// <summary>
 /// Builder for General Information packet (0xBF) subcommands.
 /// </summary>
@@ -88,6 +95,75 @@ public static class GeneralInformationPacketBuilder
 
     public static GeneralInformationPacket CreateDisplayPopupContextMenu(ReadOnlySpan<byte> payload)
         => CreateChecked(GeneralInformationSubcommandType.DisplayPopupContextMenu, payload);
+
+    public static GeneralInformationPacket CreateDisplayPopupContextMenu2D(
+        uint serial,
+        IReadOnlyList<PopupContextMenuEntry> entries
+    )
+    {
+        ArgumentNullException.ThrowIfNull(entries);
+
+        if (entries.Count > byte.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(nameof(entries), "Context menu supports at most 255 entries.");
+        }
+
+        var payloadLength = 7;
+
+        foreach (var entry in entries)
+        {
+            payloadLength += 6;
+
+            if (entry.Hue is not null)
+            {
+                payloadLength += 2;
+            }
+        }
+
+        var payload = new byte[payloadLength];
+        payload[0] = 0x00;
+        payload[1] = 0x01;
+        WriteUInt32(payload, 2, serial);
+        payload[6] = (byte)entries.Count;
+
+        var offset = 7;
+
+        foreach (var entry in entries)
+        {
+            if (entry.ClilocId < 3_000_000)
+            {
+                throw new ArgumentOutOfRangeException(nameof(entries), "Cliloc id must be >= 3000000.");
+            }
+
+            var clilocOffset = entry.ClilocId - 3_000_000;
+
+            if (clilocOffset > ushort.MaxValue)
+            {
+                throw new ArgumentOutOfRangeException(nameof(entries), "Cliloc offset must fit in UInt16.");
+            }
+
+            WriteUInt16(payload, offset, entry.EntryTag);
+            WriteUInt16(payload, offset + 2, (ushort)clilocOffset);
+
+            var flags = entry.Flags;
+
+            if (entry.Hue is not null)
+            {
+                flags |= 0x20;
+            }
+
+            WriteUInt16(payload, offset + 4, flags);
+            offset += 6;
+
+            if (entry.Hue is not null)
+            {
+                WriteUInt16(payload, offset, entry.Hue.Value);
+                offset += 2;
+            }
+        }
+
+        return CreateChecked(GeneralInformationSubcommandType.DisplayPopupContextMenu, payload);
+    }
 
     public static GeneralInformationPacket CreateEnableMapDiff(ReadOnlySpan<byte> payload)
         => CreateChecked(GeneralInformationSubcommandType.EnableMapDiff, payload);

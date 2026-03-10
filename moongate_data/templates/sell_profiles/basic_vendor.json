@@ -1,0 +1,24 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.basic",
+    "name": "Basic Vendor",
+    "category": "vendors",
+    "description": "Base sell profile for generic vendors.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "apple",
+        "price": 5,
+        "maxStock": 20,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "apple",
+        "price": 2,
+        "enabled": true
+      }
+    ]
+  }
+]

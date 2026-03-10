@@ -53,6 +53,8 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
 
     public string Brain { get; set; } = "None";
 
+    public string? SellProfileId { get; set; }
+
     public Dictionary<MobileSoundType, int> Sounds { get; set; } = new();
 
     [JsonConverter(typeof(GoldValueSpecJsonConverter))]
