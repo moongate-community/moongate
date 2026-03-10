@@ -26,6 +26,7 @@ This is the main documentation portal for Moongate v2.
 ## Scripting
 
 - [Scripting Overview](articles/scripting/overview.md)
+- [Vendor and Context Menus](articles/scripting/vendor-context-menus.md)
 - [NPC Behaviors](articles/scripting/npc-behaviors.md)
 - [Gump Tutorial](articles/scripting/gump-tutorial.md)
 - [Script Modules](articles/scripting/modules.md)

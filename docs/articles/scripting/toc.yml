@@ -1,6 +1,8 @@
 items:
   - name: Overview
     href: overview.md
+  - name: Vendor and Context Menus
+    href: vendor-context-menus.md
   - name: Modules
     href: modules.md
   - name: API Reference

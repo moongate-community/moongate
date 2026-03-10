@@ -46,6 +46,9 @@ On repeated violations, session is disconnected.
 ## Wired `0xBF` Subcommands
 
 - `0x06` Party System
+- `0x13` Request Popup Context Menu
+- `0x14` Display Popup Context Menu (server -> client)
+- `0x15` Popup Entry Selection
 - `0x1A` Stat Lock Change
 - `0x2C` Use Targeted Item
 - `0x2D` Cast Targeted Spell

@@ -46,6 +46,8 @@
   items:
   - name: Overview
     href: articles/scripting/overview.md
+  - name: Vendor and Context Menus
+    href: articles/scripting/vendor-context-menus.md
   - name: NPC Behaviors
     href: articles/scripting/npc-behaviors.md
   - name: Script Modules
