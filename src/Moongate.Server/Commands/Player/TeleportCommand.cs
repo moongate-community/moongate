@@ -70,7 +70,10 @@ public sealed class TeleportCommand : ICommandExecutor
         character.MapId = mapId;
         character.Location = targetLocation;
 
-        _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(character));
+        if (oldMapId == mapId)
+        {
+            _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(character));
+        }
 
         await _gameEventBusService.PublishAsync(
             new MobilePositionChangedEvent(

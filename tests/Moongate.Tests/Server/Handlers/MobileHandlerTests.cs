@@ -778,10 +778,11 @@ public sealed class MobileHandlerTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets, Has.Count.EqualTo(3));
                 Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<ServerChangePacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<DrawPlayerPacket>());
+                Assert.That(packets[2].Packet, Is.TypeOf<ServerChangePacket>());
             }
         );
     }
@@ -831,10 +832,11 @@ public sealed class MobileHandlerTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(packets, Has.Count.EqualTo(2));
+                Assert.That(packets, Has.Count.EqualTo(3));
                 Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<ServerChangePacket>());
+                Assert.That(packets[1].Packet, Is.TypeOf<DrawPlayerPacket>());
+                Assert.That(packets[2].Packet, Is.TypeOf<ServerChangePacket>());
             }
         );
     }
