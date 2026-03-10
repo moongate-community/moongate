@@ -56,8 +56,8 @@ public sealed class MapImageService : IMapImageService
                         var land = landBlock[(tileY << 3) + tileX];
                         var topZ = land.Z;
                         var (r, g, b) = land.ID > 0
-                            ? RadarCol.GetLandColor(land.ID)
-                            : ((byte)0, (byte)0, (byte)0);
+                                            ? RadarCol.GetLandColor(land.ID)
+                                            : ((byte)0, (byte)0, (byte)0);
 
                         var statics = staticBlock[tileX][tileY];
 
