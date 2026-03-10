@@ -11,8 +11,8 @@ local state = {
 }
 
 local MESSAGES = {
-    "Miaaow! I am hungry!",
-    "Meow... I want my crunchy snacks!",
+    "Miaaow! Voglio uscire in terrazza!",
+    "Meow... Mi nascondo nell armadio!",
 }
 
 local SOUNDS = {
@@ -33,14 +33,18 @@ function vega.brain_loop(npc_id)
             end
 
             if now - state.last_speech_ms >= SPEECH_INTERVAL_MS then
-                local index = random.int(1, #MESSAGES)
-                npc:say(MESSAGES[index])
+                local message = random.element(MESSAGES)
+                if message ~= nil then
+                    npc:say(message)
+                end
                 state.last_speech_ms = now
             end
 
             if now - state.last_sound_ms >= SOUND_INTERVAL_MS then
-                local sound_index = random.int(1, #SOUNDS)
-                npc:play_sound(SOUNDS[sound_index])
+                local sound_id = random.element(SOUNDS)
+                if sound_id ~= nil then
+                    npc:play_sound(sound_id)
+                end
                 state.last_sound_ms = now
             end
         end

@@ -142,8 +142,6 @@ public sealed class TeleportCommandTests
             }
         );
 
-        Assert.That(outgoingPacketQueue.TryDequeue(out var first), Is.True);
-        Assert.That(first.Packet, Is.TypeOf<DrawPlayerPacket>());
         Assert.That(outgoingPacketQueue.TryDequeue(out _), Is.False);
     }
 }

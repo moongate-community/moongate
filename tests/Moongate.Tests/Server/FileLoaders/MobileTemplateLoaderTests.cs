@@ -80,6 +80,55 @@ public class MobileTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseMobileHasSellProfile_ShouldInheritSellProfileId()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "vendors.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_vendor",
+                "name": "Base Vendor",
+                "body": "0x0190",
+                "sellProfileId": "vendor.blacksmith"
+              },
+              {
+                "type": "mobile",
+                "id": "blacksmith_vendor",
+                "base_mobile": "base_vendor",
+                "name": "Blacksmith Vendor"
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("blacksmith_vendor", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.SellProfileId, Is.EqualTo("vendor.blacksmith"));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseMobileIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();

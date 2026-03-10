@@ -324,6 +324,8 @@ public class MobileHandler
             GeneralInformationFactory.CreateSetCursorHueSetMap((byte)gameEvent.MapId)
         );
 
+        _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
+
         var map = Map.GetMap(gameEvent.MapId);
         var mapWidth = (ushort)Math.Clamp(map?.Width ?? 0, ushort.MinValue, ushort.MaxValue);
         var mapHeight = (ushort)Math.Clamp(map?.Height ?? 0, ushort.MinValue, ushort.MaxValue);

@@ -16,4 +16,10 @@ public sealed class MoongateHttpActiveSession
     public required string CharacterId { get; init; }
 
     public required string CharacterName { get; init; }
+
+    public required int MapId { get; init; }
+
+    public required int X { get; init; }
+
+    public required int Y { get; init; }
 }

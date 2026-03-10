@@ -123,6 +123,29 @@ public class MobileServiceTests
             _ = range;
         }
 
+        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
+        {
+            _ = mobile;
+            _ = requester;
+
+            return [];
+        }
+
+        public bool TryHandleContextMenuSelection(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester,
+            string menuKey,
+            long sessionId
+        )
+        {
+            _ = mobile;
+            _ = requester;
+            _ = menuKey;
+            _ = sessionId;
+
+            return false;
+        }
+
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = gameEvent;

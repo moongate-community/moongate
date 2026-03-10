@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Events.Interaction;
 using Moongate.Server.Data.Events.Party;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Session;
@@ -13,6 +14,7 @@ using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Moongate.UO.Data.Version;
 
 namespace Moongate.Server.Handlers;
 
@@ -51,6 +53,14 @@ public class GeneralInformationHandler : BasePacketListener
                 break;
             case GeneralInformationSubcommandType.StatLockChange:
                 await HandleStatLockChangeAsync(session, payload);
+
+                break;
+            case GeneralInformationSubcommandType.RequestPopupMenu:
+                await HandleRequestPopupMenuAsync(session, payload);
+
+                break;
+            case GeneralInformationSubcommandType.PopupEntrySelection:
+                await HandlePopupEntrySelectionAsync(session, payload);
 
                 break;
             case GeneralInformationSubcommandType.UseTargetedItem:
@@ -141,6 +151,53 @@ public class GeneralInformationHandler : BasePacketListener
         return _gameEventBusService.PublishAsync(
             new StatLockChangeRequestedEvent(session.SessionId, (Stat)statIndex, (UOSkillLock)lockState)
         );
+    }
+
+    private ValueTask HandleRequestPopupMenuAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (!SupportsContextMenu(session))
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        if (payload.Length != 4)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload);
+
+        return _gameEventBusService.PublishAsync(new ContextMenuRequestedEvent(session.SessionId, targetSerial));
+    }
+
+    private ValueTask HandlePopupEntrySelectionAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (!SupportsContextMenu(session))
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        if (payload.Length != 6)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload);
+        var entryTag = BinaryPrimitives.ReadUInt16BigEndian(payload[4..]);
+
+        return _gameEventBusService.PublishAsync(
+            new ContextMenuEntrySelectedEvent(session.SessionId, targetSerial, entryTag)
+        );
+    }
+
+    private static bool SupportsContextMenu(GameSession session)
+    {
+        if (session.ClientVersion is null)
+        {
+            return false;
+        }
+
+        return session.ClientVersion.ProtocolChanges.HasFlag(ProtocolChanges.StygianAbyss);
     }
 
     private ValueTask HandleUseTargetedItemAsync(GameSession session, ReadOnlySpan<byte> payload)

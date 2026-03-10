@@ -1,5 +1,6 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.UO.Data.Types;
+using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
 
@@ -39,5 +40,25 @@ public sealed class RandomModule
         }
 
         return Random.Shared.Next(min, max + 1);
+    }
+
+    [ScriptFunction("element", "Returns a random element from an array-like Lua table (1..n), or nil if empty.")]
+    public DynValue Element(Table? values)
+    {
+        if (values is null)
+        {
+            return DynValue.Nil;
+        }
+
+        var count = values.Length;
+
+        if (count <= 0)
+        {
+            return DynValue.Nil;
+        }
+
+        var index = Random.Shared.Next(1, count + 1);
+
+        return values.Get(index);
     }
 }

@@ -693,8 +693,6 @@ public class PersistenceUnitOfWorkTests
                 MaxHits = 60,
                 MaxMana = 40,
                 MaxStamina = 50,
-                Level = 12,
-                Experience = 987654,
                 SkillPoints = 8,
                 StatPoints = 6,
                 FireResistance = 15,
@@ -787,8 +785,6 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.MaxHits, Is.EqualTo(60));
                 Assert.That(loadedMobile.MaxMana, Is.EqualTo(40));
                 Assert.That(loadedMobile.MaxStamina, Is.EqualTo(50));
-                Assert.That(loadedMobile.Level, Is.EqualTo(12));
-                Assert.That(loadedMobile.Experience, Is.EqualTo(987654));
                 Assert.That(loadedMobile.SkillPoints, Is.EqualTo(8));
                 Assert.That(loadedMobile.StatPoints, Is.EqualTo(6));
                 Assert.That(loadedMobile.FireResistance, Is.EqualTo(15));

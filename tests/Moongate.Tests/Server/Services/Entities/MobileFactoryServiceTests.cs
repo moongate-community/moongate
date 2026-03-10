@@ -330,6 +330,91 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_WhenSellProfileIsConfigured_ShouldBindSellProfileCustomProperty()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "vendor_with_profile",
+                Name = "Vendor",
+                Category = "human",
+                Description = "vendor",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                SellProfileId = "vendor.blacksmith"
+            }
+        );
+
+        var sellProfileService = new SellProfileTemplateService();
+        sellProfileService.Upsert(
+            new()
+            {
+                Id = "vendor.blacksmith",
+                Name = "Blacksmith Vendor",
+                Category = "vendors",
+                Description = "blacksmith"
+            }
+        );
+
+        var service = new MobileFactoryService(
+            templateService,
+            new TestNameService(),
+            persistence,
+            sellProfileService
+        );
+
+        var mobile = service.CreateMobileFromTemplate("vendor_with_profile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetCustomString("sell_profile_id", out var profileId), Is.True);
+                Assert.That(profileId, Is.EqualTo("vendor.blacksmith"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenSellProfileIsMissing_ShouldThrow()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "vendor_with_profile",
+                Name = "Vendor",
+                Category = "human",
+                Description = "vendor",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                SellProfileId = "vendor.missing"
+            }
+        );
+
+        var sellProfileService = new SellProfileTemplateService();
+        var service = new MobileFactoryService(
+            templateService,
+            new TestNameService(),
+            persistence,
+            sellProfileService
+        );
+
+        Assert.That(
+            () => service.CreateMobileFromTemplate("vendor_with_profile"),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("missing sell profile")
+        );
+    }
+
+    [Test]
     public async Task CreatePlayerMobile_ShouldMapPacketFieldsAndAllocateSerial()
     {
         using var temp = new TempDirectory();

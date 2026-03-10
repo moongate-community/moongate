@@ -76,6 +76,8 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public string ScriptId { get; set; }
 
+    public List<string> FlippableItemIds { get; set; } = [];
+
     public List<string> Tags { get; set; } = [];
 
     public decimal Weight { get; set; }

@@ -103,6 +103,78 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseItemHasFlippableItemIds_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "base");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "flippable.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "test",
+                "id": "base_door",
+                "name": "Base Door",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0675",
+                "lootType": "Regular",
+                "scriptId": "items.door",
+                "tags": [],
+                "weight": 1.0,
+                "flippableItemIds": ["0x0675", "0x0676"]
+              },
+              {
+                "type": "item",
+                "category": "test",
+                "id": "door_child",
+                "base_item": "base_door",
+                "name": "Door Child",
+                "description": "child",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0677",
+                "lootType": "Regular",
+                "scriptId": "items.door_child",
+                "tags": [],
+                "weight": 1.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("door_child", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.FlippableItemIds, Is.EqualTo(new[] { "0x0675", "0x0676" }));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();

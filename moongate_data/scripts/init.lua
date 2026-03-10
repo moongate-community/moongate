@@ -1,3 +1,7 @@
+require("ai.behavior")
+require("ai.behaviors")
+require("ai.brains.guard")
+require("ai.brains.utility_npc")
 require("ai.orion")
 require("ai.vega")
 require("commands.gm.eclipse")

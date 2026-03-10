@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Events.Interaction;
 using Moongate.Server.Data.Events.Party;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Session;
@@ -11,6 +12,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Version;
 
 namespace Moongate.Tests.Server.Handlers;
 
@@ -210,6 +212,62 @@ public class GeneralInformationHandlerTests
             {
                 Assert.That(handled, Is.True);
                 Assert.That(eventBus.Events.OfType<MobilePlayAnimationEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldPublishContextMenuRequestedEvent_ForSubcommand13()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new GeneralInformationHandler(new BasePacketListenerTestOutgoingPacketQueue(), eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        var targetSerial = (Serial)0x00000002u;
+        var packet = GeneralInformationPacket.Create(
+            GeneralInformationSubcommandType.RequestPopupMenu,
+            new byte[] { 0x00, 0x00, 0x00, 0x02 }
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+        var gameEvent = eventBus.Events.OfType<ContextMenuRequestedEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(gameEvent.TargetSerial, Is.EqualTo(targetSerial));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldPublishContextMenuEntrySelectedEvent_ForSubcommand15()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new GeneralInformationHandler(new BasePacketListenerTestOutgoingPacketQueue(), eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        var targetSerial = (Serial)0x00000009u;
+        const ushort entryTag = 3;
+        var packet = GeneralInformationPacket.Create(
+            GeneralInformationSubcommandType.PopupEntrySelection,
+            new byte[] { 0x00, 0x00, 0x00, 0x09, 0x00, 0x03 }
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+        var gameEvent = eventBus.Events.OfType<ContextMenuEntrySelectedEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(gameEvent.TargetSerial, Is.EqualTo(targetSerial));
+                Assert.That(gameEvent.EntryTag, Is.EqualTo(entryTag));
             }
         );
     }

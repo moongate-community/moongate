@@ -23,6 +23,16 @@ public class ContainerLayoutSystem
     public static readonly Dictionary<string, ContainerSize> ContainerSizesById = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
+    /// Merged container definitions by item id.
+    /// </summary>
+    public static readonly Dictionary<int, ContainerBagDef> ContainerBagDefsByItemId = new();
+
+    /// <summary>
+    /// Merged container definitions by profile id.
+    /// </summary>
+    public static readonly Dictionary<string, ContainerBagDef> ContainerBagDefsById = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
     /// Enhanced version of your original function with intelligent positioning
     /// </summary>
     public static void AddContainerItems(

@@ -66,10 +66,6 @@ public sealed class MobileSnapshot
 
     public int MaxStamina { get; set; }
 
-    public int Level { get; set; }
-
-    public long Experience { get; set; }
-
     public int SkillPoints { get; set; }
 
     public int StatPoints { get; set; }
@@ -95,6 +91,16 @@ public sealed class MobileSnapshot
     public ItemCustomPropertySnapshot[] CustomProperties { get; set; } = [];
 
     public bool IsWarMode { get; set; }
+
+    public int Hunger { get; set; }
+
+    public int Thirst { get; set; }
+
+    public int Fame { get; set; }
+
+    public int Karma { get; set; }
+
+    public int Kills { get; set; }
 
     public bool IsHidden { get; set; }
 

@@ -32,6 +32,7 @@ public sealed class LuaBrainRunner
     private const int InRangeEnterDistance = 3;
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
+    private const int MaxContextMenuEntries = 32;
     private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
     private readonly Lock _syncRoot = new();
     private readonly ITimerService _timerService;
@@ -111,6 +112,98 @@ public sealed class LuaBrainRunner
                 )
             );
         }
+    }
+
+    /// <inheritdoc />
+    public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        if (!_supportsMoonSharpRuntime || _luaScript is null)
+        {
+            return [];
+        }
+
+        LuaBrainRuntimeState? state;
+
+        lock (_syncRoot)
+        {
+            if (!_states.TryGetValue(mobile.Id, out state))
+            {
+                return [];
+            }
+        }
+
+        if (state.OnGetContextMenusFunction is null)
+        {
+            return [];
+        }
+
+        try
+        {
+            var payload = BuildContextMenuPayload(state.MobileId, requester, 0, null);
+            var result = _luaScript.Call(state.OnGetContextMenusFunction, payload);
+
+            return ParseContextMenuEntries(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Lua get_context_menus failed for mobile {MobileId}", mobile.Id);
+
+            return [];
+        }
+    }
+
+    /// <inheritdoc />
+    public bool TryHandleContextMenuSelection(
+        UOMobileEntity mobile,
+        UOMobileEntity? requester,
+        string menuKey,
+        long sessionId
+    )
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        if (string.IsNullOrWhiteSpace(menuKey) || !_supportsMoonSharpRuntime || _luaScript is null)
+        {
+            return false;
+        }
+
+        LuaBrainRuntimeState? state;
+
+        lock (_syncRoot)
+        {
+            if (!_states.TryGetValue(mobile.Id, out state))
+            {
+                return false;
+            }
+        }
+
+        var payload = BuildContextMenuPayload(state.MobileId, requester, sessionId, menuKey);
+
+        try
+        {
+            if (state.OnSelectedContextMenuFunction is not null)
+            {
+                _luaScript.Call(state.OnSelectedContextMenuFunction, menuKey, payload);
+
+                return true;
+            }
+
+            if (state.OnEventFunction is not null)
+            {
+                var requesterId = requester is null ? 0u : (uint)requester.Id;
+                _luaScript.Call(state.OnEventFunction, "context_menu_selected", requesterId, payload);
+
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Lua on_selected_context_menu failed for mobile {MobileId} key {MenuKey}", mobile.Id, menuKey);
+        }
+
+        return false;
     }
 
     private void EnqueueOutRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = InRangeEnterDistance)
@@ -632,8 +725,10 @@ public sealed class LuaBrainRunner
             state.OnDeathFunction = null;
             state.OnSpawnFunction = null;
             state.OnInRangeFunction = null;
-            state.OnOutRangeFunction = null;
-            state.IsFaulted = true;
+                state.OnOutRangeFunction = null;
+                state.OnGetContextMenusFunction = null;
+                state.OnSelectedContextMenuFunction = null;
+                state.IsFaulted = true;
 
             return;
         }
@@ -643,6 +738,16 @@ public sealed class LuaBrainRunner
         state.OnSpawnFunction = ResolveTableFunction(brainTable, "on_spawn", "OnSpawn");
         state.OnInRangeFunction = ResolveTableFunction(brainTable, "in_range", "on_in_range", "OnInRange");
         state.OnOutRangeFunction = ResolveTableFunction(brainTable, "out_range", "on_out_range", "OnOutRange");
+        state.OnGetContextMenusFunction = ResolveTableFunction(
+            brainTable,
+            "get_context_menus",
+            "GetContextMenus"
+        );
+        state.OnSelectedContextMenuFunction = ResolveTableFunction(
+            brainTable,
+            "on_selected_context_menu",
+            "OnSelectedContextMenu"
+        );
         state.OnEventFunction = ResolveTableFunction(brainTable, "on_event", "OnEvent");
 
         var brainLoop = ResolveTableFunction(brainTable, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
@@ -684,6 +789,115 @@ public sealed class LuaBrainRunner
         }
 
         return _luaScript.Globals.Get(brainTableName) is { Type: DataType.Table } table ? table : null;
+    }
+
+    private static Dictionary<string, object?> BuildContextMenuPayload(
+        Serial targetMobileId,
+        UOMobileEntity? requester,
+        long sessionId,
+        string? menuKey
+    )
+        => new()
+        {
+            ["target_mobile_id"] = (uint)targetMobileId,
+            ["session_id"] = sessionId,
+            ["menu_key"] = menuKey,
+            ["requester"] = requester is null
+                                ? null
+                                : new Dictionary<string, object?>
+                                {
+                                    ["mobile_id"] = (uint)requester.Id,
+                                    ["name"] = requester.Name,
+                                    ["map_id"] = requester.MapId,
+                                    ["location"] = new Dictionary<string, int>
+                                    {
+                                        ["x"] = requester.Location.X,
+                                        ["y"] = requester.Location.Y,
+                                        ["z"] = requester.Location.Z
+                                    }
+                                }
+        };
+
+    private static IReadOnlyList<LuaBrainContextMenuEntry> ParseContextMenuEntries(DynValue result)
+    {
+        if (result.Type != DataType.Table || result.Table is null)
+        {
+            return [];
+        }
+
+        var entries = new List<LuaBrainContextMenuEntry>(capacity: 8);
+
+        for (var index = 1; index <= MaxContextMenuEntries; index++)
+        {
+            var value = result.Table.Get(index);
+
+            if (value.IsNil())
+            {
+                break;
+            }
+
+            if (!TryParseContextMenuEntry(value, out var entry))
+            {
+                continue;
+            }
+
+            entries.Add(entry);
+        }
+
+        return entries;
+    }
+
+    private static bool TryParseContextMenuEntry(DynValue value, out LuaBrainContextMenuEntry entry)
+    {
+        entry = null!;
+
+        if (value.Type == DataType.String && !string.IsNullOrWhiteSpace(value.String))
+        {
+            var keyText = value.String.Trim();
+            entry = new(keyText, keyText);
+
+            return true;
+        }
+
+        if (value.Type != DataType.Table || value.Table is null)
+        {
+            return false;
+        }
+
+        var keyValue = value.Table.Get("key");
+        var textValue = value.Table.Get("text");
+
+        var key = keyValue.Type == DataType.String ? keyValue.String : null;
+        var text = textValue.Type == DataType.String ? textValue.String : null;
+
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            var tupleKey = value.Table.Get(1);
+
+            if (tupleKey.Type == DataType.String)
+            {
+                key = tupleKey.String;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            var tupleText = value.Table.Get(2);
+
+            if (tupleText.Type == DataType.String)
+            {
+                text = tupleText.String;
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        entry = new(key.Trim(), text.Trim());
+
+        return true;
     }
 
     private string ResolveBrainTableName(string brainId)

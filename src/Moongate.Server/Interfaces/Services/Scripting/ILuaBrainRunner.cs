@@ -46,6 +46,29 @@ public interface ILuaBrainRunner
     void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3);
 
     /// <summary>
+    /// Gets custom context menu entries exposed by a mobile brain script.
+    /// </summary>
+    /// <param name="mobile">Target mobile.</param>
+    /// <param name="requester">Requesting player/mobile context.</param>
+    /// <returns>Custom context menu entries in display order.</returns>
+    IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester);
+
+    /// <summary>
+    /// Dispatches a selected custom context menu key to the mobile brain script.
+    /// </summary>
+    /// <param name="mobile">Target mobile.</param>
+    /// <param name="requester">Requesting player/mobile context.</param>
+    /// <param name="menuKey">Selected menu key.</param>
+    /// <param name="sessionId">Requesting session id.</param>
+    /// <returns><c>true</c> when handled by script; otherwise <c>false</c>.</returns>
+    bool TryHandleContextMenuSelection(
+        UOMobileEntity mobile,
+        UOMobileEntity? requester,
+        string menuKey,
+        long sessionId
+    );
+
+    /// <summary>
     /// Registers or updates a mobile brain runtime binding.
     /// </summary>
     /// <param name="mobile">Target mobile.</param>

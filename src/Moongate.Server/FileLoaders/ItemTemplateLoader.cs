@@ -135,6 +135,11 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.Container = [..parent.Container];
         }
 
+        if (child.FlippableItemIds.Count == 0 && parent.FlippableItemIds.Count > 0)
+        {
+            child.FlippableItemIds = [..parent.FlippableItemIds];
+        }
+
         child.Params = MergeParams(parent.Params, child.Params);
 
         if (child.Hue.Equals(default))

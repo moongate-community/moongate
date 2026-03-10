@@ -112,6 +112,10 @@ log.info("Active players: " .. count)
 
 ## Script Examples (NPC / Item / Gump / Command)
 
+For the behavior-based NPC AI architecture, see [NPC Behaviors](npc-behaviors.md).
+For vendor sell profiles and context menu flow (native + custom Lua), see
+[Vendor and Context Menus](vendor-context-menus.md).
+
 ### NPC Brain Example
 
 `mobileTemplate.brain = "orion"` resolves to table `orion` in `scripts/ai/orion.lua`.
