@@ -2,6 +2,7 @@ using System.Globalization;
 using Moongate.Core.Extensions.Strings;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -51,7 +52,7 @@ public sealed class ItemFactoryService : IItemFactoryService
             Visibility = template.Visibility,
             ItemId = ParseItemId(template.ItemId),
             Hue = template.Hue.Resolve(),
-            GumpId = ParseOptionalInt(template.GumpId),
+            GumpId = ResolveGumpId(template),
             ScriptId = template.ScriptId,
             Location = Point3D.Zero,
             ParentContainerId = Serial.Zero,
@@ -227,5 +228,30 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
+    }
+
+    private static int? ResolveGumpId(ItemTemplateDefinition template)
+    {
+        var templateGumpId = ParseOptionalInt(template.GumpId);
+
+        if (templateGumpId.HasValue)
+        {
+            return templateGumpId;
+        }
+
+        var itemId = ParseItemId(template.ItemId);
+
+        if (ContainerLayoutSystem.ContainerBagDefsByItemId.TryGetValue(itemId, out var byItemId))
+        {
+            return byItemId.GumpId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(template.ContainerLayoutId) &&
+            ContainerLayoutSystem.ContainerBagDefsById.TryGetValue(template.ContainerLayoutId.Trim(), out var byLayoutId))
+        {
+            return byLayoutId.GumpId;
+        }
+
+        return null;
     }
 }

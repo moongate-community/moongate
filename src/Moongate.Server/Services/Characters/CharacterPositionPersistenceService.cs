@@ -69,9 +69,22 @@ public sealed class CharacterPositionPersistenceService
             return;
         }
 
+        var persistedMobile = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(
+            gameEvent.MobileId,
+            cancellationToken
+        );
+
+        if (persistedMobile is null)
+        {
+            persistedMobile = session.Character;
+        }
+
+        persistedMobile.Location = gameEvent.NewLocation;
+        persistedMobile.MapId = gameEvent.MapId;
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(persistedMobile, cancellationToken);
+
         session.Character.Location = gameEvent.NewLocation;
         session.Character.MapId = gameEvent.MapId;
-        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(session.Character, cancellationToken);
 
         lock (_sync)
         {

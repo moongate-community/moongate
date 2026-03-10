@@ -5,6 +5,7 @@ using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Services.Templates;
@@ -268,6 +269,52 @@ public class ItemFactoryServiceTests
         var expected = TileData.ItemTable[item.ItemId][UOTileFlag.Generic];
 
         Assert.That(item.IsStackable, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldResolveContainerGumpIdFromContainerDefinitions_WhenTemplateGumpIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "gm_like_bag",
+                Name = "GM Like Bag",
+                Category = "gm",
+                Description = "test",
+                ItemId = "0x0E76",
+                ContainerLayoutId = "bag",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.gm_like_bag",
+                Weight = 1
+            }
+        );
+
+        try
+        {
+            ContainerLayoutSystem.ContainerBagDefsByItemId[0x0E76] = new()
+            {
+                Id = "item_0e76",
+                ItemId = 0x0E76,
+                Name = "Bag 0x0E76",
+                Width = 6,
+                Height = 6,
+                GumpId = 0x003D
+            };
+
+            var service = new ItemFactoryService(templateService, persistence);
+            var item = service.CreateItemFromTemplate("gm_like_bag");
+
+            Assert.That(item.GumpId, Is.EqualTo(0x003D));
+        }
+        finally
+        {
+            _ = ContainerLayoutSystem.ContainerBagDefsByItemId.Remove(0x0E76);
+        }
     }
 
     [Test]
