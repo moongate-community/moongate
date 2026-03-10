@@ -416,7 +416,10 @@ internal static class MoongateHttpRouteExtensions
                                           Username = account?.Username ?? string.Empty,
                                           AccountType = session.AccountType.ToString(),
                                           CharacterId = session.CharacterId.Value.ToString(),
-                                          CharacterName = session.Character?.Name ?? string.Empty
+                                          CharacterName = session.Character?.Name ?? string.Empty,
+                                          MapId = session.Character?.MapId ?? 0,
+                                          X = session.Character?.Location.X ?? 0,
+                                          Y = session.Character?.Location.Y ?? 0
                                       };
                                   }
                               )

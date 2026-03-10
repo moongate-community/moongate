@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { Button, Spinner } from '@heroui/react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
-import { rawApiFetch } from '../api/client'
+import { rawApiFetch, api } from '../api/client'
+
+interface ActiveSession {
+  sessionId: number
+  characterName: string
+  mapId: number
+  x: number
+  y: number
+}
 
 const MAPS = [
   { id: 0, name: 'Felucca',  width: 7168, height: 4096 },
@@ -20,6 +28,7 @@ export function MapsPage() {
   const blobUrlRef = useRef<string | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
+  const [players, setPlayers] = useState<ActiveSession[]>([])
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return
@@ -76,6 +85,26 @@ export function MapsPage() {
       if (blobUrlRef.current) {
         URL.revokeObjectURL(blobUrlRef.current)
       }
+    }
+  }, [])
+
+  useEffect(() => {
+    let mounted = true
+
+    async function pollPlayers() {
+      try {
+        const sessions = await api.get<ActiveSession[]>('/sessions/active')
+        if (mounted) setPlayers(sessions)
+      } catch {
+        // ignore polling errors silently
+      }
+    }
+
+    pollPlayers()
+    const id = window.setInterval(pollPlayers, 5000)
+    return () => {
+      mounted = false
+      window.clearInterval(id)
     }
   }, [])
 
@@ -181,8 +210,54 @@ export function MapsPage() {
               const mapX = mousePos ? Math.max(0, Math.min(selectedMap.width - 1, Math.round((mousePos.x - positionX) / scale))) : 0
               const mapY = mousePos ? Math.max(0, Math.min(selectedMap.height - 1, Math.round((mousePos.y - positionY) / scale))) : 0
 
+              const visiblePlayers = players.filter((p) => p.mapId === selectedMapId)
+
               return (
               <>
+                {/* Player markers */}
+                {visiblePlayers.map((p) => {
+                  const sx = positionX + p.x * scale
+                  const sy = positionY + p.y * scale
+                  return (
+                    <div
+                      key={p.sessionId}
+                      style={{
+                        position: 'absolute',
+                        left: sx,
+                        top: sy,
+                        transform: 'translate(-50%, -50%)',
+                        pointerEvents: 'none',
+                        zIndex: 25,
+                      }}
+                    >
+                      {/* Dot */}
+                      <div style={{
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        background: '#22c55e',
+                        boxShadow: '0 0 6px #22c55e',
+                        margin: '0 auto',
+                      }} />
+                      {/* Name */}
+                      <div style={{
+                        marginTop: '3px',
+                        background: 'rgba(10,10,16,0.85)',
+                        border: '1px solid rgba(34,197,94,0.4)',
+                        borderRadius: '3px',
+                        padding: '1px 6px',
+                        fontFamily: 'monospace',
+                        fontSize: '10px',
+                        color: '#22c55e',
+                        whiteSpace: 'nowrap',
+                        textAlign: 'center',
+                      }}>
+                        {p.characterName || '?'}
+                      </div>
+                    </div>
+                  )
+                })}
+
                 {/* Crosshair */}
                 {mousePos && (
                   <>
