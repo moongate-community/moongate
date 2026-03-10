@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Button, Spinner } from '@heroui/react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { rawApiFetch } from '../api/client'
@@ -18,6 +18,18 @@ export function MapsPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const blobUrlRef = useRef<string | null>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return
+    const rect = containerRef.current.getBoundingClientRect()
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top })
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    setMousePos(null)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -127,12 +139,15 @@ export function MapsPage() {
 
       {/* Viewer */}
       <div
+        ref={containerRef}
         className="flex-1 rounded-xl overflow-hidden relative"
         style={{
           border: '1px solid rgba(106,165,218,0.15)',
           background: '#0a0a10',
           minHeight: '400px',
         }}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
       >
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center z-10">
@@ -161,8 +176,46 @@ export function MapsPage() {
             wheel={{ step: 0.1 }}
             centerOnInit
           >
-            {({ resetTransform }) => (
+            {({ resetTransform, instance }) => {
+              const { scale, positionX, positionY } = instance.transformState
+              const mapX = mousePos ? Math.max(0, Math.min(selectedMap.width - 1, Math.round((mousePos.x - positionX) / scale))) : 0
+              const mapY = mousePos ? Math.max(0, Math.min(selectedMap.height - 1, Math.round((mousePos.y - positionY) / scale))) : 0
+
+              return (
               <>
+                {/* Crosshair */}
+                {mousePos && (
+                  <>
+                    <div style={{
+                      position: 'absolute', left: mousePos.x, top: 0, bottom: 0,
+                      width: '1px', background: 'rgba(106,165,218,0.4)',
+                      pointerEvents: 'none', zIndex: 20,
+                    }} />
+                    <div style={{
+                      position: 'absolute', top: mousePos.y, left: 0, right: 0,
+                      height: '1px', background: 'rgba(106,165,218,0.4)',
+                      pointerEvents: 'none', zIndex: 20,
+                    }} />
+                    <div style={{
+                      position: 'absolute',
+                      left: mousePos.x + 12,
+                      top: mousePos.y + 12,
+                      pointerEvents: 'none', zIndex: 20,
+                      background: 'rgba(10,10,16,0.88)',
+                      border: '1px solid rgba(106,165,218,0.35)',
+                      borderRadius: '3px',
+                      padding: '2px 8px',
+                      fontFamily: 'monospace',
+                      fontSize: '11px',
+                      color: '#6aa5da',
+                      letterSpacing: '0.08em',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {mapX} , {mapY}
+                    </div>
+                  </>
+                )}
+
                 <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
                   <span className="font-mono text-xs" style={{ color: 'rgba(185,187,211,0.4)' }}>
                     {selectedMap.width} × {selectedMap.height}
@@ -194,7 +247,8 @@ export function MapsPage() {
                   />
                 </TransformComponent>
               </>
-            )}
+            )
+            }}
           </TransformWrapper>
         )}
       </div>
