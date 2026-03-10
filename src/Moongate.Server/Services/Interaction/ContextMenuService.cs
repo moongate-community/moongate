@@ -146,6 +146,7 @@ public sealed class ContextMenuService
         var entries = BuildEntries(targetMobile);
         var entryActions =
             new Dictionary<ushort, (ContextMenuActionType Action, string? ScriptKey)>(capacity: entries.Count);
+        var hasValidScriptEntries = false;
 
         if (_luaBrainRunner is not null)
         {
@@ -154,7 +155,7 @@ public sealed class ContextMenuService
 
             foreach (var customEntry in customEntries)
             {
-                if (string.IsNullOrWhiteSpace(customEntry.Key) || string.IsNullOrWhiteSpace(customEntry.Text))
+                if (string.IsNullOrWhiteSpace(customEntry.Key) || customEntry.ClilocId < 3_000_000)
                 {
                     continue;
                 }
@@ -170,9 +171,15 @@ public sealed class ContextMenuService
                 }
 
                 var tag = (ushort)nextTag++;
-                entries.Add(new(tag, 3_001_000, Hue: 0x0481));
+                entries.Add(new(tag, customEntry.ClilocId, Hue: 0x0481));
                 entryActions[tag] = (ContextMenuActionType.Script, customEntry.Key);
+                hasValidScriptEntries = true;
             }
+        }
+
+        if (hasValidScriptEntries && !targetMobile.IsPlayer)
+        {
+            entries.RemoveAll(static entry => entry.EntryTag == PaperdollEntryTag);
         }
 
         if (entries.Count == 0)

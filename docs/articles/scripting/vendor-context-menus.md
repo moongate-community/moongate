@@ -102,14 +102,38 @@ Supported hooks on the brain table:
 
 Each list item can be:
 
-- string: `"follow_me"` (key=text)
-- object/table: `{ key = "follow_me", text = "Follow me" }`
-- tuple table: `{ "follow_me", "Follow me" }`
+- object/table: `{ key = "follow_me", cliloc_id = 3006135 }`
+- tuple table: `{ "follow_me", 3006135 }`
 
 Moongate assigns runtime tags starting from `1000` and maps the selected tag back to your `key`.
 
-Note: packet `0xBF/0x14` is cliloc-based. Current implementation uses a fixed cliloc for script entries,
-so custom `text` is preserved server-side as semantic label/key for routing, not as arbitrary client-rendered text.
+Note: packet `0xBF/0x14` is cliloc-based. `cliloc_id` is required and must be `>= 3000000`.
+
+### Common Cliloc IDs for Context Menus
+
+Use these as practical defaults when defining custom entries:
+
+| Label (client) | Cliloc ID |
+| --- | --- |
+| Open Paperdoll | `3006123` |
+| Buy | `3006103` |
+| Sell | `3006104` |
+| Open Bank | `3006105` |
+| Eat | `3006135` |
+| Open Backpack | `3006145` |
+
+Example:
+
+```lua
+local cliloc = require("common.cliloc_ids")
+
+function vendor_brain.get_context_menus(ctx)
+    return {
+        { key = "give_food", cliloc_id = cliloc.eat },
+        { key = "open_pack", cliloc_id = cliloc.open_backpack }
+    }
+end
+```
 
 ### Payload shape
 
@@ -130,6 +154,7 @@ File: `moongate_data/scripts/ai/vendor_brain.lua`
 
 ```lua
 vendor_brain = {}
+local cliloc = require("common.cliloc_ids")
 
 function vendor_brain.brain_loop(npc_id)
     while true do
@@ -139,8 +164,8 @@ end
 
 function vendor_brain.get_context_menus(ctx)
     return {
-        { key = "greet", text = "Greetings" },
-        { key = "where_bank", text = "Where is the bank?" }
+        { key = "greet", cliloc_id = cliloc.eat },
+        { key = "where_bank", cliloc_id = cliloc.open_backpack }
     }
 end
 

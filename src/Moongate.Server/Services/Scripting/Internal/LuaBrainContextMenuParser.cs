@@ -43,24 +43,16 @@ internal static class LuaBrainContextMenuParser
     {
         entry = null!;
 
-        if (value.Type == DataType.String && !string.IsNullOrWhiteSpace(value.String))
-        {
-            var keyText = value.String.Trim();
-            entry = new(keyText, keyText);
-
-            return true;
-        }
-
         if (value.Type != DataType.Table || value.Table is null)
         {
             return false;
         }
 
         var keyValue = value.Table.Get("key");
-        var textValue = value.Table.Get("text");
+        var clilocValue = value.Table.Get("cliloc_id");
 
         var key = keyValue.Type == DataType.String ? keyValue.String : null;
-        var text = textValue.Type == DataType.String ? textValue.String : null;
+        var clilocId = TryReadClilocId(clilocValue);
 
         if (string.IsNullOrWhiteSpace(key))
         {
@@ -72,23 +64,36 @@ internal static class LuaBrainContextMenuParser
             }
         }
 
-        if (string.IsNullOrWhiteSpace(text))
+        if (clilocId is null)
         {
-            var tupleText = value.Table.Get(2);
-
-            if (tupleText.Type == DataType.String)
-            {
-                text = tupleText.String;
-            }
+            clilocId = TryReadClilocId(value.Table.Get(2));
         }
 
-        if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(text))
+        if (string.IsNullOrWhiteSpace(key) || clilocId is null || clilocId.Value < 3_000_000)
         {
             return false;
         }
 
-        entry = new(key.Trim(), text.Trim());
+        entry = new(key.Trim(), clilocId.Value);
 
         return true;
+    }
+
+    private static int? TryReadClilocId(DynValue value)
+    {
+        if (value.Type == DataType.Number)
+        {
+            var numeric = (int)Math.Truncate(value.Number);
+
+            return numeric;
+        }
+
+        if (value.Type == DataType.String &&
+            int.TryParse(value.String, out var parsed))
+        {
+            return parsed;
+        }
+
+        return null;
     }
 }
