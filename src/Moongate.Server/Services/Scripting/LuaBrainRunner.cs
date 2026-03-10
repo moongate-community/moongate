@@ -40,7 +40,6 @@ public sealed class LuaBrainRunner
     private readonly ILuaBrainRegistry _luaBrainRegistry;
     private readonly ILogger _logger = Log.ForContext<LuaBrainRunner>();
     private readonly Script? _luaScript;
-    private readonly bool _supportsMoonSharpRuntime;
 
     private string? _timerId;
 
@@ -56,7 +55,6 @@ public sealed class LuaBrainRunner
         _luaBrainRegistry = luaBrainRegistry;
         _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
-        _supportsMoonSharpRuntime = _luaScript is not null;
     }
 
     /// <inheritdoc />
@@ -119,7 +117,7 @@ public sealed class LuaBrainRunner
     {
         ArgumentNullException.ThrowIfNull(mobile);
 
-        if (!_supportsMoonSharpRuntime || _luaScript is null)
+        if (_luaScript is null)
         {
             return [];
         }
@@ -164,7 +162,7 @@ public sealed class LuaBrainRunner
     {
         ArgumentNullException.ThrowIfNull(mobile);
 
-        if (string.IsNullOrWhiteSpace(menuKey) || !_supportsMoonSharpRuntime || _luaScript is null)
+        if (string.IsNullOrWhiteSpace(menuKey) || _luaScript is null)
         {
             return false;
         }
@@ -396,7 +394,7 @@ public sealed class LuaBrainRunner
                     // TODO: Brain fallback behavior (point 5 excluded for now).
                     nextWake = nowMilliseconds + FaultRetryMilliseconds;
                 }
-                else if (_supportsMoonSharpRuntime)
+                else if (_luaScript is not null)
                 {
                     nextWake = TickMoonSharpState(nowMilliseconds, state);
                 }
@@ -705,7 +703,7 @@ public sealed class LuaBrainRunner
 
     private void InitializeRuntimeState(LuaBrainRuntimeState state)
     {
-        if (!_supportsMoonSharpRuntime || _luaScript is null)
+        if (_luaScript is null)
         {
             return;
         }
