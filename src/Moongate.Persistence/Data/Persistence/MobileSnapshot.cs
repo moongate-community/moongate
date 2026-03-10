@@ -96,6 +96,16 @@ public sealed class MobileSnapshot
 
     public bool IsWarMode { get; set; }
 
+    public int Hunger { get; set; }
+
+    public int Thirst { get; set; }
+
+    public int Fame { get; set; }
+
+    public int Karma { get; set; }
+
+    public int Kills { get; set; }
+
     public bool IsHidden { get; set; }
 
     public bool IsFrozen { get; set; }

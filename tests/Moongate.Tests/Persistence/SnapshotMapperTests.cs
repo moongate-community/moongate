@@ -92,4 +92,40 @@ public class SnapshotMapperTests
             }
         );
     }
+
+    [Test]
+    public void ToMobileSnapshot_ShouldPreserveLifeStatusFields()
+    {
+        var entity = new UOMobileEntity
+        {
+            Id = (Serial)0x150u,
+            Name = "status",
+            Location = new(10, 20, 0),
+            Hunger = 20,
+            Thirst = 19,
+            Fame = 1500,
+            Karma = -1200,
+            Kills = 3
+        };
+
+        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
+        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshot.Hunger, Is.EqualTo(20));
+                Assert.That(snapshot.Thirst, Is.EqualTo(19));
+                Assert.That(snapshot.Fame, Is.EqualTo(1500));
+                Assert.That(snapshot.Karma, Is.EqualTo(-1200));
+                Assert.That(snapshot.Kills, Is.EqualTo(3));
+
+                Assert.That(restored.Hunger, Is.EqualTo(20));
+                Assert.That(restored.Thirst, Is.EqualTo(19));
+                Assert.That(restored.Fame, Is.EqualTo(1500));
+                Assert.That(restored.Karma, Is.EqualTo(-1200));
+                Assert.That(restored.Kills, Is.EqualTo(3));
+            }
+        );
+    }
 }

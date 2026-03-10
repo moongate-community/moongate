@@ -14,7 +14,9 @@ namespace Moongate.UO.Data.Persistence.Entities;
 /// </summary>
 public class UOMobileEntity : IMobileEntity
 {
+    private const int GoldItemId = 0x0EED;
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
+    private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
     private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
 
     public Serial Id { get; set; }
@@ -141,11 +143,32 @@ public class UOMobileEntity : IMobileEntity
     public IReadOnlyDictionary<ItemLayerType, ItemReference> EquippedItemReferences => _equippedItemReferences;
 
     /// <summary>
+    /// Gets runtime total gold in backpack and bank box.
+    /// </summary>
+    public int Gold => GetGold();
+
+    /// <summary>
     /// Gets persisted custom mobile properties.
     /// </summary>
     public IReadOnlyDictionary<string, ItemCustomProperty> CustomProperties => _customProperties;
 
     public bool IsWarMode { get; set; }
+
+    public int Hunger { get; set; }
+
+    public int Thirst { get; set; }
+
+    public int Fame { get; set; }
+
+    public int Karma { get; set; }
+
+    public int Kills { get; set; }
+
+    public bool Hidden
+    {
+        get => IsHidden;
+        set => IsHidden = value;
+    }
 
     public bool IsHidden { get; set; }
 
@@ -158,6 +181,12 @@ public class UOMobileEntity : IMobileEntity
     public bool IgnoreMobiles { get; set; }
 
     public bool IsPoisoned { get; set; }
+
+    public bool Blessed
+    {
+        get => IsBlessed;
+        set => IsBlessed = value;
+    }
 
     public bool IsBlessed { get; set; }
 
@@ -180,6 +209,7 @@ public class UOMobileEntity : IMobileEntity
 
         EquippedItemIds[layer] = item.Id;
         _equippedItemReferences[layer] = new(item.Id, item.ItemId, item.Hue);
+        _equippedItemsRuntime[layer] = item;
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
         item.EquippedMobileId = Id;
@@ -193,6 +223,7 @@ public class UOMobileEntity : IMobileEntity
     {
         EquippedItemIds[layer] = itemId;
         _equippedItemReferences.Remove(layer);
+        _equippedItemsRuntime.Remove(layer);
     }
 
     /// <summary>
@@ -315,6 +346,7 @@ public class UOMobileEntity : IMobileEntity
         ArgumentNullException.ThrowIfNull(equippedItems);
 
         _equippedItemReferences.Clear();
+        _equippedItemsRuntime.Clear();
 
         foreach (var item in equippedItems)
         {
@@ -331,6 +363,7 @@ public class UOMobileEntity : IMobileEntity
             }
 
             _equippedItemReferences[layer.Value] = new(item.Id, item.ItemId, item.Hue);
+            _equippedItemsRuntime[layer.Value] = item;
         }
     }
 
@@ -540,6 +573,7 @@ public class UOMobileEntity : IMobileEntity
     {
         var removed = EquippedItemIds.Remove(layer);
         _equippedItemReferences.Remove(layer);
+        _equippedItemsRuntime.Remove(layer);
 
         if (removed && item is not null)
         {
@@ -548,5 +582,80 @@ public class UOMobileEntity : IMobileEntity
         }
 
         return removed;
+    }
+
+    private int GetGold()
+    {
+        var visited = new HashSet<Serial>();
+        long total = 0;
+
+        if (TryGetBackpackRuntime(out var backpack))
+        {
+            total += SumGoldRecursive(backpack, visited);
+        }
+
+        if (TryGetBankBoxRuntime(out var bankBox))
+        {
+            total += SumGoldRecursive(bankBox, visited);
+        }
+
+        return total >= int.MaxValue ? int.MaxValue : (int)total;
+    }
+
+    private bool TryGetBackpackRuntime(out UOItemEntity backpack)
+    {
+        backpack = null!;
+
+        if (_equippedItemsRuntime.TryGetValue(ItemLayerType.Backpack, out backpack))
+        {
+            return true;
+        }
+
+        if (BackpackId == Serial.Zero)
+        {
+            return false;
+        }
+
+        foreach (var equipped in _equippedItemsRuntime.Values)
+        {
+            if (equipped.Id != BackpackId)
+            {
+                continue;
+            }
+
+            backpack = equipped;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryGetBankBoxRuntime(out UOItemEntity bankBox)
+        => _equippedItemsRuntime.TryGetValue(ItemLayerType.Bank, out bankBox);
+
+    private static long SumGoldRecursive(UOItemEntity container, HashSet<Serial> visited)
+    {
+        if (!visited.Add(container.Id))
+        {
+            return 0;
+        }
+
+        long total = 0;
+
+        foreach (var child in container.Items)
+        {
+            if (child.ItemId == GoldItemId)
+            {
+                total += Math.Max(0, child.Amount);
+            }
+
+            if (child.Items.Count > 0)
+            {
+                total += SumGoldRecursive(child, visited);
+            }
+        }
+
+        return total;
     }
 }

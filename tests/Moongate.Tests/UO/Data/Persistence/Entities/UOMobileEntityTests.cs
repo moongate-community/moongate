@@ -150,6 +150,28 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void HiddenAndBlessedAliases_ShouldMapToIsHiddenAndIsBlessed()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Hidden = true,
+            Blessed = true
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.IsHidden, Is.True);
+                Assert.That(mobile.IsBlessed, Is.True);
+                mobile.IsHidden = false;
+                mobile.IsBlessed = false;
+                Assert.That(mobile.Hidden, Is.False);
+                Assert.That(mobile.Blessed, Is.False);
+            }
+        );
+    }
+
+    [Test]
     public void HydrateEquipmentRuntime_ShouldBuildReferencesForOwnedEquippedItems()
     {
         var mobile = new UOMobileEntity
@@ -220,6 +242,104 @@ public class UOMobileEntityTests
                 Assert.That(mobile.Mana, Is.EqualTo(1));
             }
         );
+    }
+
+    [Test]
+    public void Gold_ShouldSumGoldInBackpackAndBankBoxIncludingNestedContainers()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001010
+        };
+
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40001010,
+            ItemId = 0x0E75
+        };
+        var bankBox = new UOItemEntity
+        {
+            Id = (Serial)0x40001011,
+            ItemId = 0x09A8
+        };
+        var pouch = new UOItemEntity
+        {
+            Id = (Serial)0x40001012,
+            ItemId = 0x0E79
+        };
+        var goldBackpack = new UOItemEntity
+        {
+            Id = (Serial)0x40001013,
+            ItemId = 0x0EED,
+            Amount = 250
+        };
+        var goldPouch = new UOItemEntity
+        {
+            Id = (Serial)0x40001014,
+            ItemId = 0x0EED,
+            Amount = 100
+        };
+        var goldBank = new UOItemEntity
+        {
+            Id = (Serial)0x40001015,
+            ItemId = 0x0EED,
+            Amount = 700
+        };
+
+        backpack.AddItem(goldBackpack, new(1, 1));
+        backpack.AddItem(pouch, new(2, 2));
+        pouch.AddItem(goldPouch, new(3, 3));
+        bankBox.AddItem(goldBank, new(4, 4));
+
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.AddEquippedItem(ItemLayerType.Bank, bankBox);
+
+        Assert.That(mobile.Gold, Is.EqualTo(1050));
+    }
+
+    [Test]
+    public void Gold_WhenNoRuntimeBackpackOrBank_ShouldReturnZero()
+    {
+        var mobile = new UOMobileEntity
+        {
+            BackpackId = (Serial)0x40000099
+        };
+
+        Assert.That(mobile.Gold, Is.EqualTo(0));
+    }
+
+    [Test]
+    public void Gold_ShouldNotLoopOnContainerCycles()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001020
+        };
+
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40002010,
+            ItemId = 0x0E75
+        };
+        var pouch = new UOItemEntity
+        {
+            Id = (Serial)0x40002011,
+            ItemId = 0x0E79
+        };
+        var gold = new UOItemEntity
+        {
+            Id = (Serial)0x40002012,
+            ItemId = 0x0EED,
+            Amount = 10
+        };
+
+        backpack.AddItem(pouch, new(1, 1));
+        pouch.AddItem(gold, new(2, 2));
+        pouch.AddItem(backpack, new(3, 3));
+
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+
+        Assert.That(mobile.Gold, Is.EqualTo(10));
     }
 
     [Test]
