@@ -7,6 +7,7 @@ const navItems = [
   { label: 'Users', path: '/users', icon: '⍟' },
   { label: 'Console', path: '/console', icon: '⌘' },
   { label: 'Active Players', path: '/active-players', icon: '◎' },
+  { label: 'Maps', path: '/maps', icon: '◫' },
   { label: 'Item Templates', path: '/item-templates', icon: '▦' },
 ]
 

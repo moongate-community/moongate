@@ -10,6 +10,7 @@ import { ConsolePage } from './pages/ConsolePage'
 import { ItemTemplatesPage } from './pages/ItemTemplatesPage'
 import { ItemTemplateDetailsPage } from './pages/ItemTemplateDetailsPage'
 import { ActivePlayersPage } from './pages/ActivePlayersPage'
+import { MapsPage } from './pages/MapsPage'
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user)
@@ -34,6 +35,7 @@ export function AppRouter() {
         <Route path="users/add" element={<AddUserPage />} />
         <Route path="console" element={<ConsolePage />} />
         <Route path="active-players" element={<ActivePlayersPage />} />
+        <Route path="maps" element={<MapsPage />} />
         <Route path="item-templates" element={<ItemTemplatesPage />} />
         <Route path="item-templates/:id" element={<ItemTemplateDetailsPage />} />
       </Route>
