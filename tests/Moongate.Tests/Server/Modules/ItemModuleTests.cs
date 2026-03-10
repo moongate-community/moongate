@@ -5,6 +5,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using MoonSharp.Interpreter;
 
 namespace Moongate.Tests.Server.Modules;
 
@@ -13,6 +14,12 @@ public class ItemModuleTests
     private sealed class ItemModuleTestItemService : IItemService
     {
         public UOItemEntity? ItemToReturn { get; set; }
+        public string? LastSpawnTemplateId { get; private set; }
+        public Serial LastMoveItemId { get; private set; }
+        public Point3D LastMoveLocation { get; private set; }
+        public int LastMoveMapId { get; private set; }
+        public bool MoveItemToWorldResult { get; set; } = true;
+        public UOItemEntity? LastUpsertedItem { get; private set; }
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
         {
@@ -103,15 +110,30 @@ public class ItemModuleTests
             _ = itemId;
             _ = location;
             _ = mapId;
+            _ = sessionId;
 
-            return Task.FromResult(true);
+            LastMoveItemId = itemId;
+            LastMoveLocation = location;
+            LastMoveMapId = mapId;
+
+            return Task.FromResult(MoveItemToWorldResult);
         }
 
         public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
         {
-            _ = itemTemplateId;
+            LastSpawnTemplateId = itemTemplateId;
 
-            return Task.FromResult(new UOItemEntity { Id = (Serial)1u });
+            return Task.FromResult(
+                new UOItemEntity
+                {
+                    Id = (Serial)1u,
+                    ItemId = 0x0EED,
+                    Name = "Spawned Item",
+                    MapId = 0,
+                    Location = Point3D.Zero,
+                    Amount = 1
+                }
+            );
         }
 
         public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
@@ -119,7 +141,7 @@ public class ItemModuleTests
 
         public Task UpsertItemAsync(UOItemEntity item)
         {
-            _ = item;
+            LastUpsertedItem = item;
 
             return Task.CompletedTask;
         }
@@ -188,5 +210,96 @@ public class ItemModuleTests
                 Assert.That(reference.ContainerY, Is.EqualTo(22));
             }
         );
+    }
+
+    [Test]
+    public void Spawn_WhenTemplateIdIsEmpty_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+        var position = CreatePositionTable(120, 210, 0, 1);
+
+        var result = module.Spawn("", position, 1);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public void Spawn_WhenPositionIsInvalid_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+        var invalidPosition = new Table(new Script())
+        {
+            ["x"] = 100,
+            ["y"] = 200
+        };
+
+        var result = module.Spawn("gold", invalidPosition, 1);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public void Spawn_WhenAmountIsZero_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+        var position = CreatePositionTable(120, 210, 0, 1);
+
+        var result = module.Spawn("gold", position, 0);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public void Spawn_WhenMoveToWorldFails_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService
+        {
+            MoveItemToWorldResult = false
+        };
+        var module = new ItemModule(itemService);
+        var position = CreatePositionTable(120, 210, 0, 1);
+
+        var result = module.Spawn("gold", position, 1);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public void Spawn_WhenValidInput_ShouldSpawnAndReturnLuaItemProxy()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+        var position = CreatePositionTable(120, 210, 0, 1);
+
+        var result = module.Spawn("gold", position, 25);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(itemService.LastSpawnTemplateId, Is.EqualTo("gold"));
+                Assert.That(itemService.LastMoveItemId, Is.EqualTo((Serial)1u));
+                Assert.That(itemService.LastMoveLocation, Is.EqualTo(new Point3D(120, 210, 0)));
+                Assert.That(itemService.LastMoveMapId, Is.EqualTo(1));
+                Assert.That(itemService.LastUpsertedItem, Is.Not.Null);
+                Assert.That(itemService.LastUpsertedItem!.Amount, Is.EqualTo(25));
+            }
+        );
+    }
+
+    private static Table CreatePositionTable(int x, int y, int z, int mapId)
+    {
+        var table = new Table(new Script())
+        {
+            ["x"] = x,
+            ["y"] = y,
+            ["z"] = z,
+            ["map_id"] = mapId
+        };
+
+        return table;
     }
 }
