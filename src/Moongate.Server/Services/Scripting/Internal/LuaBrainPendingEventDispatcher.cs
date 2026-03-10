@@ -1,5 +1,3 @@
-using Moongate.Server.Data.Events.Speech;
-using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Scripting;
 using MoonSharp.Interpreter;
 
@@ -74,7 +72,7 @@ internal static class LuaBrainPendingEventDispatcher
                     state.OnEventFunction,
                     SpeechHeardEventName,
                     (uint)speech.SpeakerId,
-                    BuildSpeechEventPayload(speech)
+                    LuaBrainPayloadFactory.BuildSpeechEventPayload(speech)
                 );
 
                 continue;
@@ -104,7 +102,7 @@ internal static class LuaBrainPendingEventDispatcher
         while (state.PendingSpawn.Count > 0)
         {
             var spawn = state.PendingSpawn.Dequeue();
-            var payload = BuildSpawnEventPayload(spawn);
+            var payload = LuaBrainPayloadFactory.BuildSpawnEventPayload(spawn);
 
             if (state.OnSpawnFunction is not null)
             {
@@ -195,51 +193,4 @@ internal static class LuaBrainPendingEventDispatcher
         }
     }
 
-    private static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
-        => new()
-        {
-            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
-            ["speaker_id"] = (uint)speech.SpeakerId,
-            ["text"] = speech.Text,
-            ["speech_type"] = (byte)speech.SpeechType,
-            ["map_id"] = speech.MapId,
-            ["location"] = new Dictionary<string, int>
-            {
-                ["x"] = speech.Location.X,
-                ["y"] = speech.Location.Y,
-                ["z"] = speech.Location.Z
-            }
-        };
-
-    private static Dictionary<string, object> BuildSpawnEventPayload(MobileSpawnedFromSpawnerEvent spawn)
-        => new()
-        {
-            ["mobile_id"] = (uint)spawn.Mobile.Id,
-            ["spawner_guid"] = spawn.SpawnerGuid.ToString("D"),
-            ["spawner_name"] = spawn.SpawnerName,
-            ["source_group"] = spawn.SourceGroup,
-            ["source_file"] = spawn.SourceFile,
-            ["spawn_count"] = spawn.SpawnCount,
-            ["min_delay_ms"] = (int)spawn.MinDelay.TotalMilliseconds,
-            ["max_delay_ms"] = (int)spawn.MaxDelay.TotalMilliseconds,
-            ["team"] = spawn.Team,
-            ["home_range"] = spawn.HomeRange,
-            ["walking_range"] = spawn.WalkingRange,
-            ["entry_name"] = spawn.EntryName,
-            ["entry_max_count"] = spawn.EntryMaxCount,
-            ["entry_probability"] = spawn.EntryProbability,
-            ["map_id"] = spawn.Mobile.MapId,
-            ["location"] = new Dictionary<string, int>
-            {
-                ["x"] = spawn.Mobile.Location.X,
-                ["y"] = spawn.Mobile.Location.Y,
-                ["z"] = spawn.Mobile.Location.Z
-            },
-            ["spawner_location"] = new Dictionary<string, int>
-            {
-                ["x"] = spawn.SpawnerLocation.X,
-                ["y"] = spawn.SpawnerLocation.Y,
-                ["z"] = spawn.SpawnerLocation.Z
-            }
-        };
 }
