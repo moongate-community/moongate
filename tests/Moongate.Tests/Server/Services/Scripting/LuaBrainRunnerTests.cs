@@ -2,6 +2,7 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.Scripting;
@@ -510,6 +511,117 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(eventCall.Args.Length, Is.EqualTo(3));
                 Assert.That(eventCall.Args[1], Is.EqualTo((uint)source.Id));
                 Assert.That(eventCall.Args[2], Is.TypeOf<Dictionary<string, object>>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenMaxBrainsPerTickIsConfigured_ShouldRespectProcessingBudget()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var config = new MoongateConfig
+        {
+            Scripting = new MoongateScriptingConfig
+            {
+                LuaBrainMaxBrainsPerTick = 1
+            }
+        };
+        var runner = new LuaBrainRunner(
+            timerService,
+            scriptEngine,
+            new LuaBrainRegistryStub(),
+            directories,
+            config
+        );
+        var firstNpc = new UOMobileEntity
+        {
+            Id = (Serial)0xA00,
+            Name = "orion_1",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var secondNpc = new UOMobileEntity
+        {
+            Id = (Serial)0xA01,
+            Name = "orion_2",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(102, 100, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(firstNpc, firstNpc.BrainId));
+        await runner.HandleAsync(new MobileAddedInWorldEvent(secondNpc, secondNpc.BrainId));
+
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        await runner.TickAllAsync(now);
+        var firstTickCalls = scriptEngine.Calls.Count(call => call.FunctionName == "on_brain_tick");
+
+        await runner.TickAllAsync(now + 1);
+        var secondTickCalls = scriptEngine.Calls.Count(call => call.FunctionName == "on_brain_tick");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(firstTickCalls, Is.EqualTo(1));
+                Assert.That(secondTickCalls, Is.EqualTo(2));
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetMetricsSnapshot_ShouldTrackDueProcessedDeferredAndTickTimings()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var config = new MoongateConfig
+        {
+            Scripting = new MoongateScriptingConfig
+            {
+                LuaBrainMaxBrainsPerTick = 1
+            }
+        };
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories, config);
+        var firstNpc = new UOMobileEntity
+        {
+            Id = (Serial)0xB00,
+            Name = "brain_1",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var secondNpc = new UOMobileEntity
+        {
+            Id = (Serial)0xB01,
+            Name = "brain_2",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(firstNpc, firstNpc.BrainId));
+        await runner.HandleAsync(new MobileAddedInWorldEvent(secondNpc, secondNpc.BrainId));
+
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        await runner.TickAllAsync(now);
+        await runner.TickAllAsync(now + 1);
+        var metrics = runner.GetMetricsSnapshot();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(metrics.DueBrainsTotal, Is.EqualTo(3));
+                Assert.That(metrics.ProcessedBrainsTotal, Is.EqualTo(2));
+                Assert.That(metrics.DeferredBrainsTotal, Is.EqualTo(1));
+                Assert.That(metrics.ProcessedTicksTotal, Is.EqualTo(2));
+                Assert.That(metrics.TickDurationTotalMs, Is.GreaterThanOrEqualTo(0));
+                Assert.That(metrics.TickDurationAvgMs, Is.GreaterThanOrEqualTo(0));
+                Assert.That(metrics.TickDurationMaxMs, Is.GreaterThanOrEqualTo(0));
             }
         );
     }

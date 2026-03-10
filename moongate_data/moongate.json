@@ -43,7 +43,8 @@
     "LightSecondsPerUoMinute": 5.0
   },
   "Scripting": {
-    "EnableFileWatcher": true
+    "EnableFileWatcher": true,
+    "LuaBrainMaxBrainsPerTick": 0
   },
   "Email": {
     "IsEnabled": false,

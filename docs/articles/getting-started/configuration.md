@@ -137,6 +137,9 @@ Current scripting runtime option:
 - `Scripting.EnableFileWatcher` (`bool`, default `true`)
   - `true`: enables `FileSystemWatcher` on `scripts/**/*.lua` for live reload notifications
   - `false`: disables watcher creation entirely
+- `Scripting.LuaBrainMaxBrainsPerTick` (`int`, default `0`)
+  - `<= 0`: no explicit per-tick cap
+  - `> 0`: limits how many due NPC brains are processed per tick (helps smooth spikes under heavy load)
 
 ## Email Templates
 

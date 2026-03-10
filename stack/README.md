@@ -102,6 +102,15 @@ Moongate exposes the following metrics at `:8088/metrics`:
 ### Timer
 - `moongate_timer_timer_processed_ticks_total` - Total timer ticks processed
 
+### Lua Brain
+- `moongate_lua_brain_brains_due_total` - Total brains due for processing
+- `moongate_lua_brain_brains_processed_total` - Total brains processed
+- `moongate_lua_brain_brains_deferred_total` - Total brains deferred by per-tick budget
+- `moongate_lua_brain_ticks_processed_total` - Total lua brain ticks executed
+- `moongate_lua_brain_tick_duration_total_ms` - Total lua brain tick duration in milliseconds
+- `moongate_lua_brain_tick_duration_avg_ms` - Average lua brain tick duration in milliseconds
+- `moongate_lua_brain_tick_duration_max_ms` - Max lua brain tick duration in milliseconds
+
 ## Grafana Dashboard Panels
 
 The auto-provisioned dashboard includes:
@@ -115,6 +124,7 @@ The auto-provisioned dashboard includes:
 7. **Outbound Packets Total** - Total outbound packets (stat panel)
 8. **Total Game Ticks** - Total game loop ticks executed (stat panel)
 9. **Script Cache Entries** - Number of script cache entries (stat panel)
+10. **Lua Brain Throughput** - Due/processed/deferred brains per second (line chart)
 
 ## Commands
 

@@ -1,14 +1,18 @@
+using System.Diagnostics;
 using Moongate.Abstractions.Services.Base;
 using Moongate.Core.Data.Directories;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Metrics.Data;
 using Moongate.Server.Services.Scripting.Internal;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Geometry;
@@ -25,6 +29,7 @@ namespace Moongate.Server.Services.Scripting;
 public sealed class LuaBrainRunner
     : BaseMoongateService,
       ILuaBrainRunner,
+      ILuaBrainMetricsSource,
       IGameEventListener<SpeechHeardEvent>,
       IGameEventListener<MobileAddedInWorldEvent>,
       IGameEventListener<MobilePositionChangedEvent>,
@@ -33,6 +38,7 @@ public sealed class LuaBrainRunner
     private const int InRangeEnterDistance = 3;
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
+    private static readonly DynValue ContextMenuSelectedEventName = DynValue.NewString("context_menu_selected");
     private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
     private readonly Lock _syncRoot = new();
     private readonly ITimerService _timerService;
@@ -40,14 +46,23 @@ public sealed class LuaBrainRunner
     private readonly ILuaBrainRegistry _luaBrainRegistry;
     private readonly ILogger _logger = Log.ForContext<LuaBrainRunner>();
     private readonly Script? _luaScript;
+    private readonly int _maxBrainsPerTick;
+    private readonly Lock _metricsSync = new();
 
     private string? _timerId;
+    private long _dueBrainsTotal;
+    private long _processedBrainsTotal;
+    private long _deferredBrainsTotal;
+    private long _processedTicksTotal;
+    private double _tickDurationTotalMilliseconds;
+    private double _tickDurationMaxMilliseconds;
 
     public LuaBrainRunner(
         ITimerService timerService,
         IScriptEngineService scriptEngineService,
         ILuaBrainRegistry luaBrainRegistry,
-        DirectoriesConfig directoriesConfig
+        DirectoriesConfig directoriesConfig,
+        MoongateConfig? config = null
     )
     {
         _timerService = timerService;
@@ -55,6 +70,8 @@ public sealed class LuaBrainRunner
         _luaBrainRegistry = luaBrainRegistry;
         _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
+        var configuredMaxBrains = config?.Scripting?.LuaBrainMaxBrainsPerTick ?? 0;
+        _maxBrainsPerTick = configuredMaxBrains <= 0 ? int.MaxValue : configuredMaxBrains;
     }
 
     /// <inheritdoc />
@@ -139,7 +156,7 @@ public sealed class LuaBrainRunner
 
         try
         {
-            var payload = LuaBrainContextMenuPayloadFactory.Build(
+            using var payload = LuaBrainContextMenuPayloadFactory.Rent(
                 new LuaBrainContextMenuPayload(
                     state.MobileId,
                     requester,
@@ -147,7 +164,7 @@ public sealed class LuaBrainRunner
                     null
                 )
             );
-            var result = _luaScript.Call(state.OnGetContextMenusFunction, payload);
+            var result = _luaScript.Call(state.OnGetContextMenusFunction, payload.Payload);
 
             return LuaBrainContextMenuParser.Parse(result);
         }
@@ -184,7 +201,7 @@ public sealed class LuaBrainRunner
             }
         }
 
-        var payload = LuaBrainContextMenuPayloadFactory.Build(
+        using var payload = LuaBrainContextMenuPayloadFactory.Rent(
             new LuaBrainContextMenuPayload(
                 state.MobileId,
                 requester,
@@ -197,7 +214,7 @@ public sealed class LuaBrainRunner
         {
             if (state.OnSelectedContextMenuFunction is not null)
             {
-                _luaScript.Call(state.OnSelectedContextMenuFunction, menuKey, payload);
+                _luaScript.Call(state.OnSelectedContextMenuFunction, menuKey, payload.Payload);
 
                 return true;
             }
@@ -205,7 +222,7 @@ public sealed class LuaBrainRunner
             if (state.OnEventFunction is not null)
             {
                 var requesterId = requester is null ? 0u : (uint)requester.Id;
-                _luaScript.Call(state.OnEventFunction, "context_menu_selected", requesterId, payload);
+                _luaScript.Call(state.OnEventFunction, ContextMenuSelectedEventName, requesterId, payload.Payload);
 
                 return true;
             }
@@ -385,6 +402,7 @@ public sealed class LuaBrainRunner
     public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
+        var tickStart = Stopwatch.GetTimestamp();
         List<LuaBrainRuntimeState> dueStates;
 
         lock (_syncRoot)
@@ -396,6 +414,19 @@ public sealed class LuaBrainRunner
                           .Select(static state => state)
             ];
         }
+
+        var dueCount = dueStates.Count;
+
+        if (_maxBrainsPerTick != int.MaxValue && dueStates.Count > _maxBrainsPerTick)
+        {
+            dueStates = dueStates.OrderBy(static state => state.AiNextWakeTime)
+                                 .ThenBy(static state => (uint)state.MobileId)
+                                 .Take(_maxBrainsPerTick)
+                                 .ToList();
+        }
+
+        var processedCount = dueStates.Count;
+        var deferredCount = Math.Max(0, dueCount - processedCount);
 
         foreach (var state in dueStates)
         {
@@ -440,7 +471,44 @@ public sealed class LuaBrainRunner
             }
         }
 
+        var elapsedMilliseconds = Stopwatch.GetElapsedTime(tickStart).TotalMilliseconds;
+
+        lock (_metricsSync)
+        {
+            _dueBrainsTotal += dueCount;
+            _processedBrainsTotal += processedCount;
+            _deferredBrainsTotal += deferredCount;
+            _processedTicksTotal++;
+            _tickDurationTotalMilliseconds += elapsedMilliseconds;
+
+            if (elapsedMilliseconds > _tickDurationMaxMilliseconds)
+            {
+                _tickDurationMaxMilliseconds = elapsedMilliseconds;
+            }
+        }
+
         return ValueTask.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public LuaBrainMetricsSnapshot GetMetricsSnapshot()
+    {
+        lock (_metricsSync)
+        {
+            var averageTickMilliseconds = _processedTicksTotal == 0
+                ? 0
+                : _tickDurationTotalMilliseconds / _processedTicksTotal;
+
+            return new(
+                _dueBrainsTotal,
+                _processedBrainsTotal,
+                _deferredBrainsTotal,
+                _processedTicksTotal,
+                _tickDurationTotalMilliseconds,
+                averageTickMilliseconds,
+                _tickDurationMaxMilliseconds
+            );
+        }
     }
 
     /// <inheritdoc />

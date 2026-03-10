@@ -10,6 +10,12 @@ namespace Moongate.Server.Services.Scripting.Internal;
 /// </summary>
 internal static class LuaBrainPendingEventDispatcher
 {
+    private static readonly DynValue SpeechHeardEventName = DynValue.NewString("speech_heard");
+    private static readonly DynValue DeathEventName = DynValue.NewString("death");
+    private static readonly DynValue SpawnEventName = DynValue.NewString("spawn");
+    private static readonly DynValue InRangeEventName = DynValue.NewString("in_range");
+    private static readonly DynValue OutRangeEventName = DynValue.NewString("out_range");
+
     public static void DispatchAll(Script luaScript, LuaBrainRuntimeState state)
     {
         ArgumentNullException.ThrowIfNull(luaScript);
@@ -35,7 +41,7 @@ internal static class LuaBrainPendingEventDispatcher
             {
                 luaScript.Call(
                     state.OnEventFunction,
-                    "death",
+                    DeathEventName,
                     byCharacter,
                     death.Context
                 );
@@ -66,7 +72,7 @@ internal static class LuaBrainPendingEventDispatcher
             {
                 luaScript.Call(
                     state.OnEventFunction,
-                    "speech_heard",
+                    SpeechHeardEventName,
                     (uint)speech.SpeakerId,
                     BuildSpeechEventPayload(speech)
                 );
@@ -118,7 +124,7 @@ internal static class LuaBrainPendingEventDispatcher
 
             luaScript.Call(
                 state.OnEventFunction,
-                "spawn",
+                SpawnEventName,
                 0u,
                 payload
             );
@@ -150,7 +156,7 @@ internal static class LuaBrainPendingEventDispatcher
 
             luaScript.Call(
                 state.OnEventFunction,
-                "in_range",
+                InRangeEventName,
                 (uint)inRange.SourceMobileId,
                 inRange.Payload
             );
@@ -182,7 +188,7 @@ internal static class LuaBrainPendingEventDispatcher
 
             luaScript.Call(
                 state.OnEventFunction,
-                "out_range",
+                OutRangeEventName,
                 (uint)outRange.SourceMobileId,
                 outRange.Payload
             );
