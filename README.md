@@ -120,27 +120,6 @@ UI default URL: `http://localhost:8088/`
 
 Published docs: <https://moongate-community.github.io/moongatev2/>
 
-## Docker
-
-Build image:
-
-```bash
-docker build -t moongate:local .
-```
-
-Run container:
-
-```bash
-docker run --rm -it \
-  -p 2593:2593 \
-  -p 8088:8088 \
-  -v "$HOME/moongate:/app/moongate" \
-  -v "$HOME/uo:/app/uo" \
-  moongate:local
-```
-
-Official image: <https://hub.docker.com/r/tgiachi/moongate>
-
 ## Benchmarks and Stress
 
 - Benchmarks project: `benchmarks/Moongate.Benchmarks`
