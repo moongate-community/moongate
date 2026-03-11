@@ -9,6 +9,10 @@
 
     <ItemGroup>
         <PackageReference Include="BenchmarkDotNet" Version="0.15.8"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.200">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

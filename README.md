@@ -40,6 +40,23 @@ cd moongatev2
 dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
 ```
 
+### Run Server (Docker quick start)
+
+```bash
+git clone https://github.com/moongate-community/moongatev2.git
+cd moongatev2
+docker build -t moongate:local .
+docker run --rm -it \
+  -p 2593:2593 \
+  -p 8088:8088 \
+  -v "$HOME/moongate:/app/moongate" \
+  -v "$HOME/uo:/app/uo" \
+  moongate:local
+```
+
+Server port: `2593`  
+HTTP/UI API port: `8088`
+
 ### Run UI (dev)
 
 ```bash
