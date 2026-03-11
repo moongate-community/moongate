@@ -1,3 +1,5 @@
+using System.Globalization;
+using Moongate.Core.Extensions.Strings;
 using Moongate.Server.Commands.WorldGen;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Items;
@@ -80,6 +82,87 @@ public sealed class SpawnDecorationsCommandTests
                 Assert.That(delayMs, Is.EqualTo(1000));
             }
         );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_ShouldPreserveDecorationItemId_WhenUsingFallbackStaticTemplate()
+    {
+        var decoration = new DecorationEntry(
+            MapId: 0,
+            SourceGroup: "Britannia",
+            SourceFile: "britain.cfg",
+            TypeName: "LibraryBookcase",
+            ItemId: (Serial)0x0A98,
+            Parameters: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            Location: new Point3D(100, 200, 5),
+            Extra: string.Empty
+        );
+        var seedData = new SpawnDecorationsTestSeedDataService([decoration]);
+        var background = new ImmediateBackgroundJobService();
+        var itemFactory = new SpawnDecorationsTestItemFactoryService();
+        var itemService = new SpawnDecorationsTestItemService();
+        var command = new SpawnDecorationsCommand(seedData, background, itemFactory, itemService);
+
+        var context = new CommandSystemContext(
+            "spawn_decorations 0",
+            ["0"],
+            CommandSourceType.Console,
+            0,
+            static (_, _) => { }
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(itemService.CreatedItems, Has.Count.EqualTo(1));
+        Assert.That(itemService.CreatedItems[0].ItemId, Is.EqualTo(0x0A98));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_ShouldPreserveDecorationItemId_WhenTypedTemplateExists()
+    {
+        var decoration = new DecorationEntry(
+            MapId: 0,
+            SourceGroup: "Britannia",
+            SourceFile: "sample.cfg",
+            TypeName: "RuinedBookcase",
+            ItemId: (Serial)0x0A99,
+            Parameters: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase),
+            Location: new Point3D(150, 250, 10),
+            Extra: string.Empty
+        );
+        var seedData = new SpawnDecorationsTestSeedDataService([decoration]);
+        var background = new ImmediateBackgroundJobService();
+        var itemFactory = new SpawnDecorationsTestItemFactoryService
+        {
+            ExistingTemplates =
+            {
+                ["RuinedBookcase"] = new ItemTemplateDefinition
+                {
+                    Id = "ruined_bookcase",
+                    Name = "Ruined Bookcase",
+                    ItemId = "0x0A97",
+                    Hue = HueSpec.FromValue(0),
+                    GoldValue = GoldValueSpec.FromValue(0),
+                    ScriptId = "items.ruined_bookcase",
+                    IsMovable = true
+                }
+            }
+        };
+        var itemService = new SpawnDecorationsTestItemService();
+        var command = new SpawnDecorationsCommand(seedData, background, itemFactory, itemService);
+
+        var context = new CommandSystemContext(
+            "spawn_decorations 0",
+            ["0"],
+            CommandSourceType.Console,
+            0,
+            static (_, _) => { }
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(itemService.CreatedItems, Has.Count.EqualTo(1));
+        Assert.That(itemService.CreatedItems[0].ItemId, Is.EqualTo(0x0A99));
     }
 
     private sealed class SpawnDecorationsTestSeedDataService : ISeedDataService
@@ -166,26 +249,62 @@ public sealed class SpawnDecorationsCommandTests
 
     private sealed class SpawnDecorationsTestItemFactoryService : IItemFactoryService
     {
+        public Dictionary<string, ItemTemplateDefinition> ExistingTemplates { get; } =
+            new(StringComparer.OrdinalIgnoreCase);
+
         public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
-            => new()
+        {
+            var itemId = 0x1BC3;
+            var scriptId = "none";
+
+            if (ExistingTemplates.TryGetValue(itemTemplateId, out var definition))
+            {
+                itemId = ParseItemId(definition.ItemId);
+                scriptId = definition.ScriptId;
+            }
+
+            return new()
             {
                 Id = (Serial)0x40000001,
                 Name = itemTemplateId,
-                ItemId = 0x1BC3,
+                ItemId = itemId,
                 MapId = 0,
                 Location = Point3D.Zero,
-                ScriptId = "none",
+                ScriptId = scriptId,
                 Direction = DirectionType.North
             };
+        }
 
         public UOItemEntity GetNewBackpack()
             => throw new NotSupportedException();
 
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition)
         {
+            if (ExistingTemplates.TryGetValue(itemTemplateId, out definition))
+            {
+                return true;
+            }
+
+            var snakeCase = itemTemplateId.ToSnakeCase();
+
+            if (ExistingTemplates.TryGetValue(snakeCase, out definition))
+            {
+                return true;
+            }
+
             definition = null;
 
             return false;
+        }
+
+        private static int ParseItemId(string value)
+        {
+            if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                return int.Parse(value.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            }
+
+            return int.Parse(value, CultureInfo.InvariantCulture);
         }
     }
 

@@ -103,6 +103,11 @@ public class SpawnDecorationsCommand : ICommandExecutor
 
 
 
+            if (decoration.ItemId != Serial.Zero)
+            {
+                item.ItemId = (int)decoration.ItemId.Value;
+            }
+
             item.MapId = mapId;
             item.Location = decoration.Location;
 
