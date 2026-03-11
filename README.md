@@ -64,6 +64,7 @@ Player portal routes:
 
 - Dev UI: `http://localhost:5173/portal/login`
 - Embedded UI: `http://localhost:8088/portal/login`
+- Authenticated profile: `http://localhost:8088/portal/profile`
 
 ### Run UI (dev)
 
@@ -85,7 +86,7 @@ UI default URL: `http://localhost:8088/`
 - Lua scripting runtime for commands, gumps, item/mobile behavior
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows
-- Player portal for authenticated account and character overview (`/portal/login`, `/api/portal/me`)
+- Player portal for authenticated account overview, profile editing, and password change (`/portal/login`, `/portal/profile`, `/api/portal/me`, `/api/portal/me/password`)
 
 ## Project Highlights
 

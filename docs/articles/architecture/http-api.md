@@ -46,6 +46,8 @@ When `enableJwt` is true, protected endpoints require a Bearer token obtained fr
 | Method | Path | Description |
 |--------|------|-------------|
 | GET | `/api/portal/me` | Return the authenticated account and its characters |
+| PUT | `/api/portal/me` | Update editable profile fields for the authenticated account |
+| PUT | `/api/portal/me/password` | Change the authenticated account password |
 
 ### Users
 
@@ -163,6 +165,31 @@ Response shape:
 }
 ```
 
+### Player Portal Password Change
+
+The portal profile page can change the password of the authenticated account.
+
+- `Regular` accounts must provide the current password.
+- `GameMaster` and `Administrator` accounts may omit the current password.
+- Successful changes clear `RecoveryCode`.
+
+```bash
+curl -s -X PUT "$BASE_URL/api/portal/me/password" \
+  -H "$AUTH_HEADER" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "currentPassword": "old-secret",
+    "newPassword": "new-secret",
+    "confirmPassword": "new-secret"
+  }'
+```
+
+Response:
+
+- `200 OK` on success
+- `400 Bad Request` on validation failure
+- `401 Unauthorized` when JWT is missing or invalid
+
 ### Item Template Search (page/pageSize + name/tag)
 
 ```bash
@@ -265,6 +292,7 @@ Player-facing routes are exposed separately:
 
 - `/portal/login`
 - `/portal/account`
+- `/portal/profile`
 
 ## Notes
 
