@@ -13,19 +13,22 @@ namespace Moongate.Server.Http.Json;
  JsonSerializable(typeof(List<MoongateHttpUser>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpUser>)),
  JsonSerializable(typeof(MoongateHttpItemTemplateSummary)),
+ JsonSerializable(typeof(MoongateHttpItemTemplateDetail)),
+ JsonSerializable(typeof(MoongateHttpItemTemplateContainerItem)),
  JsonSerializable(typeof(ItemTemplateParamDefinition)),
  JsonSerializable(typeof(Dictionary<string, ItemTemplateParamDefinition>)),
  JsonSerializable(typeof(IReadOnlyDictionary<string, ItemTemplateParamDefinition>)),
  JsonSerializable(typeof(List<MoongateHttpItemTemplateSummary>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpItemTemplateSummary>)),
+ JsonSerializable(typeof(List<MoongateHttpItemTemplateContainerItem>)),
+ JsonSerializable(typeof(IReadOnlyList<MoongateHttpItemTemplateContainerItem>)),
  JsonSerializable(typeof(MoongateHttpActiveSession)),
  JsonSerializable(typeof(List<MoongateHttpActiveSession>)),
  JsonSerializable(typeof(IReadOnlyList<MoongateHttpActiveSession>)),
  JsonSerializable(typeof(MoongateHttpExecuteCommandRequest)),
  JsonSerializable(typeof(MoongateHttpExecuteCommandResponse)),
  JsonSerializable(typeof(MoongateHttpServerVersion)),
- JsonSerializable(typeof(MoongateHttpItemTemplatePage)),
- JsonSerializable(typeof(ItemTemplateDefinition))]
+ JsonSerializable(typeof(MoongateHttpItemTemplatePage))]
 
 /// <summary>
 /// Represents MoongateHttpJsonContext.

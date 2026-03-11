@@ -8,6 +8,7 @@ using Moongate.Tests.Server.Http.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Items;
+using Moongate.UO.Data.Types;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -25,10 +26,22 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
         itemTemplateService.Upsert(
             new()
             {
+                Id = "gold_coin",
+                Name = "Gold Coin",
+                Category = "currency",
+                ItemId = "0x0EED"
+            }
+        );
+        itemTemplateService.Upsert(
+            new()
+            {
                 Id = "test_item",
                 Name = "Test",
                 Category = "test",
                 ItemId = "0x1F9E",
+                ScriptId = "items.test_item",
+                Rarity = ItemRarity.Rare,
+                Container = ["gold_coin", "missing_child"],
                 Params = new()
                 {
                     ["owner"] = new() { Type = ItemTemplateParamType.Serial, Value = "0x40000001" }
@@ -60,6 +73,23 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
                 {
                     Assert.That(okResponse.StatusCode, Is.EqualTo(HttpStatusCode.OK));
                     Assert.That(notFoundResponse.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+                    Assert.That(okDoc.RootElement.GetProperty("scriptId").GetString(), Is.EqualTo("items.test_item"));
+                    Assert.That(okDoc.RootElement.GetProperty("rarity").GetString(), Is.EqualTo(nameof(ItemRarity.Rare)));
+                    Assert.That(okDoc.RootElement.GetProperty("container").GetArrayLength(), Is.EqualTo(2));
+                    Assert.That(okDoc.RootElement.GetProperty("container")[0].GetString(), Is.EqualTo("gold_coin"));
+                    Assert.That(okDoc.RootElement.GetProperty("containerItems").GetArrayLength(), Is.EqualTo(1));
+                    Assert.That(
+                        okDoc.RootElement.GetProperty("containerItems")[0].GetProperty("id").GetString(),
+                        Is.EqualTo("gold_coin")
+                    );
+                    Assert.That(
+                        okDoc.RootElement.GetProperty("containerItems")[0].GetProperty("name").GetString(),
+                        Is.EqualTo("Gold Coin")
+                    );
+                    Assert.That(
+                        okDoc.RootElement.GetProperty("containerItems")[0].GetProperty("itemId").GetString(),
+                        Is.EqualTo("0x0EED")
+                    );
                     Assert.That(okDoc.RootElement.GetProperty("params").TryGetProperty("owner", out var owner), Is.True);
                     Assert.That(owner.GetProperty("type").GetInt32(), Is.EqualTo((int)ItemTemplateParamType.Serial));
                     Assert.That(owner.GetProperty("value").GetString(), Is.EqualTo("0x40000001"));

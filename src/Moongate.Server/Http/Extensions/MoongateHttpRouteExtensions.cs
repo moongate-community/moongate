@@ -230,7 +230,7 @@ internal static class MoongateHttpRouteExtensions
                                   )
                                   .WithName("ItemTemplatesGetById")
                                   .WithSummary("Returns an item template by id.")
-                                  .Produces<ItemTemplateDefinition>()
+                                  .Produces<MoongateHttpItemTemplateDetail>()
                                   .Produces(StatusCodes.Status404NotFound);
             }
 
@@ -446,7 +446,10 @@ internal static class MoongateHttpRouteExtensions
             return TypedResults.NotFound();
         }
 
-        return Results.Json(template, MoongateHttpJsonContext.Default.ItemTemplateDefinition);
+        return Results.Json(
+            MapItemTemplateToHttpDetail(context, template),
+            MoongateHttpJsonContext.Default.MoongateHttpItemTemplateDetail
+        );
     }
 
     private static IResult HandleGetItemTemplateImageByItemId(
@@ -795,6 +798,56 @@ internal static class MoongateHttpRouteExtensions
             Name = template.Name,
             Category = template.Category,
             ItemId = template.ItemId,
+            Params = template.Params.ToDictionary(
+                static kvp => kvp.Key,
+                static kvp => new ItemTemplateParamDefinition
+                {
+                    Type = kvp.Value.Type,
+                    Value = kvp.Value.Value
+                },
+                StringComparer.OrdinalIgnoreCase
+            )
+        };
+
+    private static MoongateHttpItemTemplateDetail MapItemTemplateToHttpDetail(
+        MoongateHttpRouteContext context,
+        ItemTemplateDefinition template
+    )
+        => new()
+        {
+            Id = template.Id,
+            Name = template.Name,
+            Category = template.Category,
+            ItemId = template.ItemId,
+            Description = template.Description,
+            Tags = template.Tags.ToList(),
+            ScriptId = template.ScriptId,
+            Weight = template.Weight > 0 ? template.Weight : null,
+            GoldValue = template.GoldValue.ToString(),
+            Hue = template.Hue.ToString(),
+            GumpId = template.GumpId,
+            Rarity = template.Rarity.ToString(),
+            Container = template.Container.ToList(),
+            ContainerItems = template.Container
+                                     .Select(
+                                         containerId =>
+                                         {
+                                             if (!context.ItemTemplateService!.TryGet(containerId, out var childTemplate) ||
+                                                 childTemplate is null)
+                                             {
+                                                 return null;
+                                             }
+
+                                             return new MoongateHttpItemTemplateContainerItem
+                                             {
+                                                 Id = childTemplate.Id,
+                                                 Name = childTemplate.Name,
+                                                 ItemId = childTemplate.ItemId
+                                             };
+                                         }
+                                     )
+                                     .OfType<MoongateHttpItemTemplateContainerItem>()
+                                     .ToList(),
             Params = template.Params.ToDictionary(
                 static kvp => kvp.Key,
                 static kvp => new ItemTemplateParamDefinition
