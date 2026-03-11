@@ -316,6 +316,8 @@ public class ToolTipHandlerTests
                 Assert.That(response.IsClientRequest, Is.False);
                 Assert.That(response.Serial, Is.EqualTo(itemSerial));
                 Assert.That(response.Properties.Count, Is.GreaterThan(0));
+                Assert.That(response.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
+                Assert.That(response.Properties[0].Text, Is.EqualTo("Gold Coins"));
             }
         );
     }
