@@ -1,20 +1,55 @@
+import { lazy, Suspense } from 'react'
 import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
 import { AppLayout } from './components/AppLayout'
 import { LoginPage } from './pages/LoginPage'
-import { DashboardPage } from './pages/DashboardPage'
-import { UsersPage } from './pages/UsersPage'
-import { AddUserPage } from './pages/AddUserPage'
-import { ConsolePage } from './pages/ConsolePage'
-import { ItemTemplatesPage } from './pages/ItemTemplatesPage'
-import { ItemTemplateDetailsPage } from './pages/ItemTemplateDetailsPage'
-import { ActivePlayersPage } from './pages/ActivePlayersPage'
-import { MapsPage } from './pages/MapsPage'
+
+const DashboardPage = lazy(async () =>
+  import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })),
+)
+const UsersPage = lazy(async () =>
+  import('./pages/UsersPage').then((module) => ({ default: module.UsersPage })),
+)
+const AddUserPage = lazy(async () =>
+  import('./pages/AddUserPage').then((module) => ({ default: module.AddUserPage })),
+)
+const ConsolePage = lazy(async () =>
+  import('./pages/ConsolePage').then((module) => ({ default: module.ConsolePage })),
+)
+const ItemTemplatesPage = lazy(async () =>
+  import('./pages/ItemTemplatesPage').then((module) => ({ default: module.ItemTemplatesPage })),
+)
+const ItemTemplateDetailsPage = lazy(async () =>
+  import('./pages/ItemTemplateDetailsPage').then((module) => ({ default: module.ItemTemplateDetailsPage })),
+)
+const ActivePlayersPage = lazy(async () =>
+  import('./pages/ActivePlayersPage').then((module) => ({ default: module.ActivePlayersPage })),
+)
+const MapsPage = lazy(async () =>
+  import('./pages/MapsPage').then((module) => ({ default: module.MapsPage })),
+)
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user)
   return user ? <>{children}</> : <Navigate to="/login" replace />
+}
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center">
+      <div
+        className="rounded-lg border px-4 py-3 font-mono text-xs uppercase tracking-[0.18em]"
+        style={{
+          color: 'rgba(185,187,211,0.65)',
+          borderColor: 'rgba(106,165,218,0.2)',
+          background: 'rgba(36,33,48,0.45)',
+        }}
+      >
+        Loading
+      </div>
+    </div>
+  )
 }
 
 export function AppRouter() {
@@ -30,14 +65,70 @@ export function AppRouter() {
         }
       >
         <Route index element={<Navigate to="/dashboard" replace />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="users" element={<UsersPage />} />
-        <Route path="users/add" element={<AddUserPage />} />
-        <Route path="console" element={<ConsolePage />} />
-        <Route path="active-players" element={<ActivePlayersPage />} />
-        <Route path="maps" element={<MapsPage />} />
-        <Route path="item-templates" element={<ItemTemplatesPage />} />
-        <Route path="item-templates/:id" element={<ItemTemplateDetailsPage />} />
+        <Route
+          path="dashboard"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <DashboardPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="users"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <UsersPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="users/add"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <AddUserPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="console"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <ConsolePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="active-players"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <ActivePlayersPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="maps"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <MapsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="item-templates"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <ItemTemplatesPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="item-templates/:id"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <ItemTemplateDetailsPage />
+            </Suspense>
+          }
+        />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
