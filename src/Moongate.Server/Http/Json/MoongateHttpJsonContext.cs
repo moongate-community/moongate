@@ -7,6 +7,8 @@ namespace Moongate.Server.Http.Json;
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase),
  JsonSerializable(typeof(MoongateHttpLoginRequest)),
  JsonSerializable(typeof(MoongateHttpLoginResponse)),
+ JsonSerializable(typeof(MoongateHttpBranding)),
+ JsonSerializable(typeof(MoongateHttpUpdatePortalProfileRequest)),
  JsonSerializable(typeof(MoongateHttpPortalAccount)),
  JsonSerializable(typeof(MoongateHttpPortalCharacter)),
  JsonSerializable(typeof(MoongateHttpCreateUserRequest)),

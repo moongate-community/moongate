@@ -8,6 +8,7 @@ public enum DirectoryType
     Data,
     Templates,
     Scripts,
+    WebRoot,
     Save,
     Images,
     Logs,

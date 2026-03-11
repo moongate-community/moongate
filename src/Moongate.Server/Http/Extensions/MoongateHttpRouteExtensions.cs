@@ -61,6 +61,11 @@ internal static class MoongateHttpRouteExtensions
                    .WithSummary("Returns running server version metadata.")
                    .Produces<MoongateHttpServerVersion>(StatusCodes.Status200OK, "application/json");
 
+        systemGroup.MapGet("/api/branding", () => Results.Json(context.Branding, MoongateHttpJsonContext.Default.MoongateHttpBranding))
+                   .WithName("Branding")
+                   .WithSummary("Returns public branding metadata for login pages.")
+                   .Produces<MoongateHttpBranding>(StatusCodes.Status200OK, "application/json");
+
         if (context.JwtOptions.IsEnabled && context.AccountService is not null)
         {
             var authGroup = endpoints.MapGroup("/auth").WithTags("Auth");
@@ -167,6 +172,22 @@ internal static class MoongateHttpRouteExtensions
                        .WithName("PortalGetMe")
                        .WithSummary("Returns the authenticated player's account and characters.")
                        .Produces<MoongateHttpPortalAccount>()
+                       .Produces(StatusCodes.Status401Unauthorized)
+                       .Produces(StatusCodes.Status404NotFound);
+
+            portalGroup.MapPut(
+                           "/me",
+                           (
+                               ClaimsPrincipal user,
+                               MoongateHttpUpdatePortalProfileRequest request,
+                               CancellationToken cancellationToken
+                           ) => HandleUpdatePortalMe(context, user, request, cancellationToken)
+                       )
+                       .WithName("PortalUpdateMe")
+                       .WithSummary("Updates the authenticated player's editable profile fields.")
+                       .Accepts<MoongateHttpUpdatePortalProfileRequest>("application/json")
+                       .Produces<MoongateHttpPortalAccount>()
+                       .Produces(StatusCodes.Status400BadRequest)
                        .Produces(StatusCodes.Status401Unauthorized)
                        .Produces(StatusCodes.Status404NotFound);
         }
@@ -689,26 +710,47 @@ internal static class MoongateHttpRouteExtensions
                                 .GetAwaiter()
                                 .GetResult();
 
-        var response = new MoongateHttpPortalAccount
-        {
-            AccountId = account.Id.Value.ToString(),
-            Username = account.Username,
-            Email = account.Email,
-            AccountType = account.AccountType.ToString(),
-            Characters = characters.Select(
-                                     static character => new MoongateHttpPortalCharacter
-                                     {
-                                         CharacterId = character.Id.Value.ToString(),
-                                         Name = character.Name,
-                                         MapId = character.MapId,
-                                         X = character.Location.X,
-                                         Y = character.Location.Y
-                                     }
-                                 )
-                                 .ToList()
-        };
+        return Results.Json(MapPortalAccount(account, characters), MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
+    }
 
-        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
+    private static IResult HandleUpdatePortalMe(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        MoongateHttpUpdatePortalProfileRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var accountIdClaim = user.FindFirst("account_id")?.Value;
+        var accountId = string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var email = request.Email?.Trim();
+
+        if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+        {
+            return TypedResults.BadRequest("invalid email");
+        }
+
+        var updated = context.AccountService!
+                             .UpdateAccountAsync(accountId.Value, email: email, cancellationToken: cancellationToken)
+                             .GetAwaiter()
+                             .GetResult();
+
+        if (updated is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var characters = context.CharacterService!
+                                .GetCharactersForAccountAsync(accountId.Value)
+                                .GetAwaiter()
+                                .GetResult();
+
+        return Results.Json(MapPortalAccount(updated, characters), MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
     }
 
     private static IResult HandleLogin(
@@ -753,6 +795,52 @@ internal static class MoongateHttpRouteExtensions
         };
 
         return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpLoginResponse);
+    }
+
+    private static string ResolveMapName(int mapId)
+        => mapId switch
+        {
+            0 => "Felucca",
+            1 => "Trammel",
+            2 => "Ilshenar",
+            3 => "Malas",
+            4 => "Tokuno",
+            5 => "TerMur",
+            _ => $"Map {mapId}"
+        };
+
+    private static MoongateHttpPortalAccount MapPortalAccount(UOAccountEntity account, IReadOnlyList<UOMobileEntity> characters)
+        => new()
+        {
+            AccountId = account.Id.Value.ToString(),
+            Username = account.Username,
+            Email = account.Email,
+            AccountType = account.AccountType.ToString(),
+            Characters = characters.Select(
+                                     static character => new MoongateHttpPortalCharacter
+                                     {
+                                         CharacterId = character.Id.Value.ToString(),
+                                         Name = character.Name,
+                                         MapId = character.MapId,
+                                         MapName = ResolveMapName(character.MapId),
+                                         X = character.Location.X,
+                                         Y = character.Location.Y
+                                     }
+                                 )
+                                 .ToList()
+        };
+
+    private static bool IsValidEmail(string email)
+    {
+        try
+        {
+            _ = new System.Net.Mail.MailAddress(email);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private static IResult HandleMetrics(MoongateHttpRouteContext context, CancellationToken cancellationToken)

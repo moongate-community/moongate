@@ -39,6 +39,10 @@ export default defineConfig({
         target: 'http://localhost:8088',
         changeOrigin: true,
       },
+      '/images': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
       '/openapi': {
         target: 'http://localhost:8088',
         changeOrigin: true,

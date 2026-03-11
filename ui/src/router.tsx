@@ -7,6 +7,9 @@ import { AppLayout } from './components/AppLayout'
 import { LoginPage } from './pages/LoginPage'
 import { PortalLoginPage } from './pages/PortalLoginPage'
 import { PortalAccountPage } from './pages/PortalAccountPage'
+import { PortalProfilePage } from './pages/PortalProfilePage'
+import { PortalIntlProvider } from './i18n/PortalIntlProvider'
+import { PortalLayout } from './components/PortalLayout'
 
 const DashboardPage = lazy(async () =>
   import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })),
@@ -64,13 +67,36 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/portal/login" element={<PortalLoginPage />} />
+      <Route
+        path="/portal/login"
+        element={(
+          <PortalIntlProvider>
+            <PortalLoginPage />
+          </PortalIntlProvider>
+        )}
+      />
       <Route
         path="/portal/account"
         element={
-          <PortalProtectedRoute>
-            <PortalAccountPage />
-          </PortalProtectedRoute>
+          <PortalIntlProvider>
+            <PortalProtectedRoute>
+              <PortalLayout>
+                <PortalAccountPage />
+              </PortalLayout>
+            </PortalProtectedRoute>
+          </PortalIntlProvider>
+        }
+      />
+      <Route
+        path="/portal/profile"
+        element={
+          <PortalIntlProvider>
+            <PortalProtectedRoute>
+              <PortalLayout>
+                <PortalProfilePage />
+              </PortalLayout>
+            </PortalProtectedRoute>
+          </PortalIntlProvider>
         }
       />
       <Route

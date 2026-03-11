@@ -125,6 +125,7 @@ Top-level shape:
 - `data`
 - `templates`
 - `scripts`
+- `web`
 - `save`
 - `logs`
 - `cache`
@@ -164,6 +165,19 @@ When HTTP is enabled:
 - `/health` → plain text `ok`
 - `/metrics` → Prometheus text format (if metrics factory configured)
 - `/scalar` and `/openapi/*` (if OpenAPI enabled)
+
+Branding assets are served from:
+
+- `DirectoriesConfig[DirectoryType.WebRoot]`
+
+Login pages consume public branding metadata from:
+
+- `/api/branding`
+
+Relevant config keys:
+
+- `Http.AdminLoginLogoPath`
+- `Http.PlayerLoginLogoPath`
 
 ## Persistence Setting
 

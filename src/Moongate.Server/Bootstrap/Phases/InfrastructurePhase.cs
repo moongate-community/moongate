@@ -141,6 +141,8 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
         var destinationDataDirectory = context.DirectoriesConfig[DirectoryType.Data];
         var sourceTemplatesDirectory = Path.Combine(AppContext.BaseDirectory, "Assets", "templates");
         var destinationTemplatesDirectory = context.DirectoriesConfig[DirectoryType.Templates];
+        var sourceWebDirectory = Path.Combine(AppContext.BaseDirectory, "Assets", "web");
+        var destinationWebDirectory = context.DirectoriesConfig[DirectoryType.WebRoot];
 
         DataAssetsBootstrapper.EnsureDataAssets(sourceDataDirectory, destinationDataDirectory, context.Logger);
         DataAssetsBootstrapper.EnsureAssets(
@@ -149,5 +151,6 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
             context.Logger,
             "Template assets"
         );
+        DataAssetsBootstrapper.EnsureAssets(sourceWebDirectory, destinationWebDirectory, context.Logger, "Web assets");
     }
 }

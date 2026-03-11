@@ -11,6 +11,8 @@ public sealed class MoongateHttpPortalCharacter
 
     public required int MapId { get; init; }
 
+    public required string MapName { get; init; }
+
     public required int X { get; init; }
 
     public required int Y { get; init; }

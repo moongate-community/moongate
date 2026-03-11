@@ -18,6 +18,7 @@ internal sealed class MoongateHttpRouteContext
 {
     public MoongateHttpRouteContext(
         MoongateHttpJwtOptions jwtOptions,
+        MoongateHttpBranding branding,
         IAccountService? accountService,
         ICharacterService? characterService,
         IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory,
@@ -31,6 +32,7 @@ internal sealed class MoongateHttpRouteContext
     )
     {
         JwtOptions = jwtOptions;
+        Branding = branding;
         AccountService = accountService;
         CharacterService = characterService;
         MetricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
@@ -48,6 +50,8 @@ internal sealed class MoongateHttpRouteContext
     public ICharacterService? CharacterService { get; }
 
     public MoongateHttpJwtOptions JwtOptions { get; }
+
+    public MoongateHttpBranding Branding { get; }
 
     public IMetricsHttpSnapshotFactory? MetricsHttpSnapshotFactory { get; }
 

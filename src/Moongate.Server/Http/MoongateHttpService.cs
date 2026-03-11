@@ -48,6 +48,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly IMapImageService? _mapImageService;
     private readonly bool _isUiEnabled;
     private readonly string? _uiDistPath;
+    private readonly MoongateHttpBranding _branding;
 
     private WebApplication? _app;
 
@@ -88,6 +89,12 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _mapImageService = mapImageService;
         _isUiEnabled = options.IsUiEnabled;
         _uiDistPath = options.UiDistPath;
+        _branding = new()
+        {
+            ShardName = string.IsNullOrWhiteSpace(options.ShardName) ? "Moongate" : options.ShardName,
+            AdminLoginLogoUrl = NormalizePublicAssetPath(options.AdminLoginLogoPath),
+            PlayerLoginLogoUrl = NormalizePublicAssetPath(options.PlayerLoginLogoPath)
+        };
 
         if (_jwtOptions.IsEnabled && string.IsNullOrWhiteSpace(_jwtOptions.SigningKey))
         {
@@ -139,6 +146,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         var routeContext = new MoongateHttpRouteContext(
             _jwtOptions,
+            _branding,
             _accountService,
             _characterService,
             _metricsHttpSnapshotFactory,
@@ -261,6 +269,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
     private bool ConfigureUiHosting(WebApplication app)
     {
+        ConfigureWebRootHosting(app);
+
         if (!_isUiEnabled)
         {
             return false;
@@ -298,6 +308,19 @@ public sealed class MoongateHttpService : IMoongateHttpService
         Log.Information("Serving UI static files from {UiDistPath}", uiDistPath);
 
         return true;
+    }
+
+    private void ConfigureWebRootHosting(WebApplication app)
+    {
+        var webRootPath = _directoriesConfig[DirectoryType.WebRoot];
+
+        if (!Directory.Exists(webRootPath))
+        {
+            return;
+        }
+
+        var fileProvider = new PhysicalFileProvider(webRootPath);
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
     }
 
     private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
@@ -429,5 +452,22 @@ public sealed class MoongateHttpService : IMoongateHttpService
                path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase) ||
                path.StartsWithSegments("/openapi", StringComparison.OrdinalIgnoreCase) ||
                path.StartsWithSegments("/scalar", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string? NormalizePublicAssetPath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var normalized = path.Replace('\\', '/').Trim();
+
+        if (!normalized.StartsWith('/'))
+        {
+            normalized = "/" + normalized;
+        }
+
+        return normalized;
     }
 }

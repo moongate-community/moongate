@@ -7,6 +7,8 @@
     "IsEnabled": true,
     "Port": 8088,
     "WebsiteUrl": "http://localhost",
+    "AdminLoginLogoPath": "images/moongate_logo_admin.png",
+    "PlayerLoginLogoPath": "images/moongate_logo_players.png",
     "IsOpenApiEnabled": true,
     "Jwt": {
       "IsEnabled": true,

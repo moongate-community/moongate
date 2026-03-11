@@ -60,6 +60,11 @@ export async function rawPortalApiFetch(
 
 export const portalApi = {
   get: <T>(path: string) => portalApiFetch<T>(path),
+  put: <T>(path: string, body: unknown) =>
+    portalApiFetch<T>(path, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
   post: <T>(path: string, body: unknown) =>
     portalApiFetch<T>(path, {
       method: 'POST',
