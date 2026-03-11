@@ -57,6 +57,9 @@ docker run --rm -it \
 Server port: `2593`  
 HTTP/UI API port: `8088`
 
+Default credentials: `admin` / `password`  
+Change them immediately from the server console. A dedicated `.password` command will be added next.
+
 ### Run UI (dev)
 
 ```bash
