@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Books;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
@@ -6,6 +7,7 @@ using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -39,6 +41,7 @@ public class ItemHandler
       , IGameEventListener<ItemDeletedEvent>
 {
     private const int GroundItemInteractionRange = 2;
+    private const int BookLinesPerPage = 8;
 
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
@@ -447,6 +450,11 @@ public class ItemHandler
             );
         }
 
+        if (TryEnqueueReadonlyBook(session, item))
+        {
+            return true;
+        }
+
         if (item.IsContainer)
         {
             Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
@@ -632,6 +640,72 @@ public class ItemHandler
 
     private static bool IsGroundItem(UOItemEntity item)
         => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;
+
+    private bool TryEnqueueReadonlyBook(GameSession session, UOItemEntity item)
+    {
+        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out var title) ||
+            !item.TryGetCustomString(BookTemplateParamKeys.Author, out var author) ||
+            !item.TryGetCustomString(BookTemplateParamKeys.Content, out var content))
+        {
+            return false;
+        }
+
+        var pages = BuildBookPages(content);
+        var header = new BookHeaderNewPacket
+        {
+            BookSerial = item.Id.Value,
+            Flag1 = false,
+            IsWritable = false,
+            PageCount = (ushort)pages.Count,
+            Title = title,
+            Author = author
+        };
+
+        var packet = new BookPagesPacket
+        {
+            BookSerial = item.Id.Value,
+            PageCount = (ushort)pages.Count
+        };
+
+        for (var i = 0; i < pages.Count; i++)
+        {
+            var page = new BookPageEntry
+            {
+                PageNumber = (ushort)(i + 1),
+                LineCount = (ushort)pages[i].Count
+            };
+
+            page.Lines.AddRange(pages[i]);
+            packet.Pages.Add(page);
+        }
+
+        Enqueue(session, header);
+        Enqueue(session, packet);
+
+        return true;
+    }
+
+    private static List<List<string>> BuildBookPages(string content)
+    {
+        var normalized = string.IsNullOrWhiteSpace(content)
+                             ? string.Empty
+                             : content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+        var lines = normalized.Length == 0 ? [] : normalized.Split('\n').ToList();
+
+        if (lines.Count == 0)
+        {
+            return [[]];
+        }
+
+        var pages = new List<List<string>>();
+
+        for (var index = 0; index < lines.Count; index += BookLinesPerPage)
+        {
+            pages.Add(lines.Skip(index).Take(BookLinesPerPage).ToList());
+        }
+
+        return pages;
+    }
 
     private static bool IsValidWearLayer(ItemLayerType layer)
     {

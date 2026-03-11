@@ -91,6 +91,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);
         container.Register<ITextTemplateService, TextTemplateService>(Reuse.Singleton);
+        container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);

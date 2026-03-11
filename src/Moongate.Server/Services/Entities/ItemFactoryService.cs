@@ -1,7 +1,9 @@
 using System.Globalization;
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -25,11 +27,17 @@ public sealed class ItemFactoryService : IItemFactoryService
     private readonly ILogger _logger = Log.ForContext<ItemFactoryService>();
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IPersistenceService _persistenceService;
+    private readonly IBookTemplateService? _bookTemplateService;
 
-    public ItemFactoryService(IItemTemplateService itemTemplateService, IPersistenceService persistenceService)
+    public ItemFactoryService(
+        IItemTemplateService itemTemplateService,
+        IPersistenceService persistenceService,
+        IBookTemplateService? bookTemplateService = null
+    )
     {
         _itemTemplateService = itemTemplateService;
         _persistenceService = persistenceService;
+        _bookTemplateService = bookTemplateService;
     }
 
     /// <inheritdoc />
@@ -76,6 +84,7 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         ApplyTemplateParams(item, template);
+        ApplyBookTemplate(item, template);
 
         return item;
     }
@@ -136,6 +145,33 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         return false;
+    }
+
+    private void ApplyBookTemplate(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        if (string.IsNullOrWhiteSpace(template.BookId))
+        {
+            return;
+        }
+
+        if (_bookTemplateService is null)
+        {
+            throw new InvalidOperationException(
+                $"Item template '{template.Id}' references book '{template.BookId}' but no book template service is configured."
+            );
+        }
+
+        if (!_bookTemplateService.TryLoad(template.BookId, model: null, out var book) || book is null)
+        {
+            throw new InvalidOperationException(
+                $"Item template '{template.Id}' references missing or invalid book template '{template.BookId}'."
+            );
+        }
+
+        item.SetCustomString(BookTemplateParamKeys.BookId, template.BookId.Trim());
+        item.SetCustomString(BookTemplateParamKeys.Title, book.Title);
+        item.SetCustomString(BookTemplateParamKeys.Author, book.Author);
+        item.SetCustomString(BookTemplateParamKeys.Content, book.Content);
     }
 
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)

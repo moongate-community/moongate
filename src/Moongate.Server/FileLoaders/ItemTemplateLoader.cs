@@ -120,6 +120,11 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.GumpId = parent.GumpId;
         }
 
+        if (string.IsNullOrWhiteSpace(child.BookId))
+        {
+            child.BookId = parent.BookId;
+        }
+
         if (string.IsNullOrWhiteSpace(child.ContainerLayoutId))
         {
             child.ContainerLayoutId = parent.ContainerLayoutId;

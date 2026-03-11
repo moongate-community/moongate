@@ -97,6 +97,43 @@ items_teleport = {
 }
 ```
 
+### Read-Only Book Template
+
+Item templates can point to a book text file with `bookId`. The file lives under
+`moongate_data/templates/books/<book_id>.txt`, supports the same `#` comments and
+Scriban placeholders used by text templates, and is rendered once when the item
+is created.
+
+Example item template:
+
+```json
+{
+  "type": "item",
+  "id": "moongate_welcome_book",
+  "name": "Welcome To Moongate",
+  "category": "Books",
+  "itemId": "0x0FF0",
+  "scriptId": "none",
+  "bookId": "welcome_player",
+  "isMovable": true,
+  "tags": ["book", "moongate"]
+}
+```
+
+Example book file:
+
+```txt
+[Title] Welcome To {{ shard.name }}
+[Author] The Moongate Team
+
+Welcome traveler.
+Website: {{ shard.website_url }}
+```
+
+At runtime the rendered `title`, `author`, and `content` are stored into the item
+custom params (`book_title`, `book_author`, `book_content`). Double-click opens
+the classic client book UI in read-only mode.
+
 ### GM Command: Eclipse
 
 ```lua

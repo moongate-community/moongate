@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.Books;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
@@ -705,6 +706,69 @@ public class ItemHandlerTests
                 Assert.That(handled, Is.True);
                 Assert.That(doubleClickEvent.ItemSerial, Is.EqualTo(targetSerial));
                 Assert.That(doubleClickEvent.SessionId, Is.EqualTo(session.SessionId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickReadonlyBook_ShouldEnqueueClassicBookPackets()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var targetSerial = (Serial)0x40000021u;
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = (Serial)0x40000001u,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Welcome");
+        item.SetCustomString("book_author", "Archivist");
+        item.SetCustomString("book_content", "Line 1\nLine 2\nLine 3");
+        itemService.ItemsById[targetSerial] = item;
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DoubleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(queue.TryDequeue(out var headerOutbound), Is.True);
+                Assert.That(headerOutbound.Packet, Is.TypeOf<BookHeaderNewPacket>());
+                var header = (BookHeaderNewPacket)headerOutbound.Packet;
+                Assert.That(header.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(header.IsWritable, Is.False);
+                Assert.That(header.Title, Is.EqualTo("Welcome"));
+                Assert.That(header.Author, Is.EqualTo("Archivist"));
+                Assert.That(header.PageCount, Is.EqualTo(1));
+
+                Assert.That(queue.TryDequeue(out var pagesOutbound), Is.True);
+                Assert.That(pagesOutbound.Packet, Is.TypeOf<BookPagesPacket>());
+                var pages = (BookPagesPacket)pagesOutbound.Packet;
+                Assert.That(pages.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(pages.Pages, Has.Count.EqualTo(1));
+                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
+                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2", "Line 3" }));
             }
         );
     }

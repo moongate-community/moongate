@@ -175,6 +175,78 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseItemHasBookId_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "books");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "books.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "books",
+                "id": "base_book",
+                "name": "Base Book",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FF0",
+                "lootType": "Regular",
+                "scriptId": "none",
+                "bookId": "welcome_player",
+                "tags": ["book"],
+                "weight": 1.0
+              },
+              {
+                "type": "item",
+                "category": "books",
+                "id": "derived_book",
+                "base_item": "base_book",
+                "name": "Derived Book",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FF1",
+                "lootType": "Regular",
+                "scriptId": "none",
+                "tags": ["book"],
+                "weight": 1.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("derived_book", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.BookId, Is.EqualTo("welcome_player"));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();

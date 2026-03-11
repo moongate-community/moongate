@@ -58,12 +58,20 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
         }
 
         _logger.Information("Interactive console prompt enabled.");
-        _consoleUiService.LockInput();
-        _consoleUiService.WriteLogLine(
-            $"Console input is locked. Press '{_consoleUiService.UnlockCharacter}' to unlock.",
-            LogEventLevel.Warning
-        );
-        _inputLoopTask = Task.Run(() => InputLoopAsync(_lifetimeCts.Token), _lifetimeCts.Token);
+        try
+        {
+            _consoleUiService.LockInput();
+            _consoleUiService.WriteLogLine(
+                $"Console input is locked. Press '{_consoleUiService.UnlockCharacter}' to unlock.",
+                LogEventLevel.Warning
+            );
+            _inputLoopTask = Task.Run(() => InputLoopAsync(_lifetimeCts.Token), _lifetimeCts.Token);
+        }
+        catch (Exception ex) when (ex is IOException or InvalidOperationException or ArgumentOutOfRangeException)
+        {
+            _logger.Warning(ex, "Interactive console prompt disabled because the current terminal does not support prompt rendering.");
+            _inputLoopTask = Task.CompletedTask;
+        }
 
         return Task.CompletedTask;
     }

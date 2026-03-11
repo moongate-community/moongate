@@ -2,7 +2,9 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Timing;
+using Moongate.Server.Data.Config;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Containers;
@@ -17,6 +19,74 @@ namespace Moongate.Tests.Server.Services.Entities;
 
 public class ItemFactoryServiceTests
 {
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldRenderBookTemplateIntoCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "welcome_book",
+                Name = "Welcome Book",
+                Category = "books",
+                Description = "welcome",
+                ItemId = "0x0FF0",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 1,
+                BookId = "welcome_player",
+                Tags = ["book"]
+            }
+        );
+
+        var booksDirectory = Path.Combine(temp.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(booksDirectory, "welcome_player.txt"),
+            """
+            [Title] Welcome To {{ shard.name }}
+            [Author] Archivist
+
+            Welcome traveler.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(
+            temp.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var config = new MoongateConfig();
+        config.Game.ShardName = "Moongate";
+        var bookTemplateService = new BookTemplateService(directoriesConfig, config);
+
+        var service = new ItemFactoryService(templateService, persistence, bookTemplateService);
+
+        var item = service.CreateItemFromTemplate("welcome_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomString("book_id", out var bookId), Is.True);
+                Assert.That(bookId, Is.EqualTo("welcome_player"));
+                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
+                Assert.That(title, Is.EqualTo("Welcome To Moongate"));
+                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
+                Assert.That(author, Is.EqualTo("Archivist"));
+                Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
+                Assert.That(content, Does.Contain("Welcome traveler."));
+            }
+        );
+    }
+
     [Test]
     public async Task CreateItemFromTemplate_ShouldApplyTypedParamsToCustomProperties()
     {
@@ -45,7 +115,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("param_item");
 
@@ -85,7 +155,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("door_item");
 
@@ -115,7 +185,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("fallback_item");
         var tile = TileData.ItemTable[item.ItemId];
@@ -153,7 +223,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("test_item");
 
@@ -199,7 +269,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("gm_only_item");
 
@@ -228,7 +298,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("BarredMetalDoor");
 
@@ -263,7 +333,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("gold_item");
         var expected = TileData.ItemTable[item.ItemId][UOTileFlag.Generic];
@@ -306,7 +376,7 @@ public class ItemFactoryServiceTests
                 GumpId = 0x003D
             };
 
-            var service = new ItemFactoryService(templateService, persistence);
+            var service = new ItemFactoryService(templateService, persistence, null);
             var item = service.CreateItemFromTemplate("gm_like_bag");
 
             Assert.That(item.GumpId, Is.EqualTo(0x003D));
@@ -343,7 +413,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         Assert.That(
             () => service.CreateItemFromTemplate("invalid_serial_param_item"),
@@ -357,7 +427,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         Assert.That(
             () => service.CreateItemFromTemplate(templateId!),
@@ -371,7 +441,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         Assert.That(
             () => service.CreateItemFromTemplate("missing_template"),
@@ -385,7 +455,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var backpack = service.GetNewBackpack();
 
@@ -424,7 +494,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var backpack = service.GetNewBackpack();
 
@@ -458,7 +528,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var found = service.TryGetItemTemplate("BarredMetalDoor", out var template);
 
@@ -478,7 +548,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var found = service.TryGetItemTemplate("missing_template", out var template);
 
@@ -508,7 +578,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var found = service.TryGetItemTemplate("test_item", out var template);
 

@@ -25,6 +25,8 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public string? GumpId { get; set; }
 
+    public string? BookId { get; set; }
+
     [JsonConverter(typeof(HueSpecJsonConverter))]
     public HueSpec Hue { get; set; }
 
