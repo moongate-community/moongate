@@ -12,6 +12,7 @@ using Moongate.Server.Http.Extensions;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Metrics;
@@ -38,6 +39,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly Action<WebApplication> _configureApp;
     private readonly MoongateHttpJwtOptions _jwtOptions;
     private readonly IAccountService? _accountService;
+    private readonly ICharacterService? _characterService;
     private readonly IMetricsHttpSnapshotFactory? _metricsHttpSnapshotFactory;
     private readonly IItemTemplateService? _itemTemplateService;
     private readonly IArtService? _artService;
@@ -52,6 +54,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
     public MoongateHttpService(
         MoongateHttpServiceOptions options,
         IAccountService? accountService = null,
+        ICharacterService? characterService = null,
         IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory = null,
         IItemTemplateService? itemTemplateService = null,
         IArtService? artService = null,
@@ -76,6 +79,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _configureApp = options.ConfigureApp ?? (_ => { });
         _jwtOptions = options.Jwt ?? new MoongateHttpJwtOptions();
         _accountService = accountService;
+        _characterService = characterService;
         _metricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
         _itemTemplateService = itemTemplateService;
         _artService = artService;
@@ -136,6 +140,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
         var routeContext = new MoongateHttpRouteContext(
             _jwtOptions,
             _accountService,
+            _characterService,
             _metricsHttpSnapshotFactory,
             isUiServing,
             _directoriesConfig,

@@ -60,6 +60,11 @@ HTTP/UI API port: `8088`
 Default credentials: `admin` / `password`  
 Change them immediately from the server console with `.password`.
 
+Player portal routes:
+
+- Dev UI: `http://localhost:5173/portal/login`
+- Embedded UI: `http://localhost:8088/portal/login`
+
 ### Run UI (dev)
 
 ```bash
@@ -80,6 +85,7 @@ UI default URL: `http://localhost:8088/`
 - Lua scripting runtime for commands, gumps, item/mobile behavior
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows
+- Player portal for authenticated account and character overview (`/portal/login`, `/api/portal/me`)
 
 ## Project Highlights
 

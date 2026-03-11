@@ -46,6 +46,7 @@ HTTP checks:
 - `http://localhost:8088/health` → `ok`
 - `http://localhost:8088/metrics` → Prometheus payload (or config message)
 - `http://localhost:8088/scalar` → OpenAPI UI (if enabled)
+- `http://localhost:8088/portal/login` → player portal login
 
 ## 5. Console Commands
 

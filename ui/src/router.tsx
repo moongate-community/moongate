@@ -2,8 +2,11 @@ import { lazy, Suspense } from 'react'
 import type { ReactNode } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuthStore } from './store/authStore'
+import { usePortalAuthStore } from './store/portalAuthStore'
 import { AppLayout } from './components/AppLayout'
 import { LoginPage } from './pages/LoginPage'
+import { PortalLoginPage } from './pages/PortalLoginPage'
+import { PortalAccountPage } from './pages/PortalAccountPage'
 
 const DashboardPage = lazy(async () =>
   import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage })),
@@ -35,6 +38,11 @@ function ProtectedRoute({ children }: { children: ReactNode }) {
   return user ? <>{children}</> : <Navigate to="/login" replace />
 }
 
+function PortalProtectedRoute({ children }: { children: ReactNode }) {
+  const user = usePortalAuthStore((s) => s.user)
+  return user ? <>{children}</> : <Navigate to="/portal/login" replace />
+}
+
 function RouteFallback() {
   return (
     <div className="flex min-h-[40vh] items-center justify-center">
@@ -56,6 +64,15 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/portal/login" element={<PortalLoginPage />} />
+      <Route
+        path="/portal/account"
+        element={
+          <PortalProtectedRoute>
+            <PortalAccountPage />
+          </PortalProtectedRoute>
+        }
+      />
       <Route
         path="/"
         element={

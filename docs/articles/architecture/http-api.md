@@ -41,6 +41,12 @@ When `enableJwt` is true, protected endpoints require a Bearer token obtained fr
 |--------|------|-------------|
 | POST | `/auth/login` | Authenticate and receive JWT token |
 
+### Player Portal
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/portal/me` | Return the authenticated account and its characters |
+
 ### Users
 
 | Method | Path | Description |
@@ -127,6 +133,34 @@ If JWT is enabled, pass token:
 ```bash
 TOKEN="<jwt>"
 AUTH_HEADER="Authorization: Bearer $TOKEN"
+```
+
+### Player Portal Account Snapshot
+
+The player-facing portal uses the same JWT login endpoint, but reads only the authenticated account attached to the token.
+
+```bash
+curl -s "$BASE_URL/api/portal/me" -H "$AUTH_HEADER"
+```
+
+Response shape:
+
+```json
+{
+  "accountId": "1",
+  "username": "player_one",
+  "email": "player@example.com",
+  "accountType": "Regular",
+  "characters": [
+    {
+      "characterId": "2",
+      "name": "Lilly",
+      "mapId": 0,
+      "x": 1324,
+      "y": 1624
+    }
+  ]
+}
 ```
 
 ### Item Template Search (page/pageSize + name/tag)
@@ -226,6 +260,11 @@ Response shape:
 ## Frontend UI
 
 When UI hosting is enabled (default), the server serves a React-based admin dashboard on `/`. The frontend source is in the `ui/` directory.
+
+Player-facing routes are exposed separately:
+
+- `/portal/login`
+- `/portal/account`
 
 ## Notes
 

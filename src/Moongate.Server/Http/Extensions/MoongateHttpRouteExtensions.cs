@@ -11,6 +11,7 @@ using Moongate.Server.Data.Version;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -147,6 +148,27 @@ internal static class MoongateHttpRouteExtensions
                       .WithSummary("Deletes a user by account id.")
                       .Produces(StatusCodes.Status204NoContent)
                       .Produces(StatusCodes.Status404NotFound);
+        }
+
+        if (context.AccountService is not null && context.CharacterService is not null)
+        {
+            var portalGroup = endpoints.MapGroup("/api/portal").WithTags("Portal");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                portalGroup.RequireAuthorization();
+            }
+
+            portalGroup.MapGet(
+                           "/me",
+                           (ClaimsPrincipal user, CancellationToken cancellationToken) =>
+                               HandleGetPortalMe(context, user, cancellationToken)
+                       )
+                       .WithName("PortalGetMe")
+                       .WithSummary("Returns the authenticated player's account and characters.")
+                       .Produces<MoongateHttpPortalAccount>()
+                       .Produces(StatusCodes.Status401Unauthorized)
+                       .Produces(StatusCodes.Status404NotFound);
         }
 
         if (context.GameNetworkSessionService is not null)
@@ -637,6 +659,56 @@ internal static class MoongateHttpRouteExtensions
         _ = cancellationToken;
 
         return TypedResults.Text("ok");
+    }
+
+    private static IResult HandleGetPortalMe(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        var accountIdClaim = user.FindFirst("account_id")?.Value;
+        var accountId = string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var account = context.AccountService!.GetAccountAsync(accountId.Value).GetAwaiter().GetResult();
+
+        if (account is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var characters = context.CharacterService!
+                                .GetCharactersForAccountAsync(accountId.Value)
+                                .GetAwaiter()
+                                .GetResult();
+
+        var response = new MoongateHttpPortalAccount
+        {
+            AccountId = account.Id.Value.ToString(),
+            Username = account.Username,
+            Email = account.Email,
+            AccountType = account.AccountType.ToString(),
+            Characters = characters.Select(
+                                     static character => new MoongateHttpPortalCharacter
+                                     {
+                                         CharacterId = character.Id.Value.ToString(),
+                                         Name = character.Name,
+                                         MapId = character.MapId,
+                                         X = character.Location.X,
+                                         Y = character.Location.Y
+                                     }
+                                 )
+                                 .ToList()
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
     }
 
     private static IResult HandleLogin(
