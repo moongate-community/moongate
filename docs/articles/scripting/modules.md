@@ -68,6 +68,12 @@ Built-in template values available by default:
 - `shard.name`
 - `shard.website_url`
 
+Text template comments:
+
+- `# comment` skips the whole line
+- `value # comment` keeps only `value`
+- `\#` preserves a literal `#`
+
 `location` runtime helpers:
 
 ```lua

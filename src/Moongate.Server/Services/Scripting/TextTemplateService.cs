@@ -49,7 +49,7 @@ public sealed class TextTemplateService : ITextTemplateService
             return false;
         }
 
-        var source = File.ReadAllText(templatePath);
+        var source = PreprocessTemplateSource(File.ReadAllText(templatePath));
         var template = Template.Parse(source, templatePath);
 
         if (template.HasErrors)
@@ -182,5 +182,80 @@ public sealed class TextTemplateService : ITextTemplateService
         }
 
         return value;
+    }
+
+    private static string PreprocessTemplateSource(string source)
+    {
+        if (string.IsNullOrEmpty(source))
+        {
+            return string.Empty;
+        }
+
+        var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal)
+                          .Replace('\r', '\n')
+                          .Split('\n');
+        var processedLines = new List<string>(lines.Length);
+
+        foreach (var line in lines)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                processedLines.Add(string.Empty);
+
+                continue;
+            }
+
+            if (line.TrimStart().StartsWith('#'))
+            {
+                continue;
+            }
+
+            processedLines.Add(StripInlineComment(line));
+        }
+
+        return string.Join('\n', processedLines);
+    }
+
+    private static string StripInlineComment(string line)
+    {
+        var builder = new System.Text.StringBuilder(line.Length);
+        var escaped = false;
+
+        foreach (var character in line)
+        {
+            if (escaped)
+            {
+                if (character != '#')
+                {
+                    builder.Append('\\');
+                }
+
+                builder.Append(character);
+                escaped = false;
+
+                continue;
+            }
+
+            if (character == '\\')
+            {
+                escaped = true;
+
+                continue;
+            }
+
+            if (character == '#')
+            {
+                break;
+            }
+
+            builder.Append(character);
+        }
+
+        if (escaped)
+        {
+            builder.Append('\\');
+        }
+
+        return builder.ToString().TrimEnd();
     }
 }

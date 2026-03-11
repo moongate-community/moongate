@@ -525,12 +525,19 @@ Available built-in template values:
 - `shard.name`
 - `shard.website_url`
 
+Template comment rules:
+
+- a line starting with `#` after trim is ignored
+- inline `#` starts a comment and truncates the rest of the line
+- use `\#` to keep a literal `#`
+
 Example `moongate_data/scripts/texts/welcome_player.txt`:
 
 ```txt
+# internal comment
 Welcome to {{ shard.name }}, {{ player.name }}.
 
-Website: {{ shard.website_url }}
+Website: {{ shard.website_url }} # shown to the player
 ```
 
 ### Gump API

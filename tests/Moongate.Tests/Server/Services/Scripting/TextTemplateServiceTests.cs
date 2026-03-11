@@ -99,4 +99,38 @@ public sealed class TextTemplateServiceTests
             }
         );
     }
+
+    [Test]
+    public void TryRender_WhenTemplateContainsHashComments_ShouldSkipCommentsAndPreserveEscapedHash()
+    {
+        using var tempDirectory = new TempDirectory();
+        var scriptsDirectory = Path.Combine(tempDirectory.Path, "scripts");
+        var textsDirectory = Path.Combine(scriptsDirectory, "texts");
+        Directory.CreateDirectory(textsDirectory);
+        File.WriteAllText(
+            Path.Combine(textsDirectory, "comments.txt"),
+            """
+            # hidden line
+            Welcome to {{ shard.name }} # internal note
+            Price: 100\# coins
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var config = new MoongateConfig
+        {
+            Game = new() { ShardName = "Test Shard" }
+        };
+        var service = new TextTemplateService(directoriesConfig, config);
+
+        var success = service.TryRender("comments.txt", null, out var rendered);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.True);
+                Assert.That(rendered, Is.EqualTo("Welcome to Test Shard\nPrice: 100# coins"));
+            }
+        );
+    }
 }

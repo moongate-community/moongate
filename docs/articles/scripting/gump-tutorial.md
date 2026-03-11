@@ -134,9 +134,10 @@ Uso in-game:
 File: `moongate_data/scripts/texts/welcome_player.txt`
 
 ```txt
+# internal note
 Welcome to {{ shard.name }}, {{ player.name }}.
 
-Website: {{ shard.website_url }}
+Website: {{ shard.website_url }} # visible line
 ```
 
 Uso da Lua:
@@ -159,6 +160,8 @@ Note:
 - i file stanno sotto `moongate_data/scripts/texts/**`
 - la sintassi è Scriban (`{{ ... }}`)
 - `shard.name` e `shard.website_url` sono disponibili di default
+- `#` commenta la riga o la parte finale della riga
+- `\#` mantiene un `#` letterale
 
 ## 6) Troubleshooting rapido
 
