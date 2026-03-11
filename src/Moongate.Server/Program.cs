@@ -4,6 +4,7 @@ using Moongate.Core.Types;
 using Moongate.Core.Utils;
 using Moongate.Scripting.Context;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Json;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Json.Converters;
@@ -18,6 +19,9 @@ await ConsoleApp.RunAsync(
         CancellationToken cancellationToken = default
     ) =>
     {
+        var resolvedRootDirectory = RootDirectoryResolver.Resolve(rootDirectory);
+        using var pidFileGuard = PidFileGuard.Acquire(resolvedRootDirectory);
+
         if (showHeader)
         {
             ShowHeader();
@@ -39,7 +43,7 @@ await ConsoleApp.RunAsync(
         var bootstrap = new MoongateBootstrap(
             new()
             {
-                RootDirectory = rootDirectory,
+                RootDirectory = resolvedRootDirectory,
                 LogLevel = loglevel,
                 LogPacketData = true,
                 UODirectory = uoDirectory
