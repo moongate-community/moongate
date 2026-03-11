@@ -506,6 +506,33 @@ Hook aliases:
 - `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
 - `double_click` -> `on_double_click`, `OnDoubleClick`
 
+### Text API
+
+`text.render(...)` loads a Scriban template from `moongate_data/scripts/texts/**` and returns the rendered string.
+
+```lua
+local body = text.render("welcome_player.txt", {
+    player = {
+        name = "Tommy",
+        account_type = "Regular",
+        character_id = 2
+    }
+})
+```
+
+Available built-in template values:
+
+- `shard.name`
+- `shard.website_url`
+
+Example `moongate_data/scripts/texts/welcome_player.txt`:
+
+```txt
+Welcome to {{ shard.name }}, {{ player.name }}.
+
+Website: {{ shard.website_url }}
+```
+
 ### Gump API
 
 ```lua
@@ -556,6 +583,21 @@ return {
 local layout = require("gumps/test_shop")
 local ui_ctx = { name = "Orion", level = 42 }
 gump.send_layout(session_id, layout, character_id, 0xB300, 120, 80, ui_ctx)
+```
+
+Using `text.render(...)` with `htmlgump`:
+
+```lua
+local body = text.render("welcome_player.txt", {
+    player = {
+        name = "Tommy"
+    }
+}) or "Welcome."
+
+local g = gump.create()
+g:resize_pic(0, 0, 9200, 420, 240)
+g:html(20, 20, 380, 180, body, true, true)
+gump.send(session_id, g, character_id, 0xB500, 120, 80)
 ```
 
 Supported file-based element types currently include:
