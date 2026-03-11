@@ -9,6 +9,7 @@ namespace Moongate.Server.Http.Json;
  JsonSerializable(typeof(MoongateHttpLoginResponse)),
  JsonSerializable(typeof(MoongateHttpBranding)),
  JsonSerializable(typeof(MoongateHttpUpdatePortalProfileRequest)),
+ JsonSerializable(typeof(MoongateHttpUpdatePortalPasswordRequest)),
  JsonSerializable(typeof(MoongateHttpPortalAccount)),
  JsonSerializable(typeof(MoongateHttpPortalCharacter)),
  JsonSerializable(typeof(MoongateHttpCreateUserRequest)),

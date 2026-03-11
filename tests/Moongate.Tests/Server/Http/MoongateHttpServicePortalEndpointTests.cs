@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Sockets;
 using System.Text.Json;
+using Moongate.Core.Utils;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Http;
@@ -19,6 +20,265 @@ namespace Moongate.Tests.Server.Http;
 
 public class MoongateHttpServicePortalEndpointTests
 {
+    [Test]
+    public async Task PortalMePasswordPutEndpoint_WhenRegularAndCurrentPasswordMatches_ShouldUpdatePasswordAndClearRecoveryCode()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetValues<DirectoryType>().Cast<Enum>().ToArray());
+        var port = GetRandomPort();
+
+        var account = new UOAccountEntity
+        {
+            Id = (Serial)7,
+            Username = "player_one",
+            Email = "player@moongate.test",
+            AccountType = AccountType.Regular,
+            PasswordHash = HashUtils.HashPassword("secret"),
+            RecoveryCode = "recover-me"
+        };
+
+        var accountService = new TestAccountService
+        {
+            LoginAsyncImpl = (username, password) =>
+                Task.FromResult<UOAccountEntity?>(username == "player_one" && password == "secret" ? account : null),
+            GetAccountAsyncImpl = accountId =>
+                Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null),
+            UpdateAccountAsyncImpl = (accountId, _, password, _, _, _, clearRecoveryCode, _) =>
+            {
+                if (accountId != account.Id || string.IsNullOrWhiteSpace(password))
+                {
+                    return Task.FromResult<UOAccountEntity?>(null);
+                }
+
+                account.PasswordHash = HashUtils.HashPassword(password);
+                if (clearRecoveryCode)
+                {
+                    account.RecoveryCode = null;
+                }
+
+                return Task.FromResult<UOAccountEntity?>(account);
+            }
+        };
+
+        var service = CreatePortalHttpService(directories, port, accountService);
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginPortalClientAsync(port, "player_one", "secret");
+
+            var response = await http.PutAsJsonAsync(
+                               $"http://127.0.0.1:{port}/api/portal/me/password",
+                               new
+                               {
+                                   currentPassword = "secret",
+                                   newPassword = "new-secret",
+                                   confirmPassword = "new-secret"
+                               }
+                           );
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), body);
+                    Assert.That(HashUtils.VerifyPassword("new-secret", account.PasswordHash), Is.True);
+                    Assert.That(account.RecoveryCode, Is.Null);
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task PortalMePasswordPutEndpoint_WhenRegularAndCurrentPasswordIsWrong_ShouldReturnBadRequest()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetValues<DirectoryType>().Cast<Enum>().ToArray());
+        var port = GetRandomPort();
+
+        var account = new UOAccountEntity
+        {
+            Id = (Serial)7,
+            Username = "player_one",
+            Email = "player@moongate.test",
+            AccountType = AccountType.Regular,
+            PasswordHash = HashUtils.HashPassword("secret")
+        };
+
+        var accountService = new TestAccountService
+        {
+            LoginAsyncImpl = (username, password) =>
+                Task.FromResult<UOAccountEntity?>(username == "player_one" && password == "secret" ? account : null),
+            GetAccountAsyncImpl = accountId =>
+                Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null)
+        };
+
+        var service = CreatePortalHttpService(directories, port, accountService);
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginPortalClientAsync(port, "player_one", "secret");
+
+            var response = await http.PutAsJsonAsync(
+                               $"http://127.0.0.1:{port}/api/portal/me/password",
+                               new
+                               {
+                                   currentPassword = "wrong-secret",
+                                   newPassword = "new-secret",
+                                   confirmPassword = "new-secret"
+                               }
+                           );
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(body, Does.Contain("current password"));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task PortalMePasswordPutEndpoint_WhenAdminWithoutCurrentPassword_ShouldSucceed()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetValues<DirectoryType>().Cast<Enum>().ToArray());
+        var port = GetRandomPort();
+
+        var account = new UOAccountEntity
+        {
+            Id = (Serial)7,
+            Username = "player_one",
+            Email = "player@moongate.test",
+            AccountType = AccountType.Administrator,
+            PasswordHash = HashUtils.HashPassword("secret")
+        };
+
+        var accountService = new TestAccountService
+        {
+            LoginAsyncImpl = (username, password) =>
+                Task.FromResult<UOAccountEntity?>(username == "player_one" && password == "secret" ? account : null),
+            GetAccountAsyncImpl = accountId =>
+                Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null),
+            UpdateAccountAsyncImpl = (accountId, _, password, _, _, _, _, _) =>
+            {
+                if (accountId != account.Id || string.IsNullOrWhiteSpace(password))
+                {
+                    return Task.FromResult<UOAccountEntity?>(null);
+                }
+
+                account.PasswordHash = HashUtils.HashPassword(password);
+                return Task.FromResult<UOAccountEntity?>(account);
+            }
+        };
+
+        var service = CreatePortalHttpService(directories, port, accountService);
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginPortalClientAsync(port, "player_one", "secret");
+
+            var response = await http.PutAsJsonAsync(
+                               $"http://127.0.0.1:{port}/api/portal/me/password",
+                               new
+                               {
+                                   currentPassword = "",
+                                   newPassword = "new-secret",
+                                   confirmPassword = "new-secret"
+                               }
+                           );
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), body);
+                    Assert.That(HashUtils.VerifyPassword("new-secret", account.PasswordHash), Is.True);
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task PortalMePasswordPutEndpoint_WhenConfirmationDoesNotMatch_ShouldReturnBadRequest()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetValues<DirectoryType>().Cast<Enum>().ToArray());
+        var port = GetRandomPort();
+
+        var account = new UOAccountEntity
+        {
+            Id = (Serial)7,
+            Username = "player_one",
+            Email = "player@moongate.test",
+            AccountType = AccountType.Regular,
+            PasswordHash = HashUtils.HashPassword("secret")
+        };
+
+        var accountService = new TestAccountService
+        {
+            LoginAsyncImpl = (username, password) =>
+                Task.FromResult<UOAccountEntity?>(username == "player_one" && password == "secret" ? account : null),
+            GetAccountAsyncImpl = accountId =>
+                Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null)
+        };
+
+        var service = CreatePortalHttpService(directories, port, accountService);
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginPortalClientAsync(port, "player_one", "secret");
+
+            var response = await http.PutAsJsonAsync(
+                               $"http://127.0.0.1:{port}/api/portal/me/password",
+                               new
+                               {
+                                   currentPassword = "secret",
+                                   newPassword = "new-secret",
+                                   confirmPassword = "other-secret"
+                               }
+                           );
+
+            var body = await response.Content.ReadAsStringAsync();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(body, Does.Contain("confirm"));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
     [Test]
     public async Task PortalMePutEndpoint_WhenAuthenticated_ShouldUpdateEmail()
     {
@@ -40,7 +300,7 @@ public class MoongateHttpServicePortalEndpointTests
                 Task.FromResult<UOAccountEntity?>(username == "player_one" && password == "secret" ? account : null),
             GetAccountAsyncImpl = accountId =>
                 Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null),
-            UpdateAccountAsyncImpl = (accountId, _, _, email, _, _, _) =>
+            UpdateAccountAsyncImpl = (accountId, _, _, email, _, _, _, _) =>
             {
                 if (accountId != account.Id || string.IsNullOrWhiteSpace(email))
                 {
@@ -306,6 +566,47 @@ public class MoongateHttpServicePortalEndpointTests
         listener.Start();
         var endpoint = (IPEndPoint)listener.LocalEndpoint;
         return endpoint.Port;
+    }
+
+    private static MoongateHttpService CreatePortalHttpService(
+        DirectoriesConfig directories,
+        int port,
+        TestAccountService accountService
+    )
+        => new(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false,
+                Jwt = new()
+                {
+                    IsEnabled = true,
+                    SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
+                    Issuer = "moongate-tests",
+                    Audience = "moongate-tests-client",
+                    ExpirationMinutes = 5
+                }
+            },
+            accountService,
+            characterService: new PortalTestCharacterService()
+        );
+
+    private static async Task<HttpClient> LoginPortalClientAsync(int port, string username, string password)
+    {
+        var http = new HttpClient();
+        var loginResponse = await http.PostAsJsonAsync(
+                                $"http://127.0.0.1:{port}/auth/login",
+                                new MoongateHttpLoginRequest
+                                {
+                                    Username = username,
+                                    Password = password
+                                }
+                            );
+        var loginPayload = await loginResponse.Content.ReadFromJsonAsync<MoongateHttpLoginResponse>();
+        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginPayload!.AccessToken);
+
+        return http;
     }
 
     private sealed class PortalTestCharacterService : ICharacterService

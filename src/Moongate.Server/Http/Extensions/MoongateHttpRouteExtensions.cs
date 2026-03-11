@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
+using Moongate.Core.Utils;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http.Data;
@@ -187,6 +188,22 @@ internal static class MoongateHttpRouteExtensions
                        .WithSummary("Updates the authenticated player's editable profile fields.")
                        .Accepts<MoongateHttpUpdatePortalProfileRequest>("application/json")
                        .Produces<MoongateHttpPortalAccount>()
+                       .Produces(StatusCodes.Status400BadRequest)
+                       .Produces(StatusCodes.Status401Unauthorized)
+                       .Produces(StatusCodes.Status404NotFound);
+
+            portalGroup.MapPut(
+                           "/me/password",
+                           (
+                               ClaimsPrincipal user,
+                               MoongateHttpUpdatePortalPasswordRequest request,
+                               CancellationToken cancellationToken
+                           ) => HandleUpdatePortalPassword(context, user, request, cancellationToken)
+                       )
+                       .WithName("PortalUpdateMyPassword")
+                       .WithSummary("Updates the authenticated player's password.")
+                       .Accepts<MoongateHttpUpdatePortalPasswordRequest>("application/json")
+                       .Produces(StatusCodes.Status200OK)
                        .Produces(StatusCodes.Status400BadRequest)
                        .Produces(StatusCodes.Status401Unauthorized)
                        .Produces(StatusCodes.Status404NotFound);
@@ -753,6 +770,68 @@ internal static class MoongateHttpRouteExtensions
         return Results.Json(MapPortalAccount(updated, characters), MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
     }
 
+    private static IResult HandleUpdatePortalPassword(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        MoongateHttpUpdatePortalPasswordRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var accountIdClaim = user.FindFirst("account_id")?.Value;
+        var accountId = string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var account = context.AccountService!.GetAccountAsync(accountId.Value).GetAwaiter().GetResult();
+
+        if (account is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var newPassword = request.NewPassword?.Trim();
+        var confirmPassword = request.ConfirmPassword?.Trim();
+
+        if (string.IsNullOrWhiteSpace(newPassword))
+        {
+            return TypedResults.BadRequest("new password is required");
+        }
+
+        if (!string.Equals(newPassword, confirmPassword, StringComparison.Ordinal))
+        {
+            return TypedResults.BadRequest("confirm password does not match");
+        }
+
+        if (account.AccountType == AccountType.Regular)
+        {
+            if (string.IsNullOrWhiteSpace(request.CurrentPassword) ||
+                !HashUtils.VerifyPassword(request.CurrentPassword, account.PasswordHash))
+            {
+                return TypedResults.BadRequest("current password is invalid");
+            }
+        }
+
+        var updated = context.AccountService!
+                             .UpdateAccountAsync(
+                                 accountId.Value,
+                                 password: newPassword,
+                                 clearRecoveryCode: true,
+                                 cancellationToken: cancellationToken
+                             )
+                             .GetAwaiter()
+                             .GetResult();
+
+        if (updated is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        return TypedResults.Ok();
+    }
+
     private static IResult HandleLogin(
         MoongateHttpRouteContext context,
         MoongateHttpLoginRequest request,
@@ -928,7 +1007,7 @@ internal static class MoongateHttpRouteExtensions
                                  request.Email,
                                  role,
                                  request.IsLocked,
-                                 cancellationToken
+                                 cancellationToken: cancellationToken
                              )
                              .GetAwaiter()
                              .GetResult();

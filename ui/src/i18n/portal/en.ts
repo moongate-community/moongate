@@ -37,6 +37,7 @@ const en = {
   'portal.profile.title': 'Profile Settings',
   'portal.profile.subtitle': 'Manage the account details that are available to your player portal.',
   'portal.profile.section.account': 'Profile',
+  'portal.profile.section.password': 'Change Password',
   'portal.profile.field.accountType': 'Account Type',
   'portal.profile.save': 'Save Profile',
   'portal.profile.saving': 'Saving...',
@@ -44,6 +45,18 @@ const en = {
   'portal.profile.error.load': 'Failed to load profile.',
   'portal.profile.error.save': 'Failed to save profile.',
   'portal.profile.error.emailRequired': 'Email is required.',
+  'portal.profile.password.field.current': 'Current Password',
+  'portal.profile.password.field.new': 'New Password',
+  'portal.profile.password.field.confirm': 'Confirm Password',
+  'portal.profile.password.save': 'Change Password',
+  'portal.profile.password.saving': 'Updating...',
+  'portal.profile.password.success.saved': 'Password updated successfully',
+  'portal.profile.password.error.save': 'Failed to update password.',
+  'portal.profile.password.error.currentRequired': 'Current password is required.',
+  'portal.profile.password.error.newRequired': 'New password is required.',
+  'portal.profile.password.error.confirmMismatch': 'Confirm password does not match.',
+  'portal.profile.password.policy.regular': 'Current password required',
+  'portal.profile.password.policy.staff': 'Staff bypass enabled',
 } as const
 
 export default en

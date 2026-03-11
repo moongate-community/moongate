@@ -55,6 +55,7 @@ public sealed class PasswordCommandTests
             string? email = null,
             AccountType? accountType = null,
             bool? isLocked = null,
+            bool clearRecoveryCode = false,
             CancellationToken cancellationToken = default
         )
         {
@@ -62,6 +63,7 @@ public sealed class PasswordCommandTests
             _ = email;
             _ = accountType;
             _ = isLocked;
+            _ = clearRecoveryCode;
             _ = cancellationToken;
 
             var account = Accounts.FirstOrDefault(current => current.Id == accountId);

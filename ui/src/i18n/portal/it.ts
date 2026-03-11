@@ -37,6 +37,7 @@ const it = {
   'portal.profile.title': 'Impostazioni Profilo',
   'portal.profile.subtitle': 'Gestisci i dettagli account disponibili nel portale giocatore.',
   'portal.profile.section.account': 'Profilo',
+  'portal.profile.section.password': 'Cambia Password',
   'portal.profile.field.accountType': 'Tipo Account',
   'portal.profile.save': 'Salva Profilo',
   'portal.profile.saving': 'Salvataggio...',
@@ -44,6 +45,18 @@ const it = {
   'portal.profile.error.load': 'Impossibile caricare il profilo.',
   'portal.profile.error.save': 'Impossibile salvare il profilo.',
   'portal.profile.error.emailRequired': "L'email è obbligatoria.",
+  'portal.profile.password.field.current': 'Password Attuale',
+  'portal.profile.password.field.new': 'Nuova Password',
+  'portal.profile.password.field.confirm': 'Conferma Password',
+  'portal.profile.password.save': 'Cambia Password',
+  'portal.profile.password.saving': 'Aggiornamento...',
+  'portal.profile.password.success.saved': 'Password aggiornata con successo',
+  'portal.profile.password.error.save': 'Impossibile aggiornare la password.',
+  'portal.profile.password.error.currentRequired': 'La password attuale è obbligatoria.',
+  'portal.profile.password.error.newRequired': 'La nuova password è obbligatoria.',
+  'portal.profile.password.error.confirmMismatch': 'La conferma password non corrisponde.',
+  'portal.profile.password.policy.regular': 'Password attuale richiesta',
+  'portal.profile.password.policy.staff': 'Bypass staff attivo',
 } as const
 
 export default it

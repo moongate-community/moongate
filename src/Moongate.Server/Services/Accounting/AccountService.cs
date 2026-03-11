@@ -148,6 +148,7 @@ public class AccountService : IAccountService
         string? email = null,
         AccountType? accountType = null,
         bool? isLocked = null,
+        bool clearRecoveryCode = false,
         CancellationToken cancellationToken = default
     )
     {
@@ -198,6 +199,11 @@ public class AccountService : IAccountService
         if (isLocked.HasValue)
         {
             account.IsLocked = isLocked.Value;
+        }
+
+        if (clearRecoveryCode)
+        {
+            account.RecoveryCode = null;
         }
 
         await _persistenceService.UnitOfWork.Accounts.UpsertAsync(account, cancellationToken);
