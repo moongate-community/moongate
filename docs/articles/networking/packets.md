@@ -53,6 +53,80 @@ Current gameplay examples:
   - `BookHeaderOldPacket` (`0x93`) saves writable book `title` / `author`
   - `BookPagesPacket` (`0x66`) serves page requests and writable page saves
 
+## Pragmatic POL Coverage Matrix
+
+This matrix tracks the packet subset that is already present in Moongate or still relevant for the current `7.x` client target.
+
+`Status` values:
+
+- `handler`: parsed and wired to gameplay with `RegisterPacketHandler(...)`
+- `outgoing`: server-to-client packet emitted by runtime code
+- `parse-only`: packet class is registered in `PacketRegistry`, but no gameplay listener handles it yet
+- `missing`: relevant in POL/client docs, but not implemented in Moongate
+
+| Opcode | Op Description | Direction | Moongate Packet Class | Status | Runtime Wiring | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| `0xEF` | Login Seed | C -> S | `LoginSeedPacket` | `handler` | `LoginHandler` | Login bootstrap |
+| `0x80` | Account Login | C -> S | `AccountLoginPacket` | `handler` | `LoginHandler` | Account auth |
+| `0xA0` | Server Select | C -> S | `ServerSelectPacket` | `handler` | `LoginHandler` | Shard select |
+| `0x91` | Game Login | C -> S | `GameLoginPacket` | `handler` | `LoginHandler` | Game-server auth |
+| `0x5D` | Login Character | C -> S | `LoginCharacterPacket` | `handler` | `LoginHandler` | Character enter world |
+| `0xBD` | Client Version | C -> S | `ClientVersionPacket` | `handler` | `LoginHandler` | Stores negotiated client version |
+| `0xF8` | Character Creation | C -> S | `CharacterCreationPacket` | `handler` | `CharacterHandler` | Modern creation flow |
+| `0x72` | Request War Mode / War Mode | both | `RequestWarModePacket`, `WarModePacket` | `handler` + `outgoing` | `CharacterHandler` | Inbound toggle request and outbound war-mode state reply share opcode `0x72`; outgoing packet is intentionally not registry-decorated to avoid direction-agnostic opcode collision |
+| `0x02` | Move Request | C -> S | `MoveRequestPacket` | `handler` | `MovementHandler` | Core movement |
+| `0x73` | Ping Message | C -> S | `PingMessagePacket` | `handler` | `PingPongHandler` | Keepalive |
+| `0xC8` | Client View Range | C -> S | `ClientViewRangePacket` | `handler` | `ClientViewRangeHandler` | View range update |
+| `0x34` | Get Player Status | C -> S | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
+| `0xAD` | Unicode Speech | C -> S | `UnicodeSpeechPacket` | `handler` | `SpeechHandler` | In-game commands and speech |
+| `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `SpeechHandler` | Chat window open |
+| `0x6C` | Target Cursor Commands | C -> S | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Target callbacks |
+| `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
+| `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
+| `0xB1` | Gump Menu Selection | C -> S | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump button replies |
+| `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler` | Item use / open flows |
+| `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler` | Labels / tooltip-side behavior |
+| `0x07` | Pick Up Item | C -> S | `PickUpItemPacket` | `handler` | `ItemHandler` | Drag start |
+| `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler` | Container / world drop |
+| `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
+| `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
+| `0x93` | Book Header (Old) | C -> S | `BookHeaderOldPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
+| `0xD9` | Spy On Client | C -> S | `SpyOnClientPacket` | `handler` | `PlayerHandler` | Minimal session-side handling |
+| `0x03` | Talk Request | C -> S | `TalkRequestPacket` | `parse-only` | none | Legacy speech path not wired |
+| `0x12` | Request Skill / Use | C -> S | `RequestSkillUsePacket` | `parse-only` | none | Skill-use flow still missing |
+| `0x83` | Delete Character | C -> S | `DeleteCharacterPacket` | `parse-only` | none | No delete flow wired |
+| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `parse-only` | none | Client packet shape registered, no inbound behavior needed today |
+| `0xA8` | Server List | S -> C | `ServerListPacket` | `outgoing` | `LoginHandler` | Shard list |
+| `0x8C` | Server Redirect | S -> C | `ServerRedirectPacket` | `outgoing` | `LoginHandler` | Redirect to game server |
+| `0x1B` | Login Confirm | S -> C | `LoginConfirmPacket` | `outgoing` | login flow | Character accepted |
+| `0xA9` | Characters / Starting Locations | S -> C | `CharactersStartingLocationsPacket` | `outgoing` | login flow | Character list + starts |
+| `0xB9` | Support Features | S -> C | `SupportFeaturesPacket` | `outgoing` | login flow | Enables client features |
+| `0x55` | Login Complete | S -> C | `LoginCompletePacket` | `outgoing` | login flow | Enter world complete |
+| `0x22` | Move Confirm | S -> C | `MoveConfirmPacket` | `outgoing` | movement flow | Movement ack |
+| `0x21` | Move Deny | S -> C | `MoveDenyPacket` | `outgoing` | movement flow | Movement reject |
+| `0x78` | Mobile Incoming | S -> C | `MobileIncomingPacket` | `outgoing` | world/entity sync | Nearby mobiles |
+| `0x20` | Draw Player | S -> C | `DrawPlayerPacket` | `outgoing` | login/move flow | Draw controlled mobile |
+| `0x2E` | Worn Item | S -> C | `WornItemPacket` | `outgoing` | equipment sync | Equipped visuals |
+| `0x24` | Draw Container | S -> C | `DrawContainerPacket` | `outgoing` | container flow | Open container |
+| `0x3C` | Add Multiple Items To Container | S -> C | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched contents |
+| `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open |
+| `0x11` | Status Bar Info | S -> C | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status payload |
+| `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Full skill list with lock state |
+| `0x23` | Dragging Of Item | S -> C | `DraggingOfItemPacket` | `outgoing` | item drag flow | Drag visual |
+| `0xAE` | Unicode Speech Message | S -> C | `UnicodeSpeechMessagePacket` | `outgoing` | speech/system messages | Server speech |
+| `0xB0` | Generic Gump | S -> C | `GenericGumpPacket` | `outgoing` | gump flow | Standard gump |
+| `0xDD` | Compressed Gump | S -> C | `CompressedGumpPacket` | `outgoing` | gump flow | Compressed gump |
+| `0xF3` | Object Information | S -> C | `ObjectInformationPacket` | `outgoing` | item/world sync | Item/object updates |
+| `0x76` | Server Change | S -> C | `ServerChangePacket` | `outgoing` | map transition flow | Map/server boundary change |
+| `0x65` | Weather | S -> C | `SetWeatherPacket` | `outgoing` | world presentation | Client 7.x still supports it |
+| `0x54` | Play Sound Effect | S -> C | `PlaySoundEffectPacket` | `outgoing` | world presentation | Audio cue |
+| `0x70` | Graphical Effect | S -> C | `GraphicalEffectPacket` | `outgoing` | world presentation | Classic effect |
+| `0xC0` | Hued Effect | S -> C | `HuedEffectPacket` | `outgoing` | world presentation | Colored effect |
+| `0xC7` | Particle Effect | S -> C | `ParticleEffectPacket` | `outgoing` | world presentation | Particle effect |
+| `0x7C` | Relay | both | none | `missing` | none | Relevant in POL docs, not implemented in Moongate |
+| `0x16` | Status Bar Info (old) | S -> C | none | `missing` | none | POL legacy status packet; Moongate uses modern `0x11` only |
+| `0x39` | Group Remove / old chat | C -> S | none | `missing` | none | Not targeted for current client/runtime |
+
 ## Serialization
 
 Outbound packets are serialized with `SpanWriter` in `OutboundPacketSender`.
