@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import { api } from '../api/client'
 import { usePortalAuthStore } from '../store/portalAuthStore'
 import type { AuthUser } from '../store/authStore'
-import { ThemeToggle } from '../components/ThemeToggle'
 import type { PublicBranding } from '../types/publicBranding'
 import { PortalLanguageSwitcher } from '../components/PortalLanguageSwitcher'
 
@@ -26,6 +25,16 @@ export function PortalLoginPage() {
   const [loading, setLoading] = useState(false)
   const [serverVersion, setServerVersion] = useState<ServerVersion | null>(null)
   const [branding, setBranding] = useState<PublicBranding | null>(null)
+
+  useEffect(() => {
+    document.documentElement.classList.remove('light')
+    document.documentElement.classList.add('dark')
+    document.body.classList.add('portal-theme')
+
+    return () => {
+      document.body.classList.remove('portal-theme')
+    }
+  }, [])
 
   useEffect(() => {
     if (user) {
@@ -94,31 +103,30 @@ export function PortalLoginPage() {
       className="flex min-h-screen items-center justify-center px-6"
       style={{
         background: [
-          'radial-gradient(circle at top, rgba(214,179,106,0.12), transparent 34%)',
-          'radial-gradient(circle at bottom, rgba(143,107,47,0.12), transparent 28%)',
-          'linear-gradient(180deg, #19140f 0%, #241b14 42%, #16110d 100%)',
+          'radial-gradient(circle at top, color-mix(in srgb, var(--mg-accent) 18%, transparent), transparent 34%)',
+          'radial-gradient(circle at bottom, color-mix(in srgb, var(--mg-accent-2) 16%, transparent), transparent 28%)',
+          'linear-gradient(180deg, color-mix(in srgb, var(--mg-bg) 92%, black 8%) 0%, color-mix(in srgb, var(--mg-panel) 72%, var(--mg-bg) 28%) 42%, color-mix(in srgb, var(--mg-bg) 88%, black 12%) 100%)',
         ].join(', '),
       }}
     >
       <div className="fixed top-4 right-4 z-10">
         <div className="flex items-center gap-2">
           <PortalLanguageSwitcher />
-          <ThemeToggle className="px-3 py-2" />
         </div>
       </div>
 
       <div
         className="relative w-full max-w-md overflow-hidden rounded-xl border animate-fade-in"
         style={{
-          background: 'linear-gradient(180deg, rgba(44,32,22,0.94), rgba(28,22,17,0.96))',
-          borderColor: 'rgba(214,179,106,0.24)',
-          boxShadow: '0 30px 80px rgba(0,0,0,0.46), inset 0 1px 0 rgba(255,236,205,0.04)',
+          background: 'linear-gradient(180deg, color-mix(in srgb, var(--mg-panel) 96%, var(--mg-bg) 4%), color-mix(in srgb, var(--mg-panel-soft) 94%, var(--mg-bg) 6%))',
+          borderColor: 'color-mix(in srgb, var(--mg-accent) 28%, transparent)',
+          boxShadow: '0 30px 80px color-mix(in srgb, var(--mg-bg) 46%, black), inset 0 1px 0 color-mix(in srgb, var(--mg-text) 6%, transparent)',
           backdropFilter: 'blur(16px)',
         }}
       >
         <div
           className="absolute inset-x-0 top-0 h-px"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(214,179,106,0.9), transparent)' }}
+          style={{ background: 'linear-gradient(90deg, transparent, color-mix(in srgb, var(--mg-accent) 88%, transparent), transparent)' }}
         />
 
         <div className="px-8 py-9">
@@ -131,21 +139,21 @@ export function PortalLoginPage() {
                   style={{
                     width: '140px',
                     height: 'auto',
-                    filter: 'drop-shadow(0 0 18px rgba(214,179,106,0.22))',
+                    filter: 'drop-shadow(0 0 18px color-mix(in srgb, var(--mg-accent) 22%, transparent))',
                   }}
                 />
               )}
             </div>
             <p
               className="mb-2 font-mono text-[11px] uppercase tracking-[0.35em]"
-              style={{ color: 'rgba(244,234,215,0.52)' }}
+              style={{ color: 'color-mix(in srgb, var(--mg-text) 52%, transparent)' }}
             >
               {intl.formatMessage({ id: 'portal.login.portalLabel' })}
             </p>
-            <h1 className="font-cinzel text-2xl font-semibold" style={{ color: '#f4ead7' }}>
+            <h1 className="font-uo text-2xl font-semibold" style={{ color: 'var(--mg-text)' }}>
               {branding?.shardName || 'Moongate'}
             </h1>
-            <p className="mt-3 font-mono text-xs leading-6" style={{ color: 'rgba(244,234,215,0.7)' }}>
+            <p className="mt-3 font-mono text-xs leading-6" style={{ color: 'color-mix(in srgb, var(--mg-text) 72%, transparent)' }}>
               {intl.formatMessage({ id: 'portal.login.subtitle' })}
             </p>
           </div>
@@ -160,7 +168,7 @@ export function PortalLoginPage() {
               classNames={{
                 inputWrapper: 'border-divider data-[hover=true]:border-warning',
                 label: 'font-mono text-xs tracking-wider',
-                input: 'font-mono text-sm text-[#f4ead7]',
+                input: 'font-mono text-sm text-[color:var(--mg-text)]',
               }}
               style={{}}
             />
@@ -174,7 +182,7 @@ export function PortalLoginPage() {
               classNames={{
                 inputWrapper: 'border-divider data-[hover=true]:border-warning',
                 label: 'font-mono text-xs tracking-wider',
-                input: 'font-mono text-sm text-[#f4ead7]',
+                input: 'font-mono text-sm text-[color:var(--mg-text)]',
               }}
             />
 
@@ -200,8 +208,8 @@ export function PortalLoginPage() {
               className="mt-2 font-mono uppercase tracking-[0.18em]"
               style={{
                 height: '44px',
-                background: 'linear-gradient(180deg, #d6b36a 0%, #b98b3d 100%)',
-                color: '#2a2118',
+                background: 'linear-gradient(180deg, var(--mg-accent) 0%, var(--mg-accent-2) 100%)',
+                color: 'color-mix(in srgb, var(--mg-bg) 82%, black 18%)',
               }}
             >
               {loading
@@ -216,9 +224,9 @@ export function PortalLoginPage() {
         <div
           className="fixed bottom-4 right-4 rounded-md px-3 py-2 font-mono text-xs"
           style={{
-            color: 'rgba(244,234,215,0.82)',
-            background: 'rgba(27,20,15,0.78)',
-            border: '1px solid rgba(214,179,106,0.22)',
+            color: 'color-mix(in srgb, var(--mg-text) 82%, transparent)',
+            background: 'color-mix(in srgb, var(--mg-panel) 92%, transparent)',
+            border: '1px solid color-mix(in srgb, var(--mg-accent) 22%, transparent)',
             letterSpacing: '0.04em',
           }}
         >

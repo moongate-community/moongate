@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -120,6 +121,15 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         builder.WebHost.UseUrls($"http://0.0.0.0:{_port}");
         builder.Host.UseSerilog(httpLogger, true);
+        builder.Services.AddResponseCompression(
+            options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["image/svg+xml"]);
+            }
+        );
         builder.Services.ConfigureHttpJsonOptions(
             options => { options.SerializerOptions.TypeInfoResolverChain.Insert(0, MoongateHttpJsonContext.Default); }
         );
@@ -136,6 +146,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         var app = builder.Build();
         app.UseSerilogRequestLogging();
+        app.UseResponseCompression();
         var isUiServing = ConfigureUiHosting(app);
 
         if (_jwtOptions.IsEnabled)
@@ -287,7 +298,13 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         var fileProvider = new PhysicalFileProvider(uiDistPath);
         app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = fileProvider });
-        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+        app.UseStaticFiles(
+            new StaticFileOptions
+            {
+                FileProvider = fileProvider,
+                OnPrepareResponse = context => ApplyStaticAssetCacheHeaders(context.Context, context.File.Name)
+            }
+        );
 
         var indexPath = Path.Combine(uiDistPath, "index.html");
         app.MapFallback(
@@ -300,6 +317,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
                     return;
                 }
 
+                ApplyDocumentCacheHeaders(context.Response);
                 context.Response.ContentType = "text/html; charset=utf-8";
                 await context.Response.SendFileAsync(indexPath);
             }
@@ -320,7 +338,55 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         var fileProvider = new PhysicalFileProvider(webRootPath);
-        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
+        app.UseStaticFiles(
+            new StaticFileOptions
+            {
+                FileProvider = fileProvider,
+                OnPrepareResponse = context => ApplyStaticAssetCacheHeaders(context.Context, context.File.Name)
+            }
+        );
+    }
+
+    private static void ApplyStaticAssetCacheHeaders(HttpContext context, string fileName)
+    {
+        if (string.Equals(fileName, "index.html", StringComparison.OrdinalIgnoreCase))
+        {
+            ApplyDocumentCacheHeaders(context.Response);
+            return;
+        }
+
+        var cacheControl = IsImmutableUiAsset(fileName)
+            ? "public, max-age=31536000, immutable"
+            : "public, max-age=600";
+
+        context.Response.Headers.CacheControl = cacheControl;
+    }
+
+    private static void ApplyDocumentCacheHeaders(HttpResponse response)
+    {
+        response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+        response.Headers.Pragma = "no-cache";
+        response.Headers.Expires = "0";
+    }
+
+    private static bool IsImmutableUiAsset(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+        if (string.IsNullOrWhiteSpace(extension))
+        {
+            return false;
+        }
+
+        return extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".css", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".webp", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".woff", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".woff2", StringComparison.OrdinalIgnoreCase);
     }
 
     private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
