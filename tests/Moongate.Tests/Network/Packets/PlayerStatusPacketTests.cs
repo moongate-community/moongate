@@ -16,7 +16,12 @@ public class PlayerStatusPacketTests
             Id = (Serial)0x00000002,
             Name = "Tommy",
             Hits = 50,
-            MaxHits = 100
+            MaxHits = 100,
+            Weight = 12,
+            MaxWeight = 400,
+            StatCap = 225,
+            Followers = 2,
+            FollowersMax = 5
         };
         var sourcePacket = new PlayerStatusPacket(sourceMobile);
         var payload = Write(sourcePacket);
@@ -33,13 +38,13 @@ public class PlayerStatusPacketTests
                 Assert.That(packet.CurrentHits, Is.EqualTo(50));
                 Assert.That(packet.MaxHits, Is.EqualTo(100));
                 Assert.That(packet.CanBeRenamed, Is.False);
-                Assert.That(packet.Version, Is.EqualTo(0));
+                Assert.That(packet.Version, Is.EqualTo(PlayerStatusPacket.ModernVersion));
             }
         );
     }
 
     [Test]
-    public void Write_ShouldSerializeCompactPlayerStatus()
+    public void Write_ShouldSerializeModernPlayerStatusHeader()
     {
         var mobile = new UOMobileEntity
         {
@@ -55,20 +60,20 @@ public class PlayerStatusPacketTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(data.Length, Is.EqualTo(43));
+                Assert.That(data.Length, Is.EqualTo(121));
                 Assert.That(data[0], Is.EqualTo(0x11));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)43));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)121));
                 Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(3, 4)), Is.EqualTo(0x00000002u));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(37, 2)), Is.EqualTo((ushort)50));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(39, 2)), Is.EqualTo((ushort)100));
                 Assert.That(data[41], Is.EqualTo(0x00));
-                Assert.That(data[42], Is.EqualTo(0x00));
+                Assert.That(data[42], Is.EqualTo(PlayerStatusPacket.ModernVersion));
             }
         );
     }
 
     [Test]
-    public void Write_ShouldSerializeEffectiveStats_ForVersionOnePacket()
+    public void Write_ShouldSerializeModernEffectiveStatusValues()
     {
         var mobile = new UOMobileEntity
         {
@@ -80,6 +85,14 @@ public class PlayerStatusPacketTests
                 Dexterity = 50,
                 Intelligence = 40
             },
+            BaseResistances = new()
+            {
+                Physical = 5,
+                Fire = 10,
+                Cold = 15,
+                Poison = 20,
+                Energy = 25
+            },
             Resources = new()
             {
                 Hits = 55,
@@ -89,20 +102,55 @@ public class PlayerStatusPacketTests
                 Mana = 35,
                 MaxMana = 40
             },
+            BaseLuck = 100,
+            Weight = 23,
+            MaxWeight = 450,
+            StatCap = 260,
+            Followers = 3,
+            FollowersMax = 5,
+            MinWeaponDamage = 11,
+            MaxWeaponDamage = 15,
+            Tithing = 777,
+            RaceIndex = 1,
             EquipmentModifiers = new()
             {
                 StrengthBonus = 5,
                 DexterityBonus = 2,
-                IntelligenceBonus = 1
+                IntelligenceBonus = 1,
+                PhysicalResist = 2,
+                FireResist = 3,
+                HitChanceIncrease = 8,
+                DefenseChanceIncrease = 7,
+                DamageIncrease = 12,
+                SwingSpeedIncrease = 9,
+                SpellDamageIncrease = 11,
+                FasterCasting = 2,
+                FasterCastRecovery = 3,
+                LowerManaCost = 4,
+                LowerReagentCost = 5,
+                Luck = 20
             },
             RuntimeModifiers = new()
             {
                 StrengthBonus = -1,
                 DexterityBonus = 3,
-                IntelligenceBonus = 4
+                IntelligenceBonus = 4,
+                PhysicalResist = 1,
+                FireResist = 4,
+                DefenseChanceIncrease = 2,
+                Luck = 30
+            },
+            ModifierCaps = new()
+            {
+                PhysicalResist = 70,
+                FireResist = 71,
+                ColdResist = 72,
+                PoisonResist = 73,
+                EnergyResist = 74,
+                DefenseChanceIncrease = 45
             }
         };
-        var packet = new PlayerStatusPacket(mobile, version: 1);
+        var packet = new PlayerStatusPacket(mobile);
 
         var data = Write(packet);
 
@@ -116,6 +164,32 @@ public class PlayerStatusPacketTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(52, 2)), Is.EqualTo((ushort)50));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(54, 2)), Is.EqualTo((ushort)35));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(56, 2)), Is.EqualTo((ushort)40));
+                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(58, 4)), Is.EqualTo((uint)0));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(62, 2)), Is.EqualTo((ushort)8));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(64, 2)), Is.EqualTo((ushort)23));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(66, 2)), Is.EqualTo((ushort)450));
+                Assert.That(data[68], Is.EqualTo((byte)2));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(69, 2)), Is.EqualTo((ushort)260));
+                Assert.That(data[71], Is.EqualTo((byte)3));
+                Assert.That(data[72], Is.EqualTo((byte)5));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(73, 2)), Is.EqualTo((ushort)17));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(75, 2)), Is.EqualTo((ushort)15));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(77, 2)), Is.EqualTo((ushort)20));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(79, 2)), Is.EqualTo((ushort)25));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(81, 2)), Is.EqualTo((ushort)150));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(83, 2)), Is.EqualTo((ushort)11));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(85, 2)), Is.EqualTo((ushort)15));
+                Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(87, 4)), Is.EqualTo(777));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(91, 2)), Is.EqualTo((ushort)70));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(103, 2)), Is.EqualTo((ushort)45));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(105, 2)), Is.EqualTo((ushort)8));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(107, 2)), Is.EqualTo((ushort)9));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(109, 2)), Is.EqualTo((ushort)12));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(111, 2)), Is.EqualTo((ushort)5));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(113, 2)), Is.EqualTo((ushort)11));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(115, 2)), Is.EqualTo((ushort)3));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(117, 2)), Is.EqualTo((ushort)2));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(119, 2)), Is.EqualTo((ushort)4));
             }
         );
     }

@@ -39,6 +39,12 @@ Protection currently implemented:
 3. `IOutboundPacketSender` serializes packet with `SpanWriter` and sends through `MoongateTCPClient.SendAsync(...)`.
 4. If packet logging is enabled, hex dump is written with `PacketData` context.
 
+Current gameplay-facing outbound examples:
+
+- `PlayerStatusHandler` emits `PlayerStatusPacket` (`0x11`) for basic status requests
+- `PlayerStatusHandler` emits `SkillListPacket` (`0x3A`) for skill window requests
+- `ItemHandler` responds to book page requests (`0x66`) for read-only books
+
 ## Compression and Middleware
 
 `GameNetworkSession` can toggle transport middleware:
@@ -53,6 +59,16 @@ Compression middleware is attached/removed on `MoongateTCPClient` pipeline.
 - connect: create or refresh `GameSession` + `GameNetworkSession`
 - disconnect: remove session from `GameNetworkSessionService`
 - protocol states: `AwaitingSeed`, `Authenticated`, `InGame`, etc.
+
+## Current Request Flows
+
+Important current request/response pairs:
+
+- `0x34 Get Player Status`
+  - `BasicStatus` -> `0x11 Player Status`
+  - `RequestSkills` -> `0x3A Skill List`
+- `0x66 Book Pages`
+  - client page request -> server book page response from rendered book content
 
 ## Useful Runtime Diagnostics
 

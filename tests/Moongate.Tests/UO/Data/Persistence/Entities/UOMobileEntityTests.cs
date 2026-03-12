@@ -85,19 +85,37 @@ public class UOMobileEntityTests
                 Energy = 25
             },
             BaseLuck = 100,
+            StatCap = 250,
+            Followers = 2,
+            FollowersMax = 5,
             EquipmentModifiers = new()
             {
                 StrengthBonus = 5,
                 FireResist = 3,
                 PhysicalResist = 2,
-                Luck = 20
+                Luck = 20,
+                HitChanceIncrease = 8,
+                DefenseChanceIncrease = 7,
+                DamageIncrease = 12,
+                SwingSpeedIncrease = 9,
+                SpellDamageIncrease = 11,
+                FasterCastRecovery = 3,
+                FasterCasting = 2,
+                LowerManaCost = 4,
+                LowerReagentCost = 5
             },
             RuntimeModifiers = new()
             {
                 StrengthBonus = -2,
                 FireResist = 4,
                 PhysicalResist = 1,
-                Luck = 30
+                Luck = 30,
+                DefenseChanceIncrease = 2
+            },
+            ModifierCaps = new()
+            {
+                PhysicalResist = 70,
+                DefenseChanceIncrease = 45
             }
         };
 
@@ -113,6 +131,20 @@ public class UOMobileEntityTests
                 Assert.That(mobile.EffectivePoisonResistance, Is.EqualTo(20));
                 Assert.That(mobile.EffectiveEnergyResistance, Is.EqualTo(25));
                 Assert.That(mobile.EffectiveLuck, Is.EqualTo(150));
+                Assert.That(mobile.EffectiveHitChanceIncrease, Is.EqualTo(8));
+                Assert.That(mobile.EffectiveDefenseChanceIncrease, Is.EqualTo(9));
+                Assert.That(mobile.EffectiveDamageIncrease, Is.EqualTo(12));
+                Assert.That(mobile.EffectiveSwingSpeedIncrease, Is.EqualTo(9));
+                Assert.That(mobile.EffectiveSpellDamageIncrease, Is.EqualTo(11));
+                Assert.That(mobile.EffectiveFasterCastRecovery, Is.EqualTo(3));
+                Assert.That(mobile.EffectiveFasterCasting, Is.EqualTo(2));
+                Assert.That(mobile.EffectiveLowerManaCost, Is.EqualTo(4));
+                Assert.That(mobile.EffectiveLowerReagentCost, Is.EqualTo(5));
+                Assert.That(mobile.StatCap, Is.EqualTo(250));
+                Assert.That(mobile.Followers, Is.EqualTo(2));
+                Assert.That(mobile.FollowersMax, Is.EqualTo(5));
+                Assert.That(mobile.ModifierCaps.PhysicalResist, Is.EqualTo(70));
+                Assert.That(mobile.ModifierCaps.DefenseChanceIncrease, Is.EqualTo(45));
             }
         );
     }

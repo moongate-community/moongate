@@ -707,6 +707,14 @@ public class PersistenceUnitOfWorkTests
                 },
                 SkillPoints = 8,
                 StatPoints = 6,
+                StatCap = 250,
+                Followers = 2,
+                FollowersMax = 5,
+                Weight = 33,
+                MaxWeight = 400,
+                MinWeaponDamage = 11,
+                MaxWeaponDamage = 15,
+                Tithing = 777,
                 BaseResistances = new()
                 {
                     Fire = 15,
@@ -719,13 +727,24 @@ public class PersistenceUnitOfWorkTests
                 {
                     StrengthBonus = 5,
                     FireResist = 2,
-                    Luck = 10
+                    Luck = 10,
+                    HitChanceIncrease = 8
                 },
                 RuntimeModifiers = new()
                 {
                     StrengthBonus = -1,
                     FireResist = 4,
-                    Luck = 20
+                    Luck = 20,
+                    DefenseChanceIncrease = 7
+                },
+                ModifierCaps = new()
+                {
+                    PhysicalResist = 70,
+                    FireResist = 71,
+                    ColdResist = 72,
+                    PoisonResist = 73,
+                    EnergyResist = 74,
+                    DefenseChanceIncrease = 45
                 },
                 BackpackId = (Serial)0x40000020,
                 EquippedItemIds = new()
@@ -851,6 +870,14 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.MaxStamina, Is.EqualTo(50));
                 Assert.That(loadedMobile.SkillPoints, Is.EqualTo(8));
                 Assert.That(loadedMobile.StatPoints, Is.EqualTo(6));
+                Assert.That(loadedMobile.StatCap, Is.EqualTo(250));
+                Assert.That(loadedMobile.Followers, Is.EqualTo(2));
+                Assert.That(loadedMobile.FollowersMax, Is.EqualTo(5));
+                Assert.That(loadedMobile.Weight, Is.EqualTo(33));
+                Assert.That(loadedMobile.MaxWeight, Is.EqualTo(400));
+                Assert.That(loadedMobile.MinWeaponDamage, Is.EqualTo(11));
+                Assert.That(loadedMobile.MaxWeaponDamage, Is.EqualTo(15));
+                Assert.That(loadedMobile.Tithing, Is.EqualTo(777));
                 Assert.That(loadedMobile.BaseResistances.Fire, Is.EqualTo(15));
                 Assert.That(loadedMobile.BaseResistances.Cold, Is.EqualTo(11));
                 Assert.That(loadedMobile.BaseResistances.Poison, Is.EqualTo(9));
@@ -865,10 +892,15 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.EquipmentModifiers!.StrengthBonus, Is.EqualTo(5));
                 Assert.That(loadedMobile.EquipmentModifiers.FireResist, Is.EqualTo(2));
                 Assert.That(loadedMobile.EquipmentModifiers.Luck, Is.EqualTo(10));
+                Assert.That(loadedMobile.EquipmentModifiers.HitChanceIncrease, Is.EqualTo(8));
                 Assert.That(loadedMobile.RuntimeModifiers, Is.Not.Null);
                 Assert.That(loadedMobile.RuntimeModifiers!.StrengthBonus, Is.EqualTo(-1));
                 Assert.That(loadedMobile.RuntimeModifiers.FireResist, Is.EqualTo(4));
                 Assert.That(loadedMobile.RuntimeModifiers.Luck, Is.EqualTo(20));
+                Assert.That(loadedMobile.RuntimeModifiers.DefenseChanceIncrease, Is.EqualTo(7));
+                Assert.That(loadedMobile.ModifierCaps.PhysicalResist, Is.EqualTo(70));
+                Assert.That(loadedMobile.ModifierCaps.FireResist, Is.EqualTo(71));
+                Assert.That(loadedMobile.ModifierCaps.DefenseChanceIncrease, Is.EqualTo(45));
                 Assert.That(loadedMobile.EffectiveStrength, Is.EqualTo(64));
                 Assert.That(loadedMobile.EffectiveFireResistance, Is.EqualTo(21));
                 Assert.That(loadedMobile.EffectiveLuck, Is.EqualTo(72));

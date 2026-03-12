@@ -40,17 +40,36 @@ public class SnapshotMapperTests
                 MaxStamina = 60
             },
             BaseLuck = 42,
+            StatCap = 250,
+            Followers = 2,
+            FollowersMax = 5,
+            Weight = 33,
+            MaxWeight = 400,
+            MinWeaponDamage = 11,
+            MaxWeaponDamage = 15,
+            Tithing = 777,
             EquipmentModifiers = new()
             {
                 StrengthBonus = 5,
                 FireResist = 3,
-                Luck = 10
+                Luck = 10,
+                HitChanceIncrease = 8
             },
             RuntimeModifiers = new()
             {
                 StrengthBonus = -2,
                 FireResist = 4,
-                Luck = 20
+                Luck = 20,
+                DefenseChanceIncrease = 7
+            },
+            ModifierCaps = new()
+            {
+                PhysicalResist = 70,
+                FireResist = 71,
+                ColdResist = 72,
+                PoisonResist = 73,
+                EnergyResist = 74,
+                DefenseChanceIncrease = 45
             }
         };
 
@@ -75,14 +94,27 @@ public class SnapshotMapperTests
                 Assert.That(restored.Resources.Stamina, Is.EqualTo(50));
                 Assert.That(restored.Resources.MaxStamina, Is.EqualTo(60));
                 Assert.That(restored.BaseLuck, Is.EqualTo(42));
+                Assert.That(restored.StatCap, Is.EqualTo(250));
+                Assert.That(restored.Followers, Is.EqualTo(2));
+                Assert.That(restored.FollowersMax, Is.EqualTo(5));
+                Assert.That(restored.Weight, Is.EqualTo(33));
+                Assert.That(restored.MaxWeight, Is.EqualTo(400));
+                Assert.That(restored.MinWeaponDamage, Is.EqualTo(11));
+                Assert.That(restored.MaxWeaponDamage, Is.EqualTo(15));
+                Assert.That(restored.Tithing, Is.EqualTo(777));
                 Assert.That(restored.EquipmentModifiers, Is.Not.Null);
                 Assert.That(restored.EquipmentModifiers!.StrengthBonus, Is.EqualTo(5));
                 Assert.That(restored.EquipmentModifiers.FireResist, Is.EqualTo(3));
                 Assert.That(restored.EquipmentModifiers.Luck, Is.EqualTo(10));
+                Assert.That(restored.EquipmentModifiers.HitChanceIncrease, Is.EqualTo(8));
                 Assert.That(restored.RuntimeModifiers, Is.Not.Null);
                 Assert.That(restored.RuntimeModifiers!.StrengthBonus, Is.EqualTo(-2));
                 Assert.That(restored.RuntimeModifiers.FireResist, Is.EqualTo(4));
                 Assert.That(restored.RuntimeModifiers.Luck, Is.EqualTo(20));
+                Assert.That(restored.RuntimeModifiers.DefenseChanceIncrease, Is.EqualTo(7));
+                Assert.That(restored.ModifierCaps.PhysicalResist, Is.EqualTo(70));
+                Assert.That(restored.ModifierCaps.FireResist, Is.EqualTo(71));
+                Assert.That(restored.ModifierCaps.DefenseChanceIncrease, Is.EqualTo(45));
                 Assert.That(restored.Strength, Is.EqualTo(60));
                 Assert.That(restored.FireResistance, Is.EqualTo(15));
                 Assert.That(restored.Luck, Is.EqualTo(42));

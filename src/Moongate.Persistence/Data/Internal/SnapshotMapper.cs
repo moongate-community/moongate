@@ -273,6 +273,14 @@ internal static class SnapshotMapper
                             },
             SkillPoints = snapshot.SkillPoints,
             StatPoints = snapshot.StatPoints,
+            StatCap = snapshot.StatCap,
+            Followers = snapshot.Followers,
+            FollowersMax = snapshot.FollowersMax,
+            Weight = snapshot.Weight,
+            MaxWeight = snapshot.MaxWeight,
+            MinWeaponDamage = snapshot.MinWeaponDamage,
+            MaxWeaponDamage = snapshot.MaxWeaponDamage,
+            Tithing = snapshot.Tithing,
             BaseResistances = snapshot.BaseResistances is null
                                   ? new()
                                   {
@@ -338,6 +346,17 @@ internal static class SnapshotMapper
                                        Luck = snapshot.RuntimeModifiers.Luck,
                                        SpellChanneling = snapshot.RuntimeModifiers.SpellChanneling
                                    },
+            ModifierCaps = snapshot.ModifierCaps is null
+                               ? new()
+                               : new()
+                               {
+                                   PhysicalResist = snapshot.ModifierCaps.PhysicalResist,
+                                   FireResist = snapshot.ModifierCaps.FireResist,
+                                   ColdResist = snapshot.ModifierCaps.ColdResist,
+                                   PoisonResist = snapshot.ModifierCaps.PoisonResist,
+                                   EnergyResist = snapshot.ModifierCaps.EnergyResist,
+                                   DefenseChanceIncrease = snapshot.ModifierCaps.DefenseChanceIncrease
+                               },
             BaseBody = snapshot.BaseBodyId is null ? null : (Body)snapshot.BaseBodyId.Value,
             BackpackId = (Serial)snapshot.BackpackId,
             IsWarMode = snapshot.IsWarMode,
@@ -484,6 +503,14 @@ internal static class SnapshotMapper
             MaxStamina = entity.MaxStamina,
             SkillPoints = entity.SkillPoints,
             StatPoints = entity.StatPoints,
+            StatCap = entity.StatCap,
+            Followers = entity.Followers,
+            FollowersMax = entity.FollowersMax,
+            Weight = entity.Weight,
+            MaxWeight = entity.MaxWeight,
+            MinWeaponDamage = entity.MinWeaponDamage,
+            MaxWeaponDamage = entity.MaxWeaponDamage,
+            Tithing = entity.Tithing,
             FireResistance = entity.FireResistance,
             ColdResistance = entity.ColdResistance,
             PoisonResistance = entity.PoisonResistance,
@@ -560,6 +587,15 @@ internal static class SnapshotMapper
                                        Luck = entity.RuntimeModifiers.Luck,
                                        SpellChanneling = entity.RuntimeModifiers.SpellChanneling
                                    },
+            ModifierCaps = new()
+            {
+                PhysicalResist = entity.ModifierCaps.PhysicalResist,
+                FireResist = entity.ModifierCaps.FireResist,
+                ColdResist = entity.ModifierCaps.ColdResist,
+                PoisonResist = entity.ModifierCaps.PoisonResist,
+                EnergyResist = entity.ModifierCaps.EnergyResist,
+                DefenseChanceIncrease = entity.ModifierCaps.DefenseChanceIncrease
+            },
             Skills = skills,
             BaseLuck = entity.BaseLuck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,

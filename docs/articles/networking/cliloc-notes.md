@@ -69,6 +69,12 @@ For Moongate item tooltips:
 
 Do not use `ObjectPropertyList.Add(string)` for canonical object names. That path rotates through generic argument-only clilocs and can produce incorrect localized client text.
 
+### Book-Specific Note
+
+Read-only books should follow the same argument-style custom text rule.
+
+Using a generic rotating string path for book item tooltip text can produce client-localized artifacts such as `NEXT` instead of the intended object name. Moongate now uses the verified `1042971` custom-string pattern for book tooltip text so read-only books render like other custom-named objects.
+
 ## Future Cleanup
 
 A value should move from provisional to verified only after at least one of these is true:

@@ -132,7 +132,8 @@ Website: {{ shard.website_url }}
 
 At runtime the rendered `title`, `author`, and `content` are stored into the item
 custom params (`book_title`, `book_author`, `book_content`). Double-click opens
-the classic client book UI in read-only mode.
+the classic client book UI in read-only mode. The server also listens to client
+`0x66` page requests and serves the rendered book content page-by-page.
 
 ### GM Command: Eclipse
 
@@ -206,6 +207,41 @@ effect.send_to_player(characterId, x, y, z, itemId, speed, duration, hue, render
 -- mobile proxy
 mobile.get(serial):SetEffect(itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
 ```
+
+## Mobile Template Skill Materialization
+
+`MobileTemplateDefinition.skills` is now materialized into the persisted mobile
+entity at creation time.
+
+Template shape:
+
+```json
+{
+  "id": "mage_apprentice",
+  "type": "mobile",
+  "skills": {
+    "magery": 750,
+    "meditation": 500,
+    "wrestling": 300
+  }
+}
+```
+
+Behavior:
+
+- newly created mobiles get a full skill table seeded from `SkillInfo.Table`
+- unspecified skills default to `0`
+- specified template skills override those defaults
+- character creation also creates the full skill table and maps the four starting skills into persisted mobile skills
+
+Current persisted skill entry fields are:
+
+- `value`
+- `base`
+- `cap`
+- `lock`
+
+The runtime `0x3A` skill list packet reads directly from this persisted mobile skill table.
 
 ## Global Modules
 

@@ -70,6 +70,22 @@ public sealed class MobileSnapshot
 
     public int StatPoints { get; set; }
 
+    public int StatCap { get; set; }
+
+    public int Followers { get; set; }
+
+    public int FollowersMax { get; set; }
+
+    public int Weight { get; set; }
+
+    public int MaxWeight { get; set; }
+
+    public int MinWeaponDamage { get; set; }
+
+    public int MaxWeaponDamage { get; set; }
+
+    public int Tithing { get; set; }
+
     public int FireResistance { get; set; }
 
     public int ColdResistance { get; set; }
@@ -89,6 +105,8 @@ public sealed class MobileSnapshot
     public MobileModifiersSnapshot? EquipmentModifiers { get; set; }
 
     public MobileModifiersSnapshot? RuntimeModifiers { get; set; }
+
+    public MobileModifierCapsSnapshot? ModifierCaps { get; set; }
 
     public MobileSkillEntrySnapshot[] Skills { get; set; } = [];
 
