@@ -11,10 +11,10 @@ public static class CommonClilocIds
 #region Verified And In Active Use
 
     /// <summary>
-    /// Generic object name cliloc.
-    /// This is the project default for single-object names in MegaCliloc.
+    /// Generic argument-based object name cliloc (~1_NOTHING~).
+    /// POL uses this for item tooltip names and custom single-string entries.
     /// </summary>
-    public const uint ObjectName = 1000000;
+    public const uint ObjectName = 1042971;
 
     /// <summary>
     /// Item name: ~1_NUMBER~ ~2_ITEMNAME~

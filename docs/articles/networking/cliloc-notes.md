@@ -27,7 +27,7 @@ These are either:
 
 Examples:
 
-- `ObjectName = 1000000`
+- `ObjectName = 1042971`
 - `ItemName = 1050039`
 - `Weight = 1072788`
 - `Blessed = 1038021`

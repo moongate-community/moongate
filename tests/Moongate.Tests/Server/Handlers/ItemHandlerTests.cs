@@ -774,6 +774,70 @@ public class ItemHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenReadonlyBookPageIsRequested_ShouldEnqueueRequestedPage()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var targetSerial = (Serial)0x40000022u;
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = (Serial)0x40000001u,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Welcome");
+        item.SetCustomString("book_author", "Archivist");
+        item.SetCustomString("book_content", "Line 1\nLine 2\nLine 3");
+        itemService.ItemsById[targetSerial] = item;
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new BookPagesPacket
+                          {
+                              BookSerial = targetSerial.Value,
+                              PageCount = 1,
+                              Pages =
+                              {
+                                  new()
+                                  {
+                                      PageNumber = 1,
+                                      LineCount = 0xFFFF
+                                  }
+                              }
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<BookPagesPacket>());
+                var pages = (BookPagesPacket)outbound.Packet;
+                Assert.That(pages.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(pages.Pages, Has.Count.EqualTo(1));
+                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
+                Assert.That(pages.Pages[0].LineCount, Is.EqualTo(3));
+                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2", "Line 3" }));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_ShouldPublishItemSingleClickEvent()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();

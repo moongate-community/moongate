@@ -30,6 +30,7 @@ namespace Moongate.Server.Handlers;
 
 [
     RegisterGameEventListener,
+    RegisterPacketHandler(PacketDefinition.BookPagesPacket),
     RegisterPacketHandler(PacketDefinition.DropItemPacket),
     RegisterPacketHandler(PacketDefinition.DropWearItemPacket),
     RegisterPacketHandler(PacketDefinition.PickUpItemPacket),
@@ -213,6 +214,11 @@ public class ItemHandler
         if (packet is DropWearItemPacket dropWearItemPacket)
         {
             return await HandleDropWearItemAsync(session, dropWearItemPacket);
+        }
+
+        if (packet is BookPagesPacket bookPagesPacket)
+        {
+            return await HandleBookPagesAsync(session, bookPagesPacket);
         }
 
         if (packet is SingleClickPacket singleClickPacket)
@@ -638,14 +644,40 @@ public class ItemHandler
         return true;
     }
 
+    private async Task<bool> HandleBookPagesAsync(GameSession session, BookPagesPacket bookPagesPacket)
+    {
+        var item = await _itemService.GetItemAsync((Serial)bookPagesPacket.BookSerial);
+
+        if (item is null || !TryReadReadonlyBook(item, out _, out _, out var content))
+        {
+            return true;
+        }
+
+        var requestedPages = BuildRequestedBookPages(content, bookPagesPacket.Pages);
+
+        if (requestedPages.Count == 0)
+        {
+            return true;
+        }
+
+        var response = new BookPagesPacket
+        {
+            BookSerial = bookPagesPacket.BookSerial,
+            PageCount = (ushort)requestedPages.Count
+        };
+
+        response.Pages.AddRange(requestedPages);
+        Enqueue(session, response);
+
+        return true;
+    }
+
     private static bool IsGroundItem(UOItemEntity item)
         => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;
 
     private bool TryEnqueueReadonlyBook(GameSession session, UOItemEntity item)
     {
-        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out var title) ||
-            !item.TryGetCustomString(BookTemplateParamKeys.Author, out var author) ||
-            !item.TryGetCustomString(BookTemplateParamKeys.Content, out var content))
+        if (!TryReadReadonlyBook(item, out var title, out var author, out var content))
         {
             return false;
         }
@@ -683,6 +715,54 @@ public class ItemHandler
         Enqueue(session, packet);
 
         return true;
+    }
+
+    private static bool TryReadReadonlyBook(UOItemEntity item, out string title, out string author, out string content)
+    {
+        title = string.Empty;
+        author = string.Empty;
+        content = string.Empty;
+
+        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out title) ||
+            !item.TryGetCustomString(BookTemplateParamKeys.Author, out author) ||
+            !item.TryGetCustomString(BookTemplateParamKeys.Content, out content))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static List<BookPageEntry> BuildRequestedBookPages(string content, IReadOnlyList<BookPageEntry> requestedPages)
+    {
+        var allPages = BuildBookPages(content);
+        var responsePages = new List<BookPageEntry>();
+
+        foreach (var requestedPage in requestedPages)
+        {
+            if (!requestedPage.IsPageRequest)
+            {
+                continue;
+            }
+
+            var pageIndex = requestedPage.PageNumber - 1;
+
+            if (pageIndex < 0 || pageIndex >= allPages.Count)
+            {
+                continue;
+            }
+
+            var responsePage = new BookPageEntry
+            {
+                PageNumber = requestedPage.PageNumber,
+                LineCount = (ushort)allPages[pageIndex].Count
+            };
+
+            responsePage.Lines.AddRange(allPages[pageIndex]);
+            responsePages.Add(responsePage);
+        }
+
+        return responsePages;
     }
 
     private static List<List<string>> BuildBookPages(string content)

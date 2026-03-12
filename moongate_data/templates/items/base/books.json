@@ -1,7 +1,7 @@
 [
   {
     "type": "item",
-    "id": "moongate_welcome_book",
+    "id": "welcome_book",
     "name": "Welcome To Moongate",
     "category": "Books",
     "description": "Read-only welcome book rendered from templates/books/welcome_player.txt.",
@@ -12,9 +12,6 @@
     "scriptId": "none",
     "bookId": "welcome_player",
     "isMovable": true,
-    "tags": [
-      "book",
-      "moongate"
-    ]
+    "tags": ["book", "moongate"]
   }
 ]
