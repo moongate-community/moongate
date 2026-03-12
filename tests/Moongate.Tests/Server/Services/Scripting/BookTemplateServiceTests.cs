@@ -20,6 +20,7 @@ public sealed class BookTemplateServiceTests
             # hidden
             [Title] Welcome To Moongate
             [Author] Tommy
+            [ReadOnly] True
 
             Welcome to {{ shard.name }}.
             Website: {{ shard.website_url }}
@@ -44,7 +45,71 @@ public sealed class BookTemplateServiceTests
                 Assert.That(book, Is.Not.Null);
                 Assert.That(book!.Title, Is.EqualTo("Welcome To Moongate"));
                 Assert.That(book.Author, Is.EqualTo("Tommy"));
+                Assert.That(book.ReadOnly, Is.True);
                 Assert.That(book.Content, Is.EqualTo("Welcome to Test Shard.\nWebsite: https://example.test\nPrice: 100# coins"));
+            }
+        );
+    }
+
+    [Test]
+    public void TryLoad_WhenReadOnlyIsFalse_ShouldParseReadOnlyFlag()
+    {
+        using var tempDirectory = new TempDirectory();
+        var booksDirectory = Path.Combine(tempDirectory.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        File.WriteAllText(
+            Path.Combine(booksDirectory, "journal.txt"),
+            """
+            [Title] Journal
+            [Author] Scribe
+            [ReadOnly] False
+
+            Entry one.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new BookTemplateService(directoriesConfig, new MoongateConfig());
+
+        var success = service.TryLoad("journal", null, out var book);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.True);
+                Assert.That(book, Is.Not.Null);
+                Assert.That(book!.ReadOnly, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void TryLoad_WhenReadOnlyIsMissing_ShouldLeaveReadOnlyUnset()
+    {
+        using var tempDirectory = new TempDirectory();
+        var booksDirectory = Path.Combine(tempDirectory.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        File.WriteAllText(
+            Path.Combine(booksDirectory, "plain_book.txt"),
+            """
+            [Title] Plain Book
+            [Author] Scribe
+
+            Entry one.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new BookTemplateService(directoriesConfig, new MoongateConfig());
+
+        var success = service.TryLoad("plain_book", null, out var book);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.True);
+                Assert.That(book, Is.Not.Null);
+                Assert.That(book!.ReadOnly, Is.Null);
             }
         );
     }

@@ -1,6 +1,7 @@
 # Read-only sample book rendered once at item creation time.
 [Title] Welcome To {{ shard.name }}
 [Author] The Moongate Team
+[ReadOnly] True
 
 Welcome traveler.
 

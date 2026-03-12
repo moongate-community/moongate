@@ -127,11 +127,19 @@ Moongate currently treats the outgoing `0x11` status packet as a modern `7.x`-st
 
 ## Current Book Flow
 
-Moongate now listens for `0x66` book page requests.
+Moongate now supports both read-only and writable classic book flows.
 
-- double-click opens read-only book UI for supported items
-- client page requests use `0x66`
-- server answers using the stored rendered book content
+- double-click opens the classic book UI for supported items
+- `0x93` saves writable book `title` and `author`
+- `0x66` is used for both:
+  - page requests
+  - writable page saves
+- writable edits are accepted only when the book is:
+  - equipped by the player, or
+  - inside the player's backpack/container tree
+- read-only books continue to serve rendered template content
+- writable books persist `title`, `author`, and canonical newline content on the item
+- book template files may force read-only or writable policy with `[ReadOnly] True|False`; when present, this overrides fallback item/startup `writable`
 
 The book tooltip path uses the argument-style cliloc rule documented in [Cliloc Notes](cliloc-notes.md), avoiding the legacy `NEXT` tooltip artifact caused by generic string cliloc rotation.
 

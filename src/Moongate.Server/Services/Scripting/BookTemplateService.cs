@@ -47,9 +47,9 @@ public sealed class BookTemplateService : IBookTemplateService
 
         var source = PreprocessTemplateSource(File.ReadAllText(templatePath));
 
-        if (!TryParseMetadata(source, out var title, out var author, out var body))
+        if (!TryParseMetadata(source, out var title, out var author, out var readOnly, out var body))
         {
-            Logger.Error("Invalid book template '{Path}': missing [Title] or [Author].", templatePath);
+            Logger.Error("Invalid book template '{Path}': missing [Title] or [Author], or invalid [ReadOnly].", templatePath);
             return false;
         }
 
@@ -76,6 +76,7 @@ public sealed class BookTemplateService : IBookTemplateService
             {
                 Title = titleTemplate.Render(context).Trim(),
                 Author = authorTemplate.Render(context).Trim(),
+                ReadOnly = readOnly,
                 Content = bodyTemplate.Render(context).Trim()
             };
 
@@ -136,10 +137,17 @@ public sealed class BookTemplateService : IBookTemplateService
         return true;
     }
 
-    private static bool TryParseMetadata(string source, out string title, out string author, out string body)
+    private static bool TryParseMetadata(
+        string source,
+        out string title,
+        out string author,
+        out bool? readOnly,
+        out string body
+    )
     {
         title = string.Empty;
         author = string.Empty;
+        readOnly = null;
         body = string.Empty;
 
         var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal)
@@ -158,6 +166,19 @@ public sealed class BookTemplateService : IBookTemplateService
             if (line.StartsWith("[Author]", StringComparison.OrdinalIgnoreCase))
             {
                 author = line[8..].Trim();
+                continue;
+            }
+
+            if (line.StartsWith("[ReadOnly]", StringComparison.OrdinalIgnoreCase))
+            {
+                var value = line[10..].Trim();
+
+                if (!bool.TryParse(value, out var parsed))
+                {
+                    return false;
+                }
+
+                readOnly = parsed;
                 continue;
             }
 

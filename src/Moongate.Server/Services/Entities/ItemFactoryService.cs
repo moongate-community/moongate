@@ -174,6 +174,11 @@ public sealed class ItemFactoryService : IItemFactoryService
         item.SetCustomString(BookTemplateParamKeys.Title, book.Title);
         item.SetCustomString(BookTemplateParamKeys.Author, book.Author);
         item.SetCustomString(BookTemplateParamKeys.Content, book.Content);
+
+        if (book.ReadOnly.HasValue)
+        {
+            item.SetCustomBoolean(BookTemplateParamKeys.Writable, !book.ReadOnly.Value);
+        }
     }
 
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
@@ -193,6 +198,14 @@ public sealed class ItemFactoryService : IItemFactoryService
             }
 
             var normalizedKey = key.Trim();
+
+            if (string.Equals(normalizedKey, "writable", StringComparison.OrdinalIgnoreCase) &&
+                bool.TryParse(param.Value, out var writable))
+            {
+                item.SetCustomBoolean(BookTemplateParamKeys.Writable, writable);
+
+                continue;
+            }
 
             switch (param.Type)
             {

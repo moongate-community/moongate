@@ -6,5 +6,7 @@ public sealed class BookTemplateContent
 
     public string Author { get; set; } = string.Empty;
 
+    public bool? ReadOnly { get; set; }
+
     public string Content { get; set; } = string.Empty;
 }

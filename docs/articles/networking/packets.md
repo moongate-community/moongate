@@ -49,8 +49,9 @@ Current gameplay examples:
 - `PlayerStatusHandler` listens to `PacketDefinition.GetPlayerStatusPacket`
   - `BasicStatus` requests enqueue `PlayerStatusPacket` (`0x11`)
   - `RequestSkills` requests enqueue `SkillListPacket` (`0x3A`)
-- `ItemHandler` listens to `PacketDefinition.BookPagesPacket`
-  - this wires client `0x66` book page requests to read-only book responses
+- `ItemHandler` listens to book packets
+  - `BookHeaderOldPacket` (`0x93`) saves writable book `title` / `author`
+  - `BookPagesPacket` (`0x66`) serves page requests and writable page saves
 
 ## Serialization
 
@@ -69,6 +70,9 @@ Current notable outgoing packet classes:
   - outgoing `0x3A`
   - serializes the persisted mobile skill table in skill-id order
   - includes lock state, but not per-skill caps
+- `BookHeaderNewPacket`
+  - opens the classic book UI
+  - toggles client writable mode per item
 
 ## Source Generation
 

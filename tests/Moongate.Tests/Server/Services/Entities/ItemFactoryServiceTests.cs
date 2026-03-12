@@ -83,6 +83,181 @@ public class ItemFactoryServiceTests
                 Assert.That(author, Is.EqualTo("Archivist"));
                 Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
                 Assert.That(content, Does.Contain("Welcome traveler."));
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldMaterializeWritableBookMetadataFromParams()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "journal_book",
+                Name = "Journal",
+                Category = "Books",
+                Description = "Writable book",
+                ItemId = "0x0FF1",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.journal_book",
+                Weight = 1,
+                Params = new()
+                {
+                    ["book_title"] = new() { Type = ItemTemplateParamType.String, Value = "Journal" },
+                    ["book_author"] = new() { Type = ItemTemplateParamType.String, Value = "Player" },
+                    ["book_content"] = new() { Type = ItemTemplateParamType.String, Value = "" },
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "true" }
+                }
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("journal_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldPreferBookTemplateReadOnlyTrueOverWritableParam()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "welcome_book",
+                Name = "Welcome",
+                Category = "Books",
+                Description = "Read only",
+                ItemId = "0x0FF0",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.welcome_book",
+                Weight = 1,
+                BookId = "welcome_player",
+                Params = new()
+                {
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "true" }
+                }
+            }
+        );
+
+        var booksDirectory = Path.Combine(temp.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(booksDirectory, "welcome_player.txt"),
+            """
+            [Title] Welcome
+            [Author] Archivist
+            [ReadOnly] True
+
+            Hello.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(
+            temp.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var service = new ItemFactoryService(
+            templateService,
+            persistence,
+            new BookTemplateService(directoriesConfig, new MoongateConfig())
+        );
+
+        var item = service.CreateItemFromTemplate("welcome_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldPreferBookTemplateReadOnlyFalseOverWritableParam()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "journal_book",
+                Name = "Journal",
+                Category = "Books",
+                Description = "Writable",
+                ItemId = "0x0FF1",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.journal_book",
+                Weight = 1,
+                BookId = "journal",
+                Params = new()
+                {
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "false" }
+                }
+            }
+        );
+
+        var booksDirectory = Path.Combine(temp.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(booksDirectory, "journal.txt"),
+            """
+            [Title] Journal
+            [Author] Scribe
+            [ReadOnly] False
+
+            Entry one.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(
+            temp.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var service = new ItemFactoryService(
+            templateService,
+            persistence,
+            new BookTemplateService(directoriesConfig, new MoongateConfig())
+        );
+
+        var item = service.CreateItemFromTemplate("journal_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.True);
             }
         );
     }

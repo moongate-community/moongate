@@ -125,6 +125,7 @@ Example book file:
 ```txt
 [Title] Welcome To {{ shard.name }}
 [Author] The Moongate Team
+[ReadOnly] True
 
 Welcome traveler.
 Website: {{ shard.website_url }}
@@ -134,6 +135,28 @@ At runtime the rendered `title`, `author`, and `content` are stored into the ite
 custom params (`book_title`, `book_author`, `book_content`). Double-click opens
 the classic client book UI in read-only mode. The server also listens to client
 `0x66` page requests and serves the rendered book content page-by-page.
+
+Writable books use the same classic client UI, but the save flow differs:
+
+- `book_writable = true` marks the item as writable at runtime
+- `0x93` saves `title` and `author`
+- `0x66` saves page content
+- writes are accepted only when the book is equipped by the player or inside the player's backpack tree
+
+Current writable storage still uses the item custom params:
+
+- `book_title`
+- `book_author`
+- `book_content`
+- `book_writable`
+
+Book templates can also declare writability directly in the `.txt` file:
+
+- `[ReadOnly] True` -> forces the resulting item to be read-only
+- `[ReadOnly] False` -> forces the resulting item to be writable
+- if `[ReadOnly]` is absent, Moongate falls back to item/startup `writable`
+
+When present, `[ReadOnly]` takes precedence over fallback `writable` metadata.
 
 ### GM Command: Eclipse
 

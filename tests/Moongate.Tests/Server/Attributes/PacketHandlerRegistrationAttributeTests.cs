@@ -64,6 +64,7 @@ public class PacketHandlerRegistrationAttributeTests
         AssertMappings(typeof(ToolTipHandler), PacketDefinition.MegaClilocPacket);
         AssertMappings(
             typeof(ItemHandler),
+            PacketDefinition.BookHeaderOldPacket,
             PacketDefinition.BookPagesPacket,
             PacketDefinition.DropItemPacket,
             PacketDefinition.DropWearItemPacket,
