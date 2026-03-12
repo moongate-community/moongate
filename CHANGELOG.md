@@ -1,3 +1,89 @@
+## [0.32.0](https://github.com/moongate-community/moongatev2/compare/v0.31.0...v0.32.0) (2026-03-09)
+
+### Features
+
+* add generic_npc mobile template ([3c726dd](https://github.com/moongate-community/moongatev2/commit/3c726dd52dd2d61132237778e4adb664b68e8478))
+* add mobile animation event dispatch and packet support ([9719ad3](https://github.com/moongate-community/moongatev2/commit/9719ad32acf41362eb124136fe22046b07714bac))
+* add reload_template command and set lilly npc id ([4dfa023](https://github.com/moongate-community/moongatev2/commit/4dfa02376dad788b7988940be205a0e38fea2fd0))
+* add runtime spawn service for active sectors ([eac7144](https://github.com/moongate-community/moongatev2/commit/eac7144f5dd8814b82120d238d5568b518d11914))
+* add semantic animation intent mapping ([2010df1](https://github.com/moongate-community/moongatev2/commit/2010df17f169f6e5338511ad172faa14ffb32b73))
+* add spawn Lua module and update docs ([f060b3d](https://github.com/moongate-community/moongatev2/commit/f060b3da505055a3de28372967c4013fbe6d1dfb))
+* add spawner spawn events and harden spawn tools flow ([64d701e](https://github.com/moongate-community/moongatev2/commit/64d701ea40e6cb4940851bfd2a4daf9f54c97f55))
+* add use_animation helpers to LuaMobileProxy ([1375f3e](https://github.com/moongate-community/moongatev2/commit/1375f3e8e7744304f28ef2d6031bd9b358fd1015))
+* add Vega cat command and Lua brain ([26fdc97](https://github.com/moongate-community/moongatev2/commit/26fdc97719914896886d513bbd7c45a0f5561cb0))
+* **data:** add spawn tools gump and teleporter seed dataset ([c12a7fd](https://github.com/moongate-community/moongatev2/commit/c12a7fdaed33a65a615925783cd22a93f909dc32))
+* **items:** add account-based item visibility and spawner base template ([e705e88](https://github.com/moongate-community/moongatev2/commit/e705e88d2a83860ce1bd3b6fa26a24bdb4dd8072))
+* **lua-brain:** add in_range and out_range callbacks ([4b6a7b9](https://github.com/moongate-community/moongatev2/commit/4b6a7b9343c050331b9252f7df5d08b2fb3521d4))
+* pass spawner walking range to lua mobile brain ([a43f870](https://github.com/moongate-community/moongatev2/commit/a43f870c5fa47c51c0cf250710af690db6880443))
+* **scripting:** add map/convert modules and refactor teleport item script ([9310c73](https://github.com/moongate-community/moongatev2/commit/9310c73e44cf2cabf17b48fa4d61313dc39c8a27))
+* **templates:** add noble queen outfit and Lilly NPC ([9e1c5be](https://github.com/moongate-community/moongatev2/commit/9e1c5bebb2c38f77c4448a2deb7cc560f7881256))
+* **world:** import spawns and teleporters seed data with loaders/services ([5b73322](https://github.com/moongate-community/moongatev2/commit/5b73322ea8f0064b19f30f2c6cca2f325226a664))
+
+### Bug Fixes
+
+* align linked door toggle semantics and simplify spawn counting ([b77f641](https://github.com/moongate-community/moongatev2/commit/b77f641e3ce505ecc05b6ce6c8a9a7343097a93b))
+* **benchmarks:** update SpatialWorldService benchmark for teleporter dependency ([70b726c](https://github.com/moongate-community/moongatev2/commit/70b726c6a50e42e4ab023b82172f23ce9190a67b))
+* handle opened door offset for static collision checks ([0d40c49](https://github.com/moongate-community/moongatev2/commit/0d40c492ace6743b954d78ea0870da599ac448d7))
+* restore gump callback wiring and decouple lua brain runner ([f95fb89](https://github.com/moongate-community/moongatev2/commit/f95fb897b4f199dc20a9ee831807162337fc8b43))
+* send map change even when destination sector is missing ([72e9358](https://github.com/moongate-community/moongatev2/commit/72e93583c302cd989ef98b73b5eacbe861392ea5))
+* **teleport:** force position event on map-change and bypass throttle ([3f8a01d](https://github.com/moongate-community/moongatev2/commit/3f8a01ddb2a8e1a9675d5b343f470e0d01eba55e))
+* update benchmark mobile service stub for try spawn api ([09d169f](https://github.com/moongate-community/moongatev2/commit/09d169f68637edb20687b4eb96913811fccaa3f6))
+
+## [0.31.0](https://github.com/moongate-community/moongatev2/compare/v0.30.0...v0.31.0) (2026-03-06)
+
+### Features
+
+* **persistence:** add bulk upsert for items with batched journal writes ([ed2a2e1](https://github.com/moongate-community/moongatev2/commit/ed2a2e10b954c381367dd05b46c9f392bca7ab90))
+
+### Bug Fixes
+
+* align door toggle with ModernUO item+location behavior ([541b4ca](https://github.com/moongate-community/moongatev2/commit/541b4ca8a52af6d7c777f0ece992023e3fd7b2d5))
+* delta sector sync, bulk persistence perf, rename emulator to server ([b68e4fc](https://github.com/moongate-community/moongatev2/commit/b68e4fc0b3b3464aad916bd406d848645155a140))
+
+## [0.30.0](https://github.com/moongate-community/moongatev2/compare/v0.29.0...v0.30.0) (2026-03-06)
+
+### Features
+
+* expand sector updates and template params across server ([5fd65c0](https://github.com/moongate-community/moongatev2/commit/5fd65c03aaac77d66b0f37723fa755de2639b9dc))
+* **lua:** add eclipse command with global light override ([05194b8](https://github.com/moongate-community/moongatev2/commit/05194b8217b0539ad4be0a395eca220fba18b896))
+* **persistence:** migrate persistence serialization to MessagePack source-gen ([08f1d7a](https://github.com/moongate-community/moongatev2/commit/08f1d7a606d9381c64422490bb4b2018e9f716af))
+* port ModernUO-style light cycle with spatial/region overrides ([e134f0f](https://github.com/moongate-community/moongatev2/commit/e134f0f6a4ac29ceba7e47ad34966b7d7acde577))
+* **world:** add door data pipeline and runtime door toggling ([e7f2e79](https://github.com/moongate-community/moongatev2/commit/e7f2e79b7c36c4bdc01212e03e2b4eea9201b0d6))
+
+### Bug Fixes
+
+* **items:** correct ItemMovedEvent handler loading wrong entity ([b2539f8](https://github.com/moongate-community/moongatev2/commit/b2539f87a3cf81a150125c7d5d6f1bfa4e98389a))
+* remove player self-resync on movement and add teleports gump ([91dd4e0](https://github.com/moongate-community/moongatev2/commit/91dd4e0f6deef7dd24646e451c19aaef34d5a965))
+
+### Performance Improvements
+
+* **characters:** batch load missing equipment items instead of N+1 queries ([7cfdb0e](https://github.com/moongate-community/moongatev2/commit/7cfdb0e2cbbdd3d85c247019909824aaf8fb59a5))
+* **events:** reduce per-event allocations in GameEventBusService ([19c5aa9](https://github.com/moongate-community/moongatev2/commit/19c5aa95fae3c62efbd66ed11eeadb0d150aaa92))
+* **items:** add early exit for ItemDeletedEvent when source owns container ([7e9dbec](https://github.com/moongate-community/moongatev2/commit/7e9dbece00760735ba83e70d87923aa88d414eac))
+* **login:** eliminate redundant character loads during login ([998d5cd](https://github.com/moongate-community/moongatev2/commit/998d5cd9e04f3a63e53234224652664dbc953cb2))
+* **login:** use Count property instead of GetAll().Count to avoid array allocation ([7726461](https://github.com/moongate-community/moongatev2/commit/772646136737148fa05a710af7f3e2ff464e6835))
+* **mobile:** delta sector sync on movement + packet handler performance docs ([02a0d1c](https://github.com/moongate-community/moongatev2/commit/02a0d1cafc9badd8aa8ec36eceed6931df4c1370))
+* **movement:** convert event publishing to fire-and-forget instead of blocking ([c65c986](https://github.com/moongate-community/moongatev2/commit/c65c986523c22915156d352beb0cfe0bc5716385))
+* **packets:** remove sync-over-async and allocations from PacketDispatchService ([5723991](https://github.com/moongate-community/moongatev2/commit/57239919d4652c37e08b6c892cb3fc852c40a69a))
+* **persistence:** eliminate LINQ allocations in SnapshotMapper.ToMobileSnapshot ([7546b65](https://github.com/moongate-community/moongatev2/commit/7546b655befde1f7edd30279bf0893814263b217))
+* **spatial:** convert PublishEvent to fire-and-forget instead of blocking ([dc7d6c9](https://github.com/moongate-community/moongatev2/commit/dc7d6c9a1534c6aba0bcbef2099ee62f8394f4f7))
+* **spatial:** deduplicate session-to-character mapping in broadcast ([0b23056](https://github.com/moongate-community/moongatev2/commit/0b230569ac5b9f13e1d60bd2075159a684796ffd))
+* **spatial:** proactive sector warmup on player sector change ([e2236e2](https://github.com/moongate-community/moongatev2/commit/e2236e2c3a7c38311ce54d2e111f994b93975ef6))
+* **spatial:** use O(1) reverse lookup for NPC resolution instead of sector scan ([0b0ff33](https://github.com/moongate-community/moongatev2/commit/0b0ff3390c4514d79b8f818f267b4a856c40f247))
+
+## [0.29.0](https://github.com/moongate-community/moongatev2/compare/v0.28.0...v0.29.0) (2026-03-05)
+
+### Features
+
+* add Lua command.execute bridge with output capture ([ac0443e](https://github.com/moongate-community/moongatev2/commit/ac0443ed3f083f344d7b3aad0f81c514a2e0588e))
+* **config,scripting:** support env overrides and snake_case userdata ([8c98a0e](https://github.com/moongate-community/moongatev2/commit/8c98a0e7a391bbf5412ec0f494f7bc9f6fe899e0))
+* extend lua gump layout flow and scripting runtime modules ([bdd7237](https://github.com/moongate-community/moongatev2/commit/bdd7237e686820314eb8a9e40c5686506a690f8b))
+* **network:** capture client hardware info and local bind endpoint in sessions ([625b33c](https://github.com/moongate-community/moongatev2/commit/625b33cd3a2746931cb6bca6fa1326f4671ffe24))
+
+### Bug Fixes
+
+* **commands:** harden lua command module registration and error handling ([482709f](https://github.com/moongate-community/moongatev2/commit/482709ff234312ae9f1971cd67640454c6dae697))
+
 ## [0.28.0](https://github.com/moongate-community/moongatev2/compare/v0.27.0...v0.28.0) (2026-03-04)
 
 ### Features
