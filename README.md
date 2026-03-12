@@ -84,7 +84,7 @@ UI default URL: `http://localhost:8088/`
 - Sector/chunk spatial system with lazy warmup and broadcast radius
 - Snapshot + journal persistence (MessagePack source-generated, AOT-safe)
 - Lua scripting runtime for commands, gumps, item/mobile behavior
-- Read-only books rendered from `moongate_data/templates/books/*.txt` into item params and opened with the classic client book UI
+- Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows
 - Player portal for authenticated account overview, profile editing, and password change (`/portal/login`, `/portal/profile`, `/api/portal/me`, `/api/portal/me/password`)

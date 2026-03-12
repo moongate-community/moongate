@@ -196,7 +196,10 @@ MOONGATE_UO_DIRECTORY=/uo
 
 Mount `/app` for runtime data and `/uo` for UO client files.
 
-For a full variable list and a complete `docker-compose` sample, see `README.md` -> **Environment Configuration**.
+The most complete runnable examples currently live in:
+
+- [Quick Start](quickstart.md) for local and Docker launch commands
+- [README.md](/Users/squid/projects/personal/moongatev2/README.md) for top-level onboarding
 
 ---
 
