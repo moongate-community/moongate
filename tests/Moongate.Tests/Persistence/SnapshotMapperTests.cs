@@ -8,6 +8,70 @@ namespace Moongate.Tests.Persistence;
 public class SnapshotMapperTests
 {
     [Test]
+    public void ToItemSnapshot_ShouldPreserveCombatStatsAndModifiers()
+    {
+        var entity = new UOItemEntity
+        {
+            Id = (Serial)0x40000010u,
+            Name = "typed-item",
+            Location = new(10, 20, 0),
+            ItemId = 0x13B9,
+            CombatStats = new ItemCombatStats
+            {
+                MinStrength = 40,
+                DamageMin = 11,
+                DamageMax = 13,
+                Defense = 15,
+                AttackSpeed = 30,
+                RangeMin = 1,
+                RangeMax = 2,
+                MaxDurability = 45,
+                CurrentDurability = 40
+            },
+            Modifiers = new ItemModifiers
+            {
+                StrengthBonus = 5,
+                PhysicalResist = 12,
+                FireResist = 8,
+                HitChanceIncrease = 10,
+                DefenseChanceIncrease = 7,
+                Luck = 100,
+                SpellChanneling = 1,
+                UsesRemaining = 25
+            }
+        };
+
+        var snapshot = SnapshotMapper.ToItemSnapshot(entity);
+        var restored = SnapshotMapper.ToItemEntity(snapshot);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored.CombatStats, Is.Not.Null);
+                Assert.That(restored.CombatStats!.MinStrength, Is.EqualTo(40));
+                Assert.That(restored.CombatStats.DamageMin, Is.EqualTo(11));
+                Assert.That(restored.CombatStats.DamageMax, Is.EqualTo(13));
+                Assert.That(restored.CombatStats.Defense, Is.EqualTo(15));
+                Assert.That(restored.CombatStats.AttackSpeed, Is.EqualTo(30));
+                Assert.That(restored.CombatStats.RangeMin, Is.EqualTo(1));
+                Assert.That(restored.CombatStats.RangeMax, Is.EqualTo(2));
+                Assert.That(restored.CombatStats.MaxDurability, Is.EqualTo(45));
+                Assert.That(restored.CombatStats.CurrentDurability, Is.EqualTo(40));
+
+                Assert.That(restored.Modifiers, Is.Not.Null);
+                Assert.That(restored.Modifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(restored.Modifiers.PhysicalResist, Is.EqualTo(12));
+                Assert.That(restored.Modifiers.FireResist, Is.EqualTo(8));
+                Assert.That(restored.Modifiers.HitChanceIncrease, Is.EqualTo(10));
+                Assert.That(restored.Modifiers.DefenseChanceIncrease, Is.EqualTo(7));
+                Assert.That(restored.Modifiers.Luck, Is.EqualTo(100));
+                Assert.That(restored.Modifiers.SpellChanneling, Is.EqualTo(1));
+                Assert.That(restored.Modifiers.UsesRemaining, Is.EqualTo(25));
+            }
+        );
+    }
+
+    [Test]
     public void ToMobileSnapshot_ShouldPreserveCustomProperties()
     {
         var entity = new UOMobileEntity

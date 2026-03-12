@@ -51,6 +51,10 @@ public class UOItemEntity : IItemEntity
 
     public AccountType Visibility { get; set; } = AccountType.Regular;
 
+    public ItemCombatStats? CombatStats { get; set; }
+
+    public ItemModifiers? Modifiers { get; set; }
+
     /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
@@ -150,6 +154,37 @@ public class UOItemEntity : IItemEntity
         hash.Add(ScriptId, StringComparer.Ordinal);
         hash.Add(Rarity);
         hash.Add(Visibility);
+        hash.Add(CombatStats?.MinStrength ?? 0);
+        hash.Add(CombatStats?.MinDexterity ?? 0);
+        hash.Add(CombatStats?.MinIntelligence ?? 0);
+        hash.Add(CombatStats?.DamageMin ?? 0);
+        hash.Add(CombatStats?.DamageMax ?? 0);
+        hash.Add(CombatStats?.Defense ?? 0);
+        hash.Add(CombatStats?.AttackSpeed ?? 0);
+        hash.Add(CombatStats?.RangeMin ?? 0);
+        hash.Add(CombatStats?.RangeMax ?? 0);
+        hash.Add(CombatStats?.MaxDurability ?? 0);
+        hash.Add(CombatStats?.CurrentDurability ?? 0);
+        hash.Add(Modifiers?.StrengthBonus ?? 0);
+        hash.Add(Modifiers?.DexterityBonus ?? 0);
+        hash.Add(Modifiers?.IntelligenceBonus ?? 0);
+        hash.Add(Modifiers?.PhysicalResist ?? 0);
+        hash.Add(Modifiers?.FireResist ?? 0);
+        hash.Add(Modifiers?.ColdResist ?? 0);
+        hash.Add(Modifiers?.PoisonResist ?? 0);
+        hash.Add(Modifiers?.EnergyResist ?? 0);
+        hash.Add(Modifiers?.HitChanceIncrease ?? 0);
+        hash.Add(Modifiers?.DefenseChanceIncrease ?? 0);
+        hash.Add(Modifiers?.DamageIncrease ?? 0);
+        hash.Add(Modifiers?.SwingSpeedIncrease ?? 0);
+        hash.Add(Modifiers?.SpellDamageIncrease ?? 0);
+        hash.Add(Modifiers?.FasterCasting ?? 0);
+        hash.Add(Modifiers?.FasterCastRecovery ?? 0);
+        hash.Add(Modifiers?.LowerManaCost ?? 0);
+        hash.Add(Modifiers?.LowerReagentCost ?? 0);
+        hash.Add(Modifiers?.Luck ?? 0);
+        hash.Add(Modifiers?.SpellChanneling ?? 0);
+        hash.Add(Modifiers?.UsesRemaining ?? 0);
         hash.Add(ParentContainerId);
         hash.Add(ContainerPosition);
         hash.Add(EquippedMobileId);

@@ -64,7 +64,48 @@ internal static class SnapshotMapper
             ParentContainerId = (Serial)snapshot.ParentContainerId,
             ContainerPosition = new(snapshot.ContainerX, snapshot.ContainerY),
             EquippedMobileId = (Serial)snapshot.EquippedMobileId,
-            EquippedLayer = snapshot.EquippedLayer is null ? null : (ItemLayerType)snapshot.EquippedLayer.Value
+            EquippedLayer = snapshot.EquippedLayer is null ? null : (ItemLayerType)snapshot.EquippedLayer.Value,
+            CombatStats = snapshot.CombatStats is null
+                              ? null
+                              : new()
+                              {
+                                  MinStrength = snapshot.CombatStats.MinStrength,
+                                  MinDexterity = snapshot.CombatStats.MinDexterity,
+                                  MinIntelligence = snapshot.CombatStats.MinIntelligence,
+                                  DamageMin = snapshot.CombatStats.DamageMin,
+                                  DamageMax = snapshot.CombatStats.DamageMax,
+                                  Defense = snapshot.CombatStats.Defense,
+                                  AttackSpeed = snapshot.CombatStats.AttackSpeed,
+                                  RangeMin = snapshot.CombatStats.RangeMin,
+                                  RangeMax = snapshot.CombatStats.RangeMax,
+                                  MaxDurability = snapshot.CombatStats.MaxDurability,
+                                  CurrentDurability = snapshot.CombatStats.CurrentDurability
+                              },
+            Modifiers = snapshot.Modifiers is null
+                            ? null
+                            : new()
+                            {
+                                StrengthBonus = snapshot.Modifiers.StrengthBonus,
+                                DexterityBonus = snapshot.Modifiers.DexterityBonus,
+                                IntelligenceBonus = snapshot.Modifiers.IntelligenceBonus,
+                                PhysicalResist = snapshot.Modifiers.PhysicalResist,
+                                FireResist = snapshot.Modifiers.FireResist,
+                                ColdResist = snapshot.Modifiers.ColdResist,
+                                PoisonResist = snapshot.Modifiers.PoisonResist,
+                                EnergyResist = snapshot.Modifiers.EnergyResist,
+                                HitChanceIncrease = snapshot.Modifiers.HitChanceIncrease,
+                                DefenseChanceIncrease = snapshot.Modifiers.DefenseChanceIncrease,
+                                DamageIncrease = snapshot.Modifiers.DamageIncrease,
+                                SwingSpeedIncrease = snapshot.Modifiers.SwingSpeedIncrease,
+                                SpellDamageIncrease = snapshot.Modifiers.SpellDamageIncrease,
+                                FasterCasting = snapshot.Modifiers.FasterCasting,
+                                FasterCastRecovery = snapshot.Modifiers.FasterCastRecovery,
+                                LowerManaCost = snapshot.Modifiers.LowerManaCost,
+                                LowerReagentCost = snapshot.Modifiers.LowerReagentCost,
+                                Luck = snapshot.Modifiers.Luck,
+                                SpellChanneling = snapshot.Modifiers.SpellChanneling,
+                                UsesRemaining = snapshot.Modifiers.UsesRemaining
+                            }
         };
 
         if (snapshot.ContainedItemIds is { Length: > 0 })
@@ -118,6 +159,47 @@ internal static class SnapshotMapper
             EquippedMobileId = (uint)entity.EquippedMobileId,
             EquippedLayer = entity.EquippedLayer is null ? null : (byte)entity.EquippedLayer.Value,
             ContainedItemIds = [.. entity.ContainedItemIds.Select(id => (uint)id)],
+            CombatStats = entity.CombatStats is null
+                              ? null
+                              : new()
+                              {
+                                  MinStrength = entity.CombatStats.MinStrength,
+                                  MinDexterity = entity.CombatStats.MinDexterity,
+                                  MinIntelligence = entity.CombatStats.MinIntelligence,
+                                  DamageMin = entity.CombatStats.DamageMin,
+                                  DamageMax = entity.CombatStats.DamageMax,
+                                  Defense = entity.CombatStats.Defense,
+                                  AttackSpeed = entity.CombatStats.AttackSpeed,
+                                  RangeMin = entity.CombatStats.RangeMin,
+                                  RangeMax = entity.CombatStats.RangeMax,
+                                  MaxDurability = entity.CombatStats.MaxDurability,
+                                  CurrentDurability = entity.CombatStats.CurrentDurability
+                              },
+            Modifiers = entity.Modifiers is null
+                            ? null
+                            : new()
+                            {
+                                StrengthBonus = entity.Modifiers.StrengthBonus,
+                                DexterityBonus = entity.Modifiers.DexterityBonus,
+                                IntelligenceBonus = entity.Modifiers.IntelligenceBonus,
+                                PhysicalResist = entity.Modifiers.PhysicalResist,
+                                FireResist = entity.Modifiers.FireResist,
+                                ColdResist = entity.Modifiers.ColdResist,
+                                PoisonResist = entity.Modifiers.PoisonResist,
+                                EnergyResist = entity.Modifiers.EnergyResist,
+                                HitChanceIncrease = entity.Modifiers.HitChanceIncrease,
+                                DefenseChanceIncrease = entity.Modifiers.DefenseChanceIncrease,
+                                DamageIncrease = entity.Modifiers.DamageIncrease,
+                                SwingSpeedIncrease = entity.Modifiers.SwingSpeedIncrease,
+                                SpellDamageIncrease = entity.Modifiers.SpellDamageIncrease,
+                                FasterCasting = entity.Modifiers.FasterCasting,
+                                FasterCastRecovery = entity.Modifiers.FasterCastRecovery,
+                                LowerManaCost = entity.Modifiers.LowerManaCost,
+                                LowerReagentCost = entity.Modifiers.LowerReagentCost,
+                                Luck = entity.Modifiers.Luck,
+                                SpellChanneling = entity.Modifiers.SpellChanneling,
+                                UsesRemaining = entity.Modifiers.UsesRemaining
+                            },
             CustomProperties =
             [
                 .. entity.CustomProperties.Select(

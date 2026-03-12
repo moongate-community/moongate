@@ -52,5 +52,9 @@ public sealed class ItemSnapshot
 
     public uint[] ContainedItemIds { get; set; } = [];
 
+    public ItemCombatStatsSnapshot? CombatStats { get; set; }
+
+    public ItemModifiersSnapshot? Modifiers { get; set; }
+
     public ItemCustomPropertySnapshot[] CustomProperties { get; set; } = [];
 }

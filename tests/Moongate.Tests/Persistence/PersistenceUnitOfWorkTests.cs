@@ -734,6 +734,29 @@ public class PersistenceUnitOfWorkTests
                 Direction = DirectionType.West,
                 MapId = 1,
                 Location = new(10, 20, 0),
+                CombatStats = new ItemCombatStats
+                {
+                    MinStrength = 40,
+                    DamageMin = 11,
+                    DamageMax = 13,
+                    Defense = 15,
+                    AttackSpeed = 30,
+                    RangeMin = 1,
+                    RangeMax = 2,
+                    MaxDurability = 45,
+                    CurrentDurability = 40
+                },
+                Modifiers = new ItemModifiers
+                {
+                    StrengthBonus = 5,
+                    PhysicalResist = 12,
+                    FireResist = 8,
+                    HitChanceIncrease = 10,
+                    DefenseChanceIncrease = 7,
+                    Luck = 100,
+                    SpellChanneling = 1,
+                    UsesRemaining = 25
+                },
                 ParentContainerId = (Serial)0x40000020,
                 ContainerPosition = new(42, 84),
                 EquippedMobileId = (Serial)0x00000010,
@@ -813,6 +836,25 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedItem.MapId, Is.EqualTo(1));
                 Assert.That(loadedItem.EquippedMobileId, Is.EqualTo((Serial)0x00000010));
                 Assert.That(loadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(loadedItem.CombatStats, Is.Not.Null);
+                Assert.That(loadedItem.CombatStats!.MinStrength, Is.EqualTo(40));
+                Assert.That(loadedItem.CombatStats.DamageMin, Is.EqualTo(11));
+                Assert.That(loadedItem.CombatStats.DamageMax, Is.EqualTo(13));
+                Assert.That(loadedItem.CombatStats.Defense, Is.EqualTo(15));
+                Assert.That(loadedItem.CombatStats.AttackSpeed, Is.EqualTo(30));
+                Assert.That(loadedItem.CombatStats.RangeMin, Is.EqualTo(1));
+                Assert.That(loadedItem.CombatStats.RangeMax, Is.EqualTo(2));
+                Assert.That(loadedItem.CombatStats.MaxDurability, Is.EqualTo(45));
+                Assert.That(loadedItem.CombatStats.CurrentDurability, Is.EqualTo(40));
+                Assert.That(loadedItem.Modifiers, Is.Not.Null);
+                Assert.That(loadedItem.Modifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(loadedItem.Modifiers.PhysicalResist, Is.EqualTo(12));
+                Assert.That(loadedItem.Modifiers.FireResist, Is.EqualTo(8));
+                Assert.That(loadedItem.Modifiers.HitChanceIncrease, Is.EqualTo(10));
+                Assert.That(loadedItem.Modifiers.DefenseChanceIncrease, Is.EqualTo(7));
+                Assert.That(loadedItem.Modifiers.Luck, Is.EqualTo(100));
+                Assert.That(loadedItem.Modifiers.SpellChanneling, Is.EqualTo(1));
+                Assert.That(loadedItem.Modifiers.UsesRemaining, Is.EqualTo(25));
                 Assert.That(loadedItem.ContainedItemIds, Has.Count.EqualTo(2));
                 Assert.That(loadedItem.ContainedItemIds[0], Is.EqualTo((Serial)0x40000030));
                 Assert.That(loadedItem.ContainedItemIds[1], Is.EqualTo((Serial)0x40000031));

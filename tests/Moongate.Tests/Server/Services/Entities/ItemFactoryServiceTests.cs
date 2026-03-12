@@ -342,6 +342,138 @@ public class ItemFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateItemFromTemplate_ShouldMapTypedCombatStatsAndModifiers()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "combat_item",
+                Name = "Combat Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x13B9",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.combat_item",
+                Weight = 1,
+                Strength = 40,
+                Dexterity = 15,
+                Intelligence = 10,
+                StrengthAdd = 5,
+                DexterityAdd = 3,
+                IntelligenceAdd = 2,
+                PhysicalResist = 10,
+                FireResist = 11,
+                ColdResist = 12,
+                PoisonResist = 13,
+                EnergyResist = 14,
+                HitChanceIncrease = 15,
+                DefenseChanceIncrease = 16,
+                DamageIncrease = 17,
+                SwingSpeedIncrease = 18,
+                SpellDamageIncrease = 19,
+                FasterCasting = 2,
+                FasterCastRecovery = 4,
+                LowerManaCost = 5,
+                LowerReagentCost = 6,
+                Luck = 100,
+                SpellChanneling = true,
+                UsesRemaining = 25,
+                LowDamage = 11,
+                HighDamage = 13,
+                Defense = 15,
+                Speed = 30,
+                BaseRange = 1,
+                MaxRange = 2,
+                HitPoints = 45
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("combat_item");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.CombatStats, Is.Not.Null);
+                Assert.That(item.CombatStats!.MinStrength, Is.EqualTo(40));
+                Assert.That(item.CombatStats.MinDexterity, Is.EqualTo(15));
+                Assert.That(item.CombatStats.MinIntelligence, Is.EqualTo(10));
+                Assert.That(item.CombatStats.DamageMin, Is.EqualTo(11));
+                Assert.That(item.CombatStats.DamageMax, Is.EqualTo(13));
+                Assert.That(item.CombatStats.Defense, Is.EqualTo(15));
+                Assert.That(item.CombatStats.AttackSpeed, Is.EqualTo(30));
+                Assert.That(item.CombatStats.RangeMin, Is.EqualTo(1));
+                Assert.That(item.CombatStats.RangeMax, Is.EqualTo(2));
+                Assert.That(item.CombatStats.MaxDurability, Is.EqualTo(45));
+                Assert.That(item.CombatStats.CurrentDurability, Is.EqualTo(45));
+
+                Assert.That(item.Modifiers, Is.Not.Null);
+                Assert.That(item.Modifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(item.Modifiers.DexterityBonus, Is.EqualTo(3));
+                Assert.That(item.Modifiers.IntelligenceBonus, Is.EqualTo(2));
+                Assert.That(item.Modifiers.PhysicalResist, Is.EqualTo(10));
+                Assert.That(item.Modifiers.FireResist, Is.EqualTo(11));
+                Assert.That(item.Modifiers.ColdResist, Is.EqualTo(12));
+                Assert.That(item.Modifiers.PoisonResist, Is.EqualTo(13));
+                Assert.That(item.Modifiers.EnergyResist, Is.EqualTo(14));
+                Assert.That(item.Modifiers.HitChanceIncrease, Is.EqualTo(15));
+                Assert.That(item.Modifiers.DefenseChanceIncrease, Is.EqualTo(16));
+                Assert.That(item.Modifiers.DamageIncrease, Is.EqualTo(17));
+                Assert.That(item.Modifiers.SwingSpeedIncrease, Is.EqualTo(18));
+                Assert.That(item.Modifiers.SpellDamageIncrease, Is.EqualTo(19));
+                Assert.That(item.Modifiers.FasterCasting, Is.EqualTo(2));
+                Assert.That(item.Modifiers.FasterCastRecovery, Is.EqualTo(4));
+                Assert.That(item.Modifiers.LowerManaCost, Is.EqualTo(5));
+                Assert.That(item.Modifiers.LowerReagentCost, Is.EqualTo(6));
+                Assert.That(item.Modifiers.Luck, Is.EqualTo(100));
+                Assert.That(item.Modifiers.SpellChanneling, Is.EqualTo(1));
+                Assert.That(item.Modifiers.UsesRemaining, Is.EqualTo(25));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldLeaveTypedCombatStatsAndModifiersNull_WhenTemplateHasNoTypedValues()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "plain_item",
+                Name = "Plain Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x1517",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.plain_item",
+                Weight = 1
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("plain_item");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.CombatStats, Is.Null);
+                Assert.That(item.Modifiers, Is.Null);
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateItemFromTemplate_ShouldResolveContainerGumpIdFromContainerDefinitions_WhenTemplateGumpIsMissing()
     {
         using var temp = new TempDirectory();

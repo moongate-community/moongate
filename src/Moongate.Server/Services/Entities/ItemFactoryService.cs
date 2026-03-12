@@ -85,6 +85,8 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         ApplyTemplateParams(item, template);
         ApplyBookTemplate(item, template);
+        item.CombatStats = CreateCombatStats(template);
+        item.Modifiers = CreateModifiers(template);
 
         return item;
     }
@@ -230,6 +232,89 @@ public sealed class ItemFactoryService : IItemFactoryService
                     );
             }
         }
+    }
+
+    private static ItemCombatStats? CreateCombatStats(ItemTemplateDefinition template)
+    {
+        if (template.Strength == 0 &&
+            template.Dexterity == 0 &&
+            template.Intelligence == 0 &&
+            template.LowDamage == 0 &&
+            template.HighDamage == 0 &&
+            template.Defense == 0 &&
+            template.Speed == 0 &&
+            template.BaseRange == 0 &&
+            template.MaxRange == 0 &&
+            template.HitPoints == 0)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            MinStrength = template.Strength,
+            MinDexterity = template.Dexterity,
+            MinIntelligence = template.Intelligence,
+            DamageMin = template.LowDamage,
+            DamageMax = template.HighDamage,
+            Defense = template.Defense,
+            AttackSpeed = template.Speed,
+            RangeMin = template.BaseRange,
+            RangeMax = template.MaxRange,
+            MaxDurability = template.HitPoints,
+            CurrentDurability = template.HitPoints
+        };
+    }
+
+    private static ItemModifiers? CreateModifiers(ItemTemplateDefinition template)
+    {
+        if (template.StrengthAdd == 0 &&
+            template.DexterityAdd == 0 &&
+            template.IntelligenceAdd == 0 &&
+            template.PhysicalResist == 0 &&
+            template.FireResist == 0 &&
+            template.ColdResist == 0 &&
+            template.PoisonResist == 0 &&
+            template.EnergyResist == 0 &&
+            template.HitChanceIncrease == 0 &&
+            template.DefenseChanceIncrease == 0 &&
+            template.DamageIncrease == 0 &&
+            template.SwingSpeedIncrease == 0 &&
+            template.SpellDamageIncrease == 0 &&
+            template.FasterCasting == 0 &&
+            template.FasterCastRecovery == 0 &&
+            template.LowerManaCost == 0 &&
+            template.LowerReagentCost == 0 &&
+            template.Luck == 0 &&
+            !template.SpellChanneling &&
+            template.UsesRemaining == 0)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            StrengthBonus = template.StrengthAdd,
+            DexterityBonus = template.DexterityAdd,
+            IntelligenceBonus = template.IntelligenceAdd,
+            PhysicalResist = template.PhysicalResist,
+            FireResist = template.FireResist,
+            ColdResist = template.ColdResist,
+            PoisonResist = template.PoisonResist,
+            EnergyResist = template.EnergyResist,
+            HitChanceIncrease = template.HitChanceIncrease,
+            DefenseChanceIncrease = template.DefenseChanceIncrease,
+            DamageIncrease = template.DamageIncrease,
+            SwingSpeedIncrease = template.SwingSpeedIncrease,
+            SpellDamageIncrease = template.SpellDamageIncrease,
+            FasterCasting = template.FasterCasting,
+            FasterCastRecovery = template.FasterCastRecovery,
+            LowerManaCost = template.LowerManaCost,
+            LowerReagentCost = template.LowerReagentCost,
+            Luck = template.Luck,
+            SpellChanneling = template.SpellChanneling ? 1 : 0,
+            UsesRemaining = template.UsesRemaining
+        };
     }
 
     private static int ParseItemId(string value)
