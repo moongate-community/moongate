@@ -117,6 +117,9 @@ public sealed class SpatialWorldServiceTests
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
             => throw new NotSupportedException();
 
+        public Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character)
+            => throw new NotSupportedException();
+
         public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
             => Task.FromResult(_characters.TryGetValue(characterId, out var character) ? character : null);
 

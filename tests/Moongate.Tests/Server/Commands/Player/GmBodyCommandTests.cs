@@ -147,6 +147,9 @@ public sealed class GmBodyCommandTests
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
             => Task.FromResult<UOItemEntity?>(null);
 
+        public Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character)
+            => Task.FromResult<UOItemEntity?>(null);
+
         public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
         {
             _ = characterId;

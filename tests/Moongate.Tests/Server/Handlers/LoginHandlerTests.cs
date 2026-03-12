@@ -132,6 +132,13 @@ public class LoginHandlerTests
             return Task.FromResult<UOItemEntity?>(null);
         }
 
+        public Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character)
+        {
+            _ = character;
+
+            return Task.FromResult<UOItemEntity?>(null);
+        }
+
         public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
         {
             _ = characterId;
