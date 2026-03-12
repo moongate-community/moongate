@@ -1,9 +1,11 @@
-﻿using ConsoleAppFramework;
+﻿using System.Diagnostics;
+using ConsoleAppFramework;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
 using Moongate.Scripting.Context;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Json;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Json.Converters;
@@ -15,9 +17,25 @@ await ConsoleApp.RunAsync(
         string rootDirectory = null,
         string uoDirectory = null,
         LogLevelType loglevel = LogLevelType.Debug,
+        bool waitForDebugger = false,
         CancellationToken cancellationToken = default
     ) =>
     {
+        if (waitForDebugger && !Debugger.IsAttached)
+        {
+            Console.WriteLine($"Waiting for debugger to attach... (PID: {Environment.ProcessId})");
+
+            while (!Debugger.IsAttached)
+            {
+                await Task.Delay(250, cancellationToken);
+            }
+
+            Console.WriteLine("Debugger attached!");
+        }
+
+        var resolvedRootDirectory = RootDirectoryResolver.Resolve(rootDirectory);
+        using var pidFileGuard = PidFileGuard.Acquire(resolvedRootDirectory);
+
         if (showHeader)
         {
             ShowHeader();
@@ -39,7 +57,7 @@ await ConsoleApp.RunAsync(
         var bootstrap = new MoongateBootstrap(
             new()
             {
-                RootDirectory = rootDirectory,
+                RootDirectory = resolvedRootDirectory,
                 LogLevel = loglevel,
                 LogPacketData = true,
                 UODirectory = uoDirectory

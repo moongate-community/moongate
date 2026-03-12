@@ -66,7 +66,12 @@ public sealed class CommandSystemTestAccountService : IAccountService
         string? email = null,
         AccountType? accountType = null,
         bool? isLocked = null,
+        bool clearRecoveryCode = false,
         CancellationToken cancellationToken = default
     )
-        => Task.FromResult<UOAccountEntity?>(null);
+    {
+        _ = clearRecoveryCode;
+
+        return Task.FromResult<UOAccountEntity?>(null);
+    }
 }

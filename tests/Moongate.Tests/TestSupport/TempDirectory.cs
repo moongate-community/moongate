@@ -4,7 +4,7 @@ public sealed class TempDirectory : IDisposable
 {
     public TempDirectory()
     {
-        Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "moongate-tests-" + Guid.NewGuid().ToString("N"));
+        Path = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "moongate-tests", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(Path);
     }
 
@@ -12,16 +12,9 @@ public sealed class TempDirectory : IDisposable
 
     public void Dispose()
     {
-        try
+        if (Directory.Exists(Path))
         {
-            if (Directory.Exists(Path))
-            {
-                Directory.Delete(Path, true);
-            }
-        }
-        catch
-        {
-            // best-effort temp cleanup
+            Directory.Delete(Path, true);
         }
     }
 }

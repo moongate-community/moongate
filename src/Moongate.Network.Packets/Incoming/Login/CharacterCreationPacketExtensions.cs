@@ -42,12 +42,18 @@ public static class CharacterCreationPacketExtensions
             HairHue = packet.Hair.Hue,
             FacialHairStyle = packet.FacialHair.Style,
             FacialHairHue = packet.FacialHair.Hue,
-            Strength = packet.Strength,
-            Dexterity = packet.Dexterity,
-            Intelligence = packet.Intelligence,
-            Hits = packet.Strength,
-            Mana = packet.Intelligence,
-            Stamina = packet.Dexterity,
+            BaseStats = new()
+            {
+                Strength = packet.Strength,
+                Dexterity = packet.Dexterity,
+                Intelligence = packet.Intelligence
+            },
+            Resources = new()
+            {
+                Hits = packet.Strength,
+                Mana = packet.Intelligence,
+                Stamina = packet.Dexterity
+            },
             IsWarMode = false,
             IsHidden = false,
             IsFrozen = false,
@@ -59,6 +65,12 @@ public static class CharacterCreationPacketExtensions
         };
 
         mobile.RecalculateMaxStats();
+        mobile.InitializeSkills();
+
+        foreach (var skill in packet.Skills)
+        {
+            mobile.SetSkill(skill.Skill, skill.Value * 10);
+        }
 
         return mobile;
     }

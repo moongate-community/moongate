@@ -105,6 +105,7 @@ public class ToolTipHandler : BasePacketListener
                 item.Name,
                 item.ItemId,
                 item.Amount,
+                item.Weight,
                 hue: item.Hue
             );
 
@@ -112,6 +113,8 @@ public class ToolTipHandler : BasePacketListener
             {
                 propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
             }
+
+            AppendTypedItemProperties(propertyList, item);
 
             if (item.TryGetCustomString("label_number", out var value) &&
                 uint.TryParse(value, out var clilocId))
@@ -127,6 +130,70 @@ public class ToolTipHandler : BasePacketListener
         _logger.Debug("MegaCliloc request ignored. Invalid serial {Serial}.", serial);
 
         return null;
+    }
+
+    private static void AppendTypedItemProperties(ObjectPropertyList propertyList, UOItemEntity item)
+    {
+        var combatStats = item.CombatStats;
+
+        if (combatStats is not null)
+        {
+            if (combatStats.DamageMin > 0 || combatStats.DamageMax > 0)
+            {
+                propertyList.Add(CommonClilocIds.WeaponDamage, $"{combatStats.DamageMin}\t{combatStats.DamageMax}");
+            }
+
+            if (combatStats.AttackSpeed > 0)
+            {
+                propertyList.Add(CommonClilocIds.WeaponSpeed, combatStats.AttackSpeed);
+            }
+
+            if (combatStats.CurrentDurability > 0 || combatStats.MaxDurability > 0)
+            {
+                MegaClilocBuilder.AddDurability(
+                    propertyList,
+                    combatStats.CurrentDurability,
+                    combatStats.MaxDurability
+                );
+            }
+        }
+
+        var modifiers = item.Modifiers;
+
+        if (modifiers is null)
+        {
+            return;
+        }
+
+        AddIfPositive(propertyList, CommonClilocIds.PhysicalResist, modifiers.PhysicalResist);
+        AddIfPositive(propertyList, CommonClilocIds.FireResist, modifiers.FireResist);
+        AddIfPositive(propertyList, CommonClilocIds.ColdResist, modifiers.ColdResist);
+        AddIfPositive(propertyList, CommonClilocIds.PoisonResist, modifiers.PoisonResist);
+        AddIfPositive(propertyList, CommonClilocIds.EnergyResist, modifiers.EnergyResist);
+        AddIfPositive(propertyList, CommonClilocIds.HitChanceIncrease, modifiers.HitChanceIncrease);
+        AddIfPositive(propertyList, CommonClilocIds.DamageIncrease, modifiers.DamageIncrease);
+        AddIfPositive(propertyList, CommonClilocIds.SwingSpeedIncrease, modifiers.SwingSpeedIncrease);
+        AddIfPositive(propertyList, CommonClilocIds.SpellDamageIncrease, modifiers.SpellDamageIncrease);
+        AddIfPositive(propertyList, CommonClilocIds.FasterCasting, modifiers.FasterCasting);
+        AddIfPositive(propertyList, CommonClilocIds.FasterCastRecovery, modifiers.FasterCastRecovery);
+
+        if (modifiers.SpellChanneling != 0)
+        {
+            MegaClilocBuilder.AddSpellChanneling(propertyList);
+        }
+
+        if (modifiers.UsesRemaining > 0)
+        {
+            MegaClilocBuilder.AddUsesRemaining(propertyList, modifiers.UsesRemaining);
+        }
+    }
+
+    private static void AddIfPositive(ObjectPropertyList propertyList, uint clilocId, int value)
+    {
+        if (value > 0)
+        {
+            propertyList.Add(clilocId, value);
+        }
     }
 
     private async Task<bool> HandleMegaClilocPacketAsync(GameSession session, MegaClilocPacket clilocPacket)

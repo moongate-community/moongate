@@ -64,6 +64,7 @@ public sealed class DoorService : IDoorService
             return false;
         }
 
+        var originalLocation = item.Location;
         var toggled = await ToggleCoreAsync(item);
 
         if (!toggled)
@@ -90,7 +91,12 @@ public sealed class DoorService : IDoorService
             return true;
         }
 
-        await ToggleCoreAsync(linkedItem);
+        var primaryDelta = new Point3D(
+            item.Location.X - originalLocation.X,
+            item.Location.Y - originalLocation.Y,
+            item.Location.Z - originalLocation.Z
+        );
+        await ToggleLinkedCoreAsync(originalLocation, linkedItem, primaryDelta);
 
         return true;
     }
@@ -139,5 +145,64 @@ public sealed class DoorService : IDoorService
         _spatialWorldService.AddOrUpdateItem(item, item.MapId);
 
         return true;
+    }
+
+    private async Task<bool> ToggleLinkedCoreAsync(
+        Point3D primaryClosedLocation,
+        UOItemEntity linkedDoor,
+        Point3D primaryDelta
+    )
+    {
+        if (!_doorDataService.TryGetToggleDefinition(linkedDoor.ItemId, out var linkedState))
+        {
+            return false;
+        }
+
+        var offset = ResolveLinkedOpenOffset(primaryClosedLocation, linkedDoor.Location, linkedState.Offset, primaryDelta);
+        var targetLocation = new Point3D(
+            linkedDoor.Location.X + offset.X,
+            linkedDoor.Location.Y + offset.Y,
+            linkedDoor.Location.Z + offset.Z
+        );
+
+        var moved = await _itemService.MoveItemToWorldAsync(linkedDoor.Id, targetLocation, linkedDoor.MapId);
+
+        if (!moved)
+        {
+            return false;
+        }
+
+        linkedDoor.ItemId = linkedState.NextItemId;
+        await _itemService.UpsertItemAsync(linkedDoor);
+        _spatialWorldService.AddOrUpdateItem(linkedDoor, linkedDoor.MapId);
+
+        return true;
+    }
+
+    private static Point3D ResolveLinkedOpenOffset(
+        Point3D primaryLocation,
+        Point3D linkedLocation,
+        Point3D linkedDefaultOffset,
+        Point3D primaryDelta
+    )
+    {
+        var doorDeltaX = linkedLocation.X - primaryLocation.X;
+        var doorDeltaY = linkedLocation.Y - primaryLocation.Y;
+        var offsetX = linkedDefaultOffset.X;
+        var offsetY = linkedDefaultOffset.Y;
+
+        // For linked double doors, mirror the perpendicular component so the pair opens opposite ways.
+        if (Math.Abs(doorDeltaX) == 1 && doorDeltaY == 0)
+        {
+            var primaryPerpendicular = primaryDelta.Y != 0 ? primaryDelta.Y : linkedDefaultOffset.Y;
+            offsetY = -primaryPerpendicular;
+        }
+        else if (Math.Abs(doorDeltaY) == 1 && doorDeltaX == 0)
+        {
+            var primaryPerpendicular = primaryDelta.X != 0 ? primaryDelta.X : linkedDefaultOffset.X;
+            offsetX = -primaryPerpendicular;
+        }
+
+        return new(offsetX, offsetY, linkedDefaultOffset.Z);
     }
 }

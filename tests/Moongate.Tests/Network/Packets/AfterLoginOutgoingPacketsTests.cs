@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Network.Spans;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -53,6 +54,51 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(12, 2)), Is.EqualTo((ushort)1));
             }
         );
+    }
+
+    [Test]
+    public void DrawContainerAndAddItemCombinedPacket_Write_ShouldFallbackToContainerDefinitionGump_WhenEntityGumpIsMissing()
+    {
+        var previous = ContainerLayoutSystem.ContainerBagDefsByItemId.TryGetValue(0x0E76, out var originalDefinition)
+            ? originalDefinition
+            : null;
+
+        try
+        {
+            ContainerLayoutSystem.ContainerBagDefsByItemId[0x0E76] = new()
+            {
+                Id = "item_0e76",
+                ItemId = 0x0E76,
+                Name = "Bag 0x0E76",
+                Width = 6,
+                Height = 6,
+                GumpId = 0x003D
+            };
+
+            var container = new UOItemEntity
+            {
+                Id = (Serial)0x40000040,
+                ItemId = 0x0E76,
+                GumpId = null
+            };
+            var packet = new DrawContainerAndAddItemCombinedPacket(container);
+
+            var data = Write(packet);
+            var gumpId = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(5, 2));
+
+            Assert.That(gumpId, Is.EqualTo((ushort)0x003D));
+        }
+        finally
+        {
+            if (previous is null)
+            {
+                _ = ContainerLayoutSystem.ContainerBagDefsByItemId.Remove(0x0E76);
+            }
+            else
+            {
+                ContainerLayoutSystem.ContainerBagDefsByItemId[0x0E76] = previous;
+            }
+        }
     }
 
     [Test]

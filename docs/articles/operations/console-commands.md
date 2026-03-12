@@ -16,9 +16,10 @@ Commands use source-generated registration:
 [RegisterConsoleCommand("my_command", "Description of the command")]
 public sealed class MyCommand : ICommandExecutor
 {
-    public Task ExecuteAsync(string[] args)
+    public Task ExecuteCommandAsync(CommandSystemContext context)
     {
-        // Command logic
+        context.Print("Command executed.");
+        return Task.CompletedTask;
     }
 }
 ```

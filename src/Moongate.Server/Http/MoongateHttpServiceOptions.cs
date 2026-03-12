@@ -26,6 +26,21 @@ public sealed class MoongateHttpServiceOptions
     public bool IsOpenApiEnabled { get; init; } = true;
 
     /// <summary>
+    /// Shard display name used by public branding endpoints.
+    /// </summary>
+    public string ShardName { get; init; } = "Moongate";
+
+    /// <summary>
+    /// Public admin login logo path relative to the mounted web root.
+    /// </summary>
+    public string? AdminLoginLogoPath { get; init; }
+
+    /// <summary>
+    /// Public player login logo path relative to the mounted web root.
+    /// </summary>
+    public string? PlayerLoginLogoPath { get; init; }
+
+    /// <summary>
     /// Minimum log level for HTTP logs.
     /// </summary>
     public LogEventLevel MinimumLogLevel { get; init; } = LogEventLevel.Information;

@@ -71,6 +71,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IDoorService, DoorService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+        container.Register<IMobileModifierAggregationService, MobileModifierAggregationService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
         container.Register<IPlaceholderResolverService, PlaceholderResolverService>(Reuse.Singleton);
@@ -90,6 +91,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);
+        container.Register<ITextTemplateService, TextTemplateService>(Reuse.Singleton);
+        container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);

@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, Spinner } from '@heroui/react'
+import { Button, Chip, Spinner } from '@heroui/react'
 import { api } from '../api/client'
 import { ItemTemplatePreview } from '../components/ItemTemplatePreview'
+
+interface ItemTemplateContainerItem {
+  id: string
+  name: string
+  itemId: string
+}
 
 interface ItemTemplateDetail {
   id: string
@@ -12,10 +18,13 @@ interface ItemTemplateDetail {
   description?: string
   tags?: string[]
   scriptId?: string
+  rarity?: string
   weight?: number
   goldValue?: string
   hue?: string
   gumpId?: string
+  container?: string[]
+  containerItems?: ItemTemplateContainerItem[]
   params?: Record<string, { type: number; value: string }>
 }
 
@@ -77,6 +86,47 @@ function toApproxHueColor(hue?: string): string | null {
   return `hsl(${h} ${s}% ${l}%)`
 }
 
+function getRarityChipStyle(rarity?: string): { background: string; border: string; color: string } {
+  switch ((rarity ?? '').toLowerCase()) {
+    case 'common':
+      return {
+        background: 'rgba(148,163,184,0.12)',
+        border: '1px solid rgba(148,163,184,0.28)',
+        color: '#cbd5e1',
+      }
+    case 'uncommon':
+      return {
+        background: 'rgba(34,197,94,0.12)',
+        border: '1px solid rgba(34,197,94,0.28)',
+        color: '#86efac',
+      }
+    case 'rare':
+      return {
+        background: 'rgba(59,130,246,0.12)',
+        border: '1px solid rgba(59,130,246,0.28)',
+        color: '#93c5fd',
+      }
+    case 'epic':
+      return {
+        background: 'rgba(168,85,247,0.14)',
+        border: '1px solid rgba(168,85,247,0.32)',
+        color: '#d8b4fe',
+      }
+    case 'legendary':
+      return {
+        background: 'rgba(245,158,11,0.14)',
+        border: '1px solid rgba(245,158,11,0.3)',
+        color: '#fcd34d',
+      }
+    default:
+      return {
+        background: 'rgba(106,165,218,0.1)',
+        border: '1px solid rgba(106,165,218,0.22)',
+        color: '#9fc5e8',
+      }
+  }
+}
+
 export function ItemTemplateDetailsPage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -84,6 +134,7 @@ export function ItemTemplateDetailsPage() {
   const [error, setError] = useState<string | null>(null)
   const [template, setTemplate] = useState<ItemTemplateDetail | null>(null)
   const hueColor = toApproxHueColor(template?.hue)
+  const rarityChipStyle = getRarityChipStyle(template?.rarity)
 
   useEffect(() => {
     if (!id) {
@@ -182,7 +233,7 @@ export function ItemTemplateDetailsPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
               <div className="rounded-lg border border-[rgba(106,165,218,0.12)] bg-[rgba(36,33,48,0.55)] px-3 py-2">
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[rgba(185,187,211,0.6)]">Weight</p>
                 <p className="font-mono text-sm text-[#f9f4ed]">{template.weight ?? '-'}</p>
@@ -207,6 +258,19 @@ export function ItemTemplateDetailsPage() {
               <div className="rounded-lg border border-[rgba(106,165,218,0.12)] bg-[rgba(36,33,48,0.55)] px-3 py-2">
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[rgba(185,187,211,0.6)]">Gump ID</p>
                 <p className="font-mono text-sm text-[#f9f4ed]">{template.gumpId ?? '-'}</p>
+              </div>
+              <div className="rounded-lg border border-[rgba(106,165,218,0.12)] bg-[rgba(36,33,48,0.55)] px-3 py-2">
+                <p className="font-mono text-[10px] tracking-wider uppercase text-[rgba(185,187,211,0.6)]">Rarity</p>
+                <div className="mt-1">
+                  <Chip
+                    size="sm"
+                    variant="flat"
+                    className="font-mono text-[10px] uppercase tracking-wider"
+                    style={rarityChipStyle}
+                  >
+                    {template.rarity || 'None'}
+                  </Chip>
+                </div>
               </div>
             </div>
 
@@ -251,6 +315,45 @@ export function ItemTemplateDetailsPage() {
                         {itemTemplateParamTypeToLabel(value.type)}
                       </span>
                       <span className="font-mono text-xs text-[rgba(249,244,237,0.82)] break-all text-right">{value.value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-lg border border-[rgba(106,165,218,0.12)] bg-[rgba(36,33,48,0.55)] px-3 py-3">
+              <p className="font-mono text-[10px] tracking-wider uppercase text-[rgba(185,187,211,0.6)] mb-2">
+                Container Contents
+              </p>
+              {(template.containerItems ?? []).length === 0 ? (
+                <span className="font-mono text-xs text-[rgba(185,187,211,0.7)]">
+                  {(template.container ?? []).length === 0 ? 'No container contents.' : 'Container entries could not be resolved.'}
+                </span>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {template.containerItems?.map((item) => (
+                    <div
+                      key={item.id}
+                      className="grid grid-cols-[56px_1fr_auto] items-center gap-3 rounded border border-[rgba(106,165,218,0.12)] bg-[rgba(31,28,42,0.65)] px-2 py-2"
+                    >
+                      <div className="flex h-12 w-12 items-center justify-center rounded border border-[rgba(106,165,218,0.12)] bg-[rgba(14,18,26,0.65)]">
+                        <ItemTemplatePreview itemId={item.itemId} className="w-10 h-10" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-mono text-xs text-[#f9f4ed] truncate">{item.name || 'Unnamed'}</div>
+                        <div className="font-mono text-[10px] uppercase tracking-wider text-[rgba(185,187,211,0.55)]">
+                          {item.id}
+                        </div>
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="primary"
+                        className="font-mono text-[10px] uppercase tracking-wider"
+                        onPress={() => navigate(`/item-templates/${encodeURIComponent(item.id)}`)}
+                      >
+                        Open
+                      </Button>
                     </div>
                   ))}
                 </div>

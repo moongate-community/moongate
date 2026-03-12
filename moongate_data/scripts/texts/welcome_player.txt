@@ -1,0 +1,6 @@
+Welcome to {{ shard.name }}, {{ player.name }}.
+
+This shard is still under active development.
+Please report strange behavior when you find it.
+
+Website: {{ shard.website_url }}

@@ -75,6 +75,41 @@ Replay stops at first invalid/truncated record.
 
 No extra sidecar/checksum/history paths are currently configured.
 
+## Current Entity Snapshot Shape
+
+The world snapshot stores typed mobile and item substructures rather than only flat scalar entities.
+
+`UOMobileEntity` currently persists:
+
+- `BaseStats`
+- `BaseResistances`
+- `Resources`
+- `EquipmentModifiers`
+- `RuntimeModifiers`
+- `ModifierCaps`
+- `Skills`
+- status-oriented scalars such as `StatCap`, `Followers`, `FollowersMax`, `Weight`, `MaxWeight`, `MinWeaponDamage`, `MaxWeaponDamage`, and `Tithing`
+
+`Skills` are stored as explicit entries containing:
+
+- `SkillId`
+- `Value`
+- `Base`
+- `Cap`
+- `Lock`
+
+`UOItemEntity` currently persists:
+
+- `CombatStats`
+- `Modifiers`
+
+This means snapshot payloads now preserve:
+
+- item combat requirements and AoS-style item modifiers
+- mobile aggregated equipment/runtime modifiers
+- mobile skill tables used by `0x3A`
+- mobile modern status data used by `0x11`
+
 ---
 
 **Previous**: [Persistence Overview](overview.md) | **Next**: [Persistence Repositories](repositories.md)

@@ -1,5 +1,6 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Server.Http.Data;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Metrics;
@@ -17,7 +18,9 @@ internal sealed class MoongateHttpRouteContext
 {
     public MoongateHttpRouteContext(
         MoongateHttpJwtOptions jwtOptions,
+        MoongateHttpBranding branding,
         IAccountService? accountService,
+        ICharacterService? characterService,
         IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory,
         bool isUiEnabled,
         DirectoriesConfig directoriesConfig,
@@ -29,7 +32,9 @@ internal sealed class MoongateHttpRouteContext
     )
     {
         JwtOptions = jwtOptions;
+        Branding = branding;
         AccountService = accountService;
+        CharacterService = characterService;
         MetricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
         IsUiEnabled = isUiEnabled;
         DirectoriesConfig = directoriesConfig;
@@ -42,7 +47,11 @@ internal sealed class MoongateHttpRouteContext
 
     public IAccountService? AccountService { get; }
 
+    public ICharacterService? CharacterService { get; }
+
     public MoongateHttpJwtOptions JwtOptions { get; }
+
+    public MoongateHttpBranding Branding { get; }
 
     public IMetricsHttpSnapshotFactory? MetricsHttpSnapshotFactory { get; }
 

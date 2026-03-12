@@ -97,6 +97,67 @@ items_teleport = {
 }
 ```
 
+### Read-Only Book Template
+
+Item templates can point to a book text file with `bookId`. The file lives under
+`moongate_data/templates/books/<book_id>.txt`, supports the same `#` comments and
+Scriban placeholders used by text templates, and is rendered once when the item
+is created.
+
+Example item template:
+
+```json
+{
+  "type": "item",
+  "id": "moongate_welcome_book",
+  "name": "Welcome To Moongate",
+  "category": "Books",
+  "itemId": "0x0FF0",
+  "scriptId": "none",
+  "bookId": "welcome_player",
+  "isMovable": true,
+  "tags": ["book", "moongate"]
+}
+```
+
+Example book file:
+
+```txt
+[Title] Welcome To {{ shard.name }}
+[Author] The Moongate Team
+[ReadOnly] True
+
+Welcome traveler.
+Website: {{ shard.website_url }}
+```
+
+At runtime the rendered `title`, `author`, and `content` are stored into the item
+custom params (`book_title`, `book_author`, `book_content`). Double-click opens
+the classic client book UI in read-only mode. The server also listens to client
+`0x66` page requests and serves the rendered book content page-by-page.
+
+Writable books use the same classic client UI, but the save flow differs:
+
+- `book_writable = true` marks the item as writable at runtime
+- `0x93` saves `title` and `author`
+- `0x66` saves page content
+- writes are accepted only when the book is equipped by the player or inside the player's backpack tree
+
+Current writable storage still uses the item custom params:
+
+- `book_title`
+- `book_author`
+- `book_content`
+- `book_writable`
+
+Book templates can also declare writability directly in the `.txt` file:
+
+- `[ReadOnly] True` -> forces the resulting item to be read-only
+- `[ReadOnly] False` -> forces the resulting item to be writable
+- if `[ReadOnly]` is absent, Moongate falls back to item/startup `writable`
+
+When present, `[ReadOnly]` takes precedence over fallback `writable` metadata.
+
 ### GM Command: Eclipse
 
 ```lua
@@ -169,6 +230,41 @@ effect.send_to_player(characterId, x, y, z, itemId, speed, duration, hue, render
 -- mobile proxy
 mobile.get(serial):SetEffect(itemId, speed, duration, hue, renderMode, effect, explodeEffect, explodeSound, layer, unknown3)
 ```
+
+## Mobile Template Skill Materialization
+
+`MobileTemplateDefinition.skills` is now materialized into the persisted mobile
+entity at creation time.
+
+Template shape:
+
+```json
+{
+  "id": "mage_apprentice",
+  "type": "mobile",
+  "skills": {
+    "magery": 750,
+    "meditation": 500,
+    "wrestling": 300
+  }
+}
+```
+
+Behavior:
+
+- newly created mobiles get a full skill table seeded from `SkillInfo.Table`
+- unspecified skills default to `0`
+- specified template skills override those defaults
+- character creation also creates the full skill table and maps the four starting skills into persisted mobile skills
+
+Current persisted skill entry fields are:
+
+- `value`
+- `base`
+- `cap`
+- `lock`
+
+The runtime `0x3A` skill list packet reads directly from this persisted mobile skill table.
 
 ## Global Modules
 
@@ -506,6 +602,40 @@ Hook aliases:
 - `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
 - `double_click` -> `on_double_click`, `OnDoubleClick`
 
+### Text API
+
+`text.render(...)` loads a Scriban template from `moongate_data/scripts/texts/**` and returns the rendered string.
+
+```lua
+local body = text.render("welcome_player.txt", {
+    player = {
+        name = "Tommy",
+        account_type = "Regular",
+        character_id = 2
+    }
+})
+```
+
+Available built-in template values:
+
+- `shard.name`
+- `shard.website_url`
+
+Template comment rules:
+
+- a line starting with `#` after trim is ignored
+- inline `#` starts a comment and truncates the rest of the line
+- use `\#` to keep a literal `#`
+
+Example `moongate_data/scripts/texts/welcome_player.txt`:
+
+```txt
+# internal comment
+Welcome to {{ shard.name }}, {{ player.name }}.
+
+Website: {{ shard.website_url }} # shown to the player
+```
+
 ### Gump API
 
 ```lua
@@ -556,6 +686,21 @@ return {
 local layout = require("gumps/test_shop")
 local ui_ctx = { name = "Orion", level = 42 }
 gump.send_layout(session_id, layout, character_id, 0xB300, 120, 80, ui_ctx)
+```
+
+Using `text.render(...)` with `htmlgump`:
+
+```lua
+local body = text.render("welcome_player.txt", {
+    player = {
+        name = "Tommy"
+    }
+}) or "Welcome."
+
+local g = gump.create()
+g:resize_pic(0, 0, 9200, 420, 240)
+g:html(20, 20, 380, 180, body, true, true)
+gump.send(session_id, g, character_id, 0xB500, 120, 80)
 ```
 
 Supported file-based element types currently include:

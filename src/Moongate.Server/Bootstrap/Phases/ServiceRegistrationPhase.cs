@@ -43,6 +43,9 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
             DirectoriesConfig = context.DirectoriesConfig,
             IsOpenApiEnabled = context.Config.Http.IsOpenApiEnabled,
             Port = context.Config.Http.Port,
+            ShardName = context.Config.Game.ShardName,
+            AdminLoginLogoPath = context.Config.Http.AdminLoginLogoPath,
+            PlayerLoginLogoPath = context.Config.Http.PlayerLoginLogoPath,
             MinimumLogLevel = context.Config.LogLevel.ToSerilogLogLevel(),
             Jwt = new()
             {

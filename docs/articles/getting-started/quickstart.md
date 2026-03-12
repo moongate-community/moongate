@@ -46,6 +46,14 @@ HTTP checks:
 - `http://localhost:8088/health` → `ok`
 - `http://localhost:8088/metrics` → Prometheus payload (or config message)
 - `http://localhost:8088/scalar` → OpenAPI UI (if enabled)
+- `http://localhost:8088/portal/login` → player portal login
+- `http://localhost:8088/portal/profile` → authenticated player portal profile
+
+The player portal currently supports:
+
+- authenticated account + character overview
+- profile email update
+- authenticated password change
 
 ## 5. Console Commands
 

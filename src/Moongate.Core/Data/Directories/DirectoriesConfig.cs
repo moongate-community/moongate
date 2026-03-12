@@ -118,6 +118,11 @@ public class DirectoriesConfig
             return string.Empty;
         }
 
+        if (string.Equals(directoryType, "WebRoot", StringComparison.OrdinalIgnoreCase))
+        {
+            return "web";
+        }
+
         if (directoryType.Contains(Path.DirectorySeparatorChar) ||
             directoryType.Contains(Path.AltDirectorySeparatorChar))
         {

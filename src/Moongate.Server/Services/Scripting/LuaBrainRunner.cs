@@ -1,16 +1,20 @@
+using System.Diagnostics;
 using Moongate.Abstractions.Services.Base;
 using Moongate.Core.Data.Directories;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Metrics.Data;
+using Moongate.Server.Services.Scripting.Internal;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using MoonSharp.Interpreter;
 using Serilog;
@@ -24,6 +28,7 @@ namespace Moongate.Server.Services.Scripting;
 public sealed class LuaBrainRunner
     : BaseMoongateService,
       ILuaBrainRunner,
+      ILuaBrainMetricsSource,
       IGameEventListener<SpeechHeardEvent>,
       IGameEventListener<MobileAddedInWorldEvent>,
       IGameEventListener<MobilePositionChangedEvent>,
@@ -32,15 +37,15 @@ public sealed class LuaBrainRunner
     private const int InRangeEnterDistance = 3;
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
-    private const int MaxContextMenuEntries = 32;
-    private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
-    private readonly Lock _syncRoot = new();
+
     private readonly ITimerService _timerService;
     private readonly IScriptEngineService _scriptEngineService;
     private readonly ILuaBrainRegistry _luaBrainRegistry;
     private readonly ILogger _logger = Log.ForContext<LuaBrainRunner>();
     private readonly Script? _luaScript;
-    private readonly bool _supportsMoonSharpRuntime;
+    private readonly int _maxBrainsPerTick;
+    private readonly LuaBrainStateStore _stateStore = new();
+    private readonly LuaBrainMetricsTracker _metricsTracker = new();
 
     private string? _timerId;
 
@@ -48,7 +53,8 @@ public sealed class LuaBrainRunner
         ITimerService timerService,
         IScriptEngineService scriptEngineService,
         ILuaBrainRegistry luaBrainRegistry,
-        DirectoriesConfig directoriesConfig
+        DirectoriesConfig directoriesConfig,
+        MoongateConfig? config = null
     )
     {
         _timerService = timerService;
@@ -56,102 +62,38 @@ public sealed class LuaBrainRunner
         _luaBrainRegistry = luaBrainRegistry;
         _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
-        _supportsMoonSharpRuntime = _luaScript is not null;
+
+        var configuredMaxBrains = config?.Scripting?.LuaBrainMaxBrainsPerTick ?? 0;
+        _maxBrainsPerTick = configuredMaxBrains <= 0 ? int.MaxValue : configuredMaxBrains;
     }
 
     /// <inheritdoc />
     public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
-    {
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(mobileId, out var state))
-            {
-                state.PendingDeath.Enqueue(deathContext);
-            }
-        }
-    }
+        => _stateStore.EnqueueDeath(mobileId, deathContext);
 
     /// <inheritdoc />
     public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-    {
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(gameEvent.ListenerNpcId, out var state))
-            {
-                state.PendingSpeech.Enqueue(gameEvent);
-            }
-        }
-    }
+        => _stateStore.EnqueueSpeech(gameEvent);
 
     /// <inheritdoc />
     public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
-    {
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(gameEvent.Mobile.Id, out var state))
-            {
-                state.PendingSpawn.Enqueue(gameEvent);
-            }
-        }
-    }
+        => _stateStore.EnqueueSpawn(gameEvent);
 
     /// <inheritdoc />
     public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = InRangeEnterDistance)
-    {
-        lock (_syncRoot)
-        {
-            if (!_states.TryGetValue(listenerNpcId, out var state))
-            {
-                return;
-            }
-
-            state.PendingInRange.Enqueue(
-                new LuaBrainInRangeContext(
-                    sourceMobile.Id,
-                    BuildInRangeEventPayload(state.MobileId, sourceMobile, range)
-                )
-            );
-        }
-    }
+        => _stateStore.EnqueueInRange(listenerNpcId, sourceMobile, range);
 
     /// <inheritdoc />
     public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
     {
         ArgumentNullException.ThrowIfNull(mobile);
 
-        if (!_supportsMoonSharpRuntime || _luaScript is null)
+        if (!_stateStore.TryGet(mobile.Id, out var state) || state is null)
         {
             return [];
         }
 
-        LuaBrainRuntimeState? state;
-
-        lock (_syncRoot)
-        {
-            if (!_states.TryGetValue(mobile.Id, out state))
-            {
-                return [];
-            }
-        }
-
-        if (state.OnGetContextMenusFunction is null)
-        {
-            return [];
-        }
-
-        try
-        {
-            var payload = BuildContextMenuPayload(state.MobileId, requester, 0, null);
-            var result = _luaScript.Call(state.OnGetContextMenusFunction, payload);
-
-            return ParseContextMenuEntries(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Lua get_context_menus failed for mobile {MobileId}", mobile.Id);
-
-            return [];
-        }
+        return LuaBrainContextMenuDispatcher.GetEntries(_luaScript, state, requester, _logger);
     }
 
     /// <inheritdoc />
@@ -164,64 +106,19 @@ public sealed class LuaBrainRunner
     {
         ArgumentNullException.ThrowIfNull(mobile);
 
-        if (string.IsNullOrWhiteSpace(menuKey) || !_supportsMoonSharpRuntime || _luaScript is null)
+        if (string.IsNullOrWhiteSpace(menuKey) || !_stateStore.TryGet(mobile.Id, out var state) || state is null)
         {
             return false;
         }
 
-        LuaBrainRuntimeState? state;
-
-        lock (_syncRoot)
-        {
-            if (!_states.TryGetValue(mobile.Id, out state))
-            {
-                return false;
-            }
-        }
-
-        var payload = BuildContextMenuPayload(state.MobileId, requester, sessionId, menuKey);
-
-        try
-        {
-            if (state.OnSelectedContextMenuFunction is not null)
-            {
-                _luaScript.Call(state.OnSelectedContextMenuFunction, menuKey, payload);
-
-                return true;
-            }
-
-            if (state.OnEventFunction is not null)
-            {
-                var requesterId = requester is null ? 0u : (uint)requester.Id;
-                _luaScript.Call(state.OnEventFunction, "context_menu_selected", requesterId, payload);
-
-                return true;
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Lua on_selected_context_menu failed for mobile {MobileId} key {MenuKey}", mobile.Id, menuKey);
-        }
-
-        return false;
-    }
-
-    private void EnqueueOutRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = InRangeEnterDistance)
-    {
-        lock (_syncRoot)
-        {
-            if (!_states.TryGetValue(listenerNpcId, out var state))
-            {
-                return;
-            }
-
-            state.PendingOutRange.Enqueue(
-                new LuaBrainInRangeContext(
-                    sourceMobile.Id,
-                    BuildInRangeEventPayload(state.MobileId, sourceMobile, range)
-                )
-            );
-        }
+        return LuaBrainContextMenuDispatcher.TryHandleSelection(
+            _luaScript,
+            state,
+            requester,
+            menuKey,
+            sessionId,
+            _logger
+        );
     }
 
     /// <inheritdoc />
@@ -274,15 +171,7 @@ public sealed class LuaBrainRunner
     public Task HandleAsync(MobilePositionChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(gameEvent.MobileId, out var trackedState))
-            {
-                trackedState.Mobile.MapId = gameEvent.MapId;
-                trackedState.Mobile.Location = gameEvent.NewLocation;
-            }
-        }
-
+        _stateStore.UpdateTrackedMobilePosition(gameEvent.MobileId, gameEvent.MapId, gameEvent.NewLocation);
         NotifyInRangeForMovedMobile(gameEvent);
 
         return Task.CompletedTask;
@@ -309,29 +198,26 @@ public sealed class LuaBrainRunner
         var normalizedBrainId = brainId.Trim();
         var brainTableName = ResolveBrainTableName(normalizedBrainId);
 
-        lock (_syncRoot)
+        if (_stateStore.TryGet(mobile.Id, out var state) && state is not null)
         {
-            if (_states.TryGetValue(mobile.Id, out var state))
-            {
-                state.Mobile = mobile;
-                state.BrainId = normalizedBrainId;
-                state.BrainTableName = brainTableName;
-                state.AiNextWakeTime = 0;
-                state.IsFaulted = false;
-                state.PendingSpeech.Clear();
-                state.PendingDeath.Clear();
-                state.PendingSpawn.Clear();
-                state.PendingInRange.Clear();
-                state.PendingOutRange.Clear();
-                InitializeRuntimeState(state);
+            state.Mobile = mobile;
+            state.BrainId = normalizedBrainId;
+            state.BrainTableName = brainTableName;
+            state.AiNextWakeTime = 0;
+            state.IsFaulted = false;
+            state.PendingSpeech.Clear();
+            state.PendingDeath.Clear();
+            state.PendingSpawn.Clear();
+            state.PendingInRange.Clear();
+            state.PendingOutRange.Clear();
+            LuaBrainLifecycle.InitializeRuntimeState(_luaScript, state, _logger);
 
-                return;
-            }
-
-            var runtimeState = new LuaBrainRuntimeState(mobile, normalizedBrainId, brainTableName);
-            InitializeRuntimeState(runtimeState);
-            _states[mobile.Id] = runtimeState;
+            return;
         }
+
+        var runtimeState = new LuaBrainRuntimeState(mobile, normalizedBrainId, brainTableName);
+        LuaBrainLifecycle.InitializeRuntimeState(_luaScript, runtimeState, _logger);
+        _stateStore.Upsert(runtimeState);
     }
 
     /// <inheritdoc />
@@ -361,10 +247,7 @@ public sealed class LuaBrainRunner
             _timerId = null;
         }
 
-        lock (_syncRoot)
-        {
-            _states.Clear();
-        }
+        _stateStore.Clear();
 
         return Task.CompletedTask;
     }
@@ -373,16 +256,17 @@ public sealed class LuaBrainRunner
     public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
-        List<LuaBrainRuntimeState> dueStates;
+        var tickStart = Stopwatch.GetTimestamp();
 
-        lock (_syncRoot)
+        var dueStates = _stateStore.GetDueStates(nowMilliseconds);
+        var dueCount = dueStates.Count;
+
+        if (_maxBrainsPerTick != int.MaxValue && dueStates.Count > _maxBrainsPerTick)
         {
-            dueStates =
-            [
-                .. _states.Values
-                          .Where(state => nowMilliseconds >= state.AiNextWakeTime)
-                          .Select(static state => state)
-            ];
+            dueStates = dueStates.OrderBy(static state => state.AiNextWakeTime)
+                                 .ThenBy(static state => (uint)state.MobileId)
+                                 .Take(_maxBrainsPerTick)
+                                 .ToList();
         }
 
         foreach (var state in dueStates)
@@ -393,512 +277,47 @@ public sealed class LuaBrainRunner
             {
                 if (state.IsFaulted)
                 {
-                    // TODO: Brain fallback behavior (point 5 excluded for now).
-                    nextWake = nowMilliseconds + FaultRetryMilliseconds;
+                    nextWake = LuaBrainFaultPolicy.NextWakeAfterFault(nowMilliseconds, FaultRetryMilliseconds);
                 }
-                else if (_supportsMoonSharpRuntime)
+                else if (_luaScript is not null)
                 {
-                    nextWake = TickMoonSharpState(nowMilliseconds, state);
+                    nextWake = LuaBrainTickExecutor.Tick(
+                        nowMilliseconds,
+                        _luaScript,
+                        state,
+                        DefaultTickMilliseconds,
+                        FaultRetryMilliseconds,
+                        Unregister
+                    );
                 }
                 else
                 {
-                    TickFallbackState(state);
+                    LuaBrainFallbackDispatcher.DispatchAll(_scriptEngineService, state);
                 }
             }
             catch (Exception ex)
             {
                 state.IsFaulted = true;
-                nextWake = nowMilliseconds + FaultRetryMilliseconds;
+                nextWake = LuaBrainFaultPolicy.NextWakeAfterFault(nowMilliseconds, FaultRetryMilliseconds);
                 _logger.Error(ex, "Lua brain tick failed for mobile {MobileId}", state.MobileId);
             }
 
-            lock (_syncRoot)
-            {
-                if (_states.TryGetValue(state.MobileId, out var trackedState))
-                {
-                    trackedState.AiNextWakeTime = nextWake;
-                }
-            }
+            _stateStore.UpdateWakeTime(state.MobileId, nextWake);
         }
+
+        var elapsedMilliseconds = Stopwatch.GetElapsedTime(tickStart).TotalMilliseconds;
+        _metricsTracker.RecordTick(dueCount, dueStates.Count, elapsedMilliseconds);
 
         return ValueTask.CompletedTask;
     }
 
     /// <inheritdoc />
+    public LuaBrainMetricsSnapshot GetMetricsSnapshot()
+        => _metricsTracker.CreateSnapshot();
+
+    /// <inheritdoc />
     public void Unregister(Serial mobileId)
-    {
-        lock (_syncRoot)
-        {
-            _states.Remove(mobileId);
-        }
-    }
-
-    private static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
-        => new()
-        {
-            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
-            ["speaker_id"] = (uint)speech.SpeakerId,
-            ["text"] = speech.Text,
-            ["speech_type"] = (byte)speech.SpeechType,
-            ["map_id"] = speech.MapId,
-            ["location"] = new Dictionary<string, int>
-            {
-                ["x"] = speech.Location.X,
-                ["y"] = speech.Location.Y,
-                ["z"] = speech.Location.Z
-            }
-        };
-
-    private static Dictionary<string, object> BuildSpawnEventPayload(MobileSpawnedFromSpawnerEvent spawn)
-        => new()
-        {
-            ["mobile_id"] = (uint)spawn.Mobile.Id,
-            ["spawner_guid"] = spawn.SpawnerGuid.ToString("D"),
-            ["spawner_name"] = spawn.SpawnerName,
-            ["source_group"] = spawn.SourceGroup,
-            ["source_file"] = spawn.SourceFile,
-            ["spawn_count"] = spawn.SpawnCount,
-            ["min_delay_ms"] = (int)spawn.MinDelay.TotalMilliseconds,
-            ["max_delay_ms"] = (int)spawn.MaxDelay.TotalMilliseconds,
-            ["team"] = spawn.Team,
-            ["home_range"] = spawn.HomeRange,
-            ["walking_range"] = spawn.WalkingRange,
-            ["entry_name"] = spawn.EntryName,
-            ["entry_max_count"] = spawn.EntryMaxCount,
-            ["entry_probability"] = spawn.EntryProbability,
-            ["map_id"] = spawn.Mobile.MapId,
-            ["location"] = new Dictionary<string, int>
-            {
-                ["x"] = spawn.Mobile.Location.X,
-                ["y"] = spawn.Mobile.Location.Y,
-                ["z"] = spawn.Mobile.Location.Z
-            },
-            ["spawner_location"] = new Dictionary<string, int>
-            {
-                ["x"] = spawn.SpawnerLocation.X,
-                ["y"] = spawn.SpawnerLocation.Y,
-                ["z"] = spawn.SpawnerLocation.Z
-            }
-        };
-
-    private static Dictionary<string, object> BuildInRangeEventPayload(
-        Serial listenerNpcId,
-        UOMobileEntity sourceMobile,
-        int range
-    )
-        => new()
-        {
-            ["listener_npc_id"] = (uint)listenerNpcId,
-            ["source_mobile_id"] = (uint)sourceMobile.Id,
-            ["source_is_player"] = sourceMobile.IsPlayer,
-            ["map_id"] = sourceMobile.MapId,
-            ["range"] = range,
-            ["location"] = new Dictionary<string, int>
-            {
-                ["x"] = sourceMobile.Location.X,
-                ["y"] = sourceMobile.Location.Y,
-                ["z"] = sourceMobile.Location.Z
-            }
-        };
-
-    private void DispatchPendingDeath(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingDeath.Clear();
-
-            return;
-        }
-
-        while (state.PendingDeath.Count > 0)
-        {
-            var death = state.PendingDeath.Dequeue();
-            var byCharacter = death.ByCharacterId.HasValue
-                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
-                                  : DynValue.Nil;
-
-            if (state.OnEventFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnEventFunction,
-                    "death",
-                    byCharacter,
-                    death.Context
-                );
-
-                continue;
-            }
-
-            if (state.OnDeathFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnDeathFunction,
-                byCharacter,
-                death.Context
-            );
-        }
-    }
-
-    private void DispatchPendingSpeech(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingSpeech.Clear();
-
-            return;
-        }
-
-        while (state.PendingSpeech.Count > 0)
-        {
-            var speech = state.PendingSpeech.Dequeue();
-
-            if (state.OnEventFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnEventFunction,
-                    "speech_heard",
-                    (uint)speech.SpeakerId,
-                    BuildSpeechEventPayload(speech)
-                );
-
-                continue;
-            }
-
-            if (state.OnSpeechFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnSpeechFunction,
-                (uint)speech.ListenerNpcId,
-                (uint)speech.SpeakerId,
-                speech.Text,
-                (byte)speech.SpeechType,
-                speech.MapId,
-                speech.Location.X,
-                speech.Location.Y,
-                speech.Location.Z
-            );
-        }
-    }
-
-    private void DispatchPendingSpawn(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingSpawn.Clear();
-
-            return;
-        }
-
-        while (state.PendingSpawn.Count > 0)
-        {
-            var spawn = state.PendingSpawn.Dequeue();
-            var payload = BuildSpawnEventPayload(spawn);
-
-            if (state.OnSpawnFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnSpawnFunction,
-                    (uint)state.MobileId,
-                    payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnEventFunction,
-                "spawn",
-                0u,
-                payload
-            );
-        }
-    }
-
-    private void DispatchPendingInRange(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingInRange.Clear();
-
-            return;
-        }
-
-        while (state.PendingInRange.Count > 0)
-        {
-            var inRange = state.PendingInRange.Dequeue();
-
-            if (state.OnInRangeFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnInRangeFunction,
-                    (uint)state.MobileId,
-                    (uint)inRange.SourceMobileId,
-                    inRange.Payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnEventFunction,
-                "in_range",
-                (uint)inRange.SourceMobileId,
-                inRange.Payload
-            );
-        }
-    }
-
-    private void DispatchPendingOutRange(LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            state.PendingOutRange.Clear();
-
-            return;
-        }
-
-        while (state.PendingOutRange.Count > 0)
-        {
-            var outRange = state.PendingOutRange.Dequeue();
-
-            if (state.OnOutRangeFunction is not null)
-            {
-                _luaScript.Call(
-                    state.OnOutRangeFunction,
-                    (uint)state.MobileId,
-                    (uint)outRange.SourceMobileId,
-                    outRange.Payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            _luaScript.Call(
-                state.OnEventFunction,
-                "out_range",
-                (uint)outRange.SourceMobileId,
-                outRange.Payload
-            );
-        }
-    }
-
-    private void InitializeRuntimeState(LuaBrainRuntimeState state)
-    {
-        if (!_supportsMoonSharpRuntime || _luaScript is null)
-        {
-            return;
-        }
-
-        var brainTable = ResolveBrainTable(state.BrainTableName);
-
-        if (brainTable is null)
-        {
-            _logger.Warning(
-                "Lua brain table {BrainTable} not found for mobile {MobileId}.",
-                state.BrainTableName,
-                state.MobileId
-            );
-            state.BrainCoroutine = null;
-            state.OnEventFunction = null;
-            state.OnSpeechFunction = null;
-            state.OnDeathFunction = null;
-            state.OnSpawnFunction = null;
-            state.OnInRangeFunction = null;
-                state.OnOutRangeFunction = null;
-                state.OnGetContextMenusFunction = null;
-                state.OnSelectedContextMenuFunction = null;
-                state.IsFaulted = true;
-
-            return;
-        }
-
-        state.OnSpeechFunction = ResolveTableFunction(brainTable, "on_speech", "OnSpeech");
-        state.OnDeathFunction = ResolveTableFunction(brainTable, "on_death", "OnDeath");
-        state.OnSpawnFunction = ResolveTableFunction(brainTable, "on_spawn", "OnSpawn");
-        state.OnInRangeFunction = ResolveTableFunction(brainTable, "in_range", "on_in_range", "OnInRange");
-        state.OnOutRangeFunction = ResolveTableFunction(brainTable, "out_range", "on_out_range", "OnOutRange");
-        state.OnGetContextMenusFunction = ResolveTableFunction(
-            brainTable,
-            "get_context_menus",
-            "GetContextMenus"
-        );
-        state.OnSelectedContextMenuFunction = ResolveTableFunction(
-            brainTable,
-            "on_selected_context_menu",
-            "OnSelectedContextMenu"
-        );
-        state.OnEventFunction = ResolveTableFunction(brainTable, "on_event", "OnEvent");
-
-        var brainLoop = ResolveTableFunction(brainTable, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick");
-
-        if (brainLoop is null || brainLoop.Type != DataType.Function)
-        {
-            _logger.Warning(
-                "Lua brain table {BrainTable} for mobile {MobileId} does not expose brain_loop.",
-                state.BrainTableName,
-                state.MobileId
-            );
-
-            state.BrainCoroutine = null;
-            state.IsFaulted = true;
-
-            return;
-        }
-
-        state.BrainCoroutine = _luaScript.CreateCoroutine(brainLoop).Coroutine;
-    }
-
-    private int ParseYieldDelay(DynValue yielded)
-    {
-        if (yielded.Type == DataType.Number)
-        {
-            var value = (int)Math.Round(yielded.Number);
-
-            return value <= 0 ? DefaultTickMilliseconds : value;
-        }
-
-        return DefaultTickMilliseconds;
-    }
-
-    private DynValue? ResolveBrainTable(string brainTableName)
-    {
-        if (_luaScript is null)
-        {
-            return null;
-        }
-
-        return _luaScript.Globals.Get(brainTableName) is { Type: DataType.Table } table ? table : null;
-    }
-
-    private static Dictionary<string, object?> BuildContextMenuPayload(
-        Serial targetMobileId,
-        UOMobileEntity? requester,
-        long sessionId,
-        string? menuKey
-    )
-        => new()
-        {
-            ["target_mobile_id"] = (uint)targetMobileId,
-            ["session_id"] = sessionId,
-            ["menu_key"] = menuKey,
-            ["requester"] = requester is null
-                                ? null
-                                : new Dictionary<string, object?>
-                                {
-                                    ["mobile_id"] = (uint)requester.Id,
-                                    ["name"] = requester.Name,
-                                    ["map_id"] = requester.MapId,
-                                    ["location"] = new Dictionary<string, int>
-                                    {
-                                        ["x"] = requester.Location.X,
-                                        ["y"] = requester.Location.Y,
-                                        ["z"] = requester.Location.Z
-                                    }
-                                }
-        };
-
-    private static IReadOnlyList<LuaBrainContextMenuEntry> ParseContextMenuEntries(DynValue result)
-    {
-        if (result.Type != DataType.Table || result.Table is null)
-        {
-            return [];
-        }
-
-        var entries = new List<LuaBrainContextMenuEntry>(capacity: 8);
-
-        for (var index = 1; index <= MaxContextMenuEntries; index++)
-        {
-            var value = result.Table.Get(index);
-
-            if (value.IsNil())
-            {
-                break;
-            }
-
-            if (!TryParseContextMenuEntry(value, out var entry))
-            {
-                continue;
-            }
-
-            entries.Add(entry);
-        }
-
-        return entries;
-    }
-
-    private static bool TryParseContextMenuEntry(DynValue value, out LuaBrainContextMenuEntry entry)
-    {
-        entry = null!;
-
-        if (value.Type == DataType.String && !string.IsNullOrWhiteSpace(value.String))
-        {
-            var keyText = value.String.Trim();
-            entry = new(keyText, keyText);
-
-            return true;
-        }
-
-        if (value.Type != DataType.Table || value.Table is null)
-        {
-            return false;
-        }
-
-        var keyValue = value.Table.Get("key");
-        var textValue = value.Table.Get("text");
-
-        var key = keyValue.Type == DataType.String ? keyValue.String : null;
-        var text = textValue.Type == DataType.String ? textValue.String : null;
-
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            var tupleKey = value.Table.Get(1);
-
-            if (tupleKey.Type == DataType.String)
-            {
-                key = tupleKey.String;
-            }
-        }
-
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            var tupleText = value.Table.Get(2);
-
-            if (tupleText.Type == DataType.String)
-            {
-                text = tupleText.String;
-            }
-        }
-
-        if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        entry = new(key.Trim(), text.Trim());
-
-        return true;
-    }
+        => _stateStore.Remove(mobileId);
 
     private string ResolveBrainTableName(string brainId)
     {
@@ -910,211 +329,47 @@ public sealed class LuaBrainRunner
         return brainId;
     }
 
-    private static DynValue? ResolveTableFunction(DynValue table, params string[] functionNames)
-    {
-        if (table.Type != DataType.Table || table.Table is null)
-        {
-            return null;
-        }
-
-        foreach (var functionName in functionNames)
-        {
-            var function = table.Table.Get(functionName);
-
-            if (function.Type == DataType.Function)
-            {
-                return function;
-            }
-        }
-
-        return null;
-    }
-
     private void TickCallback()
     {
         var nowMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         TickAllAsync(nowMilliseconds).AsTask().GetAwaiter().GetResult();
     }
 
-    private void TickFallbackState(LuaBrainRuntimeState state)
-    {
-        while (state.PendingSpawn.Count > 0)
-        {
-            var spawn = state.PendingSpawn.Dequeue();
-            var payload = BuildSpawnEventPayload(spawn);
-
-            _scriptEngineService.CallFunction(
-                "on_spawn",
-                (uint)state.MobileId,
-                payload
-            );
-            _scriptEngineService.CallFunction(
-                "on_event",
-                "spawn",
-                0u,
-                payload
-            );
-        }
-
-        while (state.PendingSpeech.Count > 0)
-        {
-            var speech = state.PendingSpeech.Dequeue();
-            _scriptEngineService.CallFunction(
-                "on_event",
-                "speech_heard",
-                (uint)speech.SpeakerId,
-                BuildSpeechEventPayload(speech)
-            );
-
-            _scriptEngineService.CallFunction(
-                "on_speech",
-                (uint)speech.ListenerNpcId,
-                (uint)speech.SpeakerId,
-                speech.Text,
-                (byte)speech.SpeechType,
-                speech.MapId,
-                speech.Location.X,
-                speech.Location.Y,
-                speech.Location.Z
-            );
-        }
-
-        while (state.PendingDeath.Count > 0)
-        {
-            var death = state.PendingDeath.Dequeue();
-            var byCharacterId = death.ByCharacterId.HasValue ? (uint)death.ByCharacterId.Value : 0u;
-
-            _scriptEngineService.CallFunction(
-                "on_event",
-                "death",
-                byCharacterId,
-                death.Context
-            );
-            _scriptEngineService.CallFunction(
-                "on_death",
-                byCharacterId,
-                death.Context
-            );
-        }
-
-        while (state.PendingInRange.Count > 0)
-        {
-            var inRange = state.PendingInRange.Dequeue();
-            _scriptEngineService.CallFunction(
-                "on_event",
-                "in_range",
-                (uint)inRange.SourceMobileId,
-                inRange.Payload
-            );
-            _scriptEngineService.CallFunction(
-                "on_in_range",
-                (uint)state.MobileId,
-                (uint)inRange.SourceMobileId,
-                inRange.Payload
-            );
-        }
-
-        while (state.PendingOutRange.Count > 0)
-        {
-            var outRange = state.PendingOutRange.Dequeue();
-            _scriptEngineService.CallFunction(
-                "on_event",
-                "out_range",
-                (uint)outRange.SourceMobileId,
-                outRange.Payload
-            );
-            _scriptEngineService.CallFunction(
-                "on_out_range",
-                (uint)state.MobileId,
-                (uint)outRange.SourceMobileId,
-                outRange.Payload
-            );
-        }
-
-        _scriptEngineService.CallFunction("on_brain_tick", (uint)state.MobileId);
-    }
-
-    private long TickMoonSharpState(long nowMilliseconds, LuaBrainRuntimeState state)
-    {
-        if (_luaScript is null)
-        {
-            return nowMilliseconds + DefaultTickMilliseconds;
-        }
-
-        if (state.BrainCoroutine is null)
-        {
-            state.IsFaulted = true;
-
-            return nowMilliseconds + FaultRetryMilliseconds;
-        }
-
-        DispatchPendingSpeech(state);
-        DispatchPendingDeath(state);
-        DispatchPendingSpawn(state);
-        DispatchPendingInRange(state);
-        DispatchPendingOutRange(state);
-
-        if (state.BrainCoroutine.State == CoroutineState.Dead)
-        {
-            Unregister(state.MobileId);
-
-            return nowMilliseconds + DefaultTickMilliseconds;
-        }
-
-        var result = state.BrainCoroutine.State == CoroutineState.NotStarted
-                         ? state.BrainCoroutine.Resume((uint)state.MobileId)
-                         : state.BrainCoroutine.Resume();
-        var delay = ParseYieldDelay(result);
-
-        if (state.BrainCoroutine.State == CoroutineState.Dead)
-        {
-            Unregister(state.MobileId);
-        }
-
-        return nowMilliseconds + delay;
-    }
-
     private void NotifyInRangeForAddedMobile(UOMobileEntity sourceMobile)
     {
-        if (!TryResolveSourceMobile(sourceMobile.Id, sourceMobile.MapId, sourceMobile.Location, out var resolvedSourceMobile))
+        if (!_stateStore.TryResolveSourceMobile(sourceMobile.Id, sourceMobile.MapId, sourceMobile.Location, out var resolved) ||
+            resolved is null)
         {
             return;
         }
 
-        List<LuaBrainRuntimeState> snapshot;
-        lock (_syncRoot)
-        {
-            snapshot = [.. _states.Values];
-        }
+        var snapshot = _stateStore.GetAllStates();
 
         foreach (var state in snapshot)
         {
-            if (state.MobileId == resolvedSourceMobile.Id || state.Mobile.MapId != resolvedSourceMobile.MapId)
+            if (state.MobileId == resolved.Id || state.Mobile.MapId != resolved.MapId)
             {
                 continue;
             }
 
-            if (!state.Mobile.Location.InRange(resolvedSourceMobile.Location, InRangeEnterDistance))
+            if (!state.Mobile.Location.InRange(resolved.Location, InRangeEnterDistance))
             {
                 continue;
             }
 
-            EnqueueInRange(state.MobileId, resolvedSourceMobile, InRangeEnterDistance);
+            _stateStore.EnqueueInRange(state.MobileId, resolved, InRangeEnterDistance);
         }
     }
 
     private void NotifyInRangeForMovedMobile(MobilePositionChangedEvent gameEvent)
     {
-        if (!TryResolveSourceMobile(gameEvent.MobileId, gameEvent.MapId, gameEvent.NewLocation, out var sourceMobile))
+        if (!_stateStore.TryResolveSourceMobile(gameEvent.MobileId, gameEvent.MapId, gameEvent.NewLocation, out var sourceMobile) ||
+            sourceMobile is null)
         {
             return;
         }
 
-        List<LuaBrainRuntimeState> snapshot;
-        lock (_syncRoot)
-        {
-            snapshot = [.. _states.Values];
-        }
+        var snapshot = _stateStore.GetAllStates();
 
         foreach (var state in snapshot)
         {
@@ -1130,37 +385,13 @@ public sealed class LuaBrainRunner
 
             if (!wasInRangeBefore && isInRangeNow)
             {
-                EnqueueInRange(state.MobileId, sourceMobile, InRangeEnterDistance);
+                _stateStore.EnqueueInRange(state.MobileId, sourceMobile, InRangeEnterDistance);
             }
 
             if (wasInRangeBefore && !isInRangeNow)
             {
-                EnqueueOutRange(state.MobileId, sourceMobile, InRangeEnterDistance);
+                _stateStore.EnqueueOutRange(state.MobileId, sourceMobile, InRangeEnterDistance);
             }
         }
-    }
-
-    private bool TryResolveSourceMobile(Serial mobileId, int mapId, Point3D location, out UOMobileEntity? sourceMobile)
-    {
-        lock (_syncRoot)
-        {
-            if (_states.TryGetValue(mobileId, out var trackedState))
-            {
-                sourceMobile = trackedState.Mobile;
-
-                return true;
-            }
-        }
-
-        // Fallback without spatial query: enough for range notifications payload.
-        sourceMobile = new()
-        {
-            Id = mobileId,
-            MapId = mapId,
-            Location = location,
-            IsPlayer = true
-        };
-
-        return true;
     }
 }

@@ -1,0 +1,11 @@
+# Read-only sample book rendered once at item creation time.
+[Title] Welcome To {{ shard.name }}
+[Author] The Moongate Team
+[ReadOnly] True
+
+Welcome traveler.
+
+This shard is still under active development.
+Explore slowly, report strange behavior, and have fun.
+
+Website: {{ shard.website_url }}

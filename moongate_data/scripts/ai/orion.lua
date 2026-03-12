@@ -1,6 +1,6 @@
 orion = {}
 
-local MOVE_INTERVAL_MS = 1000
+local MOVE_INTERVAL_MS = 5000
 local SPEECH_INTERVAL_MS = 2000
 local SOUND_INTERVAL_MS = 3000
 
@@ -58,6 +58,25 @@ end
 
 function orion.on_event(event_type, from_serial, event_obj)
     -- No event reactions for now.
+end
+
+function orion.get_context_menus(ctx)
+    return {
+        { key = "give_food", cliloc_id = 3006135 },
+    }
+end
+
+function orion.on_selected_context_menu(menu_key, ctx)
+    if menu_key ~= "give_food" then
+        return
+    end
+
+    local npc = mobile.get(ctx.target_mobile_id)
+    if npc == nil then
+        return
+    end
+
+    npc:say("meeow")
 end
 
 function orion.on_death(by_character, context)

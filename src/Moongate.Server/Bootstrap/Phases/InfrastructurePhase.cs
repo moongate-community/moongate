@@ -3,6 +3,7 @@ using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
+using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Interfaces.Bootstrap;
 using Moongate.Server.Json;
 using Moongate.Server.Services.Console.Internal.Logging;
@@ -59,14 +60,7 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
 
     private static void CheckDirectoryConfig(BootstrapContext context)
     {
-        if (string.IsNullOrWhiteSpace(context.Config.RootDirectory))
-        {
-            context.Config.RootDirectory = Environment.GetEnvironmentVariable("MOONGATE_ROOT_DIRECTORY") ??
-                                           Path.Combine(AppContext.BaseDirectory, "moongate");
-        }
-
-        context.Config.RootDirectory = context.Config.RootDirectory.ResolvePathAndEnvs();
-
+        context.Config.RootDirectory = RootDirectoryResolver.Resolve(context.Config.RootDirectory);
         context.DirectoriesConfig = new(context.Config.RootDirectory, Enum.GetNames<DirectoryType>());
     }
 
@@ -147,6 +141,8 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
         var destinationDataDirectory = context.DirectoriesConfig[DirectoryType.Data];
         var sourceTemplatesDirectory = Path.Combine(AppContext.BaseDirectory, "Assets", "templates");
         var destinationTemplatesDirectory = context.DirectoriesConfig[DirectoryType.Templates];
+        var sourceWebDirectory = Path.Combine(AppContext.BaseDirectory, "Assets", "web");
+        var destinationWebDirectory = context.DirectoriesConfig[DirectoryType.WebRoot];
 
         DataAssetsBootstrapper.EnsureDataAssets(sourceDataDirectory, destinationDataDirectory, context.Logger);
         DataAssetsBootstrapper.EnsureAssets(
@@ -155,5 +151,6 @@ internal sealed class InfrastructurePhase : IBootstrapPhase
             context.Logger,
             "Template assets"
         );
+        DataAssetsBootstrapper.EnsureAssets(sourceWebDirectory, destinationWebDirectory, context.Logger, "Web assets");
     }
 }

@@ -8,12 +8,23 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Handlers;
 
 public class PlayerStatusHandlerTests
 {
+    [SetUp]
+    public void SetUp()
+    {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
+            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence)
+        ];
+    }
+
     private sealed class TestCharacterService : ICharacterService
     {
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
@@ -48,15 +59,19 @@ public class PlayerStatusHandlerTests
         }
 
         public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
-            => Task.FromResult<UOMobileEntity?>(
-                new()
-                {
-                    Id = characterId,
-                    Name = "Loaded",
-                    Hits = 50,
-                    MaxHits = 100
-                }
-            );
+        {
+            var mobile = new UOMobileEntity
+            {
+                Id = characterId,
+                Name = "Loaded",
+                Hits = 50,
+                MaxHits = 100
+            };
+            mobile.InitializeSkills();
+            mobile.SetSkill(UOSkillName.Magery, 500, lockState: UOSkillLock.Locked);
+
+            return Task.FromResult<UOMobileEntity?>(mobile);
+        }
 
         public Task<List<UOMobileEntity>> GetCharactersForAccountAsync(Serial accountId)
         {
@@ -115,7 +130,7 @@ public class PlayerStatusHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_ShouldIgnoreRequestSkillsType()
+    public async Task HandlePacketAsync_ShouldEnqueueSkillListPacket_WhenRequestSkillsTypeRequested()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var characterService = new TestCharacterService();
@@ -133,6 +148,8 @@ public class PlayerStatusHandlerTests
                 MaxHits = 100
             }
         };
+        session.Character.InitializeSkills();
+        session.Character.SetSkill(UOSkillName.Alchemy, 250, lockState: UOSkillLock.Down);
 
         var packet = new GetPlayerStatusPacket
         {
@@ -141,13 +158,14 @@ public class PlayerStatusHandlerTests
         };
 
         var handled = await handler.HandlePacketAsync(session, packet);
-        var dequeued = queue.TryDequeue(out _);
+        var dequeued = queue.TryDequeue(out var outbound);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(handled, Is.True);
-                Assert.That(dequeued, Is.False);
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<SkillListPacket>());
             }
         );
     }

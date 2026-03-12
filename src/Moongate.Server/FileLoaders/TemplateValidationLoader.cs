@@ -1,4 +1,5 @@
 using Moongate.Server.Attributes;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -19,16 +20,19 @@ public sealed class TemplateValidationLoader : IFileLoader
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IMobileTemplateService _mobileTemplateService;
     private readonly ISellProfileTemplateService _sellProfileTemplateService;
+    private readonly IBookTemplateService _bookTemplateService;
 
     public TemplateValidationLoader(
         IItemTemplateService itemTemplateService,
         IMobileTemplateService mobileTemplateService,
-        ISellProfileTemplateService sellProfileTemplateService
+        ISellProfileTemplateService sellProfileTemplateService,
+        IBookTemplateService bookTemplateService
     )
     {
         _itemTemplateService = itemTemplateService;
         _mobileTemplateService = mobileTemplateService;
         _sellProfileTemplateService = sellProfileTemplateService;
+        _bookTemplateService = bookTemplateService;
     }
 
     public Task LoadAsync()
@@ -129,7 +133,21 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Item template '{item.Id}' has negative weight: {item.Weight}.");
             }
 
+            ValidateBookTemplate(item, errors);
             ValidateItemContainerLayout(item, errors);
+        }
+    }
+
+    private void ValidateBookTemplate(ItemTemplateDefinition item, List<string> errors)
+    {
+        if (string.IsNullOrWhiteSpace(item.BookId))
+        {
+            return;
+        }
+
+        if (!_bookTemplateService.TryLoad(item.BookId, model: null, out _))
+        {
+            errors.Add($"Item template '{item.Id}' references missing or invalid book template '{item.BookId}'.");
         }
     }
 

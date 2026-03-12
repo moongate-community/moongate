@@ -36,6 +36,7 @@ On repeated violations, session is disconnected.
 - `0x09` Single Click (`Length=5`, fixed)
 - `0x06` Double Click (`Length=5`, fixed)
 - `0x34` Get Player Status (`Length=10`, fixed)
+- `0x66` Book Pages (`variable`)
 - `0x73` Ping Message (`Length=2`, fixed)
 - `0xAD` Unicode Speech (`variable`)
 - `0xB5` Open Chat Window (`Length=64`, fixed)
@@ -73,6 +74,7 @@ On repeated violations, session is disconnected.
 - `0x3C` Add Multiple Items To Container (variable)
 - `0x88` Paperdoll (`Length=66`, fixed)
 - `0x11` Player Status (variable)
+- `0x3A` Skill List (variable)
 - `0xF3` Object Information (`Length=24`, fixed)
 - `0x23` Dragging Of Item (`Length=26`, fixed)
 - `0x76` Server Change (`Length=16`, fixed)
@@ -102,6 +104,44 @@ Map transition notes:
 
 - Length/source metadata is defined in packet attributes and registration.
 - Runtime listener availability is independent from packet registration: a packet can be parseable but still not be wired to gameplay flow.
+
+## Current Status And Skill Flow
+
+`0x34` is the shared client request for both status and skill window behavior.
+
+- `GetPlayerStatusType.BasicStatus` -> server replies with `0x11` `Player Status`
+- `GetPlayerStatusType.RequestSkills` -> server replies with `0x3A` full skill list including lock state
+
+Moongate currently treats the outgoing `0x11` status packet as a modern `7.x`-style payload and serializes:
+
+- hits / max hits
+- effective str / dex / int
+- stamina / mana
+- carried gold aggregate
+- effective physical / elemental resists
+- luck
+- carrying data
+- follower counts
+- weapon damage / tithing
+- advanced modifier fields such as HCI, DCI, SSI, DI, LRC, SDI, FCR, FC, and LMC
+
+## Current Book Flow
+
+Moongate now supports both read-only and writable classic book flows.
+
+- double-click opens the classic book UI for supported items
+- `0x93` saves writable book `title` and `author`
+- `0x66` is used for both:
+  - page requests
+  - writable page saves
+- writable edits are accepted only when the book is:
+  - equipped by the player, or
+  - inside the player's backpack/container tree
+- read-only books continue to serve rendered template content
+- writable books persist `title`, `author`, and canonical newline content on the item
+- book template files may force read-only or writable policy with `[ReadOnly] True|False`; when present, this overrides fallback item/startup `writable`
+
+The book tooltip path uses the argument-style cliloc rule documented in [Cliloc Notes](cliloc-notes.md), avoiding the legacy `NEXT` tooltip artifact caused by generic string cliloc rotation.
 
 ---
 

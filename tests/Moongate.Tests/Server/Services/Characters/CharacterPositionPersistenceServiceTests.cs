@@ -12,6 +12,7 @@ using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Characters;
 
@@ -109,6 +110,66 @@ public sealed class CharacterPositionPersistenceServiceTests
             Assert.That(persistedAfterThrottle!.Location, Is.EqualTo(new Point3D(101, 100, 0)));
             Assert.That(persistedAfterSectorChange, Is.Not.Null);
             Assert.That(persistedAfterSectorChange!.Location, Is.EqualTo(new Point3D(96, 100, 0)));
+        }
+        finally
+        {
+            await persistence.StopAsync();
+            persistence.Dispose();
+        }
+    }
+
+    [Test]
+    public async Task HandleAsync_ShouldNotOverwritePersistedEquipmentFromStaleSessionCharacter()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+
+        try
+        {
+            var characterId = (Serial)0x00000044u;
+            var persisted = new Moongate.UO.Data.Persistence.Entities.UOMobileEntity
+            {
+                Id = characterId,
+                Location = new(100, 100, 0),
+                MapId = 1,
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Shoes] = (Serial)0x40000099u
+                }
+            };
+            await persistence.UnitOfWork.Mobiles.UpsertAsync(persisted);
+
+            var sessions = new FakeGameNetworkSessionService();
+            var bus = new GameEventBusService();
+            var service = new CharacterPositionPersistenceService(bus, sessions, persistence);
+            var session = CreateSession(characterId, new(100, 100, 0), 1);
+
+            // Simulate stale in-memory session character without equipment.
+            session.Character!.EquippedItemIds.Clear();
+            sessions.Add(session);
+
+            await service.HandleAsync(
+                new(
+                    session.SessionId,
+                    session.CharacterId,
+                    1,
+                    1,
+                    new(100, 100, 0),
+                    new(101, 100, 0)
+                )
+            );
+
+            var reloaded = await persistence.UnitOfWork.Mobiles.GetByIdAsync(characterId);
+
+            Assert.That(reloaded, Is.Not.Null);
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(reloaded!.Location, Is.EqualTo(new Point3D(101, 100, 0)));
+                    Assert.That(reloaded.EquippedItemIds.TryGetValue(ItemLayerType.Shoes, out var equippedId), Is.True);
+                    Assert.That(equippedId, Is.EqualTo((Serial)0x40000099u));
+                }
+            );
         }
         finally
         {

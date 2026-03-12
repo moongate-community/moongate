@@ -12,6 +12,7 @@ using Moongate.Server.Http.Extensions;
 using Moongate.Server.Http.Interfaces;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
+using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Metrics;
@@ -38,6 +39,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly Action<WebApplication> _configureApp;
     private readonly MoongateHttpJwtOptions _jwtOptions;
     private readonly IAccountService? _accountService;
+    private readonly ICharacterService? _characterService;
     private readonly IMetricsHttpSnapshotFactory? _metricsHttpSnapshotFactory;
     private readonly IItemTemplateService? _itemTemplateService;
     private readonly IArtService? _artService;
@@ -46,12 +48,14 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly IMapImageService? _mapImageService;
     private readonly bool _isUiEnabled;
     private readonly string? _uiDistPath;
+    private readonly MoongateHttpBranding _branding;
 
     private WebApplication? _app;
 
     public MoongateHttpService(
         MoongateHttpServiceOptions options,
         IAccountService? accountService = null,
+        ICharacterService? characterService = null,
         IMetricsHttpSnapshotFactory? metricsHttpSnapshotFactory = null,
         IItemTemplateService? itemTemplateService = null,
         IArtService? artService = null,
@@ -76,6 +80,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _configureApp = options.ConfigureApp ?? (_ => { });
         _jwtOptions = options.Jwt ?? new MoongateHttpJwtOptions();
         _accountService = accountService;
+        _characterService = characterService;
         _metricsHttpSnapshotFactory = metricsHttpSnapshotFactory;
         _itemTemplateService = itemTemplateService;
         _artService = artService;
@@ -84,6 +89,12 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _mapImageService = mapImageService;
         _isUiEnabled = options.IsUiEnabled;
         _uiDistPath = options.UiDistPath;
+        _branding = new()
+        {
+            ShardName = string.IsNullOrWhiteSpace(options.ShardName) ? "Moongate" : options.ShardName,
+            AdminLoginLogoUrl = NormalizePublicAssetPath(options.AdminLoginLogoPath),
+            PlayerLoginLogoUrl = NormalizePublicAssetPath(options.PlayerLoginLogoPath)
+        };
 
         if (_jwtOptions.IsEnabled && string.IsNullOrWhiteSpace(_jwtOptions.SigningKey))
         {
@@ -135,7 +146,9 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
         var routeContext = new MoongateHttpRouteContext(
             _jwtOptions,
+            _branding,
             _accountService,
+            _characterService,
             _metricsHttpSnapshotFactory,
             isUiServing,
             _directoriesConfig,
@@ -256,6 +269,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
 
     private bool ConfigureUiHosting(WebApplication app)
     {
+        ConfigureWebRootHosting(app);
+
         if (!_isUiEnabled)
         {
             return false;
@@ -293,6 +308,19 @@ public sealed class MoongateHttpService : IMoongateHttpService
         Log.Information("Serving UI static files from {UiDistPath}", uiDistPath);
 
         return true;
+    }
+
+    private void ConfigureWebRootHosting(WebApplication app)
+    {
+        var webRootPath = _directoriesConfig[DirectoryType.WebRoot];
+
+        if (!Directory.Exists(webRootPath))
+        {
+            return;
+        }
+
+        var fileProvider = new PhysicalFileProvider(webRootPath);
+        app.UseStaticFiles(new StaticFileOptions { FileProvider = fileProvider });
     }
 
     private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
@@ -424,5 +452,22 @@ public sealed class MoongateHttpService : IMoongateHttpService
                path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase) ||
                path.StartsWithSegments("/openapi", StringComparison.OrdinalIgnoreCase) ||
                path.StartsWithSegments("/scalar", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string? NormalizePublicAssetPath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var normalized = path.Replace('\\', '/').Trim();
+
+        if (!normalized.StartsWith('/'))
+        {
+            normalized = "/" + normalized;
+        }
+
+        return normalized;
     }
 }

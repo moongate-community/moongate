@@ -11,6 +11,7 @@ The persistence layer provides:
 - MessagePack-CSharp source-generated serialization for compact binary payloads
 - Per-entry journal checksum validation
 - Thread-safe repositories over shared in-memory state
+- Typed snapshot storage for item combat/modifier state and mobile status/skill state
 
 ## Storage Structure
 
@@ -75,6 +76,18 @@ Current repositories:
 - `IItemRepository`
 
 They append journal entries on mutation and query from in-memory state.
+
+## Domain Snapshot Notes
+
+Current persistence is no longer just flat account/mobile/item records.
+
+Important runtime-facing data now persisted in snapshots includes:
+
+- mobile base stats and resources
+- mobile aggregated equipment and runtime modifiers
+- mobile modifier caps used by modern status packets
+- persisted mobile skill tables used by skill window responses
+- item combat stats and item modifiers used by equip logic, tooltips, and mobile aggregation
 
 ## What Is Not Implemented Yet
 

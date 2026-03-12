@@ -13,4 +13,11 @@
         <ProjectReference Include="../../src/Moongate.Network.Packets/Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="../../src/Moongate.UO.Data/Moongate.UO.Data.csproj"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.200">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
 </Project>

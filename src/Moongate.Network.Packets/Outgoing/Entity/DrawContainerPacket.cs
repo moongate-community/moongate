@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Network.Packets.Outgoing.Entity;
@@ -33,8 +34,25 @@ public class DrawContainerPacket : BaseGameNetworkPacket
 
         writer.Write(OpCode);
         writer.Write(Container.Id.Value);
-        writer.Write((ushort)(Container.GumpId ?? 0));
+        writer.Write((ushort)ResolveGumpId(Container));
         writer.Write((short)0x7D);
+    }
+
+    private static int ResolveGumpId(UOItemEntity container)
+    {
+        if (container.GumpId is { } explicitGumpId)
+        {
+            return explicitGumpId;
+        }
+
+        if (ContainerLayoutSystem.ContainerBagDefsByItemId.TryGetValue(container.ItemId, out var definition) &&
+            definition.GumpId is { } fallbackGumpId &&
+            fallbackGumpId != 0)
+        {
+            return fallbackGumpId;
+        }
+
+        return 0;
     }
 
     protected override bool ParsePayload(ref SpanReader reader)

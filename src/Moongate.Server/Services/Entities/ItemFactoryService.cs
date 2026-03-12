@@ -1,7 +1,10 @@
 using System.Globalization;
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -24,11 +27,17 @@ public sealed class ItemFactoryService : IItemFactoryService
     private readonly ILogger _logger = Log.ForContext<ItemFactoryService>();
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IPersistenceService _persistenceService;
+    private readonly IBookTemplateService? _bookTemplateService;
 
-    public ItemFactoryService(IItemTemplateService itemTemplateService, IPersistenceService persistenceService)
+    public ItemFactoryService(
+        IItemTemplateService itemTemplateService,
+        IPersistenceService persistenceService,
+        IBookTemplateService? bookTemplateService = null
+    )
     {
         _itemTemplateService = itemTemplateService;
         _persistenceService = persistenceService;
+        _bookTemplateService = bookTemplateService;
     }
 
     /// <inheritdoc />
@@ -51,7 +60,7 @@ public sealed class ItemFactoryService : IItemFactoryService
             Visibility = template.Visibility,
             ItemId = ParseItemId(template.ItemId),
             Hue = template.Hue.Resolve(),
-            GumpId = ParseOptionalInt(template.GumpId),
+            GumpId = ResolveGumpId(template),
             ScriptId = template.ScriptId,
             Location = Point3D.Zero,
             ParentContainerId = Serial.Zero,
@@ -75,6 +84,9 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         ApplyTemplateParams(item, template);
+        ApplyBookTemplate(item, template);
+        item.CombatStats = CreateCombatStats(template);
+        item.Modifiers = CreateModifiers(template);
 
         return item;
     }
@@ -137,6 +149,38 @@ public sealed class ItemFactoryService : IItemFactoryService
         return false;
     }
 
+    private void ApplyBookTemplate(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        if (string.IsNullOrWhiteSpace(template.BookId))
+        {
+            return;
+        }
+
+        if (_bookTemplateService is null)
+        {
+            throw new InvalidOperationException(
+                $"Item template '{template.Id}' references book '{template.BookId}' but no book template service is configured."
+            );
+        }
+
+        if (!_bookTemplateService.TryLoad(template.BookId, model: null, out var book) || book is null)
+        {
+            throw new InvalidOperationException(
+                $"Item template '{template.Id}' references missing or invalid book template '{template.BookId}'."
+            );
+        }
+
+        item.SetCustomString(BookTemplateParamKeys.BookId, template.BookId.Trim());
+        item.SetCustomString(BookTemplateParamKeys.Title, book.Title);
+        item.SetCustomString(BookTemplateParamKeys.Author, book.Author);
+        item.SetCustomString(BookTemplateParamKeys.Content, book.Content);
+
+        if (book.ReadOnly.HasValue)
+        {
+            item.SetCustomBoolean(BookTemplateParamKeys.Writable, !book.ReadOnly.Value);
+        }
+    }
+
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
     {
         if (template.FlippableItemIds.Count > 0)
@@ -154,6 +198,14 @@ public sealed class ItemFactoryService : IItemFactoryService
             }
 
             var normalizedKey = key.Trim();
+
+            if (string.Equals(normalizedKey, "writable", StringComparison.OrdinalIgnoreCase) &&
+                bool.TryParse(param.Value, out var writable))
+            {
+                item.SetCustomBoolean(BookTemplateParamKeys.Writable, writable);
+
+                continue;
+            }
 
             switch (param.Type)
             {
@@ -195,6 +247,89 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
     }
 
+    private static ItemCombatStats? CreateCombatStats(ItemTemplateDefinition template)
+    {
+        if (template.Strength == 0 &&
+            template.Dexterity == 0 &&
+            template.Intelligence == 0 &&
+            template.LowDamage == 0 &&
+            template.HighDamage == 0 &&
+            template.Defense == 0 &&
+            template.Speed == 0 &&
+            template.BaseRange == 0 &&
+            template.MaxRange == 0 &&
+            template.HitPoints == 0)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            MinStrength = template.Strength,
+            MinDexterity = template.Dexterity,
+            MinIntelligence = template.Intelligence,
+            DamageMin = template.LowDamage,
+            DamageMax = template.HighDamage,
+            Defense = template.Defense,
+            AttackSpeed = template.Speed,
+            RangeMin = template.BaseRange,
+            RangeMax = template.MaxRange,
+            MaxDurability = template.HitPoints,
+            CurrentDurability = template.HitPoints
+        };
+    }
+
+    private static ItemModifiers? CreateModifiers(ItemTemplateDefinition template)
+    {
+        if (template.StrengthAdd == 0 &&
+            template.DexterityAdd == 0 &&
+            template.IntelligenceAdd == 0 &&
+            template.PhysicalResist == 0 &&
+            template.FireResist == 0 &&
+            template.ColdResist == 0 &&
+            template.PoisonResist == 0 &&
+            template.EnergyResist == 0 &&
+            template.HitChanceIncrease == 0 &&
+            template.DefenseChanceIncrease == 0 &&
+            template.DamageIncrease == 0 &&
+            template.SwingSpeedIncrease == 0 &&
+            template.SpellDamageIncrease == 0 &&
+            template.FasterCasting == 0 &&
+            template.FasterCastRecovery == 0 &&
+            template.LowerManaCost == 0 &&
+            template.LowerReagentCost == 0 &&
+            template.Luck == 0 &&
+            !template.SpellChanneling &&
+            template.UsesRemaining == 0)
+        {
+            return null;
+        }
+
+        return new()
+        {
+            StrengthBonus = template.StrengthAdd,
+            DexterityBonus = template.DexterityAdd,
+            IntelligenceBonus = template.IntelligenceAdd,
+            PhysicalResist = template.PhysicalResist,
+            FireResist = template.FireResist,
+            ColdResist = template.ColdResist,
+            PoisonResist = template.PoisonResist,
+            EnergyResist = template.EnergyResist,
+            HitChanceIncrease = template.HitChanceIncrease,
+            DefenseChanceIncrease = template.DefenseChanceIncrease,
+            DamageIncrease = template.DamageIncrease,
+            SwingSpeedIncrease = template.SwingSpeedIncrease,
+            SpellDamageIncrease = template.SpellDamageIncrease,
+            FasterCasting = template.FasterCasting,
+            FasterCastRecovery = template.FasterCastRecovery,
+            LowerManaCost = template.LowerManaCost,
+            LowerReagentCost = template.LowerReagentCost,
+            Luck = template.Luck,
+            SpellChanneling = template.SpellChanneling ? 1 : 0,
+            UsesRemaining = template.UsesRemaining
+        };
+    }
+
     private static int ParseItemId(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -227,5 +362,30 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
+    }
+
+    private static int? ResolveGumpId(ItemTemplateDefinition template)
+    {
+        var templateGumpId = ParseOptionalInt(template.GumpId);
+
+        if (templateGumpId.HasValue)
+        {
+            return templateGumpId;
+        }
+
+        var itemId = ParseItemId(template.ItemId);
+
+        if (ContainerLayoutSystem.ContainerBagDefsByItemId.TryGetValue(itemId, out var byItemId))
+        {
+            return byItemId.GumpId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(template.ContainerLayoutId) &&
+            ContainerLayoutSystem.ContainerBagDefsById.TryGetValue(template.ContainerLayoutId.Trim(), out var byLayoutId))
+        {
+            return byLayoutId.GumpId;
+        }
+
+        return null;
     }
 }

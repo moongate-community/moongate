@@ -69,23 +69,6 @@
   },
   {
     "type": "item",
-    "id": "gm_robe",
-    "name": "GM Robe",
-    "category": "Suits",
-    "description": "Imported from ModernUO (GMRobe).",
-    "itemId": "0x0026",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "items.gm_robe",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "suits"
-    ]
-  },
-  {
-    "type": "item",
     "id": "lord_blackthorne_suit",
     "name": "Lord Blackthorne Suit",
     "category": "Suits",

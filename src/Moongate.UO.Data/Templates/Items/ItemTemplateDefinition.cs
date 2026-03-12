@@ -25,6 +25,8 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public string? GumpId { get; set; }
 
+    public string? BookId { get; set; }
+
     [JsonConverter(typeof(HueSpecJsonConverter))]
     public HueSpec Hue { get; set; }
 
@@ -57,6 +59,40 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
     public int Intelligence { get; set; }
 
     public int IntelligenceAdd { get; set; }
+
+    public int PhysicalResist { get; set; }
+
+    public int FireResist { get; set; }
+
+    public int ColdResist { get; set; }
+
+    public int PoisonResist { get; set; }
+
+    public int EnergyResist { get; set; }
+
+    public int HitChanceIncrease { get; set; }
+
+    public int DefenseChanceIncrease { get; set; }
+
+    public int DamageIncrease { get; set; }
+
+    public int SwingSpeedIncrease { get; set; }
+
+    public int SpellDamageIncrease { get; set; }
+
+    public int FasterCasting { get; set; }
+
+    public int FasterCastRecovery { get; set; }
+
+    public int LowerManaCost { get; set; }
+
+    public int LowerReagentCost { get; set; }
+
+    public int Luck { get; set; }
+
+    public bool SpellChanneling { get; set; }
+
+    public int UsesRemaining { get; set; }
 
     [JsonConverter(typeof(Int32FlexibleJsonConverter))]
     public int Ammo { get; set; }

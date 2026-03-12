@@ -316,6 +316,8 @@ public class ToolTipHandlerTests
                 Assert.That(response.IsClientRequest, Is.False);
                 Assert.That(response.Serial, Is.EqualTo(itemSerial));
                 Assert.That(response.Properties.Count, Is.GreaterThan(0));
+                Assert.That(response.Properties[0].ClilocId, Is.EqualTo(1042971));
+                Assert.That(response.Properties[0].Text, Is.EqualTo("Gold Coins"));
             }
         );
     }
@@ -412,6 +414,84 @@ public class ToolTipHandlerTests
             {
                 Assert.That(rarityProperty.ClilocId, Is.EqualTo(CommonClilocIds.ItemRarity));
                 Assert.That(rarityProperty.Text, Is.EqualTo(ItemRarity.Legendary.ToString()));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldIncludeTypedCombatStatsAndModifiers_WhenItemHasThem()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000022u;
+        await persistenceService.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = itemSerial,
+                Name = "Runic Sword",
+                ItemId = 0x13B9,
+                Weight = 7,
+                CombatStats = new()
+                {
+                    DamageMin = 11,
+                    DamageMax = 15,
+                    AttackSpeed = 30,
+                    MaxDurability = 40,
+                    CurrentDurability = 25
+                },
+                Modifiers = new()
+                {
+                    PhysicalResist = 10,
+                    FireResist = 11,
+                    ColdResist = 12,
+                    PoisonResist = 13,
+                    EnergyResist = 14,
+                    HitChanceIncrease = 15,
+                    DamageIncrease = 16,
+                    SpellDamageIncrease = 17,
+                    FasterCasting = 1,
+                    FasterCastRecovery = 2,
+                    SwingSpeedIncrease = 20,
+                    SpellChanneling = 1,
+                    UsesRemaining = 25
+                }
+            }
+        );
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        var handled = await handler.HandlePacketAsync(session, request);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+            }
+        );
+
+        var response = DeserializeResponse(outbound.Packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.WeaponDamage && p.Text == "11\t15"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.WeaponSpeed && p.Text == "30"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.Durability && p.Text == "25\t40"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.PhysicalResist && p.Text == "10"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.FireResist && p.Text == "11"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.HitChanceIncrease && p.Text == "15"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.DamageIncrease && p.Text == "16"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellDamageIncrease && p.Text == "17"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.FasterCasting && p.Text == "1"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.FasterCastRecovery && p.Text == "2"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SwingSpeedIncrease && p.Text == "20"), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellChanneling), Is.True);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.UsesRemaining && p.Text == "25"), Is.True);
             }
         );
     }

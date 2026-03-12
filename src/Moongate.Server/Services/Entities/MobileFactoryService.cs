@@ -7,6 +7,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
@@ -76,18 +77,25 @@ public sealed class MobileFactoryService : IMobileFactoryService
             SkinHue = (short)template.SkinHue.Resolve(),
             HairStyle = (short)template.HairStyle,
             HairHue = (short)template.HairHue.Resolve(),
-            Strength = template.Strength,
-            Dexterity = template.Dexterity,
-            Intelligence = template.Intelligence,
-            Hits = template.Hits,
-            Mana = template.Mana,
-            Stamina = template.Stamina,
+            BaseStats = new()
+            {
+                Strength = template.Strength,
+                Dexterity = template.Dexterity,
+                Intelligence = template.Intelligence
+            },
+            Resources = new()
+            {
+                Hits = template.Hits,
+                Mana = template.Mana,
+                Stamina = template.Stamina
+            },
             Notoriety = template.Notoriety,
             CreatedUtc = now,
             LastLoginUtc = now
         };
 
         mobile.RecalculateMaxStats();
+        InitializeTemplateSkills(mobile, template);
 
         if (template.MaxHits > 0)
         {
@@ -128,12 +136,18 @@ public sealed class MobileFactoryService : IMobileFactoryService
             HairHue = packet.Hair.Hue,
             FacialHairStyle = packet.FacialHair.Style,
             FacialHairHue = packet.FacialHair.Hue,
-            Strength = packet.Strength,
-            Dexterity = packet.Dexterity,
-            Intelligence = packet.Intelligence,
-            Hits = packet.Strength,
-            Mana = packet.Intelligence,
-            Stamina = packet.Dexterity,
+            BaseStats = new()
+            {
+                Strength = packet.Strength,
+                Dexterity = packet.Dexterity,
+                Intelligence = packet.Intelligence
+            },
+            Resources = new()
+            {
+                Hits = packet.Strength,
+                Mana = packet.Intelligence,
+                Stamina = packet.Dexterity
+            },
             IsWarMode = false,
             IsHidden = false,
             IsFrozen = false,
@@ -145,6 +159,12 @@ public sealed class MobileFactoryService : IMobileFactoryService
         };
 
         mobile.RecalculateMaxStats();
+        mobile.InitializeSkills();
+
+        foreach (var skill in packet.Skills)
+        {
+            mobile.SetSkill(skill.Skill, skill.Value * 10);
+        }
 
         return mobile;
     }
@@ -218,5 +238,43 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         mobile.SetCustomString(SellProfileIdKey, template.SellProfileId);
+    }
+
+    private static void InitializeTemplateSkills(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        mobile.InitializeSkills();
+
+        foreach (var skill in template.Skills)
+        {
+            if (!TryResolveSkillName(skill.Key, out var skillName))
+            {
+                continue;
+            }
+
+            mobile.SetSkill(skillName, skill.Value);
+        }
+    }
+
+    private static bool TryResolveSkillName(string skillName, out UOSkillName resolved)
+    {
+        if (ProfessionInfo.TryGetSkillName(skillName, out resolved))
+        {
+            return true;
+        }
+
+        foreach (var skillInfo in Moongate.UO.Data.Skills.SkillInfo.Table)
+        {
+            if (string.Equals(skillInfo.Name, skillName, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(skillInfo.ProfessionSkillName, skillName, StringComparison.OrdinalIgnoreCase))
+            {
+                resolved = (UOSkillName)skillInfo.SkillID;
+
+                return true;
+            }
+        }
+
+        resolved = default;
+
+        return false;
     }
 }

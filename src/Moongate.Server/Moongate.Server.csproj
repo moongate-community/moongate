@@ -27,15 +27,19 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.13.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.4" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.13.6" />
         <PackageReference Include="Serilog" Version="4.3.1"/>
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
         <PackageReference Include="Serilog.Enrichers.Demystifier" Version="1.0.3"/>
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1"/>
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
         <PackageReference Include="Spectre.Console" Version="0.54.0"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.200">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -82,5 +86,10 @@
     <ItemGroup>
         <Folder Include="Assets\"/>
     </ItemGroup>
+
+    <!-- macOS: sign the apphost with get-task-allow so the debugger can attach -->
+    <Target Name="CodesignMacOS" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(Configuration)' == 'Debug'">
+        <Exec Command="codesign -s - --force --entitlements &quot;$(MSBuildProjectDirectory)/Moongate.Server.entitlements&quot; &quot;$(OutputPath)$(AssemblyName)&quot;" />
+    </Target>
 
 </Project>

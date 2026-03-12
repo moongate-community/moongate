@@ -4,17 +4,7 @@ import { HeroUIProvider } from '@heroui/react'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
-import { applyThemeToDocument, useThemeStore } from './store/themeStore'
-
-function ThemeSync() {
-  const theme = useThemeStore((s) => s.theme)
-
-  React.useEffect(() => {
-    applyThemeToDocument(theme)
-  }, [theme])
-
-  return null
-}
+import { ThemeSync } from './components/ThemeSync'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

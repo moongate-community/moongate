@@ -9,6 +9,7 @@ Alla fine di questa guida saprai:
 - inviare un gump semplice a un player
 - gestire i click dei bottoni
 - usare il layout file-based (`gump.send_layout`)
+- caricare testo esterno da `scripts/texts` dentro un `htmlgump`
 - eseguire comandi server dal callback
 
 ## Prerequisiti
@@ -16,6 +17,7 @@ Alla fine di questa guida saprai:
 - script runtime attivo
 - file `moongate_data/scripts/init.lua` caricato
 - modulo `gump` disponibile (default runtime)
+- modulo `text` disponibile (default runtime)
 
 ## 1) Gump base con runtime builder
 
@@ -127,7 +129,41 @@ Uso in-game:
 
 - `.tutorial_gump`
 
-## 5) Troubleshooting rapido
+## 5) Testo esterno in `htmlgump`
+
+File: `moongate_data/scripts/texts/welcome_player.txt`
+
+```txt
+# internal note
+Welcome to {{ shard.name }}, {{ player.name }}.
+
+Website: {{ shard.website_url }} # visible line
+```
+
+Uso da Lua:
+
+```lua
+local body = text.render("welcome_player.txt", {
+    player = {
+        name = "Tommy"
+    }
+}) or "Welcome."
+
+local g = gump.create()
+g:resize_pic(0, 0, 9200, 420, 240)
+g:html(20, 20, 380, 180, body, true, true)
+gump.send(session_id, g, character_id or 0, 0xB500, 120, 80)
+```
+
+Note:
+
+- i file stanno sotto `moongate_data/scripts/texts/**`
+- la sintassi è Scriban (`{{ ... }}`)
+- `shard.name` e `shard.website_url` sono disponibili di default
+- `#` commenta la riga o la parte finale della riga
+- `\#` mantiene un `#` letterale
+
+## 6) Troubleshooting rapido
 
 - Errore “Failed to open ... gump”
   - verifica `ctx.session_id` valido
@@ -143,6 +179,7 @@ Uso in-game:
 ## Best Practices
 
 - usa `gump.send_layout` per gump complessi
+- usa `text.render(...)` per testo lungo, messaggi di benvenuto, regole, libri
 - tieni `ui` e `handlers` nello stesso file modulo
 - usa costanti per `gumpId` e `buttonId`
 - non usare fallback “magici” su `sender_serial`

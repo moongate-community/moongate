@@ -11,6 +11,7 @@ using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
@@ -822,6 +823,182 @@ public class LuaScriptEngineServiceTests
                 Assert.That(layout, Does.Contain("{ tooltip 101 }"));
             }
         );
+    }
+
+    [Test]
+    public async Task StartAsync_WithTextModule_ShouldRenderTemplateFromFile()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var textsDir = Path.Combine(scriptsDir, "texts");
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(textsDir);
+        Directory.CreateDirectory(luarcDir);
+        await File.WriteAllTextAsync(
+            Path.Combine(textsDir, "welcome_player.txt"),
+            "Welcome to {{ shard.name }}, {{ player.name }}."
+        );
+
+        var container = new Container();
+        container.RegisterInstance<ITextTemplateService>(
+            new TextTemplateService(
+                dirs,
+                new MoongateConfig
+                {
+                    Game = new() { ShardName = "Test Shard" }
+                }
+            )
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TextModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local ctx = {
+                    player = {
+                        name = "Tommy"
+                    }
+                }
+
+                return text.render("welcome_player.txt", ctx)
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("Welcome to Test Shard, Tommy."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithTextModule_ShouldReturnNilWhenTemplateIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "texts"));
+        Directory.CreateDirectory(luarcDir);
+
+        var container = new Container();
+        container.RegisterInstance<ITextTemplateService>(new TextTemplateService(dirs, new MoongateConfig()));
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TextModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local value = text.render("missing.txt", {})
+                return value == nil
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithTextModuleAndGumpModule_ShouldSendRenderedHtmlText()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var textsDir = Path.Combine(scriptsDir, "texts");
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(textsDir);
+        Directory.CreateDirectory(luarcDir);
+        await File.WriteAllTextAsync(
+            Path.Combine(textsDir, "welcome_player.txt"),
+            "<CENTER>Welcome to {{ shard.name }}, {{ player.name }}.</CENTER>"
+        );
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000055u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
+        container.RegisterInstance<ITextTemplateService>(
+            new TextTemplateService(
+                dirs,
+                new MoongateConfig
+                {
+                    Game = new() { ShardName = "Test Shard" }
+                }
+            )
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TextModule)), new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            $$"""
+              (function()
+                  local body = text.render("welcome_player.txt", {
+                      player = {
+                          name = "Tommy"
+                      }
+                  })
+
+                  local g = gump.create()
+                  g:html(20, 20, 220, 80, body, true, true)
+                  return gump.send({{session.SessionId}}, g, {{(uint)session.CharacterId}}, 0xB501, 120, 80)
+              end)()
+              """
+        );
+
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Data, Is.EqualTo(true));
+        Assert.That(queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var gump = (CompressedGumpPacket)outbound.Packet;
+        Assert.That(gump.TextLines, Is.EqualTo(new[] { "<CENTER>Welcome to Test Shard, Tommy.</CENTER>" }));
     }
 
     [Test]

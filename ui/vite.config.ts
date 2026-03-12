@@ -4,6 +4,23 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [tailwindcss(), react()],
+  build: {
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) {
+            return undefined
+          }
+
+          if (id.includes('@xterm/')) {
+            return 'vendor-xterm'
+          }
+          return undefined
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api': {
@@ -19,6 +36,10 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/metrics': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/images': {
         target: 'http://localhost:8088',
         changeOrigin: true,
       },

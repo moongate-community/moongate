@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Books;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
@@ -6,6 +7,7 @@ using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -28,6 +30,8 @@ namespace Moongate.Server.Handlers;
 
 [
     RegisterGameEventListener,
+    RegisterPacketHandler(PacketDefinition.BookHeaderOldPacket),
+    RegisterPacketHandler(PacketDefinition.BookPagesPacket),
     RegisterPacketHandler(PacketDefinition.DropItemPacket),
     RegisterPacketHandler(PacketDefinition.DropWearItemPacket),
     RegisterPacketHandler(PacketDefinition.PickUpItemPacket),
@@ -39,6 +43,7 @@ public class ItemHandler
       , IGameEventListener<ItemDeletedEvent>
 {
     private const int GroundItemInteractionRange = 2;
+    private const int BookLinesPerPage = 8;
 
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
@@ -210,6 +215,16 @@ public class ItemHandler
         if (packet is DropWearItemPacket dropWearItemPacket)
         {
             return await HandleDropWearItemAsync(session, dropWearItemPacket);
+        }
+
+        if (packet is BookPagesPacket bookPagesPacket)
+        {
+            return await HandleBookPagesAsync(session, bookPagesPacket);
+        }
+
+        if (packet is BookHeaderOldPacket bookHeaderOldPacket)
+        {
+            return await HandleBookHeaderAsync(session, bookHeaderOldPacket);
         }
 
         if (packet is SingleClickPacket singleClickPacket)
@@ -447,6 +462,11 @@ public class ItemHandler
             );
         }
 
+        if (TryEnqueueBook(session, item))
+        {
+            return true;
+        }
+
         if (item.IsContainer)
         {
             Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
@@ -630,8 +650,297 @@ public class ItemHandler
         return true;
     }
 
+    private async Task<bool> HandleBookPagesAsync(GameSession session, BookPagesPacket bookPagesPacket)
+    {
+        var item = await _itemService.GetItemAsync((Serial)bookPagesPacket.BookSerial);
+
+        if (item is null || !TryReadBook(item, out _, out _, out var content))
+        {
+            return true;
+        }
+
+        if (bookPagesPacket.Pages.Any(static page => !page.IsPageRequest))
+        {
+            if (!IsWritableBook(item) || !await CanWriteBookAsync(session, item))
+            {
+                return true;
+            }
+
+            ApplyBookPageUpdates(item, bookPagesPacket.Pages);
+            await _itemService.UpsertItemAsync(item);
+
+            return true;
+        }
+
+        var requestedPages = BuildRequestedBookPages(content, bookPagesPacket.Pages);
+
+        if (requestedPages.Count == 0)
+        {
+            return true;
+        }
+
+        var response = new BookPagesPacket
+        {
+            BookSerial = bookPagesPacket.BookSerial,
+            PageCount = (ushort)requestedPages.Count
+        };
+
+        response.Pages.AddRange(requestedPages);
+        Enqueue(session, response);
+
+        return true;
+    }
+
+    private async Task<bool> HandleBookHeaderAsync(GameSession session, BookHeaderOldPacket bookHeaderOldPacket)
+    {
+        var item = await _itemService.GetItemAsync((Serial)bookHeaderOldPacket.BookSerial);
+
+        if (item is null || !IsWritableBook(item) || !await CanWriteBookAsync(session, item))
+        {
+            return true;
+        }
+
+        item.SetCustomString(BookTemplateParamKeys.Title, SanitizeBookText(bookHeaderOldPacket.Title));
+        item.SetCustomString(BookTemplateParamKeys.Author, SanitizeBookText(bookHeaderOldPacket.Author));
+        await _itemService.UpsertItemAsync(item);
+
+        return true;
+    }
+
     private static bool IsGroundItem(UOItemEntity item)
         => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;
+
+    private bool TryEnqueueBook(GameSession session, UOItemEntity item)
+    {
+        if (!TryReadBook(item, out var title, out var author, out var content))
+        {
+            return false;
+        }
+
+        var pages = BuildBookPages(content);
+        var header = new BookHeaderNewPacket
+        {
+            BookSerial = item.Id.Value,
+            Flag1 = false,
+            IsWritable = IsWritableBook(item),
+            PageCount = (ushort)pages.Count,
+            Title = title,
+            Author = author
+        };
+
+        var packet = new BookPagesPacket
+        {
+            BookSerial = item.Id.Value,
+            PageCount = (ushort)pages.Count
+        };
+
+        for (var i = 0; i < pages.Count; i++)
+        {
+            var page = new BookPageEntry
+            {
+                PageNumber = (ushort)(i + 1),
+                LineCount = (ushort)pages[i].Count
+            };
+
+            page.Lines.AddRange(pages[i]);
+            packet.Pages.Add(page);
+        }
+
+        Enqueue(session, header);
+        Enqueue(session, packet);
+
+        return true;
+    }
+
+    private static bool TryReadBook(UOItemEntity item, out string title, out string author, out string content)
+    {
+        title = string.Empty;
+        author = string.Empty;
+        content = string.Empty;
+
+        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out title) ||
+            !item.TryGetCustomString(BookTemplateParamKeys.Author, out author) ||
+            !item.TryGetCustomString(BookTemplateParamKeys.Content, out content))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool IsWritableBook(UOItemEntity item)
+    {
+        if (item.TryGetCustomBoolean(BookTemplateParamKeys.Writable, out var writable))
+        {
+            return writable;
+        }
+
+        return item.TryGetCustomString(BookTemplateParamKeys.Writable, out var stringValue) &&
+               bool.TryParse(stringValue, out writable) &&
+               writable;
+    }
+
+    private async Task<bool> CanWriteBookAsync(GameSession session, UOItemEntity item)
+    {
+        if (session.CharacterId == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (item.EquippedMobileId == session.CharacterId)
+        {
+            return true;
+        }
+
+        var mobile = await _mobileService.GetAsync(session.CharacterId);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        var backpackId = ResolveBackpackId(mobile);
+
+        if (backpackId == Serial.Zero)
+        {
+            return false;
+        }
+
+        var currentContainerId = item.ParentContainerId;
+
+        while (currentContainerId != Serial.Zero)
+        {
+            if (currentContainerId == backpackId)
+            {
+                return true;
+            }
+
+            var container = await _itemService.GetItemAsync(currentContainerId);
+
+            if (container is null)
+            {
+                return false;
+            }
+
+            if (container.EquippedMobileId == session.CharacterId)
+            {
+                return true;
+            }
+
+            currentContainerId = container.ParentContainerId;
+        }
+
+        return false;
+    }
+
+    private static Serial ResolveBackpackId(UOMobileEntity mobile)
+    {
+        if (mobile.BackpackId != Serial.Zero)
+        {
+            return mobile.BackpackId;
+        }
+
+        return mobile.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
+                   ? equippedBackpackId
+                   : Serial.Zero;
+    }
+
+    private static List<BookPageEntry> BuildRequestedBookPages(string content, IReadOnlyList<BookPageEntry> requestedPages)
+    {
+        var allPages = BuildBookPages(content);
+        var responsePages = new List<BookPageEntry>();
+
+        foreach (var requestedPage in requestedPages)
+        {
+            if (!requestedPage.IsPageRequest)
+            {
+                continue;
+            }
+
+            var pageIndex = requestedPage.PageNumber - 1;
+
+            if (pageIndex < 0 || pageIndex >= allPages.Count)
+            {
+                continue;
+            }
+
+            var responsePage = new BookPageEntry
+            {
+                PageNumber = requestedPage.PageNumber,
+                LineCount = (ushort)allPages[pageIndex].Count
+            };
+
+            responsePage.Lines.AddRange(allPages[pageIndex]);
+            responsePages.Add(responsePage);
+        }
+
+        return responsePages;
+    }
+
+    private static List<List<string>> BuildBookPages(string content)
+    {
+        var normalized = string.IsNullOrWhiteSpace(content)
+                             ? string.Empty
+                             : content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+        var lines = normalized.Length == 0 ? [] : normalized.Split('\n').ToList();
+
+        if (lines.Count == 0)
+        {
+            return [[]];
+        }
+
+        var pages = new List<List<string>>();
+
+        for (var index = 0; index < lines.Count; index += BookLinesPerPage)
+        {
+            pages.Add(lines.Skip(index).Take(BookLinesPerPage).ToList());
+        }
+
+        return pages;
+    }
+
+    private static void ApplyBookPageUpdates(UOItemEntity item, IReadOnlyList<BookPageEntry> updatedPages)
+    {
+        item.TryGetCustomString(BookTemplateParamKeys.Content, out var content);
+        var lines = SplitBookContent(content).ToList();
+
+        foreach (var page in updatedPages.Where(static page => !page.IsPageRequest))
+        {
+            var startLineIndex = Math.Max(0, page.PageNumber - 1) * BookLinesPerPage;
+            var lineCount = page.LineCount == 0 ? page.Lines.Count : Math.Min(page.LineCount, page.Lines.Count);
+
+            while (lines.Count < startLineIndex)
+            {
+                lines.Add(string.Empty);
+            }
+
+            for (var i = 0; i < lineCount; i++)
+            {
+                var targetIndex = startLineIndex + i;
+
+                while (lines.Count <= targetIndex)
+                {
+                    lines.Add(string.Empty);
+                }
+
+                lines[targetIndex] = page.Lines[i];
+            }
+        }
+
+        item.SetCustomString(BookTemplateParamKeys.Content, string.Join('\n', lines));
+    }
+
+    private static IEnumerable<string> SplitBookContent(string? content)
+    {
+        var normalized = string.IsNullOrWhiteSpace(content)
+                             ? string.Empty
+                             : content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
+
+        return normalized.Length == 0 ? [] : normalized.Split('\n');
+    }
+
+    private static string SanitizeBookText(string value)
+        => new string(value.Select(static c => char.IsControl(c) ? ' ' : c).ToArray()).TrimEnd();
 
     private static bool IsValidWearLayer(ItemLayerType layer)
     {

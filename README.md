@@ -40,6 +40,32 @@ cd moongatev2
 dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
 ```
 
+### Run Server (Docker quick start)
+
+```bash
+git clone https://github.com/moongate-community/moongatev2.git
+cd moongatev2
+docker build -t moongate:local .
+docker run --rm -it \
+  -p 2593:2593 \
+  -p 8088:8088 \
+  -v "$HOME/moongate:/app/moongate" \
+  -v "$HOME/uo:/app/uo" \
+  moongate:local
+```
+
+Server port: `2593`  
+HTTP/UI API port: `8088`
+
+Default credentials: `admin` / `password`  
+Change them immediately from the server console with `.password`.
+
+Player portal routes:
+
+- Dev UI: `http://localhost:5173/portal/login`
+- Embedded UI: `http://localhost:8088/portal/login`
+- Authenticated profile: `http://localhost:8088/portal/profile`
+
 ### Run UI (dev)
 
 ```bash
@@ -58,8 +84,10 @@ UI default URL: `http://localhost:8088/`
 - Sector/chunk spatial system with lazy warmup and broadcast radius
 - Snapshot + journal persistence (MessagePack source-generated, AOT-safe)
 - Lua scripting runtime for commands, gumps, item/mobile behavior
+- Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows
+- Player portal for authenticated account overview, profile editing, and password change (`/portal/login`, `/portal/profile`, `/api/portal/me`, `/api/portal/me/password`)
 
 ## Project Highlights
 
@@ -102,27 +130,6 @@ UI default URL: `http://localhost:8088/`
 - Operations/stress test: `docs/articles/operations/stress-test.md`
 
 Published docs: <https://moongate-community.github.io/moongatev2/>
-
-## Docker
-
-Build image:
-
-```bash
-docker build -t moongate:local .
-```
-
-Run container:
-
-```bash
-docker run --rm -it \
-  -p 2593:2593 \
-  -p 8088:8088 \
-  -v "$HOME/moongate:/app/moongate" \
-  -v "$HOME/uo:/app/uo" \
-  moongate:local
-```
-
-Official image: <https://hub.docker.com/r/tgiachi/moongate>
 
 ## Benchmarks and Stress
 

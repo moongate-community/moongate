@@ -3,6 +3,7 @@ using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Network;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Metrics;
@@ -40,10 +41,15 @@ public static class AddBootstrapMetricsServicesExtension
             resolver => (ISpatialMetricsSource)resolver.Resolve<ISpatialWorldService>(),
             Reuse.Singleton
         );
+        container.RegisterDelegate<ILuaBrainMetricsSource>(
+            resolver => (ILuaBrainMetricsSource)resolver.Resolve<ILuaBrainRunner>(),
+            Reuse.Singleton
+        );
         container.Register<IMetricsHttpSnapshotFactory, MetricsHttpSnapshotFactory>(Reuse.Singleton);
         container.Register<IMetricProvider, GameLoopMetricsProvider>(Reuse.Singleton);
         container.Register<IMetricProvider, NetworkMetricsProvider>(Reuse.Singleton);
         container.Register<IMetricProvider, ScriptEngineMetricsProvider>(Reuse.Singleton);
+        container.Register<IMetricProvider, LuaBrainMetricsProvider>(Reuse.Singleton);
         container.Register<IMetricProvider, PersistenceMetricsProvider>(Reuse.Singleton);
         container.Register<IMetricProvider, TimerMetricsProvider>(Reuse.Singleton);
         container.Register<IMetricProvider, SpatialMetricsProvider>(Reuse.Singleton);

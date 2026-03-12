@@ -66,6 +66,17 @@ public class MetricsProvidersTests
         "entities.per_sector.avg"
     ];
 
+    private static readonly string[] LuaBrainMetricNames =
+    [
+        "brains.due.total",
+        "brains.processed.total",
+        "brains.deferred.total",
+        "ticks.processed.total",
+        "tick.duration.total_ms",
+        "tick.duration.avg_ms",
+        "tick.duration.max_ms"
+    ];
+
     [Test]
     public async Task GameLoopMetricsProvider_ShouldExposeExpectedMetricNames()
     {
@@ -178,5 +189,27 @@ public class MetricsProvidersTests
         var names = samples.Select(sample => sample.Name).ToArray();
 
         Assert.That(names, Is.EquivalentTo(TimerMetricNames));
+    }
+
+    [Test]
+    public async Task LuaBrainMetricsProvider_ShouldExposeExpectedMetricNames()
+    {
+        var provider = new LuaBrainMetricsProvider(
+            new MetricsProvidersTestLuaBrainRunner
+            {
+                DueBrainsTotal = 6,
+                ProcessedBrainsTotal = 5,
+                DeferredBrainsTotal = 1,
+                ProcessedTicksTotal = 2,
+                TickDurationTotalMs = 35,
+                TickDurationAvgMs = 17.5,
+                TickDurationMaxMs = 20
+            }
+        );
+
+        var samples = await provider.CollectAsync();
+        var names = samples.Select(sample => sample.Name).ToArray();
+
+        Assert.That(names, Is.EquivalentTo(LuaBrainMetricNames));
     }
 }

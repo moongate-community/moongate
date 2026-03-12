@@ -54,6 +54,23 @@ public class ItemTemplatePolymorphicTests
                        "dexterityAdd": 1,
                        "intelligence": 3,
                        "intelligenceAdd": 0,
+                       "physicalResist": 10,
+                       "fireResist": 8,
+                       "coldResist": 6,
+                       "poisonResist": 4,
+                       "energyResist": 2,
+                       "hitChanceIncrease": 12,
+                       "defenseChanceIncrease": 7,
+                       "damageIncrease": 15,
+                       "swingSpeedIncrease": 20,
+                       "spellDamageIncrease": 25,
+                       "fasterCasting": 2,
+                       "fasterCastRecovery": 3,
+                       "lowerManaCost": 5,
+                       "lowerReagentCost": 10,
+                       "luck": 100,
+                       "spellChanneling": true,
+                       "usesRemaining": 30,
                        "ammo": "0x0f3f",
                        "ammoFx": "0x1bfe",
                        "maxRange": 8,
@@ -96,6 +113,23 @@ public class ItemTemplatePolymorphicTests
                 Assert.That(item.LowDamage, Is.EqualTo(4));
                 Assert.That(item.HighDamage, Is.EqualTo(8));
                 Assert.That(item.Defense, Is.EqualTo(12));
+                Assert.That(item.PhysicalResist, Is.EqualTo(10));
+                Assert.That(item.FireResist, Is.EqualTo(8));
+                Assert.That(item.ColdResist, Is.EqualTo(6));
+                Assert.That(item.PoisonResist, Is.EqualTo(4));
+                Assert.That(item.EnergyResist, Is.EqualTo(2));
+                Assert.That(item.HitChanceIncrease, Is.EqualTo(12));
+                Assert.That(item.DefenseChanceIncrease, Is.EqualTo(7));
+                Assert.That(item.DamageIncrease, Is.EqualTo(15));
+                Assert.That(item.SwingSpeedIncrease, Is.EqualTo(20));
+                Assert.That(item.SpellDamageIncrease, Is.EqualTo(25));
+                Assert.That(item.FasterCasting, Is.EqualTo(2));
+                Assert.That(item.FasterCastRecovery, Is.EqualTo(3));
+                Assert.That(item.LowerManaCost, Is.EqualTo(5));
+                Assert.That(item.LowerReagentCost, Is.EqualTo(10));
+                Assert.That(item.Luck, Is.EqualTo(100));
+                Assert.That(item.SpellChanneling, Is.True);
+                Assert.That(item.UsesRemaining, Is.EqualTo(30));
                 Assert.That(item.Ammo, Is.EqualTo(0x0F3F));
                 Assert.That(item.AmmoFx, Is.EqualTo(0x1BFE));
                 Assert.That(item.MaxRange, Is.EqualTo(8));

@@ -132,7 +132,7 @@ public static class MegaClilocBuilder
             }
             else
             {
-                list.Add(name);
+                list.Add(CommonClilocIds.ObjectName, name);
             }
         }
         else if (amount > 1)

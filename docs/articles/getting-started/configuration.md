@@ -125,6 +125,7 @@ Top-level shape:
 - `data`
 - `templates`
 - `scripts`
+- `web`
 - `save`
 - `logs`
 - `cache`
@@ -137,6 +138,9 @@ Current scripting runtime option:
 - `Scripting.EnableFileWatcher` (`bool`, default `true`)
   - `true`: enables `FileSystemWatcher` on `scripts/**/*.lua` for live reload notifications
   - `false`: disables watcher creation entirely
+- `Scripting.LuaBrainMaxBrainsPerTick` (`int`, default `0`)
+  - `<= 0`: no explicit per-tick cap
+  - `> 0`: limits how many due NPC brains are processed per tick (helps smooth spikes under heavy load)
 
 ## Email Templates
 
@@ -162,6 +166,19 @@ When HTTP is enabled:
 - `/metrics` → Prometheus text format (if metrics factory configured)
 - `/scalar` and `/openapi/*` (if OpenAPI enabled)
 
+Branding assets are served from:
+
+- `DirectoriesConfig[DirectoryType.WebRoot]`
+
+Login pages consume public branding metadata from:
+
+- `/api/branding`
+
+Relevant config keys:
+
+- `Http.AdminLoginLogoPath`
+- `Http.PlayerLoginLogoPath`
+
 ## Persistence Setting
 
 Only persistence knob currently exposed:
@@ -179,7 +196,10 @@ MOONGATE_UO_DIRECTORY=/uo
 
 Mount `/app` for runtime data and `/uo` for UO client files.
 
-For a full variable list and a complete `docker-compose` sample, see `README.md` -> **Environment Configuration**.
+The most complete runnable examples currently live in:
+
+- [Quick Start](quickstart.md) for local and Docker launch commands
+- [README.md](/Users/squid/projects/personal/moongatev2/README.md) for top-level onboarding
 
 ---
 

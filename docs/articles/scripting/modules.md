@@ -18,6 +18,7 @@ The following modules are available in the default server runtime:
 - `door`
 - `effect`
 - `gump`
+- `text`
 - `location`
 - `random`
 - `dice`
@@ -47,6 +48,31 @@ end
 
 - runtime builder (`gump.create()` + `gump.send(...)` + `gump.on(...)`)
 - file-based layout (`gump.send_layout(...)`) using files under `moongate_data/scripts/gumps/**`
+
+`text` renders Scriban text templates from:
+
+- `moongate_data/scripts/texts/**`
+
+Example:
+
+```lua
+local body = text.render("welcome_player.txt", {
+  player = {
+    name = "Tommy"
+  }
+})
+```
+
+Built-in template values available by default:
+
+- `shard.name`
+- `shard.website_url`
+
+Text template comments:
+
+- `# comment` skips the whole line
+- `value # comment` keeps only `value`
+- `\#` preserves a literal `#`
 
 `location` runtime helpers:
 

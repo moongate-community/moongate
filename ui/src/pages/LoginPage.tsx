@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import type { AuthUser } from '../store/authStore'
 import { ThemeToggle } from '../components/ThemeToggle'
+import type { PublicBranding } from '../types/publicBranding'
 
 interface ServerVersion {
   version: string
@@ -20,6 +21,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [serverVersion, setServerVersion] = useState<ServerVersion | null>(null)
+  const [branding, setBranding] = useState<PublicBranding | null>(null)
 
   useEffect(() => {
     let isCancelled = false
@@ -33,6 +35,26 @@ export function LoginPage() {
       .catch(() => {
         if (!isCancelled) {
           setServerVersion(null)
+        }
+      })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let isCancelled = false
+
+    api.get<PublicBranding>('/branding')
+      .then((value) => {
+        if (!isCancelled) {
+          setBranding(value)
+        }
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setBranding(null)
         }
       })
 
@@ -91,19 +113,21 @@ export function LoginPage() {
         <div className="px-8 pt-9 pb-8">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
-              <img
-                src="/images/moongate_logo.png"
-                alt="Moongate Logo"
-                style={{
-                  width: '128px',
-                  height: 'auto',
-                  filter: 'drop-shadow(0 0 14px rgba(106,165,218,0.35))',
-                }}
-              />
+              {branding?.adminLoginLogoUrl && (
+                <img
+                  src={branding.adminLoginLogoUrl}
+                  alt="Admin Login Logo"
+                  style={{
+                    width: '128px',
+                    height: 'auto',
+                    filter: 'drop-shadow(0 0 14px rgba(106,165,218,0.35))',
+                  }}
+                />
+              )}
             </div>
             <h1 className="font-cinzel font-semibold tracking-widest uppercase mb-1"
               style={{ color: '#6aa5da', fontSize: '18px', letterSpacing: '0.25em' }}>
-              Moongate
+              {branding?.shardName || 'Moongate'}
             </h1>
             <p className="font-mono text-xs tracking-widest"
               style={{ color: 'rgba(185,187,211,0.4)', letterSpacing: '0.2em' }}>

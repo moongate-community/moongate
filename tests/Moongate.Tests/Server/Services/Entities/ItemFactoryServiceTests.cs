@@ -2,9 +2,12 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Timing;
+using Moongate.Server.Data.Config;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Services.Templates;
@@ -16,6 +19,249 @@ namespace Moongate.Tests.Server.Services.Entities;
 
 public class ItemFactoryServiceTests
 {
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldRenderBookTemplateIntoCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "welcome_book",
+                Name = "Welcome Book",
+                Category = "books",
+                Description = "welcome",
+                ItemId = "0x0FF0",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 1,
+                BookId = "welcome_player",
+                Tags = ["book"]
+            }
+        );
+
+        var booksDirectory = Path.Combine(temp.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(booksDirectory, "welcome_player.txt"),
+            """
+            [Title] Welcome To {{ shard.name }}
+            [Author] Archivist
+
+            Welcome traveler.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(
+            temp.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var config = new MoongateConfig();
+        config.Game.ShardName = "Moongate";
+        var bookTemplateService = new BookTemplateService(directoriesConfig, config);
+
+        var service = new ItemFactoryService(templateService, persistence, bookTemplateService);
+
+        var item = service.CreateItemFromTemplate("welcome_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomString("book_id", out var bookId), Is.True);
+                Assert.That(bookId, Is.EqualTo("welcome_player"));
+                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
+                Assert.That(title, Is.EqualTo("Welcome To Moongate"));
+                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
+                Assert.That(author, Is.EqualTo("Archivist"));
+                Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
+                Assert.That(content, Does.Contain("Welcome traveler."));
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldMaterializeWritableBookMetadataFromParams()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "journal_book",
+                Name = "Journal",
+                Category = "Books",
+                Description = "Writable book",
+                ItemId = "0x0FF1",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.journal_book",
+                Weight = 1,
+                Params = new()
+                {
+                    ["book_title"] = new() { Type = ItemTemplateParamType.String, Value = "Journal" },
+                    ["book_author"] = new() { Type = ItemTemplateParamType.String, Value = "Player" },
+                    ["book_content"] = new() { Type = ItemTemplateParamType.String, Value = "" },
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "true" }
+                }
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("journal_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldPreferBookTemplateReadOnlyTrueOverWritableParam()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "welcome_book",
+                Name = "Welcome",
+                Category = "Books",
+                Description = "Read only",
+                ItemId = "0x0FF0",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.welcome_book",
+                Weight = 1,
+                BookId = "welcome_player",
+                Params = new()
+                {
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "true" }
+                }
+            }
+        );
+
+        var booksDirectory = Path.Combine(temp.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(booksDirectory, "welcome_player.txt"),
+            """
+            [Title] Welcome
+            [Author] Archivist
+            [ReadOnly] True
+
+            Hello.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(
+            temp.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var service = new ItemFactoryService(
+            templateService,
+            persistence,
+            new BookTemplateService(directoriesConfig, new MoongateConfig())
+        );
+
+        var item = service.CreateItemFromTemplate("welcome_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldPreferBookTemplateReadOnlyFalseOverWritableParam()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "journal_book",
+                Name = "Journal",
+                Category = "Books",
+                Description = "Writable",
+                ItemId = "0x0FF1",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.journal_book",
+                Weight = 1,
+                BookId = "journal",
+                Params = new()
+                {
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "false" }
+                }
+            }
+        );
+
+        var booksDirectory = Path.Combine(temp.Path, "templates", "books");
+        Directory.CreateDirectory(booksDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(booksDirectory, "journal.txt"),
+            """
+            [Title] Journal
+            [Author] Scribe
+            [ReadOnly] False
+
+            Entry one.
+            """
+        );
+
+        var directoriesConfig = new DirectoriesConfig(
+            temp.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var service = new ItemFactoryService(
+            templateService,
+            persistence,
+            new BookTemplateService(directoriesConfig, new MoongateConfig())
+        );
+
+        var item = service.CreateItemFromTemplate("journal_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.True);
+            }
+        );
+    }
+
     [Test]
     public async Task CreateItemFromTemplate_ShouldApplyTypedParamsToCustomProperties()
     {
@@ -44,7 +290,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("param_item");
 
@@ -84,7 +330,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("door_item");
 
@@ -114,7 +360,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("fallback_item");
         var tile = TileData.ItemTable[item.ItemId];
@@ -152,7 +398,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("test_item");
 
@@ -198,7 +444,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("gm_only_item");
 
@@ -227,7 +473,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("BarredMetalDoor");
 
@@ -262,12 +508,190 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var item = service.CreateItemFromTemplate("gold_item");
         var expected = TileData.ItemTable[item.ItemId][UOTileFlag.Generic];
 
         Assert.That(item.IsStackable, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldMapTypedCombatStatsAndModifiers()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "combat_item",
+                Name = "Combat Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x13B9",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.combat_item",
+                Weight = 1,
+                Strength = 40,
+                Dexterity = 15,
+                Intelligence = 10,
+                StrengthAdd = 5,
+                DexterityAdd = 3,
+                IntelligenceAdd = 2,
+                PhysicalResist = 10,
+                FireResist = 11,
+                ColdResist = 12,
+                PoisonResist = 13,
+                EnergyResist = 14,
+                HitChanceIncrease = 15,
+                DefenseChanceIncrease = 16,
+                DamageIncrease = 17,
+                SwingSpeedIncrease = 18,
+                SpellDamageIncrease = 19,
+                FasterCasting = 2,
+                FasterCastRecovery = 4,
+                LowerManaCost = 5,
+                LowerReagentCost = 6,
+                Luck = 100,
+                SpellChanneling = true,
+                UsesRemaining = 25,
+                LowDamage = 11,
+                HighDamage = 13,
+                Defense = 15,
+                Speed = 30,
+                BaseRange = 1,
+                MaxRange = 2,
+                HitPoints = 45
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("combat_item");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.CombatStats, Is.Not.Null);
+                Assert.That(item.CombatStats!.MinStrength, Is.EqualTo(40));
+                Assert.That(item.CombatStats.MinDexterity, Is.EqualTo(15));
+                Assert.That(item.CombatStats.MinIntelligence, Is.EqualTo(10));
+                Assert.That(item.CombatStats.DamageMin, Is.EqualTo(11));
+                Assert.That(item.CombatStats.DamageMax, Is.EqualTo(13));
+                Assert.That(item.CombatStats.Defense, Is.EqualTo(15));
+                Assert.That(item.CombatStats.AttackSpeed, Is.EqualTo(30));
+                Assert.That(item.CombatStats.RangeMin, Is.EqualTo(1));
+                Assert.That(item.CombatStats.RangeMax, Is.EqualTo(2));
+                Assert.That(item.CombatStats.MaxDurability, Is.EqualTo(45));
+                Assert.That(item.CombatStats.CurrentDurability, Is.EqualTo(45));
+
+                Assert.That(item.Modifiers, Is.Not.Null);
+                Assert.That(item.Modifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(item.Modifiers.DexterityBonus, Is.EqualTo(3));
+                Assert.That(item.Modifiers.IntelligenceBonus, Is.EqualTo(2));
+                Assert.That(item.Modifiers.PhysicalResist, Is.EqualTo(10));
+                Assert.That(item.Modifiers.FireResist, Is.EqualTo(11));
+                Assert.That(item.Modifiers.ColdResist, Is.EqualTo(12));
+                Assert.That(item.Modifiers.PoisonResist, Is.EqualTo(13));
+                Assert.That(item.Modifiers.EnergyResist, Is.EqualTo(14));
+                Assert.That(item.Modifiers.HitChanceIncrease, Is.EqualTo(15));
+                Assert.That(item.Modifiers.DefenseChanceIncrease, Is.EqualTo(16));
+                Assert.That(item.Modifiers.DamageIncrease, Is.EqualTo(17));
+                Assert.That(item.Modifiers.SwingSpeedIncrease, Is.EqualTo(18));
+                Assert.That(item.Modifiers.SpellDamageIncrease, Is.EqualTo(19));
+                Assert.That(item.Modifiers.FasterCasting, Is.EqualTo(2));
+                Assert.That(item.Modifiers.FasterCastRecovery, Is.EqualTo(4));
+                Assert.That(item.Modifiers.LowerManaCost, Is.EqualTo(5));
+                Assert.That(item.Modifiers.LowerReagentCost, Is.EqualTo(6));
+                Assert.That(item.Modifiers.Luck, Is.EqualTo(100));
+                Assert.That(item.Modifiers.SpellChanneling, Is.EqualTo(1));
+                Assert.That(item.Modifiers.UsesRemaining, Is.EqualTo(25));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldLeaveTypedCombatStatsAndModifiersNull_WhenTemplateHasNoTypedValues()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "plain_item",
+                Name = "Plain Item",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x1517",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.plain_item",
+                Weight = 1
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("plain_item");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.CombatStats, Is.Null);
+                Assert.That(item.Modifiers, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldResolveContainerGumpIdFromContainerDefinitions_WhenTemplateGumpIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "gm_like_bag",
+                Name = "GM Like Bag",
+                Category = "gm",
+                Description = "test",
+                ItemId = "0x0E76",
+                ContainerLayoutId = "bag",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.gm_like_bag",
+                Weight = 1
+            }
+        );
+
+        try
+        {
+            ContainerLayoutSystem.ContainerBagDefsByItemId[0x0E76] = new()
+            {
+                Id = "item_0e76",
+                ItemId = 0x0E76,
+                Name = "Bag 0x0E76",
+                Width = 6,
+                Height = 6,
+                GumpId = 0x003D
+            };
+
+            var service = new ItemFactoryService(templateService, persistence, null);
+            var item = service.CreateItemFromTemplate("gm_like_bag");
+
+            Assert.That(item.GumpId, Is.EqualTo(0x003D));
+        }
+        finally
+        {
+            _ = ContainerLayoutSystem.ContainerBagDefsByItemId.Remove(0x0E76);
+        }
     }
 
     [Test]
@@ -296,7 +720,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         Assert.That(
             () => service.CreateItemFromTemplate("invalid_serial_param_item"),
@@ -310,7 +734,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         Assert.That(
             () => service.CreateItemFromTemplate(templateId!),
@@ -324,7 +748,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         Assert.That(
             () => service.CreateItemFromTemplate("missing_template"),
@@ -338,7 +762,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var backpack = service.GetNewBackpack();
 
@@ -377,7 +801,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var backpack = service.GetNewBackpack();
 
@@ -411,7 +835,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var found = service.TryGetItemTemplate("BarredMetalDoor", out var template);
 
@@ -431,7 +855,7 @@ public class ItemFactoryServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var templateService = new ItemTemplateService();
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var found = service.TryGetItemTemplate("missing_template", out var template);
 
@@ -461,7 +885,7 @@ public class ItemFactoryServiceTests
             }
         );
 
-        var service = new ItemFactoryService(templateService, persistence);
+        var service = new ItemFactoryService(templateService, persistence, null);
 
         var found = service.TryGetItemTemplate("test_item", out var template);
 

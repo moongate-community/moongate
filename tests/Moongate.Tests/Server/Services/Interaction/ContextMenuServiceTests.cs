@@ -516,7 +516,7 @@ public sealed class ContextMenuServiceTests
         var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
         var eventBus = new GameEventBusService();
         var luaBrainRunner = new ContextMenuTestLuaBrainRunner();
-        luaBrainRunner.Entries.Add(new("feed", "Feed Orion"));
+        luaBrainRunner.Entries.Add(new("feed", 3_006_135));
         var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, luaBrainRunner);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
@@ -548,11 +548,161 @@ public sealed class ContextMenuServiceTests
         Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
         var packet = (GeneralInformationPacket)outgoingPacket.Packet;
         var payload = packet.SubcommandData.Span;
-        Assert.That(payload[6], Is.EqualTo(2));
-        var customTag = BinaryPrimitives.ReadUInt16BigEndian(payload[13..15]);
+        Assert.That(payload[6], Is.EqualTo(1));
+        var customTag = BinaryPrimitives.ReadUInt16BigEndian(payload[7..9]);
 
         await service.HandleAsync(new ContextMenuEntrySelectedEvent(session.SessionId, target.Id, customTag));
 
         Assert.That(luaBrainRunner.LastSelectedKey, Is.EqualTo("feed"));
+    }
+
+    [Test]
+    public async Task SendContextMenuAsync_WhenCustomEntriesContainInvalidValues_ShouldFilterAndKeepOrder()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var luaBrainRunner = new ContextMenuTestLuaBrainRunner();
+        luaBrainRunner.Entries.Add(new("first", 3_006_135));
+        luaBrainRunner.Entries.Add(new("", 3_006_135));
+        luaBrainRunner.Entries.Add(new("invalid_cliloc", 2_999_999));
+        luaBrainRunner.Entries.Add(new("second", 3_006_145));
+        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, luaBrainRunner);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            Character = new UOMobileEntity
+            {
+                Id = (Serial)0x00000001u,
+                MapId = 0,
+                Location = new Point3D(100, 100, 0)
+            }
+        };
+        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        sessions.Add(session);
+
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000009u,
+            Name = "Orion",
+            MapId = 0,
+            Location = new Point3D(101, 100, 0)
+        };
+        mobiles.MobilesById[target.Id] = target;
+
+        var sent = await service.SendContextMenuAsync(session.SessionId, target.Id);
+
+        Assert.That(sent, Is.True);
+        Assert.That(outgoing.TryDequeue(out var outgoingPacket), Is.True);
+        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
+
+        var packet = (GeneralInformationPacket)outgoingPacket.Packet;
+        var payload = packet.SubcommandData.Span;
+        var entryCount = payload[6];
+
+        // 2 valid script entries
+        Assert.That(entryCount, Is.EqualTo(2));
+
+        var tags = new List<ushort>(capacity: entryCount);
+        var offset = 7;
+
+        for (var index = 0; index < entryCount; index++)
+        {
+            var tag = BinaryPrimitives.ReadUInt16BigEndian(payload[offset..(offset + 2)]);
+            var flags = BinaryPrimitives.ReadUInt16BigEndian(payload[(offset + 4)..(offset + 6)]);
+            tags.Add(tag);
+            offset += 6;
+
+            if ((flags & 0x20) != 0)
+            {
+                offset += 2;
+            }
+        }
+
+        var firstScriptTag = tags[0];
+        var secondScriptTag = tags[1];
+
+        await service.HandleAsync(new ContextMenuEntrySelectedEvent(session.SessionId, target.Id, firstScriptTag));
+        Assert.That(luaBrainRunner.LastSelectedKey, Is.EqualTo("first"));
+
+        // Context menu selection consumes pending state for the session: request it again.
+        sent = await service.SendContextMenuAsync(session.SessionId, target.Id);
+        Assert.That(sent, Is.True);
+        Assert.That(outgoing.TryDequeue(out outgoingPacket), Is.True);
+        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
+        packet = (GeneralInformationPacket)outgoingPacket.Packet;
+        payload = packet.SubcommandData.Span;
+        entryCount = payload[6];
+        tags.Clear();
+        offset = 7;
+
+        for (var index = 0; index < entryCount; index++)
+        {
+            var tag = BinaryPrimitives.ReadUInt16BigEndian(payload[offset..(offset + 2)]);
+            var flags = BinaryPrimitives.ReadUInt16BigEndian(payload[(offset + 4)..(offset + 6)]);
+            tags.Add(tag);
+            offset += 6;
+
+            if ((flags & 0x20) != 0)
+            {
+                offset += 2;
+            }
+        }
+
+        secondScriptTag = tags[1];
+        await service.HandleAsync(new ContextMenuEntrySelectedEvent(session.SessionId, target.Id, secondScriptTag));
+        Assert.That(luaBrainRunner.LastSelectedKey, Is.EqualTo("second"));
+    }
+
+    [Test]
+    public async Task SendContextMenuAsync_WhenNpcHasCustomEntries_ShouldNotIncludePaperdollEntry()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var luaBrainRunner = new ContextMenuTestLuaBrainRunner();
+        luaBrainRunner.Entries.Add(new("give_food", 3_006_135));
+        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, luaBrainRunner);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            Character = new UOMobileEntity
+            {
+                Id = (Serial)0x00000001u,
+                MapId = 0,
+                Location = new Point3D(100, 100, 0)
+            }
+        };
+        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        sessions.Add(session);
+
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000009u,
+            Name = "Orion",
+            IsPlayer = false,
+            MapId = 0,
+            Location = new Point3D(101, 100, 0)
+        };
+        mobiles.MobilesById[target.Id] = target;
+
+        var sent = await service.SendContextMenuAsync(session.SessionId, target.Id);
+
+        Assert.That(sent, Is.True);
+        Assert.That(outgoing.TryDequeue(out var outgoingPacket), Is.True);
+        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
+
+        var packet = (GeneralInformationPacket)outgoingPacket.Packet;
+        var payload = packet.SubcommandData.Span;
+        Assert.That(payload[6], Is.EqualTo(1));
+
+        var firstTag = BinaryPrimitives.ReadUInt16BigEndian(payload[7..9]);
+        var firstClilocOffset = BinaryPrimitives.ReadUInt16BigEndian(payload[9..11]);
+        Assert.That(firstTag, Is.EqualTo(1000));
+        Assert.That(firstClilocOffset, Is.EqualTo(6135));
     }
 }

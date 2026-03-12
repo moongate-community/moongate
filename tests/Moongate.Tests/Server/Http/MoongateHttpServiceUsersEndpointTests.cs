@@ -128,7 +128,7 @@ public class MoongateHttpServiceUsersEndpointTests
 
                                          return Task.FromResult<UOAccountEntity?>(created);
                                      },
-            UpdateAccountAsyncImpl = (accountId, username, _, email, role, isLocked, _) =>
+            UpdateAccountAsyncImpl = (accountId, username, _, email, role, isLocked, _, _) =>
                                      {
                                          if (!users.TryGetValue(accountId.Value.ToString(), out var existing))
                                          {

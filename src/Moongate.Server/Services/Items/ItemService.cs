@@ -22,16 +22,19 @@ public sealed class ItemService : IItemService
     private readonly IPersistenceService _persistenceService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IItemFactoryService? _itemFactoryService;
+    private readonly IMobileModifierAggregationService? _mobileModifierAggregationService;
 
     public ItemService(
         IPersistenceService persistenceService,
         IGameEventBusService gameEventBusService,
-        IItemFactoryService? itemFactoryService = null
+        IItemFactoryService? itemFactoryService = null,
+        IMobileModifierAggregationService? mobileModifierAggregationService = null
     )
     {
         _persistenceService = persistenceService;
         _gameEventBusService = gameEventBusService;
         _itemFactoryService = itemFactoryService;
+        _mobileModifierAggregationService = mobileModifierAggregationService;
     }
 
     public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
@@ -180,17 +183,15 @@ public sealed class ItemService : IItemService
 
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
-        item.EquippedMobileId = mobileId;
-        item.EquippedLayer = layer;
         item.MapId = mobile.MapId;
-
-        mobile.EquippedItemIds[layer] = itemId;
+        mobile.AddEquippedItem(layer, item);
 
         if (layer == ItemLayerType.Backpack)
         {
             mobile.BackpackId = itemId;
         }
 
+        RecalculateEquipmentModifiers(mobile);
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
         await _gameEventBusService.PublishAsync(new ItemEquippedEvent(itemId, mobileId, layer));
@@ -427,18 +428,14 @@ public sealed class ItemService : IItemService
 
         if (mobile.EquippedItemIds.TryGetValue(layer, out var equippedItemId) && equippedItemId == item.Id)
         {
-            mobile.EquippedItemIds.Remove(layer);
-
-            if (layer == ItemLayerType.Backpack && mobile.BackpackId == item.Id)
-            {
-                mobile.BackpackId = Serial.Zero;
-            }
-
+            mobile.UnequipItem(layer, item);
             await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
         }
 
         item.EquippedMobileId = Serial.Zero;
         item.EquippedLayer = null;
+        RecalculateEquipmentModifiers(mobile);
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
     }
 
     private async Task<UOItemEntity?> GetItemHydratedAsync(Serial itemId)
@@ -527,16 +524,17 @@ public sealed class ItemService : IItemService
 
         if (currentItem is not null)
         {
-            currentItem.EquippedMobileId = Serial.Zero;
-            currentItem.EquippedLayer = null;
+            mobile.UnequipItem(layer, currentItem);
             await _persistenceService.UnitOfWork.Items.UpsertAsync(currentItem);
         }
-
-        mobile.EquippedItemIds.Remove(layer);
-
-        if (layer == ItemLayerType.Backpack && mobile.BackpackId == currentItemId)
+        else
         {
-            mobile.BackpackId = Serial.Zero;
+            mobile.UnequipItem(layer);
         }
+    }
+
+    private void RecalculateEquipmentModifiers(UOMobileEntity mobile)
+    {
+        _mobileModifierAggregationService?.RecalculateEquipmentModifiers(mobile);
     }
 }

@@ -175,6 +175,78 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseItemHasBookId_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "books");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "books.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "books",
+                "id": "base_book",
+                "name": "Base Book",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FF0",
+                "lootType": "Regular",
+                "scriptId": "none",
+                "bookId": "welcome_player",
+                "tags": ["book"],
+                "weight": 1.0
+              },
+              {
+                "type": "item",
+                "category": "books",
+                "id": "derived_book",
+                "base_item": "base_book",
+                "name": "Derived Book",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FF1",
+                "lootType": "Regular",
+                "scriptId": "none",
+                "tags": ["book"],
+                "weight": 1.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("derived_book", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.BookId, Is.EqualTo("welcome_player"));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();
@@ -226,6 +298,23 @@ public class ItemTemplateLoaderTests
                 "dexterityAdd": 1,
                 "intelligence": 0,
                 "intelligenceAdd": 0,
+                "physicalResist": 10,
+                "fireResist": 8,
+                "coldResist": 6,
+                "poisonResist": 4,
+                "energyResist": 2,
+                "hitChanceIncrease": 12,
+                "defenseChanceIncrease": 7,
+                "damageIncrease": 15,
+                "swingSpeedIncrease": 20,
+                "spellDamageIncrease": 25,
+                "fasterCasting": 2,
+                "fasterCastRecovery": 3,
+                "lowerManaCost": 5,
+                "lowerReagentCost": 10,
+                "luck": 100,
+                "spellChanneling": true,
+                "usesRemaining": 30,
                 "ammo": 0,
                 "ammoFx": 0,
                 "maxRange": 1,
@@ -276,6 +365,23 @@ public class ItemTemplateLoaderTests
                 Assert.That(template.MaxItems, Is.EqualTo(125));
                 Assert.That(template.Strength, Is.EqualTo(20));
                 Assert.That(template.StrengthAdd, Is.EqualTo(2));
+                Assert.That(template.PhysicalResist, Is.EqualTo(10));
+                Assert.That(template.FireResist, Is.EqualTo(8));
+                Assert.That(template.ColdResist, Is.EqualTo(6));
+                Assert.That(template.PoisonResist, Is.EqualTo(4));
+                Assert.That(template.EnergyResist, Is.EqualTo(2));
+                Assert.That(template.HitChanceIncrease, Is.EqualTo(12));
+                Assert.That(template.DefenseChanceIncrease, Is.EqualTo(7));
+                Assert.That(template.DamageIncrease, Is.EqualTo(15));
+                Assert.That(template.SwingSpeedIncrease, Is.EqualTo(20));
+                Assert.That(template.SpellDamageIncrease, Is.EqualTo(25));
+                Assert.That(template.FasterCasting, Is.EqualTo(2));
+                Assert.That(template.FasterCastRecovery, Is.EqualTo(3));
+                Assert.That(template.LowerManaCost, Is.EqualTo(5));
+                Assert.That(template.LowerReagentCost, Is.EqualTo(10));
+                Assert.That(template.Luck, Is.EqualTo(100));
+                Assert.That(template.SpellChanneling, Is.True);
+                Assert.That(template.UsesRemaining, Is.EqualTo(30));
                 Assert.That(template.MaxRange, Is.EqualTo(1));
                 Assert.That(template.BaseRange, Is.EqualTo(1));
             }

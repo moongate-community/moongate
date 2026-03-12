@@ -120,6 +120,11 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.GumpId = parent.GumpId;
         }
 
+        if (string.IsNullOrWhiteSpace(child.BookId))
+        {
+            child.BookId = parent.BookId;
+        }
+
         if (string.IsNullOrWhiteSpace(child.ContainerLayoutId))
         {
             child.ContainerLayoutId = parent.ContainerLayoutId;
@@ -166,6 +171,46 @@ public sealed class ItemTemplateLoader : IFileLoader
         child.DexterityAdd = InheritInt(child.DexterityAdd, parent.DexterityAdd, Defaults.DexterityAdd);
         child.Intelligence = InheritInt(child.Intelligence, parent.Intelligence, Defaults.Intelligence);
         child.IntelligenceAdd = InheritInt(child.IntelligenceAdd, parent.IntelligenceAdd, Defaults.IntelligenceAdd);
+        child.PhysicalResist = InheritInt(child.PhysicalResist, parent.PhysicalResist, Defaults.PhysicalResist);
+        child.FireResist = InheritInt(child.FireResist, parent.FireResist, Defaults.FireResist);
+        child.ColdResist = InheritInt(child.ColdResist, parent.ColdResist, Defaults.ColdResist);
+        child.PoisonResist = InheritInt(child.PoisonResist, parent.PoisonResist, Defaults.PoisonResist);
+        child.EnergyResist = InheritInt(child.EnergyResist, parent.EnergyResist, Defaults.EnergyResist);
+        child.HitChanceIncrease = InheritInt(
+            child.HitChanceIncrease,
+            parent.HitChanceIncrease,
+            Defaults.HitChanceIncrease
+        );
+        child.DefenseChanceIncrease = InheritInt(
+            child.DefenseChanceIncrease,
+            parent.DefenseChanceIncrease,
+            Defaults.DefenseChanceIncrease
+        );
+        child.DamageIncrease = InheritInt(child.DamageIncrease, parent.DamageIncrease, Defaults.DamageIncrease);
+        child.SwingSpeedIncrease = InheritInt(
+            child.SwingSpeedIncrease,
+            parent.SwingSpeedIncrease,
+            Defaults.SwingSpeedIncrease
+        );
+        child.SpellDamageIncrease = InheritInt(
+            child.SpellDamageIncrease,
+            parent.SpellDamageIncrease,
+            Defaults.SpellDamageIncrease
+        );
+        child.FasterCasting = InheritInt(child.FasterCasting, parent.FasterCasting, Defaults.FasterCasting);
+        child.FasterCastRecovery = InheritInt(
+            child.FasterCastRecovery,
+            parent.FasterCastRecovery,
+            Defaults.FasterCastRecovery
+        );
+        child.LowerManaCost = InheritInt(child.LowerManaCost, parent.LowerManaCost, Defaults.LowerManaCost);
+        child.LowerReagentCost = InheritInt(
+            child.LowerReagentCost,
+            parent.LowerReagentCost,
+            Defaults.LowerReagentCost
+        );
+        child.Luck = InheritInt(child.Luck, parent.Luck, Defaults.Luck);
+        child.UsesRemaining = InheritInt(child.UsesRemaining, parent.UsesRemaining, Defaults.UsesRemaining);
         child.Ammo = InheritInt(child.Ammo, parent.Ammo, Defaults.Ammo);
         child.AmmoFx = InheritInt(child.AmmoFx, parent.AmmoFx, Defaults.AmmoFx);
         child.MaxRange = InheritInt(child.MaxRange, parent.MaxRange, Defaults.MaxRange);
@@ -173,6 +218,11 @@ public sealed class ItemTemplateLoader : IFileLoader
 
         child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);
         child.IsMovable = InheritBool(child.IsMovable, parent.IsMovable, Defaults.IsMovable);
+        child.SpellChanneling = InheritBool(
+            child.SpellChanneling,
+            parent.SpellChanneling,
+            Defaults.SpellChanneling
+        );
 
         if (child.LootType == Defaults.LootType)
         {

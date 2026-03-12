@@ -296,7 +296,7 @@ public sealed class DoorServiceTests
     public async Task ToggleAsync_WhenDoorIsLinked_ShouldToggleBothDoors()
     {
         var firstDoor = CreateWorldItem((Serial)0x40000001u, 0x0685, new(100, 100, 0));
-        var secondDoor = CreateWorldItem((Serial)0x40000002u, 0x0687, new(110, 110, 0));
+        var secondDoor = CreateWorldItem((Serial)0x40000002u, 0x0687, new(101, 100, 0));
         firstDoor.SetCustomInteger("door_link_serial", (uint)secondDoor.Id);
         secondDoor.SetCustomInteger("door_link_serial", (uint)firstDoor.Id);
 
@@ -314,7 +314,7 @@ public sealed class DoorServiceTests
                 Assert.That(firstDoor.ItemId, Is.EqualTo(0x0686));
                 Assert.That(firstDoor.Location, Is.EqualTo(new Point3D(99, 101, 0)));
                 Assert.That(secondDoor.ItemId, Is.EqualTo(0x0688));
-                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(111, 111, 0)));
+                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(102, 99, 0)));
                 Assert.That(itemService.MoveToWorldCalls, Is.EqualTo(2));
                 Assert.That(itemService.UpsertCalls, Is.EqualTo(2));
                 Assert.That(spatial.AddOrUpdateCalls, Is.EqualTo(2));
