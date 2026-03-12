@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "Moongate.Server": {
+      "commandName": "Project",
+      "commandLineArgs": "--root-directory ~/moongate --uo-directory ~/uo",
+      "environmentVariables": {
+        "DOTNET_ReadyToRun": "0",
+        "DOTNET_TieredCompilation": "0",
+        "DOTNET_EnableEventPipe": "0"
+      }
+    }
+  }
+}
