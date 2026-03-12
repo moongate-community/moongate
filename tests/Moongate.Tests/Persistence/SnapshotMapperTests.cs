@@ -1,6 +1,7 @@
 using Moongate.Persistence.Data.Internal;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Persistence;
@@ -88,6 +89,42 @@ public class SnapshotMapperTests
                 Assert.That(restored.EffectiveStrength, Is.EqualTo(63));
                 Assert.That(restored.EffectiveFireResistance, Is.EqualTo(22));
                 Assert.That(restored.EffectiveLuck, Is.EqualTo(72));
+            }
+        );
+    }
+
+    [Test]
+    public void ToMobileSnapshot_ShouldPreserveSkills()
+    {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
+            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence)
+        ];
+        var entity = new UOMobileEntity
+        {
+            Id = (Serial)0x111u,
+            Name = "skilled-mobile"
+        };
+        entity.SetSkill(UOSkillName.Alchemy, 500, cap: 900, lockState: UOSkillLock.Locked);
+        entity.SetSkill(UOSkillName.Magery, 725, baseValue: 700, cap: 1000, lockState: UOSkillLock.Down);
+
+        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
+        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshot.Skills, Has.Length.EqualTo(2));
+                Assert.That(restored.Skills, Has.Count.EqualTo(2));
+                Assert.That(restored.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(500));
+                Assert.That(restored.Skills[UOSkillName.Alchemy].Base, Is.EqualTo(500));
+                Assert.That(restored.Skills[UOSkillName.Alchemy].Cap, Is.EqualTo(900));
+                Assert.That(restored.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Locked));
+                Assert.That(restored.Skills[UOSkillName.Magery].Value, Is.EqualTo(725));
+                Assert.That(restored.Skills[UOSkillName.Magery].Base, Is.EqualTo(700));
+                Assert.That(restored.Skills[UOSkillName.Magery].Cap, Is.EqualTo(1000));
+                Assert.That(restored.Skills[UOSkillName.Magery].Lock, Is.EqualTo(UOSkillLock.Down));
             }
         );
     }

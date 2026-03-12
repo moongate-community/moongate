@@ -35,7 +35,7 @@ public class PlayerStatusHandler : BasePacketListener
             return true;
         }
 
-        if (getPlayerStatusPacket.StatusType != GetPlayerStatusType.BasicStatus)
+        if (getPlayerStatusPacket.StatusType is not (GetPlayerStatusType.BasicStatus or GetPlayerStatusType.RequestSkills))
         {
             return true;
         }
@@ -47,7 +47,17 @@ public class PlayerStatusHandler : BasePacketListener
             return true;
         }
 
-        Enqueue(session, new PlayerStatusPacket(target));
+        switch (getPlayerStatusPacket.StatusType)
+        {
+            case GetPlayerStatusType.BasicStatus:
+                Enqueue(session, new PlayerStatusPacket(target));
+
+                break;
+            case GetPlayerStatusType.RequestSkills:
+                Enqueue(session, new SkillListPacket(target));
+
+                break;
+        }
 
         return true;
     }

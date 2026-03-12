@@ -7,6 +7,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
@@ -94,6 +95,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
         };
 
         mobile.RecalculateMaxStats();
+        InitializeTemplateSkills(mobile, template);
 
         if (template.MaxHits > 0)
         {
@@ -157,6 +159,12 @@ public sealed class MobileFactoryService : IMobileFactoryService
         };
 
         mobile.RecalculateMaxStats();
+        mobile.InitializeSkills();
+
+        foreach (var skill in packet.Skills)
+        {
+            mobile.SetSkill(skill.Skill, skill.Value * 10);
+        }
 
         return mobile;
     }
@@ -230,5 +238,43 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         mobile.SetCustomString(SellProfileIdKey, template.SellProfileId);
+    }
+
+    private static void InitializeTemplateSkills(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        mobile.InitializeSkills();
+
+        foreach (var skill in template.Skills)
+        {
+            if (!TryResolveSkillName(skill.Key, out var skillName))
+            {
+                continue;
+            }
+
+            mobile.SetSkill(skillName, skill.Value);
+        }
+    }
+
+    private static bool TryResolveSkillName(string skillName, out UOSkillName resolved)
+    {
+        if (ProfessionInfo.TryGetSkillName(skillName, out resolved))
+        {
+            return true;
+        }
+
+        foreach (var skillInfo in Moongate.UO.Data.Skills.SkillInfo.Table)
+        {
+            if (string.Equals(skillInfo.Name, skillName, StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(skillInfo.ProfessionSkillName, skillName, StringComparison.OrdinalIgnoreCase))
+            {
+                resolved = (UOSkillName)skillInfo.SkillID;
+
+                return true;
+            }
+        }
+
+        resolved = default;
+
+        return false;
     }
 }

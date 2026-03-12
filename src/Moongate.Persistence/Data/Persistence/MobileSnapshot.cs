@@ -90,6 +90,8 @@ public sealed class MobileSnapshot
 
     public MobileModifiersSnapshot? RuntimeModifiers { get; set; }
 
+    public MobileSkillEntrySnapshot[] Skills { get; set; } = [];
+
     public int BaseLuck { get; set; }
 
     public int? BaseBodyId { get; set; }

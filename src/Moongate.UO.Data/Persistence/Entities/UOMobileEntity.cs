@@ -4,6 +4,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Professions;
 using Moongate.UO.Data.Races.Base;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 using UoMap = Moongate.UO.Data.Maps.Map;
 
@@ -15,6 +16,7 @@ namespace Moongate.UO.Data.Persistence.Entities;
 public class UOMobileEntity : IMobileEntity
 {
     private const int GoldItemId = 0x0EED;
+    private const int DefaultSkillCap = 1000;
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
     private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
     private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
@@ -157,6 +159,8 @@ public class UOMobileEntity : IMobileEntity
     public int SkillPoints { get; set; }
 
     public int StatPoints { get; set; }
+
+    public Dictionary<UOSkillName, SkillEntry> Skills { get; set; } = [];
 
     public int FireResistance
     {
@@ -487,6 +491,24 @@ public class UOMobileEntity : IMobileEntity
     public void OverrideBody(Body body)
         => SetBody(body);
 
+    public SkillEntry? GetSkill(UOSkillName skillName)
+        => Skills.GetValueOrDefault(skillName);
+
+    public void InitializeSkills()
+    {
+        Skills.Clear();
+
+        foreach (var skillInfo in SkillInfo.Table)
+        {
+            if (!Enum.IsDefined(typeof(UOSkillName), skillInfo.SkillID))
+            {
+                continue;
+            }
+
+            Skills[(UOSkillName)skillInfo.SkillID] = CreateSkillEntry(skillInfo);
+        }
+    }
+
     /// <summary>
     /// Recomputes max stat caps from base stats and clamps current values.
     /// </summary>
@@ -550,6 +572,27 @@ public class UOMobileEntity : IMobileEntity
 
     public void SetBody(Body body)
         => BaseBody = body;
+
+    public SkillEntry SetSkill(
+        UOSkillName skillName,
+        int value,
+        int? baseValue = null,
+        int cap = DefaultSkillCap,
+        UOSkillLock lockState = UOSkillLock.Up
+    )
+    {
+        var skillInfo = ResolveSkillInfo(skillName);
+        var entry = Skills.TryGetValue(skillName, out var existing) ? existing : CreateSkillEntry(skillInfo);
+
+        entry.Skill = skillInfo;
+        entry.Value = value;
+        entry.Base = baseValue ?? value;
+        entry.Cap = cap;
+        entry.Lock = lockState;
+        Skills[skillName] = entry;
+
+        return entry;
+    }
 
     /// <summary>
     /// Sets a boolean custom property.
@@ -801,6 +844,43 @@ public class UOMobileEntity : IMobileEntity
         }
 
         return total;
+    }
+
+    private static SkillEntry CreateSkillEntry(SkillInfo skillInfo)
+        => new()
+        {
+            Skill = skillInfo,
+            Value = 0,
+            Base = 0,
+            Cap = DefaultSkillCap,
+            Lock = UOSkillLock.Up
+        };
+
+    private static SkillInfo ResolveSkillInfo(UOSkillName skillName)
+    {
+        foreach (var skillInfo in SkillInfo.Table)
+        {
+            if (skillInfo.SkillID == (int)skillName)
+            {
+                return skillInfo;
+            }
+        }
+
+        return new(
+            (int)skillName,
+            skillName.ToString(),
+            0,
+            0,
+            0,
+            string.Empty,
+            0,
+            0,
+            0,
+            1,
+            skillName.ToString(),
+            Stat.Strength,
+            Stat.Strength
+        );
     }
 
     private static bool IsZero(MobileModifiers modifiers)

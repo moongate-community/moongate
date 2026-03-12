@@ -1,5 +1,6 @@
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.UO.Data.Persistence.Entities;
@@ -210,6 +211,60 @@ public class UOMobileEntityTests
                 Assert.That(equipped.Hue, Is.EqualTo(0x0456));
                 Assert.That(item.EquippedMobileId, Is.EqualTo(mobile.Id));
                 Assert.That(item.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+            }
+        );
+    }
+
+    [Test]
+    public void Skills_ShouldStoreEntriesBySkillName()
+    {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence)
+        ];
+        var mobile = new UOMobileEntity();
+        var entry = new SkillEntry
+        {
+            Skill = SkillInfo.Table[0],
+            Value = 500,
+            Base = 500,
+            Cap = 1000,
+            Lock = UOSkillLock.Locked
+        };
+
+        mobile.Skills[UOSkillName.Alchemy] = entry;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Skills, Has.Count.EqualTo(1));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(500));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Locked));
+            }
+        );
+    }
+
+    [Test]
+    public void InitializeSkills_ShouldPopulateFullSkillTableWithDefaults()
+    {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
+            new(1, "Anatomy", 100, 0, 0, "Biologist", 0, 0, 0, 1, "Anatomy", Stat.Strength, Stat.Intelligence)
+        ];
+        var mobile = new UOMobileEntity();
+
+        mobile.InitializeSkills();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Skills, Has.Count.EqualTo(2));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(0));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Base, Is.EqualTo(0));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Cap, Is.EqualTo(1000));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.Skills[UOSkillName.Anatomy].Value, Is.EqualTo(0));
             }
         );
     }

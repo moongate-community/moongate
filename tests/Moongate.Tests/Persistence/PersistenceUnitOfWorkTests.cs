@@ -3,6 +3,7 @@ using Moongate.Persistence.Services.Persistence;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Persistence;
@@ -652,6 +653,11 @@ public class PersistenceUnitOfWorkTests
     [Test]
     public async Task SaveSnapshotAsync_ShouldPersistAllEntities()
     {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
+            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence)
+        ];
         using var tempDirectory = new TempDirectory();
         var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
         await unitOfWork.InitializeAsync();
@@ -739,6 +745,11 @@ public class PersistenceUnitOfWorkTests
                 Location = new(10, 20, 0)
             }
         );
+        var persistedMobile = await unitOfWork.Mobiles.GetByIdAsync((Serial)0x00000010);
+        Assert.That(persistedMobile, Is.Not.Null);
+        persistedMobile!.SetSkill(UOSkillName.Alchemy, 500, cap: 900, lockState: UOSkillLock.Locked);
+        persistedMobile.SetSkill(UOSkillName.Magery, 725, baseValue: 700, cap: 1000, lockState: UOSkillLock.Down);
+        await unitOfWork.Mobiles.UpsertAsync(persistedMobile);
 
         await unitOfWork.Items.UpsertAsync(
             new()
@@ -868,6 +879,12 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.Notoriety, Is.EqualTo(Notoriety.Innocent));
                 Assert.That(loadedMobile.CreatedUtc, Is.EqualTo(new DateTime(2026, 2, 19, 12, 0, 0, DateTimeKind.Utc)));
                 Assert.That(loadedMobile.LastLoginUtc, Is.EqualTo(new DateTime(2026, 2, 19, 13, 0, 0, DateTimeKind.Utc)));
+                Assert.That(loadedMobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(500));
+                Assert.That(loadedMobile.Skills[UOSkillName.Alchemy].Cap, Is.EqualTo(900));
+                Assert.That(loadedMobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Locked));
+                Assert.That(loadedMobile.Skills[UOSkillName.Magery].Value, Is.EqualTo(725));
+                Assert.That(loadedMobile.Skills[UOSkillName.Magery].Base, Is.EqualTo(700));
+                Assert.That(loadedMobile.Skills[UOSkillName.Magery].Lock, Is.EqualTo(UOSkillLock.Down));
                 Assert.That(loadedItem!.ParentContainerId, Is.EqualTo((Serial)0x40000020));
                 Assert.That(loadedItem.ContainerPosition.X, Is.EqualTo(42));
                 Assert.That(loadedItem.ContainerPosition.Y, Is.EqualTo(84));

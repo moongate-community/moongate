@@ -1,12 +1,26 @@
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Network.Packets;
 
 public class CharacterCreationPacketTests
 {
+    [SetUp]
+    public void SetUp()
+    {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
+            new(16, "Evaluate Intelligence", 0, 0, 100, "Scholar", 0, 0, 0, 1, "EvaluateIntelligence", Stat.Intelligence, Stat.Intelligence),
+            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence),
+            new(46, "Meditation", 0, 0, 100, "Seer", 0, 0, 0, 1, "Meditation", Stat.Intelligence, Stat.Intelligence),
+            new(43, "Wrestling", 100, 0, 0, "Wrestler", 0, 0, 0, 1, "Wrestling", Stat.Strength, Stat.Dexterity)
+        ];
+    }
+
     [Test]
     public void ToEntity_ShouldMapPacketIntoMobileEntity()
     {
@@ -50,6 +64,13 @@ public class CharacterCreationPacketTests
                 Assert.That(mobile.MaxStamina, Is.EqualTo(50));
                 Assert.That(mobile.Mana, Is.EqualTo(40));
                 Assert.That(mobile.MaxMana, Is.EqualTo(40));
+                Assert.That(mobile.Skills, Has.Count.EqualTo(SkillInfo.Table.Length));
+                Assert.That(mobile.Skills[UOSkillName.Magery].Value, Is.EqualTo(500));
+                Assert.That(mobile.Skills[UOSkillName.Meditation].Value, Is.EqualTo(500));
+                Assert.That(mobile.Skills[UOSkillName.EvalInt].Value, Is.EqualTo(500));
+                Assert.That(mobile.Skills[UOSkillName.Wrestling].Value, Is.EqualTo(500));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(0));
+                Assert.That(mobile.Skills[UOSkillName.Magery].Lock, Is.EqualTo(UOSkillLock.Up));
             }
         );
     }

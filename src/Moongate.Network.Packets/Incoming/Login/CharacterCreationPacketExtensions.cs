@@ -65,6 +65,12 @@ public static class CharacterCreationPacketExtensions
         };
 
         mobile.RecalculateMaxStats();
+        mobile.InitializeSkills();
+
+        foreach (var skill in packet.Skills)
+        {
+            mobile.SetSkill(skill.Skill, skill.Value * 10);
+        }
 
         return mobile;
     }

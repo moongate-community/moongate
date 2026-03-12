@@ -2,6 +2,7 @@ using Moongate.Persistence.Data.Persistence;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Persistence.Data.Internal;
@@ -384,6 +385,25 @@ internal static class SnapshotMapper
             }
         }
 
+        if (snapshot.Skills is { Length: > 0 })
+        {
+            foreach (var skill in snapshot.Skills)
+            {
+                if (!Enum.IsDefined(typeof(UOSkillName), skill.SkillId))
+                {
+                    continue;
+                }
+
+                entity.SetSkill(
+                    (UOSkillName)skill.SkillId,
+                    (int)skill.Value,
+                    (int)skill.Base,
+                    skill.Cap,
+                    (UOSkillLock)skill.Lock
+                );
+            }
+        }
+
         return entity;
     }
 
@@ -416,6 +436,20 @@ internal static class SnapshotMapper
                 StringValue = pair.Value.StringValue
             };
         }
+
+        var skills = entity.Skills
+                           .OrderBy(static pair => (int)pair.Key)
+                           .Select(
+                                static pair => new MobileSkillEntrySnapshot
+                                {
+                                    SkillId = (int)pair.Key,
+                                    Value = pair.Value.Value,
+                                    Base = pair.Value.Base,
+                                    Cap = pair.Value.Cap,
+                                    Lock = (byte)pair.Value.Lock
+                                }
+                            )
+                           .ToArray();
 
         return new()
         {
@@ -526,6 +560,7 @@ internal static class SnapshotMapper
                                        Luck = entity.RuntimeModifiers.Luck,
                                        SpellChanneling = entity.RuntimeModifiers.SpellChanneling
                                    },
+            Skills = skills,
             BaseLuck = entity.BaseLuck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,
             BackpackId = (uint)entity.BackpackId,
