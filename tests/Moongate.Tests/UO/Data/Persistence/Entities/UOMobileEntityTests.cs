@@ -7,6 +7,116 @@ namespace Moongate.Tests.UO.Data.Persistence.Entities;
 public class UOMobileEntityTests
 {
     [Test]
+    public void TypedMobileState_ShouldBeInitializedByDefault()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.BaseStats, Is.Not.Null);
+                Assert.That(mobile.BaseResistances, Is.Not.Null);
+                Assert.That(mobile.Resources, Is.Not.Null);
+                Assert.That(mobile.EquipmentModifiers, Is.Null);
+                Assert.That(mobile.RuntimeModifiers, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public void LegacyScalarProperties_ShouldReadAndWriteTypedBaseState()
+    {
+        var mobile = new UOMobileEntity();
+
+        mobile.Strength = 60;
+        mobile.Dexterity = 50;
+        mobile.Intelligence = 40;
+        mobile.Hits = 55;
+        mobile.MaxHits = 70;
+        mobile.Mana = 35;
+        mobile.MaxMana = 45;
+        mobile.Stamina = 25;
+        mobile.MaxStamina = 65;
+        mobile.FireResistance = 10;
+        mobile.ColdResistance = 11;
+        mobile.PoisonResistance = 12;
+        mobile.EnergyResistance = 13;
+        mobile.Luck = 100;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.BaseStats.Strength, Is.EqualTo(60));
+                Assert.That(mobile.BaseStats.Dexterity, Is.EqualTo(50));
+                Assert.That(mobile.BaseStats.Intelligence, Is.EqualTo(40));
+                Assert.That(mobile.Resources.Hits, Is.EqualTo(55));
+                Assert.That(mobile.Resources.MaxHits, Is.EqualTo(70));
+                Assert.That(mobile.Resources.Mana, Is.EqualTo(35));
+                Assert.That(mobile.Resources.MaxMana, Is.EqualTo(45));
+                Assert.That(mobile.Resources.Stamina, Is.EqualTo(25));
+                Assert.That(mobile.Resources.MaxStamina, Is.EqualTo(65));
+                Assert.That(mobile.BaseResistances.Fire, Is.EqualTo(10));
+                Assert.That(mobile.BaseResistances.Cold, Is.EqualTo(11));
+                Assert.That(mobile.BaseResistances.Poison, Is.EqualTo(12));
+                Assert.That(mobile.BaseResistances.Energy, Is.EqualTo(13));
+                Assert.That(mobile.BaseLuck, Is.EqualTo(100));
+            }
+        );
+    }
+
+    [Test]
+    public void EffectiveProperties_ShouldCombineBaseEquipmentAndRuntimeModifiers()
+    {
+        var mobile = new UOMobileEntity
+        {
+            BaseStats = new()
+            {
+                Strength = 60,
+                Dexterity = 50,
+                Intelligence = 40
+            },
+            BaseResistances = new()
+            {
+                Physical = 5,
+                Fire = 10,
+                Cold = 15,
+                Poison = 20,
+                Energy = 25
+            },
+            BaseLuck = 100,
+            EquipmentModifiers = new()
+            {
+                StrengthBonus = 5,
+                FireResist = 3,
+                PhysicalResist = 2,
+                Luck = 20
+            },
+            RuntimeModifiers = new()
+            {
+                StrengthBonus = -2,
+                FireResist = 4,
+                PhysicalResist = 1,
+                Luck = 30
+            }
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.EffectiveStrength, Is.EqualTo(63));
+                Assert.That(mobile.EffectiveDexterity, Is.EqualTo(50));
+                Assert.That(mobile.EffectiveIntelligence, Is.EqualTo(40));
+                Assert.That(mobile.EffectivePhysicalResistance, Is.EqualTo(8));
+                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(17));
+                Assert.That(mobile.EffectiveColdResistance, Is.EqualTo(15));
+                Assert.That(mobile.EffectivePoisonResistance, Is.EqualTo(20));
+                Assert.That(mobile.EffectiveEnergyResistance, Is.EqualTo(25));
+                Assert.That(mobile.EffectiveLuck, Is.EqualTo(150));
+            }
+        );
+    }
+
+    [Test]
     public void AddEquippedItem_WithEntity_ShouldTrackSlotAndUpdateItemOwnership()
     {
         var mobile = new UOMobileEntity
@@ -359,6 +469,77 @@ public class UOMobileEntityTests
                 Assert.That(mobile.TryGetEquippedReference(ItemLayerType.Pants, out _), Is.False);
                 Assert.That(item.EquippedMobileId, Is.EqualTo(Serial.Zero));
                 Assert.That(item.EquippedLayer, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public void GetEquippedItemsRuntime_ShouldReturnEquippedRuntimeItems()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001021
+        };
+        var shirt = new UOItemEntity
+        {
+            Id = (Serial)0x40002021,
+            ItemId = 0x1517
+        };
+        var shoes = new UOItemEntity
+        {
+            Id = (Serial)0x40002022,
+            ItemId = 0x170F
+        };
+
+        mobile.AddEquippedItem(ItemLayerType.Shirt, shirt);
+        mobile.AddEquippedItem(ItemLayerType.Shoes, shoes);
+
+        Assert.That(mobile.GetEquippedItemsRuntime(), Has.Count.EqualTo(2));
+    }
+
+    [Test]
+    public void ApplyAndRemoveRuntimeModifier_ShouldUpdateEffectiveValues()
+    {
+        var mobile = new UOMobileEntity
+        {
+            BaseStats = new()
+            {
+                Strength = 60
+            },
+            BaseResistances = new()
+            {
+                Fire = 10
+            },
+            BaseLuck = 100
+        };
+        var delta = new MobileModifierDelta
+        {
+            StrengthBonus = 5,
+            FireResist = 3,
+            Luck = 20
+        };
+
+        mobile.ApplyRuntimeModifier(delta);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.RuntimeModifiers, Is.Not.Null);
+                Assert.That(mobile.EffectiveStrength, Is.EqualTo(65));
+                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(13));
+                Assert.That(mobile.EffectiveLuck, Is.EqualTo(120));
+            }
+        );
+
+        mobile.RemoveRuntimeModifier(delta);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.RuntimeModifiers, Is.Null);
+                Assert.That(mobile.EffectiveStrength, Is.EqualTo(60));
+                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(10));
+                Assert.That(mobile.EffectiveLuck, Is.EqualTo(100));
             }
         );
     }

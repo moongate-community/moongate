@@ -684,22 +684,43 @@ public class PersistenceUnitOfWorkTests
                 HairHue = 0x0304,
                 FacialHairStyle = 0x0000,
                 FacialHairHue = 0x0000,
-                Strength = 60,
-                Dexterity = 50,
-                Intelligence = 40,
-                Hits = 60,
-                Mana = 40,
-                Stamina = 50,
-                MaxHits = 60,
-                MaxMana = 40,
-                MaxStamina = 50,
+                BaseStats = new()
+                {
+                    Strength = 60,
+                    Dexterity = 50,
+                    Intelligence = 40
+                },
+                Resources = new()
+                {
+                    Hits = 60,
+                    Mana = 40,
+                    Stamina = 50,
+                    MaxHits = 60,
+                    MaxMana = 40,
+                    MaxStamina = 50
+                },
                 SkillPoints = 8,
                 StatPoints = 6,
-                FireResistance = 15,
-                ColdResistance = 11,
-                PoisonResistance = 9,
-                EnergyResistance = 13,
-                Luck = 42,
+                BaseResistances = new()
+                {
+                    Fire = 15,
+                    Cold = 11,
+                    Poison = 9,
+                    Energy = 13
+                },
+                BaseLuck = 42,
+                EquipmentModifiers = new()
+                {
+                    StrengthBonus = 5,
+                    FireResist = 2,
+                    Luck = 10
+                },
+                RuntimeModifiers = new()
+                {
+                    StrengthBonus = -1,
+                    FireResist = 4,
+                    Luck = 20
+                },
                 BackpackId = (Serial)0x40000020,
                 EquippedItemIds = new()
                 {
@@ -799,9 +820,18 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.SkinHue, Is.EqualTo(0x0455));
                 Assert.That(loadedMobile.HairStyle, Is.EqualTo(0x0203));
                 Assert.That(loadedMobile.HairHue, Is.EqualTo(0x0304));
+                Assert.That(loadedMobile.BaseStats.Strength, Is.EqualTo(60));
+                Assert.That(loadedMobile.BaseStats.Dexterity, Is.EqualTo(50));
+                Assert.That(loadedMobile.BaseStats.Intelligence, Is.EqualTo(40));
                 Assert.That(loadedMobile.Strength, Is.EqualTo(60));
                 Assert.That(loadedMobile.Dexterity, Is.EqualTo(50));
                 Assert.That(loadedMobile.Intelligence, Is.EqualTo(40));
+                Assert.That(loadedMobile.Resources.Hits, Is.EqualTo(60));
+                Assert.That(loadedMobile.Resources.Mana, Is.EqualTo(40));
+                Assert.That(loadedMobile.Resources.Stamina, Is.EqualTo(50));
+                Assert.That(loadedMobile.Resources.MaxHits, Is.EqualTo(60));
+                Assert.That(loadedMobile.Resources.MaxMana, Is.EqualTo(40));
+                Assert.That(loadedMobile.Resources.MaxStamina, Is.EqualTo(50));
                 Assert.That(loadedMobile.Hits, Is.EqualTo(60));
                 Assert.That(loadedMobile.Mana, Is.EqualTo(40));
                 Assert.That(loadedMobile.Stamina, Is.EqualTo(50));
@@ -810,11 +840,27 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.MaxStamina, Is.EqualTo(50));
                 Assert.That(loadedMobile.SkillPoints, Is.EqualTo(8));
                 Assert.That(loadedMobile.StatPoints, Is.EqualTo(6));
+                Assert.That(loadedMobile.BaseResistances.Fire, Is.EqualTo(15));
+                Assert.That(loadedMobile.BaseResistances.Cold, Is.EqualTo(11));
+                Assert.That(loadedMobile.BaseResistances.Poison, Is.EqualTo(9));
+                Assert.That(loadedMobile.BaseResistances.Energy, Is.EqualTo(13));
                 Assert.That(loadedMobile.FireResistance, Is.EqualTo(15));
                 Assert.That(loadedMobile.ColdResistance, Is.EqualTo(11));
                 Assert.That(loadedMobile.PoisonResistance, Is.EqualTo(9));
                 Assert.That(loadedMobile.EnergyResistance, Is.EqualTo(13));
+                Assert.That(loadedMobile.BaseLuck, Is.EqualTo(42));
                 Assert.That(loadedMobile.Luck, Is.EqualTo(42));
+                Assert.That(loadedMobile.EquipmentModifiers, Is.Not.Null);
+                Assert.That(loadedMobile.EquipmentModifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(loadedMobile.EquipmentModifiers.FireResist, Is.EqualTo(2));
+                Assert.That(loadedMobile.EquipmentModifiers.Luck, Is.EqualTo(10));
+                Assert.That(loadedMobile.RuntimeModifiers, Is.Not.Null);
+                Assert.That(loadedMobile.RuntimeModifiers!.StrengthBonus, Is.EqualTo(-1));
+                Assert.That(loadedMobile.RuntimeModifiers.FireResist, Is.EqualTo(4));
+                Assert.That(loadedMobile.RuntimeModifiers.Luck, Is.EqualTo(20));
+                Assert.That(loadedMobile.EffectiveStrength, Is.EqualTo(64));
+                Assert.That(loadedMobile.EffectiveFireResistance, Is.EqualTo(21));
+                Assert.That(loadedMobile.EffectiveLuck, Is.EqualTo(72));
                 Assert.That(loadedMobile.BackpackId, Is.EqualTo((Serial)0x40000020));
                 Assert.That(loadedMobile.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo((Serial)0x40000021));
                 Assert.That(loadedMobile.EquippedItemIds[ItemLayerType.Pants], Is.EqualTo((Serial)0x40000022));

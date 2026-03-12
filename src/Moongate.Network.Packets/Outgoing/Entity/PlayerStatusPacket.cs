@@ -61,9 +61,9 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
         if (Version >= 1)
         {
             writer.Write(Mobile.Gender == GenderType.Female);
-            writer.Write((ushort)Mobile.Strength);
-            writer.Write((ushort)Mobile.Dexterity);
-            writer.Write((ushort)Mobile.Intelligence);
+            writer.Write((ushort)Mobile.EffectiveStrength);
+            writer.Write((ushort)Mobile.EffectiveDexterity);
+            writer.Write((ushort)Mobile.EffectiveIntelligence);
             writer.Write((ushort)Mobile.Stamina);
             writer.Write((ushort)Mobile.MaxStamina);
             writer.Write((ushort)Mobile.Mana);

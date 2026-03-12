@@ -90,37 +90,128 @@ public class UOMobileEntity : IMobileEntity
         set => SetBody(value);
     }
 
-    public int Strength { get; set; }
+    public MobileStats BaseStats { get; set; } = new();
 
-    public int Dexterity { get; set; }
+    public MobileResistances BaseResistances { get; set; } = new();
 
-    public int Intelligence { get; set; }
+    public MobileResources Resources { get; set; } = new();
 
-    public int Hits { get; set; }
+    public MobileModifiers? EquipmentModifiers { get; set; }
 
-    public int Mana { get; set; }
+    public MobileModifiers? RuntimeModifiers { get; set; }
 
-    public int Stamina { get; set; }
+    public int Strength
+    {
+        get => BaseStats.Strength;
+        set => BaseStats.Strength = value;
+    }
 
-    public int MaxHits { get; set; }
+    public int Dexterity
+    {
+        get => BaseStats.Dexterity;
+        set => BaseStats.Dexterity = value;
+    }
 
-    public int MaxMana { get; set; }
+    public int Intelligence
+    {
+        get => BaseStats.Intelligence;
+        set => BaseStats.Intelligence = value;
+    }
 
-    public int MaxStamina { get; set; }
+    public int Hits
+    {
+        get => Resources.Hits;
+        set => Resources.Hits = value;
+    }
+
+    public int Mana
+    {
+        get => Resources.Mana;
+        set => Resources.Mana = value;
+    }
+
+    public int Stamina
+    {
+        get => Resources.Stamina;
+        set => Resources.Stamina = value;
+    }
+
+    public int MaxHits
+    {
+        get => Resources.MaxHits;
+        set => Resources.MaxHits = value;
+    }
+
+    public int MaxMana
+    {
+        get => Resources.MaxMana;
+        set => Resources.MaxMana = value;
+    }
+
+    public int MaxStamina
+    {
+        get => Resources.MaxStamina;
+        set => Resources.MaxStamina = value;
+    }
 
     public int SkillPoints { get; set; }
 
     public int StatPoints { get; set; }
 
-    public int FireResistance { get; set; }
+    public int FireResistance
+    {
+        get => BaseResistances.Fire;
+        set => BaseResistances.Fire = value;
+    }
 
-    public int ColdResistance { get; set; }
+    public int ColdResistance
+    {
+        get => BaseResistances.Cold;
+        set => BaseResistances.Cold = value;
+    }
 
-    public int PoisonResistance { get; set; }
+    public int PoisonResistance
+    {
+        get => BaseResistances.Poison;
+        set => BaseResistances.Poison = value;
+    }
 
-    public int EnergyResistance { get; set; }
+    public int EnergyResistance
+    {
+        get => BaseResistances.Energy;
+        set => BaseResistances.Energy = value;
+    }
 
-    public int Luck { get; set; }
+    public int BaseLuck { get; set; }
+
+    public int Luck
+    {
+        get => BaseLuck;
+        set => BaseLuck = value;
+    }
+
+    public int EffectiveStrength => Strength + GetModifierValue(static modifier => modifier.StrengthBonus);
+
+    public int EffectiveDexterity => Dexterity + GetModifierValue(static modifier => modifier.DexterityBonus);
+
+    public int EffectiveIntelligence => Intelligence + GetModifierValue(static modifier => modifier.IntelligenceBonus);
+
+    public int EffectivePhysicalResistance
+        => BaseResistances.Physical + GetModifierValue(static modifier => modifier.PhysicalResist);
+
+    public int EffectiveFireResistance
+        => FireResistance + GetModifierValue(static modifier => modifier.FireResist);
+
+    public int EffectiveColdResistance
+        => ColdResistance + GetModifierValue(static modifier => modifier.ColdResist);
+
+    public int EffectivePoisonResistance
+        => PoisonResistance + GetModifierValue(static modifier => modifier.PoisonResist);
+
+    public int EffectiveEnergyResistance
+        => EnergyResistance + GetModifierValue(static modifier => modifier.EnergyResist);
+
+    public int EffectiveLuck => BaseLuck + GetModifierValue(static modifier => modifier.Luck);
 
     /// <summary>
     /// Gets or sets the serial of the backpack item.
@@ -137,6 +228,9 @@ public class UOMobileEntity : IMobileEntity
     /// This cache is not used for persistence.
     /// </summary>
     public IReadOnlyDictionary<ItemLayerType, ItemReference> EquippedItemReferences => _equippedItemReferences;
+
+    public IReadOnlyCollection<UOItemEntity> GetEquippedItemsRuntime()
+        => _equippedItemsRuntime.Values;
 
     /// <summary>
     /// Gets runtime total gold in backpack and bank box.
@@ -253,6 +347,33 @@ public class UOMobileEntity : IMobileEntity
         var fallbackRace = Race ?? (Race.Races.Length > 0 ? Race.Races[0] : null);
 
         return fallbackRace is null ? 0x00 : (Body)fallbackRace.Body(this);
+    }
+
+    public void ApplyRuntimeModifier(MobileModifierDelta delta)
+    {
+        ArgumentNullException.ThrowIfNull(delta);
+
+        RuntimeModifiers ??= new();
+
+        RuntimeModifiers.StrengthBonus += delta.StrengthBonus;
+        RuntimeModifiers.DexterityBonus += delta.DexterityBonus;
+        RuntimeModifiers.IntelligenceBonus += delta.IntelligenceBonus;
+        RuntimeModifiers.PhysicalResist += delta.PhysicalResist;
+        RuntimeModifiers.FireResist += delta.FireResist;
+        RuntimeModifiers.ColdResist += delta.ColdResist;
+        RuntimeModifiers.PoisonResist += delta.PoisonResist;
+        RuntimeModifiers.EnergyResist += delta.EnergyResist;
+        RuntimeModifiers.HitChanceIncrease += delta.HitChanceIncrease;
+        RuntimeModifiers.DefenseChanceIncrease += delta.DefenseChanceIncrease;
+        RuntimeModifiers.DamageIncrease += delta.DamageIncrease;
+        RuntimeModifiers.SwingSpeedIncrease += delta.SwingSpeedIncrease;
+        RuntimeModifiers.SpellDamageIncrease += delta.SpellDamageIncrease;
+        RuntimeModifiers.FasterCasting += delta.FasterCasting;
+        RuntimeModifiers.FasterCastRecovery += delta.FasterCastRecovery;
+        RuntimeModifiers.LowerManaCost += delta.LowerManaCost;
+        RuntimeModifiers.LowerReagentCost += delta.LowerReagentCost;
+        RuntimeModifiers.Luck += delta.Luck;
+        RuntimeModifiers.SpellChanneling += delta.SpellChanneling;
     }
 
     /// <summary>
@@ -390,6 +511,41 @@ public class UOMobileEntity : IMobileEntity
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
 
         return _customProperties.Remove(key);
+    }
+
+    public void RemoveRuntimeModifier(MobileModifierDelta delta)
+    {
+        ArgumentNullException.ThrowIfNull(delta);
+
+        if (RuntimeModifiers is null)
+        {
+            return;
+        }
+
+        RuntimeModifiers.StrengthBonus -= delta.StrengthBonus;
+        RuntimeModifiers.DexterityBonus -= delta.DexterityBonus;
+        RuntimeModifiers.IntelligenceBonus -= delta.IntelligenceBonus;
+        RuntimeModifiers.PhysicalResist -= delta.PhysicalResist;
+        RuntimeModifiers.FireResist -= delta.FireResist;
+        RuntimeModifiers.ColdResist -= delta.ColdResist;
+        RuntimeModifiers.PoisonResist -= delta.PoisonResist;
+        RuntimeModifiers.EnergyResist -= delta.EnergyResist;
+        RuntimeModifiers.HitChanceIncrease -= delta.HitChanceIncrease;
+        RuntimeModifiers.DefenseChanceIncrease -= delta.DefenseChanceIncrease;
+        RuntimeModifiers.DamageIncrease -= delta.DamageIncrease;
+        RuntimeModifiers.SwingSpeedIncrease -= delta.SwingSpeedIncrease;
+        RuntimeModifiers.SpellDamageIncrease -= delta.SpellDamageIncrease;
+        RuntimeModifiers.FasterCasting -= delta.FasterCasting;
+        RuntimeModifiers.FasterCastRecovery -= delta.FasterCastRecovery;
+        RuntimeModifiers.LowerManaCost -= delta.LowerManaCost;
+        RuntimeModifiers.LowerReagentCost -= delta.LowerReagentCost;
+        RuntimeModifiers.Luck -= delta.Luck;
+        RuntimeModifiers.SpellChanneling -= delta.SpellChanneling;
+
+        if (IsZero(RuntimeModifiers))
+        {
+            RuntimeModifiers = null;
+        }
     }
 
     public void SetBody(Body body)
@@ -629,6 +785,44 @@ public class UOMobileEntity : IMobileEntity
 
     private bool TryGetBankBoxRuntime(out UOItemEntity bankBox)
         => _equippedItemsRuntime.TryGetValue(ItemLayerType.Bank, out bankBox);
+
+    private int GetModifierValue(Func<MobileModifiers, int> selector)
+    {
+        var total = 0;
+
+        if (EquipmentModifiers is not null)
+        {
+            total += selector(EquipmentModifiers);
+        }
+
+        if (RuntimeModifiers is not null)
+        {
+            total += selector(RuntimeModifiers);
+        }
+
+        return total;
+    }
+
+    private static bool IsZero(MobileModifiers modifiers)
+        => modifiers.StrengthBonus == 0 &&
+           modifiers.DexterityBonus == 0 &&
+           modifiers.IntelligenceBonus == 0 &&
+           modifiers.PhysicalResist == 0 &&
+           modifiers.FireResist == 0 &&
+           modifiers.ColdResist == 0 &&
+           modifiers.PoisonResist == 0 &&
+           modifiers.EnergyResist == 0 &&
+           modifiers.HitChanceIncrease == 0 &&
+           modifiers.DefenseChanceIncrease == 0 &&
+           modifiers.DamageIncrease == 0 &&
+           modifiers.SwingSpeedIncrease == 0 &&
+           modifiers.SpellDamageIncrease == 0 &&
+           modifiers.FasterCasting == 0 &&
+           modifiers.FasterCastRecovery == 0 &&
+           modifiers.LowerManaCost == 0 &&
+           modifiers.LowerReagentCost == 0 &&
+           modifiers.Luck == 0 &&
+           modifiers.SpellChanneling == 0;
 
     private static long SumGoldRecursive(UOItemEntity container, HashSet<Serial> visited)
     {

@@ -76,12 +76,18 @@ public sealed class MobileFactoryService : IMobileFactoryService
             SkinHue = (short)template.SkinHue.Resolve(),
             HairStyle = (short)template.HairStyle,
             HairHue = (short)template.HairHue.Resolve(),
-            Strength = template.Strength,
-            Dexterity = template.Dexterity,
-            Intelligence = template.Intelligence,
-            Hits = template.Hits,
-            Mana = template.Mana,
-            Stamina = template.Stamina,
+            BaseStats = new()
+            {
+                Strength = template.Strength,
+                Dexterity = template.Dexterity,
+                Intelligence = template.Intelligence
+            },
+            Resources = new()
+            {
+                Hits = template.Hits,
+                Mana = template.Mana,
+                Stamina = template.Stamina
+            },
             Notoriety = template.Notoriety,
             CreatedUtc = now,
             LastLoginUtc = now
@@ -128,12 +134,18 @@ public sealed class MobileFactoryService : IMobileFactoryService
             HairHue = packet.Hair.Hue,
             FacialHairStyle = packet.FacialHair.Style,
             FacialHairHue = packet.FacialHair.Hue,
-            Strength = packet.Strength,
-            Dexterity = packet.Dexterity,
-            Intelligence = packet.Intelligence,
-            Hits = packet.Strength,
-            Mana = packet.Intelligence,
-            Stamina = packet.Dexterity,
+            BaseStats = new()
+            {
+                Strength = packet.Strength,
+                Dexterity = packet.Dexterity,
+                Intelligence = packet.Intelligence
+            },
+            Resources = new()
+            {
+                Hits = packet.Strength,
+                Mana = packet.Intelligence,
+                Stamina = packet.Dexterity
+            },
             IsWarMode = false,
             IsHidden = false,
             IsFrozen = false,

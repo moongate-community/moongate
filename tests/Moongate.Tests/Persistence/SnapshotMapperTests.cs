@@ -8,6 +8,91 @@ namespace Moongate.Tests.Persistence;
 public class SnapshotMapperTests
 {
     [Test]
+    public void ToMobileSnapshot_ShouldPreserveTypedBaseStateAndModifiers()
+    {
+        var entity = new UOMobileEntity
+        {
+            Id = (Serial)0x110u,
+            Name = "typed-mobile",
+            Location = new(10, 20, 0),
+            BaseStats = new()
+            {
+                Strength = 60,
+                Dexterity = 50,
+                Intelligence = 40
+            },
+            BaseResistances = new()
+            {
+                Physical = 5,
+                Fire = 15,
+                Cold = 11,
+                Poison = 9,
+                Energy = 13
+            },
+            Resources = new()
+            {
+                Hits = 60,
+                MaxHits = 70,
+                Mana = 40,
+                MaxMana = 50,
+                Stamina = 50,
+                MaxStamina = 60
+            },
+            BaseLuck = 42,
+            EquipmentModifiers = new()
+            {
+                StrengthBonus = 5,
+                FireResist = 3,
+                Luck = 10
+            },
+            RuntimeModifiers = new()
+            {
+                StrengthBonus = -2,
+                FireResist = 4,
+                Luck = 20
+            }
+        };
+
+        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
+        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored.BaseStats.Strength, Is.EqualTo(60));
+                Assert.That(restored.BaseStats.Dexterity, Is.EqualTo(50));
+                Assert.That(restored.BaseStats.Intelligence, Is.EqualTo(40));
+                Assert.That(restored.BaseResistances.Physical, Is.EqualTo(5));
+                Assert.That(restored.BaseResistances.Fire, Is.EqualTo(15));
+                Assert.That(restored.BaseResistances.Cold, Is.EqualTo(11));
+                Assert.That(restored.BaseResistances.Poison, Is.EqualTo(9));
+                Assert.That(restored.BaseResistances.Energy, Is.EqualTo(13));
+                Assert.That(restored.Resources.Hits, Is.EqualTo(60));
+                Assert.That(restored.Resources.MaxHits, Is.EqualTo(70));
+                Assert.That(restored.Resources.Mana, Is.EqualTo(40));
+                Assert.That(restored.Resources.MaxMana, Is.EqualTo(50));
+                Assert.That(restored.Resources.Stamina, Is.EqualTo(50));
+                Assert.That(restored.Resources.MaxStamina, Is.EqualTo(60));
+                Assert.That(restored.BaseLuck, Is.EqualTo(42));
+                Assert.That(restored.EquipmentModifiers, Is.Not.Null);
+                Assert.That(restored.EquipmentModifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(restored.EquipmentModifiers.FireResist, Is.EqualTo(3));
+                Assert.That(restored.EquipmentModifiers.Luck, Is.EqualTo(10));
+                Assert.That(restored.RuntimeModifiers, Is.Not.Null);
+                Assert.That(restored.RuntimeModifiers!.StrengthBonus, Is.EqualTo(-2));
+                Assert.That(restored.RuntimeModifiers.FireResist, Is.EqualTo(4));
+                Assert.That(restored.RuntimeModifiers.Luck, Is.EqualTo(20));
+                Assert.That(restored.Strength, Is.EqualTo(60));
+                Assert.That(restored.FireResistance, Is.EqualTo(15));
+                Assert.That(restored.Luck, Is.EqualTo(42));
+                Assert.That(restored.EffectiveStrength, Is.EqualTo(63));
+                Assert.That(restored.EffectiveFireResistance, Is.EqualTo(22));
+                Assert.That(restored.EffectiveLuck, Is.EqualTo(72));
+            }
+        );
+    }
+
+    [Test]
     public void ToItemSnapshot_ShouldPreserveCombatStatsAndModifiers()
     {
         var entity = new UOItemEntity

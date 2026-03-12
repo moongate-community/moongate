@@ -238,22 +238,105 @@ internal static class SnapshotMapper
             HairHue = snapshot.HairHue,
             FacialHairStyle = snapshot.FacialHairStyle,
             FacialHairHue = snapshot.FacialHairHue,
-            Strength = snapshot.Strength,
-            Dexterity = snapshot.Dexterity,
-            Intelligence = snapshot.Intelligence,
-            Hits = snapshot.Hits,
-            Mana = snapshot.Mana,
-            Stamina = snapshot.Stamina,
-            MaxHits = snapshot.MaxHits,
-            MaxMana = snapshot.MaxMana,
-            MaxStamina = snapshot.MaxStamina,
+            BaseStats = snapshot.BaseStats is null
+                            ? new()
+                            {
+                                Strength = snapshot.Strength,
+                                Dexterity = snapshot.Dexterity,
+                                Intelligence = snapshot.Intelligence
+                            }
+                            : new()
+                            {
+                                Strength = snapshot.BaseStats.Strength,
+                                Dexterity = snapshot.BaseStats.Dexterity,
+                                Intelligence = snapshot.BaseStats.Intelligence
+                            },
+            Resources = snapshot.Resources is null
+                            ? new()
+                            {
+                                Hits = snapshot.Hits,
+                                Mana = snapshot.Mana,
+                                Stamina = snapshot.Stamina,
+                                MaxHits = snapshot.MaxHits,
+                                MaxMana = snapshot.MaxMana,
+                                MaxStamina = snapshot.MaxStamina
+                            }
+                            : new()
+                            {
+                                Hits = snapshot.Resources.Hits,
+                                Mana = snapshot.Resources.Mana,
+                                Stamina = snapshot.Resources.Stamina,
+                                MaxHits = snapshot.Resources.MaxHits,
+                                MaxMana = snapshot.Resources.MaxMana,
+                                MaxStamina = snapshot.Resources.MaxStamina
+                            },
             SkillPoints = snapshot.SkillPoints,
             StatPoints = snapshot.StatPoints,
-            FireResistance = snapshot.FireResistance,
-            ColdResistance = snapshot.ColdResistance,
-            PoisonResistance = snapshot.PoisonResistance,
-            EnergyResistance = snapshot.EnergyResistance,
-            Luck = snapshot.Luck,
+            BaseResistances = snapshot.BaseResistances is null
+                                  ? new()
+                                  {
+                                      Fire = snapshot.FireResistance,
+                                      Cold = snapshot.ColdResistance,
+                                      Poison = snapshot.PoisonResistance,
+                                      Energy = snapshot.EnergyResistance
+                                  }
+                                  : new()
+                                  {
+                                      Physical = snapshot.BaseResistances.Physical,
+                                      Fire = snapshot.BaseResistances.Fire,
+                                      Cold = snapshot.BaseResistances.Cold,
+                                      Poison = snapshot.BaseResistances.Poison,
+                                      Energy = snapshot.BaseResistances.Energy
+                                  },
+            BaseLuck = snapshot.BaseLuck != 0 ? snapshot.BaseLuck : snapshot.Luck,
+            EquipmentModifiers = snapshot.EquipmentModifiers is null
+                                     ? null
+                                     : new()
+                                     {
+                                         StrengthBonus = snapshot.EquipmentModifiers.StrengthBonus,
+                                         DexterityBonus = snapshot.EquipmentModifiers.DexterityBonus,
+                                         IntelligenceBonus = snapshot.EquipmentModifiers.IntelligenceBonus,
+                                         PhysicalResist = snapshot.EquipmentModifiers.PhysicalResist,
+                                         FireResist = snapshot.EquipmentModifiers.FireResist,
+                                         ColdResist = snapshot.EquipmentModifiers.ColdResist,
+                                         PoisonResist = snapshot.EquipmentModifiers.PoisonResist,
+                                         EnergyResist = snapshot.EquipmentModifiers.EnergyResist,
+                                         HitChanceIncrease = snapshot.EquipmentModifiers.HitChanceIncrease,
+                                         DefenseChanceIncrease = snapshot.EquipmentModifiers.DefenseChanceIncrease,
+                                         DamageIncrease = snapshot.EquipmentModifiers.DamageIncrease,
+                                         SwingSpeedIncrease = snapshot.EquipmentModifiers.SwingSpeedIncrease,
+                                         SpellDamageIncrease = snapshot.EquipmentModifiers.SpellDamageIncrease,
+                                         FasterCasting = snapshot.EquipmentModifiers.FasterCasting,
+                                         FasterCastRecovery = snapshot.EquipmentModifiers.FasterCastRecovery,
+                                         LowerManaCost = snapshot.EquipmentModifiers.LowerManaCost,
+                                         LowerReagentCost = snapshot.EquipmentModifiers.LowerReagentCost,
+                                         Luck = snapshot.EquipmentModifiers.Luck,
+                                         SpellChanneling = snapshot.EquipmentModifiers.SpellChanneling
+                                     },
+            RuntimeModifiers = snapshot.RuntimeModifiers is null
+                                   ? null
+                                   : new()
+                                   {
+                                       StrengthBonus = snapshot.RuntimeModifiers.StrengthBonus,
+                                       DexterityBonus = snapshot.RuntimeModifiers.DexterityBonus,
+                                       IntelligenceBonus = snapshot.RuntimeModifiers.IntelligenceBonus,
+                                       PhysicalResist = snapshot.RuntimeModifiers.PhysicalResist,
+                                       FireResist = snapshot.RuntimeModifiers.FireResist,
+                                       ColdResist = snapshot.RuntimeModifiers.ColdResist,
+                                       PoisonResist = snapshot.RuntimeModifiers.PoisonResist,
+                                       EnergyResist = snapshot.RuntimeModifiers.EnergyResist,
+                                       HitChanceIncrease = snapshot.RuntimeModifiers.HitChanceIncrease,
+                                       DefenseChanceIncrease = snapshot.RuntimeModifiers.DefenseChanceIncrease,
+                                       DamageIncrease = snapshot.RuntimeModifiers.DamageIncrease,
+                                       SwingSpeedIncrease = snapshot.RuntimeModifiers.SwingSpeedIncrease,
+                                       SpellDamageIncrease = snapshot.RuntimeModifiers.SpellDamageIncrease,
+                                       FasterCasting = snapshot.RuntimeModifiers.FasterCasting,
+                                       FasterCastRecovery = snapshot.RuntimeModifiers.FasterCastRecovery,
+                                       LowerManaCost = snapshot.RuntimeModifiers.LowerManaCost,
+                                       LowerReagentCost = snapshot.RuntimeModifiers.LowerReagentCost,
+                                       Luck = snapshot.RuntimeModifiers.Luck,
+                                       SpellChanneling = snapshot.RuntimeModifiers.SpellChanneling
+                                   },
             BaseBody = snapshot.BaseBodyId is null ? null : (Body)snapshot.BaseBodyId.Value,
             BackpackId = (Serial)snapshot.BackpackId,
             IsWarMode = snapshot.IsWarMode,
@@ -372,6 +455,78 @@ internal static class SnapshotMapper
             PoisonResistance = entity.PoisonResistance,
             EnergyResistance = entity.EnergyResistance,
             Luck = entity.Luck,
+            BaseStats = new()
+            {
+                Strength = entity.BaseStats.Strength,
+                Dexterity = entity.BaseStats.Dexterity,
+                Intelligence = entity.BaseStats.Intelligence
+            },
+            BaseResistances = new()
+            {
+                Physical = entity.BaseResistances.Physical,
+                Fire = entity.BaseResistances.Fire,
+                Cold = entity.BaseResistances.Cold,
+                Poison = entity.BaseResistances.Poison,
+                Energy = entity.BaseResistances.Energy
+            },
+            Resources = new()
+            {
+                Hits = entity.Resources.Hits,
+                Mana = entity.Resources.Mana,
+                Stamina = entity.Resources.Stamina,
+                MaxHits = entity.Resources.MaxHits,
+                MaxMana = entity.Resources.MaxMana,
+                MaxStamina = entity.Resources.MaxStamina
+            },
+            EquipmentModifiers = entity.EquipmentModifiers is null
+                                     ? null
+                                     : new()
+                                     {
+                                         StrengthBonus = entity.EquipmentModifiers.StrengthBonus,
+                                         DexterityBonus = entity.EquipmentModifiers.DexterityBonus,
+                                         IntelligenceBonus = entity.EquipmentModifiers.IntelligenceBonus,
+                                         PhysicalResist = entity.EquipmentModifiers.PhysicalResist,
+                                         FireResist = entity.EquipmentModifiers.FireResist,
+                                         ColdResist = entity.EquipmentModifiers.ColdResist,
+                                         PoisonResist = entity.EquipmentModifiers.PoisonResist,
+                                         EnergyResist = entity.EquipmentModifiers.EnergyResist,
+                                         HitChanceIncrease = entity.EquipmentModifiers.HitChanceIncrease,
+                                         DefenseChanceIncrease = entity.EquipmentModifiers.DefenseChanceIncrease,
+                                         DamageIncrease = entity.EquipmentModifiers.DamageIncrease,
+                                         SwingSpeedIncrease = entity.EquipmentModifiers.SwingSpeedIncrease,
+                                         SpellDamageIncrease = entity.EquipmentModifiers.SpellDamageIncrease,
+                                         FasterCasting = entity.EquipmentModifiers.FasterCasting,
+                                         FasterCastRecovery = entity.EquipmentModifiers.FasterCastRecovery,
+                                         LowerManaCost = entity.EquipmentModifiers.LowerManaCost,
+                                         LowerReagentCost = entity.EquipmentModifiers.LowerReagentCost,
+                                         Luck = entity.EquipmentModifiers.Luck,
+                                         SpellChanneling = entity.EquipmentModifiers.SpellChanneling
+                                     },
+            RuntimeModifiers = entity.RuntimeModifiers is null
+                                   ? null
+                                   : new()
+                                   {
+                                       StrengthBonus = entity.RuntimeModifiers.StrengthBonus,
+                                       DexterityBonus = entity.RuntimeModifiers.DexterityBonus,
+                                       IntelligenceBonus = entity.RuntimeModifiers.IntelligenceBonus,
+                                       PhysicalResist = entity.RuntimeModifiers.PhysicalResist,
+                                       FireResist = entity.RuntimeModifiers.FireResist,
+                                       ColdResist = entity.RuntimeModifiers.ColdResist,
+                                       PoisonResist = entity.RuntimeModifiers.PoisonResist,
+                                       EnergyResist = entity.RuntimeModifiers.EnergyResist,
+                                       HitChanceIncrease = entity.RuntimeModifiers.HitChanceIncrease,
+                                       DefenseChanceIncrease = entity.RuntimeModifiers.DefenseChanceIncrease,
+                                       DamageIncrease = entity.RuntimeModifiers.DamageIncrease,
+                                       SwingSpeedIncrease = entity.RuntimeModifiers.SwingSpeedIncrease,
+                                       SpellDamageIncrease = entity.RuntimeModifiers.SpellDamageIncrease,
+                                       FasterCasting = entity.RuntimeModifiers.FasterCasting,
+                                       FasterCastRecovery = entity.RuntimeModifiers.FasterCastRecovery,
+                                       LowerManaCost = entity.RuntimeModifiers.LowerManaCost,
+                                       LowerReagentCost = entity.RuntimeModifiers.LowerReagentCost,
+                                       Luck = entity.RuntimeModifiers.Luck,
+                                       SpellChanneling = entity.RuntimeModifiers.SpellChanneling
+                                   },
+            BaseLuck = entity.BaseLuck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,
             BackpackId = (uint)entity.BackpackId,
             EquippedLayers = layers,

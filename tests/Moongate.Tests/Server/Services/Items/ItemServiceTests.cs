@@ -3,6 +3,7 @@ using Moongate.Core.Types;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -254,7 +255,11 @@ public class ItemServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        IItemService service = new ItemService(persistence, gameEventBus);
+        IItemService service = new ItemService(
+            persistence,
+            gameEventBus,
+            mobileModifierAggregationService: new MobileModifierAggregationService()
+        );
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -272,6 +277,11 @@ public class ItemServiceTests
             {
                 Id = itemId,
                 ItemId = 0x1517,
+                Modifiers = new()
+                {
+                    StrengthBonus = 5,
+                    FireResist = 3
+                },
                 ParentContainerId = persistence.UnitOfWork.AllocateNextItemId(),
                 ContainerPosition = new(3, 3)
             }
@@ -293,6 +303,9 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.ParentContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo(itemId));
+                Assert.That(reloadedMobile.EquipmentModifiers, Is.Not.Null);
+                Assert.That(reloadedMobile.EquipmentModifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(reloadedMobile.EquipmentModifiers.FireResist, Is.EqualTo(3));
                 Assert.That(equippedEvent.ItemId, Is.EqualTo(itemId));
                 Assert.That(equippedEvent.MobileId, Is.EqualTo(mobileId));
                 Assert.That(equippedEvent.Layer, Is.EqualTo(ItemLayerType.Shirt));
@@ -540,7 +553,11 @@ public class ItemServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        IItemService service = new ItemService(persistence, gameEventBus);
+        IItemService service = new ItemService(
+            persistence,
+            gameEventBus,
+            mobileModifierAggregationService: new MobileModifierAggregationService()
+        );
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
@@ -550,6 +567,10 @@ public class ItemServiceTests
             {
                 Id = mobileId,
                 Name = "item-owner",
+                EquipmentModifiers = new()
+                {
+                    StrengthBonus = 5
+                },
                 EquippedItemIds =
                 {
                     [ItemLayerType.OneHanded] = itemId
@@ -562,6 +583,10 @@ public class ItemServiceTests
             {
                 Id = itemId,
                 ItemId = 0x13B2,
+                Modifiers = new()
+                {
+                    StrengthBonus = 5
+                },
                 EquippedMobileId = mobileId,
                 EquippedLayer = ItemLayerType.OneHanded
             }
@@ -591,6 +616,8 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.EquippedLayer, Is.Null);
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OneHanded), Is.False);
+                Assert.That(reloadedMobile.EquipmentModifiers, Is.Not.Null);
+                Assert.That(reloadedMobile.EquipmentModifiers!.StrengthBonus, Is.EqualTo(0));
                 Assert.That(movedEvent.ItemId, Is.EqualTo(itemId));
                 Assert.That(movedEvent.SessionId, Is.EqualTo(4242));
                 Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));
@@ -606,7 +633,11 @@ public class ItemServiceTests
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var gameEventBus = new NetworkServiceTestGameEventBusService();
-        IItemService service = new ItemService(persistence, gameEventBus);
+        IItemService service = new ItemService(
+            persistence,
+            gameEventBus,
+            mobileModifierAggregationService: new MobileModifierAggregationService()
+        );
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
@@ -615,6 +646,10 @@ public class ItemServiceTests
             {
                 Id = mobileId,
                 Name = "world-drop-owner",
+                EquipmentModifiers = new()
+                {
+                    StrengthBonus = 4
+                },
                 EquippedItemIds =
                 {
                     [ItemLayerType.OuterTorso] = itemId
@@ -627,6 +662,10 @@ public class ItemServiceTests
             {
                 Id = itemId,
                 ItemId = 0x1F03,
+                Modifiers = new()
+                {
+                    StrengthBonus = 4
+                },
                 EquippedMobileId = mobileId,
                 EquippedLayer = ItemLayerType.OuterTorso
             }
@@ -648,6 +687,8 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.EquippedLayer, Is.Null);
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OuterTorso), Is.False);
+                Assert.That(reloadedMobile.EquipmentModifiers, Is.Not.Null);
+                Assert.That(reloadedMobile.EquipmentModifiers!.StrengthBonus, Is.EqualTo(0));
                 Assert.That(movedEvent.ItemId, Is.EqualTo(itemId));
                 Assert.That(movedEvent.SessionId, Is.EqualTo(9001));
                 Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));

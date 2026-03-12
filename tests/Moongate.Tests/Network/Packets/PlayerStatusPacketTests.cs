@@ -67,6 +67,59 @@ public class PlayerStatusPacketTests
         );
     }
 
+    [Test]
+    public void Write_ShouldSerializeEffectiveStats_ForVersionOnePacket()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000003,
+            Name = "Effective Tommy",
+            BaseStats = new()
+            {
+                Strength = 60,
+                Dexterity = 50,
+                Intelligence = 40
+            },
+            Resources = new()
+            {
+                Hits = 55,
+                MaxHits = 70,
+                Stamina = 45,
+                MaxStamina = 50,
+                Mana = 35,
+                MaxMana = 40
+            },
+            EquipmentModifiers = new()
+            {
+                StrengthBonus = 5,
+                DexterityBonus = 2,
+                IntelligenceBonus = 1
+            },
+            RuntimeModifiers = new()
+            {
+                StrengthBonus = -1,
+                DexterityBonus = 3,
+                IntelligenceBonus = 4
+            }
+        };
+        var packet = new PlayerStatusPacket(mobile, version: 1);
+
+        var data = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(44, 2)), Is.EqualTo((ushort)64));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(46, 2)), Is.EqualTo((ushort)55));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(48, 2)), Is.EqualTo((ushort)45));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(50, 2)), Is.EqualTo((ushort)45));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(52, 2)), Is.EqualTo((ushort)50));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(54, 2)), Is.EqualTo((ushort)35));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(56, 2)), Is.EqualTo((ushort)40));
+            }
+        );
+    }
+
     private static byte[] Write(PlayerStatusPacket packet)
     {
         var writer = new SpanWriter(64, true);

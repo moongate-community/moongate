@@ -80,6 +80,18 @@ public sealed class MobileSnapshot
 
     public int Luck { get; set; }
 
+    public MobileStatsSnapshot? BaseStats { get; set; }
+
+    public MobileResistancesSnapshot? BaseResistances { get; set; }
+
+    public MobileResourcesSnapshot? Resources { get; set; }
+
+    public MobileModifiersSnapshot? EquipmentModifiers { get; set; }
+
+    public MobileModifiersSnapshot? RuntimeModifiers { get; set; }
+
+    public int BaseLuck { get; set; }
+
     public int? BaseBodyId { get; set; }
 
     public uint BackpackId { get; set; }

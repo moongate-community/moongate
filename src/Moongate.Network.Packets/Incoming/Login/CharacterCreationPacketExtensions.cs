@@ -42,12 +42,18 @@ public static class CharacterCreationPacketExtensions
             HairHue = packet.Hair.Hue,
             FacialHairStyle = packet.FacialHair.Style,
             FacialHairHue = packet.FacialHair.Hue,
-            Strength = packet.Strength,
-            Dexterity = packet.Dexterity,
-            Intelligence = packet.Intelligence,
-            Hits = packet.Strength,
-            Mana = packet.Intelligence,
-            Stamina = packet.Dexterity,
+            BaseStats = new()
+            {
+                Strength = packet.Strength,
+                Dexterity = packet.Dexterity,
+                Intelligence = packet.Intelligence
+            },
+            Resources = new()
+            {
+                Hits = packet.Strength,
+                Mana = packet.Intelligence,
+                Stamina = packet.Dexterity
+            },
             IsWarMode = false,
             IsHidden = false,
             IsFrozen = false,

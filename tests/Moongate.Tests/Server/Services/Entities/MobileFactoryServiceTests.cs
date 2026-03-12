@@ -166,9 +166,15 @@ public class MobileFactoryServiceTests
                 Assert.That(mobile.SkinHue, Is.EqualTo(1000));
                 Assert.That(mobile.HairHue, Is.EqualTo(1109));
                 Assert.That(mobile.HairStyle, Is.EqualTo(8251));
+                Assert.That(mobile.BaseStats.Strength, Is.EqualTo(70));
+                Assert.That(mobile.BaseStats.Dexterity, Is.EqualTo(60));
+                Assert.That(mobile.BaseStats.Intelligence, Is.EqualTo(20));
                 Assert.That(mobile.Strength, Is.EqualTo(70));
                 Assert.That(mobile.Dexterity, Is.EqualTo(60));
                 Assert.That(mobile.Intelligence, Is.EqualTo(20));
+                Assert.That(mobile.Resources.Hits, Is.EqualTo(70));
+                Assert.That(mobile.Resources.Mana, Is.EqualTo(20));
+                Assert.That(mobile.Resources.Stamina, Is.EqualTo(60));
                 Assert.That(mobile.Hits, Is.EqualTo(70));
                 Assert.That(mobile.Mana, Is.EqualTo(20));
                 Assert.That(mobile.Stamina, Is.EqualTo(60));

@@ -32,9 +32,18 @@ public class CharacterCreationPacketTests
                 Assert.That(mobile.HairHue, Is.EqualTo(0x0304));
                 Assert.That(mobile.FacialHairStyle, Is.EqualTo(0x0506));
                 Assert.That(mobile.FacialHairHue, Is.EqualTo(0x0708));
+                Assert.That(mobile.BaseStats.Strength, Is.EqualTo(60));
+                Assert.That(mobile.BaseStats.Dexterity, Is.EqualTo(50));
+                Assert.That(mobile.BaseStats.Intelligence, Is.EqualTo(40));
                 Assert.That(mobile.Strength, Is.EqualTo(60));
                 Assert.That(mobile.Dexterity, Is.EqualTo(50));
                 Assert.That(mobile.Intelligence, Is.EqualTo(40));
+                Assert.That(mobile.Resources.Hits, Is.EqualTo(60));
+                Assert.That(mobile.Resources.MaxHits, Is.EqualTo(60));
+                Assert.That(mobile.Resources.Stamina, Is.EqualTo(50));
+                Assert.That(mobile.Resources.MaxStamina, Is.EqualTo(50));
+                Assert.That(mobile.Resources.Mana, Is.EqualTo(40));
+                Assert.That(mobile.Resources.MaxMana, Is.EqualTo(40));
                 Assert.That(mobile.Hits, Is.EqualTo(60));
                 Assert.That(mobile.MaxHits, Is.EqualTo(60));
                 Assert.That(mobile.Stamina, Is.EqualTo(50));
