@@ -62,7 +62,6 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x88` | Paperdoll | S -> C | `?Packet=0x88` | `PaperdollPacket` | `outgoing` | character UI | Open paperdoll |
 | `0x8C` | Server redirect | S -> C | `?Packet=0x8C` | `ServerRedirectPacket` | `outgoing` | `LoginHandler` | Redirect to game server |
 | `0x91` | Game login | C -> S | `?Packet=0x91` | `GameLoginPacket` | `handler` | `LoginHandler` | Game-server auth |
-| `0x93` | Book header old | C -> S | `?Packet=0x93` | `BookHeaderOldPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
 | `0x97` | Move player | S -> C | `?Packet=0x97` | `MovePlayerPacket` | `outgoing` | movement flow | Server-driven player move |
 | `0xA0` | Select server | C -> S | `?Packet=0xA0` | `ServerSelectPacket` | `handler` | `LoginHandler` | Shard select |
 | `0xA8` | Server list | S -> C | `?Packet=0xA8` | `ServerListPacket` | `outgoing` | `LoginHandler` | Shard list |
@@ -118,7 +117,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xC2` | Unicode text entry | C -> S | `?Packet=0xC2` | `UnicodeTextEntryPacket` | `parse-only` | Text entry flow missing |
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |
 | `0xD1` | Logout status | C -> S | `?Packet=0xD1` | `LogoutStatusPacket` | `parse-only` | No dedicated logout listener |
-| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `parse-only` | Client packet shape exists, no inbound behavior needed today |
+| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save for client `7.x` |
 | `0xD7` | Generic AOS commands | C -> S | `?Packet=0xD7` | `GenericAosCommandsPacket` | `parse-only` | AoS subcommands not wired |
 | `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `parse-only` | Client-type-specific behavior missing |
 | `0xEC` | Equip macro | C -> S | `?Packet=0xEC` | `EquipMacroPacket` | `parse-only` | KR macro flow missing |

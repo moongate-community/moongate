@@ -10,7 +10,7 @@ public class BookHeaderNewPacketTests
     [Test]
     public void TryParse_WithInvalidDeclaredLength_ShouldFail()
     {
-        var raw = BuildRawPacket(0x40000010u, true, false, 10, "Author", "Title");
+        var raw = BuildRawPacket(0x40000010u, true, false, 10, "Title", "Author");
         BinaryPrimitives.WriteUInt16BigEndian(raw.AsSpan(1, 2), (ushort)(raw.Length - 1));
 
         var packet = new BookHeaderNewPacket();
@@ -27,8 +27,8 @@ public class BookHeaderNewPacketTests
             true,
             true,
             64,
-            "Moongate Team",
-            "Roadmap"
+            "Roadmap",
+            "Moongate Team"
         );
 
         var packet = new BookHeaderNewPacket();
@@ -42,8 +42,8 @@ public class BookHeaderNewPacketTests
                 Assert.That(packet.Flag1, Is.True);
                 Assert.That(packet.IsWritable, Is.True);
                 Assert.That(packet.PageCount, Is.EqualTo((ushort)64));
-                Assert.That(packet.Author, Is.EqualTo("Moongate Team"));
                 Assert.That(packet.Title, Is.EqualTo("Roadmap"));
+                Assert.That(packet.Author, Is.EqualTo("Moongate Team"));
             }
         );
     }
@@ -57,8 +57,8 @@ public class BookHeaderNewPacketTests
             Flag1 = true,
             IsWritable = false,
             PageCount = 99,
-            Author = "Author",
-            Title = "Book Title"
+            Title = "Book Title",
+            Author = "Author"
         };
 
         var writer = new SpanWriter(256, true);
@@ -88,8 +88,8 @@ public class BookHeaderNewPacketTests
         bool flag1,
         bool isWritable,
         ushort pageCount,
-        string author,
-        string title
+        string title,
+        string author
     )
     {
         var writer = new SpanWriter(256, true);
@@ -100,8 +100,8 @@ public class BookHeaderNewPacketTests
         writer.Write(isWritable);
         writer.Write(pageCount);
 
-        WriteUtf8StringWithLength(ref writer, author);
         WriteUtf8StringWithLength(ref writer, title);
+        WriteUtf8StringWithLength(ref writer, author);
         writer.WritePacketLength();
 
         var bytes = writer.ToArray();

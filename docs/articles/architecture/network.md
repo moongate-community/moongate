@@ -44,7 +44,7 @@ Current gameplay-facing outbound examples:
 - `PlayerStatusHandler` emits `PlayerStatusPacket` (`0x11`) for basic status requests
 - `PlayerStatusHandler` emits `SkillListPacket` (`0x3A`) for skill window requests
 - `ItemHandler` responds to classic book traffic:
-  - `0x93` saves writable `title` / `author`
+  - `0xD4` saves writable `title` / `author`
   - `0x66` serves page requests and writable page saves
 
 ## Compression and Middleware
@@ -72,7 +72,7 @@ Important current request/response pairs:
 - `0x66 Book Pages`
   - page request -> server book page response
   - writable page save -> server persists updated page content
-- `0x93 Book Header Old`
+- `0xD4 Book Header New`
   - writable header save -> server persists `title` / `author`
 
 ## Useful Runtime Diagnostics

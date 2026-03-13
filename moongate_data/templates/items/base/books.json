@@ -1,6 +1,26 @@
 [
   {
     "type": "item",
+    "id": "writable_book",
+    "name": "Writable Book",
+    "category": "Books",
+    "description": "Blank writable book with empty title, author, and pages.",
+    "itemId": "0x0FF0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "params": {
+      "writable": {
+        "type": "string",
+        "value": "true"
+      }
+    },
+    "tags": ["book", "writable"]
+  },
+  {
+    "type": "item",
     "id": "welcome_book",
     "name": "Welcome To Moongate",
     "category": "Books",

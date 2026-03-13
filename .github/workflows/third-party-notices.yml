@@ -1,0 +1,53 @@
+name: Third-Party Notices
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate-third-party-notices:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install nuget-license
+        run: |
+          dotnet tool install --global nuget-license
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Generate third-party notices
+        run: |
+          set -euo pipefail
+
+          export DOTNET_ROOT="${DOTNET_ROOT:-$HOME/.dotnet}"
+          export DOTNET_ROOT_ARM64="${DOTNET_ROOT_ARM64:-$DOTNET_ROOT}"
+
+          NOTICE_EXIT_CODE=0
+          JSON_EXIT_CODE=0
+
+          nuget-license --input ./Moongate.slnx --include-transitive --output Markdown --file-output ./THIRD-PARTY-NOTICES || NOTICE_EXIT_CODE=$?
+          nuget-license --input ./Moongate.slnx --include-transitive --output JsonPretty --file-output ./licenses.json || JSON_EXIT_CODE=$?
+
+          if [ ! -s ./THIRD-PARTY-NOTICES ]; then
+            echo "THIRD-PARTY-NOTICES was not generated"
+            exit "${NOTICE_EXIT_CODE:-1}"
+          fi
+
+          if [ ! -s ./licenses.json ]; then
+            echo "licenses.json was not generated"
+            exit "${JSON_EXIT_CODE:-1}"
+          fi
+
+          ls -lh ./THIRD-PARTY-NOTICES ./licenses.json

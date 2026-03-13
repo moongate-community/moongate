@@ -497,6 +497,54 @@ public class ToolTipHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_ShouldUseBookMetadata_WhenBookTitleAndAuthorExist()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000023u;
+        var item = new UOItemEntity
+        {
+            Id = itemSerial,
+            Name = "Writable Book",
+            ItemId = 0x0FF0
+        };
+        item.SetCustomString("book_title", "Travel Journal");
+        item.SetCustomString("book_author", "Tommy");
+        item.SetCustomString("book_content", "Line 1");
+        await persistenceService.UnitOfWork.Items.UpsertAsync(item);
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        var handled = await handler.HandlePacketAsync(session, request);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+            }
+        );
+
+        var response = DeserializeResponse(outbound.Packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(response.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
+                Assert.That(response.Properties[0].Text, Is.EqualTo("Travel Journal"));
+                Assert.That(
+                    response.Properties.Any(property => string.Equals(property.Text, "by Tommy", StringComparison.Ordinal)),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_ShouldKeepCacheUsable_AfterSentPacketIsDisposed()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();

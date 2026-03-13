@@ -50,7 +50,7 @@ Current gameplay examples:
   - `BasicStatus` requests enqueue `PlayerStatusPacket` (`0x11`)
   - `RequestSkills` requests enqueue `SkillListPacket` (`0x3A`)
 - `ItemHandler` listens to book packets
-  - `BookHeaderOldPacket` (`0x93`) saves writable book `title` / `author`
+  - `BookHeaderNewPacket` (`0xD4`) saves writable book `title` / `author`
   - `BookPagesPacket` (`0x66`) serves page requests and writable page saves
 
 ## Pragmatic POL Coverage Matrix
@@ -90,12 +90,11 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler` | Container / world drop |
 | `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
 | `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
-| `0x93` | Book Header (Old) | C -> S | `BookHeaderOldPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
+| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
 | `0xD9` | Spy On Client | C -> S | `SpyOnClientPacket` | `handler` | `PlayerHandler` | Minimal session-side handling |
 | `0x03` | Talk Request | C -> S | `TalkRequestPacket` | `parse-only` | none | Legacy speech path not wired |
 | `0x12` | Request Skill / Use | C -> S | `RequestSkillUsePacket` | `parse-only` | none | Skill-use flow still missing |
 | `0x83` | Delete Character | C -> S | `DeleteCharacterPacket` | `parse-only` | none | No delete flow wired |
-| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `parse-only` | none | Client packet shape registered, no inbound behavior needed today |
 | `0xA8` | Server List | S -> C | `ServerListPacket` | `outgoing` | `LoginHandler` | Shard list |
 | `0x8C` | Server Redirect | S -> C | `ServerRedirectPacket` | `outgoing` | `LoginHandler` | Redirect to game server |
 | `0x1B` | Login Confirm | S -> C | `LoginConfirmPacket` | `outgoing` | login flow | Character accepted |

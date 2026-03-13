@@ -100,27 +100,7 @@ public class ToolTipHandler : BasePacketListener
                 return cachedTooltip.PacketTemplate.Clone();
             }
 
-            var propertyList = MegaClilocBuilder.CreateItemTooltip(
-                item.Id,
-                item.Name,
-                item.ItemId,
-                item.Amount,
-                item.Weight,
-                hue: item.Hue
-            );
-
-            if (item.Rarity != ItemRarity.None)
-            {
-                propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
-            }
-
-            AppendTypedItemProperties(propertyList, item);
-
-            if (item.TryGetCustomString("label_number", out var value) &&
-                uint.TryParse(value, out var clilocId))
-            {
-                propertyList.Replace(CommonClilocIds.ObjectName, clilocId);
-            }
+            var propertyList = CreateItemPropertyList(item);
 
             ReplaceCachedTooltip(serial, new(itemHashCode, propertyList));
 
@@ -130,6 +110,47 @@ public class ToolTipHandler : BasePacketListener
         _logger.Debug("MegaCliloc request ignored. Invalid serial {Serial}.", serial);
 
         return null;
+    }
+
+    internal static ObjectPropertyList CreateItemPropertyList(UOItemEntity item)
+    {
+        var displayName = item.Name;
+
+        if (item.TryGetCustomString("book_title", out var bookTitle) &&
+            !string.IsNullOrWhiteSpace(bookTitle))
+        {
+            displayName = bookTitle;
+        }
+
+        var propertyList = MegaClilocBuilder.CreateItemTooltip(
+            item.Id,
+            displayName,
+            item.ItemId,
+            item.Amount,
+            item.Weight,
+            hue: item.Hue
+        );
+
+        if (item.TryGetCustomString("book_author", out var bookAuthor) &&
+            !string.IsNullOrWhiteSpace(bookAuthor))
+        {
+            propertyList.Add($"by {bookAuthor}");
+        }
+
+        if (item.Rarity != ItemRarity.None)
+        {
+            propertyList.Add(CommonClilocIds.ItemRarity, item.Rarity.ToString());
+        }
+
+        AppendTypedItemProperties(propertyList, item);
+
+        if (item.TryGetCustomString("label_number", out var value) &&
+            uint.TryParse(value, out var clilocId))
+        {
+            propertyList.Replace(CommonClilocIds.ObjectName, clilocId);
+        }
+
+        return propertyList;
     }
 
     private static void AppendTypedItemProperties(ObjectPropertyList propertyList, UOItemEntity item)

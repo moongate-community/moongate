@@ -49,7 +49,7 @@ public class BookPagesPacket : BaseGameNetworkPacket
             for (var i = 0; i < lineCount; i++)
             {
                 var line = i < page.Lines.Count ? page.Lines[i] : string.Empty;
-                writer.WriteUTF8Null(line);
+                writer.WriteLittleUniNull(line);
             }
         }
 
@@ -91,7 +91,7 @@ public class BookPagesPacket : BaseGameNetworkPacket
             {
                 for (var lineIndex = 0; lineIndex < page.LineCount; lineIndex++)
                 {
-                    if (!TryReadUtf8NullTerminated(ref reader, out var line))
+                    if (!TryReadBookLine(ref reader, out var line))
                     {
                         return false;
                     }
@@ -104,6 +104,23 @@ public class BookPagesPacket : BaseGameNetworkPacket
         }
 
         return reader.Remaining == 0;
+    }
+
+    private static bool TryReadBookLine(ref SpanReader reader, out string value)
+    {
+        var buffer = reader.Buffer[reader.Position..];
+
+        if (TryFindUnicodeTerminator(buffer, out var unicodeTerminatorIndex))
+        {
+            var bytes = reader.ReadBytes(unicodeTerminatorIndex + 2);
+            value = unicodeTerminatorIndex == 0
+                        ? string.Empty
+                        : Encoding.Unicode.GetString(bytes, 0, unicodeTerminatorIndex);
+
+            return true;
+        }
+
+        return TryReadUtf8NullTerminated(ref reader, out value);
     }
 
     private static bool TryReadUtf8NullTerminated(ref SpanReader reader, out string value)
@@ -129,5 +146,22 @@ public class BookPagesPacket : BaseGameNetworkPacket
                     : Encoding.UTF8.GetString(bytes, 0, terminatorIndex);
 
         return true;
+    }
+
+    private static bool TryFindUnicodeTerminator(ReadOnlySpan<byte> buffer, out int index)
+    {
+        index = -1;
+
+        for (var i = 0; i + 1 < buffer.Length; i += 2)
+        {
+            if (buffer[i] == 0 && buffer[i + 1] == 0)
+            {
+                index = i;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }

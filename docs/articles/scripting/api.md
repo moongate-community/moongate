@@ -139,7 +139,7 @@ the classic client book UI in read-only mode. The server also listens to client
 Writable books use the same classic client UI, but the save flow differs:
 
 - `book_writable = true` marks the item as writable at runtime
-- `0x93` saves `title` and `author`
+- `0xD4` saves `title` and `author`
 - `0x66` saves page content
 - writes are accepted only when the book is equipped by the player or inside the player's backpack tree
 

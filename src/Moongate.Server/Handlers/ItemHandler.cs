@@ -30,7 +30,7 @@ namespace Moongate.Server.Handlers;
 
 [
     RegisterGameEventListener,
-    RegisterPacketHandler(PacketDefinition.BookHeaderOldPacket),
+    RegisterPacketHandler(PacketDefinition.BookHeaderNewPacket),
     RegisterPacketHandler(PacketDefinition.BookPagesPacket),
     RegisterPacketHandler(PacketDefinition.DropItemPacket),
     RegisterPacketHandler(PacketDefinition.DropWearItemPacket),
@@ -222,9 +222,9 @@ public class ItemHandler
             return await HandleBookPagesAsync(session, bookPagesPacket);
         }
 
-        if (packet is BookHeaderOldPacket bookHeaderOldPacket)
+        if (packet is BookHeaderNewPacket bookHeaderNewPacket)
         {
-            return await HandleBookHeaderAsync(session, bookHeaderOldPacket);
+            return await HandleBookHeaderAsync(session, bookHeaderNewPacket);
         }
 
         if (packet is SingleClickPacket singleClickPacket)
@@ -668,6 +668,7 @@ public class ItemHandler
 
             ApplyBookPageUpdates(item, bookPagesPacket.Pages);
             await _itemService.UpsertItemAsync(item);
+            Enqueue(session, ToolTipHandler.CreateItemPropertyList(item));
 
             return true;
         }
@@ -691,18 +692,19 @@ public class ItemHandler
         return true;
     }
 
-    private async Task<bool> HandleBookHeaderAsync(GameSession session, BookHeaderOldPacket bookHeaderOldPacket)
+    private async Task<bool> HandleBookHeaderAsync(GameSession session, BookHeaderNewPacket bookHeaderNewPacket)
     {
-        var item = await _itemService.GetItemAsync((Serial)bookHeaderOldPacket.BookSerial);
+        var item = await _itemService.GetItemAsync((Serial)bookHeaderNewPacket.BookSerial);
 
         if (item is null || !IsWritableBook(item) || !await CanWriteBookAsync(session, item))
         {
             return true;
         }
 
-        item.SetCustomString(BookTemplateParamKeys.Title, SanitizeBookText(bookHeaderOldPacket.Title));
-        item.SetCustomString(BookTemplateParamKeys.Author, SanitizeBookText(bookHeaderOldPacket.Author));
+        item.SetCustomString(BookTemplateParamKeys.Title, SanitizeBookText(bookHeaderNewPacket.Title));
+        item.SetCustomString(BookTemplateParamKeys.Author, SanitizeBookText(bookHeaderNewPacket.Author));
         await _itemService.UpsertItemAsync(item);
+        Enqueue(session, ToolTipHandler.CreateItemPropertyList(item));
 
         return true;
     }
