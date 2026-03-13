@@ -1,6 +1,7 @@
 using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Core.Collections;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
@@ -91,7 +92,7 @@ internal sealed class SpatialEntityIndex
                 return [];
             }
 
-            var results = new List<UOMobileEntity>();
+            using var results = PooledRefList<UOMobileEntity>.Create();
             var seen = new HashSet<Serial>();
 
             foreach (var (x, y) in sectors)
@@ -112,7 +113,7 @@ internal sealed class SpatialEntityIndex
                 }
             }
 
-            return results;
+            return [.. results.AsSpan()];
         }
     }
 
@@ -132,7 +133,7 @@ internal sealed class SpatialEntityIndex
                 return [];
             }
 
-            var results = new List<UOItemEntity>();
+            using var results = PooledRefList<UOItemEntity>.Create();
 
             foreach (var (x, y) in sectors)
             {
@@ -140,11 +141,14 @@ internal sealed class SpatialEntityIndex
 
                 if (sector is not null)
                 {
-                    results.AddRange(sector.GetEntitiesInRange<UOItemEntity>(location, range));
+                    foreach (var item in sector.GetEntitiesInRange<UOItemEntity>(location, range))
+                    {
+                        results.Add(item);
+                    }
                 }
             }
 
-            return results;
+            return [.. results.AsSpan()];
         }
     }
 
@@ -164,7 +168,7 @@ internal sealed class SpatialEntityIndex
                 return [];
             }
 
-            var results = new List<UOMobileEntity>();
+            using var results = PooledRefList<UOMobileEntity>.Create();
 
             foreach (var (x, y) in sectors)
             {
@@ -172,11 +176,14 @@ internal sealed class SpatialEntityIndex
 
                 if (sector is not null)
                 {
-                    results.AddRange(sector.GetEntitiesInRange<UOMobileEntity>(location, range));
+                    foreach (var mobile in sector.GetEntitiesInRange<UOMobileEntity>(location, range))
+                    {
+                        results.Add(mobile);
+                    }
                 }
             }
 
-            return results;
+            return [.. results.AsSpan()];
         }
     }
 

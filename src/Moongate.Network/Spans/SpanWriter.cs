@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using Moongate.Core.Buffers;
 
 namespace Moongate.Network.Spans;
 
@@ -49,7 +50,7 @@ public ref struct SpanWriter : IDisposable
     public SpanWriter(int initialCapacity, bool resize = false)
     {
         _resize = resize;
-        _arrayToReturnToPool = ArrayPool<byte>.Shared.Rent(initialCapacity);
+        _arrayToReturnToPool = STArrayPool<byte>.Shared.Rent(initialCapacity);
         _buffer = _arrayToReturnToPool;
         _position = 0;
         BytesWritten = 0;
@@ -83,7 +84,7 @@ public ref struct SpanWriter : IDisposable
         {
             if (_isPooled && _buffer is not null)
             {
-                ArrayPool<byte>.Shared.Return(_buffer);
+                STArrayPool<byte>.Shared.Return(_buffer);
             }
         }
     }
@@ -104,7 +105,7 @@ public ref struct SpanWriter : IDisposable
 
         if (toReturn is not null)
         {
-            ArrayPool<byte>.Shared.Return(toReturn);
+            STArrayPool<byte>.Shared.Return(toReturn);
         }
     }
 
@@ -128,7 +129,7 @@ public ref struct SpanWriter : IDisposable
     public void Grow(int additionalCapacity)
     {
         var newSize = Math.Max(BytesWritten + additionalCapacity, _buffer.Length * 2);
-        var poolArray = ArrayPool<byte>.Shared.Rent(newSize);
+        var poolArray = STArrayPool<byte>.Shared.Rent(newSize);
 
         _buffer[..BytesWritten].CopyTo(poolArray);
 
@@ -137,7 +138,7 @@ public ref struct SpanWriter : IDisposable
 
         if (toReturn is not null)
         {
-            ArrayPool<byte>.Shared.Return(toReturn);
+            STArrayPool<byte>.Shared.Return(toReturn);
         }
     }
 
@@ -193,7 +194,7 @@ public ref struct SpanWriter : IDisposable
 
             if (toReturn is not null)
             {
-                ArrayPool<byte>.Shared.Return(toReturn);
+                STArrayPool<byte>.Shared.Return(toReturn);
             }
 
             return new(0, null, false);
@@ -208,7 +209,7 @@ public ref struct SpanWriter : IDisposable
             return new(_position, currentPoolBuffer, true);
         }
 
-        var ownedBuffer = ArrayPool<byte>.Shared.Rent(_position);
+        var ownedBuffer = STArrayPool<byte>.Shared.Rent(_position);
         _buffer[.._position].CopyTo(ownedBuffer);
         this = default;
 

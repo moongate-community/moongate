@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Net;
 using System.Net.Sockets;
+using Moongate.Core.Buffers;
 using Moongate.Network.Buffers;
 using Moongate.Network.Events;
 using Moongate.Network.Interfaces;
@@ -416,7 +417,7 @@ public sealed class MoongateTCPClient : IAsyncDisposable, IDisposable
 
     private async Task ReceiveLoopAsync()
     {
-        var buffer = ArrayPool<byte>.Shared.Rent(ReceiveBufferSize);
+        var buffer = STArrayPool<byte>.Shared.Rent(ReceiveBufferSize);
 
         try
         {
@@ -463,7 +464,7 @@ public sealed class MoongateTCPClient : IAsyncDisposable, IDisposable
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            STArrayPool<byte>.Shared.Return(buffer);
             await CloseAsync();
         }
     }

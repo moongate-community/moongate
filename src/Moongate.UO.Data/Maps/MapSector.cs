@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Moongate.Core.Collections;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
@@ -142,7 +143,7 @@ public class MapSector
     /// </summary>
     public List<T> GetEntitiesInRange<T>(Point3D center, int range) where T : class, IPositionEntity
     {
-        var results = new List<T>();
+        using var results = PooledRefList<T>.Create();
 
         /// Choose the most efficient collection to iterate
         var collection = typeof(T) switch
@@ -160,7 +161,7 @@ public class MapSector
             }
         }
 
-        return results;
+        return [.. results.AsSpan()];
     }
 
     /// <summary>
@@ -199,7 +200,7 @@ public class MapSector
     /// </summary>
     public List<UOMobileEntity> GetPlayersInRange(Point3D center, int range)
     {
-        var results = new List<UOMobileEntity>();
+        using var results = PooledRefList<UOMobileEntity>.Create();
 
         foreach (var player in _players.Values)
         {
@@ -209,7 +210,7 @@ public class MapSector
             }
         }
 
-        return results;
+        return [.. results.AsSpan()];
     }
 
     /// <summary>

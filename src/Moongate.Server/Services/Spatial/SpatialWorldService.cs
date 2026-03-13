@@ -1,5 +1,6 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Core.Collections;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
@@ -205,7 +206,7 @@ public sealed class SpatialWorldService
     {
         var mobiles = GetNearbyMobiles(location, range, mapId);
         var sessionsByCharacter = BuildSessionsByCharacterMap(excludeSession);
-        var result = new List<GameSession>();
+        using var result = PooledRefList<GameSession>.Create(mobiles.Count);
 
         foreach (var mobile in mobiles)
         {
@@ -220,7 +221,7 @@ public sealed class SpatialWorldService
             }
         }
 
-        return result;
+        return [.. result.AsSpan()];
     }
 
     public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
