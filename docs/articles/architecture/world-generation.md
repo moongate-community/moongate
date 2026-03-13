@@ -38,6 +38,11 @@ Manages mob spawn definitions. Spawn entries define mobile templates, locations,
 
 Current status: spawn definition import is in place, but the NPC template migration from ServUO/RunUO/ModernUO is still incomplete. Runtime spawners therefore currently materialize `generic_npc` as the spawned mobile fallback.
 
+Spawn definitions currently support two runtime kinds through the JSON `type` field:
+
+- `Spawner` - periodic respawn, processed on the normal spawn tick and gated by nearby players
+- `ProximitySpawner` - trigger-on-enter behavior, using `homeRange` as the proximity radius
+
 ### TeleportersDataService
 
 Manages teleporter definitions. Teleporters are point-to-point transitions between map coordinates, including cross-map transitions.
@@ -119,6 +124,8 @@ moongate_data/
 ```
 
 At the moment the `entries[].name` values are imported and preserved from source data, but if no matching Moongate mobile template exists yet the runtime spawn path falls back to `generic_npc`.
+
+`type` may be either `Spawner` or `ProximitySpawner`. `initial_spawn` can still force a spawn attempt for both kinds.
 
 ### Location Entry
 

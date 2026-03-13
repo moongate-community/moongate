@@ -68,6 +68,7 @@ public class SpawnsDataLoaderTests
                 Assert.That(service.Entries, Has.Count.EqualTo(1));
                 Assert.That(service.Entries[0].MapId, Is.EqualTo(0));
                 Assert.That(service.Entries[0].Map, Is.EqualTo("Felucca"));
+                Assert.That(service.Entries[0].Kind, Is.EqualTo(SpawnDefinitionKind.Spawner));
                 Assert.That(service.Entries[0].Location.X, Is.EqualTo(4066));
                 Assert.That(service.Entries[0].Location.Y, Is.EqualTo(569));
                 Assert.That(service.Entries[0].Location.Z, Is.EqualTo(0));
@@ -115,5 +116,51 @@ public class SpawnsDataLoaderTests
         await loader.LoadAsync();
 
         Assert.That(service.Entries, Is.Empty);
+    }
+
+    [Test]
+    public async Task LoadAsync_ShouldImportProximitySpawnerEntries()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var spawnsPath = Path.Combine(directories[DirectoryType.Data], "spawns", "shared", "felucca");
+        Directory.CreateDirectory(spawnsPath);
+
+        const string json = """
+                            [
+                              {
+                                "type": "ProximitySpawner",
+                                "guid": "11111111-2222-3333-4444-555555555555",
+                                "name": "Proximity Spawner",
+                                "location": [100, 200, 0],
+                                "map": "Felucca",
+                                "count": 1,
+                                "minDelay": "00:00:30",
+                                "maxDelay": "00:01:00",
+                                "team": 0,
+                                "homeRange": 6,
+                                "walkingRange": 6,
+                                "entries": [
+                                  { "name": "Rat", "maxCount": 1, "probability": 100 }
+                                ]
+                              }
+                            ]
+                            """;
+        await File.WriteAllTextAsync(Path.Combine(spawnsPath, "proximity.json"), json);
+
+        var service = new TestSpawnsDataService();
+        var loader = new SpawnsDataLoader(directories, service);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(service.Entries, Has.Count.EqualTo(1));
+                Assert.That(service.Entries[0].Kind, Is.EqualTo(SpawnDefinitionKind.ProximitySpawner));
+                Assert.That(service.Entries[0].HomeRange, Is.EqualTo(6));
+                Assert.That(service.Entries[0].Entries[0].Name, Is.EqualTo("Rat"));
+            }
+        );
     }
 }

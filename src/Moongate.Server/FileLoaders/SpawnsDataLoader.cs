@@ -109,6 +109,7 @@ public class SpawnsDataLoader : IFileLoader
                         sourceGroup,
                         sourceFile,
                         spawn.Guid,
+                        ResolveKind(spawn.Type),
                         spawn.Name,
                         location,
                         spawn.Count,
@@ -179,4 +180,9 @@ public class SpawnsDataLoader : IFileLoader
 
         return false;
     }
+
+    private static SpawnDefinitionKind ResolveKind(string? rawType)
+        => string.Equals(rawType, "ProximitySpawner", StringComparison.OrdinalIgnoreCase)
+               ? SpawnDefinitionKind.ProximitySpawner
+               : SpawnDefinitionKind.Spawner;
 }

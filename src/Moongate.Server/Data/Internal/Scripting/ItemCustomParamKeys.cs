@@ -2,6 +2,11 @@ namespace Moongate.Server.Data.Internal.Scripting;
 
 public static class ItemCustomParamKeys
 {
+    public static class Item
+    {
+        public const string Dyeable = "dyeable";
+    }
+
     public static class Book
     {
         public const string BookId = "book_id";

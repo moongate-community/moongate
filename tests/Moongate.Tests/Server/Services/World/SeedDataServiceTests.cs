@@ -333,6 +333,7 @@ public class SeedDataServiceTests
                 "shared/felucca",
                 "Outdoors.json",
                 Guid.Parse("001a5320-820c-4300-96f9-676e428b55be"),
+                SpawnDefinitionKind.Spawner,
                 "Spawner (213)",
                 new(4066, 569, 0),
                 8,

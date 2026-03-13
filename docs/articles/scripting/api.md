@@ -14,6 +14,7 @@ The following modules are currently wired in runtime:
 - `speech`
 - `mobile`
 - `item`
+- `dye`
 - `door`
 - `effect`
 - `gump`
@@ -26,7 +27,7 @@ The following modules are currently wired in runtime:
 - `map` (`to_id`)
 - `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-16 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+17 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
@@ -67,6 +68,33 @@ items_door = {
     end
 }
 ```
+
+### Item Script: Dye Tub
+
+```lua
+items_dye_tub = {
+    on_double_click = function(ctx)
+        return dye.begin(ctx.session_id, ctx.item.serial, function(target_serial)
+            return target_serial ~= nil and target_serial ~= 0
+        end)
+    end
+}
+```
+
+The `dye` module currently exposes:
+
+- `dye.begin(session_id, dye_tub_serial, callback?)`
+  - starts the classic UO target cursor flow
+  - the optional callback receives the selected `target_serial`
+  - returning `false` rejects the target before the hue picker opens
+- `dye.send_dyeable(session_id, item_serial, model?)`
+  - opens the hue picker directly for a known dyeable item
+
+Runtime notes:
+
+- target items must currently be accessible from the player inventory/equipment
+- the final hue application, persistence, and item refresh are handled by `IDyeColorService`
+- item templates opt-in through the `dyeable` flag, which is materialized into runtime item metadata
 
 ### Item Script: Teleporter
 

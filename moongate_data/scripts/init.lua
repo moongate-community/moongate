@@ -11,6 +11,8 @@ require("commands.gm.teleports")
 require("items.apple")
 require("items.brick")
 require("items.door")
+require("items.dye_box")
+require("items.dye_tub")
 require("items.spawn")
 require("items.teleport")
 

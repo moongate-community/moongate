@@ -22,6 +22,42 @@ namespace Moongate.Tests.Server.Services.Entities;
 public class ItemFactoryServiceTests
 {
     [Test]
+    public async Task CreateItemFromTemplate_WhenTemplateIsDyeable_ShouldPersistDyeableFlag()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "dyeable_shoes",
+                Name = "Shoes",
+                Category = "Clothing",
+                Description = "Dyeable shoes",
+                ItemId = "0x170F",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 1,
+                Dyeable = true
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("dyeable_shoes");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("dyeable", out var dyeable), Is.True);
+                Assert.That(dyeable, Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateItemFromTemplate_ShouldRenderBookTemplateIntoCustomProperties()
     {
         using var temp = new TempDirectory();

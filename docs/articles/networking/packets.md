@@ -52,6 +52,9 @@ Current gameplay examples:
 - `ItemHandler` listens to book packets
   - `BookHeaderNewPacket` (`0xD4`) saves writable book `title` / `author`
   - `BookPagesPacket` (`0x66`) serves page requests and writable page saves
+- `DyeWindowHandler` listens to `DyeWindowPacket` (`0x95`)
+  - the classic dye-tub target flow opens `0x95` to the client
+  - the client response on `0x95` applies hue to the pending item target
 
 ## Pragmatic POL Coverage Matrix
 
@@ -90,6 +93,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler` | Container / world drop |
 | `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
 | `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
+| `0x95` | Dye Window | both | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `handler` + `outgoing` | `DyeWindowHandler`, `DyeModule` / `DyeColorService` | Classic dye tub hue picker flow; outgoing packet intentionally not registry-decorated to avoid opcode collision |
 | `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
 | `0xD9` | Spy On Client | C -> S | `SpyOnClientPacket` | `handler` | `PlayerHandler` | Minimal session-side handling |
 | `0x03` | Talk Request | C -> S | `TalkRequestPacket` | `parse-only` | none | Legacy speech path not wired |

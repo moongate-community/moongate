@@ -103,7 +103,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x75` | Rename character | C -> S | `?Packet=0x75` | `RenameCharacterPacket` | `parse-only` | Rename flow missing |
 | `0x7D` | Dialog response | C -> S | `?Packet=0x7D` | `DialogResponsePacket` | `parse-only` | Legacy dialog response not wired |
 | `0x83` | Delete character | C -> S | `?Packet=0x83` | `DeleteCharacterPacket` | `parse-only` | Delete flow missing |
-| `0x95` | Dye window | C -> S | `?Packet=0x95` | `DyeWindowPacket` | `parse-only` | Dye flow missing |
+| `0x95` | Dye window | both | `?Packet=0x95` | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `implemented` | Classic dye tub flow wired through `DyeColorService` and Lua `dye` module |
 | `0x98` | All names | C -> S | `?Packet=0x98` | `AllNamesPacket` | `parse-only` | 3D all-names flow missing |
 | `0x9A` | Console entry prompt | C -> S | `?Packet=0x9A` | `ConsoleEntryPromptPacket` | `parse-only` | No gameplay listener |
 | `0x9B` | Request help | C -> S | `?Packet=0x9B` | `RequestHelpPacket` | `parse-only` | Help flow missing |

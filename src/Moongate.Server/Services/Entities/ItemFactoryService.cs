@@ -187,6 +187,11 @@ public sealed class ItemFactoryService : IItemFactoryService
 
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
     {
+        if (template.Dyeable)
+        {
+            item.SetCustomBoolean(ItemCustomParamKeys.Item.Dyeable, true);
+        }
+
         if (template.FlippableItemIds.Count > 0)
         {
             item.SetCustomString(FlippableItemIdsKey, string.Join(',', template.FlippableItemIds));

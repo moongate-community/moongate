@@ -247,6 +247,86 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenDerivedItemUsesBaseItem_ShouldInheritSkillItemValues()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "test");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "dye.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "skill items",
+                "id": "dye_tub",
+                "name": "Dye Tub",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FAB",
+                "lootType": "Regular",
+                "scriptId": "items.dye_tub",
+                "tags": ["modernuo", "skill items"],
+                "weight": 10.0
+              },
+              {
+                "type": "item",
+                "category": "skill items",
+                "id": "dye_box",
+                "base_item": "dye_tub",
+                "name": "Dye Box",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FAB",
+                "lootType": "Regular",
+                "scriptId": "items.dye_box",
+                "tags": ["test"],
+                "weight": 10.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("dye_box", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.ItemId, Is.EqualTo("0x0FAB"));
+                Assert.That(template.Weight, Is.EqualTo(10.0m));
+                Assert.That(template.ScriptId, Is.EqualTo("items.dye_box"));
+                Assert.That(template.Tags, Does.Contain("test"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();
