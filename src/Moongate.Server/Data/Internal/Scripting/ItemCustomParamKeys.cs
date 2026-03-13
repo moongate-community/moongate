@@ -21,6 +21,13 @@ public static class ItemCustomParamKeys
     {
         public const string Facing = "door_facing";
         public const string LinkSerial = "door_link_serial";
+        public const string Locked = "door_locked";
+        public const string LockId = "door_lock_id";
+    }
+
+    public static class Key
+    {
+        public const string LockId = "key_lock_id";
     }
 
     public static class Spawner

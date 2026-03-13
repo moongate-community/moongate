@@ -24,6 +24,14 @@ Manages decoration placement data. Decorations are static world objects loaded f
 
 Manages door definitions. Works with `DoorGeneratorBuilder` and `DefaultDoorGenerationMapSpecProvider` to generate doors based on map-specific specifications and facing rules.
 
+Generated and manually spawned doors can also carry lock metadata at runtime:
+
+- `door_facing` - persisted facing/orientation metadata
+- `door_locked` - whether the door requires a key
+- `door_lock_id` - shared lock token used by one or more doors
+
+Linked double doors share the same `door_lock_id`. Physical key items carry a matching `key_lock_id`.
+
 ### SignDataService
 
 Manages sign definitions and placement data loaded from JSON files.
@@ -64,9 +72,11 @@ World generation commands (under `worldgen` group):
 
 - `create_spawners` - creates mob spawner entities from spawn definitions
 - `initial_spawn` - forces an initial spawn pass across persisted spawner items
+- `lock_door` - locks a targeted door and generates a matching key item
 - `spawn_decorations` - places decoration objects in the world
 - `spawn_doors` - generates doors from door specifications
 - `spawn_signs` - places sign objects in the world
+- `unlock_door` - removes lock metadata from a targeted door
 
 ## Data Format
 

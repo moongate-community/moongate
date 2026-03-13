@@ -136,6 +136,26 @@ Opens a target cursor and renames the selected item or mobile. Persists the upda
 
 Targets both `item` and `mobile` serials. Names are trimmed and limited to 60 characters. Context: InGame only. Access: GameMaster.
 
+#### `lock_door`
+
+Opens a target cursor and locks the selected door. Generates a new shared `lockId`, applies it to the targeted door and its linked double-door partner (if any), then creates a physical `key` item carrying the same `lockId` and drops it into the caller backpack.
+
+```
+.lock_door
+```
+
+Locked doors can only be opened by characters carrying a matching key in equipped items or anywhere in their backpack tree. Context: InGame only. Access: GameMaster.
+
+#### `unlock_door`
+
+Opens a target cursor and removes lock metadata from the selected door. If the door is linked to a double-door partner, both sides are unlocked together.
+
+```
+.unlock_door
+```
+
+This clears `door_locked` and `door_lock_id` metadata from the affected door items. Context: InGame only. Access: GameMaster.
+
 #### `add_npc`
 
 Spawns an NPC from a mobile template at a target location. The command opens a target cursor; clicking a location in the world spawns the NPC there.

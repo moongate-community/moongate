@@ -12,6 +12,7 @@ public sealed class DoorModuleTests
         public bool ToggleResult { get; set; }
         public Serial LastIsDoorSerial { get; private set; }
         public Serial LastToggleSerial { get; private set; }
+        public long LastToggleSessionId { get; private set; }
 
         public Task<bool> IsDoorAsync(Serial itemId, CancellationToken cancellationToken = default)
         {
@@ -21,10 +22,11 @@ public sealed class DoorModuleTests
             return Task.FromResult(IsDoorResult);
         }
 
-        public Task<bool> ToggleAsync(Serial itemId, CancellationToken cancellationToken = default)
+        public Task<bool> ToggleAsync(Serial itemId, long sessionId = 0, CancellationToken cancellationToken = default)
         {
             _ = cancellationToken;
             LastToggleSerial = itemId;
+            LastToggleSessionId = sessionId;
 
             return Task.FromResult(ToggleResult);
         }
@@ -81,13 +83,14 @@ public sealed class DoorModuleTests
         };
         var module = new DoorModule(service);
 
-        var result = module.Toggle(0x40000001);
+        var result = module.Toggle(0x40000001, 123);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(result, Is.True);
                 Assert.That(service.LastToggleSerial, Is.EqualTo((Serial)0x40000001u));
+                Assert.That(service.LastToggleSessionId, Is.EqualTo(123));
             }
         );
     }

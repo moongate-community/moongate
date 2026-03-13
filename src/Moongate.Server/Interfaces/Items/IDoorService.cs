@@ -19,7 +19,8 @@ public interface IDoorService
     /// Toggles a supported door between opened and closed states.
     /// </summary>
     /// <param name="itemId">Item serial.</param>
+    /// <param name="sessionId">Optional gameplay session identifier used for lock/key validation.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><c>true</c> when toggled; otherwise <c>false</c>.</returns>
-    Task<bool> ToggleAsync(Serial itemId, CancellationToken cancellationToken = default);
+    Task<bool> ToggleAsync(Serial itemId, long sessionId = 0, CancellationToken cancellationToken = default);
 }

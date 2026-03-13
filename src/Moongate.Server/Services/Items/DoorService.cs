@@ -1,4 +1,6 @@
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Data.Internal.Scripting;
@@ -16,16 +18,22 @@ public sealed class DoorService : IDoorService
     private readonly IItemService _itemService;
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IDoorDataService _doorDataService;
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IMobileService _mobileService;
 
     public DoorService(
         IItemService itemService,
         ISpatialWorldService spatialWorldService,
-        IDoorDataService doorDataService
+        IDoorDataService doorDataService,
+        IGameNetworkSessionService gameNetworkSessionService,
+        IMobileService mobileService
     )
     {
         _itemService = itemService;
         _spatialWorldService = spatialWorldService;
         _doorDataService = doorDataService;
+        _gameNetworkSessionService = gameNetworkSessionService;
+        _mobileService = mobileService;
     }
 
     public async Task<bool> IsDoorAsync(Serial itemId, CancellationToken cancellationToken = default)
@@ -42,7 +50,7 @@ public sealed class DoorService : IDoorService
         return item is not null && IsSupportedDoor(item);
     }
 
-    public async Task<bool> ToggleAsync(Serial itemId, CancellationToken cancellationToken = default)
+    public async Task<bool> ToggleAsync(Serial itemId, long sessionId = 0, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
 
@@ -63,7 +71,11 @@ public sealed class DoorService : IDoorService
             return false;
         }
 
-        var originalLocation = item.Location;
+        if (IsClosedAndLocked(item) && !await HasMatchingKeyAsync(sessionId, item))
+        {
+            return false;
+        }
+
         var toggled = await ToggleCoreAsync(item);
 
         if (!toggled)
@@ -93,6 +105,99 @@ public sealed class DoorService : IDoorService
         await ToggleLinkedCoreAsync(linkedItem);
 
         return true;
+    }
+
+    private bool IsClosedAndLocked(UOItemEntity item)
+    {
+        if (!_doorDataService.TryGetToggleDefinition(item.ItemId, out var state) || !state.IsClosed)
+        {
+            return false;
+        }
+
+        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var locked) || !locked)
+        {
+            return false;
+        }
+
+        return item.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var lockId) && !string.IsNullOrWhiteSpace(lockId);
+    }
+
+    private async Task<bool> HasMatchingKeyAsync(long sessionId, UOItemEntity door)
+    {
+        if (sessionId == 0 ||
+            !_gameNetworkSessionService.TryGet(sessionId, out var session) ||
+            !door.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var lockId) ||
+            string.IsNullOrWhiteSpace(lockId))
+        {
+            return false;
+        }
+
+        var mobile = session.Character;
+
+        if (mobile is null && session.CharacterId != Serial.Zero)
+        {
+            mobile = await _mobileService.GetAsync(session.CharacterId);
+        }
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        var visited = new HashSet<Serial>();
+
+        foreach (var equippedItemId in mobile.EquippedItemIds.Values)
+        {
+            if (equippedItemId == Serial.Zero)
+            {
+                continue;
+            }
+
+            if (await ContainsMatchingKeyRecursiveAsync(equippedItemId, lockId!, visited))
+            {
+                return true;
+            }
+        }
+
+        if (mobile.BackpackId != Serial.Zero)
+        {
+            return await ContainsMatchingKeyRecursiveAsync(mobile.BackpackId, lockId!, visited);
+        }
+
+        return false;
+    }
+
+    private async Task<bool> ContainsMatchingKeyRecursiveAsync(Serial itemId, string lockId, HashSet<Serial> visited)
+    {
+        if (!visited.Add(itemId))
+        {
+            return false;
+        }
+
+        var item = await _itemService.GetItemAsync(itemId);
+
+        if (item is null)
+        {
+            return false;
+        }
+
+        if (item.TryGetCustomString(ItemCustomParamKeys.Key.LockId, out var itemLockId) &&
+            string.Equals(itemLockId, lockId, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        var containedItems = await _itemService.GetItemsInContainerAsync(item.Id);
+
+        foreach (var containedItem in containedItems)
+        {
+            if (await ContainsMatchingKeyRecursiveAsync(containedItem.Id, lockId, visited))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool IsSupportedDoor(UOItemEntity item)

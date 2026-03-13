@@ -70,6 +70,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IPathfindingService, AStarPathfindingService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
         container.Register<IDoorService, DoorService>(Reuse.Singleton);
+        container.Register<IDoorLockService, DoorLockService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<IMobileModifierAggregationService, MobileModifierAggregationService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
@@ -83,6 +84,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IGameNetworkSessionService, GameNetworkSessionService>(Reuse.Singleton);
         container.Register<ISpatialWorldService, SpatialWorldService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
+        container.Register<IChatSystemService, ChatSystemService>(Reuse.Singleton);
         container.Register<ITimerService, TimerWheelService>(Reuse.Singleton);
         container.Register<IAccountService, AccountService>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
