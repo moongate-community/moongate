@@ -1,6 +1,7 @@
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -12,8 +13,6 @@ namespace Moongate.Server.Services.Items;
 /// </summary>
 public sealed class DoorService : IDoorService
 {
-    private const string DoorLinkSerialCustomFieldKey = "door_link_serial";
-
     private readonly IItemService _itemService;
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IDoorDataService _doorDataService;
@@ -72,7 +71,7 @@ public sealed class DoorService : IDoorService
             return false;
         }
 
-        if (!item.TryGetCustomInteger(DoorLinkSerialCustomFieldKey, out var linkedSerialValue) ||
+        if (!item.TryGetCustomInteger(ItemCustomParamKeys.Door.LinkSerial, out var linkedSerialValue) ||
             linkedSerialValue <= 0 ||
             linkedSerialValue > uint.MaxValue)
         {

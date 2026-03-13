@@ -44,6 +44,7 @@ public class ItemHandler
 {
     private const int GroundItemInteractionRange = 2;
     private const int BookLinesPerPage = 8;
+    private const int DefaultWritableBookPages = 20;
 
     private readonly ILogger _logger = Log.ForContext<ItemHandler>();
 
@@ -659,6 +660,8 @@ public class ItemHandler
             return true;
         }
 
+        var pageCount = GetBookPageCount(item, content);
+
         if (bookPagesPacket.Pages.Any(static page => !page.IsPageRequest))
         {
             if (!IsWritableBook(item) || !await CanWriteBookAsync(session, item))
@@ -673,7 +676,7 @@ public class ItemHandler
             return true;
         }
 
-        var requestedPages = BuildRequestedBookPages(content, bookPagesPacket.Pages);
+        var requestedPages = BuildRequestedBookPages(content, bookPagesPacket.Pages, pageCount);
 
         if (requestedPages.Count == 0)
         {
@@ -701,8 +704,8 @@ public class ItemHandler
             return true;
         }
 
-        item.SetCustomString(BookTemplateParamKeys.Title, SanitizeBookText(bookHeaderNewPacket.Title));
-        item.SetCustomString(BookTemplateParamKeys.Author, SanitizeBookText(bookHeaderNewPacket.Author));
+        item.SetCustomString(ItemCustomParamKeys.Book.Title, SanitizeBookText(bookHeaderNewPacket.Title));
+        item.SetCustomString(ItemCustomParamKeys.Book.Author, SanitizeBookText(bookHeaderNewPacket.Author));
         await _itemService.UpsertItemAsync(item);
         Enqueue(session, ToolTipHandler.CreateItemPropertyList(item));
 
@@ -719,13 +722,14 @@ public class ItemHandler
             return false;
         }
 
-        var pages = BuildBookPages(content);
+        var pageCount = GetBookPageCount(item, content);
+        var pages = BuildBookPages(content, pageCount);
         var header = new BookHeaderNewPacket
         {
             BookSerial = item.Id.Value,
-            Flag1 = false,
+            Flag1 = true,
             IsWritable = IsWritableBook(item),
-            PageCount = (ushort)pages.Count,
+            PageCount = (ushort)pageCount,
             Title = title,
             Author = author
         };
@@ -733,7 +737,7 @@ public class ItemHandler
         var packet = new BookPagesPacket
         {
             BookSerial = item.Id.Value,
-            PageCount = (ushort)pages.Count
+            PageCount = (ushort)pageCount
         };
 
         for (var i = 0; i < pages.Count; i++)
@@ -760,9 +764,9 @@ public class ItemHandler
         author = string.Empty;
         content = string.Empty;
 
-        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out title) ||
-            !item.TryGetCustomString(BookTemplateParamKeys.Author, out author) ||
-            !item.TryGetCustomString(BookTemplateParamKeys.Content, out content))
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Title, out title) ||
+            !item.TryGetCustomString(ItemCustomParamKeys.Book.Author, out author) ||
+            !item.TryGetCustomString(ItemCustomParamKeys.Book.Content, out content))
         {
             return false;
         }
@@ -772,12 +776,12 @@ public class ItemHandler
 
     private static bool IsWritableBook(UOItemEntity item)
     {
-        if (item.TryGetCustomBoolean(BookTemplateParamKeys.Writable, out var writable))
+        if (item.TryGetCustomBoolean(ItemCustomParamKeys.Book.Writable, out var writable))
         {
             return writable;
         }
 
-        return item.TryGetCustomString(BookTemplateParamKeys.Writable, out var stringValue) &&
+        return item.TryGetCustomString(ItemCustomParamKeys.Book.Writable, out var stringValue) &&
                bool.TryParse(stringValue, out writable) &&
                writable;
     }
@@ -847,9 +851,13 @@ public class ItemHandler
                    : Serial.Zero;
     }
 
-    private static List<BookPageEntry> BuildRequestedBookPages(string content, IReadOnlyList<BookPageEntry> requestedPages)
+    private static List<BookPageEntry> BuildRequestedBookPages(
+        string content,
+        IReadOnlyList<BookPageEntry> requestedPages,
+        int pageCount
+    )
     {
-        var allPages = BuildBookPages(content);
+        var allPages = BuildBookPages(content, pageCount);
         var responsePages = new List<BookPageEntry>();
 
         foreach (var requestedPage in requestedPages)
@@ -879,17 +887,12 @@ public class ItemHandler
         return responsePages;
     }
 
-    private static List<List<string>> BuildBookPages(string content)
+    private static List<List<string>> BuildBookPages(string content, int minimumPageCount = 1)
     {
         var normalized = string.IsNullOrWhiteSpace(content)
                              ? string.Empty
                              : content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
         var lines = normalized.Length == 0 ? [] : normalized.Split('\n').ToList();
-
-        if (lines.Count == 0)
-        {
-            return [[]];
-        }
 
         var pages = new List<List<string>>();
 
@@ -898,12 +901,17 @@ public class ItemHandler
             pages.Add(lines.Skip(index).Take(BookLinesPerPage).ToList());
         }
 
+        while (pages.Count < Math.Max(1, minimumPageCount))
+        {
+            pages.Add([]);
+        }
+
         return pages;
     }
 
     private static void ApplyBookPageUpdates(UOItemEntity item, IReadOnlyList<BookPageEntry> updatedPages)
     {
-        item.TryGetCustomString(BookTemplateParamKeys.Content, out var content);
+        item.TryGetCustomString(ItemCustomParamKeys.Book.Content, out var content);
         var lines = SplitBookContent(content).ToList();
 
         foreach (var page in updatedPages.Where(static page => !page.IsPageRequest))
@@ -929,7 +937,7 @@ public class ItemHandler
             }
         }
 
-        item.SetCustomString(BookTemplateParamKeys.Content, string.Join('\n', lines));
+        item.SetCustomString(ItemCustomParamKeys.Book.Content, string.Join('\n', lines));
     }
 
     private static IEnumerable<string> SplitBookContent(string? content)
@@ -939,6 +947,21 @@ public class ItemHandler
                              : content.Replace("\r\n", "\n", StringComparison.Ordinal).Replace('\r', '\n');
 
         return normalized.Length == 0 ? [] : normalized.Split('\n');
+    }
+
+    private static int GetBookPageCount(UOItemEntity item, string content)
+    {
+        if (item.TryGetCustomInteger(ItemCustomParamKeys.Book.Pages, out var configuredPages) && configuredPages > 0)
+        {
+            return (int)configuredPages;
+        }
+
+        if (IsWritableBook(item))
+        {
+            return DefaultWritableBookPages;
+        }
+
+        return Math.Max(1, BuildBookPages(content).Count);
     }
 
     private static string SanitizeBookText(string value)

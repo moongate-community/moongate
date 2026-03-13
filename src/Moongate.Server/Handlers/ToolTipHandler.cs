@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Incoming.Tooltip;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.System;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Persistence;
@@ -116,7 +117,7 @@ public class ToolTipHandler : BasePacketListener
     {
         var displayName = item.Name;
 
-        if (item.TryGetCustomString("book_title", out var bookTitle) &&
+        if (item.TryGetCustomString(ItemCustomParamKeys.Book.Title, out var bookTitle) &&
             !string.IsNullOrWhiteSpace(bookTitle))
         {
             displayName = bookTitle;
@@ -131,7 +132,7 @@ public class ToolTipHandler : BasePacketListener
             hue: item.Hue
         );
 
-        if (item.TryGetCustomString("book_author", out var bookAuthor) &&
+        if (item.TryGetCustomString(ItemCustomParamKeys.Book.Author, out var bookAuthor) &&
             !string.IsNullOrWhiteSpace(bookAuthor))
         {
             propertyList.Add($"by {bookAuthor}");

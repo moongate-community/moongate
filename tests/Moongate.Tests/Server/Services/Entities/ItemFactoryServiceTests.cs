@@ -173,6 +173,8 @@ public class ItemFactoryServiceTests
                 Assert.That(author, Is.Empty);
                 Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
                 Assert.That(content, Is.Empty);
+                Assert.That(item.TryGetCustomInteger("book_pages", out var pages), Is.True);
+                Assert.That(pages, Is.EqualTo(20));
             }
         );
     }

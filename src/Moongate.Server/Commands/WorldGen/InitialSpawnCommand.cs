@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Humanizer;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Persistence;
@@ -65,7 +66,7 @@ public sealed class InitialSpawnCommand : ICommandExecutor
                                item.ParentContainerId == Serial.Zero &&
                                item.EquippedMobileId == Serial.Zero &&
                                (!mapId.HasValue || item.MapId == mapId.Value) &&
-                               item.TryGetCustomString("spawner_id", out var spawnerId) &&
+                               item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerId) &&
                                !string.IsNullOrWhiteSpace(spawnerId),
                            static item => item
                        );

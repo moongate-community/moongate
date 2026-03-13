@@ -24,6 +24,7 @@ namespace Moongate.Server.Services.Entities;
 public sealed class ItemFactoryService : IItemFactoryService
 {
     private const int BackpackItemId = 0x0E75;
+    private const int DefaultWritableBookPages = 20;
     private const string FlippableItemIdsKey = "flippable_item_ids";
 
     private readonly ILogger _logger = Log.ForContext<ItemFactoryService>();
@@ -173,14 +174,14 @@ public sealed class ItemFactoryService : IItemFactoryService
             );
         }
 
-        item.SetCustomString(BookTemplateParamKeys.BookId, template.BookId.Trim());
-        item.SetCustomString(BookTemplateParamKeys.Title, book.Title);
-        item.SetCustomString(BookTemplateParamKeys.Author, book.Author);
-        item.SetCustomString(BookTemplateParamKeys.Content, book.Content);
+        item.SetCustomString(ItemCustomParamKeys.Book.BookId, template.BookId.Trim());
+        item.SetCustomString(ItemCustomParamKeys.Book.Title, book.Title);
+        item.SetCustomString(ItemCustomParamKeys.Book.Author, book.Author);
+        item.SetCustomString(ItemCustomParamKeys.Book.Content, book.Content);
 
         if (book.ReadOnly.HasValue)
         {
-            item.SetCustomBoolean(BookTemplateParamKeys.Writable, !book.ReadOnly.Value);
+            item.SetCustomBoolean(ItemCustomParamKeys.Book.Writable, !book.ReadOnly.Value);
         }
     }
 
@@ -205,7 +206,15 @@ public sealed class ItemFactoryService : IItemFactoryService
             if (string.Equals(normalizedKey, "writable", StringComparison.OrdinalIgnoreCase) &&
                 bool.TryParse(param.Value, out var writable))
             {
-                item.SetCustomBoolean(BookTemplateParamKeys.Writable, writable);
+                item.SetCustomBoolean(ItemCustomParamKeys.Book.Writable, writable);
+
+                continue;
+            }
+
+            if (string.Equals(normalizedKey, "pages", StringComparison.OrdinalIgnoreCase) &&
+                long.TryParse(param.Value, CultureInfo.InvariantCulture, out var pages))
+            {
+                item.SetCustomInteger(ItemCustomParamKeys.Book.Pages, pages);
 
                 continue;
             }
@@ -263,7 +272,7 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         item.Direction = facing.ToDirectionType();
         item.ItemId = facing.ToItemId(item.ItemId);
-        item.SetCustomString("door_facing", facing.ToString());
+        item.SetCustomString(ItemCustomParamKeys.Door.Facing, facing.ToString());
     }
 
     private static bool IsDoorTemplate(ItemTemplateDefinition template)
@@ -306,24 +315,29 @@ public sealed class ItemFactoryService : IItemFactoryService
 
     private static void EnsureWritableBookMetadata(UOItemEntity item)
     {
-        if (!item.TryGetCustomBoolean(BookTemplateParamKeys.Writable, out var writable) || !writable)
+        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Book.Writable, out var writable) || !writable)
         {
             return;
         }
 
-        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out _))
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Title, out _))
         {
-            item.SetCustomString(BookTemplateParamKeys.Title, string.Empty);
+            item.SetCustomString(ItemCustomParamKeys.Book.Title, string.Empty);
         }
 
-        if (!item.TryGetCustomString(BookTemplateParamKeys.Author, out _))
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Author, out _))
         {
-            item.SetCustomString(BookTemplateParamKeys.Author, string.Empty);
+            item.SetCustomString(ItemCustomParamKeys.Book.Author, string.Empty);
         }
 
-        if (!item.TryGetCustomString(BookTemplateParamKeys.Content, out _))
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Content, out _))
         {
-            item.SetCustomString(BookTemplateParamKeys.Content, string.Empty);
+            item.SetCustomString(ItemCustomParamKeys.Book.Content, string.Empty);
+        }
+
+        if (!item.TryGetCustomInteger(ItemCustomParamKeys.Book.Pages, out _))
+        {
+            item.SetCustomInteger(ItemCustomParamKeys.Book.Pages, DefaultWritableBookPages);
         }
     }
 

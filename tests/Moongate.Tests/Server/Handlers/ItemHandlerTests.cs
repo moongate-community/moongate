@@ -864,6 +864,7 @@ public class ItemHandlerTests
         item.SetCustomString("book_author", "Tommy");
         item.SetCustomString("book_content", "Line 1\nLine 2");
         item.SetCustomString("book_writable", "true");
+        item.SetCustomInteger("book_pages", 20);
         itemService.ItemsById[targetSerial] = item;
 
         var mobileService = new ItemHandlerTestMobileService
@@ -909,16 +910,20 @@ public class ItemHandlerTests
                 Assert.That(headerOutbound.Packet, Is.TypeOf<BookHeaderNewPacket>());
                 var header = (BookHeaderNewPacket)headerOutbound.Packet;
                 Assert.That(header.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(header.Flag1, Is.True);
                 Assert.That(header.IsWritable, Is.True);
                 Assert.That(header.Title, Is.EqualTo("Blank Notes"));
                 Assert.That(header.Author, Is.EqualTo("Tommy"));
-                Assert.That(header.PageCount, Is.EqualTo(1));
+                Assert.That(header.PageCount, Is.EqualTo(20));
 
                 Assert.That(queue.TryDequeue(out var pagesOutbound), Is.True);
                 Assert.That(pagesOutbound.Packet, Is.TypeOf<BookPagesPacket>());
                 var pages = (BookPagesPacket)pagesOutbound.Packet;
-                Assert.That(pages.Pages, Has.Count.EqualTo(1));
+                Assert.That(pages.Pages, Has.Count.EqualTo(20));
+                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
                 Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2" }));
+                Assert.That(pages.Pages[19].PageNumber, Is.EqualTo(20));
+                Assert.That(pages.Pages[19].Lines, Is.Empty);
             }
         );
     }

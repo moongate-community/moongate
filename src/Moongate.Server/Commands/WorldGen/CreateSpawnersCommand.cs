@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Humanizer;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -77,7 +78,7 @@ public sealed class CreateSpawnersCommand : ICommandExecutor
             item.MapId = spawn.MapId;
             item.Location = spawn.Location;
             item.Name = spawn.Name;
-            item.SetCustomString("spawner_id", spawn.Guid.ToString("D"));
+            item.SetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, spawn.Guid.ToString("D"));
 
             await _itemService.CreateItemAsync(item);
             created++;

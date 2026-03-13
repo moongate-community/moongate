@@ -1,4 +1,5 @@
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -24,7 +25,6 @@ public sealed class SpawnService : ISpawnService
     private const string SpawnOriginKey = "spawn_origin";
     private const string SpawnWalkingRangeKey = "walking_range";
     private const string SpawnHomeRangeKey = "home_range";
-    private const string SpawnerIdKey = "spawner_id";
     private const int ScanIntervalMilliseconds = 3000;
     private const int TickIntervalMilliseconds = 1000;
     private const int ActivationRange = MapSectorConsts.SectorSize * 2;
@@ -230,7 +230,7 @@ public sealed class SpawnService : ISpawnService
                     continue;
                 }
 
-                if (!item.TryGetCustomString(SpawnerIdKey, out var spawnerIdRaw) ||
+                if (!item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerIdRaw) ||
                     string.IsNullOrWhiteSpace(spawnerIdRaw))
                 {
                     continue;
@@ -485,7 +485,7 @@ public sealed class SpawnService : ISpawnService
     {
         state = default;
 
-        if (!item.TryGetCustomString(SpawnerIdKey, out var spawnerIdRaw) ||
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerIdRaw) ||
             string.IsNullOrWhiteSpace(spawnerIdRaw))
         {
             _logger.Debug("Cannot trigger spawner {ItemId}: missing spawner_id custom property.", item.Id);

@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Globalization;
 using Humanizer;
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Items;
@@ -140,7 +141,7 @@ public class SpawnDecorationsCommand : ICommandExecutor
         {
             item.Direction = facing.ToDirectionType();
             item.ItemId = facing.ToItemId(item.ItemId);
-            item.SetCustomString("door_facing", facing.ToString());
+            item.SetCustomString(ItemCustomParamKeys.Door.Facing, facing.ToString());
         }
 
         if (parameters.TryGetValue("Name", out var nameValue))
