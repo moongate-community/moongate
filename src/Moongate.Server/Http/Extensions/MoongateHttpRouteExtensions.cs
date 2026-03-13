@@ -13,6 +13,7 @@ using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Utils;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -567,9 +568,10 @@ internal static class MoongateHttpRouteExtensions
             return TypedResults.NotFound();
         }
 
+        using var normalized = ItemImageNormalizer.CropAndPad(image);
         using (var stream = File.Create(cachePath))
         {
-            image.Save(stream, new PngEncoder());
+            normalized.Save(stream, new PngEncoder());
         }
 
         return Results.File(cachePath, "image/png");

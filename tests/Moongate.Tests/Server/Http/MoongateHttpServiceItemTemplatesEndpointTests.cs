@@ -162,6 +162,66 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
     }
 
     [Test]
+    public async Task ItemTemplateImageEndpoint_ShouldCropTransparentBorderAndApplyFourPixelPadding()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+
+        var artService = new TestArtService
+        {
+            GetArtImpl = (itemId, _) =>
+                         {
+                             if (itemId != 0x1F9E)
+                             {
+                                 return null;
+                             }
+
+                             var image = new Image<Rgba32>(10, 10);
+                             image[4, 5] = new(255, 255, 255, 255);
+
+                             return image;
+                         }
+        };
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false
+            },
+            artService: artService
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = new HttpClient();
+            var response = await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/by-item-id/0x1F9E/image");
+            var cachePath = Path.Combine(directories[DirectoryType.Images], "items", "0x1F9E.png");
+
+            using var image = await Image.LoadAsync<Rgba32>(cachePath);
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(image.Width, Is.EqualTo(9));
+                    Assert.That(image.Height, Is.EqualTo(9));
+                    Assert.That(image[4, 4].A, Is.EqualTo(255));
+                    Assert.That(image[0, 0].A, Is.EqualTo(0));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
     public async Task ItemTemplatesEndpoint_WhenConfigured_ShouldReturnPaginatedTemplates()
     {
         using var temp = new TempDirectory();

@@ -2,6 +2,7 @@ using System.Globalization;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Templates;
 using Serilog;
@@ -69,8 +70,9 @@ public sealed class ItemsImageBuilder : IWorldGenerator
 
                 var fileName = $"{SanitizeFileName(template.Id)}_{itemId:X4}.png";
                 var outputPath = Path.Combine(destinationDirectory, fileName);
+                using var normalized = ItemImageNormalizer.CropAndPad(image);
                 using var stream = File.Create(outputPath);
-                image.Save(stream, new PngEncoder());
+                normalized.Save(stream, new PngEncoder());
                 generated++;
             }
             catch (Exception ex)
