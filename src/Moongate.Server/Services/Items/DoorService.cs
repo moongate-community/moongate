@@ -134,6 +134,9 @@ public sealed class DoorService : IDoorService
             return false;
         }
 
+        // MoveItemToWorldAsync operates on an internal clone; sync location on our reference
+        // so the subsequent UpsertItemAsync does not revert the position change.
+        item.Location = targetLocation;
         item.ItemId = state.NextItemId;
         await _itemService.UpsertItemAsync(item);
         _spatialWorldService.AddOrUpdateItem(item, item.MapId);
@@ -161,6 +164,9 @@ public sealed class DoorService : IDoorService
             return false;
         }
 
+        // MoveItemToWorldAsync operates on an internal clone; sync location on our reference
+        // so the subsequent UpsertItemAsync does not revert the position change.
+        linkedDoor.Location = targetLocation;
         linkedDoor.ItemId = linkedState.NextItemId;
         await _itemService.UpsertItemAsync(linkedDoor);
         _spatialWorldService.AddOrUpdateItem(linkedDoor, linkedDoor.MapId);
