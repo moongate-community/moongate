@@ -85,7 +85,8 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xC8` | Client View Range | C -> S | `ClientViewRangePacket` | `handler` | `ClientViewRangeHandler` | View range update |
 | `0x34` | Get Player Status | C -> S | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
 | `0xAD` | Unicode Speech | C -> S | `UnicodeSpeechPacket` | `handler` | `SpeechHandler` | In-game commands and speech |
-| `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `SpeechHandler` | Chat window open |
+| `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `ChatHandler` | Opens classic conference chat and creates runtime chat user |
+| `0xB3` | Chat Text | C -> S | `ChatTextPacket` | `handler` | `ChatHandler` | Conference chat actions (`message`, `join`, `pm`, `ignore`, `ops`, `voice`, `kick`, `whois`, `emote`) |
 | `0x6C` | Target Cursor Commands | C -> S | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Target callbacks |
 | `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
@@ -118,6 +119,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x3C` | Add Multiple Items To Container | S -> C | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched contents |
 | `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open |
 | `0x11` | Status Bar Info | S -> C | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status payload |
+| `0xB2` | Chat Command | S -> C | `ChatCommandPacket` | `outgoing` | `ChatSystemService` | Classic conference chat responses and UI updates |
 | `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Full skill list with lock state |
 | `0x23` | Dragging Of Item | S -> C | `DraggingOfItemPacket` | `outgoing` | item drag flow | Drag visual |
 | `0xAE` | Unicode Speech Message | S -> C | `UnicodeSpeechMessagePacket` | `outgoing` | speech/system messages | Server speech |

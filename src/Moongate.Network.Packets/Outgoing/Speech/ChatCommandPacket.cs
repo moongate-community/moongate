@@ -9,7 +9,7 @@ namespace Moongate.Network.Packets.Outgoing.Speech;
 /// </summary>
 public class ChatCommandPacket : BaseGameNetworkPacket
 {
-    public ChatCommandType Command { get; set; }
+    public ushort Command { get; set; }
 
     public string Language { get; set; } = "ENU";
 
@@ -23,6 +23,15 @@ public class ChatCommandPacket : BaseGameNetworkPacket
     public ChatCommandPacket(ChatCommandType command, string param1 = "", string param2 = "", string language = "ENU")
         : this()
     {
+        Command = (ushort)command;
+        Param1 = param1 ?? string.Empty;
+        Param2 = param2 ?? string.Empty;
+        Language = string.IsNullOrWhiteSpace(language) ? "ENU" : language;
+    }
+
+    public ChatCommandPacket(ushort command, string param1 = "", string param2 = "", string language = "ENU")
+        : this()
+    {
         Command = command;
         Param1 = param1 ?? string.Empty;
         Param2 = param2 ?? string.Empty;
@@ -33,7 +42,7 @@ public class ChatCommandPacket : BaseGameNetworkPacket
     {
         writer.Write(OpCode);
         writer.Write((ushort)0);
-        writer.Write((ushort)Command);
+        writer.Write((ushort)(Command - 20));
         writer.WriteAscii(Language, 4);
         writer.WriteBigUniNull(Param1);
         writer.WriteBigUniNull(Param2);

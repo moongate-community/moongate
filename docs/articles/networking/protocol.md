@@ -39,6 +39,7 @@ On repeated violations, session is disconnected.
 - `0x66` Book Pages (`variable`)
 - `0x73` Ping Message (`Length=2`, fixed)
 - `0xAD` Unicode Speech (`variable`)
+- `0xB3` Chat Text (`variable`)
 - `0xB5` Open Chat Window (`Length=64`, fixed)
 - `0x6C` Target Cursor Commands (`Length=19`, fixed)
 - `0xBF` General Information (`variable`)

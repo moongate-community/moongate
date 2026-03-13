@@ -43,6 +43,7 @@ Current gameplay-facing outbound examples:
 
 - `PlayerStatusHandler` emits `PlayerStatusPacket` (`0x11`) for basic status requests
 - `PlayerStatusHandler` emits `SkillListPacket` (`0x3A`) for skill window requests
+- `ChatSystemService` emits `ChatCommandPacket` (`0xB2`) for classic conference chat UI, channel membership, PMs, moderator/voice changes, and system responses
 - `ItemHandler` responds to classic book traffic:
   - `0xD4` saves writable `title` / `author`
   - `0x66` serves page requests and writable page saves
@@ -69,6 +70,11 @@ Important current request/response pairs:
 - `0x34 Get Player Status`
   - `BasicStatus` -> `0x11 Player Status`
   - `RequestSkills` -> `0x3A Skill List`
+- `0xB5 Open Chat Window`
+  - client open request -> server creates/refreshes runtime chat user and returns `0xB2` chat-window command
+- `0xB3 Chat Text`
+  - action dispatch in `IChatSystemService`
+  - supports conference message/join/create/rename/password, PM, ignore, ops/voice, whois, kick, emote
 - `0x66 Book Pages`
   - page request -> server book page response
   - writable page save -> server persists updated page content
