@@ -4,6 +4,8 @@ using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Types.World;
+using Moongate.Server.Services.World;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -85,6 +87,7 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         ApplyTemplateParams(item, template);
         ApplyBookTemplate(item, template);
+        EnsureWritableBookMetadata(item);
         item.CombatStats = CreateCombatStats(template);
         item.Modifiers = CreateModifiers(template);
 
@@ -245,7 +248,29 @@ public sealed class ItemFactoryService : IItemFactoryService
                     );
             }
         }
+
+        ApplyDoorFacingOverride(item, template);
     }
+
+    private static void ApplyDoorFacingOverride(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        if (!IsDoorTemplate(template) ||
+            !template.Params.TryGetValue("Facing", out var facingParam) ||
+            !Enum.TryParse<DoorGenerationFacing>(facingParam.Value, true, out var facing))
+        {
+            return;
+        }
+
+        item.Direction = facing.ToDirectionType();
+        item.ItemId = facing.ToItemId(item.ItemId);
+        item.SetCustomString("door_facing", facing.ToString());
+    }
+
+    private static bool IsDoorTemplate(ItemTemplateDefinition template)
+        => string.Equals(template.ScriptId, "items.door", StringComparison.OrdinalIgnoreCase) ||
+           template.Tags.Any(static tag =>
+               string.Equals(tag, "door", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(tag, "gate", StringComparison.OrdinalIgnoreCase));
 
     private static ItemCombatStats? CreateCombatStats(ItemTemplateDefinition template)
     {
@@ -277,6 +302,29 @@ public sealed class ItemFactoryService : IItemFactoryService
             MaxDurability = template.HitPoints,
             CurrentDurability = template.HitPoints
         };
+    }
+
+    private static void EnsureWritableBookMetadata(UOItemEntity item)
+    {
+        if (!item.TryGetCustomBoolean(BookTemplateParamKeys.Writable, out var writable) || !writable)
+        {
+            return;
+        }
+
+        if (!item.TryGetCustomString(BookTemplateParamKeys.Title, out _))
+        {
+            item.SetCustomString(BookTemplateParamKeys.Title, string.Empty);
+        }
+
+        if (!item.TryGetCustomString(BookTemplateParamKeys.Author, out _))
+        {
+            item.SetCustomString(BookTemplateParamKeys.Author, string.Empty);
+        }
+
+        if (!item.TryGetCustomString(BookTemplateParamKeys.Content, out _))
+        {
+            item.SetCustomString(BookTemplateParamKeys.Content, string.Empty);
+        }
     }
 
     private static ItemModifiers? CreateModifiers(ItemTemplateDefinition template)

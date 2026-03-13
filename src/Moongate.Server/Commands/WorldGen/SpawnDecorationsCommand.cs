@@ -140,6 +140,7 @@ public class SpawnDecorationsCommand : ICommandExecutor
         {
             item.Direction = facing.ToDirectionType();
             item.ItemId = facing.ToItemId(item.ItemId);
+            item.SetCustomString("door_facing", facing.ToString());
         }
 
         if (parameters.TryGetValue("Name", out var nameValue))

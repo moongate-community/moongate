@@ -392,6 +392,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
             generatedDoor.MapId = placement.MapId;
             generatedDoor.Direction = placement.Facing.ToDirectionType();
             generatedDoor.ItemId = placement.Facing.ToItemId(generatedDoor.ItemId);
+            generatedDoor.SetCustomString("door_facing", placement.Facing.ToString());
 
             if (placement.PairGroupId.HasValue)
             {

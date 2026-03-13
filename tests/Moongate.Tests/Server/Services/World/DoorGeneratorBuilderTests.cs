@@ -218,6 +218,31 @@ public class DoorGeneratorBuilderTests
     }
 
     [Test]
+    public async Task GenerateAsync_ShouldPersistDoorFacingCustomProperty_OnSpawnedDoors()
+    {
+        var staticTiles = new Dictionary<(int X, int Y), List<StaticTile>>
+        {
+            [(0, 0)] = [new(0x000C, 0)],
+            [(2, 0)] = [new(0x000A, 0)]
+        };
+        var itemService = new FakeDoorGeneratorItemService();
+        var service = CreateService(staticTiles, 16, 16, itemService);
+
+        await service.GenerateAsync();
+
+        Assert.That(itemService.UpsertedItems, Has.Count.EqualTo(1));
+        var spawned = itemService.UpsertedItems[0];
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spawned.TryGetCustomString("door_facing", out var facing), Is.True);
+                Assert.That(facing, Is.EqualTo(DoorGenerationFacing.WestCW.ToString()));
+            }
+        );
+    }
+
+    [Test]
     public async Task GenerateAsync_ShouldSkipDoor_WhenCanFitFailsAtPlacementLocation()
     {
         var staticTiles = new Dictionary<(int X, int Y), List<StaticTile>>

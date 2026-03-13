@@ -7,6 +7,8 @@ using Moongate.Server.Services.Timing;
 using Moongate.Server.Data.Config;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
+using Moongate.Server.Types.World;
+using Moongate.Server.Services.World;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -126,6 +128,51 @@ public class ItemFactoryServiceTests
             {
                 Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
                 Assert.That(writable, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_WhenWritableBookHasNoExplicitMetadata_ShouldInitializeBlankBookFields()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "writable_book",
+                Name = "Writable Book",
+                Category = "Books",
+                Description = "Blank writable book",
+                ItemId = "0x0FF0",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 1,
+                Params = new()
+                {
+                    ["writable"] = new() { Type = ItemTemplateParamType.String, Value = "true" }
+                }
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("writable_book");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.True);
+                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
+                Assert.That(title, Is.Empty);
+                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
+                Assert.That(author, Is.Empty);
+                Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
+                Assert.That(content, Is.Empty);
             }
         );
     }
@@ -258,6 +305,48 @@ public class ItemFactoryServiceTests
             {
                 Assert.That(item.TryGetCustomBoolean("book_writable", out var writable), Is.True);
                 Assert.That(writable, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldApplyDoorFacingOverride_FromTemplateParams()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "metal_door_east",
+                Name = "Metal Door",
+                Category = "Structure",
+                Description = "Door with facing override",
+                ItemId = "0x0675",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.door",
+                Weight = 5,
+                Tags = ["door"],
+                Params = new()
+                {
+                    ["Facing"] = new() { Type = ItemTemplateParamType.String, Value = DoorGenerationFacing.EastCCW.ToString() }
+                }
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence, null);
+
+        var item = service.CreateItemFromTemplate("metal_door_east");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.ItemId, Is.EqualTo(DoorGenerationFacing.EastCCW.ToItemId(0x0675)));
+                Assert.That(item.Direction, Is.EqualTo(DoorGenerationFacing.EastCCW.ToDirectionType()));
+                Assert.That(item.TryGetCustomString("door_facing", out var facing), Is.True);
+                Assert.That(facing, Is.EqualTo(DoorGenerationFacing.EastCCW.ToString()));
             }
         );
     }
