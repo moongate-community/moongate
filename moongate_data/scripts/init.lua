@@ -13,6 +13,8 @@ require("items.brick")
 require("items.door")
 require("items.dye_box")
 require("items.dye_tub")
+require("items.bulletin_board")
+require("items.bb")
 require("items.spawn")
 require("items.teleport")
 

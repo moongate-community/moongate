@@ -258,6 +258,44 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
+    public async Task BulletinBoardMessages_ShouldPersistAcrossSnapshotReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await firstUnitOfWork.InitializeAsync();
+
+        var message = new BulletinBoardMessageEntity
+        {
+            MessageId = (Serial)(Serial.ItemOffset + 50),
+            BoardId = (Serial)0x40000055u,
+            ParentId = Serial.Zero,
+            OwnerCharacterId = (Serial)0x00000042u,
+            Author = "Poster",
+            Subject = "Hello",
+            PostedAtUtc = new DateTime(2026, 3, 13, 12, 30, 0, DateTimeKind.Utc)
+        };
+        message.BodyLines.AddRange(["alpha", "beta"]);
+
+        await firstUnitOfWork.BulletinBoardMessages.UpsertAsync(message);
+        await firstUnitOfWork.SaveSnapshotAsync();
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await secondUnitOfWork.InitializeAsync();
+
+        var restored = await secondUnitOfWork.BulletinBoardMessages.GetByIdAsync(message.MessageId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored, Is.Not.Null);
+                Assert.That(restored!.BoardId, Is.EqualTo(message.BoardId));
+                Assert.That(restored.Subject, Is.EqualTo("Hello"));
+                Assert.That(restored.BodyLines, Is.EqualTo(new[] { "alpha", "beta" }));
+            }
+        );
+    }
+
+    [Test]
     public async Task ConcurrentWritersAcrossMultipleUnitOfWorkInstances_ShouldRemainConsistentAfterReload()
     {
         using var tempDirectory = new TempDirectory();

@@ -244,3 +244,4 @@ This section intentionally includes older or lower-priority packets so opcode ra
 ---
 
 **Previous**: [Packet System](packets.md) | **Next**: [Protocol Reference](protocol.md)
+| `0x71` | Bulletin Board Messages | both | `BulletinBoardMessagesPacket`, `BulletinBoardDisplayPacket`, `BulletinBoardSummaryPacket`, `BulletinBoardMessagePacket` | `implemented` | Classic board open, summary, message read, post, and owner-only leaf delete |

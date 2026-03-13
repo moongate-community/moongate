@@ -23,6 +23,11 @@ public interface IPersistenceUnitOfWork
     IItemRepository Items { get; }
 
     /// <summary>
+    /// Gets the bulletin board message repository.
+    /// </summary>
+    IBulletinBoardMessageRepository BulletinBoardMessages { get; }
+
+    /// <summary>
     /// Allocates the next progressive account serial identifier.
     /// </summary>
     Serial AllocateNextAccountId();

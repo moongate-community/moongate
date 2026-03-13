@@ -62,6 +62,7 @@ public class ItemServiceBenchmark : IDisposable
             Accounts = new InMemoryAccountRepository();
             Mobiles = new InMemoryMobileRepository();
             Items = new InMemoryItemRepository();
+            BulletinBoardMessages = new InMemoryBulletinBoardMessageRepository();
         }
 
         public IAccountRepository Accounts { get; }
@@ -69,6 +70,8 @@ public class ItemServiceBenchmark : IDisposable
         public IMobileRepository Mobiles { get; }
 
         public IItemRepository Items { get; }
+
+        public IBulletinBoardMessageRepository BulletinBoardMessages { get; }
 
         public Serial AllocateNextAccountId()
             => (Serial)_nextAccountId++;
@@ -84,6 +87,24 @@ public class ItemServiceBenchmark : IDisposable
 
         public ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
             => ValueTask.CompletedTask;
+    }
+
+    private sealed class InMemoryBulletinBoardMessageRepository : IBulletinBoardMessageRepository
+    {
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>([]);
+
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
+
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(Serial boardId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>([]);
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
+
+        public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(false);
     }
 
     private sealed class InMemoryItemRepository : IItemRepository

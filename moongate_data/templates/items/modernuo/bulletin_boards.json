@@ -16,5 +16,19 @@
       "bulletin boards",
       "flippable"
     ]
+  },
+  {
+    "type": "item",
+    "id": "bb",
+    "base_item": "bulletin_board",
+    "name": "BB",
+    "category": "Bulletin Boards",
+    "description": "Bulletin board test item.",
+    "itemId": "0x1E5E",
+    "scriptId": "items.bb",
+    "tags": [
+      "test",
+      "bulletin boards"
+    ]
   }
 ]

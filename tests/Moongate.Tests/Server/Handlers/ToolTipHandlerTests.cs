@@ -49,6 +49,7 @@ public class ToolTipHandlerTests
             Accounts = new TestAccountRepository();
             Mobiles = new TestMobileRepository();
             Items = new TestItemRepository();
+            BulletinBoardMessages = new TestBulletinBoardMessageRepository();
         }
 
         public IAccountRepository Accounts { get; }
@@ -56,6 +57,8 @@ public class ToolTipHandlerTests
         public IMobileRepository Mobiles { get; }
 
         public IItemRepository Items { get; }
+
+        public IBulletinBoardMessageRepository BulletinBoardMessages { get; }
 
         public Serial AllocateNextAccountId()
             => (Serial)0x00000001u;
@@ -79,6 +82,24 @@ public class ToolTipHandlerTests
 
             return ValueTask.CompletedTask;
         }
+    }
+
+    private sealed class TestBulletinBoardMessageRepository : IBulletinBoardMessageRepository
+    {
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>([]);
+
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
+
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(Serial boardId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>([]);
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
+
+        public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(false);
     }
 
     private sealed class TestItemRepository : IItemRepository

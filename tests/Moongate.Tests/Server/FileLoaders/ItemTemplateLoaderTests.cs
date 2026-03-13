@@ -327,6 +327,76 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenDerivedBulletinBoardUsesBaseItem_ShouldInheritBoardValues()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "test");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "bulletin_boards.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "id": "bulletin_board",
+                "name": "Bulletin Board",
+                "category": "Bulletin Boards",
+                "description": "base",
+                "itemId": "0x1E5E",
+                "hue": "0",
+                "goldValue": "0",
+                "weight": 0,
+                "scriptId": "items.bulletin_board",
+                "isMovable": true,
+                "tags": ["modernuo", "bulletin boards", "flippable"]
+              },
+              {
+                "type": "item",
+                "id": "bb",
+                "base_item": "bulletin_board",
+                "name": "BB",
+                "category": "Bulletin Boards",
+                "description": "derived",
+                "itemId": "0x1E5E",
+                "scriptId": "items.bb",
+                "tags": ["test"]
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("bb", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.ItemId, Is.EqualTo("0x1E5E"));
+                Assert.That(template.Weight, Is.EqualTo(0m));
+                Assert.That(template.ScriptId, Is.EqualTo("items.bb"));
+                Assert.That(template.Tags, Does.Contain("test"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();

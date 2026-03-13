@@ -126,6 +126,16 @@ Spawns a hardcoded "brick" test item and adds it to the player backpack at posit
 
 Context: InGame only. Access: Regular.
 
+#### `mod_name`
+
+Opens a target cursor and renames the selected item or mobile. Persists the updated `Name` field and pushes a refresh packet so nearby clients pick up the new tooltip/display name.
+
+```
+.mod_name <new name>
+```
+
+Targets both `item` and `mobile` serials. Names are trimmed and limited to 60 characters. Context: InGame only. Access: GameMaster.
+
 #### `add_npc`
 
 Spawns an NPC from a mobile template at a target location. The command opens a target cursor; clicking a location in the world spawns the NPC there.

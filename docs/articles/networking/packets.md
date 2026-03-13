@@ -55,6 +55,9 @@ Current gameplay examples:
 - `DyeWindowHandler` listens to `DyeWindowPacket` (`0x95`)
   - the classic dye-tub target flow opens `0x95` to the client
   - the client response on `0x95` applies hue to the pending item target
+- `BulletinBoardHandler` listens to `BulletinBoardMessagesPacket` (`0x71`)
+  - double click on a bulletin board opens the classic board window
+  - client `sub 3/4/5/6` requests load messages, post replies, and remove owned leaf messages
 
 ## Pragmatic POL Coverage Matrix
 
@@ -93,6 +96,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler` | Container / world drop |
 | `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
 | `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
+| `0x71` | Bulletin Board Messages | both | `BulletinBoardMessagesPacket`, `BulletinBoardDisplayPacket`, `BulletinBoardSummaryPacket`, `BulletinBoardMessagePacket` | `handler` + `outgoing` | `BulletinBoardHandler`, `BulletinBoardModule` / `BulletinBoardService` | Classic bulletin board open/read/post/remove flow |
 | `0x95` | Dye Window | both | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `handler` + `outgoing` | `DyeWindowHandler`, `DyeModule` / `DyeColorService` | Classic dye tub hue picker flow; outgoing packet intentionally not registry-decorated to avoid opcode collision |
 | `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
 | `0xD9` | Spy On Client | C -> S | `SpyOnClientPacket` | `handler` | `PlayerHandler` | Minimal session-side handling |

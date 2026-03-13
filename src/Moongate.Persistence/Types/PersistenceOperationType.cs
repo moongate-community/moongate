@@ -10,5 +10,7 @@ public enum PersistenceOperationType : byte
     UpsertMobile = 3,
     RemoveMobile = 4,
     UpsertItem = 5,
-    RemoveItem = 6
+    RemoveItem = 6,
+    UpsertBulletinBoardMessage = 7,
+    RemoveBulletinBoardMessage = 8
 }

@@ -14,6 +14,7 @@ The following modules are currently wired in runtime:
 - `speech`
 - `mobile`
 - `item`
+- `bulletin`
 - `dye`
 - `door`
 - `effect`
@@ -27,7 +28,7 @@ The following modules are currently wired in runtime:
 - `map` (`to_id`)
 - `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-17 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+18 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
@@ -95,6 +96,28 @@ Runtime notes:
 - target items must currently be accessible from the player inventory/equipment
 - the final hue application, persistence, and item refresh are handled by `IDyeColorService`
 - item templates opt-in through the `dyeable` flag, which is materialized into runtime item metadata
+
+### Item Script: Bulletin Board
+
+```lua
+items_bulletin_board = {
+    on_double_click = function(ctx)
+        return bulletin.open(ctx.session_id, ctx.item.serial)
+    end
+}
+```
+
+The `bulletin` module currently exposes:
+
+- `bulletin.open(session_id, board_serial)`
+  - opens the classic bulletin board UI for the specified board item
+  - the server then sends message summaries over packet `0x71`
+
+Runtime notes:
+
+- the board protocol uses the item serial as `BoardId`
+- posting and reply creation are persisted through the bulletin-board message repository
+- delete is currently owner-only and rejected when the target message already has replies
 
 ### Item Script: Teleporter
 

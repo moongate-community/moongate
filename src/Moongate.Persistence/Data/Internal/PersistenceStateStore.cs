@@ -17,6 +17,8 @@ internal sealed class PersistenceStateStore
 
     public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
 
+    public Dictionary<Serial, BulletinBoardMessageEntity> BulletinBoardMessagesById { get; } = [];
+
     public object SyncRoot { get; } = new();
 
     public long LastSequenceId { get; set; }

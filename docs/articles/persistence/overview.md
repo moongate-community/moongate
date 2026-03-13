@@ -12,6 +12,7 @@ The persistence layer provides:
 - Per-entry journal checksum validation
 - Thread-safe repositories over shared in-memory state
 - Typed snapshot storage for item combat/modifier state and mobile status/skill state
+- Dedicated persisted bulletin-board message storage keyed by board serial + message serial
 
 ## Storage Structure
 
@@ -74,6 +75,7 @@ Current repositories:
 - `IAccountRepository`
 - `IMobileRepository`
 - `IItemRepository`
+- `IBulletinBoardMessageRepository`
 
 They append journal entries on mutation and query from in-memory state.
 
@@ -88,6 +90,9 @@ Important runtime-facing data now persisted in snapshots includes:
 - mobile modifier caps used by modern status packets
 - persisted mobile skill tables used by skill window responses
 - item combat stats and item modifiers used by equip logic, tooltips, and mobile aggregation
+- bulletin board posts/replies used by packet `0x71`
+
+`BulletinBoardMessageEntity` is stored separately from `UOItemEntity`. The board item serial is the logical `BoardId`, while each post/reply has its own persisted `MessageId`, `ParentId`, owner character serial, posting timestamp, and body lines.
 
 ## What Is Not Implemented Yet
 

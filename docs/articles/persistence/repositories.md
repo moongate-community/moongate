@@ -40,11 +40,28 @@ Supports:
 - `CountAsync()`
 - `QueryAsync(predicate, selector)`
 
+## `IBulletinBoardMessageRepository`
+
+Supports:
+
+- `UpsertAsync(BulletinBoardMessageEntity)`
+- `RemoveAsync(Serial messageId)`
+- `GetByIdAsync(Serial messageId)`
+- `GetByBoardIdAsync(Serial boardId)`
+- `GetAllAsync()`
+
+Notes:
+
+- `BoardId` is the bulletin-board item serial
+- `MessageId` is the persisted serial-like identifier for a post/reply
+- replies are linked through `ParentId`
+- owner checks use `OwnerCharacterId`
+
 ## Unit Of Work
 
 `IPersistenceUnitOfWork` exposes:
 
-- repositories (`Accounts`, `Mobiles`, `Items`)
+- repositories (`Accounts`, `Mobiles`, `Items`, `BulletinBoardMessages`)
 - id allocation (`AllocateNextAccountId`, `AllocateNextMobileId`, `AllocateNextItemId`)
 - lifecycle (`InitializeAsync`, `SaveSnapshotAsync`)
 

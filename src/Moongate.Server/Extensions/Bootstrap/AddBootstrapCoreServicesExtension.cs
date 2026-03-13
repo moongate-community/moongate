@@ -90,6 +90,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IPlayerDragService, PlayerDragService>(Reuse.Singleton);
         container.Register<IPlayerTargetService, PlayerTargetService>(Reuse.Singleton);
         container.Register<IDyeColorService, DyeColorService>(Reuse.Singleton);
+        container.Register<IBulletinBoardService, BulletinBoardService>(Reuse.Singleton);
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);

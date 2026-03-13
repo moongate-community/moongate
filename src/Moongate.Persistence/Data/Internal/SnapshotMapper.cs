@@ -217,6 +217,40 @@ internal static class SnapshotMapper
             ]
         };
 
+    public static BulletinBoardMessageEntity ToBulletinBoardMessageEntity(BulletinBoardMessageSnapshot snapshot)
+    {
+        var entity = new BulletinBoardMessageEntity
+        {
+            MessageId = (Serial)snapshot.MessageId,
+            BoardId = (Serial)snapshot.BoardId,
+            ParentId = (Serial)snapshot.ParentId,
+            OwnerCharacterId = (Serial)snapshot.OwnerCharacterId,
+            Author = snapshot.Author,
+            Subject = snapshot.Subject,
+            PostedAtUtc = new DateTime(snapshot.PostedAtUtcTicks, DateTimeKind.Utc)
+        };
+
+        if (snapshot.BodyLines.Length > 0)
+        {
+            entity.BodyLines.AddRange(snapshot.BodyLines);
+        }
+
+        return entity;
+    }
+
+    public static BulletinBoardMessageSnapshot ToBulletinBoardMessageSnapshot(BulletinBoardMessageEntity entity)
+        => new()
+        {
+            MessageId = (uint)entity.MessageId,
+            BoardId = (uint)entity.BoardId,
+            ParentId = (uint)entity.ParentId,
+            OwnerCharacterId = (uint)entity.OwnerCharacterId,
+            Author = entity.Author,
+            Subject = entity.Subject,
+            PostedAtUtcTicks = entity.PostedAtUtc.Ticks,
+            BodyLines = [.. entity.BodyLines]
+        };
+
     public static UOMobileEntity ToMobileEntity(MobileSnapshot snapshot)
     {
         var entity = new UOMobileEntity

@@ -17,6 +17,7 @@ public class PacketHandlerRegistrationAttributeTests
             typeof(PlayerStatusHandler),
             typeof(MovementHandler),
             typeof(KrriosClientSpecialHandler),
+            typeof(BulletinBoardHandler),
             typeof(SpeechHandler),
             typeof(DyeWindowHandler),
             typeof(GumpHandler),
@@ -62,6 +63,7 @@ public class PacketHandlerRegistrationAttributeTests
         AssertMappings(typeof(PlayerStatusHandler), PacketDefinition.GetPlayerStatusPacket);
         AssertMappings(typeof(MovementHandler), PacketDefinition.MoveRequestPacket);
         AssertMappings(typeof(KrriosClientSpecialHandler), PacketDefinition.NewMovementRequestPacket);
+        AssertMappings(typeof(BulletinBoardHandler), PacketDefinition.BulletinBoardMessagesPacket);
         AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket, PacketDefinition.OpenChatWindowPacket);
         AssertMappings(typeof(DyeWindowHandler), PacketDefinition.DyeWindowPacket);
         AssertMappings(typeof(GumpHandler), PacketDefinition.GumpMenuSelectionPacket);
