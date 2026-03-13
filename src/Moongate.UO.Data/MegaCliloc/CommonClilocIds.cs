@@ -112,7 +112,7 @@ public static class CommonClilocIds
     /// <summary>
     /// Hit Points ~1_val~ / ~2_val~
     /// </summary>
-    public const uint HitPoints = 1028335;
+    public const uint HitPoints = 1060578;
 
     /// <summary>
     /// Guild name: ~1_val~
@@ -162,12 +162,12 @@ public static class CommonClilocIds
     /// <summary>
     /// Mana ~1_val~ / ~2_val~
     /// </summary>
-    public const uint Mana = 1028336;
+    public const uint Mana = 1060581;
 
     /// <summary>
     /// Stamina ~1_val~ / ~2_val~
     /// </summary>
-    public const uint Stamina = 1028337;
+    public const uint Stamina = 1060580;
 
     /// <summary>
     /// Strength ~1_val~
