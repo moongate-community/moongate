@@ -36,6 +36,8 @@ Provides a catalog of named locations (cities, dungeons, landmarks). Used by the
 
 Manages mob spawn definitions. Spawn entries define mobile templates, locations, counts, and respawn intervals.
 
+Current status: spawn definition import is in place, but the NPC template migration from ServUO/RunUO/ModernUO is still incomplete. Runtime spawners therefore currently materialize `generic_npc` as the spawned mobile fallback.
+
 ### TeleportersDataService
 
 Manages teleporter definitions. Teleporters are point-to-point transitions between map coordinates, including cross-map transitions.
@@ -56,6 +58,7 @@ The following file loaders support world generation:
 World generation commands (under `worldgen` group):
 
 - `create_spawners` - creates mob spawner entities from spawn definitions
+- `initial_spawn` - forces an initial spawn pass across persisted spawner items
 - `spawn_decorations` - places decoration objects in the world
 - `spawn_doors` - generates doors from door specifications
 - `spawn_signs` - places sign objects in the world
@@ -114,6 +117,8 @@ moongate_data/
   ]
 }
 ```
+
+At the moment the `entries[].name` values are imported and preserved from source data, but if no matching Moongate mobile template exists yet the runtime spawn path falls back to `generic_npc`.
 
 ### Location Entry
 

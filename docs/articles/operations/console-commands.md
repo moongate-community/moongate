@@ -198,8 +198,22 @@ Context: Console and InGame.
 
 Creates spawner items from loaded spawn definitions. Each spawner is created from the "spawn" template and tagged with a GUID (`spawner_id` custom parameter). Optionally restricts to a single map.
 
+Note: the spawn definitions already come from ModernUO-style data, but the NPC template migration from ServUO/RunUO/ModernUO is not complete yet. At the moment runtime spawners still fall back to `generic_npc` for actual spawned mobiles.
+
 ```
 .create_spawners [mapId]
+```
+
+Context: Console and InGame.
+
+#### `initial_spawn`
+
+Forces an immediate spawn attempt for all persisted spawner items in the world, or only for a specific map when `mapId` is provided. The command runs in the background, prints progress every `500` spawners, and is safe to rerun because the underlying runtime spawn service still respects each spawner's count and state.
+
+Note: until the NPC template migration is complete, the spawned mobiles currently resolve to `generic_npc`.
+
+```
+.initial_spawn [mapId]
 ```
 
 Context: Console and InGame.

@@ -1,6 +1,7 @@
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Modules;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Tests.Server.Modules;
 
@@ -21,6 +22,9 @@ public sealed class SpawnModuleTests
 
             return Task.FromResult(TriggerResult);
         }
+
+        public Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default)
+            => TriggerAsync(spawnerItem.Id, cancellationToken);
 
         public Task StartAsync()
             => Task.CompletedTask;

@@ -167,7 +167,7 @@ public class CharacterService : ICharacterService
 
         await HydrateCharacterEquipmentRuntimeAsync(character);
 
-        _logger.Debug("Loaded character {CharacterId}", characterId);
+        _logger.Verbose("Loaded character {CharacterId}", characterId);
 
         return character;
     }

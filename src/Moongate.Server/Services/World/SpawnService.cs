@@ -90,6 +90,33 @@ public sealed class SpawnService : ISpawnService
     }
 
     /// <inheritdoc />
+    public async Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        ArgumentNullException.ThrowIfNull(spawnerItem);
+
+        if (spawnerItem.Id == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (!TryBuildStateFromItem(spawnerItem, out var state))
+        {
+            return false;
+        }
+
+        lock (_sync)
+        {
+            _states[spawnerItem.Id] = state;
+        }
+
+        var now = Environment.TickCount64;
+
+        return await TrySpawnForStateAsync(state, now, forceSpawn: true);
+    }
+
+    /// <inheritdoc />
     public Task StartAsync()
     {
         BuildDefinitionIndex();
@@ -349,7 +376,7 @@ public sealed class SpawnService : ISpawnService
             );
             spawnedMobile = true;
 
-            _logger.Debug(
+            _logger.Verbose(
                 "Spawned mobile from spawner {SpawnerGuid}: MobileId={MobileId} Template={TemplateId}",
                 state.SpawnGuid,
                 mobile.Id,
