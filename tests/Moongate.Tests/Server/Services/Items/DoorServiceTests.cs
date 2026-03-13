@@ -314,7 +314,7 @@ public sealed class DoorServiceTests
                 Assert.That(firstDoor.ItemId, Is.EqualTo(0x0686));
                 Assert.That(firstDoor.Location, Is.EqualTo(new Point3D(99, 101, 0)));
                 Assert.That(secondDoor.ItemId, Is.EqualTo(0x0688));
-                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(102, 99, 0)));
+                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(102, 101, 0)));
                 Assert.That(itemService.MoveToWorldCalls, Is.EqualTo(2));
                 Assert.That(itemService.UpsertCalls, Is.EqualTo(2));
                 Assert.That(spatial.AddOrUpdateCalls, Is.EqualTo(2));
