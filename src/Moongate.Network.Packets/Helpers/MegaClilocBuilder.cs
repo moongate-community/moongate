@@ -172,10 +172,6 @@ public static class MegaClilocBuilder
             list.Add(name);
         }
 
-        list.Add(CommonClilocIds.HitPoints, $"{hits}\t{hitsMax}");
-        list.Add(CommonClilocIds.Mana, $"{mana}\t{manaMax}");
-        list.Add(CommonClilocIds.Stamina, $"{stamina}\t{staminaMax}");
-
         if (isPlayer)
         {
             if (!string.IsNullOrEmpty(guild))
