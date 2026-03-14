@@ -1,3 +1,28 @@
+## [0.34.0](https://github.com/moongate-community/moongate/compare/v0.33.0...v0.34.0) (2026-03-14)
+
+### Features
+
+* **books:** finalize client 7 writable book flow ([869ece6](https://github.com/moongate-community/moongate/commit/869ece6e49a12e212307ed503b62e71b291feaed))
+* **chat:** add runtime conference chat system ([8533b26](https://github.com/moongate-community/moongate/commit/8533b266b43de0bfead5e8268b922bbabed97116))
+* **doors:** add shared lock ids and key generation ([1f0f7d9](https://github.com/moongate-community/moongate/commit/1f0f7d9e7e3fafd712e61a05021b5fa2741967df))
+* **doors:** add targeted door placement command ([9b49d38](https://github.com/moongate-community/moongate/commit/9b49d38f3daea84f4ef5a881f98797156dea3d58))
+* **doors:** persist and apply door facing metadata ([e1c86c4](https://github.com/moongate-community/moongate/commit/e1c86c400258dedc066bdc597a6e096f48c1ad2b))
+* **gameplay:** add dye window flow and proximity spawners ([ca0e1c0](https://github.com/moongate-community/moongate/commit/ca0e1c0257fdf07acbf6e578eb2e29855c3d2641))
+* improve persistence autosave and cross-map client sync ([27d26cf](https://github.com/moongate-community/moongate/commit/27d26cf2bbfe0c629b406fb972b1ffa55837c95e))
+* **interaction:** add bulletin board flow and mod name command ([279e381](https://github.com/moongate-community/moongate/commit/279e38125f3540d92d63ebe826cfd51aef80adb5))
+* **portal:** add character inventory and bank tables ([21ab196](https://github.com/moongate-community/moongate/commit/21ab196b2349be1ba7e494d89a3e63afd13b8604))
+* **portal:** make portal dark-only and fantasy ([d5cd013](https://github.com/moongate-community/moongate/commit/d5cd0138a73337da22300d307a1a16202444cab6))
+* **spawn:** add initial world spawn command ([2c02326](https://github.com/moongate-community/moongate/commit/2c0232658a668770befb520fb1aa146eec3291d8))
+
+### Bug Fixes
+
+* **doors:** sync clone location after MoveItemToWorldAsync ([77e51d9](https://github.com/moongate-community/moongate/commit/77e51d94dba11f2ff447c7d6712f859965edb99f))
+* **doors:** use linked door native offset ([e16af32](https://github.com/moongate-community/moongate/commit/e16af3214fcf5eb7bc5caaaa37603357439c09f4))
+* **images:** crop item art transparent borders ([9f70ee9](https://github.com/moongate-community/moongate/commit/9f70ee94246b6924787aff7e83eb789ef9e7a4bd))
+* **network:** zero world item facing in object info ([a5b4215](https://github.com/moongate-community/moongate/commit/a5b42157af9289c5cf6bfd4ca761049f55dde6de))
+* restore tests badge and resolve persistence bootstrap wiring ([cd1990e](https://github.com/moongate-community/moongate/commit/cd1990e90bede01f64bcd6d9e9670e52a29eecbe))
+* **tooltip:** correct mobile vital cliloc ids ([2a2bc40](https://github.com/moongate-community/moongate/commit/2a2bc40af023634d96f1a72acdab3bc6738bdaf0))
+
 ## [0.33.0](https://github.com/moongate-community/moongatev2/compare/v0.32.0...v0.33.0) (2026-03-12)
 
 ### Features
