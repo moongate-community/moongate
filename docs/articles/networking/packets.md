@@ -50,8 +50,14 @@ Current gameplay examples:
   - `BasicStatus` requests enqueue `PlayerStatusPacket` (`0x11`)
   - `RequestSkills` requests enqueue `SkillListPacket` (`0x3A`)
 - `ItemHandler` listens to book packets
-  - `BookHeaderOldPacket` (`0x93`) saves writable book `title` / `author`
+  - `BookHeaderNewPacket` (`0xD4`) saves writable book `title` / `author`
   - `BookPagesPacket` (`0x66`) serves page requests and writable page saves
+- `DyeWindowHandler` listens to `DyeWindowPacket` (`0x95`)
+  - the classic dye-tub target flow opens `0x95` to the client
+  - the client response on `0x95` applies hue to the pending item target
+- `BulletinBoardHandler` listens to `BulletinBoardMessagesPacket` (`0x71`)
+  - double click on a bulletin board opens the classic board window
+  - client `sub 3/4/5/6` requests load messages, post replies, and remove owned leaf messages
 
 ## Pragmatic POL Coverage Matrix
 
@@ -79,7 +85,8 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xC8` | Client View Range | C -> S | `ClientViewRangePacket` | `handler` | `ClientViewRangeHandler` | View range update |
 | `0x34` | Get Player Status | C -> S | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
 | `0xAD` | Unicode Speech | C -> S | `UnicodeSpeechPacket` | `handler` | `SpeechHandler` | In-game commands and speech |
-| `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `SpeechHandler` | Chat window open |
+| `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `ChatHandler` | Opens classic conference chat and creates runtime chat user |
+| `0xB3` | Chat Text | C -> S | `ChatTextPacket` | `handler` | `ChatHandler` | Conference chat actions (`message`, `join`, `pm`, `ignore`, `ops`, `voice`, `kick`, `whois`, `emote`) |
 | `0x6C` | Target Cursor Commands | C -> S | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Target callbacks |
 | `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
@@ -90,12 +97,13 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler` | Container / world drop |
 | `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
 | `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
-| `0x93` | Book Header (Old) | C -> S | `BookHeaderOldPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
+| `0x71` | Bulletin Board Messages | both | `BulletinBoardMessagesPacket`, `BulletinBoardDisplayPacket`, `BulletinBoardSummaryPacket`, `BulletinBoardMessagePacket` | `handler` + `outgoing` | `BulletinBoardHandler`, `BulletinBoardModule` / `BulletinBoardService` | Classic bulletin board open/read/post/remove flow |
+| `0x95` | Dye Window | both | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `handler` + `outgoing` | `DyeWindowHandler`, `DyeModule` / `DyeColorService` | Classic dye tub hue picker flow; outgoing packet intentionally not registry-decorated to avoid opcode collision |
+| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
 | `0xD9` | Spy On Client | C -> S | `SpyOnClientPacket` | `handler` | `PlayerHandler` | Minimal session-side handling |
 | `0x03` | Talk Request | C -> S | `TalkRequestPacket` | `parse-only` | none | Legacy speech path not wired |
 | `0x12` | Request Skill / Use | C -> S | `RequestSkillUsePacket` | `parse-only` | none | Skill-use flow still missing |
 | `0x83` | Delete Character | C -> S | `DeleteCharacterPacket` | `parse-only` | none | No delete flow wired |
-| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `parse-only` | none | Client packet shape registered, no inbound behavior needed today |
 | `0xA8` | Server List | S -> C | `ServerListPacket` | `outgoing` | `LoginHandler` | Shard list |
 | `0x8C` | Server Redirect | S -> C | `ServerRedirectPacket` | `outgoing` | `LoginHandler` | Redirect to game server |
 | `0x1B` | Login Confirm | S -> C | `LoginConfirmPacket` | `outgoing` | login flow | Character accepted |
@@ -111,6 +119,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x3C` | Add Multiple Items To Container | S -> C | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched contents |
 | `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open |
 | `0x11` | Status Bar Info | S -> C | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status payload |
+| `0xB2` | Chat Command | S -> C | `ChatCommandPacket` | `outgoing` | `ChatSystemService` | Classic conference chat responses and UI updates |
 | `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Full skill list with lock state |
 | `0x23` | Dragging Of Item | S -> C | `DraggingOfItemPacket` | `outgoing` | item drag flow | Drag visual |
 | `0xAE` | Unicode Speech Message | S -> C | `UnicodeSpeechMessagePacket` | `outgoing` | speech/system messages | Server speech |

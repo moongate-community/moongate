@@ -49,6 +49,7 @@ public class ToolTipHandlerTests
             Accounts = new TestAccountRepository();
             Mobiles = new TestMobileRepository();
             Items = new TestItemRepository();
+            BulletinBoardMessages = new TestBulletinBoardMessageRepository();
         }
 
         public IAccountRepository Accounts { get; }
@@ -56,6 +57,8 @@ public class ToolTipHandlerTests
         public IMobileRepository Mobiles { get; }
 
         public IItemRepository Items { get; }
+
+        public IBulletinBoardMessageRepository BulletinBoardMessages { get; }
 
         public Serial AllocateNextAccountId()
             => (Serial)0x00000001u;
@@ -79,6 +82,24 @@ public class ToolTipHandlerTests
 
             return ValueTask.CompletedTask;
         }
+    }
+
+    private sealed class TestBulletinBoardMessageRepository : IBulletinBoardMessageRepository
+    {
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>([]);
+
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
+
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(Serial boardId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>([]);
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
+
+        public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(false);
     }
 
     private sealed class TestItemRepository : IItemRepository
@@ -370,6 +391,18 @@ public class ToolTipHandlerTests
                     response.Properties.Any(p => string.Equals(p.Text, "Tester", StringComparison.Ordinal)),
                     Is.True
                 );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.HitPoints && p.Text == "40\t50"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.Mana && p.Text == "20\t30"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.Stamina && p.Text == "10\t15"),
+                    Is.True
+                );
             }
         );
     }
@@ -492,6 +525,54 @@ public class ToolTipHandlerTests
                 Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SwingSpeedIncrease && p.Text == "20"), Is.True);
                 Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellChanneling), Is.True);
                 Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.UsesRemaining && p.Text == "25"), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldUseBookMetadata_WhenBookTitleAndAuthorExist()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000023u;
+        var item = new UOItemEntity
+        {
+            Id = itemSerial,
+            Name = "Writable Book",
+            ItemId = 0x0FF0
+        };
+        item.SetCustomString("book_title", "Travel Journal");
+        item.SetCustomString("book_author", "Tommy");
+        item.SetCustomString("book_content", "Line 1");
+        await persistenceService.UnitOfWork.Items.UpsertAsync(item);
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        var handled = await handler.HandlePacketAsync(session, request);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+            }
+        );
+
+        var response = DeserializeResponse(outbound.Packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(response.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
+                Assert.That(response.Properties[0].Text, Is.EqualTo("Travel Journal"));
+                Assert.That(
+                    response.Properties.Any(property => string.Equals(property.Text, "by Tommy", StringComparison.Ordinal)),
+                    Is.True
+                );
             }
         );
     }

@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Moongate.Abstractions.Interfaces;
+using Moongate.Core.Buffers;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
@@ -40,7 +41,7 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
     public ObjectPropertyList(Serial serial) : base(0xD6)
     {
         Serial = serial;
-        _buffer = ArrayPool<byte>.Shared.Rent(512);
+        _buffer = STArrayPool<byte>.Shared.Rent(512);
         ResetPayloadBuffer();
     }
 
@@ -90,7 +91,7 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
     {
         if (_buffer != null)
         {
-            ArrayPool<byte>.Shared.Return(_buffer);
+            STArrayPool<byte>.Shared.Return(_buffer);
             _buffer = null;
         }
     }
@@ -185,10 +186,10 @@ public sealed class ObjectPropertyList : BaseGameNetworkPacket, IPropertyList, I
         if (_bufferPos + requiredBytes > _buffer.Length)
         {
             var newSize = Math.Max(_buffer.Length * 2, _bufferPos + requiredBytes);
-            var newBuffer = ArrayPool<byte>.Shared.Rent(newSize);
+            var newBuffer = STArrayPool<byte>.Shared.Rent(newSize);
 
             _buffer.AsSpan(0, _bufferPos).CopyTo(newBuffer);
-            ArrayPool<byte>.Shared.Return(_buffer);
+            STArrayPool<byte>.Shared.Return(_buffer);
             _buffer = newBuffer;
         }
     }

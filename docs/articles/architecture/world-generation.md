@@ -24,6 +24,14 @@ Manages decoration placement data. Decorations are static world objects loaded f
 
 Manages door definitions. Works with `DoorGeneratorBuilder` and `DefaultDoorGenerationMapSpecProvider` to generate doors based on map-specific specifications and facing rules.
 
+Generated and manually spawned doors can also carry lock metadata at runtime:
+
+- `door_facing` - persisted facing/orientation metadata
+- `door_locked` - whether the door requires a key
+- `door_lock_id` - shared lock token used by one or more doors
+
+Linked double doors share the same `door_lock_id`. Physical key items carry a matching `key_lock_id`.
+
 ### SignDataService
 
 Manages sign definitions and placement data loaded from JSON files.
@@ -35,6 +43,13 @@ Provides a catalog of named locations (cities, dungeons, landmarks). Used by the
 ### SpawnsDataService
 
 Manages mob spawn definitions. Spawn entries define mobile templates, locations, counts, and respawn intervals.
+
+Current status: spawn definition import is in place, but the NPC template migration from ServUO/RunUO/ModernUO is still incomplete. Runtime spawners therefore currently materialize `generic_npc` as the spawned mobile fallback.
+
+Spawn definitions currently support two runtime kinds through the JSON `type` field:
+
+- `Spawner` - periodic respawn, processed on the normal spawn tick and gated by nearby players
+- `ProximitySpawner` - trigger-on-enter behavior, using `homeRange` as the proximity radius
 
 ### TeleportersDataService
 
@@ -56,9 +71,12 @@ The following file loaders support world generation:
 World generation commands (under `worldgen` group):
 
 - `create_spawners` - creates mob spawner entities from spawn definitions
+- `initial_spawn` - forces an initial spawn pass across persisted spawner items
+- `lock_door` - locks a targeted door and generates a matching key item
 - `spawn_decorations` - places decoration objects in the world
 - `spawn_doors` - generates doors from door specifications
 - `spawn_signs` - places sign objects in the world
+- `unlock_door` - removes lock metadata from a targeted door
 
 ## Data Format
 
@@ -114,6 +132,10 @@ moongate_data/
   ]
 }
 ```
+
+At the moment the `entries[].name` values are imported and preserved from source data, but if no matching Moongate mobile template exists yet the runtime spawn path falls back to `generic_npc`.
+
+`type` may be either `Spawner` or `ProximitySpawner`. `initial_spawn` can still force a spawn attempt for both kinds.
 
 ### Location Entry
 

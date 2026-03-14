@@ -26,13 +26,13 @@ public sealed class DoorModule
     }
 
     [ScriptFunction("toggle", "Toggles a supported door open/close.")]
-    public bool Toggle(uint itemSerial)
+    public bool Toggle(uint itemSerial, long sessionId = 0)
     {
         if (itemSerial == 0)
         {
             return false;
         }
 
-        return _doorService.ToggleAsync((Serial)itemSerial).GetAwaiter().GetResult();
+        return _doorService.ToggleAsync((Serial)itemSerial, sessionId).GetAwaiter().GetResult();
     }
 }

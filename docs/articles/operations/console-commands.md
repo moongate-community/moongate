@@ -126,6 +126,36 @@ Spawns a hardcoded "brick" test item and adds it to the player backpack at posit
 
 Context: InGame only. Access: Regular.
 
+#### `mod_name`
+
+Opens a target cursor and renames the selected item or mobile. Persists the updated `Name` field and pushes a refresh packet so nearby clients pick up the new tooltip/display name.
+
+```
+.mod_name <new name>
+```
+
+Targets both `item` and `mobile` serials. Names are trimmed and limited to 60 characters. Context: InGame only. Access: GameMaster.
+
+#### `lock_door`
+
+Opens a target cursor and locks the selected door. Generates a new shared `lockId`, applies it to the targeted door and its linked double-door partner (if any), then creates a physical `key` item carrying the same `lockId` and drops it into the caller backpack.
+
+```
+.lock_door
+```
+
+Locked doors can only be opened by characters carrying a matching key in equipped items or anywhere in their backpack tree. Context: InGame only. Access: GameMaster.
+
+#### `unlock_door`
+
+Opens a target cursor and removes lock metadata from the selected door. If the door is linked to a double-door partner, both sides are unlocked together.
+
+```
+.unlock_door
+```
+
+This clears `door_locked` and `door_lock_id` metadata from the affected door items. Context: InGame only. Access: GameMaster.
+
 #### `add_npc`
 
 Spawns an NPC from a mobile template at a target location. The command opens a target cursor; clicking a location in the world spawns the NPC there.
@@ -198,8 +228,27 @@ Context: Console and InGame.
 
 Creates spawner items from loaded spawn definitions. Each spawner is created from the "spawn" template and tagged with a GUID (`spawner_id` custom parameter). Optionally restricts to a single map.
 
+Note: the spawn definitions already come from ModernUO-style data, but the NPC template migration from ServUO/RunUO/ModernUO is not complete yet. At the moment runtime spawners still fall back to `generic_npc` for actual spawned mobiles.
+
+Supported spawn kinds:
+- `Spawner` - periodic runtime spawner
+- `ProximitySpawner` - enters-range trigger spawner using `homeRange`
+
 ```
 .create_spawners [mapId]
+```
+
+Context: Console and InGame.
+
+#### `initial_spawn`
+
+Forces an immediate spawn attempt for all persisted spawner items in the world, or only for a specific map when `mapId` is provided. The command runs in the background, prints progress every `500` spawners, and is safe to rerun because the underlying runtime spawn service still respects each spawner's count and state.
+
+Note: until the NPC template migration is complete, the spawned mobiles currently resolve to `generic_npc`.
+This command force-triggers both periodic and proximity spawners.
+
+```
+.initial_spawn [mapId]
 ```
 
 Context: Console and InGame.

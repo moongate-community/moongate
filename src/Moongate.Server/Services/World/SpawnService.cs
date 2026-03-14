@@ -1,4 +1,5 @@
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -24,7 +25,6 @@ public sealed class SpawnService : ISpawnService
     private const string SpawnOriginKey = "spawn_origin";
     private const string SpawnWalkingRangeKey = "walking_range";
     private const string SpawnHomeRangeKey = "home_range";
-    private const string SpawnerIdKey = "spawner_id";
     private const int ScanIntervalMilliseconds = 3000;
     private const int TickIntervalMilliseconds = 1000;
     private const int ActivationRange = MapSectorConsts.SectorSize * 2;
@@ -90,6 +90,33 @@ public sealed class SpawnService : ISpawnService
     }
 
     /// <inheritdoc />
+    public async Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        ArgumentNullException.ThrowIfNull(spawnerItem);
+
+        if (spawnerItem.Id == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (!TryBuildStateFromItem(spawnerItem, out var state))
+        {
+            return false;
+        }
+
+        lock (_sync)
+        {
+            _states[spawnerItem.Id] = state;
+        }
+
+        var now = Environment.TickCount64;
+
+        return await TrySpawnForStateAsync(state, now, forceSpawn: true);
+    }
+
+    /// <inheritdoc />
     public Task StartAsync()
     {
         BuildDefinitionIndex();
@@ -127,12 +154,9 @@ public sealed class SpawnService : ISpawnService
     {
         _definitionsByGuid.Clear();
 
-        foreach (var mapId in Map.MapIDs)
+        foreach (var definition in _spawnsDataService.GetAllEntries())
         {
-            foreach (var definition in _spawnsDataService.GetEntriesByMap(mapId))
-            {
-                _definitionsByGuid[definition.Guid] = definition;
-            }
+            _definitionsByGuid[definition.Guid] = definition;
         }
     }
 
@@ -169,7 +193,11 @@ public sealed class SpawnService : ISpawnService
                 dueStates =
                 [
                     .. _states.Values
-                              .Where(state => state.NextSpawnAt <= now)
+                              .Where(
+                                  state =>
+                                      state.Definition.Kind == SpawnDefinitionKind.ProximitySpawner ||
+                                      state.NextSpawnAt <= now
+                              )
                               .Select(state => state with { })
                 ];
             }
@@ -203,7 +231,7 @@ public sealed class SpawnService : ISpawnService
                     continue;
                 }
 
-                if (!item.TryGetCustomString(SpawnerIdKey, out var spawnerIdRaw) ||
+                if (!item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerIdRaw) ||
                     string.IsNullOrWhiteSpace(spawnerIdRaw))
                 {
                     continue;
@@ -260,7 +288,8 @@ public sealed class SpawnService : ISpawnService
                             item.MapId,
                             item.Location,
                             definition,
-                            Environment.TickCount64 + ComputeNextDelayMilliseconds(definition)
+                            ComputeInitialNextSpawnAt(definition),
+                            []
                         );
                     }
                 }
@@ -270,7 +299,36 @@ public sealed class SpawnService : ISpawnService
 
     private async Task<bool> TrySpawnForStateAsync(RuntimeSpawnerState state, long now, bool forceSpawn)
     {
-        if (!forceSpawn && _spatialWorldService.GetPlayersInRange(state.Location, ActivationRange, state.MapId).Count == 0)
+        var playersInRange = _spatialWorldService.GetPlayersInRange(
+            state.Location,
+            GetActivationRange(state.Definition),
+            state.MapId
+        );
+        var playerIdsInRange = playersInRange
+            .Select(static session => session.CharacterId)
+            .Where(static id => id != Serial.Zero)
+            .Distinct()
+            .ToArray();
+
+        if (state.Definition.Kind == SpawnDefinitionKind.ProximitySpawner)
+        {
+            if (!forceSpawn)
+            {
+                var hasEnteredRange = playerIdsInRange.Any(playerId => !state.PlayersInRange.Contains(playerId));
+
+                UpdatePlayersInRange(state.SpawnerItemId, playerIdsInRange);
+
+                if (!hasEnteredRange || state.NextSpawnAt > now)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                UpdatePlayersInRange(state.SpawnerItemId, playerIdsInRange);
+            }
+        }
+        else if (!forceSpawn && playerIdsInRange.Length == 0)
         {
             Reschedule(state.SpawnerItemId, state.Definition, now);
 
@@ -349,7 +407,7 @@ public sealed class SpawnService : ISpawnService
             );
             spawnedMobile = true;
 
-            _logger.Debug(
+            _logger.Verbose(
                 "Spawned mobile from spawner {SpawnerGuid}: MobileId={MobileId} Template={TemplateId}",
                 state.SpawnGuid,
                 mobile.Id,
@@ -458,7 +516,7 @@ public sealed class SpawnService : ISpawnService
     {
         state = default;
 
-        if (!item.TryGetCustomString(SpawnerIdKey, out var spawnerIdRaw) ||
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerIdRaw) ||
             string.IsNullOrWhiteSpace(spawnerIdRaw))
         {
             _logger.Debug("Cannot trigger spawner {ItemId}: missing spawner_id custom property.", item.Id);
@@ -494,10 +552,27 @@ public sealed class SpawnService : ISpawnService
             item.MapId,
             item.Location,
             definition,
-            Environment.TickCount64 + ComputeNextDelayMilliseconds(definition)
+            ComputeInitialNextSpawnAt(definition),
+            []
         );
 
         return true;
+    }
+
+    private void UpdatePlayersInRange(Serial spawnerItemId, IReadOnlyList<Serial> playerIdsInRange)
+    {
+        lock (_sync)
+        {
+            if (!_states.TryGetValue(spawnerItemId, out var existing))
+            {
+                return;
+            }
+
+            _states[spawnerItemId] = existing with
+            {
+                PlayersInRange = [.. playerIdsInRange]
+            };
+        }
     }
 
     private ResolvedSpawnEntry? ResolveSpawnEntry(IReadOnlyList<SpawnEntryDefinition> entries)
@@ -600,13 +675,24 @@ public sealed class SpawnService : ISpawnService
         return Random.Shared.NextInt64(minMs, maxMs + 1);
     }
 
+    private static int GetActivationRange(SpawnDefinitionEntry definition)
+        => definition.Kind == SpawnDefinitionKind.ProximitySpawner
+               ? Math.Max(1, definition.HomeRange)
+               : ActivationRange;
+
+    private static long ComputeInitialNextSpawnAt(SpawnDefinitionEntry definition)
+        => definition.Kind == SpawnDefinitionKind.ProximitySpawner
+               ? Environment.TickCount64
+               : Environment.TickCount64 + ComputeNextDelayMilliseconds(definition);
+
     private sealed record RuntimeSpawnerState(
         Serial SpawnerItemId,
         Guid SpawnGuid,
         int MapId,
         Moongate.UO.Data.Geometry.Point3D Location,
         SpawnDefinitionEntry Definition,
-        long NextSpawnAt
+        long NextSpawnAt,
+        IReadOnlyList<Serial> PlayersInRange
     );
 
     private sealed record ResolvedSpawnEntry(string TemplateId, SpawnEntryDefinition Entry);

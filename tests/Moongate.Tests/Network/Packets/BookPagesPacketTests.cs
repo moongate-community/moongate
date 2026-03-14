@@ -108,6 +108,35 @@ public class BookPagesPacketTests
         );
     }
 
+    [Test]
+    public void Write_WithPageContent_ShouldEncodeLinesAsUtf8NullTerminated()
+    {
+        var source = new BookPagesPacket
+        {
+            BookSerial = 0x40000066u,
+            Pages =
+            {
+                new() { PageNumber = 1, LineCount = 1, Lines = { "test" } }
+            }
+        };
+
+        var writer = new SpanWriter(256, true);
+        source.Write(ref writer);
+        var bytes = writer.ToArray();
+        writer.Dispose();
+
+        var utf8Sequence = new byte[] { (byte)'t', (byte)'e', (byte)'s', (byte)'t', 0x00 };
+        var utf16Sequence = new byte[] { (byte)'t', 0x00, (byte)'e', 0x00, (byte)'s', 0x00, (byte)'t', 0x00, 0x00, 0x00 };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(bytes.AsSpan().IndexOf(utf8Sequence), Is.GreaterThanOrEqualTo(0));
+                Assert.That(bytes.AsSpan().IndexOf(utf16Sequence), Is.EqualTo(-1));
+            }
+        );
+    }
+
     private static byte[] BuildPacket(
         uint serial,
         (ushort page, ushort lines, string[] text)[] pages
@@ -141,4 +170,5 @@ public class BookPagesPacketTests
 
         return bytes;
     }
+
 }

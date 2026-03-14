@@ -1,3 +1,4 @@
+@import url('https://jackkv.github.io/UOFont/styles.css');
 @import "tailwindcss";
 @plugin './hero.ts';
 @source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
@@ -6,35 +7,35 @@
 @layer base {
   :root {
     --mg-radius-control: 2px;
-    --mg-bg:       #1f1c2a;
-    --mg-panel:    rgba(36, 33, 48, 0.85);
-    --mg-panel-soft: rgba(36, 33, 48, 0.65);
-    --mg-bg-soft:  #343455;
-    --mg-surface:  #3c4d81;
-    --mg-accent:   #6aa5da;
-    --mg-accent-2: #7675c3;
-    --mg-text:     #f9f4ed;
-    --mg-muted:    #b9bbd3;
-    --mg-border:   rgba(106, 165, 218, 0.22);
+    --mg-bg:       #17110d;
+    --mg-panel:    rgba(42, 31, 23, 0.88);
+    --mg-panel-soft: rgba(62, 46, 34, 0.72);
+    --mg-bg-soft:  #2a1f18;
+    --mg-surface:  #4f3a27;
+    --mg-accent:   #c7a15a;
+    --mg-accent-2: #8d6231;
+    --mg-text:     #f3e6c8;
+    --mg-muted:    #c3ab85;
+    --mg-border:   rgba(199, 161, 90, 0.28);
   }
 
   html.light {
-    --mg-bg:       #eef2f8;
-    --mg-panel:    rgba(255, 255, 255, 0.86);
-    --mg-panel-soft: rgba(255, 255, 255, 0.78);
-    --mg-bg-soft:  #d7e1f1;
-    --mg-surface:  #c5d4ec;
-    --mg-accent:   #2f6fb0;
-    --mg-accent-2: #5d7fb0;
-    --mg-text:     #1d283a;
-    --mg-muted:    #4f647f;
-    --mg-border:   rgba(47, 111, 176, 0.25);
+    --mg-bg:       #efe2c2;
+    --mg-panel:    rgba(251, 243, 219, 0.9);
+    --mg-panel-soft: rgba(246, 233, 201, 0.82);
+    --mg-bg-soft:  #e1cc9d;
+    --mg-surface:  #d4b67c;
+    --mg-accent:   #9a6b2f;
+    --mg-accent-2: #c39548;
+    --mg-text:     #382517;
+    --mg-muted:    #6d5236;
+    --mg-border:   rgba(154, 107, 47, 0.26);
   }
 
   html {
     font-family: 'Outfit', sans-serif;
     min-height: 100%;
-    background: #1f1c2a;
+    background: #17110d;
   }
 
   body,
@@ -45,12 +46,12 @@
   body {
     background-color: var(--mg-bg);
     background-image:
-      radial-gradient(circle at 12% 18%, rgba(106, 165, 218, 0.24) 0%, rgba(106, 165, 218, 0.00) 38%),
-      radial-gradient(circle at 86% 12%, rgba(118, 117, 195, 0.22) 0%, rgba(118, 117, 195, 0.00) 34%),
-      radial-gradient(circle at 52% 100%, rgba(249, 244, 237, 0.08) 0%, rgba(249, 244, 237, 0.00) 48%),
-      linear-gradient(160deg, #1f1c2a 0%, #242130 44%, #11151f 100%),
-      linear-gradient(rgba(106, 165, 218, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(106, 165, 218, 0.035) 1px, transparent 1px);
+      radial-gradient(circle at 16% 14%, rgba(199, 161, 90, 0.18) 0%, rgba(199, 161, 90, 0.00) 34%),
+      radial-gradient(circle at 84% 10%, rgba(141, 98, 49, 0.14) 0%, rgba(141, 98, 49, 0.00) 30%),
+      radial-gradient(circle at 50% 100%, rgba(243, 230, 200, 0.08) 0%, rgba(243, 230, 200, 0.00) 52%),
+      linear-gradient(160deg, #17110d 0%, #241910 44%, #0f0b08 100%),
+      linear-gradient(rgba(199, 161, 90, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(199, 161, 90, 0.04) 1px, transparent 1px);
     background-size:
       auto,
       auto,
@@ -71,17 +72,27 @@
 
   html.light body {
     background-image:
-      radial-gradient(circle at 12% 18%, rgba(47, 111, 176, 0.18) 0%, rgba(47, 111, 176, 0.00) 38%),
-      radial-gradient(circle at 86% 12%, rgba(93, 127, 176, 0.17) 0%, rgba(93, 127, 176, 0.00) 34%),
-      radial-gradient(circle at 52% 100%, rgba(29, 40, 58, 0.08) 0%, rgba(29, 40, 58, 0.00) 48%),
-      linear-gradient(160deg, #eef2f8 0%, #e2e9f5 44%, #d7e1f1 100%),
-      linear-gradient(rgba(47, 111, 176, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(47, 111, 176, 0.05) 1px, transparent 1px);
+      radial-gradient(circle at 14% 18%, rgba(195, 149, 72, 0.14) 0%, rgba(195, 149, 72, 0.00) 38%),
+      radial-gradient(circle at 86% 10%, rgba(154, 107, 47, 0.12) 0%, rgba(154, 107, 47, 0.00) 32%),
+      radial-gradient(circle at 50% 100%, rgba(56, 37, 23, 0.08) 0%, rgba(56, 37, 23, 0.00) 52%),
+      linear-gradient(160deg, #efe2c2 0%, #e8d6ad 44%, #ddc48d 100%),
+      linear-gradient(rgba(154, 107, 47, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(154, 107, 47, 0.05) 1px, transparent 1px);
+  }
+
+  body.portal-theme,
+  body.portal-theme button,
+  body.portal-theme a,
+  body.portal-theme [role="button"],
+  body.portal-theme input,
+  body.portal-theme select,
+  body.portal-theme textarea {
+    cursor: url('/portal-cursor.png') 0 0, auto;
   }
 
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: var(--mg-bg); }
-  ::-webkit-scrollbar-thumb { background: rgba(106,165,218,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb { background: rgba(199,161,90,0.3); border-radius: 2px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--mg-accent); }
 
   /* Global control shape policy: keep controls sharp (max 2px radius). */
@@ -111,5 +122,6 @@
 
 .animate-fade-in   { animation: fade-in 0.4s ease-out forwards; }
 .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+.font-uo     { font-family: 'UOFont', serif; }
 .font-cinzel { font-family: 'Cinzel', serif; }
 .font-mono   { font-family: 'JetBrains Mono', monospace; }

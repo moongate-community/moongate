@@ -41,6 +41,13 @@ public interface ICharacterService
     Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character);
 
     /// <summary>
+    /// Loads the character bank box with contained items for portal and packet serialization.
+    /// </summary>
+    /// <param name="character">Character entity.</param>
+    /// <returns>The bank box entity including contained items when available.</returns>
+    Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character);
+
+    /// <summary>
     /// Loads a character entity by serial.
     /// </summary>
     /// <param name="characterId">Character serial identifier.</param>

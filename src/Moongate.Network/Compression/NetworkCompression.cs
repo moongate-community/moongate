@@ -1,4 +1,5 @@
 using System.Buffers;
+using Moongate.Core.Buffers;
 
 namespace Moongate.Network.Compression;
 
@@ -359,7 +360,7 @@ public static class NetworkCompression
         }
 
         /// Try decompression with a reasonable buffer size
-        var buffer = ArrayPool<byte>.Shared.Rent(BufferSize);
+        var buffer = STArrayPool<byte>.Shared.Rent(BufferSize);
 
         try
         {
@@ -379,7 +380,7 @@ public static class NetworkCompression
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            STArrayPool<byte>.Shared.Return(buffer);
         }
     }
 
@@ -413,7 +414,7 @@ public static class NetworkCompression
         }
 
         /// Data is compressed, attempt decompression
-        var buffer = ArrayPool<byte>.Shared.Rent(BufferSize);
+        var buffer = STArrayPool<byte>.Shared.Rent(BufferSize);
 
         try
         {
@@ -433,7 +434,7 @@ public static class NetworkCompression
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            STArrayPool<byte>.Shared.Return(buffer);
         }
     }
 
@@ -464,7 +465,7 @@ public static class NetworkCompression
         }
 
         /// Use ArrayPool for better memory management in high-performance scenarios
-        var buffer = ArrayPool<byte>.Shared.Rent(maxSize);
+        var buffer = STArrayPool<byte>.Shared.Rent(maxSize);
 
         try
         {
@@ -479,7 +480,7 @@ public static class NetworkCompression
         }
         finally
         {
-            ArrayPool<byte>.Shared.Return(buffer);
+            STArrayPool<byte>.Shared.Return(buffer);
         }
     }
 

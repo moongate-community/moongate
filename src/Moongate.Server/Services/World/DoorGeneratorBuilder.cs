@@ -1,3 +1,4 @@
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Movement;
@@ -14,8 +15,6 @@ namespace Moongate.Server.Services.World;
 /// </summary>
 public sealed class DoorGeneratorBuilder : IWorldGenerator
 {
-    private const string DoorLinkSerialCustomFieldKey = "door_link_serial";
-
     private static readonly HashSet<int> EastFrames =
     [
         0x0007, 0x000A, 0x001A, 0x001C, 0x001E, 0x0037, 0x0058, 0x0059, 0x005C, 0x005E, 0x0080, 0x0081, 0x0082,
@@ -392,6 +391,7 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
             generatedDoor.MapId = placement.MapId;
             generatedDoor.Direction = placement.Facing.ToDirectionType();
             generatedDoor.ItemId = placement.Facing.ToItemId(generatedDoor.ItemId);
+            generatedDoor.SetCustomString(ItemCustomParamKeys.Door.Facing, placement.Facing.ToString());
 
             if (placement.PairGroupId.HasValue)
             {
@@ -399,8 +399,8 @@ public sealed class DoorGeneratorBuilder : IWorldGenerator
 
                 if (spawnedByPairGroup.TryGetValue(pairGroupId, out var linkedDoor))
                 {
-                    generatedDoor.SetCustomInteger(DoorLinkSerialCustomFieldKey, linkedDoor.Id.Value);
-                    linkedDoor.SetCustomInteger(DoorLinkSerialCustomFieldKey, generatedDoor.Id.Value);
+                    generatedDoor.SetCustomInteger(ItemCustomParamKeys.Door.LinkSerial, linkedDoor.Id.Value);
+                    linkedDoor.SetCustomInteger(ItemCustomParamKeys.Door.LinkSerial, generatedDoor.Id.Value);
                 }
                 else
                 {

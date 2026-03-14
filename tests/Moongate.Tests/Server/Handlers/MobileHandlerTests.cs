@@ -83,10 +83,12 @@ public sealed class MobileHandlerTests
     private sealed class MobileHandlerTestCharacterService : ICharacterService
     {
         private readonly UOMobileEntity _mobile;
+        private readonly UOItemEntity? _backpack;
 
-        public MobileHandlerTestCharacterService(UOMobileEntity mobile)
+        public MobileHandlerTestCharacterService(UOMobileEntity mobile, UOItemEntity? backpack = null)
         {
             _mobile = mobile;
+            _backpack = backpack;
         }
 
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
@@ -99,6 +101,9 @@ public sealed class MobileHandlerTests
             => Task.FromResult(character.Id);
 
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
+            => Task.FromResult<UOItemEntity?>(_mobile.Id == character.Id ? _backpack : null);
+
+        public Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character)
             => Task.FromResult<UOItemEntity?>(null);
 
         public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
@@ -109,6 +114,39 @@ public sealed class MobileHandlerTests
 
         public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
             => Task.FromResult(true);
+    }
+
+    private sealed class MobileHandlerTestLightService : ILightService
+    {
+        public int GlobalLightLevel { get; set; } = 7;
+
+        public int ComputeGlobalLightLevel(DateTime? utcNow = null)
+        {
+            _ = utcNow;
+
+            return GlobalLightLevel;
+        }
+
+        public int ComputeGlobalLightLevel(int mapId, Point3D location, DateTime? utcNow = null)
+        {
+            _ = mapId;
+            _ = location;
+            _ = utcNow;
+
+            return GlobalLightLevel;
+        }
+
+        public void SetGlobalLightOverride(int? lightLevel, bool applyImmediately = true)
+        {
+            _ = lightLevel;
+            _ = applyImmediately;
+        }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
     }
 
     private sealed class MobileHandlerTestNullCharacterService : ICharacterService
@@ -125,6 +163,9 @@ public sealed class MobileHandlerTests
         public Task<UOItemEntity?> GetBackpackWithItemsAsync(UOMobileEntity character)
             => Task.FromResult<UOItemEntity?>(null);
 
+        public Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character)
+            => Task.FromResult<UOItemEntity?>(null);
+
         public Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
             => Task.FromResult<UOMobileEntity?>(null);
 
@@ -139,6 +180,8 @@ public sealed class MobileHandlerTests
     {
         public List<UOMobileEntity> PlayersInSector { get; set; } = [];
         public List<GameSession> SessionsInRange { get; set; } = [];
+        public List<UOItemEntity> NearbyItems { get; set; } = [];
+        public List<UOMobileEntity> NearbyMobiles { get; set; } = [];
 
         public MapSector? SectorByLocation { get; set; }
         public Func<int, Point3D, MapSector?>? SectorByLocationResolver { get; set; }
@@ -173,10 +216,22 @@ public sealed class MobileHandlerTests
             => 0;
 
         public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
-            => [];
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return NearbyItems;
+        }
 
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
-            => [];
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return NearbyMobiles;
+        }
 
         public List<GameSession> GetPlayersInRange(
             Point3D location,
@@ -778,11 +833,17 @@ public sealed class MobileHandlerTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(packets, Has.Count.EqualTo(3));
                 Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<DrawPlayerPacket>());
-                Assert.That(packets[2].Packet, Is.TypeOf<ServerChangePacket>());
+                Assert.That(packets.Any(packet => packet.Packet is DrawPlayerPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is MobileDrawPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is OverallLightLevelPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PersonalLightLevelPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is SeasonPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PaperdollPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is SetMusicPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is ServerChangePacket), Is.True);
             }
         );
     }
@@ -832,11 +893,252 @@ public sealed class MobileHandlerTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(packets, Has.Count.EqualTo(3));
                 Assert.That(packets.All(packet => packet.SessionId == movingSession.SessionId), Is.True);
                 Assert.That(packets[0].Packet, Is.TypeOf<GeneralInformationPacket>());
-                Assert.That(packets[1].Packet, Is.TypeOf<DrawPlayerPacket>());
-                Assert.That(packets[2].Packet, Is.TypeOf<ServerChangePacket>());
+                Assert.That(packets.Any(packet => packet.Packet is DrawPlayerPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is MobileDrawPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is OverallLightLevelPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PersonalLightLevelPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is SeasonPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PaperdollPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is SetMusicPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is ServerChangePacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldSendWornItemsBackpackAndLightToMovingPlayer()
+    {
+        var movingPlayerId = (Serial)0x00000996u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(2, 47, 17),
+            SessionsInRange = []
+        };
+
+        var character = CreatePlayer(movingPlayerId);
+        character.MapId = 2;
+        character.Location = new(1518, 568, -14);
+        character.AddEquippedItem(
+            ItemLayerType.Helm,
+            new UOItemEntity
+            {
+                Id = (Serial)0x40001000u,
+                ItemId = 0x140A,
+                Hue = 0x0481
+            }
+        );
+
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40001001u,
+            ItemId = 0x0E75,
+            Name = "Backpack"
+        };
+        backpack.AddItem(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40001002u,
+                ItemId = 0x0EED,
+                Amount = 10,
+                Name = "Gold"
+            },
+            new(1, 1)
+        );
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        character.BackpackId = backpack.Id;
+
+        var characterService = new MobileHandlerTestCharacterService(character, backpack);
+        var speechService = new MobileHandlerTestSpeechService();
+        var lightService = new MobileHandlerTestLightService { GlobalLightLevel = 9 };
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new(),
+            lightService
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                2,
+                new(100, 100, 0),
+                new(1518, 568, -14)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets.Any(packet => packet.Packet is WornItemPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is DrawContainerAndAddItemCombinedPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is OverallLightLevelPacket), Is.True);
+                Assert.That(packets.Any(packet => packet.Packet is PersonalLightLevelPacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldDeleteOldRangeEntitiesBeforeResync()
+    {
+        var movingPlayerId = (Serial)0x00000995u;
+        var oldNpcId = (Serial)0x00002001u;
+        var oldItemId = (Serial)0x40002001u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(2, 47, 17),
+            SessionsInRange = [],
+            NearbyMobiles =
+            [
+                new UOMobileEntity
+                {
+                    Id = movingPlayerId,
+                    IsPlayer = true,
+                    Location = new(100, 100, 0),
+                    MapId = 1
+                },
+                new UOMobileEntity
+                {
+                    Id = oldNpcId,
+                    IsPlayer = false,
+                    Location = new(101, 100, 0),
+                    MapId = 1
+                }
+            ],
+            NearbyItems =
+            [
+                new UOItemEntity
+                {
+                    Id = oldItemId,
+                    ItemId = 0x0EED,
+                    Location = new(102, 100, 0),
+                    MapId = 1
+                }
+            ]
+        };
+
+        var character = CreatePlayer(movingPlayerId);
+        character.MapId = 2;
+        character.Location = new(1518, 568, -14);
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(character),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                2,
+                new(100, 100, 0),
+                new(1518, 568, -14)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+        var deletePackets = packets.Select(static packet => packet.Packet)
+                                   .OfType<DeleteObjectPacket>()
+                                   .ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(deletePackets.Select(static packet => packet.Serial), Does.Contain(oldNpcId));
+                Assert.That(deletePackets.Select(static packet => packet.Serial), Does.Contain(oldItemId));
+                Assert.That(deletePackets.Select(static packet => packet.Serial), Does.Not.Contain(movingPlayerId));
+                Assert.That(packets[0].Packet, Is.TypeOf<DeleteObjectPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldPreferSessionCharacterOverStalePersistence()
+    {
+        var movingPlayerId = (Serial)0x00000997u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        movingSession.Character = new UOMobileEntity
+        {
+            Id = movingPlayerId,
+            IsPlayer = true,
+            Name = "live-player",
+            MapId = 2,
+            Location = new(1518, 568, -14)
+        };
+        sessions.Add(movingSession);
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(2, 47, 17),
+            SessionsInRange = []
+        };
+        var staleCharacter = CreatePlayer(movingPlayerId);
+        staleCharacter.MapId = 1;
+        staleCharacter.Location = new(100, 100, 0);
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(staleCharacter),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                2,
+                new(100, 100, 0),
+                new(1518, 568, -14)
+            )
+        );
+
+        var packets = DequeueAll(queue);
+        var drawPlayerPacket = packets.OfType<OutgoingGamePacket>()
+                                      .Select(static packet => packet.Packet)
+                                      .OfType<DrawPlayerPacket>()
+                                      .Single();
+        var serverChangePacket = packets.OfType<OutgoingGamePacket>()
+                                        .Select(static packet => packet.Packet)
+                                        .OfType<ServerChangePacket>()
+                                        .Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(drawPlayerPacket.Mobile, Is.SameAs(movingSession.Character));
+                Assert.That(drawPlayerPacket.Mobile!.Location, Is.EqualTo(new Point3D(1518, 568, -14)));
+                Assert.That(serverChangePacket.Location, Is.EqualTo(new Point3D(1518, 568, -14)));
             }
         );
     }

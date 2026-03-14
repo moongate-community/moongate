@@ -25,11 +25,14 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         Accounts = new AccountRepository(_stateStore, _journalService);
         Mobiles = new MobileRepository(_stateStore, _journalService);
         Items = new ItemRepository(_stateStore, _journalService);
+        BulletinBoardMessages = new BulletinBoardMessageRepository(_stateStore, _journalService);
     }
 
     public IAccountRepository Accounts { get; }
 
     public IItemRepository Items { get; }
+
+    public IBulletinBoardMessageRepository BulletinBoardMessages { get; }
 
     public IMobileRepository Mobiles { get; }
 
@@ -80,6 +83,7 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
             _stateStore.AccountNameIndex.Clear();
             _stateStore.MobilesById.Clear();
             _stateStore.ItemsById.Clear();
+            _stateStore.BulletinBoardMessagesById.Clear();
             _stateStore.LastSequenceId = 0;
             _stateStore.LastAccountId = Serial.MobileStart - 1;
             _stateStore.LastMobileId = Serial.MobileStart - 1;
@@ -104,6 +108,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 {
                     var item = SnapshotMapper.ToItemEntity(snapshot.Items[i]);
                     _stateStore.ItemsById[item.Id] = item;
+                }
+
+                for (var i = 0; i < snapshot.BulletinBoardMessages.Length; i++)
+                {
+                    var message = SnapshotMapper.ToBulletinBoardMessageEntity(snapshot.BulletinBoardMessages[i]);
+                    _stateStore.BulletinBoardMessagesById[message.MessageId] = message;
                 }
 
                 _stateStore.LastSequenceId = snapshot.LastSequenceId;
@@ -136,10 +146,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         );
     }
 
-    public async ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
+    public ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
     {
-        _logger.Verbose("Persistence snapshot-save requested");
+        _logger.Verbose("Persistence snapshot-capture requested");
+        cancellationToken.ThrowIfCancellationRequested();
         WorldSnapshot snapshot;
+        long capturedLastSequenceId;
 
         lock (_stateStore.SyncRoot)
         {
@@ -151,12 +163,44 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 Accounts = [.. _stateStore.AccountsById.Values.Select(SnapshotMapper.ToAccountSnapshot)],
                 Mobiles = [.. _stateStore.MobilesById.Values.Select(SnapshotMapper.ToMobileSnapshot)],
                 Items = [.. _stateStore.ItemsById.Values.Select(SnapshotMapper.ToItemSnapshot)]
+                ,
+                BulletinBoardMessages = [.. _stateStore.BulletinBoardMessagesById.Values.Select(SnapshotMapper.ToBulletinBoardMessageSnapshot)]
             };
+            capturedLastSequenceId = _stateStore.LastSequenceId;
         }
 
-        await _snapshotService.SaveAsync(snapshot, cancellationToken);
-        await _journalService.ResetAsync(cancellationToken);
-        _logger.Verbose("Persistence snapshot-save completed LastSequenceId={LastSequenceId}", snapshot.LastSequenceId);
+        return ValueTask.FromResult(
+            new CapturedWorldSnapshot
+            {
+                Snapshot = snapshot,
+                CapturedLastSequenceId = capturedLastSequenceId
+            }
+        );
+    }
+
+    public async ValueTask SaveCapturedSnapshotAsync(
+        CapturedWorldSnapshot capturedSnapshot,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(capturedSnapshot);
+        _logger.Verbose(
+            "Persistence captured-snapshot save requested LastSequenceId={LastSequenceId}",
+            capturedSnapshot.CapturedLastSequenceId
+        );
+        await _snapshotService.SaveAsync(capturedSnapshot.Snapshot, cancellationToken);
+        await _journalService.TrimThroughSequenceAsync(capturedSnapshot.CapturedLastSequenceId, cancellationToken);
+        _logger.Verbose(
+            "Persistence captured-snapshot save completed LastSequenceId={LastSequenceId}",
+            capturedSnapshot.CapturedLastSequenceId
+        );
+    }
+
+    public async ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Verbose("Persistence snapshot-save requested");
+        var captured = await CaptureSnapshotAsync(cancellationToken);
+        await SaveCapturedSnapshotAsync(captured, cancellationToken);
     }
 
     private void ApplyEntry(JournalEntry entry)
@@ -213,6 +257,21 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 
                     break;
                 }
+            case PersistenceOperationType.UpsertBulletinBoardMessage:
+                {
+                    var message = JournalPayloadCodec.DecodeBulletinBoardMessage(entry.Payload);
+                    _stateStore.BulletinBoardMessagesById[message.MessageId] = message;
+                    _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)message.MessageId);
+
+                    break;
+                }
+            case PersistenceOperationType.RemoveBulletinBoardMessage:
+                {
+                    var id = JournalPayloadCodec.DecodeSerial(entry.Payload);
+                    _stateStore.BulletinBoardMessagesById.Remove(id);
+
+                    break;
+                }
         }
     }
 
@@ -229,5 +288,13 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         _stateStore.LastItemId = _stateStore.ItemsById.Count == 0
                                      ? Serial.ItemOffset - 1
                                      : _stateStore.ItemsById.Keys.Max(static id => (uint)id);
+
+        if (_stateStore.BulletinBoardMessagesById.Count > 0)
+        {
+            _stateStore.LastItemId = Math.Max(
+                _stateStore.LastItemId,
+                _stateStore.BulletinBoardMessagesById.Keys.Max(static id => (uint)id)
+            );
+        }
     }
 }

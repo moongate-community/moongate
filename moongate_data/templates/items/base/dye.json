@@ -1,0 +1,21 @@
+[
+  {
+    "type": "item",
+    "id": "dye_box",
+    "base_item": "dye_tub",
+    "name": "Dye Box",
+    "category": "Skill Items",
+    "description": "Test dye box using the dye tub art.",
+    "itemId": "0x0FAB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "items.dye_box",
+    "isMovable": true,
+    "tags": [
+      "test",
+      "skill items",
+      "dye"
+    ]
+  }
+]

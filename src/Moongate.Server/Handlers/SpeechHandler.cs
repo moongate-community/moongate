@@ -1,5 +1,4 @@
 using Moongate.Network.Packets.Data.Packets;
-using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
@@ -7,9 +6,11 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Listeners.Base;
 
+using Moongate.Network.Packets.Incoming.Speech;
+
 namespace Moongate.Server.Handlers;
 
-[RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket), RegisterPacketHandler(PacketDefinition.OpenChatWindowPacket)]
+[RegisterPacketHandler(PacketDefinition.UnicodeSpeechPacket)]
 
 /// <summary>
 /// Represents SpeechHandler.
@@ -26,13 +27,6 @@ public class SpeechHandler : BasePacketListener
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {
-        if (packet is OpenChatWindowPacket openChatWindowPacket)
-        {
-            await _speechService.HandleOpenChatWindowAsync(session, openChatWindowPacket);
-
-            return true;
-        }
-
         if (packet is not UnicodeSpeechPacket speechPacket)
         {
             return true;

@@ -13,6 +13,7 @@ using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Utils;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -173,6 +174,17 @@ internal static class MoongateHttpRouteExtensions
                        .WithName("PortalGetMe")
                        .WithSummary("Returns the authenticated player's account and characters.")
                        .Produces<MoongateHttpPortalAccount>()
+                       .Produces(StatusCodes.Status401Unauthorized)
+                       .Produces(StatusCodes.Status404NotFound);
+
+            portalGroup.MapGet(
+                           "/characters/{characterId}/inventory",
+                           (ClaimsPrincipal user, string characterId, CancellationToken cancellationToken) =>
+                               HandleGetPortalCharacterInventory(context, user, characterId, cancellationToken)
+                       )
+                       .WithName("PortalGetCharacterInventory")
+                       .WithSummary("Returns the authenticated player's inventory table for one character.")
+                       .Produces<MoongateHttpPortalInventory>()
                        .Produces(StatusCodes.Status401Unauthorized)
                        .Produces(StatusCodes.Status404NotFound);
 
@@ -556,9 +568,10 @@ internal static class MoongateHttpRouteExtensions
             return TypedResults.NotFound();
         }
 
+        using var normalized = ItemImageNormalizer.CropAndPad(image);
         using (var stream = File.Create(cachePath))
         {
-            image.Save(stream, new PngEncoder());
+            normalized.Save(stream, new PngEncoder());
         }
 
         return Results.File(cachePath, "image/png");
@@ -730,6 +743,51 @@ internal static class MoongateHttpRouteExtensions
         return Results.Json(MapPortalAccount(account, characters), MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
     }
 
+    private static IResult HandleGetPortalCharacterInventory(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        string characterId,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        var accountId = ResolveAuthenticatedAccountId(user);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var parsedCharacterId = ParseAccountIdOrNull(characterId);
+
+        if (parsedCharacterId is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var character = context.CharacterService!.GetCharacterAsync(parsedCharacterId.Value).GetAwaiter().GetResult();
+
+        if (character is null || character.AccountId != accountId.Value)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var backpack = context.CharacterService.GetBackpackWithItemsAsync(character).GetAwaiter().GetResult();
+        var bankBox = context.CharacterService.GetBankBoxWithItemsAsync(character).GetAwaiter().GetResult();
+        var items = MapPortalInventoryItems(character, backpack);
+        var bankItems = MapPortalContainerItems(bankBox, "Bank");
+        var response = new MoongateHttpPortalInventory
+        {
+            CharacterId = character.Id.Value.ToString(),
+            CharacterName = character.Name ?? character.Id.Value.ToString(),
+            Items = items,
+            BankItems = bankItems
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpPortalInventory);
+    }
+
     private static IResult HandleUpdatePortalMe(
         MoongateHttpRouteContext context,
         ClaimsPrincipal user,
@@ -886,6 +944,142 @@ internal static class MoongateHttpRouteExtensions
             4 => "Tokuno",
             5 => "TerMur",
             _ => $"Map {mapId}"
+        };
+
+    private static Serial? ResolveAuthenticatedAccountId(ClaimsPrincipal user)
+    {
+        var accountIdClaim = user.FindFirst("account_id")?.Value;
+        return string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
+    }
+
+    private static IReadOnlyList<MoongateHttpPortalInventoryItem> MapPortalInventoryItems(
+        UOMobileEntity character,
+        UOItemEntity? backpack
+    )
+    {
+        var items = new List<MoongateHttpPortalInventoryItem>();
+
+        foreach (var item in character.GetEquippedItemsRuntime()
+                                      .Where(static equipped => equipped.EquippedLayer != ItemLayerType.Bank)
+                                      .OrderBy(static equipped => equipped.EquippedLayer?.ToString(), StringComparer.Ordinal))
+        {
+            var layerLabel = item.EquippedLayer is null ? null : ResolveLayerLabel(item.EquippedLayer.Value);
+            items.Add(MapPortalInventoryItem(item, $"Equipped: {layerLabel}", layerLabel, null));
+        }
+
+        items.AddRange(MapPortalContainerItems(backpack, "Backpack"));
+
+        return items;
+    }
+
+    private static IReadOnlyList<MoongateHttpPortalInventoryItem> MapPortalContainerItems(
+        UOItemEntity? rootContainer,
+        string rootLabel
+    )
+    {
+        if (rootContainer is null)
+        {
+            return [];
+        }
+
+        var items = new List<MoongateHttpPortalInventoryItem>();
+
+        foreach (var item in FlattenContainerItems(rootContainer))
+        {
+            var container = item.ParentContainerId == rootContainer.Id
+                ? null
+                : FindContainer(rootContainer, item.ParentContainerId);
+            var location = item.ParentContainerId == rootContainer.Id
+                ? rootLabel
+                : $"Container: {container?.Name ?? item.ParentContainerId.Value.ToString()}";
+
+            items.Add(MapPortalInventoryItem(item, location, null, container));
+        }
+
+        return items;
+    }
+
+    private static IEnumerable<UOItemEntity> FlattenContainerItems(UOItemEntity container)
+    {
+        foreach (var item in container.Items.OrderBy(static child => child.Name ?? string.Empty, StringComparer.Ordinal))
+        {
+            yield return item;
+
+            if (item.Items.Count == 0)
+            {
+                continue;
+            }
+
+            foreach (var descendant in FlattenContainerItems(item))
+            {
+                yield return descendant;
+            }
+        }
+    }
+
+    private static UOItemEntity? FindContainer(UOItemEntity root, Serial containerId)
+    {
+        if (root.Id == containerId)
+        {
+            return root;
+        }
+
+        foreach (var item in root.Items)
+        {
+            if (item.Id == containerId)
+            {
+                return item;
+            }
+
+            if (item.Items.Count == 0)
+            {
+                continue;
+            }
+
+            var nested = FindContainer(item, containerId);
+
+            if (nested is not null)
+            {
+                return nested;
+            }
+        }
+
+        return null;
+    }
+
+    private static MoongateHttpPortalInventoryItem MapPortalInventoryItem(
+        UOItemEntity item,
+        string location,
+        string? layer,
+        UOItemEntity? container
+    )
+        => new()
+        {
+            ItemId = $"0x{item.ItemId:X4}",
+            Serial = item.Id.Value.ToString(),
+            Name = item.Name ?? $"0x{item.ItemId:X4}",
+            Graphic = item.ItemId,
+            Hue = item.Hue,
+            Amount = item.Amount,
+            Location = location,
+            Layer = layer,
+            ContainerSerial = container is null ? null : container.Id.Value.ToString(),
+            ContainerName = container?.Name,
+            ImageUrl = $"/api/item-templates/by-item-id/0x{item.ItemId:X4}/image"
+        };
+
+    private static string ResolveLayerLabel(ItemLayerType layer)
+        => layer switch
+        {
+            ItemLayerType.OneHanded or ItemLayerType.FirstValid => "OneHanded",
+            ItemLayerType.TwoHanded => "TwoHanded",
+            ItemLayerType.InnerTorso => "InnerTorso",
+            ItemLayerType.MiddleTorso => "MiddleTorso",
+            ItemLayerType.OuterTorso => "OuterTorso",
+            ItemLayerType.OuterLegs => "OuterLegs",
+            ItemLayerType.InnerLegs or ItemLayerType.LastUserValid => "InnerLegs",
+            ItemLayerType.LastValid => "Bank",
+            _ => layer.ToString()
         };
 
     private static MoongateHttpPortalAccount MapPortalAccount(UOAccountEntity account, IReadOnlyList<UOMobileEntity> characters)

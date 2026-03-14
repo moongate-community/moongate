@@ -1,5 +1,6 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Interfaces.Services.World;
 
@@ -20,4 +21,12 @@ public interface ISpawnService : IMoongateService
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns><see langword="true" /> when a mobile is spawned; otherwise <see langword="false" />.</returns>
     Task<bool> TriggerAsync(Serial spawnerItemId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Forces a spawn attempt for a persisted spawner item, bypassing active-sector discovery.
+    /// </summary>
+    /// <param name="spawnerItem">Persisted spawner item entity.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns><see langword="true" /> when a mobile is spawned; otherwise <see langword="false" />.</returns>
+    Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default);
 }

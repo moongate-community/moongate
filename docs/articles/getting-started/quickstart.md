@@ -11,8 +11,8 @@ Get Moongate v2 running locally with the current server behavior.
 ## 1. Clone
 
 ```bash
-git clone https://github.com/moongate-community/moongatev2.git
-cd moongatev2
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
 ```
 
 ## 2. Build

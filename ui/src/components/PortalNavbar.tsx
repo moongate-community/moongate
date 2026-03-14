@@ -2,7 +2,6 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownSection, Dropdown
 import { useIntl } from 'react-intl'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { PortalLanguageSwitcher } from './PortalLanguageSwitcher'
-import { ThemeToggle } from './ThemeToggle'
 import { usePortalAuthStore } from '../store/portalAuthStore'
 
 function PortalNavItem({ to, label }: { to: string, label: string }) {
@@ -11,9 +10,9 @@ function PortalNavItem({ to, label }: { to: string, label: string }) {
       to={to}
       className="rounded-md px-3 py-2 font-mono text-xs uppercase tracking-[0.18em] transition-colors"
       style={({ isActive }) => ({
-        color: isActive ? '#f4ead7' : 'rgba(244,234,215,0.72)',
-        background: isActive ? 'rgba(214,179,106,0.12)' : 'transparent',
-        border: isActive ? '1px solid rgba(214,179,106,0.22)' : '1px solid transparent',
+        color: isActive ? 'var(--mg-text)' : 'color-mix(in srgb, var(--mg-text) 68%, transparent)',
+        background: isActive ? 'color-mix(in srgb, var(--mg-accent) 14%, transparent)' : 'transparent',
+        border: isActive ? '1px solid color-mix(in srgb, var(--mg-accent) 26%, transparent)' : '1px solid transparent',
       })}
     >
       {label}
@@ -38,8 +37,8 @@ export function PortalNavbar() {
     <header
       className="sticky top-0 z-20 border-b px-6 py-4 backdrop-blur"
       style={{
-        background: 'linear-gradient(180deg, rgba(31,23,17,0.94), rgba(24,18,13,0.88))',
-        borderColor: 'rgba(214,179,106,0.14)',
+        background: 'linear-gradient(180deg, color-mix(in srgb, var(--mg-panel) 92%, var(--mg-bg) 8%), color-mix(in srgb, var(--mg-panel-soft) 88%, var(--mg-bg) 12%))',
+        borderColor: 'var(--mg-border)',
       }}
     >
       <div className="mx-auto flex w-full max-w-[1180px] items-center justify-between gap-4">
@@ -49,7 +48,6 @@ export function PortalNavbar() {
 
         <div className="flex items-center gap-3">
           <PortalLanguageSwitcher />
-          <ThemeToggle className="px-3 py-2" />
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
               <button
@@ -61,8 +59,8 @@ export function PortalNavbar() {
                   name={initial}
                   className="h-10 w-10"
                   style={{
-                    background: 'linear-gradient(180deg, #d6b36a 0%, #9f7631 100%)',
-                    color: '#241a12',
+                    background: 'linear-gradient(180deg, var(--mg-accent) 0%, var(--mg-accent-2) 100%)',
+                    color: 'color-mix(in srgb, var(--mg-bg) 82%, black 18%)',
                   }}
                 />
               </button>
@@ -74,26 +72,26 @@ export function PortalNavbar() {
                 base: 'font-mono text-xs',
               }}
               style={{
-                background: 'linear-gradient(180deg, rgba(39,29,21,0.98), rgba(27,21,16,0.98))',
-                border: '1px solid rgba(214,179,106,0.16)',
+                background: 'linear-gradient(180deg, color-mix(in srgb, var(--mg-panel) 96%, var(--mg-bg) 4%), color-mix(in srgb, var(--mg-panel-soft) 94%, var(--mg-bg) 6%))',
+                border: '1px solid var(--mg-border)',
               }}
             >
               <DropdownSection
                 title={user?.username ?? intl.formatMessage({ id: 'portal.account.unknown' })}
                 classNames={{
-                  heading: 'font-mono text-[11px] uppercase tracking-[0.18em] text-[rgba(244,234,215,0.5)]',
+                  heading: 'font-mono text-[11px] uppercase tracking-[0.18em] text-[color:color-mix(in_srgb,var(--mg-text)_50%,transparent)]',
                 }}
               >
                 <DropdownItem
                   key="profile"
-                  className="text-[#f4ead7]"
+                  className="text-[color:var(--mg-text)]"
                   onPress={() => navigate('/portal/profile')}
                 >
                   {intl.formatMessage({ id: 'portal.nav.profile' })}
                 </DropdownItem>
                 <DropdownItem
                   key="logout"
-                  className="text-[#f0b0a4]"
+                  className="text-[color:#f0b0a4]"
                   color="danger"
                   onPress={handleLogout}
                 >

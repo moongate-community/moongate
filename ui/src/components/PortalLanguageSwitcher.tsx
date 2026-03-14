@@ -20,9 +20,9 @@ export function PortalLanguageSwitcher() {
             className="font-mono text-[11px] uppercase tracking-[0.18em]"
             style={{
               minWidth: '58px',
-              borderColor: selected ? 'rgba(196,154,94,0.42)' : 'rgba(196,154,94,0.18)',
-              color: selected ? '#f4d6a0' : 'rgba(249,244,237,0.72)',
-              background: selected ? 'rgba(196,154,94,0.12)' : 'transparent',
+              borderColor: selected ? 'color-mix(in srgb, var(--mg-accent) 42%, transparent)' : 'color-mix(in srgb, var(--mg-accent) 18%, transparent)',
+              color: selected ? 'var(--mg-accent)' : 'color-mix(in srgb, var(--mg-text) 72%, transparent)',
+              background: selected ? 'color-mix(in srgb, var(--mg-accent) 12%, transparent)' : 'transparent',
             }}
             onPress={() => setLocale(entry)}
           >

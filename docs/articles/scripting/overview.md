@@ -618,7 +618,7 @@ Moongate v2 automatically generates `.luarc.json` for editor support:
 ```json
 {
   "workspace.library": [
-    "/path/to/moongatev2/scripts/definitions"
+    "/path/to/moongate/scripts/definitions"
   ],
   "diagnostics.disable": [],
   "runtime.version": "Lua 5.2"

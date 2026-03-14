@@ -8,6 +8,8 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -163,6 +165,53 @@ public sealed class SpawnDecorationsCommandTests
 
         Assert.That(itemService.CreatedItems, Has.Count.EqualTo(1));
         Assert.That(itemService.CreatedItems[0].ItemId, Is.EqualTo(0x0A99));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_ShouldApplyDoorFacingMetadata_WhenFacingParameterIsPresent()
+    {
+        var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Facing"] = DoorGenerationFacing.EastCCW.ToString()
+        };
+        var decoration = new DecorationEntry(
+            MapId: 0,
+            SourceGroup: "Britannia",
+            SourceFile: "sample.cfg",
+            TypeName: "MetalDoor",
+            ItemId: (Serial)0x0675,
+            Parameters: parameters,
+            Location: new Point3D(150, 250, 10),
+            Extra: string.Empty
+        );
+        var seedData = new SpawnDecorationsTestSeedDataService([decoration]);
+        var background = new ImmediateBackgroundJobService();
+        var itemFactory = new SpawnDecorationsTestItemFactoryService();
+        var itemService = new SpawnDecorationsTestItemService();
+        var command = new SpawnDecorationsCommand(seedData, background, itemFactory, itemService);
+
+        var context = new CommandSystemContext(
+            "spawn_decorations 0",
+            ["0"],
+            CommandSourceType.Console,
+            0,
+            static (_, _) => { }
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(itemService.CreatedItems, Has.Count.EqualTo(1));
+        var created = itemService.CreatedItems[0];
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(created.ItemId, Is.EqualTo(DoorGenerationFacing.EastCCW.ToItemId(0x0675)));
+                Assert.That(created.Direction, Is.EqualTo(DoorGenerationFacing.EastCCW.ToDirectionType()));
+                Assert.That(created.TryGetCustomString("door_facing", out var facing), Is.True);
+                Assert.That(facing, Is.EqualTo(DoorGenerationFacing.EastCCW.ToString()));
+            }
+        );
     }
 
     private sealed class SpawnDecorationsTestSeedDataService : ISeedDataService

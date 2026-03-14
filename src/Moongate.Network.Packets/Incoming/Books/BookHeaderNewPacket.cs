@@ -40,8 +40,8 @@ public class BookHeaderNewPacket : BaseGameNetworkPacket
         writer.Write(Flag1);
         writer.Write(IsWritable);
         writer.Write(PageCount);
-        WriteStringField(ref writer, Author);
         WriteStringField(ref writer, Title);
+        WriteStringField(ref writer, Author);
         writer.WritePacketLength();
     }
 
@@ -64,18 +64,18 @@ public class BookHeaderNewPacket : BaseGameNetworkPacket
         IsWritable = reader.ReadBoolean();
         PageCount = reader.ReadUInt16();
 
-        if (!TryReadStringField(ref reader, out var author))
-        {
-            return false;
-        }
-
         if (!TryReadStringField(ref reader, out var title))
         {
             return false;
         }
 
-        Author = author;
+        if (!TryReadStringField(ref reader, out var author))
+        {
+            return false;
+        }
+
         Title = title;
+        Author = author;
 
         return reader.Remaining == 0;
     }

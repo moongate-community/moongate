@@ -16,7 +16,7 @@ items_door = {
             return
         end
 
-        local toggled = door.toggle(serial)
+        local toggled = door.toggle(serial, convert.to_int(ctx.session_id, 0))
         if not toggled then
             return
         end

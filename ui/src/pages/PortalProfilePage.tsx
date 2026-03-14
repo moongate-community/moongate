@@ -139,13 +139,13 @@ export function PortalProfilePage() {
   return (
     <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-6 px-6 py-8 animate-fade-in">
       <div>
-        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.35em]" style={{ color: 'rgba(244,234,215,0.45)' }}>
+        <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.35em]" style={{ color: 'color-mix(in srgb, var(--mg-text) 45%, transparent)' }}>
           {intl.formatMessage({ id: 'portal.profile.label' })}
         </p>
-        <h1 className="font-cinzel text-3xl font-semibold" style={{ color: '#f4ead7' }}>
+        <h1 className="font-uo text-3xl font-semibold" style={{ color: 'var(--mg-text)' }}>
           {intl.formatMessage({ id: 'portal.profile.title' })}
         </h1>
-        <p className="mt-3 font-mono text-xs leading-6" style={{ color: 'rgba(244,234,215,0.72)' }}>
+        <p className="mt-3 font-mono text-xs leading-6" style={{ color: 'color-mix(in srgb, var(--mg-text) 72%, transparent)' }}>
           {intl.formatMessage({ id: 'portal.profile.subtitle' })}
         </p>
       </div>
@@ -186,19 +186,19 @@ export function PortalProfilePage() {
       <section
         className="rounded-xl border p-6"
         style={{
-          background: 'linear-gradient(180deg, rgba(50,36,24,0.9), rgba(34,25,18,0.92))',
-          borderColor: 'rgba(214,179,106,0.16)',
+          background: 'linear-gradient(180deg, color-mix(in srgb, var(--mg-panel) 94%, var(--mg-bg) 6%), color-mix(in srgb, var(--mg-panel-soft) 92%, var(--mg-bg) 8%))',
+          borderColor: 'var(--mg-border)',
           boxShadow: '0 24px 48px rgba(0,0,0,0.26)',
         }}
       >
         <div className="mb-5 flex items-center justify-between gap-3">
-          <h2 className="font-cinzel text-lg font-semibold" style={{ color: '#f9f4ed' }}>
+          <h2 className="font-uo text-lg font-semibold" style={{ color: 'var(--mg-text)' }}>
             {intl.formatMessage({ id: 'portal.profile.section.account' })}
           </h2>
           <Chip
             variant="flat"
             className="font-mono text-[11px] uppercase tracking-[0.16em]"
-            style={{ background: 'rgba(214,179,106,0.12)', color: '#f4d6a0' }}
+            style={{ background: 'color-mix(in srgb, var(--mg-accent) 12%, transparent)', color: 'var(--mg-accent)' }}
           >
             {account?.accountType ?? user?.role ?? intl.formatMessage({ id: 'portal.account.unknown' })}
           </Chip>
@@ -212,7 +212,7 @@ export function PortalProfilePage() {
             classNames={{
               inputWrapper: 'border-divider',
               label: 'font-mono text-xs tracking-wider',
-              input: 'font-mono text-sm text-[#f4ead7]',
+              input: 'font-mono text-sm text-[color:var(--mg-text)]',
             }}
           />
 
@@ -223,7 +223,7 @@ export function PortalProfilePage() {
             classNames={{
               inputWrapper: 'border-divider',
               label: 'font-mono text-xs tracking-wider',
-              input: 'font-mono text-sm text-[#f4ead7]',
+              input: 'font-mono text-sm text-[color:var(--mg-text)]',
             }}
           />
 
@@ -234,7 +234,7 @@ export function PortalProfilePage() {
             classNames={{
               inputWrapper: 'border-divider',
               label: 'font-mono text-xs tracking-wider',
-              input: 'font-mono text-sm text-[#f4ead7]',
+              input: 'font-mono text-sm text-[color:var(--mg-text)]',
             }}
           />
 
@@ -247,7 +247,7 @@ export function PortalProfilePage() {
             classNames={{
               inputWrapper: 'border-divider data-[hover=true]:border-warning',
               label: 'font-mono text-xs tracking-wider',
-              input: 'font-mono text-sm text-[#f4ead7]',
+              input: 'font-mono text-sm text-[color:var(--mg-text)]',
             }}
           />
 
@@ -258,8 +258,8 @@ export function PortalProfilePage() {
               isLoading={saving}
               className="font-mono uppercase tracking-[0.18em]"
               style={{
-                background: 'linear-gradient(180deg, #d6b36a 0%, #b98b3d 100%)',
-                color: '#2a2118',
+                background: 'linear-gradient(180deg, var(--mg-accent) 0%, var(--mg-accent-2) 100%)',
+                color: 'color-mix(in srgb, var(--mg-bg) 82%, black 18%)',
               }}
             >
               {saving
@@ -273,19 +273,19 @@ export function PortalProfilePage() {
       <section
         className="rounded-xl border p-6"
         style={{
-          background: 'linear-gradient(180deg, rgba(50,36,24,0.9), rgba(34,25,18,0.92))',
-          borderColor: 'rgba(214,179,106,0.16)',
+          background: 'linear-gradient(180deg, color-mix(in srgb, var(--mg-panel) 94%, var(--mg-bg) 6%), color-mix(in srgb, var(--mg-panel-soft) 92%, var(--mg-bg) 8%))',
+          borderColor: 'var(--mg-border)',
           boxShadow: '0 24px 48px rgba(0,0,0,0.26)',
         }}
       >
         <div className="mb-5 flex items-center justify-between gap-3">
-          <h2 className="font-cinzel text-lg font-semibold" style={{ color: '#f9f4ed' }}>
+          <h2 className="font-uo text-lg font-semibold" style={{ color: 'var(--mg-text)' }}>
             {intl.formatMessage({ id: 'portal.profile.section.password' })}
           </h2>
           <Chip
             variant="flat"
             className="font-mono text-[11px] uppercase tracking-[0.16em]"
-            style={{ background: 'rgba(214,179,106,0.12)', color: '#f4d6a0' }}
+            style={{ background: 'color-mix(in srgb, var(--mg-accent) 12%, transparent)', color: 'var(--mg-accent)' }}
           >
             {account?.accountType === 'Regular'
               ? intl.formatMessage({ id: 'portal.profile.password.policy.regular' })
@@ -305,7 +305,7 @@ export function PortalProfilePage() {
               classNames={{
                 inputWrapper: 'border-divider data-[hover=true]:border-warning',
                 label: 'font-mono text-xs tracking-wider',
-                input: 'font-mono text-sm text-[#f4ead7]',
+                input: 'font-mono text-sm text-[color:var(--mg-text)]',
               }}
             />
           )}
@@ -320,7 +320,7 @@ export function PortalProfilePage() {
             classNames={{
               inputWrapper: 'border-divider data-[hover=true]:border-warning',
               label: 'font-mono text-xs tracking-wider',
-              input: 'font-mono text-sm text-[#f4ead7]',
+              input: 'font-mono text-sm text-[color:var(--mg-text)]',
             }}
           />
 
@@ -334,7 +334,7 @@ export function PortalProfilePage() {
             classNames={{
               inputWrapper: 'border-divider data-[hover=true]:border-warning',
               label: 'font-mono text-xs tracking-wider',
-              input: 'font-mono text-sm text-[#f4ead7]',
+              input: 'font-mono text-sm text-[color:var(--mg-text)]',
             }}
           />
 
@@ -345,8 +345,8 @@ export function PortalProfilePage() {
               isLoading={savingPassword}
               className="font-mono uppercase tracking-[0.18em]"
               style={{
-                background: 'linear-gradient(180deg, #d6b36a 0%, #b98b3d 100%)',
-                color: '#2a2118',
+                background: 'linear-gradient(180deg, var(--mg-accent) 0%, var(--mg-accent-2) 100%)',
+                color: 'color-mix(in srgb, var(--mg-bg) 82%, black 18%)',
               }}
             >
               {savingPassword

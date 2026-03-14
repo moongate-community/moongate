@@ -3,9 +3,12 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Items;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -61,7 +64,7 @@ public sealed class DoorServiceTests
             => Task.FromResult(_items.TryGetValue(itemId, out var item) ? item : null);
 
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
-            => Task.FromResult(new List<UOItemEntity>());
+            => Task.FromResult(_items.Values.Where(x => x.ParentContainerId == containerId).ToList());
 
         public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
             => Task.FromResult(false);
@@ -99,6 +102,81 @@ public sealed class DoorServiceTests
 
         public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
+    }
+
+    private sealed class DoorServiceTestGameNetworkSessionService : IGameNetworkSessionService
+    {
+        private readonly Dictionary<long, GameSession> _sessions = [];
+
+        public int Count => _sessions.Count;
+
+        public void Add(GameSession session)
+            => _sessions[session.SessionId] = session;
+
+        public void Clear()
+            => _sessions.Clear();
+
+        public IReadOnlyCollection<GameSession> GetAll()
+            => _sessions.Values.ToArray();
+
+        public GameSession GetOrCreate(Moongate.Network.Client.MoongateTCPClient client)
+            => throw new NotSupportedException();
+
+        public bool Remove(long sessionId)
+            => _sessions.Remove(sessionId);
+
+        public bool TryGet(long sessionId, out GameSession session)
+            => _sessions.TryGetValue(sessionId, out session!);
+
+        public bool TryGetByCharacterId(Serial characterId, out GameSession session)
+        {
+            session = _sessions.Values.FirstOrDefault(x => x.CharacterId == characterId)!;
+
+            return session is not null;
+        }
+    }
+
+    private sealed class DoorServiceTestMobileService : IMobileService
+    {
+        private readonly Dictionary<Serial, UOMobileEntity> _mobiles = [];
+
+        public void SetMobile(UOMobileEntity mobile)
+            => _mobiles[mobile.Id] = mobile;
+
+        public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+
+        public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
+            => Task.FromResult(false);
+
+        public Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default)
+            => Task.FromResult(_mobiles.TryGetValue(id, out var mobile) ? mobile : null);
+
+        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+            int mapId,
+            int sectorX,
+            int sectorY,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(new List<UOMobileEntity>());
+
+        public Task<UOMobileEntity> SpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(new UOMobileEntity());
+
+        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult((false, (UOMobileEntity?)null));
     }
 
     private sealed class DoorServiceTestSpatialWorldService : ISpatialWorldService
@@ -261,7 +339,7 @@ public sealed class DoorServiceTests
         var itemService = new DoorServiceTestItemService(item);
         var spatial = new DoorServiceTestSpatialWorldService();
         var doorData = DoorServiceTestDoorDataService.CreateDefault();
-        var service = new DoorService(itemService, spatial, doorData);
+        var service = CreateService(itemService, spatial, doorData);
 
         var result = await service.IsDoorAsync(item.Id);
 
@@ -275,7 +353,7 @@ public sealed class DoorServiceTests
         var itemService = new DoorServiceTestItemService(item);
         var spatial = new DoorServiceTestSpatialWorldService();
         var doorData = DoorServiceTestDoorDataService.CreateDefault();
-        var service = new DoorService(itemService, spatial, doorData);
+        var service = CreateService(itemService, spatial, doorData);
 
         var result = await service.ToggleAsync(item.Id);
 
@@ -303,7 +381,7 @@ public sealed class DoorServiceTests
         var itemService = new DoorServiceTestItemService(firstDoor, secondDoor);
         var spatial = new DoorServiceTestSpatialWorldService();
         var doorData = DoorServiceTestDoorDataService.CreateDefault();
-        var service = new DoorService(itemService, spatial, doorData);
+        var service = CreateService(itemService, spatial, doorData);
 
         var result = await service.ToggleAsync(firstDoor.Id);
 
@@ -314,7 +392,7 @@ public sealed class DoorServiceTests
                 Assert.That(firstDoor.ItemId, Is.EqualTo(0x0686));
                 Assert.That(firstDoor.Location, Is.EqualTo(new Point3D(99, 101, 0)));
                 Assert.That(secondDoor.ItemId, Is.EqualTo(0x0688));
-                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(102, 99, 0)));
+                Assert.That(secondDoor.Location, Is.EqualTo(new Point3D(102, 101, 0)));
                 Assert.That(itemService.MoveToWorldCalls, Is.EqualTo(2));
                 Assert.That(itemService.UpsertCalls, Is.EqualTo(2));
                 Assert.That(spatial.AddOrUpdateCalls, Is.EqualTo(2));
@@ -333,7 +411,7 @@ public sealed class DoorServiceTests
         var itemService = new DoorServiceTestItemService(firstDoor, secondDoor);
         var spatial = new DoorServiceTestSpatialWorldService();
         var doorData = DoorServiceTestDoorDataService.CreateDefault();
-        var service = new DoorService(itemService, spatial, doorData);
+        var service = CreateService(itemService, spatial, doorData);
 
         var result = await service.ToggleAsync(firstDoor.Id);
 
@@ -356,7 +434,7 @@ public sealed class DoorServiceTests
         var itemService = new DoorServiceTestItemService(item);
         var spatial = new DoorServiceTestSpatialWorldService();
         var doorData = DoorServiceTestDoorDataService.CreateDefault();
-        var service = new DoorService(itemService, spatial, doorData);
+        var service = CreateService(itemService, spatial, doorData);
 
         var result = await service.ToggleAsync(item.Id);
 
@@ -378,7 +456,7 @@ public sealed class DoorServiceTests
         var itemService = new DoorServiceTestItemService(item);
         var spatial = new DoorServiceTestSpatialWorldService();
         var doorData = DoorServiceTestDoorDataService.CreateDefault();
-        var service = new DoorService(itemService, spatial, doorData);
+        var service = CreateService(itemService, spatial, doorData);
 
         var result = await service.ToggleAsync(item.Id);
 
@@ -392,6 +470,107 @@ public sealed class DoorServiceTests
         );
     }
 
+    [Test]
+    public async Task ToggleAsync_WhenDoorIsLockedAndPlayerHasNoMatchingKey_ShouldReturnFalse()
+    {
+        var door = CreateWorldItem((Serial)0x40000001u, 0x0685, new(100, 100, 0));
+        door.SetCustomBoolean(ItemCustomParamKeys.Door.Locked, true);
+        door.SetCustomString(ItemCustomParamKeys.Door.LockId, "door-lock");
+
+        var player = new UOMobileEntity
+        {
+            Id = (Serial)0x00000010u,
+            BackpackId = (Serial)0x40000010u
+        };
+
+        var sessionService = new DoorServiceTestGameNetworkSessionService();
+        var session = CreateSession(player);
+        sessionService.Add(session);
+
+        var mobileService = new DoorServiceTestMobileService();
+        mobileService.SetMobile(player);
+
+        var itemService = new DoorServiceTestItemService(door);
+        var spatial = new DoorServiceTestSpatialWorldService();
+        var doorData = DoorServiceTestDoorDataService.CreateDefault();
+        var service = new DoorService(itemService, spatial, doorData, sessionService, mobileService);
+
+        var result = await service.ToggleAsync(door.Id, session.SessionId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.False);
+                Assert.That(door.ItemId, Is.EqualTo(0x0685));
+                Assert.That(itemService.MoveToWorldCalls, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ToggleAsync_WhenDoorIsLockedAndPlayerHasMatchingKeyInBackpack_ShouldOpen()
+    {
+        var door = CreateWorldItem((Serial)0x40000001u, 0x0685, new(100, 100, 0));
+        door.SetCustomBoolean(ItemCustomParamKeys.Door.Locked, true);
+        door.SetCustomString(ItemCustomParamKeys.Door.LockId, "door-lock");
+
+        var backpack = CreateContainer((Serial)0x40000010u);
+        var key = CreateKey((Serial)0x40000011u, backpack.Id, "door-lock");
+
+        var player = new UOMobileEntity
+        {
+            Id = (Serial)0x00000010u,
+            BackpackId = backpack.Id
+        };
+
+        var sessionService = new DoorServiceTestGameNetworkSessionService();
+        var session = CreateSession(player);
+        sessionService.Add(session);
+
+        var mobileService = new DoorServiceTestMobileService();
+        mobileService.SetMobile(player);
+
+        var itemService = new DoorServiceTestItemService(door, backpack, key);
+        var spatial = new DoorServiceTestSpatialWorldService();
+        var doorData = DoorServiceTestDoorDataService.CreateDefault();
+        var service = new DoorService(itemService, spatial, doorData, sessionService, mobileService);
+
+        var result = await service.ToggleAsync(door.Id, session.SessionId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(door.ItemId, Is.EqualTo(0x0686));
+                Assert.That(itemService.MoveToWorldCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    private static DoorService CreateService(
+        DoorServiceTestItemService itemService,
+        DoorServiceTestSpatialWorldService spatial,
+        DoorServiceTestDoorDataService doorData
+    )
+        => new(
+            itemService,
+            spatial,
+            doorData,
+            new DoorServiceTestGameNetworkSessionService(),
+            new DoorServiceTestMobileService()
+        );
+
+    private static GameSession CreateSession(UOMobileEntity character)
+        => new(new(new Moongate.Network.Client.MoongateTCPClient(new System.Net.Sockets.Socket(
+            System.Net.Sockets.AddressFamily.InterNetwork,
+            System.Net.Sockets.SocketType.Stream,
+            System.Net.Sockets.ProtocolType.Tcp
+        ))))
+        {
+            CharacterId = character.Id,
+            Character = character
+        };
+
     private static UOItemEntity CreateWorldItem(Serial id, int itemId, Point3D location)
         => new()
         {
@@ -402,4 +581,26 @@ public sealed class DoorServiceTests
             Name = "door",
             ScriptId = "items.door"
         };
+
+    private static UOItemEntity CreateContainer(Serial id)
+        => new()
+        {
+            Id = id,
+            ItemId = 0x0E75,
+            Name = "Backpack"
+        };
+
+    private static UOItemEntity CreateKey(Serial id, Serial containerId, string lockId)
+    {
+        var key = new UOItemEntity
+        {
+            Id = id,
+            ItemId = 0x100E,
+            ParentContainerId = containerId,
+            Name = "Key"
+        };
+        key.SetCustomString(ItemCustomParamKeys.Key.LockId, lockId);
+
+        return key;
+    }
 }

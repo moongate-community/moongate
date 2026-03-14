@@ -91,7 +91,7 @@ public class BookPagesPacket : BaseGameNetworkPacket
             {
                 for (var lineIndex = 0; lineIndex < page.LineCount; lineIndex++)
                 {
-                    if (!TryReadUtf8NullTerminated(ref reader, out var line))
+                    if (!TryReadBookLine(ref reader, out var line))
                     {
                         return false;
                     }
@@ -105,6 +105,9 @@ public class BookPagesPacket : BaseGameNetworkPacket
 
         return reader.Remaining == 0;
     }
+
+    private static bool TryReadBookLine(ref SpanReader reader, out string value)
+        => TryReadUtf8NullTerminated(ref reader, out value);
 
     private static bool TryReadUtf8NullTerminated(ref SpanReader reader, out string value)
     {

@@ -44,7 +44,7 @@ public class ObjectInformationPacketTests
     }
 
     [Test]
-    public void Write_WithItem_ShouldSerializeObjectInformationPacket()
+    public void Write_WithItem_ShouldSerializeWorldItemFacingAsZero()
     {
         var item = new UOItemEntity
         {
@@ -69,7 +69,7 @@ public class ObjectInformationPacketTests
                 Assert.That(data[3], Is.EqualTo(0x00));
                 Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(4, 4)), Is.EqualTo(0x40000033u));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(8, 2)), Is.EqualTo(0x0EED));
-                Assert.That(data[10], Is.EqualTo((byte)DirectionType.SouthWest));
+                Assert.That(data[10], Is.EqualTo(0x00));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(11, 2)), Is.EqualTo(0x0014));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(13, 2)), Is.EqualTo(0x0014));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(15, 2)), Is.EqualTo(1234));

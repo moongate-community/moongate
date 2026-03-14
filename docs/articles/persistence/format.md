@@ -103,12 +103,28 @@ The world snapshot stores typed mobile and item substructures rather than only f
 - `CombatStats`
 - `Modifiers`
 
+`WorldSnapshot` also currently persists:
+
+- `BulletinBoardMessages`
+
+Each bulletin-board message snapshot stores:
+
+- `MessageId`
+- `BoardId`
+- `ParentId`
+- `OwnerCharacterId`
+- `Author`
+- `Subject`
+- `PostedAtUtc`
+- `BodyLines`
+
 This means snapshot payloads now preserve:
 
 - item combat requirements and AoS-style item modifiers
 - mobile aggregated equipment/runtime modifiers
 - mobile skill tables used by `0x3A`
 - mobile modern status data used by `0x11`
+- classic bulletin board message trees used by `0x71`
 
 ---
 

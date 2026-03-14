@@ -14,6 +14,8 @@ The following modules are currently wired in runtime:
 - `speech`
 - `mobile`
 - `item`
+- `bulletin`
+- `dye`
 - `door`
 - `effect`
 - `gump`
@@ -26,7 +28,7 @@ The following modules are currently wired in runtime:
 - `map` (`to_id`)
 - `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-16 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+18 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
@@ -67,6 +69,55 @@ items_door = {
     end
 }
 ```
+
+### Item Script: Dye Tub
+
+```lua
+items_dye_tub = {
+    on_double_click = function(ctx)
+        return dye.begin(ctx.session_id, ctx.item.serial, function(target_serial)
+            return target_serial ~= nil and target_serial ~= 0
+        end)
+    end
+}
+```
+
+The `dye` module currently exposes:
+
+- `dye.begin(session_id, dye_tub_serial, callback?)`
+  - starts the classic UO target cursor flow
+  - the optional callback receives the selected `target_serial`
+  - returning `false` rejects the target before the hue picker opens
+- `dye.send_dyeable(session_id, item_serial, model?)`
+  - opens the hue picker directly for a known dyeable item
+
+Runtime notes:
+
+- target items must currently be accessible from the player inventory/equipment
+- the final hue application, persistence, and item refresh are handled by `IDyeColorService`
+- item templates opt-in through the `dyeable` flag, which is materialized into runtime item metadata
+
+### Item Script: Bulletin Board
+
+```lua
+items_bulletin_board = {
+    on_double_click = function(ctx)
+        return bulletin.open(ctx.session_id, ctx.item.serial)
+    end
+}
+```
+
+The `bulletin` module currently exposes:
+
+- `bulletin.open(session_id, board_serial)`
+  - opens the classic bulletin board UI for the specified board item
+  - the server then sends message summaries over packet `0x71`
+
+Runtime notes:
+
+- the board protocol uses the item serial as `BoardId`
+- posting and reply creation are persisted through the bulletin-board message repository
+- delete is currently owner-only and rejected when the target message already has replies
 
 ### Item Script: Teleporter
 
@@ -139,7 +190,7 @@ the classic client book UI in read-only mode. The server also listens to client
 Writable books use the same classic client UI, but the save flow differs:
 
 - `book_writable = true` marks the item as writable at runtime
-- `0x93` saves `title` and `author`
+- `0xD4` saves `title` and `author`
 - `0x66` saves page content
 - writes are accepted only when the book is equipped by the player or inside the player's backpack tree
 

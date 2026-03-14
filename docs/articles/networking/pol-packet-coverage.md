@@ -62,7 +62,6 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x88` | Paperdoll | S -> C | `?Packet=0x88` | `PaperdollPacket` | `outgoing` | character UI | Open paperdoll |
 | `0x8C` | Server redirect | S -> C | `?Packet=0x8C` | `ServerRedirectPacket` | `outgoing` | `LoginHandler` | Redirect to game server |
 | `0x91` | Game login | C -> S | `?Packet=0x91` | `GameLoginPacket` | `handler` | `LoginHandler` | Game-server auth |
-| `0x93` | Book header old | C -> S | `?Packet=0x93` | `BookHeaderOldPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
 | `0x97` | Move player | S -> C | `?Packet=0x97` | `MovePlayerPacket` | `outgoing` | movement flow | Server-driven player move |
 | `0xA0` | Select server | C -> S | `?Packet=0xA0` | `ServerSelectPacket` | `handler` | `LoginHandler` | Shard select |
 | `0xA8` | Server list | S -> C | `?Packet=0xA8` | `ServerListPacket` | `outgoing` | `LoginHandler` | Shard list |
@@ -71,7 +70,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xAE` | Unicode speech message | S -> C | `?Packet=0xAE` | `UnicodeSpeechMessagePacket` | `outgoing` | speech and system messages | Server speech |
 | `0xB0` | Generic gump | S -> C | `?Packet=0xB0` | `GenericGumpPacket` | `outgoing` | gump flow | Standard gump |
 | `0xB1` | Gump menu selection | C -> S | `?Packet=0xB1` | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump replies |
-| `0xB5` | Open chat window | C -> S | `?Packet=0xB5` | `OpenChatWindowPacket` | `handler` | `SpeechHandler` | Chat open |
+| `0xB5` | Open chat window | C -> S | `?Packet=0xB5` | `OpenChatWindowPacket` | `handler` | `ChatHandler` | Chat open and runtime user bootstrap |
 | `0xB9` | Enable locked client features | S -> C | `?Packet=0xB9` | `SupportFeaturesPacket` | `outgoing` | login flow | Client feature flags |
 | `0xBC` | Season | S -> C | `?Packet=0xBC` | `SeasonPacket` | `outgoing` | world presentation | Season state |
 | `0xBD` | Client version | C -> S | `?Packet=0xBD` | `ClientVersionPacket` | `handler` | `LoginHandler` | Stores client version |
@@ -104,21 +103,21 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x75` | Rename character | C -> S | `?Packet=0x75` | `RenameCharacterPacket` | `parse-only` | Rename flow missing |
 | `0x7D` | Dialog response | C -> S | `?Packet=0x7D` | `DialogResponsePacket` | `parse-only` | Legacy dialog response not wired |
 | `0x83` | Delete character | C -> S | `?Packet=0x83` | `DeleteCharacterPacket` | `parse-only` | Delete flow missing |
-| `0x95` | Dye window | C -> S | `?Packet=0x95` | `DyeWindowPacket` | `parse-only` | Dye flow missing |
+| `0x95` | Dye window | both | `?Packet=0x95` | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `implemented` | Classic dye tub flow wired through `DyeColorService` and Lua `dye` module |
 | `0x98` | All names | C -> S | `?Packet=0x98` | `AllNamesPacket` | `parse-only` | 3D all-names flow missing |
 | `0x9A` | Console entry prompt | C -> S | `?Packet=0x9A` | `ConsoleEntryPromptPacket` | `parse-only` | No gameplay listener |
 | `0x9B` | Request help | C -> S | `?Packet=0x9B` | `RequestHelpPacket` | `parse-only` | Help flow missing |
 | `0x9F` | Sell list reply | C -> S | `?Packet=0x9F` | `SellListReplyPacket` | `parse-only` | Vendor sell flow missing |
 | `0xA4` | Client spy | C -> S | `?Packet=0xA4` | `ClientSpyPacket` | `parse-only` | No behavior attached |
 | `0xA7` | Request tip / notice window | C -> S | `?Packet=0xA7` | `RequestTipNoticeWindowPacket` | `parse-only` | Tip flow missing |
-| `0xB3` | Chat text | C -> S | `?Packet=0xB3` | `ChatTextPacket` | `parse-only` | Legacy chat text path missing |
+| `0xB3` | Chat text | C -> S | `?Packet=0xB3` | `ChatTextPacket` | `handler` | ModernUO-style conference chat action dispatch via `IChatSystemService` |
 | `0xB6` | Help / tip request | C -> S | `?Packet=0xB6` | `SendHelpTipRequestPacket` | `parse-only` | Tip flow missing |
 | `0xB8` | Character profile request | C -> S | `?Packet=0xB8` | `RequestCharProfilePacket` | `parse-only` | Profile flow missing |
 | `0xBE` | Assist version | C -> S | `?Packet=0xBE` | `AssistVersionPacket` | `parse-only` | No behavior attached |
 | `0xC2` | Unicode text entry | C -> S | `?Packet=0xC2` | `UnicodeTextEntryPacket` | `parse-only` | Text entry flow missing |
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |
 | `0xD1` | Logout status | C -> S | `?Packet=0xD1` | `LogoutStatusPacket` | `parse-only` | No dedicated logout listener |
-| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `parse-only` | Client packet shape exists, no inbound behavior needed today |
+| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save for client `7.x` |
 | `0xD7` | Generic AOS commands | C -> S | `?Packet=0xD7` | `GenericAosCommandsPacket` | `parse-only` | AoS subcommands not wired |
 | `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `parse-only` | Client-type-specific behavior missing |
 | `0xEC` | Equip macro | C -> S | `?Packet=0xEC` | `EquipMacroPacket` | `parse-only` | KR macro flow missing |
@@ -212,7 +211,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0xAB` | Text entry dialog | S -> C | `?Packet=0xAB` | `missing` | Text entry flow absent |
 | `0xAC` | Server list alt / game family | S -> C | `?Packet=0xAC` | `missing` | Not modeled |
 | `0xAF` | Death animation | S -> C | `?Packet=0xAF` | `missing` | Packet class exists in Moongate, but no documented runtime flow yet |
-| `0xB2` | Chat request | S -> C | `?Packet=0xB2` | `missing` | Legacy chat system absent |
+| `0xB2` | Chat request | S -> C | `?Packet=0xB2` | `ChatCommandPacket` | `outgoing` | Conference chat responses/messages; implemented against ModernUO-style runtime chat rather than POL core |
 | `0xB7` | Char profile reply | S -> C | `?Packet=0xB7` | `missing` | No profile reply flow |
 | `0xBA` | Seasons alt / map family | S -> C | `?Packet=0xBA` | `missing` | Not modeled |
 | `0xBB` | Ultima Messenger | both | `?Packet=0xBB` | `missing` | Messenger system absent |
@@ -245,3 +244,4 @@ This section intentionally includes older or lower-priority packets so opcode ra
 ---
 
 **Previous**: [Packet System](packets.md) | **Next**: [Protocol Reference](protocol.md)
+| `0x71` | Bulletin Board Messages | both | `BulletinBoardMessagesPacket`, `BulletinBoardDisplayPacket`, `BulletinBoardSummaryPacket`, `BulletinBoardMessagePacket` | `implemented` | Classic board open, summary, message read, post, and owner-only leaf delete |

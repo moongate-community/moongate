@@ -39,6 +39,7 @@ On repeated violations, session is disconnected.
 - `0x66` Book Pages (`variable`)
 - `0x73` Ping Message (`Length=2`, fixed)
 - `0xAD` Unicode Speech (`variable`)
+- `0xB3` Chat Text (`variable`)
 - `0xB5` Open Chat Window (`Length=64`, fixed)
 - `0x6C` Target Cursor Commands (`Length=19`, fixed)
 - `0xBF` General Information (`variable`)
@@ -130,7 +131,7 @@ Moongate currently treats the outgoing `0x11` status packet as a modern `7.x`-st
 Moongate now supports both read-only and writable classic book flows.
 
 - double-click opens the classic book UI for supported items
-- `0x93` saves writable book `title` and `author`
+- `0xD4` saves writable book `title` and `author`
 - `0x66` is used for both:
   - page requests
   - writable page saves

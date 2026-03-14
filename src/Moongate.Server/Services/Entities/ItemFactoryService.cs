@@ -4,6 +4,8 @@ using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Types.World;
+using Moongate.Server.Services.World;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -22,6 +24,7 @@ namespace Moongate.Server.Services.Entities;
 public sealed class ItemFactoryService : IItemFactoryService
 {
     private const int BackpackItemId = 0x0E75;
+    private const int DefaultWritableBookPages = 20;
     private const string FlippableItemIdsKey = "flippable_item_ids";
 
     private readonly ILogger _logger = Log.ForContext<ItemFactoryService>();
@@ -85,6 +88,7 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         ApplyTemplateParams(item, template);
         ApplyBookTemplate(item, template);
+        EnsureWritableBookMetadata(item);
         item.CombatStats = CreateCombatStats(template);
         item.Modifiers = CreateModifiers(template);
 
@@ -170,19 +174,24 @@ public sealed class ItemFactoryService : IItemFactoryService
             );
         }
 
-        item.SetCustomString(BookTemplateParamKeys.BookId, template.BookId.Trim());
-        item.SetCustomString(BookTemplateParamKeys.Title, book.Title);
-        item.SetCustomString(BookTemplateParamKeys.Author, book.Author);
-        item.SetCustomString(BookTemplateParamKeys.Content, book.Content);
+        item.SetCustomString(ItemCustomParamKeys.Book.BookId, template.BookId.Trim());
+        item.SetCustomString(ItemCustomParamKeys.Book.Title, book.Title);
+        item.SetCustomString(ItemCustomParamKeys.Book.Author, book.Author);
+        item.SetCustomString(ItemCustomParamKeys.Book.Content, book.Content);
 
         if (book.ReadOnly.HasValue)
         {
-            item.SetCustomBoolean(BookTemplateParamKeys.Writable, !book.ReadOnly.Value);
+            item.SetCustomBoolean(ItemCustomParamKeys.Book.Writable, !book.ReadOnly.Value);
         }
     }
 
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
     {
+        if (template.Dyeable)
+        {
+            item.SetCustomBoolean(ItemCustomParamKeys.Item.Dyeable, true);
+        }
+
         if (template.FlippableItemIds.Count > 0)
         {
             item.SetCustomString(FlippableItemIdsKey, string.Join(',', template.FlippableItemIds));
@@ -202,7 +211,15 @@ public sealed class ItemFactoryService : IItemFactoryService
             if (string.Equals(normalizedKey, "writable", StringComparison.OrdinalIgnoreCase) &&
                 bool.TryParse(param.Value, out var writable))
             {
-                item.SetCustomBoolean(BookTemplateParamKeys.Writable, writable);
+                item.SetCustomBoolean(ItemCustomParamKeys.Book.Writable, writable);
+
+                continue;
+            }
+
+            if (string.Equals(normalizedKey, "pages", StringComparison.OrdinalIgnoreCase) &&
+                long.TryParse(param.Value, CultureInfo.InvariantCulture, out var pages))
+            {
+                item.SetCustomInteger(ItemCustomParamKeys.Book.Pages, pages);
 
                 continue;
             }
@@ -245,7 +262,29 @@ public sealed class ItemFactoryService : IItemFactoryService
                     );
             }
         }
+
+        ApplyDoorFacingOverride(item, template);
     }
+
+    private static void ApplyDoorFacingOverride(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        if (!IsDoorTemplate(template) ||
+            !template.Params.TryGetValue("Facing", out var facingParam) ||
+            !Enum.TryParse<DoorGenerationFacing>(facingParam.Value, true, out var facing))
+        {
+            return;
+        }
+
+        item.Direction = facing.ToDirectionType();
+        item.ItemId = facing.ToItemId(item.ItemId);
+        item.SetCustomString(ItemCustomParamKeys.Door.Facing, facing.ToString());
+    }
+
+    private static bool IsDoorTemplate(ItemTemplateDefinition template)
+        => string.Equals(template.ScriptId, "items.door", StringComparison.OrdinalIgnoreCase) ||
+           template.Tags.Any(static tag =>
+               string.Equals(tag, "door", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(tag, "gate", StringComparison.OrdinalIgnoreCase));
 
     private static ItemCombatStats? CreateCombatStats(ItemTemplateDefinition template)
     {
@@ -277,6 +316,34 @@ public sealed class ItemFactoryService : IItemFactoryService
             MaxDurability = template.HitPoints,
             CurrentDurability = template.HitPoints
         };
+    }
+
+    private static void EnsureWritableBookMetadata(UOItemEntity item)
+    {
+        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Book.Writable, out var writable) || !writable)
+        {
+            return;
+        }
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Title, out _))
+        {
+            item.SetCustomString(ItemCustomParamKeys.Book.Title, string.Empty);
+        }
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Author, out _))
+        {
+            item.SetCustomString(ItemCustomParamKeys.Book.Author, string.Empty);
+        }
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Content, out _))
+        {
+            item.SetCustomString(ItemCustomParamKeys.Book.Content, string.Empty);
+        }
+
+        if (!item.TryGetCustomInteger(ItemCustomParamKeys.Book.Pages, out _))
+        {
+            item.SetCustomInteger(ItemCustomParamKeys.Book.Pages, DefaultWritableBookPages);
+        }
     }
 
     private static ItemModifiers? CreateModifiers(ItemTemplateDefinition template)

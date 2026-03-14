@@ -11,6 +11,7 @@ public readonly record struct SpawnDefinitionEntry(
     string SourceGroup,
     string SourceFile,
     Guid Guid,
+    SpawnDefinitionKind Kind,
     string Name,
     Point3D Location,
     int Count,

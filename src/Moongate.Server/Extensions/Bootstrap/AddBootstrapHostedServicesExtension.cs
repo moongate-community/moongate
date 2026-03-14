@@ -1,6 +1,9 @@
 using DryIoc;
+using Moongate.Abstractions.Data.Internal;
 using Moongate.Abstractions.Extensions;
 using Moongate.Abstractions.Types;
+using Moongate.Core.Extensions.Container;
+using Moongate.Core.Data.Directories;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Interfaces.Services.Characters;
@@ -13,7 +16,9 @@ using Moongate.Server.Interfaces.Services.Network;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Interfaces.Services.World;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.EventLoop;
@@ -38,7 +43,19 @@ public static class AddBootstrapHostedServicesExtension
     /// </summary>
     public static Container AddBootstrapHostedServices(this Container container)
     {
-        container.RegisterMoongateService<IPersistenceService, PersistenceService>(ServicePriority.Persistence);
+        container.RegisterDelegate<IPersistenceService>(
+            resolver => new PersistenceService(
+                resolver.Resolve<DirectoriesConfig>(),
+                resolver.Resolve<ITimerService>(),
+                resolver.Resolve<IBackgroundJobService>(),
+                resolver.Resolve<MoongateConfig>(),
+                resolver.Resolve<IGameEventBusService>()
+            ),
+            Reuse.Singleton
+        );
+        container.AddToRegisterTypedList(
+            new ServiceRegistrationObject(typeof(IPersistenceService), typeof(PersistenceService), ServicePriority.Persistence)
+        );
         container.RegisterMoongateService<IFileLoaderService, FileLoaderService>(ServicePriority.FileLoader);
         container.RegisterMoongateService<IGameLoopService, GameLoopService>(ServicePriority.GameLoop);
         container.RegisterMoongateService<IWeatherService, WeatherService>(ServicePriority.GameLoop);

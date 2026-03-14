@@ -346,4 +346,37 @@ public class SnapshotMapperTests
             }
         );
     }
+
+    [Test]
+    public void ToBulletinBoardMessageSnapshot_ShouldPreserveBodyAndMetadata()
+    {
+        var entity = new BulletinBoardMessageEntity
+        {
+            MessageId = (Serial)0x40000091u,
+            BoardId = (Serial)0x40000055u,
+            ParentId = (Serial)0x40000011u,
+            OwnerCharacterId = (Serial)0x00000077u,
+            Author = "The Poster",
+            Subject = "Test Subject",
+            PostedAtUtc = new DateTime(2026, 3, 13, 12, 0, 0, DateTimeKind.Utc)
+        };
+        entity.BodyLines.AddRange(["line one", "line two"]);
+
+        var snapshot = SnapshotMapper.ToBulletinBoardMessageSnapshot(entity);
+        var restored = SnapshotMapper.ToBulletinBoardMessageEntity(snapshot);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored.MessageId, Is.EqualTo(entity.MessageId));
+                Assert.That(restored.BoardId, Is.EqualTo(entity.BoardId));
+                Assert.That(restored.ParentId, Is.EqualTo(entity.ParentId));
+                Assert.That(restored.OwnerCharacterId, Is.EqualTo(entity.OwnerCharacterId));
+                Assert.That(restored.Author, Is.EqualTo("The Poster"));
+                Assert.That(restored.Subject, Is.EqualTo("Test Subject"));
+                Assert.That(restored.PostedAtUtc, Is.EqualTo(entity.PostedAtUtc));
+                Assert.That(restored.BodyLines, Is.EqualTo(new[] { "line one", "line two" }));
+            }
+        );
+    }
 }

@@ -16,7 +16,12 @@ public class PacketHandlerRegistrationAttributeTests
             typeof(PingPongHandler),
             typeof(PlayerStatusHandler),
             typeof(MovementHandler),
+            typeof(KrriosClientSpecialHandler),
+            typeof(UpdateViewPublicHouseContentsHandler),
+            typeof(BulletinBoardHandler),
+            typeof(ChatHandler),
             typeof(SpeechHandler),
+            typeof(DyeWindowHandler),
             typeof(GumpHandler),
             typeof(ToolTipHandler),
             typeof(ItemHandler)
@@ -59,12 +64,17 @@ public class PacketHandlerRegistrationAttributeTests
         AssertMappings(typeof(PingPongHandler), PacketDefinition.PingMessagePacket);
         AssertMappings(typeof(PlayerStatusHandler), PacketDefinition.GetPlayerStatusPacket);
         AssertMappings(typeof(MovementHandler), PacketDefinition.MoveRequestPacket);
-        AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket, PacketDefinition.OpenChatWindowPacket);
+        AssertMappings(typeof(KrriosClientSpecialHandler), PacketDefinition.NewMovementRequestPacket);
+        AssertMappings(typeof(UpdateViewPublicHouseContentsHandler), PacketDefinition.UpdateViewPublicHouseContentsPacket);
+        AssertMappings(typeof(BulletinBoardHandler), PacketDefinition.BulletinBoardMessagesPacket);
+        AssertMappings(typeof(ChatHandler), PacketDefinition.ChatTextPacket, PacketDefinition.OpenChatWindowPacket);
+        AssertMappings(typeof(SpeechHandler), PacketDefinition.UnicodeSpeechPacket);
+        AssertMappings(typeof(DyeWindowHandler), PacketDefinition.DyeWindowPacket);
         AssertMappings(typeof(GumpHandler), PacketDefinition.GumpMenuSelectionPacket);
         AssertMappings(typeof(ToolTipHandler), PacketDefinition.MegaClilocPacket);
         AssertMappings(
             typeof(ItemHandler),
-            PacketDefinition.BookHeaderOldPacket,
+            PacketDefinition.BookHeaderNewPacket,
             PacketDefinition.BookPagesPacket,
             PacketDefinition.DropItemPacket,
             PacketDefinition.DropWearItemPacket,

@@ -127,17 +127,31 @@ public class CharacterService : ICharacterService
         }
 
         var hydratedBackpack = CloneItem(backpack);
-        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                                 item => item.ParentContainerId == backpackId,
-                                 static item => item
-                             );
-
-        foreach (var item in containedItems)
-        {
-            hydratedBackpack.AddItem(CloneItem(item), item.ContainerPosition);
-        }
+        await HydrateContainedItemsRecursiveAsync(hydratedBackpack);
 
         return hydratedBackpack;
+    }
+
+    public async Task<UOItemEntity?> GetBankBoxWithItemsAsync(UOMobileEntity character)
+    {
+        ArgumentNullException.ThrowIfNull(character);
+
+        if (!character.EquippedItemIds.TryGetValue(ItemLayerType.Bank, out var bankBoxId) || bankBoxId == Serial.Zero)
+        {
+            return null;
+        }
+
+        var bankBox = await _persistenceService.UnitOfWork.Items.GetByIdAsync(bankBoxId);
+
+        if (bankBox is null)
+        {
+            return null;
+        }
+
+        var hydratedBankBox = CloneItem(bankBox);
+        await HydrateContainedItemsRecursiveAsync(hydratedBankBox);
+
+        return hydratedBankBox;
     }
 
     public async Task<UOMobileEntity?> GetCharacterAsync(Serial characterId)
@@ -153,7 +167,7 @@ public class CharacterService : ICharacterService
 
         await HydrateCharacterEquipmentRuntimeAsync(character);
 
-        _logger.Debug("Loaded character {CharacterId}", characterId);
+        _logger.Verbose("Loaded character {CharacterId}", characterId);
 
         return character;
     }
@@ -261,6 +275,21 @@ public class CharacterService : ICharacterService
             EquippedMobileId = item.EquippedMobileId,
             EquippedLayer = item.EquippedLayer
         };
+
+    private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)
+    {
+        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                 item => item.ParentContainerId == container.Id,
+                                 static item => item
+                             );
+
+        foreach (var item in containedItems)
+        {
+            var cloned = CloneItem(item);
+            container.AddItem(cloned, item.ContainerPosition);
+            await HydrateContainedItemsRecursiveAsync(cloned);
+        }
+    }
 
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);

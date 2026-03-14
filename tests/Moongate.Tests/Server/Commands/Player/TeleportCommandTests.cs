@@ -144,4 +144,53 @@ public sealed class TeleportCommandTests
 
         Assert.That(outgoingPacketQueue.TryDequeue(out _), Is.False);
     }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenMapChanges_ShouldPublishMovementEventWithExactCrossMapPayload()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var character = new UOMobileEntity
+        {
+            Id = (Serial)0x00000003,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var session = new GameSession(new(client))
+        {
+            CharacterId = character.Id,
+            Character = character
+        };
+        var sessionService = new TeleportTestGameNetworkSessionService(session);
+        var gameEventBusService = new TeleportTestGameEventBusService();
+        var command = new TeleportCommand(
+            sessionService,
+            gameEventBusService,
+            new BasePacketListenerTestOutgoingPacketQueue()
+        );
+        var context = new CommandSystemContext(
+            "teleport 2 1518 568 -14",
+            ["2", "1518", "568", "-14"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            static (_, _) => { }
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        var gameEvent = gameEventBusService.PublishedEvents.OfType<MobilePositionChangedEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(character.MapId, Is.EqualTo(2));
+                Assert.That(character.Location, Is.EqualTo(new Point3D(1518, 568, -14)));
+                Assert.That(gameEvent.MobileId, Is.EqualTo(character.Id));
+                Assert.That(gameEvent.OldMapId, Is.EqualTo(1));
+                Assert.That(gameEvent.MapId, Is.EqualTo(2));
+                Assert.That(gameEvent.OldLocation, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(gameEvent.NewLocation, Is.EqualTo(new Point3D(1518, 568, -14)));
+            }
+        );
+    }
 }
