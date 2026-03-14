@@ -13,6 +13,7 @@ using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -208,7 +209,7 @@ public sealed class DyeColorService : IDyeColorService
         }
 
         await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
-            new ObjectInformationPacket(item),
+            ItemPacketHelper.CreateObjectInformationPacket(item, session),
             item.MapId,
             item.Location
         );

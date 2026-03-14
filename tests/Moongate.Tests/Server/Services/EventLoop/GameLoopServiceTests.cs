@@ -1,12 +1,17 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.EventLoop;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
+using Moongate.Server.Utils;
 using Moongate.Tests.Server.Support;
+using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.EventLoop;
 
@@ -255,6 +260,20 @@ public class GameLoopServiceTests
                 Assert.That(successfulListener.Sequences.Single(), Is.EqualTo(42));
             }
         );
+    }
+
+    [Test]
+    public void ObjectInformationPacket_ForGameMaster_ShouldExposeMovableFlag()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000010u,
+            ItemId = 0x0EED
+        };
+
+        var packet = ItemPacketHelper.CreateObjectInformationPacket(item, AccountType.GameMaster);
+
+        Assert.That(packet.Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
     }
 
     [Test]

@@ -283,4 +283,129 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
 
         _logger.Verbose("Journal reset completed Path={JournalPath}", _journalFilePath);
     }
+
+    public async ValueTask TrimThroughSequenceAsync(long inclusiveSequenceId, CancellationToken cancellationToken = default)
+    {
+        _logger.Verbose(
+            "Journal trim requested Path={JournalPath} InclusiveSequenceId={InclusiveSequenceId}",
+            _journalFilePath,
+            inclusiveSequenceId
+        );
+
+        if (inclusiveSequenceId < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(inclusiveSequenceId));
+        }
+
+        await _ioLock.WaitAsync(cancellationToken);
+
+        try
+        {
+            if (_journalStream.Length == 0)
+            {
+                return;
+            }
+
+            _journalStream.Position = 0;
+            var entries = new List<JournalEntry>();
+            var lengthBuffer = new byte[4];
+            var checksumBuffer = new byte[4];
+
+            while (true)
+            {
+                var lengthBytesRead = await _journalStream.ReadAsync(lengthBuffer, cancellationToken);
+
+                if (lengthBytesRead == 0)
+                {
+                    break;
+                }
+
+                if (lengthBytesRead != 4)
+                {
+                    break;
+                }
+
+                var payloadLength = BinaryPrimitives.ReadInt32LittleEndian(lengthBuffer);
+
+                if (payloadLength <= 0 || payloadLength > 16 * 1024 * 1024)
+                {
+                    break;
+                }
+
+                var payload = new byte[payloadLength];
+                var payloadBytesRead = await _journalStream.ReadAsync(payload, cancellationToken);
+
+                if (payloadBytesRead != payloadLength)
+                {
+                    break;
+                }
+
+                var checksumBytesRead = await _journalStream.ReadAsync(checksumBuffer, cancellationToken);
+
+                if (checksumBytesRead != 4)
+                {
+                    break;
+                }
+
+                var expectedChecksum = BinaryPrimitives.ReadUInt32LittleEndian(checksumBuffer);
+                var actualChecksum = ChecksumUtils.Compute(payload);
+
+                if (expectedChecksum != actualChecksum)
+                {
+                    break;
+                }
+
+                var entry = MessagePackSerializer.Deserialize<JournalEntry>(payload, cancellationToken: cancellationToken);
+
+                if (entry is null)
+                {
+                    break;
+                }
+
+                if (entry.SequenceId > inclusiveSequenceId)
+                {
+                    entries.Add(entry);
+                }
+            }
+
+            using var buffer = new MemoryStream();
+            var lengthBytes = new byte[4];
+            var checksumBytes = new byte[4];
+
+            foreach (var entry in entries)
+            {
+                var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
+                var checksum = ChecksumUtils.Compute(payload);
+
+                BinaryPrimitives.WriteInt32LittleEndian(lengthBytes, payload.Length);
+                BinaryPrimitives.WriteUInt32LittleEndian(checksumBytes, checksum);
+
+                buffer.Write(lengthBytes);
+                buffer.Write(payload);
+                buffer.Write(checksumBytes);
+            }
+
+            _journalStream.SetLength(0);
+            _journalStream.Position = 0;
+
+            var survivingData = buffer.ToArray();
+
+            if (survivingData.Length > 0)
+            {
+                await _journalStream.WriteAsync(survivingData, cancellationToken);
+            }
+
+            await _journalStream.FlushAsync(cancellationToken);
+        }
+        finally
+        {
+            _ioLock.Release();
+        }
+
+        _logger.Verbose(
+            "Journal trim completed Path={JournalPath} InclusiveSequenceId={InclusiveSequenceId}",
+            _journalFilePath,
+            inclusiveSequenceId
+        );
+    }
 }

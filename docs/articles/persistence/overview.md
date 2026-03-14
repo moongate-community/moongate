@@ -33,8 +33,10 @@ Notes:
 1. On startup, the server loads `world.snapshot.bin` if present.
 2. Then it replays valid entries from `world.journal.bin` in sequence order.
 3. During runtime, repository mutations append operations to the journal.
-4. On autosave/shutdown, a fresh snapshot is written and journal is reset.
-5. With file lock mode enabled, snapshot/journal handles remain open for process lifetime.
+4. On autosave/shutdown, a fresh snapshot is captured from in-memory state.
+5. The snapshot file write can run off the game loop on the background job service.
+6. After a successful snapshot write, journal entries included in that snapshot are trimmed by sequence id instead of blindly resetting the whole file.
+7. With file lock mode enabled, snapshot/journal handles remain open for process lifetime.
 
 ## Snapshot
 
@@ -64,9 +66,16 @@ On replay:
 
 Autosave is controlled by:
 
-- `MoongatePersistenceConfig.SaveIntervalSeconds` (default: `30`)
+- `MoongatePersistenceConfig.SaveIntervalSeconds` (default: `300`)
 
-The `PersistenceService` registers timer `db_save` and periodically calls snapshot save.
+The `PersistenceService` registers timer `db_save`.
+
+Current behavior:
+
+- the timer still fires on the game loop cadence
+- the timer only schedules autosave work
+- the expensive snapshot file write is dispatched via `IBackgroundJobService`
+- overlapping autosaves are skipped while one is already in flight
 
 ## Repositories
 

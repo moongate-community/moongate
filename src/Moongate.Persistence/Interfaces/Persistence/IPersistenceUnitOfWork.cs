@@ -1,3 +1,4 @@
+using Moongate.Persistence.Data.Persistence;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.Persistence.Interfaces.Persistence;
@@ -48,7 +49,19 @@ public interface IPersistenceUnitOfWork
     ValueTask InitializeAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Writes a new snapshot and resets the journal.
+    /// Captures a consistent snapshot artifact from in-memory state.
+    /// </summary>
+    ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
+        => ValueTask.FromException<CapturedWorldSnapshot>(new NotSupportedException());
+
+    /// <summary>
+    /// Writes a captured snapshot and trims journal entries included in it.
+    /// </summary>
+    ValueTask SaveCapturedSnapshotAsync(CapturedWorldSnapshot capturedSnapshot, CancellationToken cancellationToken = default)
+        => ValueTask.FromException(new NotSupportedException());
+
+    /// <summary>
+    /// Writes a new snapshot and trims the journal entries included in it.
     /// </summary>
     ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default);
 }

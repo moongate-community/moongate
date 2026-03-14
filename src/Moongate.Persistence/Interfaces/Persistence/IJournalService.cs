@@ -26,4 +26,9 @@ public interface IJournalService
     /// Clears the journal content after a successful snapshot.
     /// </summary>
     ValueTask ResetAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Removes journal entries up to and including the provided sequence id.
+    /// </summary>
+    ValueTask TrimThroughSequenceAsync(long inclusiveSequenceId, CancellationToken cancellationToken = default);
 }

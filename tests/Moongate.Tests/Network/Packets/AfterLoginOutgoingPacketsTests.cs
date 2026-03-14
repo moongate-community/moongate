@@ -121,6 +121,16 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
+    public void DeleteObjectPacket_Write_ShouldSerializeExpectedPayload()
+    {
+        var packet = new DeleteObjectPacket((Serial)0x40000042u);
+
+        var data = Write(packet);
+
+        Assert.That(data, Is.EqualTo(new byte[] { 0x1D, 0x40, 0x00, 0x00, 0x42 }));
+    }
+
+    [Test]
     public void GeneralInformationFactory_CreateSetCursorHueSetMap_WithByte_ShouldSerializeMapId()
     {
         var packet = GeneralInformationFactory.CreateSetCursorHueSetMap(4);

@@ -1,7 +1,9 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Services.EventLoop;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
 using Moongate.Tests.Server.Support;
@@ -15,6 +17,7 @@ public class PersistenceServiceTests
     private sealed class TimerServiceSpy : ITimerService
     {
         public TimeSpan? LastInterval { get; private set; }
+        public Action? LastCallback { get; private set; }
 
         public void ProcessTick() { }
 
@@ -27,19 +30,7 @@ public class PersistenceServiceTests
         )
         {
             LastInterval = interval;
-
-            return "timer-spy";
-        }
-
-        public string RegisterTimer(
-            string name,
-            TimeSpan interval,
-            Func<CancellationToken, ValueTask> callback,
-            TimeSpan? delay = null,
-            bool repeat = false
-        )
-        {
-            LastInterval = interval;
+            LastCallback = callback;
 
             return "timer-spy";
         }
@@ -54,6 +45,61 @@ public class PersistenceServiceTests
 
         public int UpdateTicksDelta(long timestampMilliseconds)
             => 0;
+    }
+
+    private sealed class BackgroundJobServiceSpy : IBackgroundJobService
+    {
+        private readonly Queue<Func<Task>> _queued = new();
+
+        public int EnqueuedJobsCount => _queued.Count;
+
+        public void EnqueueBackground(Action job)
+        {
+            ArgumentNullException.ThrowIfNull(job);
+            _queued.Enqueue(
+                () =>
+                {
+                    job();
+                    return Task.CompletedTask;
+                }
+            );
+        }
+
+        public void EnqueueBackground(Func<Task> job)
+        {
+            ArgumentNullException.ThrowIfNull(job);
+            _queued.Enqueue(job);
+        }
+
+        public int ExecutePendingOnGameLoop(int maxActions = 100) => 0;
+
+        public void PostToGameLoop(Action action) { }
+
+        public void RunBackgroundAndPostResult<TResult>(
+            Func<TResult> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        ) => throw new NotSupportedException();
+
+        public void RunBackgroundAndPostResultAsync<TResult>(
+            Func<Task<TResult>> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        ) => throw new NotSupportedException();
+
+        public void Start(int? workerCount = null) { }
+
+        public Task StopAsync() => Task.CompletedTask;
+
+        public async Task RunNextAsync()
+        {
+            if (_queued.Count == 0)
+            {
+                throw new InvalidOperationException("No queued jobs.");
+            }
+
+            await _queued.Dequeue()();
+        }
     }
 
     [Test]
@@ -139,12 +185,89 @@ public class PersistenceServiceTests
         using var service = new PersistenceService(
             directories,
             timerSpy,
+            new BackgroundJobServiceSpy(),
             config,
             new NetworkServiceTestGameEventBusService()
         );
         await service.StartAsync();
 
         Assert.That(timerSpy.LastInterval, Is.EqualTo(TimeSpan.FromSeconds(12)));
+    }
+
+    [Test]
+    public async Task StartAsync_TimerCallback_ShouldEnqueueAutosaveInsteadOfRunningInline()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var timerSpy = new TimerServiceSpy();
+        var backgroundSpy = new BackgroundJobServiceSpy();
+        using var service = new PersistenceService(
+            directories,
+            timerSpy,
+            backgroundSpy,
+            new MoongateConfig(),
+            new NetworkServiceTestGameEventBusService()
+        );
+
+        await service.StartAsync();
+        timerSpy.LastCallback!.Invoke();
+
+        Assert.That(backgroundSpy.EnqueuedJobsCount, Is.EqualTo(1));
+        Assert.That(service.GetMetricsSnapshot().TotalSaves, Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task StartAsync_TimerCallback_ShouldSkipSchedulingWhenAutosaveAlreadyInFlight()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var timerSpy = new TimerServiceSpy();
+        var backgroundSpy = new BackgroundJobServiceSpy();
+        using var service = new PersistenceService(
+            directories,
+            timerSpy,
+            backgroundSpy,
+            new MoongateConfig(),
+            new NetworkServiceTestGameEventBusService()
+        );
+
+        await service.StartAsync();
+
+        timerSpy.LastCallback!.Invoke();
+        timerSpy.LastCallback.Invoke();
+
+        Assert.That(backgroundSpy.EnqueuedJobsCount, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task ScheduledAutosaveBackgroundJob_ShouldCompleteSaveAndUpdateMetrics()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var timerSpy = new TimerServiceSpy();
+        var backgroundSpy = new BackgroundJobServiceSpy();
+        using var service = new PersistenceService(
+            directories,
+            timerSpy,
+            backgroundSpy,
+            new MoongateConfig(),
+            new NetworkServiceTestGameEventBusService()
+        );
+
+        await service.StartAsync();
+        timerSpy.LastCallback!.Invoke();
+        await backgroundSpy.RunNextAsync();
+
+        var snapshot = service.GetMetricsSnapshot();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshot.TotalSaves, Is.GreaterThanOrEqualTo(1));
+                Assert.That(snapshot.LastSaveTimestampUtc, Is.Not.Null);
+                Assert.That(File.Exists(Path.Combine(directories[DirectoryType.Save], "world.snapshot.bin")), Is.True);
+            }
+        );
     }
 
     private static PersistenceService CreatePersistenceService(DirectoriesConfig directoriesConfig)
@@ -157,6 +280,7 @@ public class PersistenceServiceTests
                     WheelSize = 512
                 }
             ),
+            new BackgroundJobService(),
             new(),
             new NetworkServiceTestGameEventBusService()
         );

@@ -328,7 +328,7 @@ public sealed class SpatialWorldService
                 continue;
             }
 
-            _outgoingPacketQueue.Enqueue(session.SessionId, new ObjectInformationPacket(item));
+            _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
         }
     }
 

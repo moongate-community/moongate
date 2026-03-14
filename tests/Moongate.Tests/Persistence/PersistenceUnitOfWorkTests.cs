@@ -296,6 +296,82 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
+    public async Task CaptureSnapshotAsync_ShouldReturnSnapshotAndCapturedSequenceId()
+    {
+        using var tempDirectory = new TempDirectory();
+        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await unitOfWork.InitializeAsync();
+
+        await unitOfWork.Accounts.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000010,
+                Username = "capture-user",
+                PasswordHash = "pw"
+            }
+        );
+
+        await unitOfWork.Mobiles.UpsertAsync(new() { Id = (Serial)0x00000020, IsPlayer = true, IsAlive = true });
+        await unitOfWork.Items.UpsertAsync(new() { Id = (Serial)(Serial.ItemOffset + 5), ItemId = 0x0EED });
+
+        var captured = await unitOfWork.CaptureSnapshotAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(captured.Snapshot.Accounts, Has.Length.EqualTo(1));
+                Assert.That(captured.Snapshot.Mobiles, Has.Length.EqualTo(1));
+                Assert.That(captured.Snapshot.Items, Has.Length.EqualTo(1));
+                Assert.That(captured.CapturedLastSequenceId, Is.GreaterThan(0));
+            }
+        );
+    }
+
+    [Test]
+    public async Task SaveCapturedSnapshotAsync_ShouldPreserveJournalEntriesWrittenAfterCapture()
+    {
+        using var tempDirectory = new TempDirectory();
+        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await unitOfWork.InitializeAsync();
+
+        await unitOfWork.Accounts.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000050,
+                Username = "captured-user",
+                PasswordHash = "pw"
+            }
+        );
+
+        var captured = await unitOfWork.CaptureSnapshotAsync();
+
+        await unitOfWork.Accounts.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000051,
+                Username = "after-capture",
+                PasswordHash = "pw"
+            }
+        );
+
+        await unitOfWork.SaveCapturedSnapshotAsync(captured);
+
+        var reloadedUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await reloadedUnitOfWork.InitializeAsync();
+
+        var capturedAccount = await reloadedUnitOfWork.Accounts.GetByUsernameAsync("captured-user");
+        var afterCaptureAccount = await reloadedUnitOfWork.Accounts.GetByUsernameAsync("after-capture");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(capturedAccount, Is.Not.Null);
+                Assert.That(afterCaptureAccount, Is.Not.Null);
+            }
+        );
+    }
+
+    [Test]
     public async Task ConcurrentWritersAcrossMultipleUnitOfWorkInstances_ShouldRemainConsistentAfterReload()
     {
         using var tempDirectory = new TempDirectory();

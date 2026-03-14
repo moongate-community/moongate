@@ -124,7 +124,7 @@ public class ItemHandler
                 continue;
             }
 
-            Enqueue(session, new ObjectInformationPacket(item));
+            Enqueue(session, ItemPacketHelper.CreateObjectInformationPacket(item, session));
         }
     }
 

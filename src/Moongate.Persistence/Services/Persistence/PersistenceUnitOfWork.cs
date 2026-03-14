@@ -146,10 +146,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         );
     }
 
-    public async ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
+    public ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
     {
-        _logger.Verbose("Persistence snapshot-save requested");
+        _logger.Verbose("Persistence snapshot-capture requested");
+        cancellationToken.ThrowIfCancellationRequested();
         WorldSnapshot snapshot;
+        long capturedLastSequenceId;
 
         lock (_stateStore.SyncRoot)
         {
@@ -164,11 +166,41 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 ,
                 BulletinBoardMessages = [.. _stateStore.BulletinBoardMessagesById.Values.Select(SnapshotMapper.ToBulletinBoardMessageSnapshot)]
             };
+            capturedLastSequenceId = _stateStore.LastSequenceId;
         }
 
-        await _snapshotService.SaveAsync(snapshot, cancellationToken);
-        await _journalService.ResetAsync(cancellationToken);
-        _logger.Verbose("Persistence snapshot-save completed LastSequenceId={LastSequenceId}", snapshot.LastSequenceId);
+        return ValueTask.FromResult(
+            new CapturedWorldSnapshot
+            {
+                Snapshot = snapshot,
+                CapturedLastSequenceId = capturedLastSequenceId
+            }
+        );
+    }
+
+    public async ValueTask SaveCapturedSnapshotAsync(
+        CapturedWorldSnapshot capturedSnapshot,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(capturedSnapshot);
+        _logger.Verbose(
+            "Persistence captured-snapshot save requested LastSequenceId={LastSequenceId}",
+            capturedSnapshot.CapturedLastSequenceId
+        );
+        await _snapshotService.SaveAsync(capturedSnapshot.Snapshot, cancellationToken);
+        await _journalService.TrimThroughSequenceAsync(capturedSnapshot.CapturedLastSequenceId, cancellationToken);
+        _logger.Verbose(
+            "Persistence captured-snapshot save completed LastSequenceId={LastSequenceId}",
+            capturedSnapshot.CapturedLastSequenceId
+        );
+    }
+
+    public async ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Verbose("Persistence snapshot-save requested");
+        var captured = await CaptureSnapshotAsync(cancellationToken);
+        await SaveCapturedSnapshotAsync(captured, cancellationToken);
     }
 
     private void ApplyEntry(JournalEntry entry)

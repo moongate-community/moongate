@@ -114,16 +114,16 @@ public class TeleportersDataService : ITeleportersDataService
                                              static grouping => grouping.ToList()
                                          );
             _entriesBySourceSector = entries.GroupBy(
-                                             static entry => (
-                                                 entry.SourceMapId,
-                                                 entry.SourceLocation.X >> MapSectorConsts.SectorShift,
-                                                 entry.SourceLocation.Y >> MapSectorConsts.SectorShift
-                                             )
-                                         )
-                                         .ToDictionary(
-                                             static grouping => grouping.Key,
-                                             static grouping => grouping.ToList()
-                                         );
+                                                static entry => (
+                                                                    entry.SourceMapId,
+                                                                    entry.SourceLocation.X >> MapSectorConsts.SectorShift,
+                                                                    entry.SourceLocation.Y >> MapSectorConsts.SectorShift
+                                                                )
+                                            )
+                                            .ToDictionary(
+                                                static grouping => grouping.Key,
+                                                static grouping => grouping.ToList()
+                                            );
         }
     }
 }
