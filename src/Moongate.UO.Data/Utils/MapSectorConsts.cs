@@ -10,7 +10,7 @@ public class MapSectorConsts
     /// <summary>
     /// Size of each sector in tiles.
     /// </summary>
-    public const int SectorSize = 32;
+    public const int SectorSize = 16;
 
     /// <summary>
     /// Bit shift for fast division/multiplication by <see cref="SectorSize" />.

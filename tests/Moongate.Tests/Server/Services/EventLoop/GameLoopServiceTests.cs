@@ -1,7 +1,10 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Listener;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Services.EventLoop;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Packets;
@@ -159,6 +162,44 @@ public class GameLoopServiceTests
                                );
 
         Assert.That(callbackExecuted, Is.True, "Posted game-loop callback was not executed.");
+    }
+
+    [Test]
+    public async Task StartAsync_ShouldExecutePostedGameLoopCallbacksBetweenInboundPackets()
+    {
+        var messageBus = new MessageBusService();
+        var packetDispatch = new PacketDispatchService();
+        var backgroundJobService = new BackgroundJobService();
+        var state = new GameLoopInterleavingState();
+        packetDispatch.AddPacketListener(0xAC, new GameLoopPostingPacketListener(backgroundJobService, state));
+        packetDispatch.AddPacketListener(0xAD, new GameLoopObservingPacketListener(state));
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        messageBus.PublishIncomingPacket(new(session, 0xAC, new GameLoopTestPacket(0xAC, 1), 1));
+        messageBus.PublishIncomingPacket(new(session, 0xAD, new GameLoopTestPacket(0xAD, 2), 2));
+
+        _service = new(
+            packetDispatch,
+            messageBus,
+            backgroundJobService,
+            new OutgoingPacketQueue(),
+            new GameNetworkSessionService(),
+            CreateTimerService(),
+            new GameLoopTestOutboundPacketSender()
+        );
+
+        await _service.StartAsync();
+
+        var observed = await WaitUntilAsync(() => Volatile.Read(ref state.ObservedValue) >= 0, TimeSpan.FromSeconds(2));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(observed, Is.True, "Second inbound packet was not observed in time.");
+                Assert.That(state.ObservedValue, Is.EqualTo(1));
+            }
+        );
     }
 
     [Test]
@@ -410,4 +451,53 @@ public class GameLoopServiceTests
 
         return condition();
     }
+
+    private sealed class GameLoopInterleavingState
+    {
+        public int CallbackRan;
+        public int ObservedValue = -1;
+    }
+
+    private sealed class GameLoopPostingPacketListener : IPacketListener
+    {
+        private readonly IBackgroundJobService _backgroundJobService;
+        private readonly GameLoopInterleavingState _state;
+
+        public GameLoopPostingPacketListener(
+            IBackgroundJobService backgroundJobService,
+            GameLoopInterleavingState state
+        )
+        {
+            _backgroundJobService = backgroundJobService;
+            _state = state;
+        }
+
+        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        {
+            _ = session;
+            _ = packet;
+            _backgroundJobService.PostToGameLoop(() => Volatile.Write(ref _state.CallbackRan, 1));
+
+            return Task.FromResult(true);
+        }
+    }
+
+        private sealed class GameLoopObservingPacketListener : IPacketListener
+        {
+            private readonly GameLoopInterleavingState _state;
+
+            public GameLoopObservingPacketListener(GameLoopInterleavingState state)
+            {
+                _state = state;
+            }
+
+            public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+            {
+                _ = session;
+                _ = packet;
+                Volatile.Write(ref _state.ObservedValue, Volatile.Read(ref _state.CallbackRan));
+
+                return Task.FromResult(true);
+            }
+        }
 }

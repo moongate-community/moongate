@@ -1,6 +1,7 @@
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -10,6 +11,7 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Serilog;
 
 namespace Moongate.Server.Data.Internal.Entities;
 
@@ -18,6 +20,7 @@ namespace Moongate.Server.Data.Internal.Entities;
 /// </summary>
 public sealed class LuaMobileProxy
 {
+    private readonly ILogger _logger = Log.ForContext<LuaMobileProxy>();
     private readonly UOMobileEntity _mobile;
     private readonly ISpeechService _speechService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -25,6 +28,7 @@ public sealed class LuaMobileProxy
     private readonly IMovementValidationService? _movementValidationService;
     private readonly IPathfindingService? _pathfindingService;
     private readonly IGameEventBusService? _gameEventBusService;
+    private readonly IBackgroundJobService? _backgroundJobService;
 
     private LuaMobileProxy? _target;
 
@@ -35,7 +39,8 @@ public sealed class LuaMobileProxy
         ISpatialWorldService? spatialWorldService = null,
         IMovementValidationService? movementValidationService = null,
         IPathfindingService? pathfindingService = null,
-        IGameEventBusService? gameEventBusService = null
+        IGameEventBusService? gameEventBusService = null,
+        IBackgroundJobService? backgroundJobService = null
     )
     {
         _mobile = mobile;
@@ -45,6 +50,7 @@ public sealed class LuaMobileProxy
         _movementValidationService = movementValidationService;
         _pathfindingService = pathfindingService;
         _gameEventBusService = gameEventBusService;
+        _backgroundJobService = backgroundJobService;
     }
 
     public uint Serial => (uint)_mobile.Id;
@@ -240,7 +246,8 @@ public sealed class LuaMobileProxy
                                         oldMapId,
                                         _mobile.MapId,
                                         oldLocation,
-                                        newLocation
+                                        newLocation,
+                                        isTeleport: true
                                     )
                                 )
                                 .AsTask()
@@ -454,19 +461,17 @@ public sealed class LuaMobileProxy
                                 ? session.SessionId
                                 : -1;
 
-            _gameEventBusService.PublishAsync(
-                                    new MobilePositionChangedEvent(
-                                        sessionId,
-                                        _mobile.Id,
-                                        oldMapId,
-                                        _mobile.MapId,
-                                        oldLocation,
-                                        newLocation
-                                    )
-                                )
-                                .AsTask()
-                                .GetAwaiter()
-                                .GetResult();
+            PublishPositionChangedAsync(
+                new MobilePositionChangedEvent(
+                    sessionId,
+                    _mobile.Id,
+                    oldMapId,
+                    _mobile.MapId,
+                    oldLocation,
+                    newLocation,
+                    isTeleport: true
+                )
+            );
         }
 
         return true;
@@ -482,6 +487,70 @@ public sealed class LuaMobileProxy
 
         // TODO: Implement wandering movement primitive for brain point 5.
         => _ = radius;
+
+    private void PublishPositionChangedAsync(MobilePositionChangedEvent gameEvent)
+    {
+        if (_gameEventBusService is null)
+        {
+            return;
+        }
+
+        if (_backgroundJobService is not null)
+        {
+            _backgroundJobService.PostToGameLoop(() => PublishPositionChangedSynchronously(gameEvent));
+
+            return;
+        }
+
+        var publishTask = _gameEventBusService.PublishAsync(gameEvent);
+
+        if (publishTask.IsCompletedSuccessfully)
+        {
+            return;
+        }
+
+        publishTask.AsTask()
+                   .ContinueWith(
+                       task =>
+                       {
+                           if (task.Exception is null)
+                           {
+                               return;
+                           }
+
+                           _logger.Error(
+                               task.Exception,
+                               "Failed to publish teleport position change MobileId={MobileId}",
+                               gameEvent.MobileId
+                           );
+                       },
+                       TaskScheduler.Default
+                   );
+    }
+
+    private void PublishPositionChangedSynchronously(MobilePositionChangedEvent gameEvent)
+    {
+        if (_gameEventBusService is null)
+        {
+            return;
+        }
+
+        try
+        {
+            _gameEventBusService.PublishAsync(gameEvent)
+                                .AsTask()
+                                .GetAwaiter()
+                                .GetResult();
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(
+                ex,
+                "Failed to publish teleport position change MobileId={MobileId}",
+                gameEvent.MobileId
+            );
+        }
+    }
 
     private static bool TryParseAnimationIntent(string intentName, out AnimationIntent intent)
     {

@@ -14,7 +14,8 @@ public readonly record struct MobilePositionChangedEvent(
     int OldMapId,
     int MapId,
     Point3D OldLocation,
-    Point3D NewLocation
+    Point3D NewLocation,
+    bool IsTeleport
 ) : IGameEvent
 {
     /// <summary>
@@ -26,7 +27,8 @@ public readonly record struct MobilePositionChangedEvent(
         int oldMapId,
         int mapId,
         Point3D oldLocation,
-        Point3D newLocation
+        Point3D newLocation,
+        bool isTeleport = false
     )
-        : this(GameEventBase.CreateNow(), sessionId, mobileId, oldMapId, mapId, oldLocation, newLocation) { }
+        : this(GameEventBase.CreateNow(), sessionId, mobileId, oldMapId, mapId, oldLocation, newLocation, isTeleport) { }
 }

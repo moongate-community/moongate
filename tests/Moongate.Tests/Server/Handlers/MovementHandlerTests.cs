@@ -328,6 +328,7 @@ public class MovementHandlerTests
         Assert.That(events[0].OldMapId, Is.EqualTo(0));
         Assert.That(events[0].MapId, Is.EqualTo(1));
         Assert.That(events[0].NewLocation, Is.EqualTo(new Point3D(500, 500, 10)));
+        Assert.That(events[0].IsTeleport, Is.True);
     }
 
     [Test]
