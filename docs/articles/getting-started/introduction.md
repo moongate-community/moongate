@@ -137,7 +137,7 @@ See the [Quick Start](quickstart.md) guide to get Moongate v2 running in minutes
 
 ## Community & Support
 
-- **GitHub**: https://github.com/moongate-community/moongatev2
+- **GitHub**: https://github.com/moongate-community/moongate
 - **Discord**: https://discord.gg/3HT7v95b
 - **Docker Hub**: https://hub.docker.com/r/tgiachi/moongate
 

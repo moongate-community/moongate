@@ -11,8 +11,8 @@ Install and run Moongate v2 with the current runtime requirements.
 ## Clone And Build
 
 ```bash
-git clone https://github.com/moongate-community/moongatev2.git
-cd moongatev2
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
 dotnet restore
 dotnet build -c Release
 ```

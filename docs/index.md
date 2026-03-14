@@ -54,10 +54,10 @@ This is the main documentation portal for Moongate v2.
 ## Development
 
 - [Code Convention](CODE_CONVENTION.md)
-- [Repository README](https://github.com/moongate-community/moongatev2/blob/main/README.md)
+- [Repository README](https://github.com/moongate-community/moongate/blob/main/README.md)
 
 ## Community
 
-- GitHub Issues: <https://github.com/moongate-community/moongatev2/issues>
-- GitHub Discussions: <https://github.com/moongate-community/moongatev2/discussions>
+- GitHub Issues: <https://github.com/moongate-community/moongate/issues>
+- GitHub Discussions: <https://github.com/moongate-community/moongate/discussions>
 - Matrix: <https://matrix.to/#/#moongate:matrix.org>

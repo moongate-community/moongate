@@ -11,8 +11,8 @@
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="GPL-3.0 License">
 </p>
 
-[![CI](https://github.com/moongate-community/moongatev2/actions/workflows/ci.yml/badge.svg)](https://github.com/moongate-community/moongatev2/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/moongate-community/moongatev2/gh-pages/badges/coverage.json)](https://github.com/moongate-community/moongatev2/actions/workflows/coverage.yml)
+[![CI](https://github.com/moongate-community/moongate/actions/workflows/ci.yml/badge.svg)](https://github.com/moongate-community/moongate/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/moongate-community/moongate/gh-pages/badges/coverage.json)](https://github.com/moongate-community/moongate/actions/workflows/coverage.yml)
 [![Docker Image](https://img.shields.io/docker/v/tgiachi/moongate?sort=semver)](https://hub.docker.com/r/tgiachi/moongate)
 
 Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT support, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
@@ -21,8 +21,8 @@ Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT suppo
 
 I am actively looking for contributors and reviewers.
 
-- Issues: <https://github.com/moongate-community/moongatev2/issues>
-- Discussions: <https://github.com/moongate-community/moongatev2/discussions>
+- Issues: <https://github.com/moongate-community/moongate/issues>
+- Discussions: <https://github.com/moongate-community/moongate/discussions>
 - Matrix: <https://matrix.to/#/#moongate:matrix.org>
 
 ## Quick Start
@@ -35,16 +35,16 @@ I am actively looking for contributors and reviewers.
 ### Run Server (local)
 
 ```bash
-git clone https://github.com/moongate-community/moongatev2.git
-cd moongatev2
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
 dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
 ```
 
 ### Run Server (Docker quick start)
 
 ```bash
-git clone https://github.com/moongate-community/moongatev2.git
-cd moongatev2
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
 docker build -t moongate:local .
 docker run --rm -it \
   -p 2593:2593 \
@@ -129,7 +129,7 @@ UI default URL: `http://localhost:8088/`
 - Networking/protocol: `docs/articles/networking/`
 - Operations/stress test: `docs/articles/operations/stress-test.md`
 
-Published docs: <https://moongate-community.github.io/moongatev2/>
+Published docs: <https://moongate-community.github.io/moongate/>
 
 ## Benchmarks and Stress
 
@@ -150,7 +150,7 @@ Data imported/adapted from ModernUO distribution is used in selected world datas
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/image?repos=moongate-community/moongatev2&type=date&legend=top-left)](https://www.star-history.com/?repos=moongate-community%2Fmoongatev2&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/image?repos=moongate-community/moongate&type=date&legend=top-left)](https://www.star-history.com/?repos=moongate-community%2Fmoongate&type=date&legend=top-left)
 
 ## Contributing
 
