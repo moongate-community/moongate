@@ -12,6 +12,7 @@
 </p>
 
 [![CI](https://github.com/moongate-community/moongate/actions/workflows/ci.yml/badge.svg)](https://github.com/moongate-community/moongate/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/moongate-community/moongate/gh-pages/badges/tests.json)](https://github.com/moongate-community/moongate/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/moongate-community/moongate/gh-pages/badges/coverage.json)](https://github.com/moongate-community/moongate/actions/workflows/coverage.yml)
 [![Docker Image](https://img.shields.io/docker/v/tgiachi/moongate?sort=semver)](https://hub.docker.com/r/tgiachi/moongate)
 

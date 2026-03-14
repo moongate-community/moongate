@@ -37,6 +37,14 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
     public PersistenceService(
         DirectoriesConfig directoriesConfig,
         ITimerService timerService,
+        MoongateConfig moongateConfig,
+        IGameEventBusService gameEventBusService
+    )
+        : this(directoriesConfig, timerService, new BackgroundJobService(), moongateConfig, gameEventBusService) { }
+
+    public PersistenceService(
+        DirectoriesConfig directoriesConfig,
+        ITimerService timerService,
         IBackgroundJobService backgroundJobService,
         MoongateConfig moongateConfig,
         IGameEventBusService gameEventBusService
@@ -62,14 +70,6 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
 
         UnitOfWork = new PersistenceUnitOfWork(options);
     }
-
-    public PersistenceService(
-        DirectoriesConfig directoriesConfig,
-        ITimerService timerService,
-        MoongateConfig moongateConfig,
-        IGameEventBusService gameEventBusService
-    )
-        : this(directoriesConfig, timerService, new BackgroundJobService(), moongateConfig, gameEventBusService) { }
 
     public IPersistenceUnitOfWork UnitOfWork { get; }
 
