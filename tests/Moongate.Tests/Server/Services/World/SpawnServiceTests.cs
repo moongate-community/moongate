@@ -53,8 +53,7 @@ public sealed class SpawnServiceTests
 
         spatial.PlayersInRange = [CreateSession((Serial)0x00000033u)];
 
-        timer.Fire();
-        await WaitForConditionAsync(() => mobileService.SpawnAttempts == 1);
+        await FireUntilConditionAsync(timer, () => mobileService.SpawnAttempts == 1);
         Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
 
         timer.Fire();
@@ -161,6 +160,32 @@ public sealed class SpawnServiceTests
 
         while (!condition())
         {
+            if (Environment.TickCount64 - start >= timeoutMilliseconds)
+            {
+                Assert.Fail($"Condition was not satisfied within {timeoutMilliseconds} ms.");
+            }
+
+            await Task.Delay(10);
+        }
+    }
+
+    private static async Task FireUntilConditionAsync(
+        SpawnServiceTestTimerService timer,
+        Func<bool> condition,
+        int timeoutMilliseconds = 1000
+    )
+    {
+        var start = Environment.TickCount64;
+
+        while (!condition())
+        {
+            timer.Fire();
+
+            if (condition())
+            {
+                return;
+            }
+
             if (Environment.TickCount64 - start >= timeoutMilliseconds)
             {
                 Assert.Fail($"Condition was not satisfied within {timeoutMilliseconds} ms.");
