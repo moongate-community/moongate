@@ -1,3 +1,77 @@
+## [0.34.0](https://github.com/moongate-community/moongate/compare/v0.33.0...v0.34.0) (2026-03-14)
+
+### Features
+
+* **books:** finalize client 7 writable book flow ([869ece6](https://github.com/moongate-community/moongate/commit/869ece6e49a12e212307ed503b62e71b291feaed))
+* **chat:** add runtime conference chat system ([8533b26](https://github.com/moongate-community/moongate/commit/8533b266b43de0bfead5e8268b922bbabed97116))
+* **doors:** add shared lock ids and key generation ([1f0f7d9](https://github.com/moongate-community/moongate/commit/1f0f7d9e7e3fafd712e61a05021b5fa2741967df))
+* **doors:** add targeted door placement command ([9b49d38](https://github.com/moongate-community/moongate/commit/9b49d38f3daea84f4ef5a881f98797156dea3d58))
+* **doors:** persist and apply door facing metadata ([e1c86c4](https://github.com/moongate-community/moongate/commit/e1c86c400258dedc066bdc597a6e096f48c1ad2b))
+* **gameplay:** add dye window flow and proximity spawners ([ca0e1c0](https://github.com/moongate-community/moongate/commit/ca0e1c0257fdf07acbf6e578eb2e29855c3d2641))
+* improve persistence autosave and cross-map client sync ([27d26cf](https://github.com/moongate-community/moongate/commit/27d26cf2bbfe0c629b406fb972b1ffa55837c95e))
+* **interaction:** add bulletin board flow and mod name command ([279e381](https://github.com/moongate-community/moongate/commit/279e38125f3540d92d63ebe826cfd51aef80adb5))
+* **portal:** add character inventory and bank tables ([21ab196](https://github.com/moongate-community/moongate/commit/21ab196b2349be1ba7e494d89a3e63afd13b8604))
+* **portal:** make portal dark-only and fantasy ([d5cd013](https://github.com/moongate-community/moongate/commit/d5cd0138a73337da22300d307a1a16202444cab6))
+* **spawn:** add initial world spawn command ([2c02326](https://github.com/moongate-community/moongate/commit/2c0232658a668770befb520fb1aa146eec3291d8))
+
+### Bug Fixes
+
+* **doors:** sync clone location after MoveItemToWorldAsync ([77e51d9](https://github.com/moongate-community/moongate/commit/77e51d94dba11f2ff447c7d6712f859965edb99f))
+* **doors:** use linked door native offset ([e16af32](https://github.com/moongate-community/moongate/commit/e16af3214fcf5eb7bc5caaaa37603357439c09f4))
+* **images:** crop item art transparent borders ([9f70ee9](https://github.com/moongate-community/moongate/commit/9f70ee94246b6924787aff7e83eb789ef9e7a4bd))
+* **network:** zero world item facing in object info ([a5b4215](https://github.com/moongate-community/moongate/commit/a5b42157af9289c5cf6bfd4ca761049f55dde6de))
+* restore tests badge and resolve persistence bootstrap wiring ([cd1990e](https://github.com/moongate-community/moongate/commit/cd1990e90bede01f64bcd6d9e9670e52a29eecbe))
+* **tooltip:** correct mobile vital cliloc ids ([2a2bc40](https://github.com/moongate-community/moongate/commit/2a2bc40af023634d96f1a72acdab3bc6738bdaf0))
+
+## [0.33.0](https://github.com/moongate-community/moongatev2/compare/v0.32.0...v0.33.0) (2026-03-12)
+
+### Features
+
+* **accounts:** add password command ([c02f78a](https://github.com/moongate-community/moongatev2/commit/c02f78adc6e606ac37f2003f3a7f0924a61d28bf))
+* add lua brain metrics and grafana throughput panel ([0a0364e](https://github.com/moongate-community/moongatev2/commit/0a0364ecf16d3b08da4b6a621b6dce0da95239c5))
+* add random.element for Lua tables ([22e4904](https://github.com/moongate-community/moongatev2/commit/22e4904cc4c2712227fd885194878410fcea5589))
+* **books:** add writable book flow and readonly tag ([ebfca1d](https://github.com/moongate-community/moongatev2/commit/ebfca1da0f82fec6e506343088205a3771ccf683))
+* **di:** register MapImageService and wire into HTTP service ([5ac88f3](https://github.com/moongate-community/moongatev2/commit/5ac88f395c728e6c11fdbfa8fb23f90ae6244676))
+* **gm-body:** make bag contents template-driven and add skullcap ([17d566c](https://github.com/moongate-community/moongatev2/commit/17d566cea38231773d5d4b689841a69a512b77b1))
+* **http:** add GET /api/maps/{mapId}.png endpoint with file cache ([0da2f0b](https://github.com/moongate-community/moongatev2/commit/0da2f0b951369824e0f40992050776fe252d5e57))
+* **http:** wire IMapImageService into HTTP route context ([7392779](https://github.com/moongate-community/moongatev2/commit/73927790fac0ada8e1af8b456b5a1764432d6374))
+* **items:** add flippable templates and targeted flip command ([3b3a654](https://github.com/moongate-community/moongatev2/commit/3b3a654333c5559363c7c0daf96164f8547b4677))
+* **items:** add readonly books and harden debug console startup ([36c1951](https://github.com/moongate-community/moongatev2/commit/36c19516dd536808dd61fe9bb3a573811e950aa5))
+* **items:** add typed combat stats and modifiers ([7b58087](https://github.com/moongate-community/moongatev2/commit/7b580875e3351aa3ad218860d155746add993c3a))
+* **maps:** add IMapImageService interface ([9ca3e27](https://github.com/moongate-community/moongatev2/commit/9ca3e273fbe1ac9c6a8f063c244d7eb5a816a5d8))
+* **maps:** add MapImageService radar-color renderer ([1b22a6a](https://github.com/moongate-community/moongatev2/commit/1b22a6acc4404f43d26943979a8fde116a8d985b))
+* **maps:** show online players as markers on the map viewer ([df98c07](https://github.com/moongate-community/moongatev2/commit/df98c07c992be164d39b9346798e1289c3a9611d))
+* **mobile:** persist status fields and expose runtime gold total ([ff76477](https://github.com/moongate-community/moongatev2/commit/ff76477fdfbe4ac369476d2821115952b8d855d2))
+* **mobiles:** add typed mobile state and effective modifiers ([10968fa](https://github.com/moongate-community/moongatev2/commit/10968faf8d958600aa4447f031f0696d0772e845))
+* **mobiles:** persist skills and answer request skills ([cbec8aa](https://github.com/moongate-community/moongatev2/commit/cbec8aad2718ffed6f511e3d7ecf2ca3ce04922b))
+* **network:** modernize player status packet ([c066414](https://github.com/moongate-community/moongatev2/commit/c0664147fc464b1fc3944404c7d1b1341459e9f9))
+* **portal:** add authenticated password change ([a589b3f](https://github.com/moongate-community/moongatev2/commit/a589b3f2565bae2a79e1fc53173f8e5af671b6c6))
+* **portal:** add branding, localization, and profile navigation ([3307cc1](https://github.com/moongate-community/moongatev2/commit/3307cc1cfc785ed7f2766b17e423880da2d8cda8))
+* **portal:** add player account portal ([99d7613](https://github.com/moongate-community/moongatev2/commit/99d76134c774bcdda84d085bade94b5e212b37cb))
+* **scripting:** add behavior-based NPC brains and Lua runtime modules ([c8e45d8](https://github.com/moongate-community/moongatev2/commit/c8e45d823a2b133e3eb8fbfc30facc20b09865f1))
+* **scripting:** add item.spawn helper in ItemModule ([a11961b](https://github.com/moongate-community/moongatev2/commit/a11961beec320d1f436bfdb75776ba0374273412))
+* **scripting:** add text template rendering for gumps ([c9db5b6](https://github.com/moongate-community/moongatev2/commit/c9db5b63efeb875bda0e6edc8e0e23aec5547a2f))
+* **scripting:** support hash comments in text templates ([f77466f](https://github.com/moongate-community/moongatev2/commit/f77466f8e965b26e34fff5aa3c5ab009e56b17f6))
+* **server:** add sell profiles and custom context menu pipeline ([f6773e7](https://github.com/moongate-community/moongatev2/commit/f6773e7505f5cf805cfde1890d3ab0b67dffa0c3))
+* **tiles:** add RadarCol reader for radarcol.mul ([7feea44](https://github.com/moongate-community/moongatev2/commit/7feea44b571009f440bd2aee7c73c5798e98e495))
+* **ui:** add crosshair with UO map coordinates on hover ([b1b3e8c](https://github.com/moongate-community/moongatev2/commit/b1b3e8cecb3caaec1154b940fe5d0257ec23a16a))
+* **ui:** add Maps route and sidebar entry ([88cf56e](https://github.com/moongate-community/moongatev2/commit/88cf56e40d83bbace093cda0b73800852e3521c4))
+* **ui:** add MapsPage with zoom/pan map viewer ([872d803](https://github.com/moongate-community/moongatev2/commit/872d80347a08b558afa9f89120a3ed8fe2f5f218))
+* **ui:** install react-zoom-pan-pinch for map viewer ([b4cdd9f](https://github.com/moongate-community/moongatev2/commit/b4cdd9fafefd6505826cfa4b8bae7e29e30db4c9))
+* **ui:** show resolved container contents in item details ([458e444](https://github.com/moongate-community/moongatev2/commit/458e4449d7e3e81d3c716a6ec722848fa3462b08))
+
+### Bug Fixes
+
+* **doors:** mirror linked double-door opening direction ([2a8b601](https://github.com/moongate-community/moongatev2/commit/2a8b6018d2dd969eb73d00268a6caaef574db2d7))
+* **items:** align book tooltip cliloc and page requests ([dfa7f50](https://github.com/moongate-community/moongatev2/commit/dfa7f5032fb782758ca7e7b4a3f9834bf9f6dff3))
+* **movement:** resync map change draw packets for teleport transitions ([48f8c14](https://github.com/moongate-community/moongatev2/commit/48f8c14ad1d5b8b3c92711f921d6a8cfd1f54a71))
+* **server:** add macOS codesign entitlements for debugger attach ([9a582c0](https://github.com/moongate-community/moongatev2/commit/9a582c0ff5fcc41dcc668893fc19c6f0c87576cf)), closes [dotnet/runtime#125484](https://github.com/dotnet/runtime/issues/125484)
+* **server:** preserve equipped items on position save and resolve container gump fallback ([3154ce0](https://github.com/moongate-community/moongatev2/commit/3154ce0396bcc2c56fd5e578421ef0adc3931240))
+* **templates:** remove duplicate gm_robe ([75f7ee5](https://github.com/moongate-community/moongatev2/commit/75f7ee56033fd72fb7d57af52b9e19ccb5a8abf6))
+* **tooltips:** correct item name cliloc and document cliloc audit ([0971550](https://github.com/moongate-community/moongatev2/commit/09715500cde1fba768a5107a41dd82485c3c36da))
+* **world:** align internal map registration index ([deecae9](https://github.com/moongate-community/moongatev2/commit/deecae954c671117ba8a02b7c54cec17e1442a95))
+* **worldgen:** preserve decoration item graphics and add gm robe ([19d5b7d](https://github.com/moongate-community/moongatev2/commit/19d5b7d751558495f849e9fa390cd44349948b4d))
+
 ## [0.32.0](https://github.com/moongate-community/moongatev2/compare/v0.31.0...v0.32.0) (2026-03-09)
 
 ### Features
