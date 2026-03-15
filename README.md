@@ -28,7 +28,7 @@ I am actively looking for contributors and reviewers.
 
 - Issues: <https://github.com/moongate-community/moongate/issues>
 - Discussions: <https://github.com/moongate-community/moongate/discussions>
-- Matrix: <https://matrix.to/#/#moongate:matrix.org>
+- Discord: <https://discord.gg/h9UUyGqd>
 
 ## Quick Start
 
