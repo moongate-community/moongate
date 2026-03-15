@@ -18,6 +18,8 @@
 
 Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT support, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
 
+Latest dev log: <https://orivega.io/moongate-v2-dev-log-3-player-portal-maps-books-and-a-net-bug-i-didnt-own/> covers the last week of development.
+
 ## Looking for Collaborators
 
 I am actively looking for contributors and reviewers.
