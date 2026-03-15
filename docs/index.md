@@ -43,6 +43,7 @@ This is the main documentation portal for Moongate v2.
 - [Packet System](articles/networking/packets.md)
 - [Protocol Reference](articles/networking/protocol.md)
 - [Packet Handler Performance](articles/networking/packet-handler-performance.md)
+- [Packet Reference](articles/networking/packet-reference/index.md)
 - [Cliloc Notes](articles/networking/cliloc-notes.md)
 
 ## Operations
