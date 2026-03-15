@@ -14,6 +14,7 @@
 [![CI](https://github.com/moongate-community/moongate/actions/workflows/ci.yml/badge.svg)](https://github.com/moongate-community/moongate/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/moongate-community/moongate/gh-pages/badges/tests.json)](https://github.com/moongate-community/moongate/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/moongate-community/moongate/gh-pages/badges/coverage.json)](https://github.com/moongate-community/moongate/actions/workflows/coverage.yml)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_small)
 [![Docker Image](https://img.shields.io/docker/v/tgiachi/moongate?sort=semver)](https://hub.docker.com/r/tgiachi/moongate)
 
 Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT support, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
