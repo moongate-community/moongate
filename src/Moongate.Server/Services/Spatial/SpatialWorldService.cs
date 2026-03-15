@@ -204,21 +204,23 @@ public sealed class SpatialWorldService
 
     public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
     {
-        var mobiles = GetNearbyMobiles(location, range, mapId);
-        var sessionsByCharacter = BuildSessionsByCharacterMap(excludeSession);
-        using var result = PooledRefList<GameSession>.Create(mobiles.Count);
+        var sessions = _gameNetworkSessionService.GetAll();
+        using var result = PooledRefList<GameSession>.Create(sessions.Count);
 
-        foreach (var mobile in mobiles)
+        foreach (var session in sessions)
         {
-            if (!mobile.IsPlayer)
+            var character = session.Character;
+
+            if (character is null ||
+                !character.IsPlayer ||
+                session == excludeSession ||
+                character.MapId != mapId ||
+                !location.InRange(character.Location, range))
             {
                 continue;
             }
 
-            if (sessionsByCharacter.TryGetValue(mobile.Id, out var session))
-            {
-                result.Add(session);
-            }
+            result.Add(session);
         }
 
         return [.. result.AsSpan()];

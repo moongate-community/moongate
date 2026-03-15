@@ -391,18 +391,9 @@ public class ToolTipHandlerTests
                     response.Properties.Any(p => string.Equals(p.Text, "Tester", StringComparison.Ordinal)),
                     Is.True
                 );
-                Assert.That(
-                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.HitPoints && p.Text == "40\t50"),
-                    Is.True
-                );
-                Assert.That(
-                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.Mana && p.Text == "20\t30"),
-                    Is.True
-                );
-                Assert.That(
-                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.Stamina && p.Text == "10\t15"),
-                    Is.True
-                );
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.HitPoints), Is.False);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.Mana), Is.False);
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.Stamina), Is.False);
             }
         );
     }

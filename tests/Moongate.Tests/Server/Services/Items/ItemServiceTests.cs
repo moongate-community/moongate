@@ -14,6 +14,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.Items;
 
@@ -350,7 +351,12 @@ public class ItemServiceTests
             }
         );
 
-        var items = await service.GetGroundItemsInSectorAsync(1, 4, 4);
+        const int locationX = 130;
+        const int locationY = 130;
+        var sectorX = locationX >> MapSectorConsts.SectorShift;
+        var sectorY = locationY >> MapSectorConsts.SectorShift;
+
+        var items = await service.GetGroundItemsInSectorAsync(1, sectorX, sectorY);
 
         Assert.That(items, Has.Count.EqualTo(1));
         Assert.That(items[0].MapId, Is.EqualTo(1));
