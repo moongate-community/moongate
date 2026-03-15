@@ -74,6 +74,8 @@
     href: articles/networking/protocol.md
   - name: Packet Handler Performance
     href: articles/networking/packet-handler-performance.md
+  - name: Packet Reference
+    href: articles/networking/packet-reference/index.md
 
 - name: Operations
   href: articles/operations/stress-test.md
