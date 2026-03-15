@@ -1,4 +1,5 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
@@ -31,6 +32,7 @@ public class MobileHandler
       IMoongateService
 {
     private const int DefaultMobileSyncRange = 18;
+    private const int NearEdgePreloadThreshold = 4;
     private readonly ISpatialWorldService _spatialWorldService;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -98,7 +100,24 @@ public class MobileHandler
             return;
         }
 
+        var isPlayerCrossMap = mobileEntity.IsPlayer && gameEvent.OldMapId != gameEvent.MapId;
+
+        if (gameEvent.IsTeleport && !isPlayerCrossMap)
+        {
+            await SendTeleportSourceEffectsAsync(mobileEntity, gameEvent);
+        }
+
         await TrySendMapChangeIfNeededAsync(mobileEntity, gameEvent);
+
+        if (gameEvent.IsTeleport && !isPlayerCrossMap)
+        {
+            EnqueueSameMapTeleportSelfRefresh(mobileEntity);
+        }
+
+        if (gameEvent.IsTeleport && isPlayerCrossMap)
+        {
+            await SendTeleportSourceEffectsAsync(mobileEntity, gameEvent);
+        }
 
         var sectorInfo = _spatialWorldService.GetSectorByLocation(gameEvent.MapId, gameEvent.NewLocation);
 
@@ -116,8 +135,14 @@ public class MobileHandler
             mobileEntity,
             gameEvent.MapId,
             gameEvent.OldLocation,
-            gameEvent.NewLocation
+            gameEvent.NewLocation,
+            sectorInfo
         );
+
+        if (gameEvent.IsTeleport)
+        {
+            await SendTeleportDestinationEffectsAsync(mobileEntity, gameEvent);
+        }
     }
 
     public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
@@ -173,11 +198,71 @@ public class MobileHandler
         return sessionCharacter;
     }
 
+    private async Task SendTeleportDestinationEffectsAsync(UOMobileEntity mobileEntity, MobilePositionChangedEvent gameEvent)
+    {
+        await SendTeleportPacketAsync(
+            mobileEntity,
+            gameEvent.SessionId,
+            gameEvent.MapId,
+            gameEvent.NewLocation,
+            TeleportEffectUtils.CreateDestinationEffect(gameEvent.NewLocation),
+            includeSelf: true
+        );
+        await SendTeleportPacketAsync(
+            mobileEntity,
+            gameEvent.SessionId,
+            gameEvent.MapId,
+            gameEvent.NewLocation,
+            TeleportEffectUtils.CreateDestinationSound(gameEvent.NewLocation),
+            includeSelf: true
+        );
+    }
+
+    private Task SendTeleportSourceEffectsAsync(UOMobileEntity mobileEntity, MobilePositionChangedEvent gameEvent)
+        => SendTeleportPacketAsync(
+            mobileEntity,
+            gameEvent.SessionId,
+            gameEvent.OldMapId,
+            gameEvent.OldLocation,
+            TeleportEffectUtils.CreateSourceEffect(gameEvent.OldLocation),
+            includeSelf: gameEvent.OldMapId == gameEvent.MapId
+        );
+
+    private async Task SendTeleportPacketAsync(
+        UOMobileEntity mobileEntity,
+        long sessionId,
+        int mapId,
+        Point3D location,
+        IGameNetworkPacket packet,
+        bool includeSelf
+    )
+    {
+        await _spatialWorldService.BroadcastToPlayersAsync(
+            packet,
+            mapId,
+            location,
+            excludeSessionId: sessionId >= 0 ? sessionId : null
+        );
+
+        if (!includeSelf)
+        {
+            return;
+        }
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
+        {
+            return;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, packet);
+    }
+
     private async Task SyncSectorSnapshotForEnteringPlayerAsync(
         UOMobileEntity mobileEntity,
         int mapId,
         Point3D oldLocation,
-        Point3D newLocation
+        Point3D newLocation,
+        MapSector newSector
     )
     {
         if (!mobileEntity.IsPlayer)
@@ -185,23 +270,35 @@ public class MobileHandler
             return;
         }
 
-        var oldSector = _spatialWorldService.GetSectorByLocation(mapId, oldLocation);
-        var newSector = _spatialWorldService.GetSectorByLocation(mapId, newLocation);
-
-        if (newSector is null)
-        {
-            return;
-        }
-
-        if (oldSector is not null &&
-            oldSector.SectorX == newSector.SectorX &&
-            oldSector.SectorY == newSector.SectorY)
-        {
-            return;
-        }
-
         if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
         {
+            return;
+        }
+
+        var oldSectorX = oldLocation.X >> MapSectorConsts.SectorShift;
+        var oldSectorY = oldLocation.Y >> MapSectorConsts.SectorShift;
+        var sectorChanged = oldSectorX != newSector.SectorX || oldSectorY != newSector.SectorY;
+        var loadedSectors = BuildLoadedSectorLookup(mapId, newSector);
+        HashSet<(int SectorX, int SectorY)> nearEdgeSectors = [];
+
+        if (!sectorChanged && !TryCollectNearEdgePreloadSectors(newSector, newLocation, out nearEdgeSectors))
+        {
+            return;
+        }
+
+        if (!sectorChanged)
+        {
+            foreach (var (sectorX, sectorY) in nearEdgeSectors)
+            {
+                SyncLoadedSectorForPlayer(session, mobileEntity, ResolveLoadedSector(
+                    loadedSectors,
+                    mapId,
+                    sectorX,
+                    sectorY,
+                    newLocation.Z
+                ));
+            }
+
             return;
         }
 
@@ -226,9 +323,105 @@ public class MobileHandler
                  sectorY <= newSector.SectorY + _sectorEnterSyncRadius;
                  sectorY++)
             {
-                SyncSingleSectorForPlayer(session.SessionId, mobileEntity, mapId, sectorX, sectorY, newLocation.Z);
+                SyncLoadedSectorForPlayer(session, mobileEntity, ResolveLoadedSector(
+                    loadedSectors,
+                    mapId,
+                    sectorX,
+                    sectorY,
+                    newLocation.Z
+                ));
             }
         }
+    }
+
+    private bool TryCollectNearEdgePreloadSectors(
+        MapSector sector,
+        Point3D location,
+        out HashSet<(int SectorX, int SectorY)> sectors
+    )
+    {
+        sectors = [];
+
+        var sectorOriginX = sector.SectorX << MapSectorConsts.SectorShift;
+        var sectorOriginY = sector.SectorY << MapSectorConsts.SectorShift;
+        var localX = location.X - sectorOriginX;
+        var localY = location.Y - sectorOriginY;
+        var nearWest = localX < NearEdgePreloadThreshold;
+        var nearEast = localX >= MapSectorConsts.SectorSize - NearEdgePreloadThreshold;
+        var nearNorth = localY < NearEdgePreloadThreshold;
+        var nearSouth = localY >= MapSectorConsts.SectorSize - NearEdgePreloadThreshold;
+
+        if (!nearWest && !nearEast && !nearNorth && !nearSouth)
+        {
+            return false;
+        }
+
+        var minX = sector.SectorX - _sectorEnterSyncRadius;
+        var maxX = sector.SectorX + _sectorEnterSyncRadius;
+        var minY = sector.SectorY - _sectorEnterSyncRadius;
+        var maxY = sector.SectorY + _sectorEnterSyncRadius;
+
+        if (nearWest)
+        {
+            var preloadX = minX - 1;
+
+            for (var sectorY = minY; sectorY <= maxY; sectorY++)
+            {
+                sectors.Add((preloadX, sectorY));
+            }
+        }
+
+        if (nearEast)
+        {
+            var preloadX = maxX + 1;
+
+            for (var sectorY = minY; sectorY <= maxY; sectorY++)
+            {
+                sectors.Add((preloadX, sectorY));
+            }
+        }
+
+        if (nearNorth)
+        {
+            var preloadY = minY - 1;
+
+            for (var sectorX = minX; sectorX <= maxX; sectorX++)
+            {
+                sectors.Add((sectorX, preloadY));
+            }
+        }
+
+        if (nearSouth)
+        {
+            var preloadY = maxY + 1;
+
+            for (var sectorX = minX; sectorX <= maxX; sectorX++)
+            {
+                sectors.Add((sectorX, preloadY));
+            }
+        }
+
+        if (nearWest && nearNorth)
+        {
+            sectors.Add((minX - 1, minY - 1));
+        }
+
+        if (nearWest && nearSouth)
+        {
+            sectors.Add((minX - 1, maxY + 1));
+        }
+
+        if (nearEast && nearNorth)
+        {
+            sectors.Add((maxX + 1, minY - 1));
+        }
+
+        if (nearEast && nearSouth)
+        {
+            sectors.Add((maxX + 1, maxY + 1));
+        }
+
+        return sectors.Count > 0;
     }
 
     private Task SyncSectorSnapshotForPlayerAsync(
@@ -249,6 +442,8 @@ public class MobileHandler
             return Task.CompletedTask;
         }
 
+        var loadedSectors = BuildLoadedSectorLookup(mapId, centerSector);
+
         for (var sectorX = centerSector.SectorX - _sectorEnterSyncRadius;
              sectorX <= centerSector.SectorX + _sectorEnterSyncRadius;
              sectorX++)
@@ -257,28 +452,52 @@ public class MobileHandler
                  sectorY <= centerSector.SectorY + _sectorEnterSyncRadius;
                  sectorY++)
             {
-                SyncSingleSectorForPlayer(session.SessionId, mobileEntity, mapId, sectorX, sectorY, centerLocation.Z);
+                SyncLoadedSectorForPlayer(session, mobileEntity, ResolveLoadedSector(
+                    loadedSectors,
+                    mapId,
+                    sectorX,
+                    sectorY,
+                    centerLocation.Z
+                ));
             }
         }
 
         return Task.CompletedTask;
     }
 
-    private void SyncSingleSectorForPlayer(
-        long sessionId,
-        UOMobileEntity mobileEntity,
+    private Dictionary<(int SectorX, int SectorY), MapSector> BuildLoadedSectorLookup(int mapId, MapSector anchorSector)
+    {
+        var lookup = new Dictionary<(int SectorX, int SectorY), MapSector>();
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            if (sector.MapIndex != mapId)
+            {
+                continue;
+            }
+
+            lookup[(sector.SectorX, sector.SectorY)] = sector;
+        }
+
+        lookup[(anchorSector.SectorX, anchorSector.SectorY)] = anchorSector;
+
+        return lookup;
+    }
+
+    private MapSector? ResolveLoadedSector(
+        Dictionary<(int SectorX, int SectorY), MapSector> loadedSectors,
         int mapId,
         int sectorX,
         int sectorY,
         int z
     )
     {
-        if (!_gameNetworkSessionService.TryGet(sessionId, out var session))
+        if (loadedSectors.TryGetValue((sectorX, sectorY), out var sector))
         {
-            return;
+            return sector;
         }
 
-        var targetSector = _spatialWorldService.GetSectorByLocation(
+        sector = _spatialWorldService.GetSectorByLocation(
             mapId,
             new(
                 sectorX << MapSectorConsts.SectorShift,
@@ -287,6 +506,20 @@ public class MobileHandler
             )
         );
 
+        if (sector is not null)
+        {
+            loadedSectors[(sectorX, sectorY)] = sector;
+        }
+
+        return sector;
+    }
+
+    private void SyncLoadedSectorForPlayer(
+        GameSession session,
+        UOMobileEntity mobileEntity,
+        MapSector? targetSector
+    )
+    {
         if (targetSector is null)
         {
             return;
@@ -301,7 +534,7 @@ public class MobileHandler
                 continue;
             }
 
-            _outgoingPacketQueue.Enqueue(sessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
+            _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
         }
 
         foreach (var otherMobile in targetSector.GetMobiles())
@@ -312,13 +545,13 @@ public class MobileHandler
             }
 
             _outgoingPacketQueue.Enqueue(
-                sessionId,
+                session.SessionId,
                 new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
             );
-            _outgoingPacketQueue.Enqueue(sessionId, new PlayerStatusPacket(otherMobile, 1));
+            _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
             WornItemPacketHelper.EnqueueVisibleWornItems(
                 otherMobile,
-                packet => _outgoingPacketQueue.Enqueue(sessionId, packet)
+                packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
             );
         }
     }
@@ -342,13 +575,19 @@ public class MobileHandler
             return;
         }
 
-        SendOldRangeDeletes(session, mobileEntity.Id, gameEvent.OldMapId, gameEvent.OldLocation);
-
         _outgoingPacketQueue.Enqueue(
             session.SessionId,
             GeneralInformationFactory.CreateSetCursorHueSetMap((byte)gameEvent.MapId)
         );
 
+        var map = Map.GetMap(gameEvent.MapId);
+        var mapWidth = (ushort)Math.Clamp(map?.Width ?? 0, ushort.MinValue, ushort.MaxValue);
+        var mapHeight = (ushort)Math.Clamp(map?.Height ?? 0, ushort.MinValue, ushort.MaxValue);
+
+        _outgoingPacketQueue.Enqueue(
+            session.SessionId,
+            new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
+        );
         _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
         _outgoingPacketQueue.Enqueue(
             session.SessionId,
@@ -358,7 +597,6 @@ public class MobileHandler
             mobileEntity,
             packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
         );
-        await EnqueueBackpackAsync(session.SessionId, mobileEntity);
         _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
 
         var globalLight = _lightService?.ComputeGlobalLightLevel(gameEvent.MapId, mobileEntity.Location) ??
@@ -371,7 +609,6 @@ public class MobileHandler
             new PersonalLightLevelPacket(personalLightLevel, mobileEntity)
         );
 
-        var map = Map.GetMap(gameEvent.MapId);
         var season = map?.Season ?? mobileEntity.Map?.Season ?? SeasonType.Spring;
         _outgoingPacketQueue.Enqueue(session.SessionId, new SeasonPacket(season));
 
@@ -380,13 +617,22 @@ public class MobileHandler
             session.SessionId,
             new SetMusicPacket(_spatialWorldService.GetMusic(gameEvent.MapId, mobileEntity.Location))
         );
+        await EnqueueBackpackAsync(session.SessionId, mobileEntity);
+        SendOldRangeDeletes(session, mobileEntity.Id, gameEvent.OldMapId, gameEvent.OldLocation);
+    }
 
-        var mapWidth = (ushort)Math.Clamp(map?.Width ?? 0, ushort.MinValue, ushort.MaxValue);
-        var mapHeight = (ushort)Math.Clamp(map?.Height ?? 0, ushort.MinValue, ushort.MaxValue);
+    private void EnqueueSameMapTeleportSelfRefresh(UOMobileEntity mobileEntity)
+    {
+        if (!mobileEntity.IsPlayer ||
+            !_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
+        {
+            return;
+        }
 
+        _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
         _outgoingPacketQueue.Enqueue(
             session.SessionId,
-            new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
+            new MobileDrawPacket(mobileEntity, mobileEntity, true, true)
         );
     }
 

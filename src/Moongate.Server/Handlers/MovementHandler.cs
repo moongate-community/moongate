@@ -97,6 +97,7 @@ public class MovementHandler : BasePacketListener
         var currentDirection = Point3D.GetBaseDirection(session.Character.Direction);
         var requestedDirection = moveRequestPacket.WalkDirection;
         var isFacingChangeOnly = currentDirection != requestedDirection;
+        var wasTeleported = false;
 
         var previousLocation = session.Character.Location;
         var previousMapId = session.Character.MapId;
@@ -130,7 +131,7 @@ public class MovementHandler : BasePacketListener
 
             session.Character.Location = newLocation;
             session.Character.Direction = moveRequestPacket.Direction;
-            TryApplyTeleporter(session);
+            wasTeleported = TryApplyTeleporter(session);
         }
 
         var nextSequence = moveRequestPacket.Sequence + 1;
@@ -150,7 +151,8 @@ public class MovementHandler : BasePacketListener
             previousMapId,
             session.Character.MapId,
             previousLocation,
-            session.Character.Location
+            session.Character.Location,
+            !isFacingChangeOnly && wasTeleported
         );
 
         return Task.FromResult(true);
@@ -192,11 +194,11 @@ public class MovementHandler : BasePacketListener
         return false;
     }
 
-    private void TryApplyTeleporter(GameSession session)
+    private bool TryApplyTeleporter(GameSession session)
     {
         if (session.Character is null)
         {
-            return;
+            return false;
         }
 
         if (!_teleportersDataService.TryResolveTeleportDestination(
@@ -206,11 +208,13 @@ public class MovementHandler : BasePacketListener
                 out var destinationLocation
             ))
         {
-            return;
+            return false;
         }
 
         session.Character.MapId = destinationMapId;
         session.Character.Location = destinationLocation;
+
+        return true;
     }
 
     private void TryPublishMobilePositionChangedEvent(
@@ -218,7 +222,8 @@ public class MovementHandler : BasePacketListener
         int oldMapId,
         int mapId,
         Point3D oldLocation,
-        Point3D newLocation
+        Point3D newLocation,
+        bool isTeleport = false
     )
     {
         if (session.Character is null)
@@ -249,7 +254,8 @@ public class MovementHandler : BasePacketListener
             oldMapId,
             mapId,
             oldLocation,
-            newLocation
+            newLocation,
+            isTeleport
         );
 
         var task = _gameEventBusService.PublishAsync(gameEvent);

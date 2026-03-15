@@ -138,8 +138,14 @@ Published docs: <https://moongate-community.github.io/moongate/>
 ## Benchmarks and Stress
 
 - Benchmarks project: `benchmarks/Moongate.Benchmarks`
+- Cross-map teleport cold-destination benchmark: `TeleportMapChangeBenchmark.HandleCrossMapTeleport_ColdDestination`
+- Same-map teleport cold-destination benchmark with self refresh: `TeleportMapChangeBenchmark.HandleSameMapTeleport_ColdDestination_WithSelfRefresh`
+  - Dry run on Apple M4 Max / .NET 10:
+    - cross-map median `2.696 ms`, mean `3.964 ms`, first cold outlier `17.800 ms`, allocated `1.77 MB`
+    - same-map median `1.684 ms`, mean `2.536 ms`, first cold outlier `11.828 ms`, allocated `1.17 MB`
 - Black-box socket stress tool: `tools/Moongate.Stress`
 - Guide: `docs/articles/operations/stress-test.md`
+- Packet handler performance guide: `docs/articles/networking/packet-handler-performance.md`
 
 ## Acknowledgements
 

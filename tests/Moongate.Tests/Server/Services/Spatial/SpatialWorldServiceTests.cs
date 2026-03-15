@@ -692,6 +692,41 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
+    public void GetPlayersInRange_ShouldUseRuntimeSessionsWithoutLazyLoadingSpatialMobiles()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var mobileService = new SpatialWorldServiceTestMobileService();
+        var service = CreateService(sessions, eventBus, mobileService: mobileService);
+        var nearPlayer = CreateMobile(0x340, 500, 500, 0, true);
+        var secondNearPlayer = CreateMobile(0x341, 504, 503, 0, true);
+        var farPlayer = CreateMobile(0x342, 900, 900, 0, true);
+        var otherMapPlayer = CreateMobile(0x343, 500, 500, 1, true);
+
+        var nearSession = CreateSession(nearPlayer);
+        var secondNearSession = CreateSession(secondNearPlayer);
+        var farSession = CreateSession(farPlayer);
+        var otherMapSession = CreateSession(otherMapPlayer);
+        sessions.Add(nearSession);
+        sessions.Add(secondNearSession);
+        sessions.Add(farSession);
+        sessions.Add(otherMapSession);
+
+        var players = service.GetPlayersInRange(new(500, 500, 0), 8, 0);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(players.Select(static session => session.SessionId), Contains.Item(nearSession.SessionId));
+                Assert.That(players.Select(static session => session.SessionId), Contains.Item(secondNearSession.SessionId));
+                Assert.That(players.Select(static session => session.SessionId), Does.Not.Contain(farSession.SessionId));
+                Assert.That(players.Select(static session => session.SessionId), Does.Not.Contain(otherMapSession.SessionId));
+                Assert.That(mobileService.LoadRequests, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
     public void GetPlayersInSector_ShouldReturnOnlyPlayersInTargetSector()
     {
         var sessions = new FakeGameNetworkSessionService();

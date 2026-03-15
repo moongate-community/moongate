@@ -18,6 +18,7 @@ using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.Entities;
 
@@ -326,7 +327,12 @@ public class MobileServiceTests
             }
         );
 
-        var loaded = await service.GetPersistentMobilesInSectorAsync(1, 4, 4);
+        const int locationX = 130;
+        const int locationY = 130;
+        var sectorX = locationX >> MapSectorConsts.SectorShift;
+        var sectorY = locationY >> MapSectorConsts.SectorShift;
+
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, sectorX, sectorY);
         var mobile = loaded.Single();
 
         Assert.Multiple(

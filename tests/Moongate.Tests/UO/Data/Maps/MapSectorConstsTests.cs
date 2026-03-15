@@ -10,5 +10,6 @@ public class MapSectorConstsTests
         var computedSize = 1 << MapSectorConsts.SectorShift;
 
         Assert.That(computedSize, Is.EqualTo(MapSectorConsts.SectorSize));
+        Assert.That(MapSectorConsts.SectorSize, Is.EqualTo(16));
     }
 }

@@ -178,6 +178,61 @@ await _spatialWorldService.BroadcastToPlayersAsync(
 
 These methods resolve sessions from the spatial index instead of scanning all connected players.
 
+## Cross-Map Teleport Sync
+
+We hit a concrete regression on player teleports across maps:
+
+- the client stayed on the old facet until the player moved
+- `GumpMenuSelectionPacket` and `MoveRequestPacket` could log slow ticks even with one connected player
+- cross-map teleport into a cold destination could stall on lazy sector loading and repeated snapshot lookups
+
+### Root Cause
+
+The issue came from three things compounding:
+
+- teleport-triggered work was allowed to drift behind inbound packet processing instead of being applied immediately in the player sync path
+- `MobileHandler` re-queried `GetSectorByLocation()` for every snapshot sector during teleport bootstrap, which amplified lazy loading on cold destinations
+- `SpatialWorldService.GetPlayersInRange()` previously depended on nearby-mobile spatial queries, so even simple player broadcast resolution could trigger cold-sector loads
+
+### Fix
+
+The runtime path was tightened so cross-map teleport behaves like an immediate mini re-sync:
+
+- player map-change packets are sent before old-range cleanup work
+- `MobileHandler` reuses already-loaded sectors for snapshot sync instead of repeatedly resolving them through spatial lazy-load
+- `SpatialWorldService.GetPlayersInRange()` now resolves online player sessions directly from runtime sessions, filtering by `mapId` and distance, without forcing spatial loads
+- a dedicated benchmark was added for the cold cross-map case
+
+### Benchmarks
+
+Benchmark names:
+
+```bash
+TeleportMapChangeBenchmark.HandleCrossMapTeleport_ColdDestination
+TeleportMapChangeBenchmark.HandleSameMapTeleport_ColdDestination_WithSelfRefresh
+```
+
+Run it with:
+
+```bash
+dotnet run --project benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj -c Release -- --filter "*TeleportMapChangeBenchmark*" --job Dry
+```
+
+Latest measured dry-run values on Apple M4 Max / .NET 10:
+
+- cross-map cold destination
+  - median: `2.696 ms`
+  - mean: `3.964 ms`
+  - max first-iteration outlier: `17.800 ms`
+  - allocated: `1.77 MB`
+- same-map cold destination with self refresh
+  - median: `1.684 ms`
+  - mean: `2.536 ms`
+  - max first-iteration outlier: `11.828 ms`
+  - allocated: `1.17 MB`
+
+The first-iteration spikes are expected for cold paths. The steady-state samples clustered around `2.6-2.8 ms` for cross-map and `1.64-1.72 ms` for same-map.
+
 ## Event Listener Pattern
 
 Event listeners implement `IGameEventListener<TEvent>` and are registered with `[RegisterGameEventListener]`:

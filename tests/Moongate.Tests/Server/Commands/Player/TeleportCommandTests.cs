@@ -190,6 +190,7 @@ public sealed class TeleportCommandTests
                 Assert.That(gameEvent.MapId, Is.EqualTo(2));
                 Assert.That(gameEvent.OldLocation, Is.EqualTo(new Point3D(100, 200, 5)));
                 Assert.That(gameEvent.NewLocation, Is.EqualTo(new Point3D(1518, 568, -14)));
+                Assert.That(gameEvent.IsTeleport, Is.True);
             }
         );
     }

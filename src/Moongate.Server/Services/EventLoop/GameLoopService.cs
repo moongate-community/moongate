@@ -187,19 +187,6 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
         return drained;
     }
 
-    private int DrainPacketQueue()
-    {
-        var drained = 0;
-
-        while (drained < MaxInboundPacketsPerTick && _messageBusService.TryReadIncomingPacket(out var gamePacket))
-        {
-            _packetDispatchService.NotifyPacketListeners(gamePacket);
-            drained++;
-        }
-
-        return drained;
-    }
-
     private static long GetTimestampMilliseconds()
     {
         if (UseFastTimestampMath)
@@ -212,13 +199,26 @@ public class GameLoopService : BaseMoongateService, IGameLoopService, IGameLoopM
 
     private TickWorkBreakdown ProcessTick(long timestampMilliseconds)
     {
-        var inboundStart = Stopwatch.GetTimestamp();
-        var inbound = DrainPacketQueue();
-        var inboundElapsed = Stopwatch.GetElapsedTime(inboundStart);
+        var inbound = 0;
+        var gameLoopCallbacks = 0;
+        var inboundElapsed = TimeSpan.Zero;
+        var gameLoopCallbacksElapsed = TimeSpan.Zero;
 
-        var gameLoopCallbacksStart = Stopwatch.GetTimestamp();
-        var gameLoopCallbacks = _backgroundJobService.ExecutePendingOnGameLoop();
-        var gameLoopCallbacksElapsed = Stopwatch.GetElapsedTime(gameLoopCallbacksStart);
+        while (inbound < MaxInboundPacketsPerTick && _messageBusService.TryReadIncomingPacket(out var gamePacket))
+        {
+            var inboundStart = Stopwatch.GetTimestamp();
+            _packetDispatchService.NotifyPacketListeners(gamePacket);
+            inboundElapsed += Stopwatch.GetElapsedTime(inboundStart);
+            inbound++;
+
+            var callbacksStart = Stopwatch.GetTimestamp();
+            gameLoopCallbacks += _backgroundJobService.ExecutePendingOnGameLoop();
+            gameLoopCallbacksElapsed += Stopwatch.GetElapsedTime(callbacksStart);
+        }
+
+        var finalCallbacksStart = Stopwatch.GetTimestamp();
+        gameLoopCallbacks += _backgroundJobService.ExecutePendingOnGameLoop();
+        gameLoopCallbacksElapsed += Stopwatch.GetElapsedTime(finalCallbacksStart);
 
         var timerStart = Stopwatch.GetTimestamp();
         var timerTicks = _timerService.UpdateTicksDelta(timestampMilliseconds);

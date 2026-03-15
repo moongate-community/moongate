@@ -6,6 +6,7 @@ using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
@@ -356,6 +357,66 @@ public sealed class LuaMobileProxyTests
 
         public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
             => _ = listener;
+    }
+
+    private sealed class LuaMobileProxyBlockingGameEventBusService : IGameEventBusService
+    {
+        public int PublishCalls { get; private set; }
+
+        public TaskCompletionSource<bool> PublishCompletion { get; } =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public async ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
+            where TEvent : IGameEvent
+        {
+            _ = gameEvent;
+            _ = cancellationToken;
+            PublishCalls++;
+            await PublishCompletion.Task;
+        }
+
+        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
+            => _ = listener;
+    }
+
+    private sealed class LuaMobileProxyTestBackgroundJobService : IBackgroundJobService
+    {
+        public int PostedActions { get; private set; }
+
+        public Action? LastPostedAction { get; private set; }
+
+        public void EnqueueBackground(Action job)
+            => throw new NotSupportedException();
+
+        public void EnqueueBackground(Func<Task> job)
+            => throw new NotSupportedException();
+
+        public int ExecutePendingOnGameLoop(int maxActions = 100)
+            => 0;
+
+        public void PostToGameLoop(Action action)
+        {
+            PostedActions++;
+            LastPostedAction = action;
+        }
+
+        public void RunBackgroundAndPostResult<TResult>(
+            Func<TResult> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        ) => throw new NotSupportedException();
+
+        public void RunBackgroundAndPostResultAsync<TResult>(
+            Func<Task<TResult>> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        ) => throw new NotSupportedException();
+
+        public void Start(int? workerCount = null)
+            => throw new NotSupportedException();
+
+        public Task StopAsync()
+            => Task.CompletedTask;
     }
 
     private sealed class LuaMobileProxyTestPathfindingService : IPathfindingService
@@ -905,6 +966,74 @@ public sealed class LuaMobileProxyTests
                 Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
                 Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.OldMapId, Is.EqualTo(1));
                 Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.MapId, Is.EqualTo(2));
+            }
+        );
+    }
+
+    [Test]
+    public void Teleport_ShouldNotBlockOnEventDispatch()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var gameEventBusService = new LuaMobileProxyBlockingGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService
+        );
+
+        var teleported = proxy.Teleport(2, 4500, 1300, 20);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(2));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(4500, 1300, 20)));
+                Assert.That(gameEventBusService.PublishCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void Teleport_WhenBackgroundJobServiceExists_ShouldPostPublishToGameLoop()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var gameEventBusService = new LuaMobileProxyBlockingGameEventBusService();
+        var backgroundJobService = new LuaMobileProxyTestBackgroundJobService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService,
+            backgroundJobService
+        );
+
+        var teleported = proxy.Teleport(2, 4500, 1300, 20);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(backgroundJobService.PostedActions, Is.EqualTo(1));
+                Assert.That(backgroundJobService.LastPostedAction, Is.Not.Null);
+                Assert.That(gameEventBusService.PublishCalls, Is.EqualTo(0));
             }
         );
     }

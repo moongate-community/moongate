@@ -2,6 +2,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -28,6 +29,7 @@ public sealed class MobileModule
     private readonly IMovementValidationService? _movementValidationService;
     private readonly IPathfindingService? _pathfindingService;
     private readonly IGameEventBusService? _gameEventBusService;
+    private readonly IBackgroundJobService? _backgroundJobService;
 
     public MobileModule(
         ICharacterService characterService,
@@ -36,7 +38,8 @@ public sealed class MobileModule
         ISpatialWorldService? spatialWorldService = null,
         IMovementValidationService? movementValidationService = null,
         IPathfindingService? pathfindingService = null,
-        IGameEventBusService? gameEventBusService = null
+        IGameEventBusService? gameEventBusService = null,
+        IBackgroundJobService? backgroundJobService = null
     )
     {
         _characterService = characterService;
@@ -46,6 +49,7 @@ public sealed class MobileModule
         _movementValidationService = movementValidationService;
         _pathfindingService = pathfindingService;
         _gameEventBusService = gameEventBusService;
+        _backgroundJobService = backgroundJobService;
     }
 
     [ScriptFunction("get", "Gets a mobile reference by character id, or nil when not found.")]
@@ -70,7 +74,8 @@ public sealed class MobileModule
                        _spatialWorldService,
                        _movementValidationService,
                        _pathfindingService,
-                       _gameEventBusService
+                       _gameEventBusService,
+                       _backgroundJobService
                    );
     }
 
