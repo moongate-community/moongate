@@ -1,3 +1,15 @@
+## [0.35.0](https://github.com/moongate-community/moongate/compare/v0.34.0...v0.35.0) (2026-03-15)
+
+### Features
+
+* add Discord changelog webhook release posting ([b3e9193](https://github.com/moongate-community/moongate/commit/b3e91932c7c38eac336876477acde0b00b0fabdd))
+
+### Bug Fixes
+
+* improve teleport map sync and sector alignment ([1f58297](https://github.com/moongate-community/moongate/commit/1f582973472e283c1654e26e25da092bbd327974))
+* tighten teleport visual sync and cold-sector player resolution ([3d7ca49](https://github.com/moongate-community/moongate/commit/3d7ca49c3e874ece7c6c6d853a3525595b9538ca))
+* **tooltip:** remove invalid mobile vital clilocs ([987ccc0](https://github.com/moongate-community/moongate/commit/987ccc0cf83624f172232913a0c02694ef83a85b))
+
 ## [0.34.0](https://github.com/moongate-community/moongate/compare/v0.33.0...v0.34.0) (2026-03-14)
 
 ### Features
