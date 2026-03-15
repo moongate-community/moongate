@@ -203,12 +203,13 @@ The runtime path was tightened so cross-map teleport behaves like an immediate m
 - `SpatialWorldService.GetPlayersInRange()` now resolves online player sessions directly from runtime sessions, filtering by `mapId` and distance, without forcing spatial loads
 - a dedicated benchmark was added for the cold cross-map case
 
-### Benchmark
+### Benchmarks
 
-Benchmark name:
+Benchmark names:
 
 ```bash
 TeleportMapChangeBenchmark.HandleCrossMapTeleport_ColdDestination
+TeleportMapChangeBenchmark.HandleSameMapTeleport_ColdDestination_WithSelfRefresh
 ```
 
 Run it with:
@@ -219,12 +220,18 @@ dotnet run --project benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj -
 
 Latest measured dry-run values on Apple M4 Max / .NET 10:
 
-- median: `2.800 ms`
-- mean: `4.125 ms`
-- max first-iteration outlier: `18.936 ms`
-- allocated: `1.77 MB`
+- cross-map cold destination
+  - median: `2.696 ms`
+  - mean: `3.964 ms`
+  - max first-iteration outlier: `17.800 ms`
+  - allocated: `1.77 MB`
+- same-map cold destination with self refresh
+  - median: `1.684 ms`
+  - mean: `2.536 ms`
+  - max first-iteration outlier: `11.828 ms`
+  - allocated: `1.17 MB`
 
-The first-iteration spike is expected for a cold path. The stable steady-state samples were clustered around `2.6-3.0 ms`.
+The first-iteration spikes are expected for cold paths. The steady-state samples clustered around `2.6-2.8 ms` for cross-map and `1.64-1.72 ms` for same-map.
 
 ## Event Listener Pattern
 
