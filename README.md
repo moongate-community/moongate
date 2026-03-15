@@ -135,8 +135,11 @@ Published docs: <https://moongate-community.github.io/moongate/>
 ## Benchmarks and Stress
 
 - Benchmarks project: `benchmarks/Moongate.Benchmarks`
+- Cross-map teleport cold-destination benchmark: `TeleportMapChangeBenchmark.HandleCrossMapTeleport_ColdDestination`
+  - Dry run on Apple M4 Max / .NET 10: median `2.800 ms`, mean `4.125 ms`, first cold outlier `18.936 ms`, allocated `1.77 MB`
 - Black-box socket stress tool: `tools/Moongate.Stress`
 - Guide: `docs/articles/operations/stress-test.md`
+- Packet handler performance guide: `docs/articles/networking/packet-handler-performance.md`
 
 ## Acknowledgements
 

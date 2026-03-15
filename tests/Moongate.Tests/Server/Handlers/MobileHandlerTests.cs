@@ -182,6 +182,7 @@ public sealed class MobileHandlerTests
         public List<GameSession> SessionsInRange { get; set; } = [];
         public List<UOItemEntity> NearbyItems { get; set; } = [];
         public List<UOMobileEntity> NearbyMobiles { get; set; } = [];
+        public List<MapSector> ActiveSectors { get; set; } = [];
 
         public MapSector? SectorByLocation { get; set; }
         public Func<int, Point3D, MapSector?>? SectorByLocationResolver { get; set; }
@@ -190,6 +191,8 @@ public sealed class MobileHandlerTests
         public int LastGetSectorMapId { get; private set; }
 
         public Point3D LastGetSectorLocation { get; private set; }
+
+        public int GetSectorByLocationCallCount { get; private set; }
 
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
@@ -207,7 +210,7 @@ public sealed class MobileHandlerTests
             => Task.FromResult(0);
 
         public List<MapSector> GetActiveSectors()
-            => [];
+            => ActiveSectors.Count > 0 ? [.. ActiveSectors] : [.. SectorsByCoordinate.Values];
 
         public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius)
             => [];
@@ -257,6 +260,7 @@ public sealed class MobileHandlerTests
 
         public MapSector? GetSectorByLocation(int mapId, Point3D location)
         {
+            GetSectorByLocationCallCount++;
             LastGetSectorMapId = mapId;
             LastGetSectorLocation = location;
 
@@ -490,6 +494,73 @@ public sealed class MobileHandlerTests
                     ),
                     Is.True
                 );
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenSameMapTeleport_ShouldRefreshMovingPlayerBeforeDestinationEffect()
+    {
+        var movingPlayerId = (Serial)0x00007010u;
+        var observerId = (Serial)0x00007011u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        var observerSession = CreateSession(observerId);
+        sessions.Add(movingSession);
+        sessions.Add(observerSession);
+
+        var character = CreatePlayer(movingPlayerId);
+        character.Location = new(420, 420, 0);
+        character.MapId = 1;
+        movingSession.Character = character;
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocation = new(1, 26, 26),
+            SessionsInRange = [movingSession, observerSession]
+        };
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(character),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                new(400, 400, 0),
+                new(420, 420, 0),
+                isTeleport: true
+            )
+        );
+
+        var packets = DequeueAll(queue)
+            .Where(packet => packet.SessionId == movingSession.SessionId)
+            .ToList();
+        var drawPlayerIndex = packets.FindIndex(packet => packet.Packet is DrawPlayerPacket);
+        var mobileDrawIndex = packets.FindIndex(packet => packet.Packet is MobileDrawPacket);
+        var destinationEffectIndex = packets.FindIndex(
+            packet => packet.Packet is ParticleEffectPacket particleEffectPacket &&
+                      particleEffectPacket.SourceLocation == new Point3D(420, 420, 0) &&
+                      particleEffectPacket.Effect == 5023
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(drawPlayerIndex, Is.GreaterThanOrEqualTo(0));
+                Assert.That(mobileDrawIndex, Is.GreaterThanOrEqualTo(0));
+                Assert.That(destinationEffectIndex, Is.GreaterThanOrEqualTo(0));
+                Assert.That(drawPlayerIndex, Is.LessThan(destinationEffectIndex));
+                Assert.That(mobileDrawIndex, Is.LessThan(destinationEffectIndex));
             }
         );
     }
@@ -779,6 +850,109 @@ public sealed class MobileHandlerTests
         var objectPackets = packets.Count(packet => packet.Packet is ObjectInformationPacket);
 
         Assert.That(objectPackets, Is.GreaterThanOrEqualTo(2));
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenEnteringNewSector_ShouldReuseLoadedSectorsForSnapshot()
+    {
+        var movingPlayerId = (Serial)0x00003003u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(7 << MapSectorConsts.SectorShift, 7 << MapSectorConsts.SectorShift, 0);
+        var newLocation = new Point3D(8 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0);
+        var centerSector = new MapSector(1, 8, 8);
+        var eastSector = new MapSector(1, 9, 8);
+        centerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000032u,
+                Name = "center-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = newLocation,
+                MapId = 1
+            }
+        );
+        eastSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000033u,
+                Name = "east-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = new(9 << MapSectorConsts.SectorShift, 8 << MapSectorConsts.SectorShift, 0),
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+
+        for (var sectorX = 7; sectorX <= 9; sectorX++)
+        {
+            for (var sectorY = 7; sectorY <= 9; sectorY++)
+            {
+                spatial.ActiveSectors.Add(new MapSector(1, sectorX, sectorY));
+            }
+        }
+
+        spatial.ActiveSectors.RemoveAll(sector => sector.SectorX == 8 && sector.SectorY == 8);
+        spatial.ActiveSectors.RemoveAll(sector => sector.SectorX == 9 && sector.SectorY == 8);
+        spatial.ActiveSectors.Add(centerSector);
+        spatial.ActiveSectors.Add(eastSector);
+        spatial.SectorByLocationResolver = (_, location) =>
+        {
+            var key = (location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+
+            return spatial.ActiveSectors.FirstOrDefault(
+                sector => sector.MapIndex == 1 && sector.SectorX == key.Item1 && sector.SectorY == key.Item2
+            );
+        };
+
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+            {
+                Spatial = new()
+                {
+                    SectorEnterSyncRadius = 1
+                }
+            }
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.GetSectorByLocationCallCount, Is.EqualTo(1));
+                Assert.That(
+                    packets.Count(packet => packet.Packet is ObjectInformationPacket),
+                    Is.GreaterThanOrEqualTo(2)
+                );
+            }
+        );
     }
 
     [Test]

@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Interfaces.Services.Events;
 using Serilog;
@@ -7,6 +8,7 @@ namespace Moongate.Server.Services.Events;
 
 public sealed class GameEventBusService : IGameEventBusService
 {
+    private const double SlowListenerThresholdMilliseconds = 100;
     private readonly ConcurrentDictionary<Type, List<object>> _listeners = new();
     private readonly ILogger _logger = Log.ForContext<GameEventBusService>();
 
@@ -129,6 +131,8 @@ public sealed class GameEventBusService : IGameEventBusService
     )
         where TEvent : IGameEvent
     {
+        var listenerStart = Stopwatch.GetTimestamp();
+
         try
         {
             if (listenerObject is IGameEventListener<TEvent> typedListener)
@@ -146,6 +150,20 @@ public sealed class GameEventBusService : IGameEventBusService
         catch (Exception ex)
         {
             _logger.Error(ex, "Game event listener failed for event type {EventType}", typeof(TEvent).Name);
+        }
+        finally
+        {
+            var elapsed = Stopwatch.GetElapsedTime(listenerStart);
+
+            if (elapsed.TotalMilliseconds >= SlowListenerThresholdMilliseconds)
+            {
+                _logger.Warning(
+                    "Slow game event listener event={EventType} listener={ListenerType} elapsed={ElapsedMs:0.###}ms",
+                    typeof(TEvent).Name,
+                    listenerObject.GetType().FullName,
+                    elapsed.TotalMilliseconds
+                );
+            }
         }
     }
 }
