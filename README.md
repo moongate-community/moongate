@@ -18,7 +18,8 @@
 
 Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT support, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
 
-Latest dev log: <https://orivega.io/moongate-v2-dev-log-3-player-portal-maps-books-and-a-net-bug-i-didnt-own/> covers the last week of development.
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_large)
 
 ## Looking for Collaborators
 
@@ -160,6 +161,7 @@ Data imported/adapted from ModernUO distribution is used in selected world datas
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/image?repos=moongate-community/moongate&type=date&legend=top-left)](https://www.star-history.com/?repos=moongate-community%2Fmoongate&type=date&legend=top-left)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_shield)
 
 ## Contributing
 
