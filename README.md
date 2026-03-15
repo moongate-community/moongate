@@ -28,7 +28,13 @@ I am actively looking for contributors and reviewers.
 
 - Issues: <https://github.com/moongate-community/moongate/issues>
 - Discussions: <https://github.com/moongate-community/moongate/discussions>
-- Matrix: <https://matrix.to/#/#moongate:matrix.org>
+- Discord: <https://discord.gg/h9UUyGqd>
+
+## Release Automation
+
+- GitHub releases are mirrored to Discord via the `GitHub Release Assets` workflow.
+- Configure the repository secret `DISCORD_CHANGELOG_WEBHOOK_URL` to enable changelog posting.
+- Release notes are sourced from `CHANGELOG.md` and posted to Discord after the GitHub release is created.
 
 ## Quick Start
 
