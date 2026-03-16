@@ -252,6 +252,24 @@ The runtime path is now narrower:
 
 This keeps login-specific world sync policy separate from generic movement and teleport orchestration, which makes the path easier to reason about and cheaper to profile.
 
+## Item Handler Split
+
+`ItemHandler` also grew into a broad packet entry point for unrelated behaviors:
+
+- books
+- click/use interaction
+- pickup/drop/equip manipulation
+- item event refresh fan-out
+
+That boundary has now been narrowed without changing packet ownership:
+
+- `ItemHandler` remains the packet/event router
+- `ItemBookService` owns book read/write flows
+- `ItemInteractionService` owns single-click and double-click interaction flows
+- `ItemManipulationService` owns pickup, drop, equip, and wear-refresh orchestration
+
+This keeps protocol wiring stable while moving behavior-heavy item logic into smaller units that are easier to test and profile.
+
 ## Event Listener Pattern
 
 Event listeners implement `IGameEventListener<TEvent>` and are registered with `[RegisterGameEventListener]`:

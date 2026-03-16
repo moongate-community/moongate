@@ -44,9 +44,10 @@ Current gameplay-facing outbound examples:
 - `PlayerStatusHandler` emits `PlayerStatusPacket` (`0x11`) for basic status requests
 - `PlayerStatusHandler` emits `SkillListPacket` (`0x3A`) for skill window requests
 - `ChatSystemService` emits `ChatCommandPacket` (`0xB2`) for classic conference chat UI, channel membership, PMs, moderator/voice changes, and system responses
-- `ItemHandler` responds to classic book traffic:
-  - `0xD4` saves writable `title` / `author`
-  - `0x66` serves page requests and writable page saves
+- item packet traffic is now split behind `ItemHandler` into focused services:
+  - `ItemBookService` handles classic book traffic (`0xD4`, `0x66`)
+  - `ItemInteractionService` handles single-click / double-click item interaction flows
+  - `ItemManipulationService` handles pickup, drop, equip, and wear refresh flows
 
 ## Compression and Middleware
 
@@ -76,9 +77,11 @@ Important current request/response pairs:
   - action dispatch in `IChatSystemService`
   - supports conference message/join/create/rename/password, PM, ignore, ops/voice, whois, kick, emote
 - `0x66 Book Pages`
+  - `ItemHandler` routes to `ItemBookService`
   - page request -> server book page response
   - writable page save -> server persists updated page content
 - `0xD4 Book Header New`
+  - `ItemHandler` routes to `ItemBookService`
   - writable header save -> server persists `title` / `author`
 
 ## Useful Runtime Diagnostics

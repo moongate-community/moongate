@@ -25,12 +25,12 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | Opcode | Op Description | Direction | POL Page | Moongate Packet Class | Status | Runtime Wiring | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `0x02` | Move request | C -> S | `?Packet=0x02` | `MoveRequestPacket` | `handler` | `MovementHandler` | Core player movement |
-| `0x06` | Double click | C -> S | `?Packet=0x06` | `DoubleClickPacket` | `handler` | `ItemHandler` | Item use and open flows |
-| `0x07` | Pick up item | C -> S | `?Packet=0x07` | `PickUpItemPacket` | `handler` | `ItemHandler` | Drag start |
-| `0x08` | Drop item | C -> S | `?Packet=0x08` | `DropItemPacket` | `handler` | `ItemHandler` | World/container drop |
-| `0x09` | Single click | C -> S | `?Packet=0x09` | `SingleClickPacket` | `handler` | `ItemHandler` | Labels and inspect-style flows |
+| `0x06` | Double click | C -> S | `?Packet=0x06` | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use and open flows |
+| `0x07` | Pick up item | C -> S | `?Packet=0x07` | `PickUpItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Drag start |
+| `0x08` | Drop item | C -> S | `?Packet=0x08` | `DropItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | World/container drop |
+| `0x09` | Single click | C -> S | `?Packet=0x09` | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels and inspect-style flows |
 | `0x11` | Status bar info | S -> C | `?Packet=0x11` | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status packet |
-| `0x13` | Drop to wear | C -> S | `?Packet=0x13` | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
+| `0x13` | Drop to wear | C -> S | `?Packet=0x13` | `DropWearItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Equip flow |
 | `0x1B` | Login confirm | S -> C | `?Packet=0x1B` | `LoginConfirmPacket` | `outgoing` | login flow | Character accepted |
 | `0x20` | Draw player | S -> C | `?Packet=0x20` | `DrawPlayerPacket` | `outgoing` | login and move flows | Controlled mobile draw |
 | `0x21` | Move reject | S -> C | `?Packet=0x21` | `MoveDenyPacket` | `outgoing` | movement flow | Reject or resync |
@@ -48,7 +48,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x5B` | Time | S -> C | `?Packet=0x5B` | `SetTimePacket` | `outgoing` | world presentation | World time |
 | `0x5D` | Login character | C -> S | `?Packet=0x5D` | `LoginCharacterPacket` | `handler` | `LoginHandler` | Character enters world |
 | `0x65` | Weather | S -> C | `?Packet=0x65` | `SetWeatherPacket` | `outgoing` | world presentation | Weather state |
-| `0x66` | Book pages | both | `?Packet=0x66` | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
+| `0x66` | Book pages | both | `?Packet=0x66` | `BookPagesPacket` | `handler` | `ItemHandler -> ItemBookService` | Page request and writable page save |
 | `0x6C` | Target cursor commands | both | `?Packet=0x6C` | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Inbound target replies; outbound cursor flows use same opcode family in protocol |
 | `0x6D` | Play music | S -> C | `?Packet=0x6D` | `SetMusicPacket` | `outgoing` | world presentation | Music trigger |
 | `0x6E` | Character animation | S -> C | `?Packet=0x6E` | `MobileAnimationPacket` | `outgoing` | world presentation | Mobile anims |
@@ -117,7 +117,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xC2` | Unicode text entry | C -> S | `?Packet=0xC2` | `UnicodeTextEntryPacket` | `parse-only` | Text entry flow missing |
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |
 | `0xD1` | Logout status | C -> S | `?Packet=0xD1` | `LogoutStatusPacket` | `parse-only` | No dedicated logout listener |
-| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save for client `7.x` |
+| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler -> ItemBookService` | Writable `title` / `author` save for client `7.x` |
 | `0xD7` | Generic AOS commands | C -> S | `?Packet=0xD7` | `GenericAosCommandsPacket` | `parse-only` | AoS subcommands not wired |
 | `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `parse-only` | Client-type-specific behavior missing |
 | `0xEC` | Equip macro | C -> S | `?Packet=0xEC` | `EquipMacroPacket` | `parse-only` | KR macro flow missing |

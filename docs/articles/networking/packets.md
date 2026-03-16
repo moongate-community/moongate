@@ -49,9 +49,10 @@ Current gameplay examples:
 - `PlayerStatusHandler` listens to `PacketDefinition.GetPlayerStatusPacket`
   - `BasicStatus` requests enqueue `PlayerStatusPacket` (`0x11`)
   - `RequestSkills` requests enqueue `SkillListPacket` (`0x3A`)
-- `ItemHandler` listens to book packets
-  - `BookHeaderNewPacket` (`0xD4`) saves writable book `title` / `author`
-  - `BookPagesPacket` (`0x66`) serves page requests and writable page saves
+- `ItemHandler` is now a thin router for item protocol traffic
+  - `ItemBookService` handles `BookHeaderNewPacket` (`0xD4`) and `BookPagesPacket` (`0x66`)
+  - `ItemInteractionService` handles `SingleClickPacket` (`0x09`) and `DoubleClickPacket` (`0x06`)
+  - `ItemManipulationService` handles `PickUpItemPacket` (`0x07`), `DropItemPacket` (`0x08`), and `DropWearItemPacket` (`0x13`)
 - `DyeWindowHandler` listens to `DyeWindowPacket` (`0x95`)
   - the classic dye-tub target flow opens `0x95` to the client
   - the client response on `0x95` applies hue to the pending item target
@@ -91,15 +92,15 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
 | `0xB1` | Gump Menu Selection | C -> S | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump button replies |
-| `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler` | Item use / open flows |
-| `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler` | Labels / tooltip-side behavior |
-| `0x07` | Pick Up Item | C -> S | `PickUpItemPacket` | `handler` | `ItemHandler` | Drag start |
-| `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler` | Container / world drop |
-| `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
-| `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
+| `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use / open flows |
+| `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels / tooltip-side behavior |
+| `0x07` | Pick Up Item | C -> S | `PickUpItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Drag start |
+| `0x08` | Drop Item | C -> S | `DropItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Container / world drop |
+| `0x13` | Drop -> Wear Item | C -> S | `DropWearItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Equip flow |
+| `0x66` | Books (Pages) | C -> S | `BookPagesPacket` | `handler` | `ItemHandler -> ItemBookService` | Page request and writable page save |
 | `0x71` | Bulletin Board Messages | both | `BulletinBoardMessagesPacket`, `BulletinBoardDisplayPacket`, `BulletinBoardSummaryPacket`, `BulletinBoardMessagePacket` | `handler` + `outgoing` | `BulletinBoardHandler`, `BulletinBoardModule` / `BulletinBoardService` | Classic bulletin board open/read/post/remove flow |
 | `0x95` | Dye Window | both | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `handler` + `outgoing` | `DyeWindowHandler`, `DyeModule` / `DyeColorService` | Classic dye tub hue picker flow; outgoing packet intentionally not registry-decorated to avoid opcode collision |
-| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save |
+| `0xD4` | Book Header (New) | C -> S | `BookHeaderNewPacket` | `handler` | `ItemHandler -> ItemBookService` | Writable `title` / `author` save |
 | `0xD9` | Spy On Client | C -> S | `SpyOnClientPacket` | `handler` | `PlayerHandler` | Minimal session-side handling |
 | `0x03` | Talk Request | C -> S | `TalkRequestPacket` | `parse-only` | none | Legacy speech path not wired |
 | `0x12` | Request Skill / Use | C -> S | `RequestSkillUsePacket` | `parse-only` | none | Skill-use flow still missing |
