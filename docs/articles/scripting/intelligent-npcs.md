@@ -103,6 +103,82 @@ function lilly.brain_loop(npc_id)
 end
 ```
 
+## How It Works
+
+At runtime, an intelligent NPC goes through this flow:
+
+1. A Lua brain decides when to trigger AI dialogue.
+2. The brain calls `ai_dialogue.listener(...)` or `ai_dialogue.idle(...)`.
+3. Moongate resolves the NPC prompt file and current memory summary.
+4. A dialogue request is built with:
+   - NPC name
+   - prompt text
+   - compact memory
+   - nearby player names
+   - player speech text for listener triggers
+5. The expensive OpenAI request is scheduled off the game loop.
+6. The model returns structured JSON:
+   - `should_speak`
+   - `speech_text`
+   - `memory_summary`
+   - `mood`
+7. Back on the game loop, Moongate:
+   - saves updated memory if present
+   - makes the NPC speak if `should_speak` is true
+
+This keeps the shard responsive while still letting the NPC behave intelligently.
+
+## Runtime Components
+
+The main pieces are:
+
+- Lua brain script
+  - decides when to ask for AI dialogue
+- `ai_dialogue` Lua module
+  - entry point exposed to scripts
+- `NpcDialogueService`
+  - builds request context and applies final response
+- `OpenAiNpcDialogueClient`
+  - talks to `openai-dotnet`
+- `NpcAiPromptService`
+  - loads persona prompt files from disk
+- `NpcAiMemoryService`
+  - loads and saves compact NPC memory summaries
+- `IAsyncWorkSchedulerService`
+  - runs slow LLM work in background and posts completion back to the game loop
+
+## Listener vs Idle
+
+`ai_dialogue.listener(npc, sender, text)` is for reactive speech:
+
+- a nearby player says something
+- the NPC may answer that specific speech
+- the sender name and heard text are included in the request
+
+`ai_dialogue.idle(npc)` is for autonomous chatter:
+
+- used from a brain loop or timer
+- only runs when players are nearby
+- the NPC may say a short in-character line even if nobody just spoke
+
+## Prompt and Memory Roles
+
+Prompt files and memory files do different jobs:
+
+- prompt file
+  - static persona and roleplay rules
+  - checked into the repo
+- memory file
+  - compact evolving summary for one NPC instance
+  - updated at runtime
+
+In practice:
+
+- `lilly.txt` defines who Lilly is
+- `0x0016A5.txt` stores what that spawned Lilly currently remembers
+
+This separation keeps the persona stable while still letting the NPC learn and remember.
+
 ## Runtime Behavior
 
 - If `Llm.IsEnabled` is `false`, AI dialogue stays silent.
@@ -128,7 +204,8 @@ This matters because slow LLM calls would otherwise block the timer phase and st
 Current behavior:
 
 - one in-flight AI request per NPC
-- duplicate requests for the same NPC are skipped while one is already running
+- listener speech is queued per NPC and processed in order
+- idle requests still respect the single in-flight guard
 - replies can arrive slightly later, which is expected and preferred over blocking the shard
 
 Under the hood this is powered by `IAsyncWorkSchedulerService`, a reusable queue abstraction built on top of the background job service.

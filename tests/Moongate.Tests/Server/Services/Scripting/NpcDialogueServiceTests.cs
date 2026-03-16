@@ -189,6 +189,10 @@ public sealed class NpcDialogueServiceTests
 
         public TaskCompletionSource<object?>? DeferredResultSource { get; set; }
 
+        public bool KeepKeyInFlightUntilResultCallbackReturns { get; set; }
+
+        private bool _hasInFlightKey;
+
         public bool TrySchedule<TKey, TResult>(
             string queueName,
             TKey key,
@@ -199,10 +203,16 @@ public sealed class NpcDialogueServiceTests
         )
             where TKey : notnull
         {
+            if (KeepKeyInFlightUntilResultCallbackReturns && _hasInFlightKey)
+            {
+                return false;
+            }
+
             ScheduleCount++;
             LastQueueName = queueName;
             LastKey = key;
             LastTimeout = timeout;
+            _hasInFlightKey = true;
 
             PendingWork = async cancellationToken =>
             {
@@ -229,8 +239,61 @@ public sealed class NpcDialogueServiceTests
         public void CompletePendingWork(object? result)
         {
             Assert.That(PendingResultCallback, Is.Not.Null);
-            PendingResultCallback!(result);
+            try
+            {
+                PendingResultCallback!(result);
+            }
+            finally
+            {
+                _hasInFlightKey = false;
+            }
         }
+    }
+
+    private sealed class NpcDialogueBackgroundJobServiceStub : IBackgroundJobService
+    {
+        private readonly Queue<Action> _pendingGameLoop = new();
+
+        public void EnqueueBackground(Action job)
+            => throw new NotSupportedException();
+
+        public void EnqueueBackground(Func<Task> job)
+            => throw new NotSupportedException();
+
+        public int ExecutePendingOnGameLoop(int maxActions = 100)
+        {
+            var executed = 0;
+            while (executed < maxActions && _pendingGameLoop.Count > 0)
+            {
+                _pendingGameLoop.Dequeue()();
+                executed++;
+            }
+
+            return executed;
+        }
+
+        public void PostToGameLoop(Action action)
+            => _pendingGameLoop.Enqueue(action);
+
+        public void RunBackgroundAndPostResult<TResult>(
+            Func<TResult> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        )
+            => throw new NotSupportedException();
+
+        public void RunBackgroundAndPostResultAsync<TResult>(
+            Func<Task<TResult>> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        )
+            => throw new NotSupportedException();
+
+        public void Start(int? workerCount = null)
+            => throw new NotSupportedException();
+
+        public Task StopAsync()
+            => Task.CompletedTask;
     }
 
     [Test]
@@ -255,6 +318,7 @@ public sealed class NpcDialogueServiceTests
         {
             DeferredResultSource = new(TaskCreationOptions.RunContinuationsAsynchronously)
         };
+        var backgroundJobs = new NpcDialogueBackgroundJobServiceStub();
         var service = new NpcDialogueService(
             config,
             promptService,
@@ -263,7 +327,8 @@ public sealed class NpcDialogueServiceTests
             openAiClient,
             speechService,
             spatialWorldService,
-            scheduler
+            scheduler,
+            backgroundJobs
         );
         var npc = CreateNpc((Serial)0x100u, "Lilly", isPlayer: false);
         var sender = CreateNpc((Serial)0x200u, "Marcus", isPlayer: true);
@@ -396,6 +461,7 @@ public sealed class NpcDialogueServiceTests
         var speechService = new NpcDialogueSpeechServiceStub();
         var spatialWorldService = new NpcDialogueSpatialWorldServiceStub();
         var scheduler = new NpcDialogueAsyncWorkSchedulerStub();
+        var backgroundJobs = new NpcDialogueBackgroundJobServiceStub();
         var service = new NpcDialogueService(
             config,
             promptService,
@@ -404,7 +470,8 @@ public sealed class NpcDialogueServiceTests
             openAiClient,
             speechService,
             spatialWorldService,
-            scheduler
+            scheduler,
+            backgroundJobs
         );
         var npc = CreateNpc((Serial)0x100u, "Lilly", isPlayer: false);
         var sender = CreateNpc((Serial)0x200u, "Marcus", isPlayer: true);
@@ -452,6 +519,7 @@ public sealed class NpcDialogueServiceTests
         var speechService = new NpcDialogueSpeechServiceStub();
         var spatialWorldService = new NpcDialogueSpatialWorldServiceStub();
         var scheduler = new NpcDialogueAsyncWorkSchedulerStub();
+        var backgroundJobs = new NpcDialogueBackgroundJobServiceStub();
         var service = new NpcDialogueService(
             config,
             promptService,
@@ -460,7 +528,8 @@ public sealed class NpcDialogueServiceTests
             openAiClient,
             speechService,
             spatialWorldService,
-            scheduler
+            scheduler,
+            backgroundJobs
         );
         var npc = CreateNpc((Serial)0x100u, "Lilly", isPlayer: false);
 
@@ -478,7 +547,7 @@ public sealed class NpcDialogueServiceTests
     }
 
     [Test]
-    public void QueueListener_WhenListenerCooldownBlocksRequest_ShouldNotScheduleWork()
+    public async Task QueueListener_WhenAnotherRequestIsInFlight_ShouldQueueAndProcessNextSpeech()
     {
         var config = CreateEnabledConfig();
         var promptService = new NpcDialoguePromptServiceStub();
@@ -496,6 +565,7 @@ public sealed class NpcDialogueServiceTests
         var speechService = new NpcDialogueSpeechServiceStub();
         var spatialWorldService = new NpcDialogueSpatialWorldServiceStub();
         var scheduler = new NpcDialogueAsyncWorkSchedulerStub();
+        var backgroundJobs = new NpcDialogueBackgroundJobServiceStub();
         var service = new NpcDialogueService(
             config,
             promptService,
@@ -504,21 +574,89 @@ public sealed class NpcDialogueServiceTests
             openAiClient,
             speechService,
             spatialWorldService,
-            scheduler
+            scheduler,
+            backgroundJobs
         );
         var npc = CreateNpc((Serial)0x100u, "Lilly", isPlayer: false);
         var sender = CreateNpc((Serial)0x200u, "Marcus", isPlayer: true);
 
         var first = service.QueueListener(npc, sender, "hello");
         var second = service.QueueListener(npc, sender, "hello again");
+        var firstResponse = await scheduler.ExecutePendingWorkAsync();
+        scheduler.CompletePendingWork(firstResponse);
+        backgroundJobs.ExecutePendingOnGameLoop();
+        var secondResponse = await scheduler.ExecutePendingWorkAsync();
+        scheduler.CompletePendingWork(secondResponse);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(first, Is.True);
-                Assert.That(second, Is.False);
-                Assert.That(scheduler.ScheduleCount, Is.EqualTo(1));
-                Assert.That(openAiClient.CallCount, Is.EqualTo(0));
+                Assert.That(second, Is.True);
+                Assert.That(scheduler.ScheduleCount, Is.EqualTo(2));
+                Assert.That(openAiClient.CallCount, Is.EqualTo(2));
+                Assert.That(openAiClient.LastRequest, Is.Not.Null);
+                Assert.That(openAiClient.LastRequest!.HeardText, Is.EqualTo("hello again"));
+                Assert.That(speechService.SpeakCallCount, Is.EqualTo(2));
+            }
+        );
+    }
+
+    [Test]
+    public async Task QueueListener_WhenSchedulerReleasesKeyAfterResultCallback_ShouldStillProcessQueuedSpeech()
+    {
+        var config = CreateEnabledConfig();
+        var promptService = new NpcDialoguePromptServiceStub();
+        var memoryService = new NpcDialogueMemoryServiceStub();
+        var runtimeState = new NpcAiRuntimeStateService();
+        runtimeState.BindPromptFile((Serial)0x100u, "lilly.txt");
+        var openAiClient = new NpcDialogueOpenAiClientStub
+        {
+            ResponseToReturn = new()
+            {
+                ShouldSpeak = true,
+                SpeechText = "Hello again."
+            }
+        };
+        var speechService = new NpcDialogueSpeechServiceStub();
+        var spatialWorldService = new NpcDialogueSpatialWorldServiceStub();
+        var scheduler = new NpcDialogueAsyncWorkSchedulerStub
+        {
+            KeepKeyInFlightUntilResultCallbackReturns = true
+        };
+        var backgroundJobs = new NpcDialogueBackgroundJobServiceStub();
+        var service = new NpcDialogueService(
+            config,
+            promptService,
+            memoryService,
+            runtimeState,
+            openAiClient,
+            speechService,
+            spatialWorldService,
+            scheduler,
+            backgroundJobs
+        );
+        var npc = CreateNpc((Serial)0x100u, "Lilly", isPlayer: false);
+        var sender = CreateNpc((Serial)0x200u, "Marcus", isPlayer: true);
+
+        var first = service.QueueListener(npc, sender, "hello");
+        var second = service.QueueListener(npc, sender, "hello again");
+        var firstResponse = await scheduler.ExecutePendingWorkAsync();
+        scheduler.CompletePendingWork(firstResponse);
+        backgroundJobs.ExecutePendingOnGameLoop();
+        var secondResponse = await scheduler.ExecutePendingWorkAsync();
+        scheduler.CompletePendingWork(secondResponse);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(first, Is.True);
+                Assert.That(second, Is.True);
+                Assert.That(scheduler.ScheduleCount, Is.EqualTo(2));
+                Assert.That(openAiClient.CallCount, Is.EqualTo(2));
+                Assert.That(openAiClient.LastRequest, Is.Not.Null);
+                Assert.That(openAiClient.LastRequest!.HeardText, Is.EqualTo("hello again"));
+                Assert.That(speechService.SpeakCallCount, Is.EqualTo(2));
             }
         );
     }
