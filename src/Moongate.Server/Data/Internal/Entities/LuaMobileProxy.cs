@@ -57,6 +57,8 @@ public sealed class LuaMobileProxy
 
     public string Name => _mobile.Name ?? string.Empty;
 
+    internal UOMobileEntity Mobile => _mobile;
+
     public int MapId => _mobile.MapId;
 
     public int LocationX => _mobile.Location.X;

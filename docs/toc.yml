@@ -50,6 +50,8 @@
     href: articles/scripting/vendor-context-menus.md
   - name: NPC Behaviors
     href: articles/scripting/npc-behaviors.md
+  - name: Intelligent NPC Dialogue
+    href: articles/scripting/intelligent-npcs.md
   - name: Script Modules
     href: articles/scripting/modules.md
   - name: API Reference

@@ -28,6 +28,7 @@ This is the main documentation portal for Moongate v2.
 - [Scripting Overview](articles/scripting/overview.md)
 - [Vendor and Context Menus](articles/scripting/vendor-context-menus.md)
 - [NPC Behaviors](articles/scripting/npc-behaviors.md)
+- [Intelligent NPC Dialogue](articles/scripting/intelligent-npcs.md)
 - [Gump Tutorial](articles/scripting/gump-tutorial.md)
 - [Script Modules](articles/scripting/modules.md)
 - [Lua API](articles/scripting/api.md)

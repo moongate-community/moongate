@@ -212,7 +212,7 @@
       "human"
     ],
     "body": "0x0191",
-    "brain": "town_citizen",
+    "brain": "lilly",
     "fixedEquipment": [
       {
         "itemTemplateId": "backpack",

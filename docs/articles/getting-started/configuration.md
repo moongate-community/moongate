@@ -100,6 +100,17 @@ Top-level shape:
   "scripting": {
     "enableFileWatcher": true
   },
+  "llm": {
+    "isEnabled": false,
+    "apiKey": null,
+    "model": "gpt-5-mini",
+    "baseUrl": null,
+    "listenerCooldownMilliseconds": 60000,
+    "idleCooldownMilliseconds": 300000,
+    "idleNearbyPlayerRange": 12,
+    "speechRange": 12,
+    "maxMemoryCharacters": 4000
+  },
   "email": {
     "isEnabled": false,
     "fromAddress": "noreply@localhost",
@@ -141,6 +152,60 @@ Current scripting runtime option:
 - `Scripting.LuaBrainMaxBrainsPerTick` (`int`, default `0`)
   - `<= 0`: no explicit per-tick cap
   - `> 0`: limits how many due NPC brains are processed per tick (helps smooth spikes under heavy load)
+
+## LLM
+
+Moongate can optionally use OpenAI-backed dialogue for selected NPC brains through the `ai_dialogue` Lua module.
+
+Relevant keys:
+
+- `Llm.IsEnabled` (`bool`, default `false`)
+  - enables intelligent NPC dialogue
+- `Llm.ApiKey` (`string?`, default `null`)
+  - OpenAI API key
+  - if omitted, runtime falls back to `OPENAI_API_KEY`
+  - if both are present, `Llm.ApiKey` wins
+- `Llm.Model` (`string`, default `gpt-5-mini`)
+- `Llm.BaseUrl` (`string?`, default `null`)
+  - optional OpenAI-compatible endpoint override
+- `Llm.ListenerCooldownMilliseconds` (`int`, default `60000`)
+  - per-NPC cooldown for player-triggered replies
+- `Llm.IdleCooldownMilliseconds` (`int`, default `300000`)
+  - per-NPC cooldown for autonomous chatter
+- `Llm.IdleNearbyPlayerRange` (`int`, default `12`)
+  - idle chatter only runs when at least one player is nearby
+- `Llm.SpeechRange` (`int`, default `12`)
+  - speech broadcast range when the NPC talks
+- `Llm.MaxMemoryCharacters` (`int`, default `4000`)
+  - trims persisted memory before prompt injection
+- `Llm.MaxOutputTokenCount` (`int`, default `1200`)
+  - output token budget for one structured dialogue completion
+
+Implementation note:
+
+- `ai_dialogue` requests are scheduled through the async work scheduler and run off the game loop
+- the NPC reply can therefore arrive slightly after the player speech
+- this is intentional and prevents slow OpenAI calls from stalling the shard
+
+Recommended production setup:
+
+```bash
+export OPENAI_API_KEY="sk-..."
+```
+
+Local/dev alternative in `moongate.json`:
+
+```json
+{
+  "Llm": {
+    "IsEnabled": true,
+    "ApiKey": "sk-...",
+    "Model": "gpt-5-mini"
+  }
+}
+```
+
+For prompt files, memory files, and Lua usage, see [Intelligent NPC Dialogue](../scripting/intelligent-npcs.md).
 
 ## Email Templates
 

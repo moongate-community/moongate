@@ -62,6 +62,7 @@ public static class AddBootstrapCoreServicesExtension
     {
         container.Register<IMessageBusService, MessageBusService>(Reuse.Singleton);
         container.Register<IBackgroundJobService, BackgroundJobService>(Reuse.Singleton);
+        container.Register<IAsyncWorkSchedulerService, AsyncWorkSchedulerService>(Reuse.Singleton);
         container.Register<IGameEventBusService, GameEventBusService>(Reuse.Singleton);
         container.Register<IDispatchEventsService, DispatchEventsService>(Reuse.Singleton);
         container.Register<IServerLifetimeService, ServerLifetimeService>(Reuse.Singleton);
@@ -98,6 +99,11 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);
         container.Register<ITextTemplateService, TextTemplateService>(Reuse.Singleton);
         container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
+        container.Register<INpcAiPromptService, NpcAiPromptService>(Reuse.Singleton);
+        container.Register<INpcAiMemoryService, NpcAiMemoryService>(Reuse.Singleton);
+        container.Register<INpcAiRuntimeStateService, NpcAiRuntimeStateService>(Reuse.Singleton);
+        container.Register<IOpenAiNpcDialogueClient, OpenAiNpcDialogueClient>(Reuse.Singleton);
+        container.Register<INpcDialogueService, NpcDialogueService>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);
