@@ -48,6 +48,18 @@
     "EnableFileWatcher": true,
     "LuaBrainMaxBrainsPerTick": 0
   },
+  "Llm": {
+    "IsEnabled": true,
+    "ApiKey": null,
+    "Model": "gpt-5-mini",
+    "BaseUrl": null,
+    "ListenerCooldownMilliseconds": 60000,
+    "IdleCooldownMilliseconds": 300000,
+    "IdleNearbyPlayerRange": 12,
+    "SpeechRange": 12,
+    "MaxMemoryCharacters": 4000,
+    "MaxOutputTokenCount": 1200
+  },
   "Email": {
     "IsEnabled": false,
     "FromAddress": "no-reply@moongate.local",
