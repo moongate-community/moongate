@@ -141,6 +141,7 @@ Top-level shape:
 - `logs`
 - `cache`
 - `email/templates`
+- `plugins`
 
 ## Scripting
 

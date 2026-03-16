@@ -7,5 +7,6 @@ public record LuaEngineConfig(
     string LuarcDirectory,
     string ScriptsDirectory,
     string EngineVersion,
-    bool EnableFileWatcher = true
+    bool EnableFileWatcher = true,
+    string? PluginsDirectory = null
 );

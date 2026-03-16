@@ -52,6 +52,8 @@
     href: articles/scripting/npc-behaviors.md
   - name: Intelligent NPC Dialogue
     href: articles/scripting/intelligent-npcs.md
+  - name: Lua Plugins
+    href: articles/scripting/lua-plugins.md
   - name: Script Modules
     href: articles/scripting/modules.md
   - name: API Reference

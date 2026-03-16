@@ -79,7 +79,8 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
                 context.DirectoriesConfig[DirectoryType.Scripts],
                 context.DirectoriesConfig[DirectoryType.Scripts],
                 VersionUtils.Version,
-                context.Config.Scripting.EnableFileWatcher
+                context.Config.Scripting.EnableFileWatcher,
+                context.DirectoriesConfig[DirectoryType.Plugins]
             )
         );
         ScriptModuleRegistry.Register(context.Container);

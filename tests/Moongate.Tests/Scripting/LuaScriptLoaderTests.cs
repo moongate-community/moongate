@@ -45,4 +45,22 @@ public class LuaScriptLoaderTests
 
         Assert.That(exists, Is.True);
     }
+
+    [Test]
+    public void LoadFile_WhenPluginNamespacedModuleExists_ShouldReturnPluginModuleContent()
+    {
+        using var temp = new TempDirectory();
+        var scriptsDir = Path.Combine(temp.Path, "scripts");
+        var pluginsDir = Path.Combine(temp.Path, "plugins");
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "helpplus", "gumps"));
+        var expected = "return { title = 'helpplus' }";
+        File.WriteAllText(Path.Combine(pluginsDir, "helpplus", "gumps", "window.lua"), expected);
+        var loader = new LuaScriptLoader(scriptsDir, pluginsDir);
+        var table = new Table(new());
+
+        var content = loader.LoadFile("plugin.helpplus.gumps.window", table);
+
+        Assert.That(content, Is.EqualTo(expected));
+    }
 }

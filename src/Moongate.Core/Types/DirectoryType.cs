@@ -13,5 +13,6 @@ public enum DirectoryType
     Images,
     Logs,
     Cache,
-    EmailTemplates
+    EmailTemplates,
+    Plugins
 }

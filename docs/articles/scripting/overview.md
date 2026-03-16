@@ -10,6 +10,7 @@ The scripting system is built on **MoonSharp**, a lightweight Lua interpreter fo
 - .NET interop via attributes
 - Automatic `.luarc` generation for editor tooling
 - Callback system for game events
+- Lua plugin packaging under `plugins/`
 
 ## Architecture
 
@@ -115,6 +116,7 @@ log.info("Active players: " .. count)
 For the behavior-based NPC AI architecture, see [NPC Behaviors](npc-behaviors.md).
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
+For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
 
 ### NPC Brain Example
 
