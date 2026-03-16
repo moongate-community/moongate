@@ -233,6 +233,25 @@ Latest measured dry-run values on Apple M4 Max / .NET 10:
 
 The first-iteration spikes are expected for cold paths. The steady-state samples clustered around `2.6-2.8 ms` for cross-map and `1.64-1.72 ms` for same-map.
 
+## Login World Sync
+
+We also hit a concrete login stall on cold sectors:
+
+- `LoginCharacterPacket` originally waited for `CharacterHandler`
+- `CharacterHandler` published `PlayerCharacterLoggedInEvent`
+- login world sync then ran as part of the generic `MobileHandler` path
+
+That made the `0x5D` login packet inherit cold sector load and broad visibility sync cost.
+
+The runtime path is now narrower:
+
+- `CharacterHandler` keeps the packet-critical bootstrap lean
+- `PlayerCharacterLoggedInEvent` is deferred off the `0x5D` critical path
+- `PlayerLoginWorldSyncHandler` and `PlayerLoginWorldSyncService` own the login-specific mini snapshot plus visible-range refill
+- bulk mobile equipment hydration and smaller lazy-load defaults reduce cold-sector cost before the refill runs
+
+This keeps login-specific world sync policy separate from generic movement and teleport orchestration, which makes the path easier to reason about and cheaper to profile.
+
 ## Event Listener Pattern
 
 Event listeners implement `IGameEventListener<TEvent>` and are registered with `[RegisterGameEventListener]`:

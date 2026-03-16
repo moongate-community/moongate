@@ -56,6 +56,8 @@ Like Minecraft chunks that load around the player and unload when distant, Moong
 2. **Movement warmup**: when a player crosses a sector boundary, adjacent sectors are warmed via `WarmupSectorsFireAndForget`.
 3. **Lazy load**: when any code accesses a sector that has not been loaded yet, `EnsureSingleSectorLoadedAsync` loads persistent NPCs and ground items from the repository.
 
+Login world sync itself is now handled by a dedicated login bootstrap path, not by the generic `MobileHandler` movement/teleport flow. The login path does a small sector snapshot first and then refills the player's actual visible range, keeping login-specific sync policy separate from generic mobile orchestration.
+
 Load tasks are deduplicated: if a sector is already being loaded, subsequent requests reuse the in-flight task instead of triggering a second load. This prevents thundering herd issues when multiple systems access the same sector concurrently.
 
 ## Entity Tracking

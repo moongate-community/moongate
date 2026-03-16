@@ -4,7 +4,6 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
@@ -21,8 +20,6 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
-using Serilog;
-using System.Diagnostics;
 
 namespace Moongate.Server.Handlers;
 
@@ -30,13 +27,10 @@ namespace Moongate.Server.Handlers;
 public class MobileHandler
     : IGameEventListener<MobileAddedInSectorEvent>,
       IGameEventListener<MobilePositionChangedEvent>,
-      IGameEventListener<PlayerCharacterLoggedInEvent>,
       IMoongateService
 {
     private const int DefaultMobileSyncRange = 18;
-    private const int LoginSnapshotSectorRadius = 1;
     private const int NearEdgePreloadThreshold = 4;
-    private static readonly ILogger Logger = Log.ForContext<MobileHandler>();
     private readonly ISpatialWorldService _spatialWorldService;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -147,25 +141,6 @@ public class MobileHandler
         {
             await SendTeleportDestinationEffectsAsync(mobileEntity, gameEvent);
         }
-    }
-
-    public async Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
-    {
-        _ = cancellationToken;
-        var mobileEntity = ResolveCharacterFromSession(gameEvent.SessionId, gameEvent.CharacterId) ??
-                           await _characterService.GetCharacterAsync(gameEvent.CharacterId);
-
-        if (mobileEntity is null)
-        {
-            return;
-        }
-
-        await SyncSectorSnapshotForPlayerAsync(
-            mobileEntity,
-            mobileEntity.MapId,
-            mobileEntity.Location,
-            LoginSnapshotSectorRadius
-        );
     }
 
     public Task StartAsync()
@@ -429,82 +404,6 @@ public class MobileHandler
         return sectors.Count > 0;
     }
 
-    private Task SyncSectorSnapshotForPlayerAsync(
-        UOMobileEntity mobileEntity,
-        int mapId,
-        Point3D centerLocation,
-        int sectorRadius
-    )
-    {
-        if (!_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
-        {
-            return Task.CompletedTask;
-        }
-
-        var totalStopwatch = Stopwatch.StartNew();
-        var centerSectorStopwatch = Stopwatch.StartNew();
-        var centerSector = _spatialWorldService.GetSectorByLocation(mapId, centerLocation);
-        centerSectorStopwatch.Stop();
-
-        if (centerSector is null)
-        {
-            return Task.CompletedTask;
-        }
-
-        var lookupStopwatch = Stopwatch.StartNew();
-        var loadedSectors = BuildLoadedSectorLookup(mapId, centerSector);
-        lookupStopwatch.Stop();
-        var stats = new LoginSectorSyncStats();
-        var syncStopwatch = Stopwatch.StartNew();
-        var sentItemSerials = new HashSet<Serial>();
-        var sentMobileSerials = new HashSet<Serial>();
-
-        for (var sectorX = centerSector.SectorX - sectorRadius;
-             sectorX <= centerSector.SectorX + sectorRadius;
-             sectorX++)
-        {
-            for (var sectorY = centerSector.SectorY - sectorRadius;
-                 sectorY <= centerSector.SectorY + sectorRadius;
-                 sectorY++)
-            {
-                stats.SectorsRequested++;
-                stats.Accumulate(SyncLoadedSectorForPlayer(session, mobileEntity, ResolveLoadedSector(
-                    loadedSectors,
-                    mapId,
-                    sectorX,
-                    sectorY,
-                    centerLocation.Z
-                ),
-                    sentItemSerials,
-                    sentMobileSerials));
-            }
-        }
-
-        RefillVisibleRangeForPlayer(session, mobileEntity, sentItemSerials, sentMobileSerials, stats);
-        syncStopwatch.Stop();
-        totalStopwatch.Stop();
-
-        if (totalStopwatch.ElapsedMilliseconds >= 50)
-        {
-            Logger.Warning(
-                "Player login sector snapshot session={SessionId} character={CharacterId} total={TotalMs:0.###}ms centerSector={CenterSectorMs:0.###}ms buildLookup={BuildLookupMs:0.###}ms sync={SyncMs:0.###}ms sectorsRequested={SectorsRequested} sectorsLoaded={SectorsLoaded} itemsSent={ItemsSent} mobilesSent={MobilesSent} wornItemsSent={WornItemsSent}",
-                session.SessionId,
-                mobileEntity.Id,
-                totalStopwatch.Elapsed.TotalMilliseconds,
-                centerSectorStopwatch.Elapsed.TotalMilliseconds,
-                lookupStopwatch.Elapsed.TotalMilliseconds,
-                syncStopwatch.Elapsed.TotalMilliseconds,
-                stats.SectorsRequested,
-                stats.SectorsLoaded,
-                stats.ItemsSent,
-                stats.MobilesSent,
-                stats.WornItemsSent
-            );
-        }
-
-        return Task.CompletedTask;
-    }
-
     private Dictionary<(int SectorX, int SectorY), MapSector> BuildLoadedSectorLookup(int mapId, MapSector anchorSector)
     {
         var lookup = new Dictionary<(int SectorX, int SectorY), MapSector>();
@@ -554,35 +453,27 @@ public class MobileHandler
         return sector;
     }
 
-    private SectorSyncStats SyncLoadedSectorForPlayer(
+    private void SyncLoadedSectorForPlayer(
         GameSession session,
         UOMobileEntity mobileEntity,
-        MapSector? targetSector,
-        HashSet<Serial>? sentItemSerials = null,
-        HashSet<Serial>? sentMobileSerials = null
+        MapSector? targetSector
     )
     {
-        var stats = new SectorSyncStats();
-
         if (targetSector is null)
         {
-            return stats;
+            return;
         }
-
-        stats.SectorLoaded = true;
 
         foreach (var item in targetSector.GetItems())
         {
             if (item.ParentContainerId != Serial.Zero ||
                 item.EquippedMobileId != Serial.Zero ||
-                !ItemVisibilityHelper.CanSessionSeeItem(session, item) ||
-                (sentItemSerials is not null && !sentItemSerials.Add(item.Id)))
+                !ItemVisibilityHelper.CanSessionSeeItem(session, item))
             {
                 continue;
             }
 
             _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
-            stats.ItemsSent++;
         }
 
         foreach (var otherMobile in targetSector.GetMobiles())
@@ -592,72 +483,14 @@ public class MobileHandler
                 continue;
             }
 
-            if (sentMobileSerials is not null && !sentMobileSerials.Add(otherMobile.Id))
-            {
-                continue;
-            }
-
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
                 new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
             );
             _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
-            stats.MobilesSent++;
             WornItemPacketHelper.EnqueueVisibleWornItems(
                 otherMobile,
-                packet =>
-                {
-                    _outgoingPacketQueue.Enqueue(session.SessionId, packet);
-                    stats.WornItemsSent++;
-                }
-            );
-        }
-
-        return stats;
-    }
-
-    private void RefillVisibleRangeForPlayer(
-        GameSession session,
-        UOMobileEntity mobileEntity,
-        HashSet<Serial> sentItemSerials,
-        HashSet<Serial> sentMobileSerials,
-        LoginSectorSyncStats stats
-    )
-    {
-        foreach (var item in _spatialWorldService.GetNearbyItems(mobileEntity.Location, _mobileSyncRange, mobileEntity.MapId))
-        {
-            if (item.ParentContainerId != Serial.Zero ||
-                item.EquippedMobileId != Serial.Zero ||
-                !ItemVisibilityHelper.CanSessionSeeItem(session, item) ||
-                !sentItemSerials.Add(item.Id))
-            {
-                continue;
-            }
-
-            _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
-            stats.ItemsSent++;
-        }
-
-        foreach (var otherMobile in _spatialWorldService.GetNearbyMobiles(mobileEntity.Location, _mobileSyncRange, mobileEntity.MapId))
-        {
-            if (otherMobile.Id == mobileEntity.Id || !sentMobileSerials.Add(otherMobile.Id))
-            {
-                continue;
-            }
-
-            _outgoingPacketQueue.Enqueue(
-                session.SessionId,
-                new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
-            );
-            _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
-            stats.MobilesSent++;
-            WornItemPacketHelper.EnqueueVisibleWornItems(
-                otherMobile,
-                packet =>
-                {
-                    _outgoingPacketQueue.Enqueue(session.SessionId, packet);
-                    stats.WornItemsSent++;
-                }
+                packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
             );
         }
     }
@@ -789,32 +622,4 @@ public class MobileHandler
     )
         => _dispatchEventsService.DispatchMobileUpdateAsync(mobileEntity, mapId, _mobileSyncRange, isNew);
 
-    private sealed class LoginSectorSyncStats
-    {
-        public int SectorsRequested { get; set; }
-        public int SectorsLoaded { get; set; }
-        public int ItemsSent { get; set; }
-        public int MobilesSent { get; set; }
-        public int WornItemsSent { get; set; }
-
-        public void Accumulate(SectorSyncStats stats)
-        {
-            if (stats.SectorLoaded)
-            {
-                SectorsLoaded++;
-            }
-
-            ItemsSent += stats.ItemsSent;
-            MobilesSent += stats.MobilesSent;
-            WornItemsSent += stats.WornItemsSent;
-        }
-    }
-
-    private sealed class SectorSyncStats
-    {
-        public bool SectorLoaded { get; set; }
-        public int ItemsSent { get; set; }
-        public int MobilesSent { get; set; }
-        public int WornItemsSent { get; set; }
-    }
 }
