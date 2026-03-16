@@ -59,6 +59,10 @@ Current gameplay examples:
 - `BulletinBoardHandler` listens to `BulletinBoardMessagesPacket` (`0x71`)
   - double click on a bulletin board opens the classic board window
   - client `sub 3/4/5/6` requests load messages, post replies, and remove owned leaf messages
+- `HelpHandler` listens to `RequestHelpPacket` (`0x9B`)
+  - delegates to `HelpRequestService`
+  - bridges into Lua `on_help_request(session_id, character_id)`
+  - opens the custom help gump from `moongate_data/scripts/gumps/help.lua`
 
 ## Pragmatic POL Coverage Matrix
 
@@ -92,6 +96,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
 | `0xB1` | Gump Menu Selection | C -> S | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump button replies |
+| `0x9B` | Request Help | C -> S | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService` | Opens the Lua custom help gump |
 | `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use / open flows |
 | `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels / tooltip-side behavior |
 | `0x07` | Pick Up Item | C -> S | `PickUpItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Drag start |

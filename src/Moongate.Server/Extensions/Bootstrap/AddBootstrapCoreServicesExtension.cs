@@ -101,6 +101,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IDyeColorService, DyeColorService>(Reuse.Singleton);
         container.Register<IBulletinBoardService, BulletinBoardService>(Reuse.Singleton);
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
+        container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);
         container.Register<ITextTemplateService, TextTemplateService>(Reuse.Singleton);
