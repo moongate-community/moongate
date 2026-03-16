@@ -214,50 +214,6 @@ export function MapsPage() {
 
               return (
               <>
-                {/* Player markers */}
-                {visiblePlayers.map((p) => {
-                  const sx = positionX + p.x * scale
-                  const sy = positionY + p.y * scale
-                  return (
-                    <div
-                      key={p.sessionId}
-                      style={{
-                        position: 'absolute',
-                        left: sx,
-                        top: sy,
-                        transform: 'translate(-50%, -50%)',
-                        pointerEvents: 'none',
-                        zIndex: 25,
-                      }}
-                    >
-                      {/* Dot */}
-                      <div style={{
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: '#22c55e',
-                        boxShadow: '0 0 6px #22c55e',
-                        margin: '0 auto',
-                      }} />
-                      {/* Name */}
-                      <div style={{
-                        marginTop: '3px',
-                        background: 'rgba(10,10,16,0.85)',
-                        border: '1px solid rgba(34,197,94,0.4)',
-                        borderRadius: '3px',
-                        padding: '1px 6px',
-                        fontFamily: 'monospace',
-                        fontSize: '10px',
-                        color: '#22c55e',
-                        whiteSpace: 'nowrap',
-                        textAlign: 'center',
-                      }}>
-                        {p.characterName || '?'}
-                      </div>
-                    </div>
-                  )
-                })}
-
                 {/* Crosshair */}
                 {mousePos && (
                   <>
@@ -314,12 +270,57 @@ export function MapsPage() {
                   wrapperStyle={{ width: '100%', height: '100%', cursor: 'grab' }}
                   contentStyle={{ width: '100%', height: '100%' }}
                 >
-                  <img
-                    src={imageUrl}
-                    alt={`${selectedMap.name} map`}
-                    style={{ display: 'block', maxWidth: '100%', maxHeight: '100%' }}
-                    draggable={false}
-                  />
+                  <div
+                    style={{
+                      position: 'relative',
+                      width: selectedMap.width,
+                      height: selectedMap.height,
+                    }}
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={`${selectedMap.name} map`}
+                      style={{ display: 'block', width: '100%', height: '100%' }}
+                      draggable={false}
+                    />
+
+                    {visiblePlayers.map((p) => (
+                      <div
+                        key={p.sessionId}
+                        style={{
+                          position: 'absolute',
+                          left: p.x,
+                          top: p.y,
+                          transform: 'translate(-50%, -50%)',
+                          pointerEvents: 'none',
+                          zIndex: 25,
+                        }}
+                      >
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: '#22c55e',
+                          boxShadow: '0 0 6px #22c55e',
+                          margin: '0 auto',
+                        }} />
+                        <div style={{
+                          marginTop: '3px',
+                          background: 'rgba(10,10,16,0.85)',
+                          border: '1px solid rgba(34,197,94,0.4)',
+                          borderRadius: '3px',
+                          padding: '1px 6px',
+                          fontFamily: 'monospace',
+                          fontSize: '10px',
+                          color: '#22c55e',
+                          whiteSpace: 'nowrap',
+                          textAlign: 'center',
+                        }}>
+                          {p.characterName || '?'}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </TransformComponent>
               </>
             )
