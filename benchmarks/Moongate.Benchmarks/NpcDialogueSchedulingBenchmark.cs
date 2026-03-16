@@ -68,7 +68,8 @@ public class NpcDialogueSchedulingBenchmark : IDisposable
             _openAiClient,
             _speechService,
             new BenchmarkSpatialWorldService(),
-            _scheduler
+            _scheduler,
+            _backgroundJobs
         );
 
         _npc = new()
