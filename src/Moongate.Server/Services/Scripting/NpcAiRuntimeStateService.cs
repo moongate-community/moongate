@@ -11,6 +11,17 @@ public sealed class NpcAiRuntimeStateService : INpcAiRuntimeStateService
 {
     private readonly ConcurrentDictionary<Serial, RuntimeState> _states = [];
 
+    private sealed class RuntimeState
+    {
+        public object SyncRoot { get; } = new();
+
+        public string? PromptFile { get; set; }
+
+        public long LastListenerRequestMilliseconds { get; set; }
+
+        public long LastIdleRequestMilliseconds { get; set; }
+    }
+
     public void BindPromptFile(Serial npcId, string promptFile)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(promptFile);
@@ -23,10 +34,10 @@ public sealed class NpcAiRuntimeStateService : INpcAiRuntimeStateService
     }
 
     public bool TryAcquireIdle(Serial npcId, long nowMilliseconds, int cooldownMilliseconds)
-        => TryAcquire(npcId, nowMilliseconds, cooldownMilliseconds, isIdle: true);
+        => TryAcquire(npcId, nowMilliseconds, cooldownMilliseconds, true);
 
     public bool TryAcquireListener(Serial npcId, long nowMilliseconds, int cooldownMilliseconds)
-        => TryAcquire(npcId, nowMilliseconds, cooldownMilliseconds, isIdle: false);
+        => TryAcquire(npcId, nowMilliseconds, cooldownMilliseconds, false);
 
     public bool TryGetPromptFile(Serial npcId, out string? promptFile)
     {
@@ -52,6 +63,7 @@ public sealed class NpcAiRuntimeStateService : INpcAiRuntimeStateService
         lock (state.SyncRoot)
         {
             var lastRequest = isIdle ? state.LastIdleRequestMilliseconds : state.LastListenerRequestMilliseconds;
+
             if (cooldownMilliseconds > 0 && lastRequest > 0 && nowMilliseconds - lastRequest < cooldownMilliseconds)
             {
                 return false;
@@ -68,16 +80,5 @@ public sealed class NpcAiRuntimeStateService : INpcAiRuntimeStateService
 
             return true;
         }
-    }
-
-    private sealed class RuntimeState
-    {
-        public object SyncRoot { get; } = new();
-
-        public string? PromptFile { get; set; }
-
-        public long LastListenerRequestMilliseconds { get; set; }
-
-        public long LastIdleRequestMilliseconds { get; set; }
     }
 }

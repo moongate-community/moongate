@@ -101,6 +101,28 @@ public class MetricsProvidersTests
     }
 
     [Test]
+    public async Task LuaBrainMetricsProvider_ShouldExposeExpectedMetricNames()
+    {
+        var provider = new LuaBrainMetricsProvider(
+            new MetricsProvidersTestLuaBrainRunner
+            {
+                DueBrainsTotal = 6,
+                ProcessedBrainsTotal = 5,
+                DeferredBrainsTotal = 1,
+                ProcessedTicksTotal = 2,
+                TickDurationTotalMs = 35,
+                TickDurationAvgMs = 17.5,
+                TickDurationMaxMs = 20
+            }
+        );
+
+        var samples = await provider.CollectAsync();
+        var names = samples.Select(sample => sample.Name).ToArray();
+
+        Assert.That(names, Is.EquivalentTo(LuaBrainMetricNames));
+    }
+
+    [Test]
     public async Task NetworkMetricsProvider_ShouldExposeExpectedMetricNames()
     {
         var provider = new NetworkMetricsProvider(
@@ -189,27 +211,5 @@ public class MetricsProvidersTests
         var names = samples.Select(sample => sample.Name).ToArray();
 
         Assert.That(names, Is.EquivalentTo(TimerMetricNames));
-    }
-
-    [Test]
-    public async Task LuaBrainMetricsProvider_ShouldExposeExpectedMetricNames()
-    {
-        var provider = new LuaBrainMetricsProvider(
-            new MetricsProvidersTestLuaBrainRunner
-            {
-                DueBrainsTotal = 6,
-                ProcessedBrainsTotal = 5,
-                DeferredBrainsTotal = 1,
-                ProcessedTicksTotal = 2,
-                TickDurationTotalMs = 35,
-                TickDurationAvgMs = 17.5,
-                TickDurationMaxMs = 20
-            }
-        );
-
-        var samples = await provider.CollectAsync();
-        var names = samples.Select(sample => sample.Name).ToArray();
-
-        Assert.That(names, Is.EquivalentTo(LuaBrainMetricNames));
     }
 }

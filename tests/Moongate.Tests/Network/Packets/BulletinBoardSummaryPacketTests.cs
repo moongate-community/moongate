@@ -38,12 +38,13 @@ public sealed class BulletinBoardSummaryPacketTests
         );
     }
 
-    private static uint ToUInt32(byte[] bytes, int offset)
-        => (uint)((bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3]);
-
     private static string ReadLengthPrefixedAscii(byte[] bytes, int offset)
     {
         var length = bytes[offset];
+
         return Encoding.ASCII.GetString(bytes, offset + 1, length - 1).TrimEnd('\0');
     }
+
+    private static uint ToUInt32(byte[] bytes, int offset)
+        => (uint)((bytes[offset] << 24) | (bytes[offset + 1] << 16) | (bytes[offset + 2] << 8) | bytes[offset + 3]);
 }

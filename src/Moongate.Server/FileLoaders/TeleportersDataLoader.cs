@@ -112,7 +112,11 @@ public class TeleportersDataLoader : IFileLoader
                 importedFromFile++;
             }
 
-            _logger.Information("Loaded {Count} teleporters from file {File}.", importedFromFile, Path.GetFileName(filePath));
+            _logger.Information(
+                "Loaded {Count} teleporters from file {File}.",
+                importedFromFile,
+                Path.GetFileName(filePath)
+            );
         }
 
         _teleportersDataService.SetEntries(entries);

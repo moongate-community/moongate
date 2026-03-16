@@ -10,16 +10,84 @@ public class CharacterCreationPacketTests
 {
     [SetUp]
     public void SetUp()
-    {
-        SkillInfo.Table =
+        => SkillInfo.Table =
         [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(16, "Evaluate Intelligence", 0, 0, 100, "Scholar", 0, 0, 0, 1, "EvaluateIntelligence", Stat.Intelligence, Stat.Intelligence),
-            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence),
-            new(46, "Meditation", 0, 0, 100, "Seer", 0, 0, 0, 1, "Meditation", Stat.Intelligence, Stat.Intelligence),
-            new(43, "Wrestling", 100, 0, 0, "Wrestler", 0, 0, 0, 1, "Wrestling", Stat.Strength, Stat.Dexterity)
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                16,
+                "Evaluate Intelligence",
+                0,
+                0,
+                100,
+                "Scholar",
+                0,
+                0,
+                0,
+                1,
+                "EvaluateIntelligence",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                25,
+                "Magery",
+                0,
+                0,
+                100,
+                "Wizard",
+                0,
+                0,
+                0,
+                1,
+                "Magery",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                46,
+                "Meditation",
+                0,
+                0,
+                100,
+                "Seer",
+                0,
+                0,
+                0,
+                1,
+                "Meditation",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                43,
+                "Wrestling",
+                100,
+                0,
+                0,
+                "Wrestler",
+                0,
+                0,
+                0,
+                1,
+                "Wrestling",
+                Stat.Strength,
+                Stat.Dexterity
+            )
         ];
-    }
 
     [Test]
     public void ToEntity_ShouldMapPacketIntoMobileEntity()

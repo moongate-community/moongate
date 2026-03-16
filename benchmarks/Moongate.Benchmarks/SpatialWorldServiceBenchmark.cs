@@ -4,8 +4,8 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Packets;
-using Moongate.Server.Data.World;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -157,7 +157,7 @@ public class SpatialWorldServiceBenchmark
             => Task.FromResult(
                 (
                     true,
-                    (UOMobileEntity?)new UOMobileEntity
+                    (UOMobileEntity?)new()
                     {
                         Id = (Serial)(uint)1,
                         MapId = mapId,
@@ -177,6 +177,9 @@ public class SpatialWorldServiceBenchmark
 
         public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
             => [];
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+            => _ = entries;
 
         public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
         {
@@ -199,13 +202,13 @@ public class SpatialWorldServiceBenchmark
 
             return false;
         }
-
-        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
-            => _ = entries;
     }
 
     private sealed class NoOpItemService : IItemService
     {
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -254,9 +257,6 @@ public class SpatialWorldServiceBenchmark
             => Task.CompletedTask;
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
     }
 

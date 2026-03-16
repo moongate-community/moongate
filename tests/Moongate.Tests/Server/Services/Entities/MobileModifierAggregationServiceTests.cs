@@ -8,6 +8,36 @@ namespace Moongate.Tests.Server.Services.Entities;
 public class MobileModifierAggregationServiceTests
 {
     [Test]
+    public void RecalculateEquipmentModifiers_ShouldIgnoreItemsWithoutModifiers()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001031
+        };
+
+        mobile.AddEquippedItem(
+            ItemLayerType.Shirt,
+            new UOItemEntity
+            {
+                Id = (Serial)0x40001032
+            }
+        );
+
+        var service = new MobileModifierAggregationService();
+
+        var modifiers = service.RecalculateEquipmentModifiers(mobile);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(modifiers.StrengthBonus, Is.EqualTo(0));
+                Assert.That(modifiers.Luck, Is.EqualTo(0));
+                Assert.That(mobile.EquipmentModifiers, Is.Not.Null);
+            }
+        );
+    }
+
+    [Test]
     public void RecalculateEquipmentModifiers_ShouldSumEquippedItemModifiers()
     {
         var mobile = new UOMobileEntity
@@ -59,36 +89,6 @@ public class MobileModifierAggregationServiceTests
                 Assert.That(mobile.EquipmentModifiers, Is.Not.Null);
                 Assert.That(mobile.EquipmentModifiers!.StrengthBonus, Is.EqualTo(7));
                 Assert.That(mobile.EffectiveStrength, Is.EqualTo(67));
-            }
-        );
-    }
-
-    [Test]
-    public void RecalculateEquipmentModifiers_ShouldIgnoreItemsWithoutModifiers()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00001031
-        };
-
-        mobile.AddEquippedItem(
-            ItemLayerType.Shirt,
-            new UOItemEntity
-            {
-                Id = (Serial)0x40001032
-            }
-        );
-
-        var service = new MobileModifierAggregationService();
-
-        var modifiers = service.RecalculateEquipmentModifiers(mobile);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(modifiers.StrengthBonus, Is.EqualTo(0));
-                Assert.That(modifiers.Luck, Is.EqualTo(0));
-                Assert.That(mobile.EquipmentModifiers, Is.Not.Null);
             }
         );
     }

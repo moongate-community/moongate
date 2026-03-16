@@ -12,6 +12,12 @@ namespace Moongate.Server.Interfaces.Items;
 public interface IItemService
 {
     /// <summary>
+    /// Inserts or updates multiple items in a single batched persistence operation.
+    /// </summary>
+    /// <param name="items">Item entities to persist.</param>
+    Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items);
+
+    /// <summary>
     /// Creates a detached copy of the provided item.
     /// </summary>
     /// <param name="item">Source item entity.</param>
@@ -146,10 +152,4 @@ public interface IItemService
     /// </summary>
     /// <param name="items">Item entities to persist.</param>
     Task UpsertItemsAsync(params UOItemEntity[] items);
-
-    /// <summary>
-    /// Inserts or updates multiple items in a single batched persistence operation.
-    /// </summary>
-    /// <param name="items">Item entities to persist.</param>
-    Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items);
 }

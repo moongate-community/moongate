@@ -4,7 +4,6 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Json;
-using OpenAI;
 using OpenAI.Chat;
 using Serilog;
 
@@ -16,21 +15,23 @@ namespace Moongate.Server.Services.Scripting;
 public sealed class OpenAiNpcDialogueClient : IOpenAiNpcDialogueClient
 {
     private static readonly ILogger Logger = Log.ForContext<OpenAiNpcDialogueClient>();
+
     private static readonly BinaryData ResponseSchema = BinaryData.FromBytes(
         """
-        {
-          "type": "object",
-          "properties": {
-            "should_speak": { "type": "boolean" },
-            "speech_text": { "type": ["string", "null"] },
-            "memory_summary": { "type": ["string", "null"] },
-            "mood": { "type": ["string", "null"] }
-          },
-          "required": ["should_speak", "speech_text", "memory_summary", "mood"],
-          "additionalProperties": false
-        }
-        """u8.ToArray()
+            {
+              "type": "object",
+              "properties": {
+                "should_speak": { "type": "boolean" },
+                "speech_text": { "type": ["string", "null"] },
+                "memory_summary": { "type": ["string", "null"] },
+                "mood": { "type": ["string", "null"] }
+              },
+              "required": ["should_speak", "speech_text", "memory_summary", "mood"],
+              "additionalProperties": false
+            }
+            """u8.ToArray()
     );
+
     private readonly MoongateConfig _config;
     private readonly ChatClient? _chatClient;
 
@@ -47,11 +48,11 @@ public sealed class OpenAiNpcDialogueClient : IOpenAiNpcDialogueClient
         }
 
         _chatClient = string.IsNullOrWhiteSpace(config.Llm.BaseUrl)
-                          ? new ChatClient(model, apiKey)
+                          ? new(model, apiKey)
                           : new ChatClient(
                               model,
                               new ApiKeyCredential(apiKey),
-                              new OpenAIClientOptions { Endpoint = new Uri(config.Llm.BaseUrl, UriKind.Absolute) }
+                              new() { Endpoint = new(config.Llm.BaseUrl, UriKind.Absolute) }
                           );
     }
 
@@ -75,8 +76,8 @@ public sealed class OpenAiNpcDialogueClient : IOpenAiNpcDialogueClient
         var options = new ChatCompletionOptions
         {
             ResponseFormat = ChatResponseFormat.CreateJsonSchemaFormat(
-                jsonSchemaFormatName: "npc_dialogue_response",
-                jsonSchema: ResponseSchema,
+                "npc_dialogue_response",
+                ResponseSchema,
                 jsonSchemaIsStrict: true
             ),
             MaxOutputTokenCount = Math.Max(300, _config.Llm.MaxOutputTokenCount)
@@ -123,6 +124,58 @@ public sealed class OpenAiNpcDialogueClient : IOpenAiNpcDialogueClient
         }
     }
 
+    internal static string BuildDeveloperMessageForTests(NpcDialogueRequest request)
+        => BuildDeveloperMessage(request);
+
+    internal static string DescribeContentParts(IReadOnlyList<ChatMessageContentPart> contentParts)
+    {
+        if (contentParts.Count == 0)
+        {
+            return "<none>";
+        }
+
+        return string.Join(
+            ", ",
+            contentParts.Select(
+                (part, index) =>
+                    $"[{index}]{part.Kind}:text={part.Text?.Length ?? 0}:refusal={part.Refusal?.Length ?? 0}"
+            )
+        );
+    }
+
+    internal static NpcDialogueResponse? DeserializeResponseForTests(string json)
+        => DeserializeResponse(json);
+
+    internal static string ExtractContentText(IReadOnlyList<ChatMessageContentPart> contentParts)
+    {
+        if (contentParts.Count == 0)
+        {
+            return string.Empty;
+        }
+
+        return string.Concat(
+            contentParts.Where(part => part.Kind == ChatMessageContentPartKind.Text && !string.IsNullOrWhiteSpace(part.Text))
+                        .Select(part => part.Text)
+        );
+    }
+
+    internal static string ExtractRefusalText(string? topLevelRefusal, IReadOnlyList<ChatMessageContentPart> contentParts)
+    {
+        if (!string.IsNullOrWhiteSpace(topLevelRefusal))
+        {
+            return topLevelRefusal.Trim();
+        }
+
+        return string.Join(
+            '\n',
+            contentParts.Where(
+                            part => part.Kind == ChatMessageContentPartKind.Refusal &&
+                                    !string.IsNullOrWhiteSpace(part.Refusal)
+                        )
+                        .Select(part => part.Refusal!.Trim())
+        );
+    }
+
     private static string BuildDeveloperMessage(NpcDialogueRequest request)
     {
         var memory = string.IsNullOrWhiteSpace(request.Memory) ? "(none)" : request.Memory.Trim();
@@ -150,28 +203,22 @@ public sealed class OpenAiNpcDialogueClient : IOpenAiNpcDialogueClient
                  """;
     }
 
-    internal static string BuildDeveloperMessageForTests(NpcDialogueRequest request)
-        => BuildDeveloperMessage(request);
-
-    internal static NpcDialogueResponse? DeserializeResponseForTests(string json)
-        => DeserializeResponse(json);
-
     private static string BuildUserMessage(NpcDialogueRequest request)
-    {
-        return request.IsIdle
-                   ? $$"""
-                      Trigger: idle
-                      Decide if {{request.NpcName}} should say a short in-character line right now.
-                      Only speak if it makes sense with nearby players present.
-                      """
-                   : $$"""
-                      Trigger: listener
-                      Speaker: {{request.SenderName}}
-                      Heard text: {{request.HeardText}}
-                      Decide if {{request.NpcName}} should reply to this nearby speech.
-                      """
-            ;
-    }
+        => request.IsIdle
+               ? $$"""
+                   Trigger: idle
+                   Decide if {{request.NpcName}} should say a short in-character line right now.
+                   Only speak if it makes sense with nearby players present.
+                   """
+               : $$"""
+                   Trigger: listener
+                   Speaker: {{request.SenderName}}
+                   Heard text: {{request.HeardText}}
+                   Decide if {{request.NpcName}} should reply to this nearby speech.
+                   """;
+
+    private static NpcDialogueResponse? DeserializeResponse(string json)
+        => JsonSerializer.Deserialize(json, MoongateServerJsonContext.Default.NpcDialogueResponse);
 
     private static string? ResolveApiKey(MoongateConfig config)
     {
@@ -183,53 +230,5 @@ public sealed class OpenAiNpcDialogueClient : IOpenAiNpcDialogueClient
         var environmentApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
         return string.IsNullOrWhiteSpace(environmentApiKey) ? null : environmentApiKey.Trim();
-    }
-
-    internal static string ExtractContentText(IReadOnlyList<ChatMessageContentPart> contentParts)
-    {
-        if (contentParts.Count == 0)
-        {
-            return string.Empty;
-        }
-
-        return string.Concat(
-            contentParts.Where(part => part.Kind == ChatMessageContentPartKind.Text && !string.IsNullOrWhiteSpace(part.Text))
-                        .Select(part => part.Text)
-        );
-    }
-
-    internal static string ExtractRefusalText(string? topLevelRefusal, IReadOnlyList<ChatMessageContentPart> contentParts)
-    {
-        if (!string.IsNullOrWhiteSpace(topLevelRefusal))
-        {
-            return topLevelRefusal.Trim();
-        }
-
-        return string.Join(
-            '\n',
-            contentParts.Where(part => part.Kind == ChatMessageContentPartKind.Refusal && !string.IsNullOrWhiteSpace(part.Refusal))
-                        .Select(part => part.Refusal!.Trim())
-        );
-    }
-
-    internal static string DescribeContentParts(IReadOnlyList<ChatMessageContentPart> contentParts)
-    {
-        if (contentParts.Count == 0)
-        {
-            return "<none>";
-        }
-
-        return string.Join(
-            ", ",
-            contentParts.Select(
-                (part, index) =>
-                    $"[{index}]{part.Kind}:text={(part.Text?.Length ?? 0)}:refusal={(part.Refusal?.Length ?? 0)}"
-            )
-        );
-    }
-
-    private static NpcDialogueResponse? DeserializeResponse(string json)
-    {
-        return JsonSerializer.Deserialize(json, MoongateServerJsonContext.Default.NpcDialogueResponse);
     }
 }

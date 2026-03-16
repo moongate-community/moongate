@@ -19,6 +19,17 @@ public sealed class AiDialogueModule
         _npcDialogueService = npcDialogueService;
     }
 
+    [ScriptFunction("idle", "Lets an NPC attempt idle chatter when a player is nearby.")]
+    public bool Idle(LuaMobileProxy? npc)
+    {
+        if (npc is null)
+        {
+            return false;
+        }
+
+        return _npcDialogueService.QueueIdle(npc.Mobile);
+    }
+
     [ScriptFunction("init", "Binds a prompt file to an NPC for ai_dialogue calls.")]
     public bool Init(LuaMobileProxy? npc, string promptFile)
     {
@@ -41,16 +52,5 @@ public sealed class AiDialogueModule
         }
 
         return _npcDialogueService.QueueListener(npc.Mobile, sender.Mobile, text.Trim());
-    }
-
-    [ScriptFunction("idle", "Lets an NPC attempt idle chatter when a player is nearby.")]
-    public bool Idle(LuaMobileProxy? npc)
-    {
-        if (npc is null)
-        {
-            return false;
-        }
-
-        return _npcDialogueService.QueueIdle(npc.Mobile);
     }
 }

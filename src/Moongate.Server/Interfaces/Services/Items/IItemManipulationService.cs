@@ -5,12 +5,6 @@ namespace Moongate.Server.Interfaces.Services.Items;
 
 public interface IItemManipulationService
 {
-    Task<bool> HandlePickUpItemAsync(
-        GameSession session,
-        PickUpItemPacket packet,
-        CancellationToken cancellationToken = default
-    );
-
     Task<bool> HandleDropItemAsync(
         GameSession session,
         DropItemPacket packet,
@@ -20,6 +14,12 @@ public interface IItemManipulationService
     Task<bool> HandleDropWearItemAsync(
         GameSession session,
         DropWearItemPacket packet,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<bool> HandlePickUpItemAsync(
+        GameSession session,
+        PickUpItemPacket packet,
         CancellationToken cancellationToken = default
     );
 }

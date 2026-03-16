@@ -139,6 +139,53 @@ public sealed class DispatchEventsServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_ForMobilePlayAnimationEvent_ShouldBroadcastMobileAnimationPacket()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+
+        await service.HandleAsync(
+            new MobilePlayAnimationEvent(
+                (Serial)0x00000002u,
+                1,
+                new(111, 222, 7),
+                17,
+                7,
+                1,
+                true,
+                false,
+                0
+            )
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
+                Assert.That(spatial.LastMapId, Is.EqualTo(1));
+                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
+                Assert.That(spatial.LastPacket, Is.TypeOf<MobileAnimationPacket>());
+            }
+        );
+
+        var packet = (MobileAnimationPacket)spatial.LastPacket!;
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.MobileId, Is.EqualTo((Serial)0x00000002u));
+                Assert.That(packet.Action, Is.EqualTo(17));
+                Assert.That(packet.FrameCount, Is.EqualTo(7));
+                Assert.That(packet.RepeatCount, Is.EqualTo(1));
+                Assert.That(packet.Forward, Is.True);
+                Assert.That(packet.Repeat, Is.False);
+                Assert.That(packet.Delay, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForMobilePlayEffectEvent_ShouldBroadcastParticleEffectPacket()
     {
         var spatial = new DispatchEventsTestSpatialWorldService();
@@ -248,53 +295,6 @@ public sealed class DispatchEventsServiceTests
         var packet = (MobileMovingPacket)spatial.LastPacket!;
         Assert.That(packet.Mobile, Is.Not.Null);
         Assert.That(packet.Mobile!.IsWarMode, Is.True);
-    }
-
-    [Test]
-    public async Task HandleAsync_ForMobilePlayAnimationEvent_ShouldBroadcastMobileAnimationPacket()
-    {
-        var spatial = new DispatchEventsTestSpatialWorldService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessions = new DispatchEventsTestGameNetworkSessionService();
-        var service = new DispatchEventsService(spatial, queue, sessions);
-
-        await service.HandleAsync(
-            new MobilePlayAnimationEvent(
-                (Serial)0x00000002u,
-                1,
-                new(111, 222, 7),
-                action: 17,
-                frameCount: 7,
-                repeatCount: 1,
-                forward: true,
-                repeat: false,
-                delay: 0
-            )
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
-                Assert.That(spatial.LastMapId, Is.EqualTo(1));
-                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
-                Assert.That(spatial.LastPacket, Is.TypeOf<MobileAnimationPacket>());
-            }
-        );
-
-        var packet = (MobileAnimationPacket)spatial.LastPacket!;
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(packet.MobileId, Is.EqualTo((Serial)0x00000002u));
-                Assert.That(packet.Action, Is.EqualTo(17));
-                Assert.That(packet.FrameCount, Is.EqualTo(7));
-                Assert.That(packet.RepeatCount, Is.EqualTo(1));
-                Assert.That(packet.Forward, Is.True);
-                Assert.That(packet.Repeat, Is.False);
-                Assert.That(packet.Delay, Is.EqualTo(0));
-            }
-        );
     }
 
     [Test]

@@ -83,7 +83,7 @@ public sealed class TeleportCommand : ICommandExecutor
                 mapId,
                 oldLocation,
                 targetLocation,
-                isTeleport: true
+                true
             )
         );
 

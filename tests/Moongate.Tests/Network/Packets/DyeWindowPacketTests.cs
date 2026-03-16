@@ -1,8 +1,9 @@
 using System.Buffers.Binary;
 using Moongate.Network.Packets.Incoming.Interaction;
-using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Spans;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Network.Packets;
 
@@ -36,7 +37,7 @@ public sealed class DyeWindowPacketTests
     {
         var packet = new DisplayDyeWindowPacket
         {
-            TargetSerial = (Moongate.UO.Data.Ids.Serial)0x40000020u,
+            TargetSerial = (Serial)0x40000020u,
             Model = 0x0FAB
         };
 

@@ -38,6 +38,9 @@ public class DrawContainerPacket : BaseGameNetworkPacket
         writer.Write((short)0x7D);
     }
 
+    protected override bool ParsePayload(ref SpanReader reader)
+        => reader.Remaining == 8;
+
     private static int ResolveGumpId(UOItemEntity container)
     {
         if (container.GumpId is { } explicitGumpId)
@@ -54,7 +57,4 @@ public class DrawContainerPacket : BaseGameNetworkPacket
 
         return 0;
     }
-
-    protected override bool ParsePayload(ref SpanReader reader)
-        => reader.Remaining == 8;
 }

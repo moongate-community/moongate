@@ -1,7 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Listener;
 using Moongate.Server.Interfaces.Services.EvenLoop;
@@ -22,6 +21,55 @@ public class GameLoopServiceTests
 {
     private static readonly int[] ExpectedDispatchSequence = [1, 2, 3];
     private GameLoopService? _service;
+
+    private sealed class GameLoopInterleavingState
+    {
+        public int CallbackRan;
+        public int ObservedValue = -1;
+    }
+
+    private sealed class GameLoopPostingPacketListener : IPacketListener
+    {
+        private readonly IBackgroundJobService _backgroundJobService;
+        private readonly GameLoopInterleavingState _state;
+
+        public GameLoopPostingPacketListener(
+            IBackgroundJobService backgroundJobService,
+            GameLoopInterleavingState state
+        )
+        {
+            _backgroundJobService = backgroundJobService;
+            _state = state;
+        }
+
+        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        {
+            _ = session;
+            _ = packet;
+            _backgroundJobService.PostToGameLoop(() => Volatile.Write(ref _state.CallbackRan, 1));
+
+            return Task.FromResult(true);
+        }
+    }
+
+    private sealed class GameLoopObservingPacketListener : IPacketListener
+    {
+        private readonly GameLoopInterleavingState _state;
+
+        public GameLoopObservingPacketListener(GameLoopInterleavingState state)
+        {
+            _state = state;
+        }
+
+        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        {
+            _ = session;
+            _ = packet;
+            Volatile.Write(ref _state.ObservedValue, Volatile.Read(ref _state.CallbackRan));
+
+            return Task.FromResult(true);
+        }
+    }
 
     [Test]
     public void Ctor_ShouldStartWithZeroedMetrics()
@@ -50,6 +98,20 @@ public class GameLoopServiceTests
                 Assert.That(snapshot.OutboundPacketsTotal, Is.Zero);
             }
         );
+    }
+
+    [Test]
+    public void ObjectInformationPacket_ForGameMaster_ShouldExposeMovableFlag()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000010u,
+            ItemId = 0x0EED
+        };
+
+        var packet = ItemPacketHelper.CreateObjectInformationPacket(item, AccountType.GameMaster);
+
+        Assert.That(packet.Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
     }
 
     [Test]
@@ -304,20 +366,6 @@ public class GameLoopServiceTests
     }
 
     [Test]
-    public void ObjectInformationPacket_ForGameMaster_ShouldExposeMovableFlag()
-    {
-        var item = new UOItemEntity
-        {
-            Id = (Serial)0x40000010u,
-            ItemId = 0x0EED
-        };
-
-        var packet = ItemPacketHelper.CreateObjectInformationPacket(item, AccountType.GameMaster);
-
-        Assert.That(packet.Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
-    }
-
-    [Test]
     public async Task StartAsync_WhenOutboundSendBlocks_ShouldKeepAdvancingGameLoopTicks()
     {
         var outgoingQueue = new OutgoingPacketQueue();
@@ -451,53 +499,4 @@ public class GameLoopServiceTests
 
         return condition();
     }
-
-    private sealed class GameLoopInterleavingState
-    {
-        public int CallbackRan;
-        public int ObservedValue = -1;
-    }
-
-    private sealed class GameLoopPostingPacketListener : IPacketListener
-    {
-        private readonly IBackgroundJobService _backgroundJobService;
-        private readonly GameLoopInterleavingState _state;
-
-        public GameLoopPostingPacketListener(
-            IBackgroundJobService backgroundJobService,
-            GameLoopInterleavingState state
-        )
-        {
-            _backgroundJobService = backgroundJobService;
-            _state = state;
-        }
-
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
-        {
-            _ = session;
-            _ = packet;
-            _backgroundJobService.PostToGameLoop(() => Volatile.Write(ref _state.CallbackRan, 1));
-
-            return Task.FromResult(true);
-        }
-    }
-
-        private sealed class GameLoopObservingPacketListener : IPacketListener
-        {
-            private readonly GameLoopInterleavingState _state;
-
-            public GameLoopObservingPacketListener(GameLoopInterleavingState state)
-            {
-                _state = state;
-            }
-
-            public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
-            {
-                _ = session;
-                _ = packet;
-                Volatile.Write(ref _state.ObservedValue, Volatile.Read(ref _state.CallbackRan));
-
-                return Task.FromResult(true);
-            }
-        }
 }

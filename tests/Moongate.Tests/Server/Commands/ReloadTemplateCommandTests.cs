@@ -2,6 +2,7 @@ using Moongate.Server.Commands;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
@@ -16,7 +17,7 @@ public sealed class ReloadTemplateCommandTests
 
         public bool ThrowOnExecute { get; set; }
 
-        public void AddFileLoader<T>() where T : Moongate.UO.Data.Interfaces.FileLoaders.IFileLoader { }
+        public void AddFileLoader<T>() where T : IFileLoader { }
 
         public Task ExecuteLoadersAsync()
         {
@@ -108,6 +109,29 @@ public sealed class ReloadTemplateCommandTests
     }
 
     [Test]
+    public async Task ExecuteCommandAsync_WhenLoaderFails_ShouldPrintError()
+    {
+        var fileLoaderService = new ReloadTemplateTestFileLoaderService { ThrowOnExecute = true };
+        var command = new ReloadTemplateCommand(
+            fileLoaderService,
+            new ReloadTemplateTestItemTemplateService(),
+            new ReloadTemplateTestMobileTemplateService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "reload_template",
+            [],
+            CommandSourceType.Console,
+            0,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(output[^1], Is.EqualTo("Failed to reload templates: boom"));
+    }
+
+    [Test]
     public async Task ExecuteCommandAsync_WhenSuccessful_ShouldExecuteLoadersAndPrintCounts()
     {
         var fileLoaderService = new ReloadTemplateTestFileLoaderService();
@@ -135,28 +159,5 @@ public sealed class ReloadTemplateCommandTests
                 );
             }
         );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenLoaderFails_ShouldPrintError()
-    {
-        var fileLoaderService = new ReloadTemplateTestFileLoaderService { ThrowOnExecute = true };
-        var command = new ReloadTemplateCommand(
-            fileLoaderService,
-            new ReloadTemplateTestItemTemplateService(),
-            new ReloadTemplateTestMobileTemplateService()
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "reload_template",
-            [],
-            CommandSourceType.Console,
-            0,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.That(output[^1], Is.EqualTo("Failed to reload templates: boom"));
     }
 }

@@ -11,6 +11,150 @@ namespace Moongate.Tests.Server.FileLoaders;
 public class ItemTemplateLoaderTests
 {
     [Test]
+    public async Task LoadAsync_WhenBaseItemHasBookId_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "books");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "books.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "books",
+                "id": "base_book",
+                "name": "Base Book",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FF0",
+                "lootType": "Regular",
+                "scriptId": "none",
+                "bookId": "welcome_player",
+                "tags": ["book"],
+                "weight": 1.0
+              },
+              {
+                "type": "item",
+                "category": "books",
+                "id": "derived_book",
+                "base_item": "base_book",
+                "name": "Derived Book",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FF1",
+                "lootType": "Regular",
+                "scriptId": "none",
+                "tags": ["book"],
+                "weight": 1.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("derived_book", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.BookId, Is.EqualTo("welcome_player"));
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenBaseItemHasFlippableItemIds_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "base");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "flippable.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "test",
+                "id": "base_door",
+                "name": "Base Door",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0675",
+                "lootType": "Regular",
+                "scriptId": "items.door",
+                "tags": [],
+                "weight": 1.0,
+                "flippableItemIds": ["0x0675", "0x0676"]
+              },
+              {
+                "type": "item",
+                "category": "test",
+                "id": "door_child",
+                "base_item": "base_door",
+                "name": "Door Child",
+                "description": "child",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0677",
+                "lootType": "Regular",
+                "scriptId": "items.door_child",
+                "tags": [],
+                "weight": 1.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("door_child", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.FlippableItemIds, Is.EqualTo(new[] { "0x0675", "0x0676" }));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemHasParams_ShouldInheritAndOverrideParams()
     {
         using var tempDirectory = new TempDirectory();
@@ -98,300 +242,6 @@ public class ItemTemplateLoaderTests
                 Assert.That(template.Params["linked_id"].Value, Is.EqualTo("0x40000002"));
                 Assert.That(template.Params["tint"].Type, Is.EqualTo(ItemTemplateParamType.Hue));
                 Assert.That(template.Params["tint"].Value, Is.EqualTo("0x044D"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task LoadAsync_WhenBaseItemHasFlippableItemIds_ShouldInheritFromParent()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(
-            tempDirectory.Path,
-            DirectoryType.Data,
-            DirectoryType.Templates,
-            DirectoryType.Scripts,
-            DirectoryType.Save,
-            DirectoryType.Logs,
-            DirectoryType.Cache
-        );
-
-        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "base");
-        Directory.CreateDirectory(itemsDirectory);
-
-        var filePath = Path.Combine(itemsDirectory, "flippable.json");
-        await File.WriteAllTextAsync(
-            filePath,
-            """
-            [
-              {
-                "type": "item",
-                "category": "test",
-                "id": "base_door",
-                "name": "Base Door",
-                "description": "base",
-                "container": [],
-                "dyeable": false,
-                "goldValue": "0",
-                "hue": "0",
-                "isMovable": true,
-                "itemId": "0x0675",
-                "lootType": "Regular",
-                "scriptId": "items.door",
-                "tags": [],
-                "weight": 1.0,
-                "flippableItemIds": ["0x0675", "0x0676"]
-              },
-              {
-                "type": "item",
-                "category": "test",
-                "id": "door_child",
-                "base_item": "base_door",
-                "name": "Door Child",
-                "description": "child",
-                "container": [],
-                "dyeable": false,
-                "goldValue": "0",
-                "hue": "0",
-                "isMovable": true,
-                "itemId": "0x0677",
-                "lootType": "Regular",
-                "scriptId": "items.door_child",
-                "tags": [],
-                "weight": 1.0
-              }
-            ]
-            """
-        );
-
-        var itemTemplateService = new ItemTemplateService();
-        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
-
-        await loader.LoadAsync();
-
-        Assert.That(itemTemplateService.TryGet("door_child", out var template), Is.True);
-        Assert.That(template, Is.Not.Null);
-        Assert.That(template!.FlippableItemIds, Is.EqualTo(new[] { "0x0675", "0x0676" }));
-    }
-
-    [Test]
-    public async Task LoadAsync_WhenBaseItemHasBookId_ShouldInheritFromParent()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(
-            tempDirectory.Path,
-            DirectoryType.Data,
-            DirectoryType.Templates,
-            DirectoryType.Scripts,
-            DirectoryType.Save,
-            DirectoryType.Logs,
-            DirectoryType.Cache
-        );
-
-        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "books");
-        Directory.CreateDirectory(itemsDirectory);
-
-        var filePath = Path.Combine(itemsDirectory, "books.json");
-        await File.WriteAllTextAsync(
-            filePath,
-            """
-            [
-              {
-                "type": "item",
-                "category": "books",
-                "id": "base_book",
-                "name": "Base Book",
-                "description": "base",
-                "container": [],
-                "dyeable": false,
-                "goldValue": "0",
-                "hue": "0",
-                "isMovable": true,
-                "itemId": "0x0FF0",
-                "lootType": "Regular",
-                "scriptId": "none",
-                "bookId": "welcome_player",
-                "tags": ["book"],
-                "weight": 1.0
-              },
-              {
-                "type": "item",
-                "category": "books",
-                "id": "derived_book",
-                "base_item": "base_book",
-                "name": "Derived Book",
-                "description": "derived",
-                "container": [],
-                "dyeable": false,
-                "goldValue": "0",
-                "hue": "0",
-                "isMovable": true,
-                "itemId": "0x0FF1",
-                "lootType": "Regular",
-                "scriptId": "none",
-                "tags": ["book"],
-                "weight": 1.0
-              }
-            ]
-            """
-        );
-
-        var itemTemplateService = new ItemTemplateService();
-        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
-
-        await loader.LoadAsync();
-
-        Assert.That(itemTemplateService.TryGet("derived_book", out var template), Is.True);
-        Assert.That(template, Is.Not.Null);
-        Assert.That(template!.BookId, Is.EqualTo("welcome_player"));
-    }
-
-    [Test]
-    public async Task LoadAsync_WhenDerivedItemUsesBaseItem_ShouldInheritSkillItemValues()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(
-            tempDirectory.Path,
-            DirectoryType.Data,
-            DirectoryType.Templates,
-            DirectoryType.Scripts,
-            DirectoryType.Save,
-            DirectoryType.Logs,
-            DirectoryType.Cache
-        );
-
-        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "test");
-        Directory.CreateDirectory(itemsDirectory);
-
-        var filePath = Path.Combine(itemsDirectory, "dye.json");
-        await File.WriteAllTextAsync(
-            filePath,
-            """
-            [
-              {
-                "type": "item",
-                "category": "skill items",
-                "id": "dye_tub",
-                "name": "Dye Tub",
-                "description": "base",
-                "container": [],
-                "dyeable": false,
-                "goldValue": "0",
-                "hue": "0",
-                "isMovable": true,
-                "itemId": "0x0FAB",
-                "lootType": "Regular",
-                "scriptId": "items.dye_tub",
-                "tags": ["modernuo", "skill items"],
-                "weight": 10.0
-              },
-              {
-                "type": "item",
-                "category": "skill items",
-                "id": "dye_box",
-                "base_item": "dye_tub",
-                "name": "Dye Box",
-                "description": "derived",
-                "container": [],
-                "dyeable": false,
-                "goldValue": "0",
-                "hue": "0",
-                "isMovable": true,
-                "itemId": "0x0FAB",
-                "lootType": "Regular",
-                "scriptId": "items.dye_box",
-                "tags": ["test"],
-                "weight": 10.0
-              }
-            ]
-            """
-        );
-
-        var itemTemplateService = new ItemTemplateService();
-        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
-
-        await loader.LoadAsync();
-
-        Assert.That(itemTemplateService.TryGet("dye_box", out var template), Is.True);
-        Assert.That(template, Is.Not.Null);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(template!.ItemId, Is.EqualTo("0x0FAB"));
-                Assert.That(template.Weight, Is.EqualTo(10.0m));
-                Assert.That(template.ScriptId, Is.EqualTo("items.dye_box"));
-                Assert.That(template.Tags, Does.Contain("test"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task LoadAsync_WhenDerivedBulletinBoardUsesBaseItem_ShouldInheritBoardValues()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(
-            tempDirectory.Path,
-            DirectoryType.Data,
-            DirectoryType.Templates,
-            DirectoryType.Scripts,
-            DirectoryType.Save,
-            DirectoryType.Logs,
-            DirectoryType.Cache
-        );
-
-        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "test");
-        Directory.CreateDirectory(itemsDirectory);
-
-        var filePath = Path.Combine(itemsDirectory, "bulletin_boards.json");
-        await File.WriteAllTextAsync(
-            filePath,
-            """
-            [
-              {
-                "type": "item",
-                "id": "bulletin_board",
-                "name": "Bulletin Board",
-                "category": "Bulletin Boards",
-                "description": "base",
-                "itemId": "0x1E5E",
-                "hue": "0",
-                "goldValue": "0",
-                "weight": 0,
-                "scriptId": "items.bulletin_board",
-                "isMovable": true,
-                "tags": ["modernuo", "bulletin boards", "flippable"]
-              },
-              {
-                "type": "item",
-                "id": "bb",
-                "base_item": "bulletin_board",
-                "name": "BB",
-                "category": "Bulletin Boards",
-                "description": "derived",
-                "itemId": "0x1E5E",
-                "scriptId": "items.bb",
-                "tags": ["test"]
-              }
-            ]
-            """
-        );
-
-        var itemTemplateService = new ItemTemplateService();
-        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
-
-        await loader.LoadAsync();
-
-        Assert.That(itemTemplateService.TryGet("bb", out var template), Is.True);
-        Assert.That(template, Is.Not.Null);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(template!.ItemId, Is.EqualTo("0x1E5E"));
-                Assert.That(template.Weight, Is.EqualTo(0m));
-                Assert.That(template.ScriptId, Is.EqualTo("items.bb"));
-                Assert.That(template.Tags, Does.Contain("test"));
             }
         );
     }
@@ -626,6 +476,156 @@ public class ItemTemplateLoaderTests
         Assert.That(
             async () => await loader.LoadAsync(),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("Circular base_item")
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenDerivedBulletinBoardUsesBaseItem_ShouldInheritBoardValues()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "test");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "bulletin_boards.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "id": "bulletin_board",
+                "name": "Bulletin Board",
+                "category": "Bulletin Boards",
+                "description": "base",
+                "itemId": "0x1E5E",
+                "hue": "0",
+                "goldValue": "0",
+                "weight": 0,
+                "scriptId": "items.bulletin_board",
+                "isMovable": true,
+                "tags": ["modernuo", "bulletin boards", "flippable"]
+              },
+              {
+                "type": "item",
+                "id": "bb",
+                "base_item": "bulletin_board",
+                "name": "BB",
+                "category": "Bulletin Boards",
+                "description": "derived",
+                "itemId": "0x1E5E",
+                "scriptId": "items.bb",
+                "tags": ["test"]
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("bb", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.ItemId, Is.EqualTo("0x1E5E"));
+                Assert.That(template.Weight, Is.EqualTo(0m));
+                Assert.That(template.ScriptId, Is.EqualTo("items.bb"));
+                Assert.That(template.Tags, Does.Contain("test"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenDerivedItemUsesBaseItem_ShouldInheritSkillItemValues()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "test");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "dye.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "skill items",
+                "id": "dye_tub",
+                "name": "Dye Tub",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FAB",
+                "lootType": "Regular",
+                "scriptId": "items.dye_tub",
+                "tags": ["modernuo", "skill items"],
+                "weight": 10.0
+              },
+              {
+                "type": "item",
+                "category": "skill items",
+                "id": "dye_box",
+                "base_item": "dye_tub",
+                "name": "Dye Box",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0FAB",
+                "lootType": "Regular",
+                "scriptId": "items.dye_box",
+                "tags": ["test"],
+                "weight": 10.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("dye_box", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.ItemId, Is.EqualTo("0x0FAB"));
+                Assert.That(template.Weight, Is.EqualTo(10.0m));
+                Assert.That(template.ScriptId, Is.EqualTo("items.dye_box"));
+                Assert.That(template.Tags, Does.Contain("test"));
+            }
         );
     }
 

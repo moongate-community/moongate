@@ -170,5 +170,4 @@ public class BookPagesPacketTests
 
         return bytes;
     }
-
 }

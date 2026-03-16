@@ -21,6 +21,6 @@ internal static class ItemPacketHelper
 
         var flags = accountType >= AccountType.GameMaster ? ObjectInfoFlags.Movable : ObjectInfoFlags.None;
 
-        return new ObjectInformationPacket(item, flags: flags);
+        return new(item, flags: flags);
     }
 }

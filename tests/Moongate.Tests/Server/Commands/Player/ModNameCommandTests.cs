@@ -2,7 +2,6 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.System;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Commands.Player;
@@ -77,8 +76,8 @@ public sealed class ModNameCommandTests
 
         public int UpsertCalls { get; private set; }
 
-        public void SetItem(UOItemEntity item)
-            => _items[item.Id] = item;
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
@@ -118,6 +117,9 @@ public sealed class ModNameCommandTests
         public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => Task.FromResult(true);
 
+        public void SetItem(UOItemEntity item)
+            => _items[item.Id] = item;
+
         public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
             => Task.FromResult(new UOItemEntity());
 
@@ -138,9 +140,6 @@ public sealed class ModNameCommandTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     private sealed class ModNameCommandTestMobileService : IMobileService
@@ -148,9 +147,6 @@ public sealed class ModNameCommandTests
         private readonly Dictionary<Serial, UOMobileEntity> _mobiles = [];
 
         public int CreateOrUpdateCalls { get; private set; }
-
-        public void SetMobile(UOMobileEntity mobile)
-            => _mobiles[mobile.Id] = mobile;
 
         public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
         {
@@ -174,6 +170,9 @@ public sealed class ModNameCommandTests
             CancellationToken cancellationToken = default
         )
             => Task.FromResult(new List<UOMobileEntity>());
+
+        public void SetMobile(UOMobileEntity mobile)
+            => _mobiles[mobile.Id] = mobile;
 
         public Task<UOMobileEntity> SpawnFromTemplateAsync(
             string templateId,
@@ -263,8 +262,8 @@ public sealed class ModNameCommandTests
             GameSession? excludeSession = null
         )
             => PlayersInRange
-                .Where(player => excludeSession is null || player.SessionId != excludeSession.SessionId)
-                .ToList();
+               .Where(player => excludeSession is null || player.SessionId != excludeSession.SessionId)
+               .ToList();
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
             => [];
@@ -347,32 +346,6 @@ public sealed class ModNameCommandTests
     }
 
     [Test]
-    public async Task ExecuteCommandAsync_WhenNameMissing_ShouldPrintUsage()
-    {
-        var command = CreateCommand(
-            out _,
-            out _,
-            out _,
-            out _,
-            out _,
-            out _,
-            Array.Empty<GameSession>()
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "mod_name",
-            [],
-            CommandSourceType.InGame,
-            1,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.That(output[^1], Is.EqualTo("Usage: .mod_name <new name>"));
-    }
-
-    [Test]
     public async Task ExecuteCommandAsync_WhenItemIsTargeted_ShouldRenamePersistAndRefresh()
     {
         var targetSerial = (Serial)0x40000123u;
@@ -389,7 +362,7 @@ public sealed class ModNameCommandTests
         var session = new GameSession(new(client))
         {
             CharacterId = (Serial)0x00000011u,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000011u,
                 Name = "GM",
@@ -420,17 +393,19 @@ public sealed class ModNameCommandTests
         await command.ExecuteCommandAsync(context);
         gameEventBus.TriggerCursorCallback(targetSerial);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(item.Name, Is.EqualTo("New Fancy Name"));
-            Assert.That(itemService.UpsertCalls, Is.EqualTo(1));
-            Assert.That(spatialWorldService.AddOrUpdateItemCalls, Is.EqualTo(1));
-            Assert.That(
-                spatialWorldService.BroadcastPackets.Any(packet => packet.Packet is ObjectPropertyList),
-                Is.True
-            );
-            Assert.That(output[^1], Is.EqualTo("Item 1073742115 renamed to 'New Fancy Name'."));
-        });
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.Name, Is.EqualTo("New Fancy Name"));
+                Assert.That(itemService.UpsertCalls, Is.EqualTo(1));
+                Assert.That(spatialWorldService.AddOrUpdateItemCalls, Is.EqualTo(1));
+                Assert.That(
+                    spatialWorldService.BroadcastPackets.Any(packet => packet.Packet is ObjectPropertyList),
+                    Is.True
+                );
+                Assert.That(output[^1], Is.EqualTo("Item 1073742115 renamed to 'New Fancy Name'."));
+            }
+        );
     }
 
     [Test]
@@ -449,7 +424,7 @@ public sealed class ModNameCommandTests
         var session = new GameSession(new(client))
         {
             CharacterId = (Serial)0x00000011u,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000011u,
                 Name = "GM",
@@ -480,18 +455,46 @@ public sealed class ModNameCommandTests
         await command.ExecuteCommandAsync(context);
         gameEventBus.TriggerCursorCallback(targetSerial);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(mobile.Name, Is.EqualTo("The Renamed Mob"));
-            Assert.That(mobileService.CreateOrUpdateCalls, Is.EqualTo(1));
-            Assert.That(spatialWorldService.AddOrUpdateMobileCalls, Is.EqualTo(1));
-            Assert.That(
-                spatialWorldService.BroadcastPackets.Any(packet => packet.Packet is ObjectPropertyList),
-                Is.True
-            );
-            Assert.That(outgoingPacketQueue.CurrentQueueDepth, Is.EqualTo(1));
-            Assert.That(output[^1], Is.EqualTo("Mobile 69 renamed to 'The Renamed Mob'."));
-        });
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Name, Is.EqualTo("The Renamed Mob"));
+                Assert.That(mobileService.CreateOrUpdateCalls, Is.EqualTo(1));
+                Assert.That(spatialWorldService.AddOrUpdateMobileCalls, Is.EqualTo(1));
+                Assert.That(
+                    spatialWorldService.BroadcastPackets.Any(packet => packet.Packet is ObjectPropertyList),
+                    Is.True
+                );
+                Assert.That(outgoingPacketQueue.CurrentQueueDepth, Is.EqualTo(1));
+                Assert.That(output[^1], Is.EqualTo("Mobile 69 renamed to 'The Renamed Mob'."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenNameMissing_ShouldPrintUsage()
+    {
+        var command = CreateCommand(
+            out _,
+            out _,
+            out _,
+            out _,
+            out _,
+            out _,
+            Array.Empty<GameSession>()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "mod_name",
+            [],
+            CommandSourceType.InGame,
+            1,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(output[^1], Is.EqualTo("Usage: .mod_name <new name>"));
     }
 
     [Test]

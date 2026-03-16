@@ -8,60 +8,6 @@ namespace Moongate.Tests.UO.Data.Persistence.Entities;
 public class UOItemEntityTests
 {
     [Test]
-    public void CombatStats_And_Modifiers_ShouldDefaultToNull()
-    {
-        var item = new UOItemEntity
-        {
-            Id = (Serial)0x40000001,
-            ItemId = 0x0EED
-        };
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(item.CombatStats, Is.Null);
-                Assert.That(item.Modifiers, Is.Null);
-            }
-        );
-    }
-
-    [Test]
-    public void CombatStats_And_Modifiers_ShouldBeAssignable()
-    {
-        var item = new UOItemEntity
-        {
-            Id = (Serial)0x40000002,
-            ItemId = 0x13B9,
-            CombatStats = new ItemCombatStats
-            {
-                MinStrength = 40,
-                DamageMin = 11,
-                DamageMax = 13
-            },
-            Modifiers = new ItemModifiers
-            {
-                StrengthBonus = 5,
-                PhysicalResist = 10,
-                Luck = 100
-            }
-        };
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(item.CombatStats, Is.Not.Null);
-                Assert.That(item.CombatStats!.MinStrength, Is.EqualTo(40));
-                Assert.That(item.CombatStats.DamageMin, Is.EqualTo(11));
-                Assert.That(item.CombatStats.DamageMax, Is.EqualTo(13));
-                Assert.That(item.Modifiers, Is.Not.Null);
-                Assert.That(item.Modifiers!.StrengthBonus, Is.EqualTo(5));
-                Assert.That(item.Modifiers.PhysicalResist, Is.EqualTo(10));
-                Assert.That(item.Modifiers.Luck, Is.EqualTo(100));
-            }
-        );
-    }
-
-    [Test]
     public void AddItem_ShouldSetParentContainerAndPosition()
     {
         var container = new UOItemEntity
@@ -89,6 +35,60 @@ public class UOItemEntityTests
                 Assert.That(container.ContainedItemIds, Has.Count.EqualTo(1));
                 Assert.That(container.ContainedItemIds[0], Is.EqualTo(item.Id));
                 Assert.That(container.ContainedItemReferences.ContainsKey(item.Id), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public void CombatStats_And_Modifiers_ShouldBeAssignable()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000002,
+            ItemId = 0x13B9,
+            CombatStats = new()
+            {
+                MinStrength = 40,
+                DamageMin = 11,
+                DamageMax = 13
+            },
+            Modifiers = new()
+            {
+                StrengthBonus = 5,
+                PhysicalResist = 10,
+                Luck = 100
+            }
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.CombatStats, Is.Not.Null);
+                Assert.That(item.CombatStats!.MinStrength, Is.EqualTo(40));
+                Assert.That(item.CombatStats.DamageMin, Is.EqualTo(11));
+                Assert.That(item.CombatStats.DamageMax, Is.EqualTo(13));
+                Assert.That(item.Modifiers, Is.Not.Null);
+                Assert.That(item.Modifiers!.StrengthBonus, Is.EqualTo(5));
+                Assert.That(item.Modifiers.PhysicalResist, Is.EqualTo(10));
+                Assert.That(item.Modifiers.Luck, Is.EqualTo(100));
+            }
+        );
+    }
+
+    [Test]
+    public void CombatStats_And_Modifiers_ShouldDefaultToNull()
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000001,
+            ItemId = 0x0EED
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.CombatStats, Is.Null);
+                Assert.That(item.Modifiers, Is.Null);
             }
         );
     }

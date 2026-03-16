@@ -4,23 +4,6 @@ namespace Moongate.Tests.Server.Services.Scripting;
 
 public sealed class LillyBrainAssetTests
 {
-    private static string GetRepositoryRoot()
-        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
-
-    [Test]
-    public void NpcsHumansTemplate_ShouldAssignDedicatedLillyBrain()
-    {
-        var repositoryRoot = GetRepositoryRoot();
-        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "npcs_humans.json");
-
-        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
-        var lilly = document.RootElement
-                            .EnumerateArray()
-                            .First(element => string.Equals(element.GetProperty("id").GetString(), "lilly", StringComparison.Ordinal));
-
-        Assert.That(lilly.GetProperty("brain").GetString(), Is.EqualTo("lilly"));
-    }
-
     [Test]
     public void InitScript_ShouldRequireLillyBrainScript()
     {
@@ -29,6 +12,23 @@ public sealed class LillyBrainAssetTests
         var initScript = File.ReadAllText(initScriptPath);
 
         Assert.That(initScript, Does.Contain("require(\"ai.lilly\")"));
+    }
+
+    [Test]
+    public void LillyBrainScript_ShouldEnsureAiDialogueIsInitializedBeforeListenerAndIdle()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "lilly.lua");
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script, Does.Contain("local function ensure_ai_ready(npc)"));
+                Assert.That(script, Does.Contain("if not ensure_ai_ready(npc)"));
+                Assert.That(script, Does.Contain("if ensure_ai_ready(npc) then"));
+            }
+        );
     }
 
     [Test]
@@ -65,19 +65,25 @@ public sealed class LillyBrainAssetTests
     }
 
     [Test]
-    public void LillyBrainScript_ShouldEnsureAiDialogueIsInitializedBeforeListenerAndIdle()
+    public void NpcsHumansTemplate_ShouldAssignDedicatedLillyBrain()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "lilly.lua");
-        var script = File.ReadAllText(scriptPath);
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "npcs_humans.json");
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(script, Does.Contain("local function ensure_ai_ready(npc)"));
-                Assert.That(script, Does.Contain("if not ensure_ai_ready(npc)"));
-                Assert.That(script, Does.Contain("if ensure_ai_ready(npc) then"));
-            }
-        );
+        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        var lilly = document.RootElement
+                            .EnumerateArray()
+                            .First(
+                                element => string.Equals(
+                                    element.GetProperty("id").GetString(),
+                                    "lilly",
+                                    StringComparison.Ordinal
+                                )
+                            );
+
+        Assert.That(lilly.GetProperty("brain").GetString(), Is.EqualTo("lilly"));
     }
+
+    private static string GetRepositoryRoot()
+        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
 }

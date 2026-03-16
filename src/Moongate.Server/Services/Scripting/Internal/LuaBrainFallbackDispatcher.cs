@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Scripting.Interfaces;
+using Moongate.Server.Data.Internal.Scripting;
 
 namespace Moongate.Server.Services.Scripting.Internal;
 

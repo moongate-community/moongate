@@ -114,6 +114,34 @@ public sealed class LuaItemProxy
         return true;
     }
 
+    public bool Flip()
+    {
+        if (!_item.TryGetCustomString(FlippableItemIdsKey, out var flippableRaw) ||
+            string.IsNullOrWhiteSpace(flippableRaw))
+        {
+            return false;
+        }
+
+        var ids = ParseFlippableItemIds(flippableRaw);
+
+        if (ids.Count < 2)
+        {
+            return false;
+        }
+
+        var currentIndex = ids.IndexOf(_item.ItemId);
+
+        if (currentIndex < 0)
+        {
+            return false;
+        }
+
+        var nextIndex = (currentIndex + 1) % ids.Count;
+        _item.ItemId = ids[nextIndex];
+
+        return PersistItem();
+    }
+
     public object? GetProp(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
@@ -148,34 +176,6 @@ public sealed class LuaItemProxy
     public bool IsInWorld()
         => _item.ParentContainerId == UO.Data.Ids.Serial.Zero &&
            _item.EquippedMobileId == UO.Data.Ids.Serial.Zero;
-
-    public bool Flip()
-    {
-        if (!_item.TryGetCustomString(FlippableItemIdsKey, out var flippableRaw) ||
-            string.IsNullOrWhiteSpace(flippableRaw))
-        {
-            return false;
-        }
-
-        var ids = ParseFlippableItemIds(flippableRaw);
-
-        if (ids.Count < 2)
-        {
-            return false;
-        }
-
-        var currentIndex = ids.IndexOf(_item.ItemId);
-
-        if (currentIndex < 0)
-        {
-            return false;
-        }
-
-        var nextIndex = (currentIndex + 1) % ids.Count;
-        _item.ItemId = ids[nextIndex];
-
-        return PersistItem();
-    }
 
     public bool MoveToContainer(uint containerSerial, int x, int y)
     {
@@ -423,6 +423,24 @@ public sealed class LuaItemProxy
         return PersistItem();
     }
 
+    private static List<int> ParseFlippableItemIds(string value)
+    {
+        var values = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var result = new List<int>(values.Length);
+
+        foreach (var token in values)
+        {
+            if (!TryParseItemId(token, out var itemId))
+            {
+                continue;
+            }
+
+            result.Add(itemId);
+        }
+
+        return result;
+    }
+
     private bool PersistItem()
     {
         if (_itemService is null)
@@ -440,24 +458,6 @@ public sealed class LuaItemProxy
         }
 
         return true;
-    }
-
-    private static List<int> ParseFlippableItemIds(string value)
-    {
-        var values = value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var result = new List<int>(values.Length);
-
-        foreach (var token in values)
-        {
-            if (!TryParseItemId(token, out var itemId))
-            {
-                continue;
-            }
-
-            result.Add(itemId);
-        }
-
-        return result;
     }
 
     private static bool TryParseItemId(string value, out int itemId)

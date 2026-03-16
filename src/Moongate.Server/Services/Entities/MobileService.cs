@@ -237,7 +237,10 @@ public sealed class MobileService : IMobileService
                             );
         var equippedItemsByMobileId = equippedItems
                                       .GroupBy(item => item.EquippedMobileId)
-                                      .ToDictionary(group => group.Key, group => group.ToDictionary(static item => item.Id, static item => item));
+                                      .ToDictionary(
+                                          group => group.Key,
+                                          group => group.ToDictionary(static item => item.Id, static item => item)
+                                      );
 
         foreach (var mobile in mobilesWithEquipment)
         {

@@ -45,19 +45,6 @@ public class MobileFactoryServiceTests
         }
     }
 
-    [SetUp]
-    public void SetUp()
-    {
-        SkillInfo.Table =
-        [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(16, "Evaluate Intelligence", 0, 0, 100, "Scholar", 0, 0, 0, 1, "EvaluateIntelligence", Stat.Intelligence, Stat.Intelligence),
-            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence),
-            new(46, "Meditation", 0, 0, 100, "Seer", 0, 0, 0, 1, "Meditation", Stat.Intelligence, Stat.Intelligence),
-            new(43, "Wrestling", 100, 0, 0, "Wrestler", 0, 0, 0, 1, "Wrestling", Stat.Strength, Stat.Dexterity)
-        ];
-    }
-
     [Test]
     public async Task CreateMobileFromTemplate_ShouldApplyTypedParamsToCustomProperties()
     {
@@ -137,6 +124,48 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldInitializeFullSkillTableAndApplyTemplateSkillValues()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "mage",
+                Name = "Mage",
+                Category = "human",
+                Description = "mage",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Skills = new(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["magery"] = 750,
+                    ["wrestling"] = 300
+                }
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("mage");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Skills, Has.Count.EqualTo(SkillInfo.Table.Length));
+                Assert.That(mobile.Skills[UOSkillName.Magery].Value, Is.EqualTo(750));
+                Assert.That(mobile.Skills[UOSkillName.Magery].Base, Is.EqualTo(750));
+                Assert.That(mobile.Skills[UOSkillName.Magery].Cap, Is.EqualTo(1000));
+                Assert.That(mobile.Skills[UOSkillName.Magery].Lock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.Skills[UOSkillName.Wrestling].Value, Is.EqualTo(300));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldMapTemplateFieldsAndAllocateSerial()
     {
         using var temp = new TempDirectory();
@@ -195,48 +224,6 @@ public class MobileFactoryServiceTests
                 Assert.That(mobile.Notoriety, Is.EqualTo(Notoriety.Criminal));
                 Assert.That(mobile.IsPlayer, Is.False);
                 Assert.That(mobile.Location, Is.EqualTo(Point3D.Zero));
-            }
-        );
-    }
-
-    [Test]
-    public async Task CreateMobileFromTemplate_ShouldInitializeFullSkillTableAndApplyTemplateSkillValues()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var templateService = new MobileTemplateService();
-        templateService.Upsert(
-            new()
-            {
-                Id = "mage",
-                Name = "Mage",
-                Category = "human",
-                Description = "mage",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
-                Skills = new(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["magery"] = 750,
-                    ["wrestling"] = 300
-                }
-            }
-        );
-        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
-
-        var mobile = service.CreateMobileFromTemplate("mage");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.Skills, Has.Count.EqualTo(SkillInfo.Table.Length));
-                Assert.That(mobile.Skills[UOSkillName.Magery].Value, Is.EqualTo(750));
-                Assert.That(mobile.Skills[UOSkillName.Magery].Base, Is.EqualTo(750));
-                Assert.That(mobile.Skills[UOSkillName.Magery].Cap, Is.EqualTo(1000));
-                Assert.That(mobile.Skills[UOSkillName.Magery].Lock, Is.EqualTo(UOSkillLock.Up));
-                Assert.That(mobile.Skills[UOSkillName.Wrestling].Value, Is.EqualTo(300));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(0));
             }
         );
     }
@@ -507,6 +494,87 @@ public class MobileFactoryServiceTests
             }
         );
     }
+
+    [SetUp]
+    public void SetUp()
+        => SkillInfo.Table =
+        [
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                16,
+                "Evaluate Intelligence",
+                0,
+                0,
+                100,
+                "Scholar",
+                0,
+                0,
+                0,
+                1,
+                "EvaluateIntelligence",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                25,
+                "Magery",
+                0,
+                0,
+                100,
+                "Wizard",
+                0,
+                0,
+                0,
+                1,
+                "Magery",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                46,
+                "Meditation",
+                0,
+                0,
+                100,
+                "Seer",
+                0,
+                0,
+                0,
+                1,
+                "Meditation",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                43,
+                "Wrestling",
+                100,
+                0,
+                0,
+                "Wrestler",
+                0,
+                0,
+                0,
+                1,
+                "Wrestling",
+                Stat.Strength,
+                Stat.Dexterity
+            )
+        ];
 
     private static byte[] BuildCharacterCreationPayload()
     {

@@ -322,6 +322,14 @@ public class UOItemEntity : IItemEntity
         );
 
     /// <summary>
+    /// Sets a location custom property serialized as a point string.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">Location value.</param>
+    public void SetCustomLocation(string key, Point3D value)
+        => SetCustomString(key, value.ToString());
+
+    /// <summary>
     /// Sets or replaces a typed custom property.
     /// </summary>
     /// <param name="key">Property key.</param>
@@ -347,14 +355,6 @@ public class UOItemEntity : IItemEntity
                 StringValue = value
             }
         );
-
-    /// <summary>
-    /// Sets a location custom property serialized as a point string.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">Location value.</param>
-    public void SetCustomLocation(string key, Point3D value)
-        => SetCustomString(key, value.ToString());
 
     public override string ToString()
         => $"Item(Id={Id}, Name={Name}, ItemId=0x{ItemId:X4}, MapId={MapId}, Location={Location})";
@@ -420,26 +420,6 @@ public class UOItemEntity : IItemEntity
     }
 
     /// <summary>
-    /// Tries to get a string custom property.
-    /// </summary>
-    /// <param name="key">Property key.</param>
-    /// <param name="value">String value when found and typed correctly.</param>
-    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
-    public bool TryGetCustomString(string key, out string? value)
-    {
-        value = null;
-
-        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.String)
-        {
-            return false;
-        }
-
-        value = property.StringValue;
-
-        return true;
-    }
-
-    /// <summary>
     /// Tries to get a location custom property encoded as a point string.
     /// </summary>
     /// <param name="key">Property key.</param>
@@ -460,6 +440,26 @@ public class UOItemEntity : IItemEntity
         }
 
         value = parsed;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a string custom property.
+    /// </summary>
+    /// <param name="key">Property key.</param>
+    /// <param name="value">String value when found and typed correctly.</param>
+    /// <returns><c>true</c> when found; otherwise <c>false</c>.</returns>
+    public bool TryGetCustomString(string key, out string? value)
+    {
+        value = null;
+
+        if (!_customProperties.TryGetValue(key, out var property) || property.Type != ItemCustomPropertyType.String)
+        {
+            return false;
+        }
+
+        value = property.StringValue;
 
         return true;
     }

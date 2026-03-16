@@ -72,16 +72,16 @@ public sealed class LuaBrainRunner
         => _stateStore.EnqueueDeath(mobileId, deathContext);
 
     /// <inheritdoc />
-    public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-        => _stateStore.EnqueueSpeech(gameEvent);
+    public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = InRangeEnterDistance)
+        => _stateStore.EnqueueInRange(listenerNpcId, sourceMobile, range);
 
     /// <inheritdoc />
     public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
         => _stateStore.EnqueueSpawn(gameEvent);
 
     /// <inheritdoc />
-    public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = InRangeEnterDistance)
-        => _stateStore.EnqueueInRange(listenerNpcId, sourceMobile, range);
+    public void EnqueueSpeech(SpeechHeardEvent gameEvent)
+        => _stateStore.EnqueueSpeech(gameEvent);
 
     /// <inheritdoc />
     public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
@@ -97,29 +97,8 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
-    public bool TryHandleContextMenuSelection(
-        UOMobileEntity mobile,
-        UOMobileEntity? requester,
-        string menuKey,
-        long sessionId
-    )
-    {
-        ArgumentNullException.ThrowIfNull(mobile);
-
-        if (string.IsNullOrWhiteSpace(menuKey) || !_stateStore.TryGet(mobile.Id, out var state) || state is null)
-        {
-            return false;
-        }
-
-        return LuaBrainContextMenuDispatcher.TryHandleSelection(
-            _luaScript,
-            state,
-            requester,
-            menuKey,
-            sessionId,
-            _logger
-        );
-    }
+    public LuaBrainMetricsSnapshot GetMetricsSnapshot()
+        => _metricsTracker.CreateSnapshot();
 
     /// <inheritdoc />
     public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
@@ -312,32 +291,42 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
-    public LuaBrainMetricsSnapshot GetMetricsSnapshot()
-        => _metricsTracker.CreateSnapshot();
+    public bool TryHandleContextMenuSelection(
+        UOMobileEntity mobile,
+        UOMobileEntity? requester,
+        string menuKey,
+        long sessionId
+    )
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        if (string.IsNullOrWhiteSpace(menuKey) || !_stateStore.TryGet(mobile.Id, out var state) || state is null)
+        {
+            return false;
+        }
+
+        return LuaBrainContextMenuDispatcher.TryHandleSelection(
+            _luaScript,
+            state,
+            requester,
+            menuKey,
+            sessionId,
+            _logger
+        );
+    }
 
     /// <inheritdoc />
     public void Unregister(Serial mobileId)
         => _stateStore.Remove(mobileId);
 
-    private string ResolveBrainTableName(string brainId)
-    {
-        if (_luaBrainRegistry.TryGet(brainId, out var definition) && definition is not null)
-        {
-            return definition.BrainId.Trim();
-        }
-
-        return brainId;
-    }
-
-    private void TickCallback()
-    {
-        var nowMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        TickAllAsync(nowMilliseconds).AsTask().GetAwaiter().GetResult();
-    }
-
     private void NotifyInRangeForAddedMobile(UOMobileEntity sourceMobile)
     {
-        if (!_stateStore.TryResolveSourceMobile(sourceMobile.Id, sourceMobile.MapId, sourceMobile.Location, out var resolved) ||
+        if (!_stateStore.TryResolveSourceMobile(
+                sourceMobile.Id,
+                sourceMobile.MapId,
+                sourceMobile.Location,
+                out var resolved
+            ) ||
             resolved is null)
         {
             return;
@@ -363,7 +352,12 @@ public sealed class LuaBrainRunner
 
     private void NotifyInRangeForMovedMobile(MobilePositionChangedEvent gameEvent)
     {
-        if (!_stateStore.TryResolveSourceMobile(gameEvent.MobileId, gameEvent.MapId, gameEvent.NewLocation, out var sourceMobile) ||
+        if (!_stateStore.TryResolveSourceMobile(
+                gameEvent.MobileId,
+                gameEvent.MapId,
+                gameEvent.NewLocation,
+                out var sourceMobile
+            ) ||
             sourceMobile is null)
         {
             return;
@@ -393,5 +387,21 @@ public sealed class LuaBrainRunner
                 _stateStore.EnqueueOutRange(state.MobileId, sourceMobile, InRangeEnterDistance);
             }
         }
+    }
+
+    private string ResolveBrainTableName(string brainId)
+    {
+        if (_luaBrainRegistry.TryGet(brainId, out var definition) && definition is not null)
+        {
+            return definition.BrainId.Trim();
+        }
+
+        return brainId;
+    }
+
+    private void TickCallback()
+    {
+        var nowMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        TickAllAsync(nowMilliseconds).AsTask().GetAwaiter().GetResult();
     }
 }

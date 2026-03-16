@@ -210,6 +210,36 @@ Current behavior:
 
 Under the hood this is powered by `IAsyncWorkSchedulerService`, a reusable queue abstraction built on top of the background job service.
 
+### Benchmark
+
+The benchmark suite includes `NpcDialogueSchedulingBenchmark` to measure the cost of the async dialogue scheduling path without putting OpenAI latency on the game loop.
+
+Run it with:
+
+```bash
+dotnet run --project benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj -c Release -- --filter "*NpcDialogueSchedulingBenchmark*" --job Dry
+```
+
+Latest measured dry-run values on Apple M4 Max / .NET 10:
+
+- `QueueListener_EnqueueOnly`
+  - median: `2.729 us`
+  - mean: `183.0 us`
+  - max first-iteration outlier: `2.133 ms`
+  - allocated: `592 B`
+- `ScheduleAndComplete_SingleNpc`
+  - median: `1.170 ms`
+  - mean: `1.258 ms`
+  - max first-iteration outlier: `2.169 ms`
+  - allocated: `1552 B`
+- `RejectDuplicate_InFlight`
+  - median: `1.270 ms`
+  - mean: `1.073 ms`
+  - max first-iteration outlier: `2.696 ms`
+  - allocated: `1288 B`
+
+These `Dry` results are intentionally cold-start heavy, so the median is the more useful value for the steady-state scheduling path.
+
 ## Current Scope
 
 The current v1 integration is focused on dialogue only:

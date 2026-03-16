@@ -12,13 +12,39 @@ public class SendSkillsPacketTests
 {
     [SetUp]
     public void SetUp()
-    {
-        SkillInfo.Table =
+        => SkillInfo.Table =
         [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence)
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                25,
+                "Magery",
+                0,
+                0,
+                100,
+                "Wizard",
+                0,
+                0,
+                0,
+                1,
+                "Magery",
+                Stat.Intelligence,
+                Stat.Intelligence
+            )
         ];
-    }
 
     [Test]
     public void Write_ShouldSerializeFullSkillListWithLocks()
@@ -30,7 +56,7 @@ public class SendSkillsPacketTests
         };
         mobile.InitializeSkills();
         mobile.SetSkill(UOSkillName.Alchemy, 500, cap: 900, lockState: UOSkillLock.Locked);
-        mobile.SetSkill(UOSkillName.Magery, 725, baseValue: 700, cap: 1000, lockState: UOSkillLock.Down);
+        mobile.SetSkill(UOSkillName.Magery, 725, 700, 1000, UOSkillLock.Down);
         var packet = new SkillListPacket(mobile);
 
         var data = Write(packet);

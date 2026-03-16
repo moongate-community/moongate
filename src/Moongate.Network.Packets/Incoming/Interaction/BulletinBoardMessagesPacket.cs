@@ -1,3 +1,4 @@
+using System.Text;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Data.BulletinBoard;
@@ -59,6 +60,14 @@ public class BulletinBoardMessagesPacket : BaseGameNetworkPacket
             default:
                 return false;
         }
+    }
+
+    private static string ReadAsciiNullTerminated(ref SpanReader reader, int byteLength)
+    {
+        var raw = reader.ReadBytes(byteLength);
+        var value = Encoding.ASCII.GetString(raw);
+
+        return value.TrimEnd('\0');
     }
 
     private bool TryParseMessageRequest(ref SpanReader reader)
@@ -131,13 +140,5 @@ public class BulletinBoardMessagesPacket : BaseGameNetworkPacket
         MessageId = reader.ReadUInt32();
 
         return reader.Remaining == 0;
-    }
-
-    private static string ReadAsciiNullTerminated(ref SpanReader reader, int byteLength)
-    {
-        var raw = reader.ReadBytes(byteLength);
-        var value = global::System.Text.Encoding.ASCII.GetString(raw);
-
-        return value.TrimEnd('\0');
     }
 }

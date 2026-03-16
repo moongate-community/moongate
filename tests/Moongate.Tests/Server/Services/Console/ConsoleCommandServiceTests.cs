@@ -1,25 +1,13 @@
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Events;
+using Moongate.Tests.Server.Support;
 using Serilog.Events;
 
 namespace Moongate.Tests.Server.Services.Console;
 
 public sealed class ConsoleCommandServiceTests
 {
-    [Test]
-    public async Task StartAsync_WhenConsolePromptInitializationFails_ShouldNotThrow()
-    {
-        var service = new ConsoleCommandService(
-            new ThrowingConsoleUiService(),
-            new Moongate.Tests.Server.Support.MockCommandSystemService(),
-            new GameEventBusService()
-        );
-
-        Assert.That(async () => await service.StartAsync(), Throws.Nothing);
-        Assert.That(async () => await service.StopAsync(), Throws.Nothing);
-    }
-
     private sealed class ThrowingConsoleUiService : IConsoleUiService
     {
         public bool IsInteractive => true;
@@ -40,5 +28,18 @@ public sealed class ConsoleCommandServiceTests
             LogEventLevel level,
             IReadOnlyCollection<string>? highlightedValues = null
         ) { }
+    }
+
+    [Test]
+    public async Task StartAsync_WhenConsolePromptInitializationFails_ShouldNotThrow()
+    {
+        var service = new ConsoleCommandService(
+            new ThrowingConsoleUiService(),
+            new MockCommandSystemService(),
+            new GameEventBusService()
+        );
+
+        Assert.That(async () => await service.StartAsync(), Throws.Nothing);
+        Assert.That(async () => await service.StopAsync(), Throws.Nothing);
     }
 }

@@ -1,10 +1,10 @@
 using Moongate.Network.Packets.Helpers;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Types.Targeting;
-using Moongate.Server.Handlers;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -147,7 +147,11 @@ public sealed class ModNameCommand : ICommandExecutor
         {
             _spatialWorldService.AddOrUpdateItem(item, item.MapId);
             _spatialWorldService
-                .BroadcastToPlayersInUpdateRadiusAsync(ToolTipHandler.CreateItemPropertyList(item), item.MapId, item.Location)
+                .BroadcastToPlayersInUpdateRadiusAsync(
+                    ToolTipHandler.CreateItemPropertyList(item),
+                    item.MapId,
+                    item.Location
+                )
                 .GetAwaiter()
                 .GetResult();
         }

@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Events.Speech;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
@@ -10,19 +10,23 @@ namespace Moongate.Server.Services.Scripting.Internal;
 /// </summary>
 internal static class LuaBrainPayloadFactory
 {
-    public static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
+    public static Dictionary<string, object> BuildInRangeEventPayload(
+        Serial listenerNpcId,
+        UOMobileEntity sourceMobile,
+        int range
+    )
         => new()
         {
-            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
-            ["speaker_id"] = (uint)speech.SpeakerId,
-            ["text"] = speech.Text,
-            ["speech_type"] = (byte)speech.SpeechType,
-            ["map_id"] = speech.MapId,
+            ["listener_npc_id"] = (uint)listenerNpcId,
+            ["source_mobile_id"] = (uint)sourceMobile.Id,
+            ["source_is_player"] = sourceMobile.IsPlayer,
+            ["map_id"] = sourceMobile.MapId,
+            ["range"] = range,
             ["location"] = new Dictionary<string, int>
             {
-                ["x"] = speech.Location.X,
-                ["y"] = speech.Location.Y,
-                ["z"] = speech.Location.Z
+                ["x"] = sourceMobile.Location.X,
+                ["y"] = sourceMobile.Location.Y,
+                ["z"] = sourceMobile.Location.Z
             }
         };
 
@@ -58,23 +62,19 @@ internal static class LuaBrainPayloadFactory
             }
         };
 
-    public static Dictionary<string, object> BuildInRangeEventPayload(
-        Serial listenerNpcId,
-        UOMobileEntity sourceMobile,
-        int range
-    )
+    public static Dictionary<string, object> BuildSpeechEventPayload(SpeechHeardEvent speech)
         => new()
         {
-            ["listener_npc_id"] = (uint)listenerNpcId,
-            ["source_mobile_id"] = (uint)sourceMobile.Id,
-            ["source_is_player"] = sourceMobile.IsPlayer,
-            ["map_id"] = sourceMobile.MapId,
-            ["range"] = range,
+            ["listener_npc_id"] = (uint)speech.ListenerNpcId,
+            ["speaker_id"] = (uint)speech.SpeakerId,
+            ["text"] = speech.Text,
+            ["speech_type"] = (byte)speech.SpeechType,
+            ["map_id"] = speech.MapId,
             ["location"] = new Dictionary<string, int>
             {
-                ["x"] = sourceMobile.Location.X,
-                ["y"] = sourceMobile.Location.Y,
-                ["z"] = sourceMobile.Location.Z
+                ["x"] = speech.Location.X,
+                ["y"] = speech.Location.Y,
+                ["z"] = speech.Location.Z
             }
         };
 }

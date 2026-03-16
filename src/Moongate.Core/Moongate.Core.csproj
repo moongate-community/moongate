@@ -19,8 +19,8 @@
         <PackageReference Include="ZLinq" Version="1.5.5"/>
         <PackageReference Include="LibDeflate.Bindings" Version="1.0.3"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 

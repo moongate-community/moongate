@@ -21,6 +21,9 @@ public class ItemModuleTests
         public bool MoveItemToWorldResult { get; set; } = true;
         public UOItemEntity? LastUpsertedItem { get; private set; }
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
         {
             _ = generateNewSerial;
@@ -152,9 +155,6 @@ public class ItemModuleTests
 
             return Task.CompletedTask;
         }
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     [Test]
@@ -213,34 +213,6 @@ public class ItemModuleTests
     }
 
     [Test]
-    public void Spawn_WhenTemplateIdIsEmpty_ShouldReturnNull()
-    {
-        var itemService = new ItemModuleTestItemService();
-        var module = new ItemModule(itemService);
-        var position = CreatePositionTable(120, 210, 0, 1);
-
-        var result = module.Spawn("", position, 1);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public void Spawn_WhenPositionIsInvalid_ShouldReturnNull()
-    {
-        var itemService = new ItemModuleTestItemService();
-        var module = new ItemModule(itemService);
-        var invalidPosition = new Table(new Script())
-        {
-            ["x"] = 100,
-            ["y"] = 200
-        };
-
-        var result = module.Spawn("gold", invalidPosition, 1);
-
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
     public void Spawn_WhenAmountIsZero_ShouldReturnNull()
     {
         var itemService = new ItemModuleTestItemService();
@@ -262,7 +234,35 @@ public class ItemModuleTests
         var module = new ItemModule(itemService);
         var position = CreatePositionTable(120, 210, 0, 1);
 
-        var result = module.Spawn("gold", position, 1);
+        var result = module.Spawn("gold", position);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public void Spawn_WhenPositionIsInvalid_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+        var invalidPosition = new Table(new())
+        {
+            ["x"] = 100,
+            ["y"] = 200
+        };
+
+        var result = module.Spawn("gold", invalidPosition);
+
+        Assert.That(result, Is.Null);
+    }
+
+    [Test]
+    public void Spawn_WhenTemplateIdIsEmpty_ShouldReturnNull()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var module = new ItemModule(itemService);
+        var position = CreatePositionTable(120, 210, 0, 1);
+
+        var result = module.Spawn("", position);
 
         Assert.That(result, Is.Null);
     }
@@ -292,7 +292,7 @@ public class ItemModuleTests
 
     private static Table CreatePositionTable(int x, int y, int z, int mapId)
     {
-        var table = new Table(new Script())
+        var table = new Table(new())
         {
             ["x"] = x,
             ["y"] = y,

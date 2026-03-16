@@ -1,10 +1,13 @@
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Items;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Services.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Items;
 
@@ -22,6 +25,9 @@ public sealed class DoorLockServiceTests
             }
         }
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -34,15 +40,15 @@ public sealed class DoorLockServiceTests
         public Task<bool> DeleteItemAsync(Serial itemId)
             => Task.FromResult(false);
 
-        public Task<Moongate.Server.Data.Items.DropItemToGroundResult?> DropItemToGroundAsync(
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
             Serial itemId,
             Point3D location,
             int mapId,
             long sessionId = 0
         )
-            => Task.FromResult<Moongate.Server.Data.Items.DropItemToGroundResult?>(null);
+            => Task.FromResult<DropItemToGroundResult?>(null);
 
-        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, Moongate.UO.Data.Types.ItemLayerType layer)
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
             => Task.FromResult(false);
 
         public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
@@ -89,19 +95,16 @@ public sealed class DoorLockServiceTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     private sealed class DoorLockServiceTestDoorDataService : IDoorDataService
     {
-        public IReadOnlyList<Moongate.Server.Data.World.DoorComponentEntry> GetAllEntries()
+        public IReadOnlyList<DoorComponentEntry> GetAllEntries()
             => [];
 
-        public void SetEntries(IReadOnlyList<Moongate.Server.Data.World.DoorComponentEntry> entries) { }
+        public void SetEntries(IReadOnlyList<DoorComponentEntry> entries) { }
 
-        public bool TryGetToggleDefinition(int itemId, out Moongate.Server.Data.World.DoorToggleDefinition definition)
+        public bool TryGetToggleDefinition(int itemId, out DoorToggleDefinition definition)
         {
             if (itemId is 0x0685 or 0x0686 or 0x0687 or 0x0688)
             {
@@ -114,6 +117,26 @@ public sealed class DoorLockServiceTests
 
             return false;
         }
+    }
+
+    [Test]
+    public async Task LockDoorAsync_WhenDoorAlreadyLocked_ShouldReturnExistingLockId()
+    {
+        var door = CreateDoor((Serial)0x40000001u);
+        door.SetCustomBoolean(ItemCustomParamKeys.Door.Locked, true);
+        door.SetCustomString(ItemCustomParamKeys.Door.LockId, "existing-lock");
+        var itemService = new DoorLockServiceTestItemService(door);
+        var service = new DoorLockService(itemService, new DoorLockServiceTestDoorDataService());
+
+        var result = await service.LockDoorAsync(door.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Locked, Is.True);
+                Assert.That(result.LockId, Is.EqualTo("existing-lock"));
+            }
+        );
     }
 
     [Test]
@@ -134,30 +157,24 @@ public sealed class DoorLockServiceTests
             {
                 Assert.That(result.Locked, Is.True);
                 Assert.That(result.LockId, Is.Not.Null.And.Not.Empty);
-                Assert.That(firstDoor.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var firstLocked) && firstLocked, Is.True);
-                Assert.That(secondDoor.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var secondLocked) && secondLocked, Is.True);
-                Assert.That(firstDoor.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var firstLockId) ? firstLockId : null, Is.EqualTo(result.LockId));
-                Assert.That(secondDoor.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var secondLockId) ? secondLockId : null, Is.EqualTo(result.LockId));
-            }
-        );
-    }
-
-    [Test]
-    public async Task LockDoorAsync_WhenDoorAlreadyLocked_ShouldReturnExistingLockId()
-    {
-        var door = CreateDoor((Serial)0x40000001u);
-        door.SetCustomBoolean(ItemCustomParamKeys.Door.Locked, true);
-        door.SetCustomString(ItemCustomParamKeys.Door.LockId, "existing-lock");
-        var itemService = new DoorLockServiceTestItemService(door);
-        var service = new DoorLockService(itemService, new DoorLockServiceTestDoorDataService());
-
-        var result = await service.LockDoorAsync(door.Id);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Locked, Is.True);
-                Assert.That(result.LockId, Is.EqualTo("existing-lock"));
+                Assert.That(
+                    firstDoor.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var firstLocked) && firstLocked,
+                    Is.True
+                );
+                Assert.That(
+                    secondDoor.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var secondLocked) && secondLocked,
+                    Is.True
+                );
+                Assert.That(
+                    firstDoor.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var firstLockId) ? firstLockId : null,
+                    Is.EqualTo(result.LockId)
+                );
+                Assert.That(
+                    secondDoor.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var secondLockId)
+                        ? secondLockId
+                        : null,
+                    Is.EqualTo(result.LockId)
+                );
             }
         );
     }
@@ -196,7 +213,7 @@ public sealed class DoorLockServiceTests
             Id = id,
             ItemId = 0x0685,
             MapId = 0,
-            Location = new Point3D(100, 100, 0),
+            Location = new(100, 100, 0),
             Name = "door",
             ScriptId = "items.door"
         };

@@ -1,15 +1,15 @@
 using Moongate.Core.Extensions.Strings;
+using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Interfaces.Services.World;
-using Moongate.Server.Interfaces.Services.Spatial;
-using Moongate.Server.Data.Events.Spatial;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
-using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
 using Serilog;
@@ -60,6 +60,18 @@ public sealed class SpawnService : ISpawnService
         _gameEventBusService = gameEventBusService;
     }
 
+    private sealed record RuntimeSpawnerState(
+        Serial SpawnerItemId,
+        Guid SpawnGuid,
+        int MapId,
+        Point3D Location,
+        SpawnDefinitionEntry Definition,
+        long NextSpawnAt,
+        IReadOnlyList<Serial> PlayersInRange
+    );
+
+    private sealed record ResolvedSpawnEntry(string TemplateId, SpawnEntryDefinition Entry);
+
     /// <inheritdoc />
     public int GetTrackedSpawnerCount()
     {
@@ -67,53 +79,6 @@ public sealed class SpawnService : ISpawnService
         {
             return _states.Count;
         }
-    }
-
-    /// <inheritdoc />
-    public async Task<bool> TriggerAsync(Serial spawnerItemId, CancellationToken cancellationToken = default)
-    {
-        _ = cancellationToken;
-
-        if (spawnerItemId == Serial.Zero)
-        {
-            return false;
-        }
-
-        if (!TryResolveRuntimeState(spawnerItemId, out var state))
-        {
-            return false;
-        }
-
-        var now = Environment.TickCount64;
-
-        return await TrySpawnForStateAsync(state, now, forceSpawn: true);
-    }
-
-    /// <inheritdoc />
-    public async Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default)
-    {
-        _ = cancellationToken;
-
-        ArgumentNullException.ThrowIfNull(spawnerItem);
-
-        if (spawnerItem.Id == Serial.Zero)
-        {
-            return false;
-        }
-
-        if (!TryBuildStateFromItem(spawnerItem, out var state))
-        {
-            return false;
-        }
-
-        lock (_sync)
-        {
-            _states[spawnerItem.Id] = state;
-        }
-
-        var now = Environment.TickCount64;
-
-        return await TrySpawnForStateAsync(state, now, forceSpawn: true);
     }
 
     /// <inheritdoc />
@@ -150,6 +115,53 @@ public sealed class SpawnService : ISpawnService
         return Task.CompletedTask;
     }
 
+    /// <inheritdoc />
+    public async Task<bool> TriggerAsync(Serial spawnerItemId, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        if (spawnerItemId == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (!TryResolveRuntimeState(spawnerItemId, out var state))
+        {
+            return false;
+        }
+
+        var now = Environment.TickCount64;
+
+        return await TrySpawnForStateAsync(state, now, true);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+
+        ArgumentNullException.ThrowIfNull(spawnerItem);
+
+        if (spawnerItem.Id == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (!TryBuildStateFromItem(spawnerItem, out var state))
+        {
+            return false;
+        }
+
+        lock (_sync)
+        {
+            _states[spawnerItem.Id] = state;
+        }
+
+        var now = Environment.TickCount64;
+
+        return await TrySpawnForStateAsync(state, now, true);
+    }
+
     private void BuildDefinitionIndex()
     {
         _definitionsByGuid.Clear();
@@ -159,6 +171,64 @@ public sealed class SpawnService : ISpawnService
             _definitionsByGuid[definition.Guid] = definition;
         }
     }
+
+    private static long ComputeInitialNextSpawnAt(SpawnDefinitionEntry definition)
+        => definition.Kind == SpawnDefinitionKind.ProximitySpawner
+               ? Environment.TickCount64
+               : Environment.TickCount64 + ComputeNextDelayMilliseconds(definition);
+
+    private static long ComputeNextDelayMilliseconds(SpawnDefinitionEntry definition)
+    {
+        var minDelay = definition.MinDelay <= TimeSpan.Zero ? TimeSpan.FromSeconds(10) : definition.MinDelay;
+        var maxDelay = definition.MaxDelay <= TimeSpan.Zero ? minDelay : definition.MaxDelay;
+
+        if (maxDelay < minDelay)
+        {
+            (minDelay, maxDelay) = (maxDelay, minDelay);
+        }
+
+        if (maxDelay == minDelay)
+        {
+            return (long)minDelay.TotalMilliseconds;
+        }
+
+        var minMs = Math.Max(1L, (long)minDelay.TotalMilliseconds);
+        var maxMs = Math.Max(minMs, (long)maxDelay.TotalMilliseconds);
+
+        return Random.Shared.NextInt64(minMs, maxMs + 1);
+    }
+
+    private int CountSpawnedMobiles(RuntimeSpawnerState state)
+    {
+        var range = Math.Max(1, state.Definition.HomeRange);
+        var spawnOrigin = state.SpawnGuid.ToString("D");
+        var count = 0;
+
+        foreach (var mobile in _spatialWorldService.GetNearbyMobiles(state.Location, range, state.MapId))
+        {
+            if (mobile.IsPlayer)
+            {
+                continue;
+            }
+
+            if (!mobile.TryGetCustomString(SpawnOriginKey, out var origin))
+            {
+                continue;
+            }
+
+            if (string.Equals(origin, spawnOrigin, StringComparison.OrdinalIgnoreCase))
+            {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    private static int GetActivationRange(SpawnDefinitionEntry definition)
+        => definition.Kind == SpawnDefinitionKind.ProximitySpawner
+               ? Math.Max(1, definition.HomeRange)
+               : ActivationRange;
 
     private void OnTick()
     {
@@ -204,13 +274,108 @@ public sealed class SpawnService : ISpawnService
 
             foreach (var state in dueStates)
             {
-                _ = await TrySpawnForStateAsync(state, now, forceSpawn: false);
+                _ = await TrySpawnForStateAsync(state, now, false);
             }
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "SpawnService tick failed.");
         }
+    }
+
+    private void Reschedule(Serial spawnerItemId, SpawnDefinitionEntry definition, long now)
+    {
+        lock (_sync)
+        {
+            if (!_states.TryGetValue(spawnerItemId, out var state))
+            {
+                return;
+            }
+
+            _states[spawnerItemId] = state with
+            {
+                NextSpawnAt = now + ComputeNextDelayMilliseconds(definition)
+            };
+        }
+    }
+
+    private ResolvedSpawnEntry? ResolveSpawnEntry(IReadOnlyList<SpawnEntryDefinition> entries)
+    {
+        if (entries.Count == 0)
+        {
+            return null;
+        }
+
+        var weighted = entries.Where(static entry => entry.Probability > 0).ToList();
+
+        if (weighted.Count == 0)
+        {
+            return null;
+        }
+
+        var totalWeight = weighted.Sum(static entry => entry.Probability);
+        var roll = Random.Shared.Next(1, totalWeight + 1);
+        var cumulative = 0;
+
+        foreach (var entry in weighted)
+        {
+            cumulative += entry.Probability;
+
+            if (roll > cumulative)
+            {
+                continue;
+            }
+
+            var resolved = ResolveTemplateId(entry.Name);
+
+            // TODO: remove only for debug
+
+            if (string.IsNullOrEmpty(resolved))
+            {
+                resolved = "generic_npc";
+            }
+
+            if (resolved is not null)
+            {
+                return new(resolved, entry);
+            }
+        }
+
+        foreach (var entry in weighted)
+        {
+            var resolved = ResolveTemplateId(entry.Name);
+
+            if (resolved is not null)
+            {
+                return new(resolved, entry);
+            }
+        }
+
+        return null;
+    }
+
+    private string? ResolveTemplateId(string sourceName)
+    {
+        if (string.IsNullOrWhiteSpace(sourceName))
+        {
+            return null;
+        }
+
+        var candidate = sourceName.Trim();
+
+        if (_mobileTemplateService.TryGet(candidate, out _))
+        {
+            return candidate;
+        }
+
+        var snakeCase = candidate.ToSnakeCase();
+
+        if (_mobileTemplateService.TryGet(snakeCase, out _))
+        {
+            return snakeCase;
+        }
+
+        return null;
     }
 
     private void ScanActiveSectorsForSpawners()
@@ -297,6 +462,91 @@ public sealed class SpawnService : ISpawnService
         }
     }
 
+    private bool TryBuildStateFromItem(UOItemEntity item, out RuntimeSpawnerState state)
+    {
+        state = default;
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerIdRaw) ||
+            string.IsNullOrWhiteSpace(spawnerIdRaw))
+        {
+            _logger.Debug("Cannot trigger spawner {ItemId}: missing spawner_id custom property.", item.Id);
+
+            return false;
+        }
+
+        if (!Guid.TryParse(spawnerIdRaw, out var spawnerGuid) || spawnerGuid == Guid.Empty)
+        {
+            _logger.Debug(
+                "Cannot trigger spawner {ItemId}: invalid spawner_id '{SpawnerIdRaw}'.",
+                item.Id,
+                spawnerIdRaw
+            );
+
+            return false;
+        }
+
+        if (!_definitionsByGuid.TryGetValue(spawnerGuid, out var definition))
+        {
+            _logger.Debug(
+                "Cannot trigger spawner {ItemId}: spawner_id {SpawnerGuid} not found in definitions.",
+                item.Id,
+                spawnerGuid
+            );
+
+            return false;
+        }
+
+        state = new(
+            item.Id,
+            spawnerGuid,
+            item.MapId,
+            item.Location,
+            definition,
+            ComputeInitialNextSpawnAt(definition),
+            []
+        );
+
+        return true;
+    }
+
+    private bool TryResolveRuntimeState(Serial spawnerItemId, out RuntimeSpawnerState state)
+    {
+        lock (_sync)
+        {
+            if (_states.TryGetValue(spawnerItemId, out state))
+            {
+                return true;
+            }
+        }
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            foreach (var item in sector.GetItems())
+            {
+                if (item.Id != spawnerItemId)
+                {
+                    continue;
+                }
+
+                if (!TryBuildStateFromItem(item, out state))
+                {
+                    return false;
+                }
+
+                lock (_sync)
+                {
+                    _states[spawnerItemId] = state;
+                }
+
+                return true;
+            }
+        }
+
+        state = default;
+
+        return false;
+    }
+
     private async Task<bool> TrySpawnForStateAsync(RuntimeSpawnerState state, long now, bool forceSpawn)
     {
         var playersInRange = _spatialWorldService.GetPlayersInRange(
@@ -305,10 +555,10 @@ public sealed class SpawnService : ISpawnService
             state.MapId
         );
         var playerIdsInRange = playersInRange
-            .Select(static session => session.CharacterId)
-            .Where(static id => id != Serial.Zero)
-            .Distinct()
-            .ToArray();
+                               .Select(static session => session.CharacterId)
+                               .Where(static id => id != Serial.Zero)
+                               .Distinct()
+                               .ToArray();
 
         if (state.Definition.Kind == SpawnDefinitionKind.ProximitySpawner)
         {
@@ -360,8 +610,7 @@ public sealed class SpawnService : ISpawnService
             var (spawned, mobile) = await _mobileService.TrySpawnFromTemplateAsync(
                                         resolvedSpawnEntry.TemplateId,
                                         state.Location,
-                                        state.MapId,
-                                        accountId: null
+                                        state.MapId
                                     );
 
             if (!spawned)
@@ -369,8 +618,7 @@ public sealed class SpawnService : ISpawnService
                 mobile = await _mobileService.SpawnFromTemplateAsync(
                              "generic_npc",
                              state.Location,
-                             state.MapId,
-                             accountId: null
+                             state.MapId
                          );
 
                 _logger.Warning(
@@ -431,134 +679,6 @@ public sealed class SpawnService : ISpawnService
         return spawnedMobile;
     }
 
-    private int CountSpawnedMobiles(RuntimeSpawnerState state)
-    {
-        var range = Math.Max(1, state.Definition.HomeRange);
-        var spawnOrigin = state.SpawnGuid.ToString("D");
-        var count = 0;
-
-        foreach (var mobile in _spatialWorldService.GetNearbyMobiles(state.Location, range, state.MapId))
-        {
-            if (mobile.IsPlayer)
-            {
-                continue;
-            }
-
-            if (!mobile.TryGetCustomString(SpawnOriginKey, out var origin))
-            {
-                continue;
-            }
-
-            if (string.Equals(origin, spawnOrigin, StringComparison.OrdinalIgnoreCase))
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
-    private void Reschedule(Serial spawnerItemId, SpawnDefinitionEntry definition, long now)
-    {
-        lock (_sync)
-        {
-            if (!_states.TryGetValue(spawnerItemId, out var state))
-            {
-                return;
-            }
-
-            _states[spawnerItemId] = state with
-            {
-                NextSpawnAt = now + ComputeNextDelayMilliseconds(definition)
-            };
-        }
-    }
-
-    private bool TryResolveRuntimeState(Serial spawnerItemId, out RuntimeSpawnerState state)
-    {
-        lock (_sync)
-        {
-            if (_states.TryGetValue(spawnerItemId, out state))
-            {
-                return true;
-            }
-        }
-
-        foreach (var sector in _spatialWorldService.GetActiveSectors())
-        {
-            foreach (var item in sector.GetItems())
-            {
-                if (item.Id != spawnerItemId)
-                {
-                    continue;
-                }
-
-                if (!TryBuildStateFromItem(item, out state))
-                {
-                    return false;
-                }
-
-                lock (_sync)
-                {
-                    _states[spawnerItemId] = state;
-                }
-
-                return true;
-            }
-        }
-
-        state = default;
-
-        return false;
-    }
-
-    private bool TryBuildStateFromItem(UOItemEntity item, out RuntimeSpawnerState state)
-    {
-        state = default;
-
-        if (!item.TryGetCustomString(ItemCustomParamKeys.Spawner.SpawnerId, out var spawnerIdRaw) ||
-            string.IsNullOrWhiteSpace(spawnerIdRaw))
-        {
-            _logger.Debug("Cannot trigger spawner {ItemId}: missing spawner_id custom property.", item.Id);
-
-            return false;
-        }
-
-        if (!Guid.TryParse(spawnerIdRaw, out var spawnerGuid) || spawnerGuid == Guid.Empty)
-        {
-            _logger.Debug(
-                "Cannot trigger spawner {ItemId}: invalid spawner_id '{SpawnerIdRaw}'.",
-                item.Id,
-                spawnerIdRaw
-            );
-
-            return false;
-        }
-
-        if (!_definitionsByGuid.TryGetValue(spawnerGuid, out var definition))
-        {
-            _logger.Debug(
-                "Cannot trigger spawner {ItemId}: spawner_id {SpawnerGuid} not found in definitions.",
-                item.Id,
-                spawnerGuid
-            );
-
-            return false;
-        }
-
-        state = new(
-            item.Id,
-            spawnerGuid,
-            item.MapId,
-            item.Location,
-            definition,
-            ComputeInitialNextSpawnAt(definition),
-            []
-        );
-
-        return true;
-    }
-
     private void UpdatePlayersInRange(Serial spawnerItemId, IReadOnlyList<Serial> playerIdsInRange)
     {
         lock (_sync)
@@ -574,126 +694,4 @@ public sealed class SpawnService : ISpawnService
             };
         }
     }
-
-    private ResolvedSpawnEntry? ResolveSpawnEntry(IReadOnlyList<SpawnEntryDefinition> entries)
-    {
-        if (entries.Count == 0)
-        {
-            return null;
-        }
-
-        var weighted = entries.Where(static entry => entry.Probability > 0).ToList();
-
-        if (weighted.Count == 0)
-        {
-            return null;
-        }
-
-        var totalWeight = weighted.Sum(static entry => entry.Probability);
-        var roll = Random.Shared.Next(1, totalWeight + 1);
-        var cumulative = 0;
-
-        foreach (var entry in weighted)
-        {
-            cumulative += entry.Probability;
-
-            if (roll > cumulative)
-            {
-                continue;
-            }
-
-            var resolved = ResolveTemplateId(entry.Name);
-
-            // TODO: remove only for debug
-
-            if (string.IsNullOrEmpty(resolved))
-            {
-                resolved = "generic_npc";
-            }
-
-            if (resolved is not null)
-            {
-                return new ResolvedSpawnEntry(resolved, entry);
-            }
-        }
-
-        foreach (var entry in weighted)
-        {
-            var resolved = ResolveTemplateId(entry.Name);
-
-            if (resolved is not null)
-            {
-                return new ResolvedSpawnEntry(resolved, entry);
-            }
-        }
-
-        return null;
-    }
-
-    private string? ResolveTemplateId(string sourceName)
-    {
-        if (string.IsNullOrWhiteSpace(sourceName))
-        {
-            return null;
-        }
-
-        var candidate = sourceName.Trim();
-
-        if (_mobileTemplateService.TryGet(candidate, out _))
-        {
-            return candidate;
-        }
-
-        var snakeCase = candidate.ToSnakeCase();
-
-        if (_mobileTemplateService.TryGet(snakeCase, out _))
-        {
-            return snakeCase;
-        }
-
-        return null;
-    }
-
-    private static long ComputeNextDelayMilliseconds(SpawnDefinitionEntry definition)
-    {
-        var minDelay = definition.MinDelay <= TimeSpan.Zero ? TimeSpan.FromSeconds(10) : definition.MinDelay;
-        var maxDelay = definition.MaxDelay <= TimeSpan.Zero ? minDelay : definition.MaxDelay;
-
-        if (maxDelay < minDelay)
-        {
-            (minDelay, maxDelay) = (maxDelay, minDelay);
-        }
-
-        if (maxDelay == minDelay)
-        {
-            return (long)minDelay.TotalMilliseconds;
-        }
-
-        var minMs = Math.Max(1L, (long)minDelay.TotalMilliseconds);
-        var maxMs = Math.Max(minMs, (long)maxDelay.TotalMilliseconds);
-
-        return Random.Shared.NextInt64(minMs, maxMs + 1);
-    }
-
-    private static int GetActivationRange(SpawnDefinitionEntry definition)
-        => definition.Kind == SpawnDefinitionKind.ProximitySpawner
-               ? Math.Max(1, definition.HomeRange)
-               : ActivationRange;
-
-    private static long ComputeInitialNextSpawnAt(SpawnDefinitionEntry definition)
-        => definition.Kind == SpawnDefinitionKind.ProximitySpawner
-               ? Environment.TickCount64
-               : Environment.TickCount64 + ComputeNextDelayMilliseconds(definition);
-
-    private sealed record RuntimeSpawnerState(
-        Serial SpawnerItemId,
-        Guid SpawnGuid,
-        int MapId,
-        Moongate.UO.Data.Geometry.Point3D Location,
-        SpawnDefinitionEntry Definition,
-        long NextSpawnAt,
-        IReadOnlyList<Serial> PlayersInRange
-    );
-
-    private sealed record ResolvedSpawnEntry(string TemplateId, SpawnEntryDefinition Entry);
 }

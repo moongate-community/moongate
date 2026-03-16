@@ -3,7 +3,6 @@ using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules.Internal;
-using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Modules;

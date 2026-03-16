@@ -91,25 +91,36 @@ public class ItemServiceBenchmark : IDisposable
 
     private sealed class InMemoryBulletinBoardMessageRepository : IBulletinBoardMessageRepository
     {
-        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(
+            CancellationToken cancellationToken = default
+        )
             => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>([]);
 
-        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default)
-            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
-
-        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(Serial boardId, CancellationToken cancellationToken = default)
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
+            Serial boardId,
+            CancellationToken cancellationToken = default
+        )
             => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>([]);
 
-        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
-            => ValueTask.CompletedTask;
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
+            Serial messageId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
 
         public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
             => ValueTask.FromResult(false);
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
     }
 
     private sealed class InMemoryItemRepository : IItemRepository
     {
         private readonly Dictionary<Serial, UOItemEntity> _items = [];
+
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
 
         public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
             => ValueTask.FromResult(_items.Count);
@@ -144,9 +155,6 @@ public class ItemServiceBenchmark : IDisposable
 
             return ValueTask.CompletedTask;
         }
-
-        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
-            => ValueTask.CompletedTask;
     }
 
     private sealed class InMemoryMobileRepository : IMobileRepository

@@ -5,15 +5,15 @@ namespace Moongate.Server.Interfaces.Services.Items;
 
 public interface IItemInteractionService
 {
-    Task<bool> HandleSingleClickAsync(
-        GameSession session,
-        SingleClickPacket packet,
-        CancellationToken cancellationToken = default
-    );
-
     Task<bool> HandleDoubleClickAsync(
         GameSession session,
         DoubleClickPacket packet,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<bool> HandleSingleClickAsync(
+        GameSession session,
+        SingleClickPacket packet,
         CancellationToken cancellationToken = default
     );
 }

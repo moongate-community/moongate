@@ -122,18 +122,24 @@ public class SeedDataServiceTests
             => [.. _entries.Where(entry => entry.SourceMapId == mapId)];
 
         public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
-            => [
+            =>
+            [
                 .. _entries.Where(
-                      entry =>
-                          entry.SourceMapId == mapId &&
-                          (entry.SourceLocation.X >> MapSectorConsts.SectorShift) == sectorX &&
-                          (entry.SourceLocation.Y >> MapSectorConsts.SectorShift) == sectorY
-                  )
+                    entry =>
+                        entry.SourceMapId == mapId &&
+                        entry.SourceLocation.X >> MapSectorConsts.SectorShift == sectorX &&
+                        entry.SourceLocation.Y >> MapSectorConsts.SectorShift == sectorY
+                )
             ];
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+            => throw new NotSupportedException();
 
         public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
         {
-            entry = _entries.FirstOrDefault(candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location);
+            entry = _entries.FirstOrDefault(
+                candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location
+            );
 
             return entry != default;
         }
@@ -161,9 +167,6 @@ public class SeedDataServiceTests
 
             return false;
         }
-
-        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
-            => throw new NotSupportedException();
     }
 
     [Test]

@@ -86,25 +86,41 @@ public class ToolTipHandlerTests
 
     private sealed class TestBulletinBoardMessageRepository : IBulletinBoardMessageRepository
     {
-        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(
+            CancellationToken cancellationToken = default
+        )
             => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>([]);
 
-        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default)
-            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
-
-        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(Serial boardId, CancellationToken cancellationToken = default)
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
+            Serial boardId,
+            CancellationToken cancellationToken = default
+        )
             => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>([]);
 
-        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
-            => ValueTask.CompletedTask;
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
+            Serial messageId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
 
         public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
             => ValueTask.FromResult(false);
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
     }
 
     private sealed class TestItemRepository : IItemRepository
     {
         private readonly Dictionary<Serial, UOItemEntity> _items = [];
+
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+        {
+            _ = items;
+            _ = cancellationToken;
+
+            return ValueTask.CompletedTask;
+        }
 
         public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
         {
@@ -150,14 +166,6 @@ public class ToolTipHandlerTests
         {
             _ = cancellationToken;
             _items[item.Id] = item;
-
-            return ValueTask.CompletedTask;
-        }
-
-        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
-        {
-            _ = items;
-            _ = cancellationToken;
 
             return ValueTask.CompletedTask;
         }
@@ -503,65 +511,53 @@ public class ToolTipHandlerTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.WeaponDamage && p.Text == "11\t15"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.WeaponSpeed && p.Text == "30"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.Durability && p.Text == "25\t40"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.PhysicalResist && p.Text == "10"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.FireResist && p.Text == "11"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.HitChanceIncrease && p.Text == "15"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.DamageIncrease && p.Text == "16"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellDamageIncrease && p.Text == "17"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.FasterCasting && p.Text == "1"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.FasterCastRecovery && p.Text == "2"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SwingSpeedIncrease && p.Text == "20"), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellChanneling), Is.True);
-                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.UsesRemaining && p.Text == "25"), Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_ShouldUseBookMetadata_WhenBookTitleAndAuthorExist()
-    {
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var persistenceService = new TestPersistenceService();
-        var itemSerial = (Serial)0x40000023u;
-        var item = new UOItemEntity
-        {
-            Id = itemSerial,
-            Name = "Writable Book",
-            ItemId = 0x0FF0
-        };
-        item.SetCustomString("book_title", "Travel Journal");
-        item.SetCustomString("book_author", "Tommy");
-        item.SetCustomString("book_content", "Line 1");
-        await persistenceService.UnitOfWork.Items.UpsertAsync(item);
-
-        var handler = new ToolTipHandler(queue, persistenceService);
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-        var request = BuildRequestPacket(itemSerial.Value);
-
-        var handled = await handler.HandlePacketAsync(session, request);
-        var dequeued = queue.TryDequeue(out var outbound);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(dequeued, Is.True);
-            }
-        );
-
-        var response = DeserializeResponse(outbound.Packet);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(response.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
-                Assert.That(response.Properties[0].Text, Is.EqualTo("Travel Journal"));
                 Assert.That(
-                    response.Properties.Any(property => string.Equals(property.Text, "by Tommy", StringComparison.Ordinal)),
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.WeaponDamage && p.Text == "11\t15"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.WeaponSpeed && p.Text == "30"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.Durability && p.Text == "25\t40"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.PhysicalResist && p.Text == "10"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.FireResist && p.Text == "11"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.HitChanceIncrease && p.Text == "15"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.DamageIncrease && p.Text == "16"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellDamageIncrease && p.Text == "17"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.FasterCasting && p.Text == "1"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.FasterCastRecovery && p.Text == "2"),
+                    Is.True
+                );
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.SwingSpeedIncrease && p.Text == "20"),
+                    Is.True
+                );
+                Assert.That(response.Properties.Any(p => p.ClilocId == CommonClilocIds.SpellChanneling), Is.True);
+                Assert.That(
+                    response.Properties.Any(p => p.ClilocId == CommonClilocIds.UsesRemaining && p.Text == "25"),
                     Is.True
                 );
             }
@@ -678,6 +674,54 @@ public class ToolTipHandlerTests
                 Assert.That(firstDequeued, Is.True);
                 Assert.That(secondDequeued, Is.True);
                 Assert.That(ReferenceEquals(firstOutbound.Packet, secondOutbound.Packet), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldUseBookMetadata_WhenBookTitleAndAuthorExist()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var persistenceService = new TestPersistenceService();
+        var itemSerial = (Serial)0x40000023u;
+        var item = new UOItemEntity
+        {
+            Id = itemSerial,
+            Name = "Writable Book",
+            ItemId = 0x0FF0
+        };
+        item.SetCustomString("book_title", "Travel Journal");
+        item.SetCustomString("book_author", "Tommy");
+        item.SetCustomString("book_content", "Line 1");
+        await persistenceService.UnitOfWork.Items.UpsertAsync(item);
+
+        var handler = new ToolTipHandler(queue, persistenceService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var request = BuildRequestPacket(itemSerial.Value);
+
+        var handled = await handler.HandlePacketAsync(session, request);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+            }
+        );
+
+        var response = DeserializeResponse(outbound.Packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(response.Properties[0].ClilocId, Is.EqualTo(CommonClilocIds.ObjectName));
+                Assert.That(response.Properties[0].Text, Is.EqualTo("Travel Journal"));
+                Assert.That(
+                    response.Properties.Any(property => string.Equals(property.Text, "by Tommy", StringComparison.Ordinal)),
+                    Is.True
+                );
             }
         );
     }

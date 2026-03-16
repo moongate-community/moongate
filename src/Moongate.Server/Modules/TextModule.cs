@@ -1,4 +1,3 @@
-using System.Collections;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Interfaces.Services.Scripting;
 using MoonSharp.Interpreter;
@@ -28,6 +27,17 @@ public sealed class TextModule
         return _textTemplateService.TryRender(relativePath.Trim(), model, out var rendered) ? rendered : null;
     }
 
+    private static object? ConvertDynValue(DynValue value)
+        => value.Type switch
+        {
+            DataType.Nil or DataType.Void => null,
+            DataType.Boolean              => value.Boolean,
+            DataType.Number               => value.Number,
+            DataType.String               => value.String,
+            DataType.Table                => ConvertTableOrArray(value.Table!),
+            _                             => value.ToObject()
+        };
+
     private static Dictionary<string, object?> ConvertTable(Table table)
     {
         var dictionary = new Dictionary<string, object?>(StringComparer.Ordinal);
@@ -43,19 +53,6 @@ public sealed class TextModule
         }
 
         return dictionary;
-    }
-
-    private static object? ConvertDynValue(DynValue value)
-    {
-        return value.Type switch
-        {
-            DataType.Nil or DataType.Void => null,
-            DataType.Boolean              => value.Boolean,
-            DataType.Number               => value.Number,
-            DataType.String               => value.String,
-            DataType.Table                => ConvertTableOrArray(value.Table!),
-            _                             => value.ToObject()
-        };
     }
 
     private static object ConvertTableOrArray(Table table)

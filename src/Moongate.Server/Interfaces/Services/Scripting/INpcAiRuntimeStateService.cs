@@ -13,9 +13,9 @@ public interface INpcAiRuntimeStateService
     void BindPromptFile(Serial npcId, string promptFile);
 
     /// <summary>
-    /// Returns the prompt file currently bound to the NPC.
+    /// Attempts to acquire the idle-chatter cooldown slot.
     /// </summary>
-    bool TryGetPromptFile(Serial npcId, out string? promptFile);
+    bool TryAcquireIdle(Serial npcId, long nowMilliseconds, int cooldownMilliseconds);
 
     /// <summary>
     /// Attempts to acquire the listener-response cooldown slot.
@@ -23,7 +23,7 @@ public interface INpcAiRuntimeStateService
     bool TryAcquireListener(Serial npcId, long nowMilliseconds, int cooldownMilliseconds);
 
     /// <summary>
-    /// Attempts to acquire the idle-chatter cooldown slot.
+    /// Returns the prompt file currently bound to the NPC.
     /// </summary>
-    bool TryAcquireIdle(Serial npcId, long nowMilliseconds, int cooldownMilliseconds);
+    bool TryGetPromptFile(Serial npcId, out string? promptFile);
 }

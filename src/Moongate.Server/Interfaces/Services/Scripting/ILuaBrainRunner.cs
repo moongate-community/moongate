@@ -26,18 +26,6 @@ public interface ILuaBrainRunner
     void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext);
 
     /// <summary>
-    /// Enqueues a speech event for brain processing.
-    /// </summary>
-    /// <param name="gameEvent">Speech event already filtered per target npc.</param>
-    void EnqueueSpeech(SpeechHeardEvent gameEvent);
-
-    /// <summary>
-    /// Enqueues an NPC spawn context for deferred brain processing.
-    /// </summary>
-    /// <param name="gameEvent">Spawner event targeting the spawned mobile.</param>
-    void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent);
-
-    /// <summary>
     /// Enqueues an in-range notification when another mobile enters proximity.
     /// </summary>
     /// <param name="listenerNpcId">Npc id receiving the notification.</param>
@@ -46,12 +34,38 @@ public interface ILuaBrainRunner
     void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3);
 
     /// <summary>
+    /// Enqueues an NPC spawn context for deferred brain processing.
+    /// </summary>
+    /// <param name="gameEvent">Spawner event targeting the spawned mobile.</param>
+    void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent);
+
+    /// <summary>
+    /// Enqueues a speech event for brain processing.
+    /// </summary>
+    /// <param name="gameEvent">Speech event already filtered per target npc.</param>
+    void EnqueueSpeech(SpeechHeardEvent gameEvent);
+
+    /// <summary>
     /// Gets custom context menu entries exposed by a mobile brain script.
     /// </summary>
     /// <param name="mobile">Target mobile.</param>
     /// <param name="requester">Requesting player/mobile context.</param>
     /// <returns>Custom context menu entries in display order.</returns>
     IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester);
+
+    /// <summary>
+    /// Registers or updates a mobile brain runtime binding.
+    /// </summary>
+    /// <param name="mobile">Target mobile.</param>
+    /// <param name="brainId">Brain identifier resolved by registry.</param>
+    void Register(UOMobileEntity mobile, string brainId);
+
+    /// <summary>
+    /// Processes due brain ticks for all registered NPCs.
+    /// </summary>
+    /// <param name="nowMilliseconds">Current Unix timestamp in milliseconds.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Dispatches a selected custom context menu key to the mobile brain script.
@@ -67,20 +81,6 @@ public interface ILuaBrainRunner
         string menuKey,
         long sessionId
     );
-
-    /// <summary>
-    /// Registers or updates a mobile brain runtime binding.
-    /// </summary>
-    /// <param name="mobile">Target mobile.</param>
-    /// <param name="brainId">Brain identifier resolved by registry.</param>
-    void Register(UOMobileEntity mobile, string brainId);
-
-    /// <summary>
-    /// Processes due brain ticks for all registered NPCs.
-    /// </summary>
-    /// <param name="nowMilliseconds">Current Unix timestamp in milliseconds.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Unregisters a mobile brain runtime binding.

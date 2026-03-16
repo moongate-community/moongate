@@ -4,8 +4,8 @@ using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Types.World;
 using Moongate.Server.Services.World;
+using Moongate.Server.Types.World;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -167,7 +167,7 @@ public sealed class ItemFactoryService : IItemFactoryService
             );
         }
 
-        if (!_bookTemplateService.TryLoad(template.BookId, model: null, out var book) || book is null)
+        if (!_bookTemplateService.TryLoad(template.BookId, null, out var book) || book is null)
         {
             throw new InvalidOperationException(
                 $"Item template '{template.Id}' references missing or invalid book template '{template.BookId}'."
@@ -183,6 +183,20 @@ public sealed class ItemFactoryService : IItemFactoryService
         {
             item.SetCustomBoolean(ItemCustomParamKeys.Book.Writable, !book.ReadOnly.Value);
         }
+    }
+
+    private static void ApplyDoorFacingOverride(UOItemEntity item, ItemTemplateDefinition template)
+    {
+        if (!IsDoorTemplate(template) ||
+            !template.Params.TryGetValue("Facing", out var facingParam) ||
+            !Enum.TryParse<DoorGenerationFacing>(facingParam.Value, true, out var facing))
+        {
+            return;
+        }
+
+        item.Direction = facing.ToDirectionType();
+        item.ItemId = facing.ToItemId(item.ItemId);
+        item.SetCustomString(ItemCustomParamKeys.Door.Facing, facing.ToString());
     }
 
     private static void ApplyTemplateParams(UOItemEntity item, ItemTemplateDefinition template)
@@ -266,26 +280,6 @@ public sealed class ItemFactoryService : IItemFactoryService
         ApplyDoorFacingOverride(item, template);
     }
 
-    private static void ApplyDoorFacingOverride(UOItemEntity item, ItemTemplateDefinition template)
-    {
-        if (!IsDoorTemplate(template) ||
-            !template.Params.TryGetValue("Facing", out var facingParam) ||
-            !Enum.TryParse<DoorGenerationFacing>(facingParam.Value, true, out var facing))
-        {
-            return;
-        }
-
-        item.Direction = facing.ToDirectionType();
-        item.ItemId = facing.ToItemId(item.ItemId);
-        item.SetCustomString(ItemCustomParamKeys.Door.Facing, facing.ToString());
-    }
-
-    private static bool IsDoorTemplate(ItemTemplateDefinition template)
-        => string.Equals(template.ScriptId, "items.door", StringComparison.OrdinalIgnoreCase) ||
-           template.Tags.Any(static tag =>
-               string.Equals(tag, "door", StringComparison.OrdinalIgnoreCase) ||
-               string.Equals(tag, "gate", StringComparison.OrdinalIgnoreCase));
-
     private static ItemCombatStats? CreateCombatStats(ItemTemplateDefinition template)
     {
         if (template.Strength == 0 &&
@@ -316,34 +310,6 @@ public sealed class ItemFactoryService : IItemFactoryService
             MaxDurability = template.HitPoints,
             CurrentDurability = template.HitPoints
         };
-    }
-
-    private static void EnsureWritableBookMetadata(UOItemEntity item)
-    {
-        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Book.Writable, out var writable) || !writable)
-        {
-            return;
-        }
-
-        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Title, out _))
-        {
-            item.SetCustomString(ItemCustomParamKeys.Book.Title, string.Empty);
-        }
-
-        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Author, out _))
-        {
-            item.SetCustomString(ItemCustomParamKeys.Book.Author, string.Empty);
-        }
-
-        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Content, out _))
-        {
-            item.SetCustomString(ItemCustomParamKeys.Book.Content, string.Empty);
-        }
-
-        if (!item.TryGetCustomInteger(ItemCustomParamKeys.Book.Pages, out _))
-        {
-            item.SetCustomInteger(ItemCustomParamKeys.Book.Pages, DefaultWritableBookPages);
-        }
     }
 
     private static ItemModifiers? CreateModifiers(ItemTemplateDefinition template)
@@ -396,6 +362,42 @@ public sealed class ItemFactoryService : IItemFactoryService
             UsesRemaining = template.UsesRemaining
         };
     }
+
+    private static void EnsureWritableBookMetadata(UOItemEntity item)
+    {
+        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Book.Writable, out var writable) || !writable)
+        {
+            return;
+        }
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Title, out _))
+        {
+            item.SetCustomString(ItemCustomParamKeys.Book.Title, string.Empty);
+        }
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Author, out _))
+        {
+            item.SetCustomString(ItemCustomParamKeys.Book.Author, string.Empty);
+        }
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Book.Content, out _))
+        {
+            item.SetCustomString(ItemCustomParamKeys.Book.Content, string.Empty);
+        }
+
+        if (!item.TryGetCustomInteger(ItemCustomParamKeys.Book.Pages, out _))
+        {
+            item.SetCustomInteger(ItemCustomParamKeys.Book.Pages, DefaultWritableBookPages);
+        }
+    }
+
+    private static bool IsDoorTemplate(ItemTemplateDefinition template)
+        => string.Equals(template.ScriptId, "items.door", StringComparison.OrdinalIgnoreCase) ||
+           template.Tags.Any(
+               static tag =>
+                   string.Equals(tag, "door", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(tag, "gate", StringComparison.OrdinalIgnoreCase)
+           );
 
     private static int ParseItemId(string value)
     {

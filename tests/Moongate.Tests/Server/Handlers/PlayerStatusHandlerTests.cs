@@ -15,16 +15,6 @@ namespace Moongate.Tests.Server.Handlers;
 
 public class PlayerStatusHandlerTests
 {
-    [SetUp]
-    public void SetUp()
-    {
-        SkillInfo.Table =
-        [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence)
-        ];
-    }
-
     private sealed class TestCharacterService : ICharacterService
     {
         public Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
@@ -97,46 +87,6 @@ public class PlayerStatusHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_ShouldEnqueueStatusPacket_WhenBasicStatusRequested()
-    {
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var characterService = new TestCharacterService();
-        var handler = new PlayerStatusHandler(queue, characterService);
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00000002,
-            Name = "Tommy",
-            Hits = 80,
-            MaxHits = 100
-        };
-        var session = new GameSession(new(client))
-        {
-            CharacterId = mobile.Id,
-            Character = mobile
-        };
-
-        var packet = new GetPlayerStatusPacket
-        {
-            StatusType = GetPlayerStatusType.BasicStatus,
-            MobileSerial = mobile.Id.Value
-        };
-
-        var handled = await handler.HandlePacketAsync(session, packet);
-        var dequeued = queue.TryDequeue(out var outbound);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(dequeued, Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<PlayerStatusPacket>());
-            }
-        );
-    }
-
-    [Test]
     public async Task HandlePacketAsync_ShouldEnqueueSkillListPacket_WhenRequestSkillsTypeRequested()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -176,4 +126,80 @@ public class PlayerStatusHandlerTests
             }
         );
     }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldEnqueueStatusPacket_WhenBasicStatusRequested()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var characterService = new TestCharacterService();
+        var handler = new PlayerStatusHandler(queue, characterService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002,
+            Name = "Tommy",
+            Hits = 80,
+            MaxHits = 100
+        };
+        var session = new GameSession(new(client))
+        {
+            CharacterId = mobile.Id,
+            Character = mobile
+        };
+
+        var packet = new GetPlayerStatusPacket
+        {
+            StatusType = GetPlayerStatusType.BasicStatus,
+            MobileSerial = mobile.Id.Value
+        };
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<PlayerStatusPacket>());
+            }
+        );
+    }
+
+    [SetUp]
+    public void SetUp()
+        => SkillInfo.Table =
+        [
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                25,
+                "Magery",
+                0,
+                0,
+                100,
+                "Wizard",
+                0,
+                0,
+                0,
+                1,
+                "Magery",
+                Stat.Intelligence,
+                Stat.Intelligence
+            )
+        ];
 }

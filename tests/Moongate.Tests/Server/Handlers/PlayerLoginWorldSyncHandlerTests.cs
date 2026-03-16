@@ -1,13 +1,10 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Tests.Server.Services.Spatial;
-using Moongate.Tests.Server.Support;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -81,7 +78,7 @@ public sealed class PlayerLoginWorldSyncHandlerTests
             IsPlayer = true,
             Name = "tommy",
             MapId = 1,
-            Location = new Point3D(132, 132, 0)
+            Location = new(132, 132, 0)
         };
         session.CharacterId = character.Id;
         session.Character = character;
@@ -96,7 +93,7 @@ public sealed class PlayerLoginWorldSyncHandlerTests
         );
 
         await handler.HandleAsync(
-            new PlayerCharacterLoggedInEvent(
+            new(
                 session.SessionId,
                 session.AccountId,
                 character.Id

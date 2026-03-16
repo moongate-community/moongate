@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Interaction;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
@@ -59,14 +60,13 @@ public sealed class ContextMenuService
         _luaBrainRunner = luaBrainRunner;
     }
 
+    private readonly record struct PendingContextMenuState(
+        Serial TargetSerial,
+        Dictionary<ushort, (ContextMenuActionType Action, string? ScriptKey)> EntryActions
+    );
+
     public async Task HandleAsync(ContextMenuRequestedEvent gameEvent, CancellationToken cancellationToken = default)
         => await SendContextMenuAsync(gameEvent.SessionId, gameEvent.TargetSerial, cancellationToken);
-
-    public Task StartAsync()
-        => Task.CompletedTask;
-
-    public Task StopAsync()
-        => Task.CompletedTask;
 
     public async Task HandleAsync(
         ContextMenuEntrySelectedEvent gameEvent,
@@ -145,7 +145,7 @@ public sealed class ContextMenuService
 
         var entries = BuildEntries(targetMobile);
         var entryActions =
-            new Dictionary<ushort, (ContextMenuActionType Action, string? ScriptKey)>(capacity: entries.Count);
+            new Dictionary<ushort, (ContextMenuActionType Action, string? ScriptKey)>(entries.Count);
         var hasValidScriptEntries = false;
 
         if (_luaBrainRunner is not null)
@@ -160,7 +160,7 @@ public sealed class ContextMenuService
                     continue;
                 }
 
-                while (entryActions.ContainsKey((ushort)nextTag))
+                while (entryActions.ContainsKey(nextTag))
                 {
                     nextTag++;
                 }
@@ -170,7 +170,7 @@ public sealed class ContextMenuService
                     break;
                 }
 
-                var tag = (ushort)nextTag++;
+                var tag = nextTag++;
                 entries.Add(new(tag, customEntry.ClilocId, Hue: 0x0481));
                 entryActions[tag] = (ContextMenuActionType.Script, customEntry.Key);
                 hasValidScriptEntries = true;
@@ -211,19 +211,30 @@ public sealed class ContextMenuService
         return true;
     }
 
-    private static bool SupportsContextMenu(Data.Session.GameSession session)
-    {
-        var clientVersion = session.ClientVersion;
+    public Task StartAsync()
+        => Task.CompletedTask;
 
-        if (clientVersion is null)
+    public Task StopAsync()
+        => Task.CompletedTask;
+
+    private static List<PopupContextMenuEntry> BuildEntries(UOMobileEntity targetMobile)
+    {
+        var entries = new List<PopupContextMenuEntry>
         {
-            return false;
+            new(PaperdollEntryTag, 3006123)
+        };
+
+        if (targetMobile.TryGetCustomString(SellProfileIdKey, out var sellProfileId) &&
+            !string.IsNullOrWhiteSpace(sellProfileId))
+        {
+            entries.Add(new(VendorBuyEntryTag, 3006103));
+            entries.Add(new(VendorSellEntryTag, 3006104));
         }
 
-        return clientVersion.ProtocolChanges.HasFlag(ProtocolChanges.StygianAbyss);
+        return entries;
     }
 
-    private static bool CanInteractWithTarget(Data.Session.GameSession session, UOMobileEntity targetMobile)
+    private static bool CanInteractWithTarget(GameSession session, UOMobileEntity targetMobile)
     {
         if (session.AccountType >= AccountType.GameMaster)
         {
@@ -247,7 +258,7 @@ public sealed class ContextMenuService
         (ContextMenuActionType Action, string? ScriptKey) action,
         long sessionId,
         UOMobileEntity targetMobile,
-        Data.Session.GameSession session
+        GameSession session
     )
     {
         if (action.Action == ContextMenuActionType.Script && !string.IsNullOrWhiteSpace(action.ScriptKey))
@@ -275,7 +286,7 @@ public sealed class ContextMenuService
         };
 
     private async Task<UOMobileEntity?> ResolveTargetMobileAsync(
-        Data.Session.GameSession session,
+        GameSession session,
         Serial targetSerial,
         CancellationToken cancellationToken
     )
@@ -288,25 +299,15 @@ public sealed class ContextMenuService
         return await _mobileService.GetAsync(targetSerial, cancellationToken);
     }
 
-    private static List<PopupContextMenuEntry> BuildEntries(UOMobileEntity targetMobile)
+    private static bool SupportsContextMenu(GameSession session)
     {
-        var entries = new List<PopupContextMenuEntry>
-        {
-            new(PaperdollEntryTag, 3006123)
-        };
+        var clientVersion = session.ClientVersion;
 
-        if (targetMobile.TryGetCustomString(SellProfileIdKey, out var sellProfileId) &&
-            !string.IsNullOrWhiteSpace(sellProfileId))
+        if (clientVersion is null)
         {
-            entries.Add(new(VendorBuyEntryTag, 3006103));
-            entries.Add(new(VendorSellEntryTag, 3006104));
+            return false;
         }
 
-        return entries;
+        return clientVersion.ProtocolChanges.HasFlag(ProtocolChanges.StygianAbyss);
     }
-
-    private readonly record struct PendingContextMenuState(
-        Serial TargetSerial,
-        Dictionary<ushort, (ContextMenuActionType Action, string? ScriptKey)> EntryActions
-    );
 }

@@ -2,7 +2,6 @@ using Moongate.Persistence.Data.Persistence;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Persistence.Data.Internal;
@@ -42,6 +41,40 @@ internal static class SnapshotMapper
             CreatedUtcTicks = entity.CreatedUtc.Ticks,
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks,
             CharacterIds = [.. entity.CharacterIds.Select(serial => (uint)serial)]
+        };
+
+    public static BulletinBoardMessageEntity ToBulletinBoardMessageEntity(BulletinBoardMessageSnapshot snapshot)
+    {
+        var entity = new BulletinBoardMessageEntity
+        {
+            MessageId = (Serial)snapshot.MessageId,
+            BoardId = (Serial)snapshot.BoardId,
+            ParentId = (Serial)snapshot.ParentId,
+            OwnerCharacterId = (Serial)snapshot.OwnerCharacterId,
+            Author = snapshot.Author,
+            Subject = snapshot.Subject,
+            PostedAtUtc = new(snapshot.PostedAtUtcTicks, DateTimeKind.Utc)
+        };
+
+        if (snapshot.BodyLines.Length > 0)
+        {
+            entity.BodyLines.AddRange(snapshot.BodyLines);
+        }
+
+        return entity;
+    }
+
+    public static BulletinBoardMessageSnapshot ToBulletinBoardMessageSnapshot(BulletinBoardMessageEntity entity)
+        => new()
+        {
+            MessageId = (uint)entity.MessageId,
+            BoardId = (uint)entity.BoardId,
+            ParentId = (uint)entity.ParentId,
+            OwnerCharacterId = (uint)entity.OwnerCharacterId,
+            Author = entity.Author,
+            Subject = entity.Subject,
+            PostedAtUtcTicks = entity.PostedAtUtc.Ticks,
+            BodyLines = [.. entity.BodyLines]
         };
 
     public static UOItemEntity ToItemEntity(ItemSnapshot snapshot)
@@ -215,40 +248,6 @@ internal static class SnapshotMapper
                     }
                 )
             ]
-        };
-
-    public static BulletinBoardMessageEntity ToBulletinBoardMessageEntity(BulletinBoardMessageSnapshot snapshot)
-    {
-        var entity = new BulletinBoardMessageEntity
-        {
-            MessageId = (Serial)snapshot.MessageId,
-            BoardId = (Serial)snapshot.BoardId,
-            ParentId = (Serial)snapshot.ParentId,
-            OwnerCharacterId = (Serial)snapshot.OwnerCharacterId,
-            Author = snapshot.Author,
-            Subject = snapshot.Subject,
-            PostedAtUtc = new DateTime(snapshot.PostedAtUtcTicks, DateTimeKind.Utc)
-        };
-
-        if (snapshot.BodyLines.Length > 0)
-        {
-            entity.BodyLines.AddRange(snapshot.BodyLines);
-        }
-
-        return entity;
-    }
-
-    public static BulletinBoardMessageSnapshot ToBulletinBoardMessageSnapshot(BulletinBoardMessageEntity entity)
-        => new()
-        {
-            MessageId = (uint)entity.MessageId,
-            BoardId = (uint)entity.BoardId,
-            ParentId = (uint)entity.ParentId,
-            OwnerCharacterId = (uint)entity.OwnerCharacterId,
-            Author = entity.Author,
-            Subject = entity.Subject,
-            PostedAtUtcTicks = entity.PostedAtUtc.Ticks,
-            BodyLines = [.. entity.BodyLines]
         };
 
     public static UOMobileEntity ToMobileEntity(MobileSnapshot snapshot)
@@ -493,15 +492,15 @@ internal static class SnapshotMapper
         var skills = entity.Skills
                            .OrderBy(static pair => (int)pair.Key)
                            .Select(
-                                static pair => new MobileSkillEntrySnapshot
-                                {
-                                    SkillId = (int)pair.Key,
-                                    Value = pair.Value.Value,
-                                    Base = pair.Value.Base,
-                                    Cap = pair.Value.Cap,
-                                    Lock = (byte)pair.Value.Lock
-                                }
-                            )
+                               static pair => new MobileSkillEntrySnapshot
+                               {
+                                   SkillId = (int)pair.Key,
+                                   Value = pair.Value.Value,
+                                   Base = pair.Value.Base,
+                                   Cap = pair.Value.Cap,
+                                   Lock = (byte)pair.Value.Lock
+                               }
+                           )
                            .ToArray();
 
         return new()

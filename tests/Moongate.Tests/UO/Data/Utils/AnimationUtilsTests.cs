@@ -1,24 +1,24 @@
-using Moongate.UO.Data.Utils;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.UO.Data.Utils;
 
 public sealed class AnimationUtilsTests
 {
     [Test]
-    public void IsValidClientAction3DAnimation_ShouldReturnTrue_ForKnownAction()
-    {
-        var result = AnimationUtils.IsValidClientAction3DAnimation(AnimationUtils.BowAction);
-
-        Assert.That(result, Is.True);
-    }
-
-    [Test]
     public void IsValidClientAction3DAnimation_ShouldReturnFalse_ForUnknownAction()
     {
         var result = AnimationUtils.IsValidClientAction3DAnimation(999);
 
         Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void IsValidClientAction3DAnimation_ShouldReturnTrue_ForKnownAction()
+    {
+        var result = AnimationUtils.IsValidClientAction3DAnimation(AnimationUtils.BowAction);
+
+        Assert.That(result, Is.True);
     }
 
     [Test]
@@ -38,43 +38,16 @@ public sealed class AnimationUtilsTests
     }
 
     [Test]
-    public void TryResolveAnimation_ShouldResolveSwingForHumanOnFoot()
+    public void TryResolveAnimation_ShouldRejectBowWhenMounted()
     {
         var ok = AnimationUtils.TryResolveAnimation(
-            AnimationIntent.SwingPrimary,
+            AnimationIntent.Bow,
             UOBodyType.Human,
-            isMounted: false,
-            out var animation
+            true,
+            out _
         );
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ok, Is.True);
-                Assert.That(animation.Action, Is.EqualTo(9));
-                Assert.That(animation.FrameCount, Is.EqualTo(7));
-            }
-        );
-    }
-
-    [Test]
-    public void TryResolveAnimation_ShouldResolveSwingForHumanMounted()
-    {
-        var ok = AnimationUtils.TryResolveAnimation(
-            AnimationIntent.SwingSecondary,
-            UOBodyType.Human,
-            isMounted: true,
-            out var animation
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ok, Is.True);
-                Assert.That(animation.Action, Is.EqualTo(29));
-                Assert.That(animation.FrameCount, Is.EqualTo(7));
-            }
-        );
+        Assert.That(ok, Is.False);
     }
 
     [Test]
@@ -83,7 +56,7 @@ public sealed class AnimationUtilsTests
         var ok = AnimationUtils.TryResolveAnimation(
             AnimationIntent.Hurt,
             UOBodyType.Monster,
-            isMounted: false,
+            false,
             out var animation
         );
 
@@ -98,15 +71,42 @@ public sealed class AnimationUtilsTests
     }
 
     [Test]
-    public void TryResolveAnimation_ShouldRejectBowWhenMounted()
+    public void TryResolveAnimation_ShouldResolveSwingForHumanMounted()
     {
         var ok = AnimationUtils.TryResolveAnimation(
-            AnimationIntent.Bow,
+            AnimationIntent.SwingSecondary,
             UOBodyType.Human,
-            isMounted: true,
-            out _
+            true,
+            out var animation
         );
 
-        Assert.That(ok, Is.False);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(animation.Action, Is.EqualTo(29));
+                Assert.That(animation.FrameCount, Is.EqualTo(7));
+            }
+        );
+    }
+
+    [Test]
+    public void TryResolveAnimation_ShouldResolveSwingForHumanOnFoot()
+    {
+        var ok = AnimationUtils.TryResolveAnimation(
+            AnimationIntent.SwingPrimary,
+            UOBodyType.Human,
+            false,
+            out var animation
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(animation.Action, Is.EqualTo(9));
+                Assert.That(animation.FrameCount, Is.EqualTo(7));
+            }
+        );
     }
 }

@@ -30,7 +30,7 @@ internal static class LuaBrainContextMenuDispatcher
         try
         {
             using var payload = LuaBrainContextMenuPayloadFactory.Rent(
-                new LuaBrainContextMenuPayload(
+                new(
                     state.MobileId,
                     requester,
                     0,
@@ -68,7 +68,7 @@ internal static class LuaBrainContextMenuDispatcher
         }
 
         using var payload = LuaBrainContextMenuPayloadFactory.Rent(
-            new LuaBrainContextMenuPayload(
+            new(
                 state.MobileId,
                 requester,
                 sessionId,
@@ -95,7 +95,12 @@ internal static class LuaBrainContextMenuDispatcher
         }
         catch (Exception ex)
         {
-            logger.Error(ex, "Lua on_selected_context_menu failed for mobile {MobileId} key {MenuKey}", state.MobileId, menuKey);
+            logger.Error(
+                ex,
+                "Lua on_selected_context_menu failed for mobile {MobileId} key {MenuKey}",
+                state.MobileId,
+                menuKey
+            );
         }
 
         return false;

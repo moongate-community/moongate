@@ -98,6 +98,34 @@ public sealed class DispatchEventsService
         return Task.FromResult(true);
     }
 
+    public Task<int> DispatchMobileAnimationAsync(
+        Serial mobileId,
+        int mapId,
+        Point3D location,
+        short action,
+        short frameCount = 5,
+        short repeatCount = 1,
+        bool forward = true,
+        bool repeat = false,
+        byte delay = 0,
+        int? range = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+        var packet = new MobileAnimationPacket(
+            mobileId,
+            action,
+            frameCount,
+            repeatCount,
+            forward,
+            repeat,
+            delay
+        );
+
+        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
+    }
+
     public Task<int> DispatchMobileEffectAsync(
         int mapId,
         Point3D location,
@@ -154,34 +182,6 @@ public sealed class DispatchEventsService
     {
         _ = cancellationToken;
         var packet = new PlaySoundEffectPacket(mode, soundModel, unknown3, location);
-
-        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
-    }
-
-    public Task<int> DispatchMobileAnimationAsync(
-        Serial mobileId,
-        int mapId,
-        Point3D location,
-        short action,
-        short frameCount = 5,
-        short repeatCount = 1,
-        bool forward = true,
-        bool repeat = false,
-        byte delay = 0,
-        int? range = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _ = cancellationToken;
-        var packet = new MobileAnimationPacket(
-            mobileId,
-            action,
-            frameCount,
-            repeatCount,
-            forward,
-            repeat,
-            delay
-        );
 
         return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
     }

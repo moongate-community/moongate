@@ -60,75 +60,6 @@ internal static class LuaBrainPendingEventDispatcher
         }
     }
 
-    private static void DispatchPendingSpeech(Script luaScript, LuaBrainRuntimeState state)
-    {
-        while (state.PendingSpeech.Count > 0)
-        {
-            var speech = state.PendingSpeech.Dequeue();
-
-            if (state.OnEventFunction is not null)
-            {
-                luaScript.Call(
-                    state.OnEventFunction,
-                    SpeechHeardEventName,
-                    (uint)speech.SpeakerId,
-                    LuaBrainPayloadFactory.BuildSpeechEventPayload(speech)
-                );
-
-                continue;
-            }
-
-            if (state.OnSpeechFunction is null)
-            {
-                continue;
-            }
-
-            luaScript.Call(
-                state.OnSpeechFunction,
-                (uint)speech.ListenerNpcId,
-                (uint)speech.SpeakerId,
-                speech.Text,
-                (byte)speech.SpeechType,
-                speech.MapId,
-                speech.Location.X,
-                speech.Location.Y,
-                speech.Location.Z
-            );
-        }
-    }
-
-    private static void DispatchPendingSpawn(Script luaScript, LuaBrainRuntimeState state)
-    {
-        while (state.PendingSpawn.Count > 0)
-        {
-            var spawn = state.PendingSpawn.Dequeue();
-            var payload = LuaBrainPayloadFactory.BuildSpawnEventPayload(spawn);
-
-            if (state.OnSpawnFunction is not null)
-            {
-                luaScript.Call(
-                    state.OnSpawnFunction,
-                    (uint)state.MobileId,
-                    payload
-                );
-
-                continue;
-            }
-
-            if (state.OnEventFunction is null)
-            {
-                continue;
-            }
-
-            luaScript.Call(
-                state.OnEventFunction,
-                SpawnEventName,
-                0u,
-                payload
-            );
-        }
-    }
-
     private static void DispatchPendingInRange(Script luaScript, LuaBrainRuntimeState state)
     {
         while (state.PendingInRange.Count > 0)
@@ -193,4 +124,72 @@ internal static class LuaBrainPendingEventDispatcher
         }
     }
 
+    private static void DispatchPendingSpawn(Script luaScript, LuaBrainRuntimeState state)
+    {
+        while (state.PendingSpawn.Count > 0)
+        {
+            var spawn = state.PendingSpawn.Dequeue();
+            var payload = LuaBrainPayloadFactory.BuildSpawnEventPayload(spawn);
+
+            if (state.OnSpawnFunction is not null)
+            {
+                luaScript.Call(
+                    state.OnSpawnFunction,
+                    (uint)state.MobileId,
+                    payload
+                );
+
+                continue;
+            }
+
+            if (state.OnEventFunction is null)
+            {
+                continue;
+            }
+
+            luaScript.Call(
+                state.OnEventFunction,
+                SpawnEventName,
+                0u,
+                payload
+            );
+        }
+    }
+
+    private static void DispatchPendingSpeech(Script luaScript, LuaBrainRuntimeState state)
+    {
+        while (state.PendingSpeech.Count > 0)
+        {
+            var speech = state.PendingSpeech.Dequeue();
+
+            if (state.OnEventFunction is not null)
+            {
+                luaScript.Call(
+                    state.OnEventFunction,
+                    SpeechHeardEventName,
+                    (uint)speech.SpeakerId,
+                    LuaBrainPayloadFactory.BuildSpeechEventPayload(speech)
+                );
+
+                continue;
+            }
+
+            if (state.OnSpeechFunction is null)
+            {
+                continue;
+            }
+
+            luaScript.Call(
+                state.OnSpeechFunction,
+                (uint)speech.ListenerNpcId,
+                (uint)speech.SpeakerId,
+                speech.Text,
+                (byte)speech.SpeechType,
+                speech.MapId,
+                speech.Location.X,
+                speech.Location.Y,
+                speech.Location.Z
+            );
+        }
+    }
 }

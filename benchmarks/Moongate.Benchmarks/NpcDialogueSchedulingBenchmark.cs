@@ -1,14 +1,10 @@
 using BenchmarkDotNet.Attributes;
-using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Scripting;
-using Moongate.Server.Interfaces.Services.EvenLoop;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Services.EventLoop;
@@ -23,9 +19,7 @@ using Moongate.UO.Data.Utils;
 
 namespace Moongate.Benchmarks;
 
-[MemoryDiagnoser]
-[WarmupCount(3)]
-[IterationCount(12)]
+[MemoryDiagnoser, WarmupCount(3), IterationCount(12)]
 public class NpcDialogueSchedulingBenchmark : IDisposable
 {
     private BackgroundJobService _backgroundJobs = null!;
@@ -37,132 +31,8 @@ public class NpcDialogueSchedulingBenchmark : IDisposable
     private UOMobileEntity _npc = null!;
     private UOMobileEntity _sender = null!;
 
-    [GlobalSetup]
-    public void GlobalSetup()
-    {
-        _backgroundJobs = new BackgroundJobService();
-        _backgroundJobs.Start(1);
-        _scheduler = new AsyncWorkSchedulerService(_backgroundJobs);
-        _openAiClient = new BenchmarkOpenAiClient();
-        _speechService = new BenchmarkSpeechService();
-        _runtimeState = new NpcAiRuntimeStateService();
-        _runtimeState.BindPromptFile((Serial)0x100u, "lilly.txt");
-
-        _dialogueService = new NpcDialogueService(
-            new MoongateConfig
-            {
-                Llm = new()
-                {
-                    IsEnabled = true,
-                    ApiKey = "benchmark-key",
-                    Model = "gpt-5-mini",
-                    ListenerCooldownMilliseconds = 0,
-                    IdleCooldownMilliseconds = 0,
-                    IdleNearbyPlayerRange = 12,
-                    SpeechRange = 12
-                }
-            },
-            new BenchmarkPromptService(),
-            new BenchmarkMemoryService(),
-            _runtimeState,
-            _openAiClient,
-            _speechService,
-            new BenchmarkSpatialWorldService(),
-            _scheduler,
-            _backgroundJobs
-        );
-
-        _npc = new()
-        {
-            Id = (Serial)0x100u,
-            Name = "Lilly",
-            MapId = 1,
-            Location = new(100, 100, 0)
-        };
-        _sender = new()
-        {
-            Id = (Serial)0x200u,
-            Name = "Marcus",
-            IsPlayer = true,
-            MapId = 1,
-            Location = new(101, 100, 0)
-        };
-    }
-
-    [IterationSetup]
-    public void IterationSetup()
-    {
-        _openAiClient.Reset();
-        _speechService.Reset();
-    }
-
-    [GlobalCleanup]
-    public async Task GlobalCleanup()
-    {
-        await _backgroundJobs.StopAsync();
-        _backgroundJobs.Dispose();
-    }
-
-    public void Dispose()
-    {
-        _backgroundJobs.Dispose();
-        GC.SuppressFinalize(this);
-    }
-
-    [Benchmark]
-    public bool QueueListener_EnqueueOnly()
-    {
-        return _dialogueService.QueueListener(_npc, _sender, "hello there");
-    }
-
-    [Benchmark]
-    public async Task<int> ScheduleAndComplete_SingleNpc()
-    {
-        _scheduler.TrySchedule(
-            "npc-dialogue",
-            _npc.Id,
-            _ => Task.FromResult(42),
-            _ => { },
-            null,
-            TimeSpan.FromSeconds(5)
-        );
-
-        while (_backgroundJobs.ExecutePendingOnGameLoop() == 0)
-        {
-            await Task.Delay(1);
-        }
-
-        return 1;
-    }
-
-    [Benchmark]
-    public bool RejectDuplicate_InFlight()
-    {
-        var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        var first = _scheduler.TrySchedule(
-            "npc-dialogue",
-            _npc.Id,
-            _ => gate.Task,
-            _ => { }
-        );
-        var second = _scheduler.TrySchedule(
-            "npc-dialogue",
-            _npc.Id,
-            _ => Task.FromResult(2),
-            _ => { }
-        );
-
-        gate.SetResult(1);
-        SpinWait.SpinUntil(() => _backgroundJobs.ExecutePendingOnGameLoop() > 0, 1000);
-
-        return first && !second;
-    }
-
     private sealed class BenchmarkOpenAiClient : IOpenAiNpcDialogueClient
     {
-        public void Reset() { }
-
         public Task<NpcDialogueResponse?> GenerateAsync(
             NpcDialogueRequest request,
             CancellationToken cancellationToken = default
@@ -180,6 +50,8 @@ public class NpcDialogueSchedulingBenchmark : IDisposable
                 }
             );
         }
+
+        public void Reset() { }
     }
 
     private sealed class BenchmarkPromptService : INpcAiPromptService
@@ -213,9 +85,6 @@ public class NpcDialogueSchedulingBenchmark : IDisposable
     private sealed class BenchmarkSpeechService : ISpeechService
     {
         public int SpokenCount { get; private set; }
-
-        public void Reset()
-            => SpokenCount = 0;
 
         public Task<int> BroadcastFromServerAsync(
             string text,
@@ -257,6 +126,9 @@ public class NpcDialogueSchedulingBenchmark : IDisposable
 
             return Task.FromResult<UnicodeSpeechMessagePacket?>(null);
         }
+
+        public void Reset()
+            => SpokenCount = 0;
 
         public Task<bool> SendMessageFromServerAsync(
             GameSession session,
@@ -367,5 +239,125 @@ public class NpcDialogueSchedulingBenchmark : IDisposable
 
         public void RemoveEntity(Serial serial)
             => _ = serial;
+    }
+
+    public void Dispose()
+    {
+        _backgroundJobs.Dispose();
+        GC.SuppressFinalize(this);
+    }
+
+    [GlobalCleanup]
+    public async Task GlobalCleanup()
+    {
+        await _backgroundJobs.StopAsync();
+        _backgroundJobs.Dispose();
+    }
+
+    [GlobalSetup]
+    public void GlobalSetup()
+    {
+        _backgroundJobs = new();
+        _backgroundJobs.Start(1);
+        _scheduler = new(_backgroundJobs);
+        _openAiClient = new();
+        _speechService = new();
+        _runtimeState = new();
+        _runtimeState.BindPromptFile((Serial)0x100u, "lilly.txt");
+
+        _dialogueService = new(
+            new()
+            {
+                Llm = new()
+                {
+                    IsEnabled = true,
+                    ApiKey = "benchmark-key",
+                    Model = "gpt-5-mini",
+                    ListenerCooldownMilliseconds = 0,
+                    IdleCooldownMilliseconds = 0,
+                    IdleNearbyPlayerRange = 12,
+                    SpeechRange = 12
+                }
+            },
+            new BenchmarkPromptService(),
+            new BenchmarkMemoryService(),
+            _runtimeState,
+            _openAiClient,
+            _speechService,
+            new BenchmarkSpatialWorldService(),
+            _scheduler,
+            _backgroundJobs
+        );
+
+        _npc = new()
+        {
+            Id = (Serial)0x100u,
+            Name = "Lilly",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        _sender = new()
+        {
+            Id = (Serial)0x200u,
+            Name = "Marcus",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+    }
+
+    [IterationSetup]
+    public void IterationSetup()
+    {
+        _openAiClient.Reset();
+        _speechService.Reset();
+    }
+
+    [Benchmark]
+    public bool QueueListener_EnqueueOnly()
+        => _dialogueService.QueueListener(_npc, _sender, "hello there");
+
+    [Benchmark]
+    public bool RejectDuplicate_InFlight()
+    {
+        var gate = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        var first = _scheduler.TrySchedule(
+            "npc-dialogue",
+            _npc.Id,
+            _ => gate.Task,
+            _ => { }
+        );
+        var second = _scheduler.TrySchedule(
+            "npc-dialogue",
+            _npc.Id,
+            _ => Task.FromResult(2),
+            _ => { }
+        );
+
+        gate.SetResult(1);
+        SpinWait.SpinUntil(() => _backgroundJobs.ExecutePendingOnGameLoop() > 0, 1000);
+
+        return first && !second;
+    }
+
+    [Benchmark]
+    public async Task<int> ScheduleAndComplete_SingleNpc()
+    {
+        _scheduler.TrySchedule(
+            "npc-dialogue",
+            _npc.Id,
+            _ => Task.FromResult(42),
+            _ => { },
+            null,
+            TimeSpan.FromSeconds(5)
+        );
+
+        while (_backgroundJobs.ExecutePendingOnGameLoop() == 0)
+        {
+            await Task.Delay(1);
+        }
+
+        return 1;
     }
 }

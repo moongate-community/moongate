@@ -1,3 +1,5 @@
+using System.Net.Sockets;
+using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Commands.Player;
@@ -33,7 +35,7 @@ public sealed class UnlockDoorCommandTests
             return ValueTask.CompletedTask;
         }
 
-        public void RegisterListener<TEvent>(Moongate.Server.Interfaces.Services.Events.IGameEventListener<TEvent> listener)
+        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener)
             where TEvent : IGameEvent
             => _ = listener;
 
@@ -71,13 +73,31 @@ public sealed class UnlockDoorCommandTests
         private readonly Dictionary<long, GameSession> _sessions = [];
 
         public int Count => _sessions.Count;
-        public void Add(GameSession session) => _sessions[session.SessionId] = session;
-        public void Clear() => _sessions.Clear();
-        public IReadOnlyCollection<GameSession> GetAll() => _sessions.Values.ToArray();
-        public GameSession GetOrCreate(Moongate.Network.Client.MoongateTCPClient client) => throw new NotSupportedException();
-        public bool Remove(long sessionId) => _sessions.Remove(sessionId);
-        public bool TryGet(long sessionId, out GameSession session) => _sessions.TryGetValue(sessionId, out session!);
-        public bool TryGetByCharacterId(Serial characterId, out GameSession session) { session = null!; return false; }
+
+        public void Add(GameSession session)
+            => _sessions[session.SessionId] = session;
+
+        public void Clear()
+            => _sessions.Clear();
+
+        public IReadOnlyCollection<GameSession> GetAll()
+            => _sessions.Values.ToArray();
+
+        public GameSession GetOrCreate(MoongateTCPClient client)
+            => throw new NotSupportedException();
+
+        public bool Remove(long sessionId)
+            => _sessions.Remove(sessionId);
+
+        public bool TryGet(long sessionId, out GameSession session)
+            => _sessions.TryGetValue(sessionId, out session!);
+
+        public bool TryGetByCharacterId(Serial characterId, out GameSession session)
+        {
+            session = null!;
+
+            return false;
+        }
     }
 
     [Test]
@@ -86,14 +106,26 @@ public sealed class UnlockDoorCommandTests
         var gameEventBus = new UnlockDoorCommandTestGameEventBusService();
         var doorLockService = new UnlockDoorCommandTestDoorLockService();
         var sessionService = new UnlockDoorCommandTestGameNetworkSessionService();
-        var session = new GameSession(new(new Moongate.Network.Client.MoongateTCPClient(new System.Net.Sockets.Socket(
-            System.Net.Sockets.AddressFamily.InterNetwork,
-            System.Net.Sockets.SocketType.Stream,
-            System.Net.Sockets.ProtocolType.Tcp
-        ))));
+        var session = new GameSession(
+            new(
+                new(
+                    new(
+                        AddressFamily.InterNetwork,
+                        SocketType.Stream,
+                        ProtocolType.Tcp
+                    )
+                )
+            )
+        );
         sessionService.Add(session);
         var command = new UnlockDoorCommand(gameEventBus, sessionService, doorLockService);
-        var context = new CommandSystemContext(".unlock_door", [], CommandSourceType.InGame, session.SessionId, (_, _) => { });
+        var context = new CommandSystemContext(
+            ".unlock_door",
+            [],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (_, _) => { }
+        );
 
         await command.ExecuteCommandAsync(context);
         gameEventBus.TriggerCursorCallback((Serial)0x40000001u);

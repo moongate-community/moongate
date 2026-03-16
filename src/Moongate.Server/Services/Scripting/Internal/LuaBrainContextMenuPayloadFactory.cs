@@ -36,13 +36,12 @@ internal static class LuaBrainContextMenuPayloadFactory
             root["requester"] = null;
         }
 
-        return new LuaBrainContextMenuPayloadLease(root, requester, requesterLocation);
+        return new(root, requester, requesterLocation);
     }
 }
 
 internal readonly struct LuaBrainContextMenuPayloadLease : IDisposable
 {
-    private readonly Dictionary<string, object?> _root;
     private readonly Dictionary<string, object?>? _requester;
     private readonly Dictionary<string, int>? _requesterLocation;
 
@@ -52,12 +51,12 @@ internal readonly struct LuaBrainContextMenuPayloadLease : IDisposable
         Dictionary<string, int>? requesterLocation
     )
     {
-        _root = root;
+        Payload = root;
         _requester = requester;
         _requesterLocation = requesterLocation;
     }
 
-    public Dictionary<string, object?> Payload => _root;
+    public Dictionary<string, object?> Payload { get; }
 
     public void Dispose()
     {
@@ -71,6 +70,6 @@ internal readonly struct LuaBrainContextMenuPayloadLease : IDisposable
             LuaBrainDictionaryPool.Return(_requester);
         }
 
-        LuaBrainDictionaryPool.Return(_root);
+        LuaBrainDictionaryPool.Return(Payload);
     }
 }

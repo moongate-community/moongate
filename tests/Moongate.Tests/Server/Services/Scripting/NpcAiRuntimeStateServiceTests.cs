@@ -24,14 +24,14 @@ public sealed class NpcAiRuntimeStateServiceTests
     }
 
     [Test]
-    public void TryAcquireListener_ShouldRespectCooldown()
+    public void TryAcquireIdle_ShouldRespectCooldown()
     {
         var service = new NpcAiRuntimeStateService();
-        var serial = (Serial)0x100u;
+        var serial = (Serial)0x101u;
 
-        var first = service.TryAcquireListener(serial, 1_000, 5_000);
-        var second = service.TryAcquireListener(serial, 2_000, 5_000);
-        var third = service.TryAcquireListener(serial, 6_000, 5_000);
+        var first = service.TryAcquireIdle(serial, 10_000, 60_000);
+        var second = service.TryAcquireIdle(serial, 20_000, 60_000);
+        var third = service.TryAcquireIdle(serial, 70_000, 60_000);
 
         Assert.Multiple(
             () =>
@@ -44,14 +44,14 @@ public sealed class NpcAiRuntimeStateServiceTests
     }
 
     [Test]
-    public void TryAcquireIdle_ShouldRespectCooldown()
+    public void TryAcquireListener_ShouldRespectCooldown()
     {
         var service = new NpcAiRuntimeStateService();
-        var serial = (Serial)0x101u;
+        var serial = (Serial)0x100u;
 
-        var first = service.TryAcquireIdle(serial, 10_000, 60_000);
-        var second = service.TryAcquireIdle(serial, 20_000, 60_000);
-        var third = service.TryAcquireIdle(serial, 70_000, 60_000);
+        var first = service.TryAcquireListener(serial, 1_000, 5_000);
+        var second = service.TryAcquireListener(serial, 2_000, 5_000);
+        var third = service.TryAcquireListener(serial, 6_000, 5_000);
 
         Assert.Multiple(
             () =>

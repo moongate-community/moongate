@@ -1,6 +1,5 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Commands.Player;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Spatial;
@@ -101,51 +100,6 @@ public sealed class TeleportCommandTests
     }
 
     [Test]
-    public async Task ExecuteCommandAsync_WhenSessionExists_ShouldTeleportAndPublishMovementEvent()
-    {
-        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        using var client = new MoongateTCPClient(socket);
-        var character = new UOMobileEntity
-        {
-            Id = (Serial)0x00000002,
-            MapId = 1,
-            Location = new(100, 200, 0)
-        };
-        var session = new GameSession(new(client))
-        {
-            CharacterId = character.Id,
-            Character = character
-        };
-        var sessionService = new TeleportTestGameNetworkSessionService(session);
-        var gameEventBusService = new TeleportTestGameEventBusService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var command = new TeleportCommand(sessionService, gameEventBusService, outgoingPacketQueue);
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "teleport 2 3613 2585 0",
-            ["2", "3613", "2585", "0"],
-            CommandSourceType.InGame,
-            session.SessionId,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(character.MapId, Is.EqualTo(2));
-                Assert.That(character.Location, Is.EqualTo(new Point3D(3613, 2585, 0)));
-                Assert.That(gameEventBusService.PublishedEvents, Has.Count.EqualTo(1));
-                Assert.That(gameEventBusService.PublishedEvents[0], Is.TypeOf<MobilePositionChangedEvent>());
-                Assert.That(output[^1], Is.EqualTo("Teleported to map 2 at (3613, 2585, 0)."));
-            }
-        );
-
-        Assert.That(outgoingPacketQueue.TryDequeue(out _), Is.False);
-    }
-
-    [Test]
     public async Task ExecuteCommandAsync_WhenMapChanges_ShouldPublishMovementEventWithExactCrossMapPayload()
     {
         using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -193,5 +147,50 @@ public sealed class TeleportCommandTests
                 Assert.That(gameEvent.IsTeleport, Is.True);
             }
         );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenSessionExists_ShouldTeleportAndPublishMovementEvent()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var character = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002,
+            MapId = 1,
+            Location = new(100, 200, 0)
+        };
+        var session = new GameSession(new(client))
+        {
+            CharacterId = character.Id,
+            Character = character
+        };
+        var sessionService = new TeleportTestGameNetworkSessionService(session);
+        var gameEventBusService = new TeleportTestGameEventBusService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var command = new TeleportCommand(sessionService, gameEventBusService, outgoingPacketQueue);
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "teleport 2 3613 2585 0",
+            ["2", "3613", "2585", "0"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(character.MapId, Is.EqualTo(2));
+                Assert.That(character.Location, Is.EqualTo(new Point3D(3613, 2585, 0)));
+                Assert.That(gameEventBusService.PublishedEvents, Has.Count.EqualTo(1));
+                Assert.That(gameEventBusService.PublishedEvents[0], Is.TypeOf<MobilePositionChangedEvent>());
+                Assert.That(output[^1], Is.EqualTo("Teleported to map 2 at (3613, 2585, 0)."));
+            }
+        );
+
+        Assert.That(outgoingPacketQueue.TryDequeue(out _), Is.False);
     }
 }

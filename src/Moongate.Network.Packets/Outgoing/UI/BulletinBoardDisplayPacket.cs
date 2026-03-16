@@ -25,9 +25,6 @@ public sealed class BulletinBoardDisplayPacket : BaseGameNetworkPacket
         BoardName = string.IsNullOrWhiteSpace(boardName) ? DefaultBoardName : boardName;
     }
 
-    protected override bool ParsePayload(ref SpanReader reader)
-        => throw new NotSupportedException();
-
     public override void Write(ref SpanWriter writer)
     {
         writer.Write(OpCode);
@@ -39,6 +36,9 @@ public sealed class BulletinBoardDisplayPacket : BaseGameNetworkPacket
         writer.Write(0u);
         writer.WritePacketLength();
     }
+
+    protected override bool ParsePayload(ref SpanReader reader)
+        => throw new NotSupportedException();
 
     private static void WriteFixedBoardName(ref SpanWriter writer, string boardName)
     {

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.EvenLoop;
@@ -7,7 +8,6 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
-using System.Collections.Concurrent;
 
 namespace Moongate.Server.Services.Scripting;
 
@@ -45,13 +45,26 @@ public sealed class NpcDialogueService : INpcDialogueService
         _promptService = promptService ?? throw new ArgumentNullException(nameof(promptService));
         _memoryService = memoryService ?? throw new ArgumentNullException(nameof(memoryService));
         _runtimeStateService = runtimeStateService ?? throw new ArgumentNullException(nameof(runtimeStateService));
-        _openAiNpcDialogueClient = openAiNpcDialogueClient ?? throw new ArgumentNullException(nameof(openAiNpcDialogueClient));
+        _openAiNpcDialogueClient =
+            openAiNpcDialogueClient ?? throw new ArgumentNullException(nameof(openAiNpcDialogueClient));
         _speechService = speechService ?? throw new ArgumentNullException(nameof(speechService));
         _spatialWorldService = spatialWorldService ?? throw new ArgumentNullException(nameof(spatialWorldService));
         _asyncWorkSchedulerService =
             asyncWorkSchedulerService ?? throw new ArgumentNullException(nameof(asyncWorkSchedulerService));
         _backgroundJobService = backgroundJobService ?? throw new ArgumentNullException(nameof(backgroundJobService));
     }
+
+    private sealed class ListenerQueueState
+    {
+        public object SyncRoot { get; } = new();
+        public Queue<QueuedListenerRequest> Pending { get; } = new();
+        public bool InFlight { get; set; }
+    }
+
+    private sealed record QueuedListenerRequest(
+        UOMobileEntity Npc,
+        NpcDialogueRequest Request
+    );
 
     public bool QueueIdle(UOMobileEntity npc)
     {
@@ -63,6 +76,7 @@ public sealed class NpcDialogueService : INpcDialogueService
         }
 
         var nearbyPlayers = GetNearbyPlayerNames(npc);
+
         if (nearbyPlayers.Count == 0)
         {
             return false;
@@ -84,7 +98,7 @@ public sealed class NpcDialogueService : INpcDialogueService
 
         return QueueRequest(
             npc,
-            new NpcDialogueRequest
+            new()
             {
                 NpcId = npc.Id,
                 NpcName = npc.Name ?? string.Empty,
@@ -129,67 +143,30 @@ public sealed class NpcDialogueService : INpcDialogueService
         return true;
     }
 
-    private List<string> GetNearbyPlayerNames(UOMobileEntity npc)
+    private void ApplyResponse(UOMobileEntity npc, NpcDialogueResponse? response)
     {
-        var names = _spatialWorldService.GetNearbyMobiles(
-                                         npc.Location,
-                                         Math.Max(1, _config.Llm.IdleNearbyPlayerRange),
-                                         npc.MapId
-                                     )
-                                     .Where(mobile => mobile.IsPlayer && mobile.Id != npc.Id)
-                                     .Select(mobile => mobile.Name?.Trim())
-                                     .Where(name => !string.IsNullOrWhiteSpace(name))
-                                     .Distinct(StringComparer.Ordinal)
-                                     .Cast<string>()
-                                     .ToList();
-
-        return names;
-    }
-
-    private bool IsEnabled()
-        => _config.Llm.IsEnabled;
-
-    private string TrimMemory(string memory)
-    {
-        if (string.IsNullOrWhiteSpace(memory))
+        if (response is null)
         {
-            return string.Empty;
+            return;
         }
 
-        var normalized = memory.Trim();
-        var maxCharacters = Math.Max(256, _config.Llm.MaxMemoryCharacters);
-        if (normalized.Length <= maxCharacters)
+        if (!string.IsNullOrWhiteSpace(response.MemorySummary))
         {
-            return normalized;
+            _memoryService.Save(npc.Id, response.MemorySummary.Trim());
         }
 
-        return normalized[^maxCharacters..];
-    }
-
-    private bool TryLoadPrompt(Serial npcId, out string prompt)
-    {
-        prompt = string.Empty;
-
-        if (!_runtimeStateService.TryGetPromptFile(npcId, out var promptFile) || string.IsNullOrWhiteSpace(promptFile))
+        if (!response.ShouldSpeak || string.IsNullOrWhiteSpace(response.SpeechText))
         {
-            Logger.Debug("Npc {NpcId} has no ai prompt binding.", npcId);
-
-            return false;
+            return;
         }
 
-        return _promptService.TryLoad(promptFile, out prompt);
-    }
-
-    private bool QueueRequest(UOMobileEntity npc, NpcDialogueRequest request)
-    {
-        return _asyncWorkSchedulerService.TrySchedule(
-            "npc-dialogue",
-            npc.Id,
-            cancellationToken => _openAiNpcDialogueClient.GenerateAsync(request, cancellationToken),
-            response => ApplyResponse(npc, response),
-            ex => Logger.Error(ex, "Npc dialogue background work failed for npc {NpcId}.", npc.Id),
-            DialogueRequestTimeout
-        );
+        _speechService.SpeakAsMobileAsync(
+                          npc,
+                          response.SpeechText.Trim(),
+                          Math.Max(1, _config.Llm.SpeechRange)
+                      )
+                      .GetAwaiter()
+                      .GetResult();
     }
 
     private NpcDialogueRequest BuildListenerRequest(UOMobileEntity npc, UOMobileEntity sender, string text, string prompt)
@@ -204,6 +181,99 @@ public sealed class NpcDialogueService : INpcDialogueService
             HeardText = text.Trim(),
             NearbyPlayerNames = GetNearbyPlayerNames(npc)
         };
+
+    private List<string> GetNearbyPlayerNames(UOMobileEntity npc)
+    {
+        var names = _spatialWorldService.GetNearbyMobiles(
+                                            npc.Location,
+                                            Math.Max(1, _config.Llm.IdleNearbyPlayerRange),
+                                            npc.MapId
+                                        )
+                                        .Where(mobile => mobile.IsPlayer && mobile.Id != npc.Id)
+                                        .Select(mobile => mobile.Name?.Trim())
+                                        .Where(name => !string.IsNullOrWhiteSpace(name))
+                                        .Distinct(StringComparer.Ordinal)
+                                        .Cast<string>()
+                                        .ToList();
+
+        return names;
+    }
+
+    private bool IsEnabled()
+        => _config.Llm.IsEnabled;
+
+    private void OnListenerRequestFinished(Serial npcId, ListenerQueueState state)
+    {
+        lock (state.SyncRoot)
+        {
+            state.InFlight = false;
+        }
+
+        _backgroundJobService.PostToGameLoop(() => TryDispatchNextListener(npcId, state));
+    }
+
+    private bool QueueRequest(UOMobileEntity npc, NpcDialogueRequest request)
+        => _asyncWorkSchedulerService.TrySchedule(
+            "npc-dialogue",
+            npc.Id,
+            cancellationToken => _openAiNpcDialogueClient.GenerateAsync(request, cancellationToken),
+            response => ApplyResponse(npc, response),
+            ex => Logger.Error(ex, "Npc dialogue background work failed for npc {NpcId}.", npc.Id),
+            DialogueRequestTimeout
+        );
+
+    private bool QueueRequest(
+        UOMobileEntity npc,
+        NpcDialogueRequest request,
+        Action? onSuccess = null,
+        Action? onError = null
+    )
+        => _asyncWorkSchedulerService.TrySchedule(
+            "npc-dialogue",
+            npc.Id,
+            cancellationToken => _openAiNpcDialogueClient.GenerateAsync(request, cancellationToken),
+            response =>
+            {
+                try
+                {
+                    ApplyResponse(npc, response);
+                }
+                finally
+                {
+                    onSuccess?.Invoke();
+                }
+            },
+            ex =>
+            {
+                try
+                {
+                    Logger.Error(ex, "Npc dialogue background work failed for npc {NpcId}.", npc.Id);
+                }
+                finally
+                {
+                    onError?.Invoke();
+                }
+            },
+            DialogueRequestTimeout
+        );
+
+    private string TrimMemory(string memory)
+    {
+        if (string.IsNullOrWhiteSpace(memory))
+        {
+            return string.Empty;
+        }
+
+        var normalized = memory.Trim();
+        var maxCharacters = Math.Max(256, _config.Llm.MaxMemoryCharacters);
+
+        if (normalized.Length <= maxCharacters)
+        {
+            return normalized;
+        }
+
+        return normalized[^maxCharacters..];
+    }
 
     private void TryDispatchNextListener(Serial npcId, ListenerQueueState state)
     {
@@ -236,88 +306,17 @@ public sealed class NpcDialogueService : INpcDialogueService
         }
     }
 
-    private void OnListenerRequestFinished(Serial npcId, ListenerQueueState state)
+    private bool TryLoadPrompt(Serial npcId, out string prompt)
     {
-        lock (state.SyncRoot)
+        prompt = string.Empty;
+
+        if (!_runtimeStateService.TryGetPromptFile(npcId, out var promptFile) || string.IsNullOrWhiteSpace(promptFile))
         {
-            state.InFlight = false;
+            Logger.Debug("Npc {NpcId} has no ai prompt binding.", npcId);
+
+            return false;
         }
 
-        _backgroundJobService.PostToGameLoop(() => TryDispatchNextListener(npcId, state));
+        return _promptService.TryLoad(promptFile, out prompt);
     }
-
-    private bool QueueRequest(
-        UOMobileEntity npc,
-        NpcDialogueRequest request,
-        Action? onSuccess = null,
-        Action? onError = null
-    )
-    {
-        return _asyncWorkSchedulerService.TrySchedule(
-            "npc-dialogue",
-            npc.Id,
-            cancellationToken => _openAiNpcDialogueClient.GenerateAsync(request, cancellationToken),
-            response =>
-            {
-                try
-                {
-                    ApplyResponse(npc, response);
-                }
-                finally
-                {
-                    onSuccess?.Invoke();
-                }
-            },
-            ex =>
-            {
-                try
-                {
-                    Logger.Error(ex, "Npc dialogue background work failed for npc {NpcId}.", npc.Id);
-                }
-                finally
-                {
-                    onError?.Invoke();
-                }
-            },
-            DialogueRequestTimeout
-        );
-    }
-
-    private void ApplyResponse(UOMobileEntity npc, NpcDialogueResponse? response)
-    {
-        if (response is null)
-        {
-            return;
-        }
-
-        if (!string.IsNullOrWhiteSpace(response.MemorySummary))
-        {
-            _memoryService.Save(npc.Id, response.MemorySummary.Trim());
-        }
-
-        if (!response.ShouldSpeak || string.IsNullOrWhiteSpace(response.SpeechText))
-        {
-            return;
-        }
-
-        _speechService.SpeakAsMobileAsync(
-                         npc,
-                         response.SpeechText.Trim(),
-                         range: Math.Max(1, _config.Llm.SpeechRange)
-                     )
-                     .GetAwaiter()
-                     .GetResult();
-    }
-
-    private sealed class ListenerQueueState
-    {
-        public object SyncRoot { get; } = new();
-        public Queue<QueuedListenerRequest> Pending { get; } = new();
-        public bool InFlight { get; set; }
-    }
-
-    private sealed record QueuedListenerRequest(
-        UOMobileEntity Npc,
-        NpcDialogueRequest Request
-    );
 }

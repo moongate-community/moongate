@@ -2,9 +2,8 @@ using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Events.Items;
-using Moongate.Server.Data.Packets;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Internal.Packets;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -80,6 +79,55 @@ public class ItemManipulationService : IItemManipulationService
 
         await DropItemOnGroundAsync(session, packet);
         _playerDragService.Clear(session.SessionId);
+
+        return true;
+    }
+
+    public async Task<bool> HandleDropWearItemAsync(
+        GameSession session,
+        DropWearItemPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        if (session.Character is null || session.CharacterId == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (packet.PlayerSerial != session.CharacterId)
+        {
+            _logger.Warning(
+                "DropWear rejected Session={SessionId} ItemId={ItemId}: target player mismatch packet={PacketPlayerId} session={SessionPlayerId}",
+                session.SessionId,
+                packet.ItemSerial,
+                packet.PlayerSerial,
+                session.CharacterId
+            );
+
+            return false;
+        }
+
+        if (!IsValidWearLayer(packet.Layer))
+        {
+            _logger.Warning(
+                "DropWear rejected Session={SessionId} ItemId={ItemId}: invalid requested layer {Layer}",
+                session.SessionId,
+                packet.ItemSerial,
+                packet.Layer
+            );
+
+            return false;
+        }
+
+        await _itemService.EquipItemAsync(
+            packet.ItemSerial,
+            session.CharacterId,
+            packet.Layer
+        );
+
+        await DispatchItemWearChange(session.CharacterId);
 
         return true;
     }
@@ -160,55 +208,6 @@ public class ItemManipulationService : IItemManipulationService
             item.ParentContainerId,
             item.Location
         );
-
-        return true;
-    }
-
-    public async Task<bool> HandleDropWearItemAsync(
-        GameSession session,
-        DropWearItemPacket packet,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _ = cancellationToken;
-
-        if (session.Character is null || session.CharacterId == Serial.Zero)
-        {
-            return false;
-        }
-
-        if (packet.PlayerSerial != session.CharacterId)
-        {
-            _logger.Warning(
-                "DropWear rejected Session={SessionId} ItemId={ItemId}: target player mismatch packet={PacketPlayerId} session={SessionPlayerId}",
-                session.SessionId,
-                packet.ItemSerial,
-                packet.PlayerSerial,
-                session.CharacterId
-            );
-
-            return false;
-        }
-
-        if (!IsValidWearLayer(packet.Layer))
-        {
-            _logger.Warning(
-                "DropWear rejected Session={SessionId} ItemId={ItemId}: invalid requested layer {Layer}",
-                session.SessionId,
-                packet.ItemSerial,
-                packet.Layer
-            );
-
-            return false;
-        }
-
-        await _itemService.EquipItemAsync(
-            packet.ItemSerial,
-            session.CharacterId,
-            packet.Layer
-        );
-
-        await DispatchItemWearChange(session.CharacterId);
 
         return true;
     }
@@ -376,11 +375,11 @@ public class ItemManipulationService : IItemManipulationService
         Enqueue(session, new DrawContainerAndAddItemCombinedPacket(sourceContainer));
     }
 
-    private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
-        => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => _outgoingPacketQueue.Enqueue(sessionId, packet));
-
     private void Enqueue(GameSession session, IGameNetworkPacket packet)
         => _outgoingPacketQueue.Enqueue(session.SessionId, packet);
+
+    private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
+        => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => _outgoingPacketQueue.Enqueue(sessionId, packet));
 
     private static bool IsValidWearLayer(ItemLayerType layer)
     {

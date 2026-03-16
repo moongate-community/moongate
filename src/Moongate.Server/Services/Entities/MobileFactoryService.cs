@@ -8,6 +8,7 @@ using Moongate.UO.Data.Interfaces.Names;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Professions;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
@@ -262,7 +263,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             return true;
         }
 
-        foreach (var skillInfo in Moongate.UO.Data.Skills.SkillInfo.Table)
+        foreach (var skillInfo in SkillInfo.Table)
         {
             if (string.Equals(skillInfo.Name, skillName, StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(skillInfo.ProfessionSkillName, skillName, StringComparison.OrdinalIgnoreCase))

@@ -5,7 +5,8 @@ namespace Moongate.UO.Data.Templates.SellProfiles;
 /// <summary>
 /// Base DTO for polymorphic sell profile templates.
 /// </summary>
-[JsonPolymorphic(TypeDiscriminatorPropertyName = "type"), JsonDerivedType(typeof(SellProfileTemplateDefinition), "sell_profile")]
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type"),
+ JsonDerivedType(typeof(SellProfileTemplateDefinition), "sell_profile")]
 public abstract class SellProfileTemplateDefinitionBase
 {
     public string Category { get; set; }

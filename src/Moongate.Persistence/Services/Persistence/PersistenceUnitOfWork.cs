@@ -66,6 +66,38 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         }
     }
 
+    public ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
+    {
+        _logger.Verbose("Persistence snapshot-capture requested");
+        cancellationToken.ThrowIfCancellationRequested();
+        WorldSnapshot snapshot;
+        long capturedLastSequenceId;
+
+        lock (_stateStore.SyncRoot)
+        {
+            snapshot = new()
+            {
+                Version = 1,
+                CreatedUnixMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                LastSequenceId = _stateStore.LastSequenceId,
+                Accounts = [.. _stateStore.AccountsById.Values.Select(SnapshotMapper.ToAccountSnapshot)],
+                Mobiles = [.. _stateStore.MobilesById.Values.Select(SnapshotMapper.ToMobileSnapshot)],
+                Items = [.. _stateStore.ItemsById.Values.Select(SnapshotMapper.ToItemSnapshot)],
+                BulletinBoardMessages =
+                    [.. _stateStore.BulletinBoardMessagesById.Values.Select(SnapshotMapper.ToBulletinBoardMessageSnapshot)]
+            };
+            capturedLastSequenceId = _stateStore.LastSequenceId;
+        }
+
+        return ValueTask.FromResult(
+            new CapturedWorldSnapshot
+            {
+                Snapshot = snapshot,
+                CapturedLastSequenceId = capturedLastSequenceId
+            }
+        );
+    }
+
     public void Dispose()
     {
         _journalService.Dispose();
@@ -143,38 +175,6 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
             _stateStore.MobilesById.Count,
             _stateStore.ItemsById.Count,
             _stateStore.LastSequenceId
-        );
-    }
-
-    public ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.Verbose("Persistence snapshot-capture requested");
-        cancellationToken.ThrowIfCancellationRequested();
-        WorldSnapshot snapshot;
-        long capturedLastSequenceId;
-
-        lock (_stateStore.SyncRoot)
-        {
-            snapshot = new()
-            {
-                Version = 1,
-                CreatedUnixMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-                LastSequenceId = _stateStore.LastSequenceId,
-                Accounts = [.. _stateStore.AccountsById.Values.Select(SnapshotMapper.ToAccountSnapshot)],
-                Mobiles = [.. _stateStore.MobilesById.Values.Select(SnapshotMapper.ToMobileSnapshot)],
-                Items = [.. _stateStore.ItemsById.Values.Select(SnapshotMapper.ToItemSnapshot)]
-                ,
-                BulletinBoardMessages = [.. _stateStore.BulletinBoardMessagesById.Values.Select(SnapshotMapper.ToBulletinBoardMessageSnapshot)]
-            };
-            capturedLastSequenceId = _stateStore.LastSequenceId;
-        }
-
-        return ValueTask.FromResult(
-            new CapturedWorldSnapshot
-            {
-                Snapshot = snapshot,
-                CapturedLastSequenceId = capturedLastSequenceId
-            }
         );
     }
 

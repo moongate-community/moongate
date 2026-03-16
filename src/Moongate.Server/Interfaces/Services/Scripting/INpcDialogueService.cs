@@ -8,12 +8,12 @@ namespace Moongate.Server.Interfaces.Services.Scripting;
 public interface INpcDialogueService
 {
     /// <summary>
-    /// Queues nearby player speech heard by the NPC for asynchronous AI dialogue generation.
-    /// </summary>
-    bool QueueListener(UOMobileEntity npc, UOMobileEntity sender, string text);
-
-    /// <summary>
     /// Queues autonomous idle chatter generation for the NPC.
     /// </summary>
     bool QueueIdle(UOMobileEntity npc);
+
+    /// <summary>
+    /// Queues nearby player speech heard by the NPC for asynchronous AI dialogue generation.
+    /// </summary>
+    bool QueueListener(UOMobileEntity npc, UOMobileEntity sender, string text);
 }

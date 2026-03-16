@@ -6,9 +6,9 @@ namespace Moongate.Server.Interfaces.Services.Items;
 
 public interface IItemBookService
 {
-    Task<bool> TryEnqueueBookAsync(
+    Task<bool> HandleBookHeaderAsync(
         GameSession session,
-        UOItemEntity item,
+        BookHeaderNewPacket packet,
         CancellationToken cancellationToken = default
     );
 
@@ -18,9 +18,9 @@ public interface IItemBookService
         CancellationToken cancellationToken = default
     );
 
-    Task<bool> HandleBookHeaderAsync(
+    Task<bool> TryEnqueueBookAsync(
         GameSession session,
-        BookHeaderNewPacket packet,
+        UOItemEntity item,
         CancellationToken cancellationToken = default
     );
 }

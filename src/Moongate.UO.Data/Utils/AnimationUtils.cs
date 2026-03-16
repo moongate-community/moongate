@@ -53,6 +53,9 @@ public static class AnimationUtils
     public const bool DefaultRepeat = false;
     public const byte DefaultDelay = 0;
 
+    public static short ClampActionToPacket(int action)
+        => (short)Math.Clamp(action, short.MinValue, short.MaxValue);
+
     public static bool IsValidClientAction3DAnimation(int action)
         => _validClientAction3DAnimations.Contains(action);
 
@@ -69,9 +72,6 @@ public static class AnimationUtils
 
         return true;
     }
-
-    public static short ClampActionToPacket(int action)
-        => (short)Math.Clamp(action, short.MinValue, short.MaxValue);
 
     public static bool TryResolveAnimation(
         AnimationIntent intent,
@@ -90,7 +90,7 @@ public static class AnimationUtils
                     return false;
                 }
 
-                animation = new AnimationSpec((short)BowAction);
+                animation = new(BowAction);
 
                 return true;
             case AnimationIntent.Salute:
@@ -99,13 +99,13 @@ public static class AnimationUtils
                     return false;
                 }
 
-                animation = new AnimationSpec((short)SaluteAction);
+                animation = new(SaluteAction);
 
                 return true;
             case AnimationIntent.SwingPrimary:
-                return TryResolveSwingAnimation(bodyType, isMounted, secondary: false, out animation);
+                return TryResolveSwingAnimation(bodyType, isMounted, false, out animation);
             case AnimationIntent.SwingSecondary:
-                return TryResolveSwingAnimation(bodyType, isMounted, secondary: true, out animation);
+                return TryResolveSwingAnimation(bodyType, isMounted, true, out animation);
             case AnimationIntent.Hurt:
                 return TryResolveHurtAnimation(bodyType, isMounted, out animation);
             default:
@@ -126,15 +126,15 @@ public static class AnimationUtils
         {
             case UOBodyType.Sea:
             case UOBodyType.Animal:
-                animation = new AnimationSpec(Action: 7, FrameCount: 5);
+                animation = new(7);
 
                 return true;
             case UOBodyType.Monster:
-                animation = new AnimationSpec(Action: 10, FrameCount: 4);
+                animation = new(10, 4);
 
                 return true;
             case UOBodyType.Human:
-                animation = new AnimationSpec(Action: 20, FrameCount: 5);
+                animation = new(20);
 
                 return true;
             default:
@@ -153,7 +153,7 @@ public static class AnimationUtils
 
         if (isMounted && bodyType == UOBodyType.Human)
         {
-            animation = new AnimationSpec(Action: secondary ? (short)29 : (short)26, FrameCount: 7);
+            animation = new(secondary ? (short)29 : (short)26, 7);
 
             return true;
         }
@@ -167,15 +167,15 @@ public static class AnimationUtils
         {
             case UOBodyType.Sea:
             case UOBodyType.Animal:
-                animation = new AnimationSpec(Action: secondary ? (short)6 : (short)5, FrameCount: 7);
+                animation = new(secondary ? (short)6 : (short)5, 7);
 
                 return true;
             case UOBodyType.Monster:
-                animation = new AnimationSpec(Action: secondary ? (short)5 : (short)4, FrameCount: 7);
+                animation = new(secondary ? (short)5 : (short)4, 7);
 
                 return true;
             case UOBodyType.Human:
-                animation = new AnimationSpec(Action: secondary ? (short)10 : (short)9, FrameCount: 7);
+                animation = new(secondary ? (short)10 : (short)9, 7);
 
                 return true;
             default:

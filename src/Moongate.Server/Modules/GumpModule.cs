@@ -434,7 +434,9 @@ public sealed class GumpModule
                     }
 
                     if (handlersTable is null || _gumpScriptDispatcherService is null)
-                    { return false; }
+                    {
+                        return false;
+                    }
 
                     var handlerValue = handlersTable.Get(onClickName);
 

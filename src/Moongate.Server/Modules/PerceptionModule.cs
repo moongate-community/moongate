@@ -1,6 +1,6 @@
 using Moongate.Scripting.Attributes.Scripts;
-using Moongate.Server.Modules.Internal;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Modules.Internal;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Modules;

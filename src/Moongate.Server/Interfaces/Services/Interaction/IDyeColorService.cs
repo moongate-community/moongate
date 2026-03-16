@@ -1,8 +1,8 @@
 using Moongate.Abstractions.Interfaces.Services.Base;
+using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Server.Data.Session;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.Network.Packets.Incoming.Interaction;
 
 namespace Moongate.Server.Interfaces.Services.Interaction;
 
@@ -17,12 +17,12 @@ public interface IDyeColorService : IMoongateService
     Task<bool> BeginAsync(long sessionId, Serial dyeTubSerial, Func<UOItemEntity, bool>? targetSelectedCallback = null);
 
     /// <summary>
-    /// Opens the dye window directly for a known target item.
-    /// </summary>
-    Task<bool> SendDyeableAsync(long sessionId, Serial itemSerial, ushort model = 0x0FAB);
-
-    /// <summary>
     /// Handles the hue selected by the client and applies it to the pending target item.
     /// </summary>
     Task<bool> HandleResponseAsync(GameSession session, DyeWindowPacket packet);
+
+    /// <summary>
+    /// Opens the dye window directly for a known target item.
+    /// </summary>
+    Task<bool> SendDyeableAsync(long sessionId, Serial itemSerial, ushort model = 0x0FAB);
 }

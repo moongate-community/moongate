@@ -7,6 +7,16 @@ public class SellProfileTemplateServiceTests
 {
     private SellProfileTemplateService _service = null!;
 
+    [Test]
+    public void Clear_ShouldRemoveProfiles()
+    {
+        _service.Upsert(CreateDefinition("vendor.blacksmith", "Blacksmith Vendor"));
+
+        _service.Clear();
+
+        Assert.That(_service.Count, Is.Zero);
+    }
+
     [SetUp]
     public void SetUp()
         => _service = new();
@@ -39,16 +49,6 @@ public class SellProfileTemplateServiceTests
         );
 
         Assert.That(_service.Count, Is.EqualTo(2));
-    }
-
-    [Test]
-    public void Clear_ShouldRemoveProfiles()
-    {
-        _service.Upsert(CreateDefinition("vendor.blacksmith", "Blacksmith Vendor"));
-
-        _service.Clear();
-
-        Assert.That(_service.Count, Is.Zero);
     }
 
     private static SellProfileTemplateDefinition CreateDefinition(string id, string name)

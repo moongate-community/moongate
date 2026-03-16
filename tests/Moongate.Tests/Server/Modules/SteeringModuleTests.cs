@@ -84,7 +84,7 @@ public sealed class SteeringModuleTests
                     break;
             }
 
-            newLocation = new Point3D(mobile.Location.X + dx, mobile.Location.Y + dy, mobile.Location.Z);
+            newLocation = new(mobile.Location.X + dx, mobile.Location.Y + dy, mobile.Location.Z);
 
             return true;
         }

@@ -1,5 +1,4 @@
 using System.Buffers;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Moongate.Core.Buffers;
@@ -15,7 +14,7 @@ public ref struct PooledRefList<T>
     internal T[] _items;
     internal int _size;
     private int _version;
-    private bool _mt;
+    private readonly bool _mt;
 
 #pragma warning disable CA1825
     private static readonly T[] s_emptyArray = new T[0];
@@ -27,12 +26,6 @@ public ref struct PooledRefList<T>
         get => _mt ? ArrayPool<T>.Shared : STArrayPool<T>.Shared;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static PooledRefList<T> Create(int capacity = 32, bool mt = false) => new(capacity, mt);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static PooledRefList<T> CreateMT(int capacity = 32) => new(capacity, true);
-
     public PooledRefList(int capacity, bool mt = false)
     {
         _mt = mt;
@@ -40,7 +33,11 @@ public ref struct PooledRefList<T>
         _version = 0;
         _items = capacity switch
         {
-            < 0 => throw new ArgumentOutOfRangeException(nameof(capacity), capacity, CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum),
+            < 0 => throw new ArgumentOutOfRangeException(
+                       nameof(capacity),
+                       capacity,
+                       CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
+                   ),
             0 => Array.Empty<T>(),
             _ => (_mt ? ArrayPool<T>.Shared : STArrayPool<T>.Shared).Rent(capacity)
         };
@@ -52,6 +49,7 @@ public ref struct PooledRefList<T>
         _mt = mt;
 
         var count = collection.Count;
+
         if (count == 0)
         {
             _items = s_emptyArray;
@@ -75,6 +73,7 @@ public ref struct PooledRefList<T>
         if (collection is ICollection<T> c)
         {
             var count = c.Count;
+
             if (count == 0)
             {
                 _items = s_emptyArray;
@@ -92,6 +91,7 @@ public ref struct PooledRefList<T>
             _size = 0;
             _items = s_emptyArray;
             using var en = collection.GetEnumerator();
+
             while (en.MoveNext())
             {
                 Add(en.Current);
@@ -114,6 +114,7 @@ public ref struct PooledRefList<T>
                 if (value > 0)
                 {
                     var newItems = ArrayPool.Rent(value);
+
                     if (_size > 0)
                     {
                         Array.Copy(_items, newItems, _size);
@@ -165,12 +166,99 @@ public ref struct PooledRefList<T>
         }
     }
 
+    public ref struct Enumerator
+    {
+        private readonly PooledRefList<T> _list;
+        private int _index;
+        private readonly int _version;
+        private T? _current;
+
+        internal Enumerator(PooledRefList<T> list)
+        {
+            _list = list;
+            _index = 0;
+            _version = list._version;
+            _current = default;
+        }
+
+        public T Current
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if (_index == 0 || _index == _list._size + 1)
+                {
+                    ThrowEnumerationNotStartedOrEnded();
+                }
+
+                return _current!;
+            }
+        }
+
+        public void Dispose()
+        {
+            _index = -2;
+            _current = default;
+        }
+
+        public bool MoveNext()
+        {
+            var localList = _list;
+
+            if (_version == localList._version && (uint)_index < (uint)localList._size)
+            {
+                _current = localList._items[_index];
+                _index++;
+
+                return true;
+            }
+
+            return MoveNextRare();
+        }
+
+        public void Reset()
+        {
+            if (_version != _list._version)
+            {
+                throw new InvalidOperationException(CollectionThrowStrings.InvalidOperation_EnumFailedVersion);
+            }
+
+            _index = -1;
+            _current = default;
+        }
+
+        private bool MoveNextRare()
+        {
+            if (_version != _list._version)
+            {
+                throw new InvalidOperationException(CollectionThrowStrings.InvalidOperation_EnumFailedVersion);
+            }
+
+            _index = _list._size + 1;
+            _current = default;
+
+            return false;
+        }
+
+        private void ThrowEnumerationNotStartedOrEnded()
+        {
+            Debug.Assert(_index is -1 or -2);
+
+            throw new InvalidOperationException(
+                _index == -1
+                    ? CollectionThrowStrings.InvalidOperation_EnumNotStarted
+                    : CollectionThrowStrings.InvalidOperation_EnumEnded
+            );
+        }
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Add(T item)
     {
         _version++;
         var array = _items;
         var size = _size;
+
         if ((uint)size < (uint)array.Length)
         {
             _size = size + 1;
@@ -182,15 +270,8 @@ public ref struct PooledRefList<T>
         }
     }
 
-    [MethodImpl(MethodImplOptions.NoInlining)]
-    private void AddWithResize(T item)
-    {
-        Debug.Assert(_size == _items.Length);
-        var size = _size;
-        Grow(size + 1);
-        _size = size + 1;
-        _items[size] = item;
-    }
+    public ReadOnlySpan<T> AsSpan()
+        => _items.AsSpan(0, _size);
 
     public int BinarySearch(int index, int count, T item, IComparer<T>? comparer)
     {
@@ -205,17 +286,22 @@ public ref struct PooledRefList<T>
         return Array.BinarySearch(_items, index, count, item, comparer);
     }
 
-    public int BinarySearch(T item) => BinarySearch(0, Count, item, null);
-    public int BinarySearch(T item, IComparer<T>? comparer) => BinarySearch(0, Count, item, comparer);
+    public int BinarySearch(T item)
+        => BinarySearch(0, Count, item, null);
+
+    public int BinarySearch(T item, IComparer<T>? comparer)
+        => BinarySearch(0, Count, item, comparer);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
     {
         _version++;
+
         if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
         {
             var size = _size;
             _size = 0;
+
             if (size > 0)
             {
                 Array.Clear(_items, 0, size);
@@ -227,23 +313,27 @@ public ref struct PooledRefList<T>
         }
     }
 
-    public bool Contains(T item) => _size != 0 && IndexOf(item) != -1;
+    public bool Contains(T item)
+        => _size != 0 && IndexOf(item) != -1;
 
     public PooledRefList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
     {
         ArgumentNullException.ThrowIfNull(converter);
 
         var list = new PooledRefList<TOutput>(_size);
+
         for (var i = 0; i < _size; i++)
         {
             list._items[i] = converter(_items[i]);
         }
 
         list._size = _size;
+
         return list;
     }
 
-    public void CopyTo(T[] array) => CopyTo(array, 0);
+    public void CopyTo(T[] array)
+        => CopyTo(array, 0);
 
     public void CopyTo(int index, T[] array, int arrayIndex, int count)
     {
@@ -256,13 +346,34 @@ public ref struct PooledRefList<T>
     }
 
     public void CopyTo(T[] array, int arrayIndex)
+        => Array.Copy(_items, 0, array, arrayIndex, _size);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static PooledRefList<T> Create(int capacity = 32, bool mt = false)
+        => new(capacity, mt);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static PooledRefList<T> CreateMT(int capacity = 32)
+        => new(capacity, true);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Dispose()
     {
-        Array.Copy(_items, 0, array, arrayIndex, _size);
+        var array = _items;
+
+        if (array?.Length > 0)
+        {
+            Clear();
+            ArrayPool.Return(_items);
+        }
+
+        this = default;
     }
 
     public int EnsureCapacity(int capacity)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(capacity);
+
         if (_items.Length < capacity)
         {
             Grow(capacity);
@@ -272,26 +383,8 @@ public ref struct PooledRefList<T>
         return _items.Length;
     }
 
-    private void Grow(int capacity)
-    {
-        Debug.Assert(_items.Length < capacity);
-
-        var newcapacity = _items.Length == 0 ? DefaultCapacity : 2 * _items.Length;
-
-        if ((uint)newcapacity > MaxLength)
-        {
-            newcapacity = MaxLength;
-        }
-
-        if (newcapacity < capacity)
-        {
-            newcapacity = capacity;
-        }
-
-        Capacity = newcapacity;
-    }
-
-    public bool Exists(Predicate<T> match) => FindIndex(match) != -1;
+    public bool Exists(Predicate<T> match)
+        => FindIndex(match) != -1;
 
     public T? Find(Predicate<T> match)
     {
@@ -313,6 +406,7 @@ public ref struct PooledRefList<T>
         ArgumentNullException.ThrowIfNull(match);
 
         var list = new PooledRefList<T>();
+
         for (var i = 0; i < _size; i++)
         {
             if (match(_items[i]))
@@ -324,8 +418,11 @@ public ref struct PooledRefList<T>
         return list;
     }
 
-    public int FindIndex(Predicate<T> match) => FindIndex(0, _size, match);
-    public int FindIndex(int startIndex, Predicate<T> match) => FindIndex(startIndex, _size - startIndex, match);
+    public int FindIndex(Predicate<T> match)
+        => FindIndex(0, _size, match);
+
+    public int FindIndex(int startIndex, Predicate<T> match)
+        => FindIndex(startIndex, _size - startIndex, match);
 
     public int FindIndex(int startIndex, int count, Predicate<T> match)
     {
@@ -342,6 +439,7 @@ public ref struct PooledRefList<T>
         ArgumentNullException.ThrowIfNull(match);
 
         var endIndex = startIndex + count;
+
         for (var i = startIndex; i < endIndex; i++)
         {
             if (match(_items[i]))
@@ -368,8 +466,11 @@ public ref struct PooledRefList<T>
         return default;
     }
 
-    public int FindLastIndex(Predicate<T> match) => FindLastIndex(_size - 1, _size, match);
-    public int FindLastIndex(int startIndex, Predicate<T> match) => FindLastIndex(startIndex, startIndex + 1, match);
+    public int FindLastIndex(Predicate<T> match)
+        => FindLastIndex(_size - 1, _size, match);
+
+    public int FindLastIndex(int startIndex, Predicate<T> match)
+        => FindLastIndex(startIndex, startIndex + 1, match);
 
     public int FindLastIndex(int startIndex, int count, Predicate<T> match)
     {
@@ -393,6 +494,7 @@ public ref struct PooledRefList<T>
         }
 
         var endIndex = startIndex - count;
+
         for (var i = startIndex; i > endIndex; i--)
         {
             if (match(_items[i]))
@@ -426,7 +528,8 @@ public ref struct PooledRefList<T>
         }
     }
 
-    public Enumerator GetEnumerator() => new(this);
+    public Enumerator GetEnumerator()
+        => new(this);
 
     public PooledRefList<T> GetRange(int index, int count)
     {
@@ -441,10 +544,12 @@ public ref struct PooledRefList<T>
         var list = new PooledRefList<T>(count);
         Array.Copy(_items, index, list._items, 0, count);
         list._size = count;
+
         return list;
     }
 
-    public int IndexOf(T item) => Array.IndexOf(_items, item, 0, _size);
+    public int IndexOf(T item)
+        => Array.IndexOf(_items, item, 0, _size);
 
     public int IndexOf(T item, int index)
     {
@@ -505,6 +610,7 @@ public ref struct PooledRefList<T>
         if (collection is ICollection<T> c)
         {
             var count = c.Count;
+
             if (count > 0)
             {
                 if (_items.Length - _size < count)
@@ -524,6 +630,7 @@ public ref struct PooledRefList<T>
         else
         {
             using var en = collection.GetEnumerator();
+
             while (en.MoveNext())
             {
                 Insert(index++, en.Current);
@@ -586,9 +693,11 @@ public ref struct PooledRefList<T>
     public bool Remove(T item)
     {
         var index = IndexOf(item);
+
         if (index >= 0)
         {
             RemoveAt(index);
+
             return true;
         }
 
@@ -600,6 +709,7 @@ public ref struct PooledRefList<T>
         ArgumentNullException.ThrowIfNull(match);
 
         var freeIndex = 0;
+
         while (freeIndex < _size && !match(_items[freeIndex]))
         {
             freeIndex++;
@@ -611,6 +721,7 @@ public ref struct PooledRefList<T>
         }
 
         var current = freeIndex + 1;
+
         while (current < _size)
         {
             while (current < _size && match(_items[current]))
@@ -632,6 +743,7 @@ public ref struct PooledRefList<T>
         var result = _size - freeIndex;
         _size = freeIndex;
         _version++;
+
         return result;
     }
 
@@ -643,6 +755,7 @@ public ref struct PooledRefList<T>
         }
 
         _size--;
+
         if (index < _size)
         {
             Array.Copy(_items, index + 1, _items, index, _size - index);
@@ -669,12 +782,14 @@ public ref struct PooledRefList<T>
         if (count > 0)
         {
             _size -= count;
+
             if (index < _size)
             {
                 Array.Copy(_items, index + count, _items, index, _size - index);
             }
 
             _version++;
+
             if (RuntimeHelpers.IsReferenceOrContainsReferences<T>())
             {
                 Array.Clear(_items, _size, count);
@@ -682,7 +797,8 @@ public ref struct PooledRefList<T>
         }
     }
 
-    public void Reverse() => Reverse(0, Count);
+    public void Reverse()
+        => Reverse(0, Count);
 
     public void Reverse(int index, int count)
     {
@@ -751,6 +867,7 @@ public ref struct PooledRefList<T>
 
         var array = new T[_size];
         Array.Copy(_items, array, _size);
+
         return array;
     }
 
@@ -763,14 +880,14 @@ public ref struct PooledRefList<T>
 
         var array = ArrayPool.Rent(_size);
         Array.Copy(_items, array, _size);
+
         return array;
     }
-
-    public ReadOnlySpan<T> AsSpan() => _items.AsSpan(0, _size);
 
     public void TrimExcess()
     {
         var threshold = (int)(_items.Length * 0.9);
+
         if (_size < threshold)
         {
             Capacity = _size;
@@ -792,100 +909,32 @@ public ref struct PooledRefList<T>
         return true;
     }
 
-    public ref struct Enumerator
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void AddWithResize(T item)
     {
-        private readonly PooledRefList<T> _list;
-        private int _index;
-        private readonly int _version;
-        private T? _current;
-
-        internal Enumerator(PooledRefList<T> list)
-        {
-            _list = list;
-            _index = 0;
-            _version = list._version;
-            _current = default;
-        }
-
-        public void Dispose()
-        {
-            _index = -2;
-            _current = default;
-        }
-
-        public bool MoveNext()
-        {
-            var localList = _list;
-
-            if (_version == localList._version && (uint)_index < (uint)localList._size)
-            {
-                _current = localList._items[_index];
-                _index++;
-                return true;
-            }
-
-            return MoveNextRare();
-        }
-
-        private bool MoveNextRare()
-        {
-            if (_version != _list._version)
-            {
-                throw new InvalidOperationException(CollectionThrowStrings.InvalidOperation_EnumFailedVersion);
-            }
-
-            _index = _list._size + 1;
-            _current = default;
-            return false;
-        }
-
-        public T Current
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                if (_index == 0 || _index == _list._size + 1)
-                {
-                    ThrowEnumerationNotStartedOrEnded();
-                }
-
-                return _current!;
-            }
-        }
-
-        private void ThrowEnumerationNotStartedOrEnded()
-        {
-            Debug.Assert(_index is -1 or -2);
-            throw new InvalidOperationException(
-                _index == -1
-                    ? CollectionThrowStrings.InvalidOperation_EnumNotStarted
-                    : CollectionThrowStrings.InvalidOperation_EnumEnded
-            );
-        }
-
-        public void Reset()
-        {
-            if (_version != _list._version)
-            {
-                throw new InvalidOperationException(CollectionThrowStrings.InvalidOperation_EnumFailedVersion);
-            }
-
-            _index = -1;
-            _current = default;
-        }
+        Debug.Assert(_size == _items.Length);
+        var size = _size;
+        Grow(size + 1);
+        _size = size + 1;
+        _items[size] = item;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Dispose()
+    private void Grow(int capacity)
     {
-        var array = _items;
+        Debug.Assert(_items.Length < capacity);
 
-        if (array?.Length > 0)
+        var newcapacity = _items.Length == 0 ? DefaultCapacity : 2 * _items.Length;
+
+        if ((uint)newcapacity > MaxLength)
         {
-            Clear();
-            ArrayPool.Return(_items);
+            newcapacity = MaxLength;
         }
 
-        this = default;
+        if (newcapacity < capacity)
+        {
+            newcapacity = capacity;
+        }
+
+        Capacity = newcapacity;
     }
 }

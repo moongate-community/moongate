@@ -5,7 +5,6 @@ using Moongate.Server.Commands.Player;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Internal.Commands;
-using Moongate.Server.Data.Internal.Cursors;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
@@ -70,8 +69,8 @@ public sealed class FlipCommandTests
 
         public int UpsertCalls { get; private set; }
 
-        public void SetItem(UOItemEntity item)
-            => _items[item.Id] = item;
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
@@ -111,6 +110,9 @@ public sealed class FlipCommandTests
         public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => Task.FromResult(true);
 
+        public void SetItem(UOItemEntity item)
+            => _items[item.Id] = item;
+
         public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
             => Task.FromResult(new UOItemEntity());
 
@@ -130,9 +132,6 @@ public sealed class FlipCommandTests
         }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
     }
 
@@ -206,7 +205,11 @@ public sealed class FlipCommandTests
     public async Task ExecuteCommandAsync_WhenArgumentsAreInvalid_ShouldPrintUsage()
     {
         var gameEventBus = new FlipCommandTestGameEventBusService();
-        var command = new FlipCommand(gameEventBus, new FlipCommandTestItemService(), new FlipCommandTestSpatialWorldService());
+        var command = new FlipCommand(
+            gameEventBus,
+            new FlipCommandTestItemService(),
+            new FlipCommandTestSpatialWorldService()
+        );
         var output = new List<string>();
         var context = new CommandSystemContext(
             "flip bad",
@@ -226,7 +229,11 @@ public sealed class FlipCommandTests
     public async Task ExecuteCommandAsync_WhenTargetIsNotAnItem_ShouldPrintError()
     {
         var gameEventBus = new FlipCommandTestGameEventBusService();
-        var command = new FlipCommand(gameEventBus, new FlipCommandTestItemService(), new FlipCommandTestSpatialWorldService());
+        var command = new FlipCommand(
+            gameEventBus,
+            new FlipCommandTestItemService(),
+            new FlipCommandTestSpatialWorldService()
+        );
         var output = new List<string>();
         var context = new CommandSystemContext(
             "flip",

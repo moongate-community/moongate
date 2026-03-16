@@ -10,11 +10,11 @@ internal static class LuaBrainDictionaryPool
     private static readonly ConcurrentBag<Dictionary<string, object?>> ObjectPool = new();
     private static readonly ConcurrentBag<Dictionary<string, int>> IntPool = new();
 
-    public static Dictionary<string, object?> RentObjectDictionary()
-        => ObjectPool.TryTake(out var value) ? value : new Dictionary<string, object?>(capacity: 8);
-
     public static Dictionary<string, int> RentIntDictionary()
-        => IntPool.TryTake(out var value) ? value : new Dictionary<string, int>(capacity: 4);
+        => IntPool.TryTake(out var value) ? value : new(4);
+
+    public static Dictionary<string, object?> RentObjectDictionary()
+        => ObjectPool.TryTake(out var value) ? value : new(8);
 
     public static void Return(Dictionary<string, object?> dictionary)
     {

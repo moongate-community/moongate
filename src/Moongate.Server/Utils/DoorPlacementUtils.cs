@@ -11,6 +11,9 @@ public static class DoorPlacementUtils
     private const int DoorContextRange = 1;
     private const int MaxZDelta = 20;
 
+    public static bool IsDoorFrameCandidate(ItemData tileData)
+        => tileData.Wall || tileData.Impassable || tileData.Window || tileData.Door;
+
     public static DoorGenerationFacing ResolveFacing(
         IMovementTileQueryService movementTileQueryService,
         ISpatialWorldService spatialWorldService,
@@ -18,10 +21,26 @@ public static class DoorPlacementUtils
         Point3D location
     )
     {
-        var westScore = ScoreSide(movementTileQueryService, spatialWorldService, mapId, location, location.X - 1, location.Y);
-        var eastScore = ScoreSide(movementTileQueryService, spatialWorldService, mapId, location, location.X + 1, location.Y);
-        var northScore = ScoreSide(movementTileQueryService, spatialWorldService, mapId, location, location.X, location.Y - 1);
-        var southScore = ScoreSide(movementTileQueryService, spatialWorldService, mapId, location, location.X, location.Y + 1);
+        var westScore =
+            ScoreSide(movementTileQueryService, spatialWorldService, mapId, location, location.X - 1, location.Y);
+        var eastScore =
+            ScoreSide(movementTileQueryService, spatialWorldService, mapId, location, location.X + 1, location.Y);
+        var northScore = ScoreSide(
+            movementTileQueryService,
+            spatialWorldService,
+            mapId,
+            location,
+            location.X,
+            location.Y - 1
+        );
+        var southScore = ScoreSide(
+            movementTileQueryService,
+            spatialWorldService,
+            mapId,
+            location,
+            location.X,
+            location.Y + 1
+        );
 
         var horizontalScore = Math.Max(westScore, eastScore);
         var verticalScore = Math.Max(northScore, southScore);
@@ -48,9 +67,6 @@ public static class DoorPlacementUtils
 
         return DoorGenerationFacing.WestCW;
     }
-
-    public static bool IsDoorFrameCandidate(ItemData tileData)
-        => tileData.Wall || tileData.Impassable || tileData.Window || tileData.Door;
 
     private static int ScoreSide(
         IMovementTileQueryService movementTileQueryService,

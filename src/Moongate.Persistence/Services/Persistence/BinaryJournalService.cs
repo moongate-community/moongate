@@ -104,7 +104,10 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
         );
     }
 
-    public async ValueTask AppendBatchAsync(IReadOnlyList<JournalEntry> entries, CancellationToken cancellationToken = default)
+    public async ValueTask AppendBatchAsync(
+        IReadOnlyList<JournalEntry> entries,
+        CancellationToken cancellationToken = default
+    )
     {
         if (entries.Count == 0)
         {

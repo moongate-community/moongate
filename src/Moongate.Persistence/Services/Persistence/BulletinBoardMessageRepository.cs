@@ -20,7 +20,9 @@ public sealed class BulletinBoardMessageRepository : IBulletinBoardMessageReposi
         _journalService = journalService;
     }
 
-    public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+    public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(
+        CancellationToken cancellationToken = default
+    )
     {
         _ = cancellationToken;
 
@@ -32,7 +34,31 @@ public sealed class BulletinBoardMessageRepository : IBulletinBoardMessageReposi
         }
     }
 
-    public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default)
+    public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
+        Serial boardId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        lock (_stateStore.SyncRoot)
+        {
+            return ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>(
+                [
+                    .. _stateStore.BulletinBoardMessagesById
+                                  .Values
+                                  .Where(message => message.BoardId == boardId)
+                                  .OrderBy(message => message.PostedAtUtc)
+                                  .Select(Clone)
+                ]
+            );
+        }
+    }
+
+    public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
+        Serial messageId,
+        CancellationToken cancellationToken = default
+    )
     {
         _ = cancellationToken;
 
@@ -46,21 +72,29 @@ public sealed class BulletinBoardMessageRepository : IBulletinBoardMessageReposi
         }
     }
 
-    public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(Serial boardId, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
     {
-        _ = cancellationToken;
+        var removed = false;
+        JournalEntry? entry = null;
 
         lock (_stateStore.SyncRoot)
         {
-            return ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>(
-                [
-                    .. _stateStore.BulletinBoardMessagesById.Values
-                                 .Where(message => message.BoardId == boardId)
-                                 .OrderBy(message => message.PostedAtUtc)
-                                 .Select(Clone)
-                ]
-            );
+            if (_stateStore.BulletinBoardMessagesById.Remove(messageId))
+            {
+                removed = true;
+                entry = CreateEntry(
+                    PersistenceOperationType.RemoveBulletinBoardMessage,
+                    JournalPayloadCodec.EncodeSerial(messageId)
+                );
+            }
         }
+
+        if (removed && entry is not null)
+        {
+            await _journalService.AppendAsync(entry, cancellationToken);
+        }
+
+        return removed;
     }
 
     public async ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
@@ -72,33 +106,14 @@ public sealed class BulletinBoardMessageRepository : IBulletinBoardMessageReposi
             var clone = Clone(message);
             _stateStore.BulletinBoardMessagesById[clone.MessageId] = clone;
             _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)clone.MessageId);
-            entry = CreateEntry(PersistenceOperationType.UpsertBulletinBoardMessage, JournalPayloadCodec.EncodeBulletinBoardMessage(clone));
+            entry = CreateEntry(
+                PersistenceOperationType.UpsertBulletinBoardMessage,
+                JournalPayloadCodec.EncodeBulletinBoardMessage(clone)
+            );
         }
 
         await _journalService.AppendAsync(entry, cancellationToken);
         _logger.Verbose("Bulletin board message upsert completed for MessageId={MessageId}", message.MessageId);
-    }
-
-    public async ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
-    {
-        var removed = false;
-        JournalEntry? entry = null;
-
-        lock (_stateStore.SyncRoot)
-        {
-            if (_stateStore.BulletinBoardMessagesById.Remove(messageId))
-            {
-                removed = true;
-                entry = CreateEntry(PersistenceOperationType.RemoveBulletinBoardMessage, JournalPayloadCodec.EncodeSerial(messageId));
-            }
-        }
-
-        if (removed && entry is not null)
-        {
-            await _journalService.AppendAsync(entry, cancellationToken);
-        }
-
-        return removed;
     }
 
     private static BulletinBoardMessageEntity Clone(BulletinBoardMessageEntity message)

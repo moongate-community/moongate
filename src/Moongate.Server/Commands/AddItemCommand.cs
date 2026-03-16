@@ -50,7 +50,7 @@ public sealed class AddItemCommand : ICommandExecutor
 
         var itemTemplateStr = context.Arguments.ElementAt(0);
 
-        if (_itemFactoryService.TryGetItemTemplate(itemTemplateStr, out var _))
+        if (_itemFactoryService.TryGetItemTemplate(itemTemplateStr, out _))
         {
             var item = _itemService.SpawnFromTemplateAsync(itemTemplateStr).GetAwaiter().GetResult();
 

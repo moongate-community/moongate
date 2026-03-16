@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Data.BulletinBoard;
+using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -61,34 +61,6 @@ public sealed class BulletinBoardService : IBulletinBoardService
         return true;
     }
 
-    public async Task<bool> SendSummaryAsync(GameSession session, uint boardId, uint messageId)
-    {
-        var message = await GetBoardMessageAsync((Serial)boardId, (Serial)messageId);
-
-        if (message is null)
-        {
-            return false;
-        }
-
-        _outgoingPacketQueue.Enqueue(session.SessionId, CreateSummaryPacket(message));
-
-        return true;
-    }
-
-    public async Task<bool> SendMessageAsync(GameSession session, uint boardId, uint messageId)
-    {
-        var message = await GetBoardMessageAsync((Serial)boardId, (Serial)messageId);
-
-        if (message is null)
-        {
-            return false;
-        }
-
-        _outgoingPacketQueue.Enqueue(session.SessionId, CreateMessagePacket(message));
-
-        return true;
-    }
-
     public async Task<bool> PostMessageAsync(GameSession session, BulletinBoardMessagesPacket packet)
     {
         if (packet.Subcommand != BulletinBoardSubcommand.PostMessage)
@@ -129,7 +101,9 @@ public sealed class BulletinBoardService : IBulletinBoardService
             Subject = packet.Subject.Trim(),
             PostedAtUtc = DateTime.UtcNow
         };
-        message.BodyLines.AddRange(packet.BodyLines.Where(line => !string.IsNullOrWhiteSpace(line)).Select(line => line.TrimEnd()));
+        message.BodyLines.AddRange(
+            packet.BodyLines.Where(line => !string.IsNullOrWhiteSpace(line)).Select(line => line.TrimEnd())
+        );
 
         if (message.BodyLines.Count == 0)
         {
@@ -161,35 +135,33 @@ public sealed class BulletinBoardService : IBulletinBoardService
         return await _persistenceService.UnitOfWork.BulletinBoardMessages.RemoveAsync(message.MessageId);
     }
 
-    private async Task<BulletinBoardMessageEntity?> GetBoardMessageAsync(Serial boardId, Serial messageId)
+    public async Task<bool> SendMessageAsync(GameSession session, uint boardId, uint messageId)
     {
-        var message = await _persistenceService.UnitOfWork.BulletinBoardMessages.GetByIdAsync(messageId);
+        var message = await GetBoardMessageAsync((Serial)boardId, (Serial)messageId);
 
-        return message?.BoardId == boardId ? message : null;
-    }
-
-    private async Task<string> ResolveAuthorAsync(Serial characterId)
-    {
-        var mobile = await _characterService.GetCharacterAsync(characterId);
-
-        return string.IsNullOrWhiteSpace(mobile?.Name) ? "Someone" : mobile.Name;
-    }
-
-    private static bool IsBulletinBoard(UOItemEntity? item)
-        => item is not null &&
-           (string.Equals(item.ScriptId, "items.bulletin_board", StringComparison.OrdinalIgnoreCase) ||
-            item.ItemId is 0x1E5E or 0x1E5F);
-
-    private static BulletinBoardSummaryPacket CreateSummaryPacket(BulletinBoardMessageEntity message)
-        => new()
+        if (message is null)
         {
-            BoardId = message.BoardId,
-            MessageId = message.MessageId,
-            ParentId = message.ParentId,
-            Poster = message.Author,
-            Subject = message.Subject,
-            PostedAtText = FormatPostedAt(message.PostedAtUtc)
-        };
+            return false;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, CreateMessagePacket(message));
+
+        return true;
+    }
+
+    public async Task<bool> SendSummaryAsync(GameSession session, uint boardId, uint messageId)
+    {
+        var message = await GetBoardMessageAsync((Serial)boardId, (Serial)messageId);
+
+        if (message is null)
+        {
+            return false;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, CreateSummaryPacket(message));
+
+        return true;
+    }
 
     private static BulletinBoardMessagePacket CreateMessagePacket(BulletinBoardMessageEntity message)
     {
@@ -206,6 +178,36 @@ public sealed class BulletinBoardService : IBulletinBoardService
         return packet;
     }
 
+    private static BulletinBoardSummaryPacket CreateSummaryPacket(BulletinBoardMessageEntity message)
+        => new()
+        {
+            BoardId = message.BoardId,
+            MessageId = message.MessageId,
+            ParentId = message.ParentId,
+            Poster = message.Author,
+            Subject = message.Subject,
+            PostedAtText = FormatPostedAt(message.PostedAtUtc)
+        };
+
     private static string FormatPostedAt(DateTime postedAtUtc)
         => postedAtUtc.ToString("dd MMM yyyy HH:mm");
+
+    private async Task<BulletinBoardMessageEntity?> GetBoardMessageAsync(Serial boardId, Serial messageId)
+    {
+        var message = await _persistenceService.UnitOfWork.BulletinBoardMessages.GetByIdAsync(messageId);
+
+        return message?.BoardId == boardId ? message : null;
+    }
+
+    private static bool IsBulletinBoard(UOItemEntity? item)
+        => item is not null &&
+           (string.Equals(item.ScriptId, "items.bulletin_board", StringComparison.OrdinalIgnoreCase) ||
+            item.ItemId is 0x1E5E or 0x1E5F);
+
+    private async Task<string> ResolveAuthorAsync(Serial characterId)
+    {
+        var mobile = await _characterService.GetCharacterAsync(characterId);
+
+        return string.IsNullOrWhiteSpace(mobile?.Name) ? "Someone" : mobile.Name;
+    }
 }

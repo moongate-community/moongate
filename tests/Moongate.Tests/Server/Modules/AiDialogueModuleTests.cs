@@ -202,6 +202,26 @@ public sealed class AiDialogueModuleTests
     }
 
     [Test]
+    public void Idle_ShouldQueueDialogueWork()
+    {
+        var runtimeState = new AiDialogueModuleTestRuntimeStateService();
+        var dialogueService = new AiDialogueModuleTestDialogueService();
+        var module = new AiDialogueModule(runtimeState, dialogueService);
+        var npc = CreateProxy((Serial)0x100u, "Lilly");
+
+        var handled = module.Idle(npc);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(dialogueService.LastIdleNpc, Is.Not.Null);
+                Assert.That(dialogueService.LastIdleNpc!.Id, Is.EqualTo((Serial)0x100u));
+            }
+        );
+    }
+
+    [Test]
     public void Init_ShouldBindPromptFileForNpc()
     {
         var runtimeState = new AiDialogueModuleTestRuntimeStateService();
@@ -245,26 +265,6 @@ public sealed class AiDialogueModuleTests
         );
     }
 
-    [Test]
-    public void Idle_ShouldQueueDialogueWork()
-    {
-        var runtimeState = new AiDialogueModuleTestRuntimeStateService();
-        var dialogueService = new AiDialogueModuleTestDialogueService();
-        var module = new AiDialogueModule(runtimeState, dialogueService);
-        var npc = CreateProxy((Serial)0x100u, "Lilly");
-
-        var handled = module.Idle(npc);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(dialogueService.LastIdleNpc, Is.Not.Null);
-                Assert.That(dialogueService.LastIdleNpc!.Id, Is.EqualTo((Serial)0x100u));
-            }
-        );
-    }
-
     private static LuaMobileProxy CreateProxy(Serial serial, string name)
     {
         var mobile = new UOMobileEntity
@@ -275,7 +275,7 @@ public sealed class AiDialogueModuleTests
             Location = new(100, 100, 0)
         };
 
-        return new LuaMobileProxy(
+        return new(
             mobile,
             new AiDialogueModuleTestSpeechService(),
             new AiDialogueModuleTestGameNetworkSessionService()

@@ -1,4 +1,3 @@
-using System.Buffers;
 using Moongate.Core.Buffers;
 
 namespace Moongate.Network.Compression;

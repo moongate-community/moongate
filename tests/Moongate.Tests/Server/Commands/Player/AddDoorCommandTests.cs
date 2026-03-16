@@ -22,7 +22,6 @@ using Moongate.Server.Types.Commands;
 using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
@@ -82,14 +81,14 @@ public sealed class AddDoorCommandTests
         {
             LastRequestedTemplateId = itemTemplateId;
 
-            return new UOItemEntity
+            return new()
             {
                 Id = (Serial)_nextId++,
                 ItemId = itemTemplateId switch
                 {
-                    "metal_door" => 0x0675,
+                    "metal_door"      => 0x0675,
                     "light_wood_door" => 0x06D5,
-                    _ => throw new InvalidOperationException($"Unexpected template '{itemTemplateId}'.")
+                    _                 => throw new InvalidOperationException($"Unexpected template '{itemTemplateId}'.")
                 },
                 Name = itemTemplateId,
                 ScriptId = "items.door"
@@ -101,7 +100,7 @@ public sealed class AddDoorCommandTests
 
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? definition)
         {
-            definition = new ItemTemplateDefinition { Id = itemTemplateId };
+            definition = new() { Id = itemTemplateId };
 
             return itemTemplateId is "metal_door" or "light_wood_door";
         }
@@ -110,6 +109,9 @@ public sealed class AddDoorCommandTests
     private sealed class AddDoorTestItemService : IItemService
     {
         public UOItemEntity? LastCreatedItem { get; private set; }
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
@@ -163,9 +165,6 @@ public sealed class AddDoorCommandTests
             => Task.CompletedTask;
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
     }
 
@@ -239,6 +238,13 @@ public sealed class AddDoorCommandTests
     {
         private readonly Dictionary<(int X, int Y), List<StaticTile>> _staticTiles = [];
 
+        public IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y)
+        {
+            _ = mapId;
+
+            return _staticTiles.TryGetValue((x, y), out var tiles) ? tiles : [];
+        }
+
         public void SetStaticTile(int x, int y, ushort id, sbyte z = 0)
         {
             var key = (x, y);
@@ -249,14 +255,7 @@ public sealed class AddDoorCommandTests
                 _staticTiles[key] = tiles;
             }
 
-            tiles.Add(new StaticTile(id, z));
-        }
-
-        public IReadOnlyList<StaticTile> GetStaticTiles(int mapId, int x, int y)
-        {
-            _ = mapId;
-
-            return _staticTiles.TryGetValue((x, y), out var tiles) ? tiles : [];
+            tiles.Add(new(id, z));
         }
 
         public bool TryGetLandTile(int mapId, int x, int y, out LandTile landTile)
@@ -320,7 +319,12 @@ public sealed class AddDoorCommandTests
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
             => [];
 
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
             => [];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -340,6 +344,101 @@ public sealed class AddDoorCommandTests
         public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
 
         public void RemoveEntity(Serial serial) { }
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenCalledWithoutArguments_ShouldRequestTargetCursor()
+    {
+        var gameEventBus = new AddDoorTestGameEventBusService();
+        var command = new AddDoorCommand(
+            gameEventBus,
+            new AddDoorTestItemFactoryService(),
+            new AddDoorTestItemService(),
+            new AddDoorTestSpatialWorldService(),
+            new AddDoorTestGameNetworkSessionService(),
+            new AddDoorTestCharacterService(),
+            new AddDoorTestMovementTileQueryService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_door",
+            [],
+            CommandSourceType.InGame,
+            7,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(gameEventBus.LastTargetRequestEvent, Is.Not.Null);
+        Assert.That(
+            gameEventBus.LastTargetRequestEvent!.Value.SelectionType,
+            Is.EqualTo(TargetCursorSelectionType.SelectLocation)
+        );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenMetalTypeAndSouthWallIsDetected_ShouldSpawnSouthFacingMetalDoor()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000020u,
+            Character = new()
+            {
+                Id = (Serial)0x00000020u,
+                MapId = 4,
+                Location = new(250, 250, 0)
+            }
+        };
+        var gameEventBus = new AddDoorTestGameEventBusService();
+        var itemFactoryService = new AddDoorTestItemFactoryService();
+        var itemService = new AddDoorTestItemService();
+        var spatialWorldService = new AddDoorTestSpatialWorldService();
+        var tileQueryService = new AddDoorTestMovementTileQueryService();
+        TileData.MaxItemValue = 0xFFFF;
+        TileData.ItemTable[0x0675] = new(string.Empty, UOTileFlag.Door, 0, 0, 0, 0, 0, 0);
+        spatialWorldService.NearbyItems.Add(
+            new()
+            {
+                Id = (Serial)0x40000050u,
+                ItemId = 0x0675,
+                MapId = 4,
+                Location = new(250, 251, 0)
+            }
+        );
+        var command = new AddDoorCommand(
+            gameEventBus,
+            itemFactoryService,
+            itemService,
+            spatialWorldService,
+            new AddDoorTestGameNetworkSessionService(session),
+            new AddDoorTestCharacterService(),
+            tileQueryService
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_door metal",
+            ["metal"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+        gameEventBus.TriggerLocationCallback(new(250, 250, 0));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemFactoryService.LastRequestedTemplateId, Is.EqualTo("metal_door"));
+                Assert.That(itemService.LastCreatedItem, Is.Not.Null);
+                Assert.That(itemService.LastCreatedItem!.ItemId, Is.EqualTo(DoorGenerationFacing.SouthCW.ToItemId(0x0675)));
+                Assert.That(itemService.LastCreatedItem.Direction, Is.EqualTo(DirectionType.South));
+                Assert.That(output[^1], Does.StartWith("Door 'metal' spawned"));
+            }
+        );
     }
 
     [Test]
@@ -369,34 +468,6 @@ public sealed class AddDoorCommandTests
     }
 
     [Test]
-    public async Task ExecuteCommandAsync_WhenCalledWithoutArguments_ShouldRequestTargetCursor()
-    {
-        var gameEventBus = new AddDoorTestGameEventBusService();
-        var command = new AddDoorCommand(
-            gameEventBus,
-            new AddDoorTestItemFactoryService(),
-            new AddDoorTestItemService(),
-            new AddDoorTestSpatialWorldService(),
-            new AddDoorTestGameNetworkSessionService(),
-            new AddDoorTestCharacterService(),
-            new AddDoorTestMovementTileQueryService()
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "add_door",
-            [],
-            CommandSourceType.InGame,
-            7,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.That(gameEventBus.LastTargetRequestEvent, Is.Not.Null);
-        Assert.That(gameEventBus.LastTargetRequestEvent!.Value.SelectionType, Is.EqualTo(TargetCursorSelectionType.SelectLocation));
-    }
-
-    [Test]
     public async Task ExecuteCommandAsync_WhenWestWallIsDetected_ShouldSpawnWoodDoorWithWestFacing()
     {
         using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -404,11 +475,11 @@ public sealed class AddDoorCommandTests
         var session = new GameSession(new(client))
         {
             CharacterId = (Serial)0x00000010u,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000010u,
                 MapId = 1,
-                Location = new Point3D(100, 100, 0)
+                Location = new(100, 100, 0)
             }
         };
         var gameEventBus = new AddDoorTestGameEventBusService();
@@ -417,8 +488,8 @@ public sealed class AddDoorCommandTests
         var spatialWorldService = new AddDoorTestSpatialWorldService();
         var tileQueryService = new AddDoorTestMovementTileQueryService();
         TileData.MaxItemValue = 0xFFFF;
-        TileData.ItemTable[0x0001] = new ItemData(string.Empty, UOTileFlag.Wall, 0, 0, 0, 0, 0, 0);
-        tileQueryService.SetStaticTile(99, 100, 0x0001, 0);
+        TileData.ItemTable[0x0001] = new(string.Empty, UOTileFlag.Wall, 0, 0, 0, 0, 0, 0);
+        tileQueryService.SetStaticTile(99, 100, 0x0001);
         var command = new AddDoorCommand(
             gameEventBus,
             itemFactoryService,
@@ -438,7 +509,7 @@ public sealed class AddDoorCommandTests
         );
 
         await command.ExecuteCommandAsync(context);
-        gameEventBus.TriggerLocationCallback(new Point3D(100, 100, 0));
+        gameEventBus.TriggerLocationCallback(new(100, 100, 0));
 
         Assert.Multiple(
             () =>
@@ -446,77 +517,19 @@ public sealed class AddDoorCommandTests
                 Assert.That(itemFactoryService.LastRequestedTemplateId, Is.EqualTo("light_wood_door"));
                 Assert.That(itemService.LastCreatedItem, Is.Not.Null);
                 Assert.That(itemService.LastCreatedItem!.ItemId, Is.EqualTo(DoorGenerationFacing.WestCW.ToItemId(0x06D5)));
-                Assert.That(itemService.LastCreatedItem.Direction, Is.EqualTo(DoorGenerationFacing.WestCW.ToDirectionType()));
+                Assert.That(
+                    itemService.LastCreatedItem.Direction,
+                    Is.EqualTo(DoorGenerationFacing.WestCW.ToDirectionType())
+                );
                 Assert.That(itemService.LastCreatedItem.MapId, Is.EqualTo(1));
                 Assert.That(itemService.LastCreatedItem.Location, Is.EqualTo(new Point3D(100, 100, 0)));
-                Assert.That(itemService.LastCreatedItem.TryGetCustomString(ItemCustomParamKeys.Door.Facing, out var facing), Is.True);
+                Assert.That(
+                    itemService.LastCreatedItem.TryGetCustomString(ItemCustomParamKeys.Door.Facing, out var facing),
+                    Is.True
+                );
                 Assert.That(facing, Is.EqualTo(DoorGenerationFacing.WestCW.ToString()));
                 Assert.That(spatialWorldService.AddOrUpdateItemCalls, Is.EqualTo(1));
                 Assert.That(output[^1], Does.StartWith("Door 'wood' spawned"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenMetalTypeAndSouthWallIsDetected_ShouldSpawnSouthFacingMetalDoor()
-    {
-        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        using var client = new MoongateTCPClient(socket);
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000020u,
-            Character = new UOMobileEntity
-            {
-                Id = (Serial)0x00000020u,
-                MapId = 4,
-                Location = new Point3D(250, 250, 0)
-            }
-        };
-        var gameEventBus = new AddDoorTestGameEventBusService();
-        var itemFactoryService = new AddDoorTestItemFactoryService();
-        var itemService = new AddDoorTestItemService();
-        var spatialWorldService = new AddDoorTestSpatialWorldService();
-        var tileQueryService = new AddDoorTestMovementTileQueryService();
-        TileData.MaxItemValue = 0xFFFF;
-        TileData.ItemTable[0x0675] = new ItemData(string.Empty, UOTileFlag.Door, 0, 0, 0, 0, 0, 0);
-        spatialWorldService.NearbyItems.Add(
-            new UOItemEntity
-            {
-                Id = (Serial)0x40000050u,
-                ItemId = 0x0675,
-                MapId = 4,
-                Location = new Point3D(250, 251, 0)
-            }
-        );
-        var command = new AddDoorCommand(
-            gameEventBus,
-            itemFactoryService,
-            itemService,
-            spatialWorldService,
-            new AddDoorTestGameNetworkSessionService(session),
-            new AddDoorTestCharacterService(),
-            tileQueryService
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "add_door metal",
-            ["metal"],
-            CommandSourceType.InGame,
-            session.SessionId,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-        gameEventBus.TriggerLocationCallback(new Point3D(250, 250, 0));
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(itemFactoryService.LastRequestedTemplateId, Is.EqualTo("metal_door"));
-                Assert.That(itemService.LastCreatedItem, Is.Not.Null);
-                Assert.That(itemService.LastCreatedItem!.ItemId, Is.EqualTo(DoorGenerationFacing.SouthCW.ToItemId(0x0675)));
-                Assert.That(itemService.LastCreatedItem.Direction, Is.EqualTo(DirectionType.South));
-                Assert.That(output[^1], Does.StartWith("Door 'metal' spawned"));
             }
         );
     }

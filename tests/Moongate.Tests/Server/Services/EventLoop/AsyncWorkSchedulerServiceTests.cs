@@ -37,6 +37,46 @@ public sealed class AsyncWorkSchedulerServiceTests
     }
 
     [Test]
+    public async Task TrySchedule_WhenBackgroundWorkFails_ShouldPostErrorAndReleaseKey()
+    {
+        using var backgroundJobService = new BackgroundJobService();
+        backgroundJobService.Start(1);
+        IAsyncWorkSchedulerService scheduler = new AsyncWorkSchedulerService(backgroundJobService);
+        Exception? captured = null;
+
+        var first = scheduler.TrySchedule<int, int>(
+            "npc-dialogue",
+            0x100,
+            _ => throw new InvalidOperationException("boom"),
+            _ => Assert.Fail("Result callback should not run"),
+            ex => captured = ex
+        );
+
+        var errorQueued = await WaitUntilAsync(
+                              () => backgroundJobService.ExecutePendingOnGameLoop() > 0,
+                              TimeSpan.FromSeconds(2)
+                          );
+
+        var second = scheduler.TrySchedule(
+            "npc-dialogue",
+            0x100,
+            _ => Task.FromResult(9),
+            _ => { }
+        );
+        await backgroundJobService.StopAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(first, Is.True);
+                Assert.That(errorQueued, Is.True);
+                Assert.That(captured, Is.TypeOf<InvalidOperationException>());
+                Assert.That(second, Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task TrySchedule_WhenSameKeyIsAlreadyInFlight_ShouldRejectDuplicateUntilCallbackRuns()
     {
         using var backgroundJobService = new BackgroundJobService();
@@ -87,46 +127,6 @@ public sealed class AsyncWorkSchedulerServiceTests
                 Assert.That(third, Is.True);
                 Assert.That(secondCallbackQueued, Is.True);
                 Assert.That(callbackValue, Is.EqualTo(7));
-            }
-        );
-    }
-
-    [Test]
-    public async Task TrySchedule_WhenBackgroundWorkFails_ShouldPostErrorAndReleaseKey()
-    {
-        using var backgroundJobService = new BackgroundJobService();
-        backgroundJobService.Start(1);
-        IAsyncWorkSchedulerService scheduler = new AsyncWorkSchedulerService(backgroundJobService);
-        Exception? captured = null;
-
-        var first = scheduler.TrySchedule<int, int>(
-            "npc-dialogue",
-            0x100,
-            _ => throw new InvalidOperationException("boom"),
-            _ => Assert.Fail("Result callback should not run"),
-            ex => captured = ex
-        );
-
-        var errorQueued = await WaitUntilAsync(
-                              () => backgroundJobService.ExecutePendingOnGameLoop() > 0,
-                              TimeSpan.FromSeconds(2)
-                          );
-
-        var second = scheduler.TrySchedule(
-            "npc-dialogue",
-            0x100,
-            _ => Task.FromResult(9),
-            _ => { }
-        );
-        await backgroundJobService.StopAsync();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(first, Is.True);
-                Assert.That(errorQueued, Is.True);
-                Assert.That(captured, Is.TypeOf<InvalidOperationException>());
-                Assert.That(second, Is.True);
             }
         );
     }

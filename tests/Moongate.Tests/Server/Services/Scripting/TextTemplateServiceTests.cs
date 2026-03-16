@@ -9,6 +9,24 @@ namespace Moongate.Tests.Server.Services.Scripting;
 public sealed class TextTemplateServiceTests
 {
     [Test]
+    public void TryRender_WhenPathAttemptsTraversal_ShouldReject()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new TextTemplateService(directoriesConfig, new());
+
+        var success = service.TryRender("../escape.txt", null, out var rendered);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.False);
+                Assert.That(rendered, Is.EqualTo(string.Empty));
+            }
+        );
+    }
+
+    [Test]
     public void TryRender_WhenTemplateAndModelAreValid_ShouldRenderNestedValuesAndShardDefaults()
     {
         using var tempDirectory = new TempDirectory();
@@ -37,65 +55,6 @@ public sealed class TextTemplateServiceTests
             {
                 Assert.That(success, Is.True);
                 Assert.That(rendered, Is.EqualTo("Welcome to Test Shard, Tommy. Website: https://example.test"));
-            }
-        );
-    }
-
-    [Test]
-    public void TryRender_WhenPathAttemptsTraversal_ShouldReject()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
-        var service = new TextTemplateService(directoriesConfig, new MoongateConfig());
-
-        var success = service.TryRender("../escape.txt", null, out var rendered);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(success, Is.False);
-                Assert.That(rendered, Is.EqualTo(string.Empty));
-            }
-        );
-    }
-
-    [Test]
-    public void TryRender_WhenTemplateIsMissing_ShouldReturnFalse()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
-        var service = new TextTemplateService(directoriesConfig, new MoongateConfig());
-
-        var success = service.TryRender("missing.txt", null, out var rendered);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(success, Is.False);
-                Assert.That(rendered, Is.EqualTo(string.Empty));
-            }
-        );
-    }
-
-    [Test]
-    public void TryRender_WhenTemplateSyntaxIsInvalid_ShouldReturnFalse()
-    {
-        using var tempDirectory = new TempDirectory();
-        var scriptsDirectory = Path.Combine(tempDirectory.Path, "scripts");
-        var textsDirectory = Path.Combine(scriptsDirectory, "texts");
-        Directory.CreateDirectory(textsDirectory);
-        File.WriteAllText(Path.Combine(textsDirectory, "broken.txt"), "Hello {{ player.name ");
-
-        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
-        var service = new TextTemplateService(directoriesConfig, new MoongateConfig());
-
-        var success = service.TryRender("broken.txt", null, out var rendered);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(success, Is.False);
-                Assert.That(rendered, Is.EqualTo(string.Empty));
             }
         );
     }
@@ -130,6 +89,47 @@ public sealed class TextTemplateServiceTests
             {
                 Assert.That(success, Is.True);
                 Assert.That(rendered, Is.EqualTo("Welcome to Test Shard\nPrice: 100# coins"));
+            }
+        );
+    }
+
+    [Test]
+    public void TryRender_WhenTemplateIsMissing_ShouldReturnFalse()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new TextTemplateService(directoriesConfig, new());
+
+        var success = service.TryRender("missing.txt", null, out var rendered);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.False);
+                Assert.That(rendered, Is.EqualTo(string.Empty));
+            }
+        );
+    }
+
+    [Test]
+    public void TryRender_WhenTemplateSyntaxIsInvalid_ShouldReturnFalse()
+    {
+        using var tempDirectory = new TempDirectory();
+        var scriptsDirectory = Path.Combine(tempDirectory.Path, "scripts");
+        var textsDirectory = Path.Combine(scriptsDirectory, "texts");
+        Directory.CreateDirectory(textsDirectory);
+        File.WriteAllText(Path.Combine(textsDirectory, "broken.txt"), "Hello {{ player.name ");
+
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new TextTemplateService(directoriesConfig, new());
+
+        var success = service.TryRender("broken.txt", null, out var rendered);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.False);
+                Assert.That(rendered, Is.EqualTo(string.Empty));
             }
         );
     }

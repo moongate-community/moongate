@@ -1,5 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Interfaces;
+using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -15,185 +17,12 @@ using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Mobiles;
-using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.World;
 
 public sealed class SpawnServiceTests
 {
     private readonly List<MoongateTCPClient> _clientsToDispose = [];
-
-    [TearDown]
-    public void TearDown()
-    {
-        foreach (var client in _clientsToDispose)
-        {
-            client.Dispose();
-        }
-
-        _clientsToDispose.Clear();
-    }
-
-    [Test]
-    public async Task StartAsync_WhenDefinitionIsProximitySpawner_ShouldSpawnOnlyOnPlayerEnter()
-    {
-        var definition = CreateSpawnDefinition(SpawnDefinitionKind.ProximitySpawner, homeRange: 5);
-        var timer = new SpawnServiceTestTimerService();
-        var spatial = new SpawnServiceTestSpatialWorldService();
-        var mobileService = new SpawnServiceTestMobileService();
-        var service = CreateService(timer, spatial, mobileService, [definition]);
-        var spawnerItem = CreateSpawnerItem(definition.Guid);
-
-        spatial.ActiveSectors.Add(CreateSectorWithItem(spawnerItem));
-
-        await service.StartAsync();
-
-        timer.Fire();
-        Assert.That(mobileService.SpawnAttempts, Is.EqualTo(0));
-
-        spatial.PlayersInRange = [CreateSession((Serial)0x00000033u)];
-
-        await FireUntilConditionAsync(timer, () => mobileService.SpawnAttempts == 1);
-        Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
-
-        timer.Fire();
-        await Task.Delay(25);
-        Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
-    }
-
-    [Test]
-    public async Task TriggerAsync_WhenDefinitionIsProximitySpawner_ShouldStillForceSpawn()
-    {
-        var definition = CreateSpawnDefinition(SpawnDefinitionKind.ProximitySpawner, homeRange: 5);
-        var timer = new SpawnServiceTestTimerService();
-        var spatial = new SpawnServiceTestSpatialWorldService();
-        var mobileService = new SpawnServiceTestMobileService();
-        var service = CreateService(timer, spatial, mobileService, [definition]);
-        var spawnerItem = CreateSpawnerItem(definition.Guid);
-
-        await service.StartAsync();
-
-        var result = await service.TriggerAsync(spawnerItem);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result, Is.True);
-                Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
-            }
-        );
-    }
-
-    private SpawnService CreateService(
-        ITimerService timerService,
-        ISpatialWorldService spatialWorldService,
-        IMobileService mobileService,
-        IReadOnlyList<SpawnDefinitionEntry> definitions
-    )
-        => new(
-            timerService,
-            spatialWorldService,
-            new SpawnServiceTestSpawnsDataService(definitions),
-            mobileService,
-            new SpawnServiceTestMobileTemplateService(),
-            new SpawnServiceTestGameEventBusService()
-        );
-
-    private GameSession CreateSession(Serial characterId)
-    {
-        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var client = new MoongateTCPClient(socket);
-        _clientsToDispose.Add(client);
-        var networkSession = new GameNetworkSession(client);
-
-        return new(networkSession)
-        {
-            CharacterId = characterId
-        };
-    }
-
-    private static MapSector CreateSectorWithItem(UOItemEntity item)
-    {
-        var sector = new MapSector(0, 0, 0);
-        sector.AddEntity(item);
-
-        return sector;
-    }
-
-    private static UOItemEntity CreateSpawnerItem(Guid guid)
-    {
-        var item = new UOItemEntity
-        {
-            Id = (Serial)0x40000001u,
-            MapId = 0,
-            ItemId = 0x1F13,
-            Name = "Spawner",
-            Location = new Point3D(100, 100, 0)
-        };
-        item.SetCustomString("spawner_id", guid.ToString("D"));
-
-        return item;
-    }
-
-    private static SpawnDefinitionEntry CreateSpawnDefinition(SpawnDefinitionKind kind, int homeRange)
-        => new(
-            0,
-            "Felucca",
-            "shared/felucca",
-            "test.json",
-            Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
-            kind,
-            "Test Spawner",
-            new Point3D(100, 100, 0),
-            1,
-            TimeSpan.Zero,
-            TimeSpan.Zero,
-            0,
-            homeRange,
-            homeRange,
-            [new SpawnEntryDefinition("rat", 1, 100)]
-        );
-
-    private static async Task WaitForConditionAsync(Func<bool> condition, int timeoutMilliseconds = 500)
-    {
-        var start = Environment.TickCount64;
-
-        while (!condition())
-        {
-            if (Environment.TickCount64 - start >= timeoutMilliseconds)
-            {
-                Assert.Fail($"Condition was not satisfied within {timeoutMilliseconds} ms.");
-            }
-
-            await Task.Delay(10);
-        }
-    }
-
-    private static async Task FireUntilConditionAsync(
-        SpawnServiceTestTimerService timer,
-        Func<bool> condition,
-        int timeoutMilliseconds = 1000
-    )
-    {
-        var start = Environment.TickCount64;
-
-        while (!condition())
-        {
-            timer.Fire();
-
-            if (condition())
-            {
-                return;
-            }
-
-            if (Environment.TickCount64 - start >= timeoutMilliseconds)
-            {
-                Assert.Fail($"Condition was not satisfied within {timeoutMilliseconds} ms.");
-            }
-
-            await Task.Delay(10);
-        }
-    }
 
     private sealed class SpawnServiceTestTimerService : ITimerService
     {
@@ -204,9 +33,16 @@ public sealed class SpawnServiceTests
 
         public void ProcessTick() { }
 
-        public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
+        public string RegisterTimer(
+            string name,
+            TimeSpan interval,
+            Action callback,
+            TimeSpan? delay = null,
+            bool repeat = false
+        )
         {
             _callback = callback;
+
             return "spawn-service-test";
         }
 
@@ -216,12 +52,14 @@ public sealed class SpawnServiceTests
         public bool UnregisterTimer(string timerId)
         {
             _callback = null;
+
             return true;
         }
 
         public int UnregisterTimersByName(string name)
         {
             _callback = null;
+
             return 1;
         }
 
@@ -235,7 +73,7 @@ public sealed class SpawnServiceTests
 
         public List<GameSession> PlayersInRange { get; set; } = [];
 
-        public List<UOMobileEntity> NearbyMobiles { get; set; } = [];
+        public List<UOMobileEntity> NearbyMobiles { get; } = [];
 
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
@@ -243,7 +81,13 @@ public sealed class SpawnServiceTests
 
         public void AddRegion(JsonRegion region) { }
 
-        public Task<int> BroadcastToPlayersAsync(Moongate.Network.Packets.Interfaces.IGameNetworkPacket packet, int mapId, Point3D location, int? range = null, long? excludeSessionId = null)
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
             => Task.FromResult(0);
 
         public List<MapSector> GetActiveSectors()
@@ -261,7 +105,12 @@ public sealed class SpawnServiceTests
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
             => [..NearbyMobiles];
 
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
             => [..PlayersInRange];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -296,18 +145,37 @@ public sealed class SpawnServiceTests
         public Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default)
             => Task.FromResult<UOMobileEntity?>(null);
 
-        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken = default)
+        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+            int mapId,
+            int sectorX,
+            int sectorY,
+            CancellationToken cancellationToken = default
+        )
             => Task.FromResult(new List<UOMobileEntity>());
 
-        public Task<UOMobileEntity> SpawnFromTemplateAsync(string templateId, Point3D location, int mapId, Serial? accountId = null, CancellationToken cancellationToken = default)
+        public Task<UOMobileEntity> SpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
         {
             SpawnAttempts++;
+
             return Task.FromResult(CreateMobile(location, mapId));
         }
 
-        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(string templateId, Point3D location, int mapId, Serial? accountId = null, CancellationToken cancellationToken = default)
+        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
         {
             SpawnAttempts++;
+
             return Task.FromResult<(bool Spawned, UOMobileEntity? Mobile)>((true, CreateMobile(location, mapId)));
         }
 
@@ -333,6 +201,7 @@ public sealed class SpawnServiceTests
         public bool TryGet(string id, out MobileTemplateDefinition? definition)
         {
             definition = null;
+
             return false;
         }
 
@@ -343,10 +212,11 @@ public sealed class SpawnServiceTests
 
     private sealed class SpawnServiceTestGameEventBusService : IGameEventBusService
     {
-        public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default) where TEvent : Moongate.Server.Data.Events.Base.IGameEvent
+        public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
+            where TEvent : IGameEvent
             => ValueTask.CompletedTask;
 
-        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : Moongate.Server.Data.Events.Base.IGameEvent { }
+        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent { }
     }
 
     private sealed class SpawnServiceTestSpawnsDataService : ISpawnsDataService
@@ -366,5 +236,177 @@ public sealed class SpawnServiceTests
 
         public void SetEntries(IReadOnlyList<SpawnDefinitionEntry> entries)
             => throw new NotSupportedException();
+    }
+
+    [Test]
+    public async Task StartAsync_WhenDefinitionIsProximitySpawner_ShouldSpawnOnlyOnPlayerEnter()
+    {
+        var definition = CreateSpawnDefinition(SpawnDefinitionKind.ProximitySpawner, 5);
+        var timer = new SpawnServiceTestTimerService();
+        var spatial = new SpawnServiceTestSpatialWorldService();
+        var mobileService = new SpawnServiceTestMobileService();
+        var service = CreateService(timer, spatial, mobileService, [definition]);
+        var spawnerItem = CreateSpawnerItem(definition.Guid);
+
+        spatial.ActiveSectors.Add(CreateSectorWithItem(spawnerItem));
+
+        await service.StartAsync();
+
+        timer.Fire();
+        Assert.That(mobileService.SpawnAttempts, Is.EqualTo(0));
+
+        spatial.PlayersInRange = [CreateSession((Serial)0x00000033u)];
+
+        await FireUntilConditionAsync(timer, () => mobileService.SpawnAttempts == 1);
+        Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
+
+        timer.Fire();
+        await Task.Delay(25);
+        Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        foreach (var client in _clientsToDispose)
+        {
+            client.Dispose();
+        }
+
+        _clientsToDispose.Clear();
+    }
+
+    [Test]
+    public async Task TriggerAsync_WhenDefinitionIsProximitySpawner_ShouldStillForceSpawn()
+    {
+        var definition = CreateSpawnDefinition(SpawnDefinitionKind.ProximitySpawner, 5);
+        var timer = new SpawnServiceTestTimerService();
+        var spatial = new SpawnServiceTestSpatialWorldService();
+        var mobileService = new SpawnServiceTestMobileService();
+        var service = CreateService(timer, spatial, mobileService, [definition]);
+        var spawnerItem = CreateSpawnerItem(definition.Guid);
+
+        await service.StartAsync();
+
+        var result = await service.TriggerAsync(spawnerItem);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(mobileService.SpawnAttempts, Is.EqualTo(1));
+            }
+        );
+    }
+
+    private static MapSector CreateSectorWithItem(UOItemEntity item)
+    {
+        var sector = new MapSector(0, 0, 0);
+        sector.AddEntity(item);
+
+        return sector;
+    }
+
+    private SpawnService CreateService(
+        ITimerService timerService,
+        ISpatialWorldService spatialWorldService,
+        IMobileService mobileService,
+        IReadOnlyList<SpawnDefinitionEntry> definitions
+    )
+        => new(
+            timerService,
+            spatialWorldService,
+            new SpawnServiceTestSpawnsDataService(definitions),
+            mobileService,
+            new SpawnServiceTestMobileTemplateService(),
+            new SpawnServiceTestGameEventBusService()
+        );
+
+    private GameSession CreateSession(Serial characterId)
+    {
+        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        var client = new MoongateTCPClient(socket);
+        _clientsToDispose.Add(client);
+        var networkSession = new GameNetworkSession(client);
+
+        return new(networkSession)
+        {
+            CharacterId = characterId
+        };
+    }
+
+    private static SpawnDefinitionEntry CreateSpawnDefinition(SpawnDefinitionKind kind, int homeRange)
+        => new(
+            0,
+            "Felucca",
+            "shared/felucca",
+            "test.json",
+            Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
+            kind,
+            "Test Spawner",
+            new(100, 100, 0),
+            1,
+            TimeSpan.Zero,
+            TimeSpan.Zero,
+            0,
+            homeRange,
+            homeRange,
+            [new("rat", 1, 100)]
+        );
+
+    private static UOItemEntity CreateSpawnerItem(Guid guid)
+    {
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000001u,
+            MapId = 0,
+            ItemId = 0x1F13,
+            Name = "Spawner",
+            Location = new(100, 100, 0)
+        };
+        item.SetCustomString("spawner_id", guid.ToString("D"));
+
+        return item;
+    }
+
+    private static async Task FireUntilConditionAsync(
+        SpawnServiceTestTimerService timer,
+        Func<bool> condition,
+        int timeoutMilliseconds = 1000
+    )
+    {
+        var start = Environment.TickCount64;
+
+        while (!condition())
+        {
+            timer.Fire();
+
+            if (condition())
+            {
+                return;
+            }
+
+            if (Environment.TickCount64 - start >= timeoutMilliseconds)
+            {
+                Assert.Fail($"Condition was not satisfied within {timeoutMilliseconds} ms.");
+            }
+
+            await Task.Delay(10);
+        }
+    }
+
+    private static async Task WaitForConditionAsync(Func<bool> condition, int timeoutMilliseconds = 500)
+    {
+        var start = Environment.TickCount64;
+
+        while (!condition())
+        {
+            if (Environment.TickCount64 - start >= timeoutMilliseconds)
+            {
+                Assert.Fail($"Condition was not satisfied within {timeoutMilliseconds} ms.");
+            }
+
+            await Task.Delay(10);
+        }
     }
 }

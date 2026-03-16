@@ -94,40 +94,6 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
         return staticBlock[x & 0x7][y & 0x7];
     }
 
-    public bool TryGetLandTile(int mapId, int x, int y, out LandTile landTile)
-    {
-        var map = Map.GetMap(mapId);
-
-        if (map is null)
-        {
-            landTile = default;
-
-            return false;
-        }
-
-        landTile = map.GetLandTile(x, y);
-
-        return true;
-    }
-
-    public bool TryGetMapBounds(int mapId, out int width, out int height)
-    {
-        var map = Map.GetMap(mapId);
-
-        if (map is null)
-        {
-            width = 0;
-            height = 0;
-
-            return false;
-        }
-
-        width = map.Width;
-        height = map.Height;
-
-        return true;
-    }
-
     public static bool IsOpenedDoorCoveringTileForStaticCollision(
         IReadOnlyList<UOItemEntity> worldItems,
         int x,
@@ -167,6 +133,40 @@ public sealed class MovementTileQueryService : IMovementTileQueryService
         }
 
         return false;
+    }
+
+    public bool TryGetLandTile(int mapId, int x, int y, out LandTile landTile)
+    {
+        var map = Map.GetMap(mapId);
+
+        if (map is null)
+        {
+            landTile = default;
+
+            return false;
+        }
+
+        landTile = map.GetLandTile(x, y);
+
+        return true;
+    }
+
+    public bool TryGetMapBounds(int mapId, out int width, out int height)
+    {
+        var map = Map.GetMap(mapId);
+
+        if (map is null)
+        {
+            width = 0;
+            height = 0;
+
+            return false;
+        }
+
+        width = map.Width;
+        height = map.Height;
+
+        return true;
     }
 
     private bool CanFitCore(

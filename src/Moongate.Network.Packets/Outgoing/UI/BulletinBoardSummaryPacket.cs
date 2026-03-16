@@ -22,9 +22,6 @@ public sealed class BulletinBoardSummaryPacket : BaseGameNetworkPacket
     public BulletinBoardSummaryPacket()
         : base(0x71) { }
 
-    protected override bool ParsePayload(ref SpanReader reader)
-        => throw new NotSupportedException();
-
     public override void Write(ref SpanWriter writer)
     {
         writer.Write(OpCode);
@@ -38,6 +35,9 @@ public sealed class BulletinBoardSummaryPacket : BaseGameNetworkPacket
         WriteAsciiLengthPrefixedNull(ref writer, PostedAtText);
         writer.WritePacketLength();
     }
+
+    protected override bool ParsePayload(ref SpanReader reader)
+        => throw new NotSupportedException();
 
     internal static void WriteAsciiLengthPrefixedNull(ref SpanWriter writer, string value)
     {

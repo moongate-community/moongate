@@ -1,10 +1,13 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Persistence.Data.Persistence;
+using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
@@ -19,9 +22,6 @@ using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
-using Moongate.Server.Interfaces.Services.Persistence;
-using Moongate.Persistence.Interfaces.Persistence;
-using Moongate.Persistence.Data.Persistence;
 
 namespace Moongate.Tests.Server.Services.Entities;
 
@@ -114,12 +114,6 @@ public class MobileServiceTests
             _ = deathContext;
         }
 
-        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-            => _ = gameEvent;
-
-        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
-            => _ = gameEvent;
-
         public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3)
         {
             _ = listenerNpcId;
@@ -127,27 +121,21 @@ public class MobileServiceTests
             _ = range;
         }
 
-        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
+        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
+            => _ = gameEvent;
+
+        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
+            => _ = gameEvent;
+
+        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester
+        )
         {
             _ = mobile;
             _ = requester;
 
             return [];
-        }
-
-        public bool TryHandleContextMenuSelection(
-            UOMobileEntity mobile,
-            UOMobileEntity? requester,
-            string menuKey,
-            long sessionId
-        )
-        {
-            _ = mobile;
-            _ = requester;
-            _ = menuKey;
-            _ = sessionId;
-
-            return false;
         }
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
@@ -197,6 +185,21 @@ public class MobileServiceTests
             _ = cancellationToken;
 
             return ValueTask.CompletedTask;
+        }
+
+        public bool TryHandleContextMenuSelection(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester,
+            string menuKey,
+            long sessionId
+        )
+        {
+            _ = mobile;
+            _ = requester;
+            _ = menuKey;
+            _ = sessionId;
+
+            return false;
         }
 
         public void Unregister(Serial mobileId)
@@ -315,6 +318,9 @@ public class MobileServiceTests
         public int QueryCallCount { get; private set; }
         public int GetByIdCallCount { get; private set; }
 
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+
         public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
             => ValueTask.FromResult(_items.Count);
 
@@ -343,9 +349,6 @@ public class MobileServiceTests
             => ValueTask.FromException<bool>(new NotSupportedException());
 
         public ValueTask UpsertAsync(UOItemEntity item, CancellationToken cancellationToken = default)
-            => ValueTask.FromException(new NotSupportedException());
-
-        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
             => ValueTask.FromException(new NotSupportedException());
     }
 
@@ -391,14 +394,12 @@ public class MobileServiceTests
 
     private sealed class NullBulletinBoardMessageRepository : IBulletinBoardMessageRepository
     {
-        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
-            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>(Array.Empty<BulletinBoardMessageEntity>());
-
-        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
-            Serial messageId,
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(
             CancellationToken cancellationToken = default
         )
-            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
+            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>(
+                Array.Empty<BulletinBoardMessageEntity>()
+            );
 
         public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
             Serial boardId,
@@ -406,11 +407,17 @@ public class MobileServiceTests
         )
             => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>(Array.Empty<BulletinBoardMessageEntity>());
 
-        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
-            => ValueTask.FromException(new NotSupportedException());
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
+            Serial messageId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
 
         public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
             => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
     }
 
     [Test]
@@ -609,9 +616,8 @@ public class MobileServiceTests
         };
         var itemRepository = new CountingItemRepository(items);
         var mobileRepository = new CountingMobileRepository(mobiles);
-        var persistence = new CountingPersistenceService(
-            new CountingPersistenceUnitOfWork(mobileRepository, itemRepository)
-        );
+        var persistence =
+            new CountingPersistenceService(new CountingPersistenceUnitOfWork(mobileRepository, itemRepository));
         var factory = new TestMobileFactoryService();
         var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();

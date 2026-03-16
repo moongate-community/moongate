@@ -7,9 +7,9 @@ using Moongate.Network.Spans;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
-using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
@@ -31,6 +31,7 @@ public sealed class CharacterHandlerTests
         public int ExecutePendingOnGameLoop(int maxActions = 100)
         {
             var executed = 0;
+
             while (executed < maxActions && _pending.Count > 0)
             {
                 _pending.Dequeue()();

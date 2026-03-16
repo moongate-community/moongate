@@ -8,6 +8,24 @@ namespace Moongate.Tests.Server.Services.Scripting;
 public sealed class NpcAiPromptServiceTests
 {
     [Test]
+    public void TryLoad_WhenPromptAttemptsTraversal_ShouldReject()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new NpcAiPromptService(directoriesConfig);
+
+        var success = service.TryLoad("../escape.txt", out var prompt);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(success, Is.False);
+                Assert.That(prompt, Is.EqualTo(string.Empty));
+            }
+        );
+    }
+
+    [Test]
     public void TryLoad_WhenPromptExists_ShouldReturnPrompt()
     {
         using var tempDirectory = new TempDirectory();
@@ -24,24 +42,6 @@ public sealed class NpcAiPromptServiceTests
             {
                 Assert.That(success, Is.True);
                 Assert.That(prompt, Is.EqualTo("You are Lilly."));
-            }
-        );
-    }
-
-    [Test]
-    public void TryLoad_WhenPromptAttemptsTraversal_ShouldReject()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
-        var service = new NpcAiPromptService(directoriesConfig);
-
-        var success = service.TryLoad("../escape.txt", out var prompt);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(success, Is.False);
-                Assert.That(prompt, Is.EqualTo(string.Empty));
             }
         );
     }

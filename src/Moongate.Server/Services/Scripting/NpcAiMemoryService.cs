@@ -41,30 +41,6 @@ public sealed class NpcAiMemoryService : INpcAiMemoryService
         File.WriteAllText(memoryPath, memory ?? string.Empty);
     }
 
-    private string ResolveMemoryPath(Serial npcId)
-    {
-        var fullRootPath = Path.GetFullPath(_memoriesRootPath);
-        var candidatePath = Path.GetFullPath(Path.Combine(fullRootPath, FormatFileName(npcId)));
-
-        if (!candidatePath.StartsWith(fullRootPath, StringComparison.Ordinal))
-        {
-            throw new InvalidOperationException("Resolved npc memory path escaped memory root.");
-        }
-
-        return candidatePath;
-    }
-
-    private static string FormatFileName(Serial npcId)
-    {
-        var hex = npcId.Value.ToString("X");
-        if (hex.Length < 6)
-        {
-            hex = hex.PadLeft(6, '0');
-        }
-
-        return $"0x{hex}.txt";
-    }
-
     private static string CreateDefaultMemory(string npcName)
     {
         var resolvedName = string.IsNullOrWhiteSpace(npcName) ? "This NPC" : npcName.Trim();
@@ -77,5 +53,30 @@ public sealed class NpcAiMemoryService : INpcAiMemoryService
 
                  [Recent Important Events]
                  """;
+    }
+
+    private static string FormatFileName(Serial npcId)
+    {
+        var hex = npcId.Value.ToString("X");
+
+        if (hex.Length < 6)
+        {
+            hex = hex.PadLeft(6, '0');
+        }
+
+        return $"0x{hex}.txt";
+    }
+
+    private string ResolveMemoryPath(Serial npcId)
+    {
+        var fullRootPath = Path.GetFullPath(_memoriesRootPath);
+        var candidatePath = Path.GetFullPath(Path.Combine(fullRootPath, FormatFileName(npcId)));
+
+        if (!candidatePath.StartsWith(fullRootPath, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException("Resolved npc memory path escaped memory root.");
+        }
+
+        return candidatePath;
     }
 }

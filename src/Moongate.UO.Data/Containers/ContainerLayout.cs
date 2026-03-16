@@ -39,6 +39,32 @@ public class ContainerLayout
     }
 
     /// <summary>
+    /// Computes a grid-aligned container position for the specified index.
+    /// </summary>
+    public static Point2D GetGridPosition(int index, int columns = 5, int startX = 40, int startY = 40, int step = 40)
+    {
+        if (index < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be non-negative.");
+        }
+
+        if (columns <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(columns), columns, "Columns must be greater than zero.");
+        }
+
+        if (step <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(step), step, "Step must be greater than zero.");
+        }
+
+        var x = startX + index % columns * step;
+        var y = startY + index / columns * step;
+
+        return new(x, y);
+    }
+
+    /// <summary>
     /// Marks space as occupied by an item
     /// </summary>
     public void MarkSpaceOccupied(Point2D position, Rectangle2D itemSize)
@@ -77,31 +103,5 @@ public class ContainerLayout
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// Computes a grid-aligned container position for the specified index.
-    /// </summary>
-    public static Point2D GetGridPosition(int index, int columns = 5, int startX = 40, int startY = 40, int step = 40)
-    {
-        if (index < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(index), index, "Index must be non-negative.");
-        }
-
-        if (columns <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(columns), columns, "Columns must be greater than zero.");
-        }
-
-        if (step <= 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(step), step, "Step must be greater than zero.");
-        }
-
-        var x = startX + (index % columns) * step;
-        var y = startY + (index / columns) * step;
-
-        return new(x, y);
     }
 }

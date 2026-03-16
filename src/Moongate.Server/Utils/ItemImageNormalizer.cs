@@ -18,8 +18,8 @@ internal static class ItemImageNormalizer
 
         var croppedWidth = maxX - minX + 1;
         var croppedHeight = maxY - minY + 1;
-        var outputWidth = croppedWidth + (padding * 2);
-        var outputHeight = croppedHeight + (padding * 2);
+        var outputWidth = croppedWidth + padding * 2;
+        var outputHeight = croppedHeight + padding * 2;
         var output = new Image<Rgba32>(outputWidth, outputHeight);
 
         for (var y = 0; y < croppedHeight; y++)

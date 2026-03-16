@@ -88,6 +88,9 @@ public sealed class PasswordCommandTests
 
         public int Count => _sessions.Count;
 
+        public void Add(GameSession session)
+            => _sessions[session.SessionId] = session;
+
         public void Clear()
             => _sessions.Clear();
 
@@ -109,9 +112,62 @@ public sealed class PasswordCommandTests
 
             return session is not null;
         }
+    }
 
-        public void Add(GameSession session)
-            => _sessions[session.SessionId] = session;
+    [Test]
+    public async Task ExecuteCommandAsync_WhenAdministratorUsesConsole_ShouldChangeTargetPassword()
+    {
+        var sessionService = new PasswordCommandTestGameNetworkSessionService();
+        var accountService = new PasswordCommandTestAccountService();
+        accountService.Accounts.Add(
+            new()
+            {
+                Id = (Serial)0x00000020u,
+                Username = "target",
+                PasswordHash = HashUtils.HashPassword("old-password"),
+                AccountType = AccountType.Regular
+            }
+        );
+        var command = new PasswordCommand(accountService, sessionService);
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "password target new-password",
+            ["target", "new-password"],
+            CommandSourceType.Console,
+            0,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(HashUtils.VerifyPassword("new-password", accountService.Accounts[0].PasswordHash), Is.True);
+                Assert.That(output[^1], Is.EqualTo("Password updated for account 'target'."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenConsoleOmitsUsername_ShouldPrintConsoleUsage()
+    {
+        var command = new PasswordCommand(
+            new PasswordCommandTestAccountService(),
+            new PasswordCommandTestGameNetworkSessionService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "password new-password",
+            ["new-password"],
+            CommandSourceType.Console,
+            0,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(output[^1], Is.EqualTo("Usage: password <username> <newPassword>"));
     }
 
     [Test]
@@ -189,62 +245,6 @@ public sealed class PasswordCommandTests
                 Assert.That(output[^1], Is.EqualTo("Usage: .password <newPassword>"));
             }
         );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenAdministratorUsesConsole_ShouldChangeTargetPassword()
-    {
-        var sessionService = new PasswordCommandTestGameNetworkSessionService();
-        var accountService = new PasswordCommandTestAccountService();
-        accountService.Accounts.Add(
-            new()
-            {
-                Id = (Serial)0x00000020u,
-                Username = "target",
-                PasswordHash = HashUtils.HashPassword("old-password"),
-                AccountType = AccountType.Regular
-            }
-        );
-        var command = new PasswordCommand(accountService, sessionService);
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "password target new-password",
-            ["target", "new-password"],
-            CommandSourceType.Console,
-            0,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(HashUtils.VerifyPassword("new-password", accountService.Accounts[0].PasswordHash), Is.True);
-                Assert.That(output[^1], Is.EqualTo("Password updated for account 'target'."));
-            }
-        );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenConsoleOmitsUsername_ShouldPrintConsoleUsage()
-    {
-        var command = new PasswordCommand(
-            new PasswordCommandTestAccountService(),
-            new PasswordCommandTestGameNetworkSessionService()
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "password new-password",
-            ["new-password"],
-            CommandSourceType.Console,
-            0,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.That(output[^1], Is.EqualTo("Usage: password <username> <newPassword>"));
     }
 
     [Test]

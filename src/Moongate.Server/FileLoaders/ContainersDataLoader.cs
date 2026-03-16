@@ -68,18 +68,6 @@ public class ContainersDataLoader : IFileLoader
         RebuildContainerSizes();
     }
 
-    private static int ParseInteger(string value)
-    {
-        var trimmed = value.Trim();
-
-        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
-        {
-            return Convert.ToInt32(trimmed[2..], 16);
-        }
-
-        return int.Parse(trimmed);
-    }
-
     private void LoadContainersCfg(string cfgPath)
     {
         foreach (var rawLine in File.ReadLines(cfgPath))
@@ -137,6 +125,18 @@ public class ContainersDataLoader : IFileLoader
                 UpsertContainerBagDefinition(existing);
             }
         }
+    }
+
+    private static int ParseInteger(string value)
+    {
+        var trimmed = value.Trim();
+
+        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return Convert.ToInt32(trimmed[2..], 16);
+        }
+
+        return int.Parse(trimmed);
     }
 
     private static void RebuildContainerSizes()

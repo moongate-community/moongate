@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Modules;
@@ -7,6 +8,32 @@ namespace Moongate.Tests.Server.Modules;
 
 public sealed class BulletinBoardModuleTests
 {
+    private sealed class BulletinBoardModuleTestService : IBulletinBoardService
+    {
+        public long LastSessionId { get; private set; }
+        public Serial LastBoardId { get; private set; }
+
+        public Task<bool> OpenBoardAsync(long sessionId, Serial boardId)
+        {
+            LastSessionId = sessionId;
+            LastBoardId = boardId;
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> PostMessageAsync(GameSession session, BulletinBoardMessagesPacket packet)
+            => Task.FromResult(true);
+
+        public Task<bool> RemoveMessageAsync(GameSession session, uint boardId, uint messageId)
+            => Task.FromResult(true);
+
+        public Task<bool> SendMessageAsync(GameSession session, uint boardId, uint messageId)
+            => Task.FromResult(true);
+
+        public Task<bool> SendSummaryAsync(GameSession session, uint boardId, uint messageId)
+            => Task.FromResult(true);
+    }
+
     [Test]
     public void Open_ShouldForwardToService()
     {
@@ -23,24 +50,5 @@ public sealed class BulletinBoardModuleTests
                 Assert.That(service.LastBoardId, Is.EqualTo((Serial)0x40000055u));
             }
         );
-    }
-
-    private sealed class BulletinBoardModuleTestService : IBulletinBoardService
-    {
-        public long LastSessionId { get; private set; }
-        public Serial LastBoardId { get; private set; }
-
-        public Task<bool> OpenBoardAsync(long sessionId, Serial boardId)
-        {
-            LastSessionId = sessionId;
-            LastBoardId = boardId;
-
-            return Task.FromResult(true);
-        }
-
-        public Task<bool> SendSummaryAsync(GameSession session, uint boardId, uint messageId) => Task.FromResult(true);
-        public Task<bool> SendMessageAsync(GameSession session, uint boardId, uint messageId) => Task.FromResult(true);
-        public Task<bool> PostMessageAsync(GameSession session, Moongate.Network.Packets.Incoming.Interaction.BulletinBoardMessagesPacket packet) => Task.FromResult(true);
-        public Task<bool> RemoveMessageAsync(GameSession session, uint boardId, uint messageId) => Task.FromResult(true);
     }
 }

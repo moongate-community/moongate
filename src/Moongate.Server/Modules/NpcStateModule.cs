@@ -145,8 +145,7 @@ public sealed class NpcStateModule
     }
 
     private static object? ConvertDynValue(DynValue value)
-    {
-        return value.Type switch
+        => value.Type switch
         {
             DataType.Nil or DataType.Void => null,
             DataType.Boolean              => value.Boolean,
@@ -154,7 +153,6 @@ public sealed class NpcStateModule
             DataType.String               => value.String,
             _                             => value.ToString()
         };
-    }
 
     private bool TryResolveValidNpc(uint npcSerial, string key, out UOMobileEntity? mobile)
     {

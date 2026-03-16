@@ -16,6 +16,8 @@ public sealed class AsyncWorkSchedulerService : IAsyncWorkSchedulerService
         _backgroundJobService = backgroundJobService ?? throw new ArgumentNullException(nameof(backgroundJobService));
     }
 
+    private readonly record struct WorkKey(string QueueName, object Key);
+
     public bool TrySchedule<TKey, TResult>(
         string queueName,
         TKey key,
@@ -31,6 +33,7 @@ public sealed class AsyncWorkSchedulerService : IAsyncWorkSchedulerService
         ArgumentNullException.ThrowIfNull(onGameLoopResult);
 
         var workKey = new WorkKey(queueName.Trim(), key);
+
         if (!_inFlight.TryAdd(workKey, 0))
         {
             return false;
@@ -70,6 +73,4 @@ public sealed class AsyncWorkSchedulerService : IAsyncWorkSchedulerService
 
         return true;
     }
-
-    private readonly record struct WorkKey(string QueueName, object Key);
 }

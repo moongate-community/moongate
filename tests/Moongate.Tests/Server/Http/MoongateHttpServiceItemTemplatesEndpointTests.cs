@@ -103,65 +103,6 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
     }
 
     [Test]
-    public async Task ItemTemplateImageEndpoint_WhenConfigured_ShouldGenerateAndCacheImage()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var port = GetRandomPort();
-
-        var artService = new TestArtService
-        {
-            GetArtImpl = (itemId, _) =>
-                         {
-                             if (itemId != 0x1F9E)
-                             {
-                                 return null;
-                             }
-
-                             var image = new Image<Rgba32>(1, 1);
-                             image[0, 0] = new(255, 255, 255, 255);
-
-                             return image;
-                         }
-        };
-
-        var service = new MoongateHttpService(
-            new()
-            {
-                DirectoriesConfig = directories,
-                Port = port,
-                IsOpenApiEnabled = false
-            },
-            artService: artService
-        );
-
-        await service.StartAsync();
-
-        try
-        {
-            using var http = new HttpClient();
-            var invalidFormatResponse =
-                await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/by-item-id/1F9E/image");
-            var response = await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/by-item-id/0x1F9E/image");
-            var expectedPath = Path.Combine(directories[DirectoryType.Images], "items", "0x1F9E.png");
-
-            Assert.Multiple(
-                () =>
-                {
-                    Assert.That(invalidFormatResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
-                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(response.Content.Headers.ContentType?.MediaType, Is.EqualTo("image/png"));
-                    Assert.That(File.Exists(expectedPath), Is.True);
-                }
-            );
-        }
-        finally
-        {
-            await service.StopAsync();
-        }
-    }
-
-    [Test]
     public async Task ItemTemplateImageEndpoint_ShouldCropTransparentBorderAndApplyFourPixelPadding()
     {
         using var temp = new TempDirectory();
@@ -212,6 +153,65 @@ public class MoongateHttpServiceItemTemplatesEndpointTests
                     Assert.That(image.Height, Is.EqualTo(9));
                     Assert.That(image[4, 4].A, Is.EqualTo(255));
                     Assert.That(image[0, 0].A, Is.EqualTo(0));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task ItemTemplateImageEndpoint_WhenConfigured_ShouldGenerateAndCacheImage()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+
+        var artService = new TestArtService
+        {
+            GetArtImpl = (itemId, _) =>
+                         {
+                             if (itemId != 0x1F9E)
+                             {
+                                 return null;
+                             }
+
+                             var image = new Image<Rgba32>(1, 1);
+                             image[0, 0] = new(255, 255, 255, 255);
+
+                             return image;
+                         }
+        };
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false
+            },
+            artService: artService
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = new HttpClient();
+            var invalidFormatResponse =
+                await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/by-item-id/1F9E/image");
+            var response = await http.GetAsync($"http://127.0.0.1:{port}/api/item-templates/by-item-id/0x1F9E/image");
+            var expectedPath = Path.Combine(directories[DirectoryType.Images], "items", "0x1F9E.png");
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(invalidFormatResponse.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(response.Content.Headers.ContentType?.MediaType, Is.EqualTo("image/png"));
+                    Assert.That(File.Exists(expectedPath), Is.True);
                 }
             );
         }

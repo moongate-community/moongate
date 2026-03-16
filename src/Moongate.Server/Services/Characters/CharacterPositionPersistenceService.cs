@@ -70,9 +70,9 @@ public sealed class CharacterPositionPersistenceService
         }
 
         var persistedMobile = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(
-            gameEvent.MobileId,
-            cancellationToken
-        );
+                                  gameEvent.MobileId,
+                                  cancellationToken
+                              );
 
         if (persistedMobile is null)
         {

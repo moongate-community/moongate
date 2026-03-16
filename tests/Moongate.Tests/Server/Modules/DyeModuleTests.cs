@@ -1,4 +1,5 @@
-using Moongate.Server.Data.Internal.Entities;
+using Moongate.Network.Packets.Incoming.Interaction;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Modules;
 using Moongate.UO.Data.Ids;
@@ -16,13 +17,11 @@ public sealed class DyeModuleTests
         public Serial LastDyeTubSerial { get; private set; }
         public Serial LastItemSerial { get; private set; }
 
-        public Task StartAsync()
-            => Task.CompletedTask;
-
-        public Task StopAsync()
-            => Task.CompletedTask;
-
-        public Task<bool> BeginAsync(long sessionId, Serial dyeTubSerial, Func<UOItemEntity, bool>? targetSelectedCallback = null)
+        public Task<bool> BeginAsync(
+            long sessionId,
+            Serial dyeTubSerial,
+            Func<UOItemEntity, bool>? targetSelectedCallback = null
+        )
         {
             LastSessionId = sessionId;
             LastDyeTubSerial = dyeTubSerial;
@@ -31,7 +30,7 @@ public sealed class DyeModuleTests
             return Task.FromResult(true);
         }
 
-        public Task<bool> HandleResponseAsync(Moongate.Server.Data.Session.GameSession session, Moongate.Network.Packets.Incoming.Interaction.DyeWindowPacket packet)
+        public Task<bool> HandleResponseAsync(GameSession session, DyeWindowPacket packet)
             => Task.FromResult(true);
 
         public Task<bool> SendDyeableAsync(long sessionId, Serial itemSerial, ushort model = 4011)
@@ -41,6 +40,12 @@ public sealed class DyeModuleTests
 
             return Task.FromResult(true);
         }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
     }
 
     [Test]
@@ -53,7 +58,7 @@ public sealed class DyeModuleTests
         var callback = script.DoString("return function(target_serial) selected = target_serial return true end").Function;
 
         var ok = module.Begin(42, 0x40000001u, callback);
-        var accepted = service.LastCallback!(new UOItemEntity { Id = (Serial)0x40000009u, Name = "boots" });
+        var accepted = service.LastCallback!(new() { Id = (Serial)0x40000009u, Name = "boots" });
 
         Assert.Multiple(
             () =>

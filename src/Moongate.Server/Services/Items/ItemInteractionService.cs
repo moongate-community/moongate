@@ -45,38 +45,6 @@ public class ItemInteractionService : IItemInteractionService
         _characterService = characterService;
     }
 
-    public async Task<bool> HandleSingleClickAsync(
-        GameSession session,
-        SingleClickPacket packet,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _ = cancellationToken;
-        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, packet.TargetSerial);
-
-        if (!canInteract)
-        {
-            return true;
-        }
-
-        if (resolvedItem is null)
-        {
-            return true;
-        }
-
-        if (_itemScriptDispatcher?.HasHook(resolvedItem, "single_click") != false)
-        {
-            await _gameEventBusService.PublishAsync(
-                new ItemSingleClickEvent(
-                    session.SessionId,
-                    packet.TargetSerial
-                )
-            );
-        }
-
-        return true;
-    }
-
     public async Task<bool> HandleDoubleClickAsync(
         GameSession session,
         DoubleClickPacket packet,
@@ -146,6 +114,38 @@ public class ItemInteractionService : IItemInteractionService
         if (item.IsContainer)
         {
             Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
+        }
+
+        return true;
+    }
+
+    public async Task<bool> HandleSingleClickAsync(
+        GameSession session,
+        SingleClickPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+        var (canInteract, resolvedItem) = await ValidateGroundItemInteractionAsync(session, packet.TargetSerial);
+
+        if (!canInteract)
+        {
+            return true;
+        }
+
+        if (resolvedItem is null)
+        {
+            return true;
+        }
+
+        if (_itemScriptDispatcher?.HasHook(resolvedItem, "single_click") != false)
+        {
+            await _gameEventBusService.PublishAsync(
+                new ItemSingleClickEvent(
+                    session.SessionId,
+                    packet.TargetSerial
+                )
+            );
         }
 
         return true;

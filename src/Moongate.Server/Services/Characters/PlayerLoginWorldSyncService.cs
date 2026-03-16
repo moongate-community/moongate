@@ -1,5 +1,5 @@
+using System.Diagnostics;
 using Moongate.Network.Packets.Outgoing.Entity;
-using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
@@ -7,13 +7,11 @@ using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Utils;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
 using Serilog;
-using System.Diagnostics;
 
 namespace Moongate.Server.Services.Characters;
 
@@ -39,6 +37,35 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             DefaultMobileSyncRange,
             _spatialWorldService.GetUpdateBroadcastSectorRadius() * MapSectorConsts.SectorSize
         );
+    }
+
+    private sealed class LoginSectorSyncStats
+    {
+        public int SectorsRequested { get; set; }
+        public int SectorsLoaded { get; set; }
+        public int ItemsSent { get; set; }
+        public int MobilesSent { get; set; }
+        public int WornItemsSent { get; set; }
+
+        public void Accumulate(SectorSyncStats stats)
+        {
+            if (stats.SectorLoaded)
+            {
+                SectorsLoaded++;
+            }
+
+            ItemsSent += stats.ItemsSent;
+            MobilesSent += stats.MobilesSent;
+            WornItemsSent += stats.WornItemsSent;
+        }
+    }
+
+    private sealed class SectorSyncStats
+    {
+        public bool SectorLoaded { get; set; }
+        public int ItemsSent { get; set; }
+        public int MobilesSent { get; set; }
+        public int WornItemsSent { get; set; }
     }
 
     public Task SyncAsync(GameSession session, UOMobileEntity mobileEntity, CancellationToken cancellationToken = default)
@@ -71,13 +98,15 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
                  sectorY++)
             {
                 stats.SectorsRequested++;
-                stats.Accumulate(SyncLoadedSectorForPlayer(
-                    session,
-                    mobileEntity,
-                    ResolveLoadedSector(loadedSectors, mobileEntity.MapId, sectorX, sectorY, mobileEntity.Location.Z),
-                    sentItemSerials,
-                    sentMobileSerials
-                ));
+                stats.Accumulate(
+                    SyncLoadedSectorForPlayer(
+                        session,
+                        mobileEntity,
+                        ResolveLoadedSector(loadedSectors, mobileEntity.MapId, sectorX, sectorY, mobileEntity.Location.Z),
+                        sentItemSerials,
+                        sentMobileSerials
+                    )
+                );
             }
         }
 
@@ -125,6 +154,60 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         return lookup;
     }
 
+    private void RefillVisibleRangeForPlayer(
+        GameSession session,
+        UOMobileEntity mobileEntity,
+        HashSet<Serial> sentItemSerials,
+        HashSet<Serial> sentMobileSerials,
+        LoginSectorSyncStats stats
+    )
+    {
+        foreach (var item in _spatialWorldService.GetNearbyItems(
+                     mobileEntity.Location,
+                     _mobileSyncRange,
+                     mobileEntity.MapId
+                 ))
+        {
+            if (item.ParentContainerId != Serial.Zero ||
+                item.EquippedMobileId != Serial.Zero ||
+                !ItemVisibilityHelper.CanSessionSeeItem(session, item) ||
+                !sentItemSerials.Add(item.Id))
+            {
+                continue;
+            }
+
+            _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
+            stats.ItemsSent++;
+        }
+
+        foreach (var otherMobile in _spatialWorldService.GetNearbyMobiles(
+                     mobileEntity.Location,
+                     _mobileSyncRange,
+                     mobileEntity.MapId
+                 ))
+        {
+            if (otherMobile.Id == mobileEntity.Id || !sentMobileSerials.Add(otherMobile.Id))
+            {
+                continue;
+            }
+
+            _outgoingPacketQueue.Enqueue(
+                session.SessionId,
+                new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+            );
+            _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
+            stats.MobilesSent++;
+            WornItemPacketHelper.EnqueueVisibleWornItems(
+                otherMobile,
+                packet =>
+                {
+                    _outgoingPacketQueue.Enqueue(session.SessionId, packet);
+                    stats.WornItemsSent++;
+                }
+            );
+        }
+    }
+
     private MapSector? ResolveLoadedSector(
         Dictionary<(int SectorX, int SectorY), MapSector> loadedSectors,
         int mapId,
@@ -140,7 +223,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
 
         sector = _spatialWorldService.GetSectorByLocation(
             mapId,
-            new Point3D(
+            new(
                 sectorX << MapSectorConsts.SectorShift,
                 sectorY << MapSectorConsts.SectorShift,
                 z
@@ -210,80 +293,5 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         }
 
         return stats;
-    }
-
-    private void RefillVisibleRangeForPlayer(
-        GameSession session,
-        UOMobileEntity mobileEntity,
-        HashSet<Serial> sentItemSerials,
-        HashSet<Serial> sentMobileSerials,
-        LoginSectorSyncStats stats
-    )
-    {
-        foreach (var item in _spatialWorldService.GetNearbyItems(mobileEntity.Location, _mobileSyncRange, mobileEntity.MapId))
-        {
-            if (item.ParentContainerId != Serial.Zero ||
-                item.EquippedMobileId != Serial.Zero ||
-                !ItemVisibilityHelper.CanSessionSeeItem(session, item) ||
-                !sentItemSerials.Add(item.Id))
-            {
-                continue;
-            }
-
-            _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
-            stats.ItemsSent++;
-        }
-
-        foreach (var otherMobile in _spatialWorldService.GetNearbyMobiles(mobileEntity.Location, _mobileSyncRange, mobileEntity.MapId))
-        {
-            if (otherMobile.Id == mobileEntity.Id || !sentMobileSerials.Add(otherMobile.Id))
-            {
-                continue;
-            }
-
-            _outgoingPacketQueue.Enqueue(
-                session.SessionId,
-                new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
-            );
-            _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
-            stats.MobilesSent++;
-            WornItemPacketHelper.EnqueueVisibleWornItems(
-                otherMobile,
-                packet =>
-                {
-                    _outgoingPacketQueue.Enqueue(session.SessionId, packet);
-                    stats.WornItemsSent++;
-                }
-            );
-        }
-    }
-
-    private sealed class LoginSectorSyncStats
-    {
-        public int SectorsRequested { get; set; }
-        public int SectorsLoaded { get; set; }
-        public int ItemsSent { get; set; }
-        public int MobilesSent { get; set; }
-        public int WornItemsSent { get; set; }
-
-        public void Accumulate(SectorSyncStats stats)
-        {
-            if (stats.SectorLoaded)
-            {
-                SectorsLoaded++;
-            }
-
-            ItemsSent += stats.ItemsSent;
-            MobilesSent += stats.MobilesSent;
-            WornItemsSent += stats.WornItemsSent;
-        }
-    }
-
-    private sealed class SectorSyncStats
-    {
-        public bool SectorLoaded { get; set; }
-        public int ItemsSent { get; set; }
-        public int MobilesSent { get; set; }
-        public int WornItemsSent { get; set; }
     }
 }

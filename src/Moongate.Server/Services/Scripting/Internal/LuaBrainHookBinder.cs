@@ -22,7 +22,7 @@ internal static class LuaBrainHookBinder
             return false;
         }
 
-        hooks = new LuaBrainResolvedHooks(
+        hooks = new(
             ResolveTableFunction(table, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick"),
             ResolveTableFunction(table, "on_speech", "OnSpeech"),
             ResolveTableFunction(table, "on_death", "OnDeath"),

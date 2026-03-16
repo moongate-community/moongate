@@ -4,11 +4,8 @@ using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
-using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
-using Moongate.Server.Data.Internal.Scripting;
-using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -21,9 +18,7 @@ using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Listeners.Base;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Utils;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Serilog;
@@ -82,8 +77,8 @@ public class ItemHandler
         _spatialWorldService = spatialWorldService;
         _mobileService = mobileService;
         _itemBookService = itemBookService ?? new ItemBookService(itemService, mobileService, outgoingPacketQueue);
-        _itemInteractionService = itemInteractionService
-                                  ?? new ItemInteractionService(
+        _itemInteractionService = itemInteractionService ??
+                                  new ItemInteractionService(
                                       itemService,
                                       gameEventBusService,
                                       _itemBookService,
@@ -91,8 +86,8 @@ public class ItemHandler
                                       itemScriptDispatcher,
                                       characterService
                                   );
-        _itemManipulationService = itemManipulationService
-                                   ?? new ItemManipulationService(
+        _itemManipulationService = itemManipulationService ??
+                                   new ItemManipulationService(
                                        itemService,
                                        gameEventBusService,
                                        playerDragService,
@@ -264,5 +259,4 @@ public class ItemHandler
 
         return true;
     }
-
 }

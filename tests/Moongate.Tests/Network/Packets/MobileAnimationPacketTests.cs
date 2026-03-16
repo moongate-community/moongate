@@ -13,12 +13,12 @@ public sealed class MobileAnimationPacketTests
     {
         var packet = new MobileAnimationPacket(
             (Serial)0x40000001u,
-            action: 17,
-            frameCount: 7,
-            repeatCount: 1,
-            forward: true,
-            repeat: false,
-            delay: 3
+            17,
+            7,
+            1,
+            true,
+            false,
+            3
         );
 
         var data = Write(packet);

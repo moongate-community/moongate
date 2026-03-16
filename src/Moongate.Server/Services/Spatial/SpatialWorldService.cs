@@ -1,6 +1,5 @@
-using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Core.Collections;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
