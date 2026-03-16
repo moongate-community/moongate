@@ -38,8 +38,8 @@
   "Spatial": {
     "LazySectorItemLoadEnabled": true,
     "SectorWarmupRadius": 1,
-    "SectorEnterSyncRadius": 3,
-    "LazySectorEntityLoadRadius": 3,
+    "SectorEnterSyncRadius": 2,
+    "LazySectorEntityLoadRadius": 1,
     "SectorUpdateBroadcastRadius": 3,
     "LightWorldStartUtc": "1997-09-01T00:00:00Z",
     "LightSecondsPerUoMinute": 5.0

@@ -19,6 +19,9 @@ using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.Persistence.Interfaces.Persistence;
+using Moongate.Persistence.Data.Persistence;
 
 namespace Moongate.Tests.Server.Services.Entities;
 
@@ -200,6 +203,216 @@ public class MobileServiceTests
             => Unregistered.Add(mobileId);
     }
 
+    private sealed class CountingPersistenceService : IPersistenceService
+    {
+        public CountingPersistenceService(IPersistenceUnitOfWork unitOfWork)
+        {
+            UnitOfWork = unitOfWork;
+        }
+
+        public IPersistenceUnitOfWork UnitOfWork { get; }
+
+        public void Dispose() { }
+
+        public Task SaveAsync(CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+
+            return Task.CompletedTask;
+        }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+    }
+
+    private sealed class CountingPersistenceUnitOfWork : IPersistenceUnitOfWork
+    {
+        public CountingPersistenceUnitOfWork(
+            IMobileRepository mobiles,
+            IItemRepository items
+        )
+        {
+            Mobiles = mobiles;
+            Items = items;
+            Accounts = new NullAccountRepository();
+            BulletinBoardMessages = new NullBulletinBoardMessageRepository();
+        }
+
+        public IAccountRepository Accounts { get; }
+        public IMobileRepository Mobiles { get; }
+        public IItemRepository Items { get; }
+        public IBulletinBoardMessageRepository BulletinBoardMessages { get; }
+
+        public Serial AllocateNextAccountId()
+            => (Serial)1u;
+
+        public Serial AllocateNextItemId()
+            => (Serial)1u;
+
+        public Serial AllocateNextMobileId()
+            => (Serial)1u;
+
+        public ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromException<CapturedWorldSnapshot>(new NotSupportedException());
+
+        public ValueTask InitializeAsync(CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
+
+        public ValueTask SaveCapturedSnapshotAsync(
+            CapturedWorldSnapshot capturedSnapshot,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromException(new NotSupportedException());
+
+        public ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class CountingMobileRepository : IMobileRepository
+    {
+        private readonly IReadOnlyList<UOMobileEntity> _mobiles;
+
+        public CountingMobileRepository(IReadOnlyList<UOMobileEntity> mobiles)
+        {
+            _mobiles = mobiles;
+        }
+
+        public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(_mobiles.Count);
+
+        public ValueTask<IReadOnlyCollection<UOMobileEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<UOMobileEntity>>(_mobiles);
+
+        public ValueTask<UOMobileEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(_mobiles.FirstOrDefault(mobile => mobile.Id == id));
+
+        public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
+            Func<UOMobileEntity, bool> predicate,
+            Func<UOMobileEntity, TResult> selector,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyList<TResult>>([.. _mobiles.Where(predicate).Select(selector)]);
+
+        public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class CountingItemRepository : IItemRepository
+    {
+        private readonly IReadOnlyList<UOItemEntity> _items;
+
+        public CountingItemRepository(IReadOnlyList<UOItemEntity> items)
+        {
+            _items = items;
+        }
+
+        public int QueryCallCount { get; private set; }
+        public int GetByIdCallCount { get; private set; }
+
+        public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(_items.Count);
+
+        public ValueTask<IReadOnlyCollection<UOItemEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<UOItemEntity>>(_items);
+
+        public ValueTask<UOItemEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
+        {
+            GetByIdCallCount++;
+
+            return ValueTask.FromResult(_items.FirstOrDefault(item => item.Id == id));
+        }
+
+        public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
+            Func<UOItemEntity, bool> predicate,
+            Func<UOItemEntity, TResult> selector,
+            CancellationToken cancellationToken = default
+        )
+        {
+            QueryCallCount++;
+
+            return ValueTask.FromResult<IReadOnlyList<TResult>>([.. _items.Where(predicate).Select(selector)]);
+        }
+
+        public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(UOItemEntity item, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class NullAccountRepository : IAccountRepository
+    {
+        public ValueTask<bool> AddAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(0);
+
+        public ValueTask<bool> ExistsAsync(
+            Func<UOAccountEntity, bool> predicate,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult(false);
+
+        public ValueTask<IReadOnlyCollection<UOAccountEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<UOAccountEntity>>(Array.Empty<UOAccountEntity>());
+
+        public ValueTask<UOAccountEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<UOAccountEntity?>(null);
+
+        public ValueTask<UOAccountEntity?> GetByUsernameAsync(
+            string username,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<UOAccountEntity?>(null);
+
+        public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
+            Func<UOAccountEntity, bool> predicate,
+            Func<UOAccountEntity, TResult> selector,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyList<TResult>>(Array.Empty<TResult>());
+
+        public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class NullBulletinBoardMessageRepository : IBulletinBoardMessageRepository
+    {
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>(Array.Empty<BulletinBoardMessageEntity>());
+
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
+            Serial messageId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
+
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
+            Serial boardId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>(Array.Empty<BulletinBoardMessageEntity>());
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+
+        public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+    }
+
     [Test]
     public async Task CreateOrUpdateAsync_ShouldAllocateSerial_WhenMissing()
     {
@@ -341,6 +554,84 @@ public class MobileServiceTests
                 Assert.That(loaded, Has.Count.EqualTo(1));
                 Assert.That(mobile.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
                 Assert.That(mobile.EquippedItemReferences.ContainsKey(ItemLayerType.Shirt), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateSectorEquipmentWithSingleBulkItemQuery()
+    {
+        var firstMobileId = (Serial)0x00000011u;
+        var secondMobileId = (Serial)0x00000012u;
+        var firstEquippedItemId = (Serial)0x00001011u;
+        var secondEquippedItemId = (Serial)0x00001012u;
+        var mobiles = new List<UOMobileEntity>
+        {
+            new()
+            {
+                Id = firstMobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(130, 130, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Shirt] = firstEquippedItemId
+                }
+            },
+            new()
+            {
+                Id = secondMobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(131, 131, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Pants] = secondEquippedItemId
+                }
+            }
+        };
+        var items = new List<UOItemEntity>
+        {
+            new()
+            {
+                Id = firstEquippedItemId,
+                ItemId = 0x1517,
+                EquippedMobileId = firstMobileId,
+                EquippedLayer = ItemLayerType.Shirt
+            },
+            new()
+            {
+                Id = secondEquippedItemId,
+                ItemId = 0x152E,
+                EquippedMobileId = secondMobileId,
+                EquippedLayer = ItemLayerType.Pants
+            }
+        };
+        var itemRepository = new CountingItemRepository(items);
+        var mobileRepository = new CountingMobileRepository(mobiles);
+        var persistence = new CountingPersistenceService(
+            new CountingPersistenceUnitOfWork(mobileRepository, itemRepository)
+        );
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        var sectorX = 130 >> MapSectorConsts.SectorShift;
+        var sectorY = 130 >> MapSectorConsts.SectorShift;
+
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, sectorX, sectorY);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loaded, Has.Count.EqualTo(2));
+                Assert.That(itemRepository.QueryCallCount, Is.EqualTo(1));
+                Assert.That(itemRepository.GetByIdCallCount, Is.EqualTo(0));
+                Assert.That(
+                    loaded.All(mobile => mobile.EquippedItemReferences.Count == 1),
+                    Is.True
+                );
             }
         );
     }

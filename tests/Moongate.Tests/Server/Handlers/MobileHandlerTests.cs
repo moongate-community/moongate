@@ -1752,6 +1752,103 @@ public sealed class MobileHandlerTests
         Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.False);
     }
 
+    [Test]
+    public async Task HandleAsync_ForPlayerCharacterLoggedIn_ShouldRefillVisibleRangeOutsideLoginSnapshotRadius()
+    {
+        var playerId = (Serial)0x00004020u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var session = CreateSession(playerId);
+        sessions.Add(session);
+
+        var spawnLocation = new Point3D(132, 132, 0);
+        var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
+        centerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000091u,
+                Name = "center-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = spawnLocation,
+                MapId = 1
+            }
+        );
+
+        var outerLocation = new Point3D(spawnLocation.X + (MapSectorConsts.SectorSize * 2), spawnLocation.Y, 0);
+        var outerSectorX = outerLocation.X >> MapSectorConsts.SectorShift;
+        var outerSectorY = outerLocation.Y >> MapSectorConsts.SectorShift;
+        var outerSector = new MapSector(1, outerSectorX, outerSectorY);
+        var outerItemId = (Serial)0x40000092u;
+        outerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = outerItemId,
+                Name = "outer-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = outerLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            NearbyItems =
+            [
+                new UOItemEntity
+                {
+                    Id = outerItemId,
+                    Name = "outer-item",
+                    ItemId = 0x0EED,
+                    ParentContainerId = Serial.Zero,
+                    EquippedMobileId = Serial.Zero,
+                    Location = outerLocation,
+                    MapId = 1
+                }
+            ]
+        };
+        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
+        spatial.SectorsByCoordinate[(1, outerSectorX, outerSectorY)] = outerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId);
+        character.Location = spawnLocation;
+        character.MapId = 1;
+        session.Character = character;
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(character),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(new PlayerCharacterLoggedInEvent(session.SessionId, (Serial)0x01u, playerId));
+
+        var packets = DequeueAll(queue);
+        var objectPackets = packets
+                            .Where(packet => packet.Packet is ObjectInformationPacket)
+                            .Select(packet => (ObjectInformationPacket)packet.Packet)
+                            .ToList();
+
+        Assert.That(objectPackets.Select(packet => packet.Serial), Contains.Item(outerItemId));
+    }
+
     private static UOMobileEntity CreatePlayer(Serial id)
         => new()
         {

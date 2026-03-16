@@ -853,7 +853,7 @@ public sealed class SpatialWorldServiceTests
             () =>
             {
                 Assert.That(sector, Is.Not.Null);
-                Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.GreaterThanOrEqualTo(49));
+                Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.GreaterThanOrEqualTo(9));
                 Assert.That(mobileService.LoadRequests, Has.Member((0, 9, 8)));
                 Assert.That(nearby.Select(static mobile => mobile.Id), Contains.Item(npc.Id));
                 Assert.That(nearby.Select(static mobile => mobile.Id), Does.Not.Contain(persistedPlayer.Id));

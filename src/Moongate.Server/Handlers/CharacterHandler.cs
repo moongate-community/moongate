@@ -14,6 +14,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -43,6 +44,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly ILightService? _lightService;
+    private readonly IBackgroundJobService _backgroundJobService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -51,7 +53,8 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IGameEventBusService gameEventBusService,
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService spatialWorldService,
-        ILightService? lightService = null
+        ILightService? lightService = null,
+        IBackgroundJobService? backgroundJobService = null
     ) : base(outgoingPacketQueue)
     {
         _characterService = characterService;
@@ -60,6 +63,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
         _lightService = lightService;
+        _backgroundJobService = backgroundJobService ?? throw new ArgumentNullException(nameof(backgroundJobService));
 
         _gameEventBusService.RegisterListener(this);
     }
@@ -133,8 +137,9 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new SetMusicPacket(_spatialWorldService.GetMusic(character.MapId, character.Location)));
 
-        await _gameEventBusService.PublishAsync(
-            new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, character.Id)
+        var playerLoggedInEvent = new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, character.Id);
+        _backgroundJobService.PostToGameLoop(
+            () => _gameEventBusService.PublishAsync(playerLoggedInEvent).AsTask().GetAwaiter().GetResult()
         );
 
         return true;

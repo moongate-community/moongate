@@ -9,6 +9,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
@@ -17,8 +18,54 @@ namespace Moongate.Tests.Server.Handlers;
 
 public sealed class CharacterHandlerTests
 {
+    private sealed class CharacterHandlerTestBackgroundJobService : IBackgroundJobService
+    {
+        private readonly Queue<Action> _pending = new();
+
+        public void EnqueueBackground(Action job)
+            => throw new NotSupportedException();
+
+        public void EnqueueBackground(Func<Task> job)
+            => throw new NotSupportedException();
+
+        public int ExecutePendingOnGameLoop(int maxActions = 100)
+        {
+            var executed = 0;
+            while (executed < maxActions && _pending.Count > 0)
+            {
+                _pending.Dequeue()();
+                executed++;
+            }
+
+            return executed;
+        }
+
+        public void PostToGameLoop(Action action)
+            => _pending.Enqueue(action);
+
+        public void RunBackgroundAndPostResult<TResult>(
+            Func<TResult> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        )
+            => throw new NotSupportedException();
+
+        public void RunBackgroundAndPostResultAsync<TResult>(
+            Func<Task<TResult>> backgroundJob,
+            Action<TResult> onGameLoopResult,
+            Action<Exception>? onGameLoopError = null
+        )
+            => throw new NotSupportedException();
+
+        public void Start(int? workerCount = null)
+            => throw new NotSupportedException();
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+    }
+
     [Test]
-    public async Task HandleCharacterLoggedIn_ShouldPublishPlayerCharacterLoggedInEvent()
+    public async Task HandleCharacterLoggedIn_ShouldDeferPlayerCharacterLoggedInEventUntilGameLoopCallback()
     {
         EnsureMapRegistered();
 
@@ -27,13 +74,15 @@ public sealed class CharacterHandlerTests
         var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var gameNetworkSessionService = new FakeGameNetworkSessionService();
+        var backgroundJobs = new CharacterHandlerTestBackgroundJobService();
         var handler = new CharacterHandler(
             queue,
             characterService,
             entityFactoryService,
             eventBus,
             gameNetworkSessionService,
-            new RegionDataLoaderTestSpatialWorldService()
+            new RegionDataLoaderTestSpatialWorldService(),
+            backgroundJobService: backgroundJobs
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -46,12 +95,16 @@ public sealed class CharacterHandlerTests
         var characterId = (Serial)0x00000099;
 
         var result = await handler.HandleCharacterLoggedIn(session, characterId);
+        Assert.That(eventBus.Events.OfType<PlayerCharacterLoggedInEvent>(), Is.Empty);
+
+        var executedCallbacks = backgroundJobs.ExecutePendingOnGameLoop();
         var gameEvent = eventBus.Events.OfType<PlayerCharacterLoggedInEvent>().Single();
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(result, Is.True);
+                Assert.That(executedCallbacks, Is.EqualTo(1));
                 Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(gameEvent.AccountId, Is.EqualTo(session.AccountId));
                 Assert.That(gameEvent.CharacterId, Is.EqualTo(characterId));
@@ -69,13 +122,15 @@ public sealed class CharacterHandlerTests
         var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var gameNetworkSessionService = new FakeGameNetworkSessionService();
+        var backgroundJobs = new CharacterHandlerTestBackgroundJobService();
         var handler = new CharacterHandler(
             queue,
             characterService,
             entityFactoryService,
             eventBus,
             gameNetworkSessionService,
-            new RegionDataLoaderTestSpatialWorldService()
+            new RegionDataLoaderTestSpatialWorldService(),
+            backgroundJobService: backgroundJobs
         );
 
         var packet = new CharacterCreationPacket();
@@ -112,13 +167,15 @@ public sealed class CharacterHandlerTests
         var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
         var eventBus = new NetworkServiceTestGameEventBusService();
         var gameNetworkSessionService = new FakeGameNetworkSessionService();
+        var backgroundJobs = new CharacterHandlerTestBackgroundJobService();
         var handler = new CharacterHandler(
             queue,
             characterService,
             entityFactoryService,
             eventBus,
             gameNetworkSessionService,
-            new RegionDataLoaderTestSpatialWorldService()
+            new RegionDataLoaderTestSpatialWorldService(),
+            backgroundJobService: backgroundJobs
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));

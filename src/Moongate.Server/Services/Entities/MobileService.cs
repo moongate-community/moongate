@@ -106,11 +106,7 @@ public sealed class MobileService : IMobileService
                       );
 
         var result = mobiles.ToList();
-
-        foreach (var mobile in result)
-        {
-            await HydrateMobileEquipmentRuntimeAsync(mobile, cancellationToken);
-        }
+        await HydrateMobileEquipmentRuntimeAsync(result, cancellationToken);
 
         return result;
     }
@@ -201,52 +197,82 @@ public sealed class MobileService : IMobileService
         UOMobileEntity mobile,
         CancellationToken cancellationToken = default
     )
+        => await HydrateMobileEquipmentRuntimeAsync([mobile], cancellationToken);
+
+    private async Task HydrateMobileEquipmentRuntimeAsync(
+        IReadOnlyList<UOMobileEntity> mobiles,
+        CancellationToken cancellationToken = default
+    )
     {
-        ArgumentNullException.ThrowIfNull(mobile);
+        ArgumentNullException.ThrowIfNull(mobiles);
 
-        if (mobile.EquippedItemIds.Count == 0)
+        if (mobiles.Count == 0)
         {
-            mobile.HydrateEquipmentRuntime([]);
-
             return;
         }
 
+        var mobilesWithEquipment = mobiles
+                                   .Where(mobile => mobile.EquippedItemIds.Count > 0)
+                                   .ToList();
+
+        foreach (var mobile in mobiles.Except(mobilesWithEquipment))
+        {
+            mobile.HydrateEquipmentRuntime([]);
+        }
+
+        if (mobilesWithEquipment.Count == 0)
+        {
+            return;
+        }
+
+        var mobileIds = mobilesWithEquipment
+                        .Select(mobile => mobile.Id)
+                        .ToHashSet();
         var equippedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                                item => item.EquippedMobileId == mobile.Id && item.EquippedLayer is not null,
+                                item => item.EquippedMobileId != Serial.Zero &&
+                                        item.EquippedLayer is not null &&
+                                        mobileIds.Contains(item.EquippedMobileId),
                                 static item => item,
                                 cancellationToken
                             );
+        var equippedItemsByMobileId = equippedItems
+                                      .GroupBy(item => item.EquippedMobileId)
+                                      .ToDictionary(group => group.Key, group => group.ToDictionary(static item => item.Id, static item => item));
 
-        var hydratedItems = equippedItems.ToDictionary(static item => item.Id, static item => item);
-        var inferredItems = new List<UOItemEntity>(mobile.EquippedItemIds.Count);
-
-        foreach (var (layer, itemId) in mobile.EquippedItemIds)
+        foreach (var mobile in mobilesWithEquipment)
         {
-            if (hydratedItems.ContainsKey(itemId))
+            equippedItemsByMobileId.TryGetValue(mobile.Id, out var hydratedItemsById);
+            hydratedItemsById ??= [];
+            var inferredItems = new List<UOItemEntity>(mobile.EquippedItemIds.Count);
+
+            foreach (var (layer, itemId) in mobile.EquippedItemIds)
             {
+                if (hydratedItemsById.ContainsKey(itemId))
+                {
+                    continue;
+                }
+
+                var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId, cancellationToken);
+
+                if (item is null)
+                {
+                    continue;
+                }
+
+                item.EquippedMobileId = mobile.Id;
+                item.EquippedLayer = layer;
+                inferredItems.Add(item);
+            }
+
+            if (inferredItems.Count > 0)
+            {
+                mobile.HydrateEquipmentRuntime([.. hydratedItemsById.Values, .. inferredItems]);
+
                 continue;
             }
 
-            var item = await _persistenceService.UnitOfWork.Items.GetByIdAsync(itemId, cancellationToken);
-
-            if (item is null)
-            {
-                continue;
-            }
-
-            item.EquippedMobileId = mobile.Id;
-            item.EquippedLayer = layer;
-            inferredItems.Add(item);
+            mobile.HydrateEquipmentRuntime(hydratedItemsById.Values);
         }
-
-        if (inferredItems.Count > 0)
-        {
-            mobile.HydrateEquipmentRuntime([.. equippedItems, .. inferredItems]);
-
-            return;
-        }
-
-        mobile.HydrateEquipmentRuntime(equippedItems);
     }
 
     private void RegisterBrainIfConfigured(string templateId, UOMobileEntity mobile)
