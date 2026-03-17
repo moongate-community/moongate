@@ -13,7 +13,6 @@ namespace Moongate.Server.Handlers;
 [RegisterGameEventListener]
 public sealed class MountMobileDoubleClickHandler : IGameEventListener<MobileDoubleClickEvent>, IMoongateService
 {
-    private const string IsMountKey = "is_mount";
     private const int MountInteractionRange = 2;
 
     private readonly IMobileService _mobileService;
@@ -41,7 +40,7 @@ public sealed class MountMobileDoubleClickHandler : IGameEventListener<MobileDou
         var rider = session.Character;
         var mount = await _mobileService.GetAsync(gameEvent.MobileSerial, cancellationToken);
 
-        if (mount is null || !IsMount(mount))
+        if (mount is null || !mount.IsMountable)
         {
             return;
         }
@@ -67,11 +66,4 @@ public sealed class MountMobileDoubleClickHandler : IGameEventListener<MobileDou
 
     public Task StopAsync()
         => Task.CompletedTask;
-
-    private static bool IsMount(UOMobileEntity mobile)
-        => mobile.TryGetCustomBoolean(IsMountKey, out var isMount)
-               ? isMount
-               : mobile.TryGetCustomString(IsMountKey, out var stringValue) &&
-                 bool.TryParse(stringValue, out var parsed) &&
-                 parsed;
 }

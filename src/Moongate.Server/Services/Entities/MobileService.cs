@@ -1,6 +1,7 @@
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Data.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -26,13 +27,15 @@ public sealed class MobileService : IMobileService
     private readonly IItemFactoryService _itemFactoryService;
     private readonly IMobileTemplateService _mobileTemplateService;
     private readonly ILuaBrainRunner _luaBrainRunner;
+    private readonly MountTileData _mountTileData;
 
     public MobileService(
         IPersistenceService persistenceService,
         IMobileFactoryService mobileFactoryService,
         IItemFactoryService itemFactoryService,
         IMobileTemplateService mobileTemplateService,
-        ILuaBrainRunner luaBrainRunner
+        ILuaBrainRunner luaBrainRunner,
+        MountTileData mountTileData
     )
     {
         _persistenceService = persistenceService;
@@ -40,6 +43,7 @@ public sealed class MobileService : IMobileService
         _itemFactoryService = itemFactoryService;
         _mobileTemplateService = mobileTemplateService;
         _luaBrainRunner = luaBrainRunner;
+        _mountTileData = mountTileData;
     }
 
     /// <inheritdoc />
@@ -81,7 +85,14 @@ public sealed class MobileService : IMobileService
             return null;
         }
 
-        return await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(id, cancellationToken);
+        var mobile = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(id, cancellationToken);
+
+        if (mobile is not null)
+        {
+            ApplyMountableState(mobile);
+        }
+
+        return mobile;
     }
 
     /// <inheritdoc />
@@ -96,6 +107,11 @@ public sealed class MobileService : IMobileService
         var mount = await GetAsync(mountId, cancellationToken);
 
         if (rider is null || mount is null)
+        {
+            return false;
+        }
+
+        if (!mount.IsMountable)
         {
             return false;
         }
@@ -182,6 +198,7 @@ public sealed class MobileService : IMobileService
 
         var result = mobiles.ToList();
         await HydrateMobileEquipmentRuntimeAsync(result, cancellationToken);
+        ApplyMountableState(result);
 
         return result;
     }
@@ -200,6 +217,7 @@ public sealed class MobileService : IMobileService
         var mobile = _mobileFactoryService.CreateMobileFromTemplate(templateId, accountId);
         mobile.Location = location;
         mobile.MapId = mapId;
+        ApplyMountableState(mobile);
         RegisterBrainIfConfigured(templateId, mobile);
 
         await CreateOrUpdateAsync(mobile, cancellationToken);
@@ -265,6 +283,20 @@ public sealed class MobileService : IMobileService
         }
 
         return int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out itemId);
+    }
+
+    private void ApplyMountableState(IEnumerable<UOMobileEntity> mobiles)
+    {
+        foreach (var mobile in mobiles)
+        {
+            ApplyMountableState(mobile);
+        }
+    }
+
+    private void ApplyMountableState(UOMobileEntity mobile)
+    {
+        var mountedDisplayItemId = ResolveMountedDisplayItemId(mobile);
+        mobile.IsMountable = mountedDisplayItemId > 0 && _mountTileData.Contains(mountedDisplayItemId);
     }
 
     private async Task ApplyTemplateEquipmentAsync(

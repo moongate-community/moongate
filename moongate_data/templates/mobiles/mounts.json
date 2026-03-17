@@ -17,10 +17,6 @@
     "stamina": 60,
     "brain": "None",
     "params": {
-      "is_mount": {
-        "type": "string",
-        "value": "true"
-      },
       "mounted_display_item_id": {
         "type": "string",
         "value": "0x3EAA"

@@ -87,9 +87,9 @@ public sealed class MountMobileDoubleClickHandlerTests
             Id = (Serial)0x300,
             Name = "horse",
             MapId = 1,
-            Location = new(101, 100, 0)
+            Location = new(101, 100, 0),
+            IsMountable = true
         };
-        mount.SetCustomString("is_mount", "true");
         mount.SetCustomString("mounted_display_item_id", "0x3EAA");
         mobiles.MobilesById[rider.Id] = rider;
         mobiles.MobilesById[mount.Id] = mount;

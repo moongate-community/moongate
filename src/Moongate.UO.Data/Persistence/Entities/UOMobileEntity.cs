@@ -599,6 +599,11 @@ public class UOMobileEntity : IMobileEntity
     public int MountedDisplayItemId { get; set; }
 
     /// <summary>
+    /// Gets or sets whether this mobile can be mounted according to loaded mount tile data.
+    /// </summary>
+    public bool IsMountable { get; set; }
+
+    /// <summary>
     /// Gets or sets whether the mobile is mounted.
     /// </summary>
     public bool IsMounted

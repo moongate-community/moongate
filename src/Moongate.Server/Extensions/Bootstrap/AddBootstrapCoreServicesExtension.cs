@@ -6,6 +6,7 @@ using Moongate.Email.Data;
 using Moongate.Email.Services;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Accounting;
@@ -78,6 +79,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IDoorLockService, DoorLockService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<IMobileModifierAggregationService, MobileModifierAggregationService>(Reuse.Singleton);
+        container.RegisterInstance(new MountTileData());
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
         container.Register<IPlaceholderResolverService, PlaceholderResolverService>(Reuse.Singleton);
