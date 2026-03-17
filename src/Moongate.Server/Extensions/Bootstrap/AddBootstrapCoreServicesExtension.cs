@@ -5,6 +5,7 @@ using Moongate.Core.Types;
 using Moongate.Email.Data;
 using Moongate.Email.Services;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Accounting;
@@ -42,6 +43,7 @@ using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.World;
+using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Maps;
 using Moongate.UO.Data.Interfaces.Names;
@@ -112,6 +114,18 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<INpcAiRuntimeStateService, NpcAiRuntimeStateService>(Reuse.Singleton);
         container.Register<IOpenAiNpcDialogueClient, OpenAiNpcDialogueClient>(Reuse.Singleton);
         container.Register<INpcDialogueService, NpcDialogueService>(Reuse.Singleton);
+        container.Register<AsyncLuaValueConverter>(Reuse.Singleton);
+        container.Register<EchoAsyncLuaJobHandler>(Reuse.Singleton);
+        container.RegisterDelegate<IAsyncLuaJobRegistry>(
+            resolver =>
+            {
+                var registry = new AsyncLuaJobRegistry();
+                _ = registry.TryRegister(resolver.Resolve<EchoAsyncLuaJobHandler>());
+                return registry;
+            },
+            Reuse.Singleton
+        );
+        container.Register<IAsyncLuaJobService, AsyncLuaJobService>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);

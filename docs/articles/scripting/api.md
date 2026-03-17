@@ -765,6 +765,33 @@ Supported file-based element types currently include:
 - `tooltip`
 - `button`, `button_page`
 
+## `async_job` Module
+
+Named background jobs callable from Lua:
+
+```lua
+async_job.run("echo", "req-1", { text = "hello" })
+async_job.try_run("echo", "npc:1", "req-2", { text = "world" })
+```
+
+Global completion callbacks:
+
+```lua
+function on_async_job_result(job_name, request_id, result)
+end
+
+function on_async_job_error(job_name, request_id, message)
+end
+```
+
+Payload and result values must be plain Lua data:
+
+- `nil`
+- `boolean`
+- `number`
+- `string`
+- nested tables / arrays of the same
+
 ### ItemScriptContext (`ctx` payload)
 
 ```lua

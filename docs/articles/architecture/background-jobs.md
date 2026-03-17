@@ -69,6 +69,18 @@ _asyncWorkSchedulerService.TrySchedule(
 Use `IBackgroundJobService` directly when you only need raw background execution.
 Use `IAsyncWorkSchedulerService` when you need feature-level dedupe and safe result application.
 
+## Lua Async Jobs
+
+Lua scripts can also use the higher-level `async_job` module for named background jobs.
+
+That path is built on top of `IAsyncWorkSchedulerService` and keeps the same contract:
+
+- background work off the game loop
+- completion callback back on the game loop
+- no world mutation from the worker
+
+See [Async Jobs](../scripting/async-jobs.md).
+
 ## Events
 
 For event-driven orchestration:

@@ -117,6 +117,7 @@ For the behavior-based NPC AI architecture, see [NPC Behaviors](npc-behaviors.md
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
+For background-safe named jobs callable from Lua, see [Async Jobs](async-jobs.md).
 
 ### NPC Brain Example
 
