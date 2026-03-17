@@ -15,7 +15,7 @@ Keep NPC AI maintainable by separating:
 ```text
 moongate_data/scripts/ai/
 ├── behavior.lua                 # behavior registry
-├── lib/
+├── runners/
 │   └── utility_runner.lua       # utility/priority behavior runner
 ├── behaviors/
 │   ├── init.lua

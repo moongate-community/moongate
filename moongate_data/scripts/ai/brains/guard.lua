@@ -4,7 +4,7 @@
 -- - "follow": follow a target set in the blackboard
 -- - "idle": fallback (wander)
 
-local utility_runner = require("ai.lib.utility_runner")
+local utility_runner = require("ai.runners.utility_runner")
 
 guard = {}
 
