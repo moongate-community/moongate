@@ -110,7 +110,7 @@ Generated packet pages: `201`
 | `0x71` | Bulletin Board Messages | `implemented` | Both | Variable | BulletinBoardMessagesPacket | [0x71.md](0x71.md) |
 | `0x72` | Request War Mode | `implemented` | Both | 5 Bytes | RequestWarModePacket, WarModePacket | [0x72.md](0x72.md) |
 | `0x73` | Ping Message | `implemented` | Both | 2 Bytes | PingMessagePacket | [0x73.md](0x73.md) |
-| `0x74` | Open Buy Window | `placeholder` | Server | Variable | None | [0x74.md](0x74.md) |
+| `0x74` | Open Buy Window | `implemented` | Server | Variable | VendorBuyListPacket | [0x74.md](0x74.md) |
 | `0x75` | Rename Character | `implemented` | Client | 35 Bytes | RenameCharacterPacket | [0x75.md](0x75.md) |
 | `0x76` | New Subserver | `implemented` | Server | 16 Bytes | ServerChangePacket | [0x76.md](0x76.md) |
 | `0x77` | Update Player | `implemented` | Server | 17 | MobileMovingPacket | [0x77.md](0x77.md) |
@@ -135,7 +135,7 @@ Generated packet pages: `201`
 | `0x9A` | Console Entry Prompt | `implemented` | Both | Variable | ConsoleEntryPromptPacket | [0x9A.md](0x9A.md) |
 | `0x9B` | Request Help | `implemented` | Client | 258 Bytes | RequestHelpPacket | [0x9B.md](0x9B.md) |
 | `0x9C` | Request Assistance | `placeholder` | Server | 53 | None | [0x9C.md](0x9C.md) |
-| `0x9E` | Sell List | `placeholder` | Server | Variable | None | [0x9E.md](0x9E.md) |
+| `0x9E` | Sell List | `implemented` | Server | Variable | VendorSellListPacket | [0x9E.md](0x9E.md) |
 | `0x9F` | Sell List Reply | `implemented` | Client | Variable | SellListReplyPacket | [0x9F.md](0x9F.md) |
 | `0xA0` | Select Server | `implemented` | Client | 3 Bytes | ServerSelectPacket | [0xA0.md](0xA0.md) |
 | `0xA1` | Update Current Health | `placeholder` | Server | 9 Bytes | None | [0xA1.md](0xA1.md) |

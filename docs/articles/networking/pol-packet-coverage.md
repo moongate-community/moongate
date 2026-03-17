@@ -192,7 +192,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0x67` | New character animation family | S -> C | `?Packet=0x67` | `missing` | Not modeled |
 | `0x68` | New target / map family | S -> C | `?Packet=0x68` | `missing` | Not modeled |
 | `0x69` | Character animation alt | S -> C | `?Packet=0x69` | `missing` | Not modeled |
-| `0x74` | Open buy window | S -> C | `?Packet=0x74` | `missing` | Vendor buy UI not implemented |
+| `0x74` | Open buy window | S -> C | `?Packet=0x74` | `VendorBuyListPacket` | Classic vendor buy list implemented and used with `0x3C` + existing `DrawContainerPacket (0x24)` shop flow |
 | `0x77` | Update player | S -> C | `?Packet=0x77` | `missing` | Moongate uses other draw/move packets |
 | `0x7C` | Open dialog box | both | `?Packet=0x7C` | `missing` | Dialog box flow absent |
 | `0x86` | Resend characters after delete | S -> C | `?Packet=0x86` | `missing` | Character delete flow absent |
@@ -201,7 +201,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0x90` | Display map | S -> C | `?Packet=0x90` | `missing` | Map display flow absent |
 | `0x99` | Multi-placement or GM packet | S -> C | `?Packet=0x99` | `missing` | Not modeled |
 | `0x9C` | Prompt response | S -> C | `?Packet=0x9C` | `missing` | Prompt flow absent |
-| `0x9E` | Vendor descriptions | S -> C | `?Packet=0x9E` | `missing` | Vendor UI flow absent |
+| `0x9E` | Vendor descriptions | S -> C | `?Packet=0x9E` | `VendorSellListPacket` | Classic vendor sell list implemented for context-menu sell flow |
 | `0xA1` | Attack cursor | S -> C | `?Packet=0xA1` | `missing` | Combat targeting UI absent |
 | `0xA2` | Character animation extended | S -> C | `?Packet=0xA2` | `missing` | Not modeled |
 | `0xA3` | Client prompt / speech family | S -> C | `?Packet=0xA3` | `missing` | Not modeled |
