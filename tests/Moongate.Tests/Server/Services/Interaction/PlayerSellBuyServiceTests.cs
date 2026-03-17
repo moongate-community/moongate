@@ -371,6 +371,78 @@ public sealed class PlayerSellBuyServiceTests
     }
 
     [Test]
+    public async Task HandleVendorBuyRequestAsync_ShouldHydrateGoldBeforeSendingPlayerStatus()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x400000A1u, ItemId = 0x0E75 };
+        backpack.AddItem(new UOItemEntity { Id = (Serial)0x400000A2u, ItemId = 0x0EED, Amount = 750, IsStackable = true }, new(1, 1));
+        var bank = new UOItemEntity { Id = (Serial)0x400000A3u, ItemId = 0x09A8 };
+        bank.AddItem(new UOItemEntity { Id = (Serial)0x400000A4u, ItemId = 0x0EED, Amount = 250, IsStackable = true }, new(1, 1));
+
+        var character = new UOMobileEntity
+        {
+            Id = (Serial)0x000000A1u,
+            Name = "buyer",
+            Location = new(100, 100, 0),
+            MapId = 0,
+            BackpackId = backpack.Id
+        };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack.Id);
+        character.AddEquippedItem(ItemLayerType.Bank, bank.Id);
+        characters.Backpack = backpack;
+        characters.BankBox = bank;
+
+        var session = new GameSession(new(client))
+        {
+            Character = character,
+            CharacterId = character.Id
+        };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity
+        {
+            Id = (Serial)0x000000A2u,
+            Name = "smith",
+            Location = new(101, 100, 0),
+            MapId = 0
+        };
+        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.weaponsmith",
+                Name = "Weaponsmith",
+                VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
+
+        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
+
+        var statusPacket = DrainPackets(outgoing).OfType<PlayerStatusPacket>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(statusPacket.Mobile, Is.Not.Null);
+                Assert.That(statusPacket.Mobile!.Gold, Is.EqualTo(1000));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleBuyItemsAsync_ShouldConsumeGoldAndCreateBoughtItemInBackpack()
     {
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -414,12 +486,15 @@ public sealed class PlayerSellBuyServiceTests
 
         await service.HandleBuyItemsAsync(session.SessionId, buyReply);
 
+        var outboundPackets = DrainPackets(outgoing);
+
         Assert.Multiple(
             () =>
             {
                 Assert.That(gold.Amount, Is.EqualTo(76));
                 Assert.That(itemService.CreatedItems.Values.Any(i => i.ItemId == 0x0F51 && i.Amount == 2), Is.True);
                 Assert.That(itemService.UpsertedItems, Does.Contain(gold.Id));
+                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
             }
         );
     }
@@ -517,11 +592,14 @@ public sealed class PlayerSellBuyServiceTests
 
         await service.HandleSellListReplyAsync(session.SessionId, reply);
 
+        var outboundPackets = DrainPackets(outgoing);
+
         Assert.Multiple(
             () =>
             {
                 Assert.That(soldItem.Amount, Is.EqualTo(1));
                 Assert.That(gold.Amount, Is.EqualTo(22));
+                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
             }
         );
     }

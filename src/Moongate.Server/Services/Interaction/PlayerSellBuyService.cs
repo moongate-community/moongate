@@ -133,6 +133,7 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
             return;
         }
 
+        await EnsureGoldContainersLoadedAsync(character);
         _pendingBuyStates[sessionId] = buyState;
         _outgoingPacketQueue.Enqueue(sessionId, CreateVendorPackPacket(vendor, buyPackSerial, ItemLayerType.ShopBuy));
         _outgoingPacketQueue.Enqueue(sessionId, CreateVendorPackPacket(vendor, resalePackSerial, ItemLayerType.ShopResale));
@@ -209,6 +210,7 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
             return;
         }
 
+        await EnsureGoldContainersLoadedAsync(character);
         _pendingSellStates[sessionId] = sellState;
         _outgoingPacketQueue.Enqueue(sessionId, sellPacket);
     }
@@ -428,6 +430,8 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
             }
         }
 
+        await EnsureGoldContainersLoadedAsync(character);
+        _outgoingPacketQueue.Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(backpack));
         _outgoingPacketQueue.Enqueue(sessionId, new PlayerStatusPacket(character, 1));
         _pendingBuyStates.Remove(sessionId);
     }
@@ -482,8 +486,27 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         }
 
         _ = await CreditGoldAsync(character, totalGold);
+        await EnsureGoldContainersLoadedAsync(character);
+        _outgoingPacketQueue.Enqueue(sessionId, new DrawContainerAndAddItemCombinedPacket(backpack));
         _outgoingPacketQueue.Enqueue(sessionId, new PlayerStatusPacket(character, 1));
         _pendingSellStates.Remove(sessionId);
+    }
+
+    private async Task EnsureGoldContainersLoadedAsync(UOMobileEntity character)
+    {
+        var backpack = await _characterService.GetBackpackWithItemsAsync(character);
+
+        if (backpack is not null)
+        {
+            character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        }
+
+        var bankBox = await _characterService.GetBankBoxWithItemsAsync(character);
+
+        if (bankBox is not null)
+        {
+            character.AddEquippedItem(ItemLayerType.Bank, bankBox);
+        }
     }
 
     private static bool TryConsumeGold(
