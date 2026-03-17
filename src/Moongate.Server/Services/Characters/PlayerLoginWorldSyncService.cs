@@ -186,7 +186,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
                      mobileEntity.MapId
                  ))
         {
-            if (otherMobile.Id == mobileEntity.Id || !sentMobileSerials.Add(otherMobile.Id))
+            if (otherMobile.Id == mobileEntity.Id ||
+                otherMobile.RiderMobileId != Serial.Zero ||
+                !sentMobileSerials.Add(otherMobile.Id))
             {
                 continue;
             }
@@ -271,7 +273,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
 
         foreach (var otherMobile in targetSector.GetMobiles())
         {
-            if (otherMobile.Id == mobileEntity.Id || !sentMobileSerials.Add(otherMobile.Id))
+            if (otherMobile.Id == mobileEntity.Id ||
+                otherMobile.RiderMobileId != Serial.Zero ||
+                !sentMobileSerials.Add(otherMobile.Id))
             {
                 continue;
             }

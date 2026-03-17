@@ -28,5 +28,11 @@ public static class WornItemPacketHelper
 
             enqueuePacket(new(character, itemReference, layer));
         }
+
+        if (!character.EquippedItemReferences.ContainsKey(ItemLayerType.Mount) &&
+            character.TryGetMountDisplayItemReference(out var mountReference))
+        {
+            enqueuePacket(new(character, mountReference, ItemLayerType.Mount));
+        }
     }
 }

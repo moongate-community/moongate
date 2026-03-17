@@ -100,6 +100,20 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
             }
         }
 
+        if (Beheld.TryGetMountDisplayItemReference(out var mountReference) &&
+            !layers[(byte)ItemLayerType.Mount])
+        {
+            layers[(byte)ItemLayerType.Mount] = true;
+            writer.Write(mountReference.Id.Value);
+            writer.Write((ushort)(mountReference.ItemId & itemIdMask));
+            writer.Write((byte)ItemLayerType.Mount);
+
+            if (NewMobileIncoming)
+            {
+                writer.Write((ushort)mountReference.Hue);
+            }
+        }
+
         if (Beheld.HairStyle > 0 && !layers[(byte)ItemLayerType.Hair])
         {
             layers[(byte)ItemLayerType.Hair] = true;

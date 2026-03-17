@@ -510,6 +510,246 @@ public class MobileServiceTests
     }
 
     [Test]
+    public async Task TryMountAsync_ShouldLinkRiderAndMount_WhenMobilesShareMapAndLocation()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mountId,
+                Name = "horse",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var mount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(mount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(mountId));
+                Assert.That(rider.MountedDisplayItemId, Is.EqualTo((int)mount.Body));
+                Assert.That(rider.IsMounted, Is.True);
+                Assert.That(mount!.RiderMobileId, Is.EqualTo(riderId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldLinkRiderAndMount_WhenMountIsWithinInteractionRange()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mountId,
+                Name = "horse",
+                MapId = 1,
+                Location = new(101, 100, 0)
+            }
+        );
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var mount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(mount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(mountId));
+                Assert.That(mount!.RiderMobileId, Is.EqualTo(riderId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldPreferMountedDisplayItemIdCustomProperty_WhenPresent()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        var mount = new UOMobileEntity
+        {
+            Id = mountId,
+            Name = "horse",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        mount.SetCustomInteger("mounted_display_item_id", 0x3EAA);
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(mount);
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(rider!.MountedDisplayItemId, Is.EqualTo(0x3EAA));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldParseMountedDisplayItemIdFromStringCustomProperty_WhenPresent()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        var mount = new UOMobileEntity
+        {
+            Id = mountId,
+            Name = "horse",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        mount.SetCustomString("mounted_display_item_id", "0x3EAA");
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(mount);
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(rider!.MountedDisplayItemId, Is.EqualTo(0x3EAA));
+            }
+        );
+    }
+
+    [Test]
+    public async Task DismountAsync_ShouldClearRiderAndMountRelationship()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0),
+                MountedMobileId = mountId
+            }
+        );
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mountId,
+                Name = "horse",
+                MapId = 1,
+                Location = new(100, 100, 0),
+                RiderMobileId = riderId
+            }
+        );
+
+        var dismounted = await service.DismountAsync(riderId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var mount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dismounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(mount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(Serial.Zero));
+                Assert.That(rider.MountedDisplayItemId, Is.EqualTo(0));
+                Assert.That(rider.IsMounted, Is.False);
+                Assert.That(mount!.RiderMobileId, Is.EqualTo(Serial.Zero));
+            }
+        );
+    }
+
+    [Test]
     public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateEquippedItemReferences()
     {
         using var temp = new TempDirectory();

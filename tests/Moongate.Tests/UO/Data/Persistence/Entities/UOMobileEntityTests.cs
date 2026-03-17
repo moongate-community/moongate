@@ -418,6 +418,44 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void IsMounted_ShouldReflectMountedMobileRelationship()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.IsMounted, Is.False);
+
+        mobile.MountedMobileId = (Serial)0x00002000;
+
+        Assert.That(mobile.IsMounted, Is.True);
+
+        mobile.MountedMobileId = Serial.Zero;
+
+        Assert.That(mobile.IsMounted, Is.False);
+    }
+
+    [Test]
+    public void TryGetMountDisplayItemReference_ShouldReturnVirtualMountLayerReference_WhenConfigured()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000045u,
+            MountedDisplayItemId = 0x3E9F
+        };
+
+        var found = mobile.TryGetMountDisplayItemReference(out var itemReference);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.True);
+                Assert.That(itemReference.ItemId, Is.EqualTo(0x3E9F));
+                Assert.That(itemReference.Id, Is.Not.EqualTo(Serial.Zero));
+                Assert.That(itemReference.Id.IsItem, Is.True);
+            }
+        );
+    }
+
+    [Test]
     public void HydrateEquipmentRuntime_ShouldBuildReferencesForOwnedEquippedItems()
     {
         var mobile = new UOMobileEntity

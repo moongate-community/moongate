@@ -1,0 +1,17 @@
+[
+  {
+    "type": "item",
+    "id": "ethereal_horse_token",
+    "name": "Ethereal Horse Statuette",
+    "category": "Mounts",
+    "description": "Reusable mount token that calls and dismisses a personal ethereal horse.",
+    "itemId": "0x20DD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.ethereal_horse",
+    "isMovable": true,
+    "lootType": "Blessed",
+    "tags": ["mount", "ethereal", "token"]
+  }
+]

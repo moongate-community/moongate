@@ -112,7 +112,7 @@ public class LuaScriptLoader : ScriptLoaderBase
 
             if (File.Exists(fullPath))
             {
-                _logger.Debug("Resolved module '{ModuleName}' to path: {FullPath}", moduleName, fullPath);
+                _logger.Verbose("Resolved module '{ModuleName}' to path: {FullPath}", moduleName, fullPath);
 
                 return fullPath;
             }
@@ -123,7 +123,7 @@ public class LuaScriptLoader : ScriptLoaderBase
 
         if (File.Exists(directPath))
         {
-            _logger.Debug("Resolved module '{ModuleName}' to direct path: {DirectPath}", moduleName, directPath);
+            _logger.Verbose("Resolved module '{ModuleName}' to direct path: {DirectPath}", moduleName, directPath);
 
             return directPath;
         }

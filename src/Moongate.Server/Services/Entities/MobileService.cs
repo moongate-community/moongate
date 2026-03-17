@@ -9,6 +9,7 @@ using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Serilog;
+using System.Globalization;
 
 namespace Moongate.Server.Services.Entities;
 
@@ -17,6 +18,8 @@ namespace Moongate.Server.Services.Entities;
 /// </summary>
 public sealed class MobileService : IMobileService
 {
+    private const string MountedDisplayItemIdKey = "mounted_display_item_id";
+    private const int MountInteractionRange = 2;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private readonly IPersistenceService _persistenceService;
     private readonly IMobileFactoryService _mobileFactoryService;
@@ -79,6 +82,78 @@ public sealed class MobileService : IMobileService
         }
 
         return await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(id, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> TryMountAsync(Serial riderId, Serial mountId, CancellationToken cancellationToken = default)
+    {
+        if (riderId == Serial.Zero || mountId == Serial.Zero || riderId == mountId)
+        {
+            return false;
+        }
+
+        var rider = await GetAsync(riderId, cancellationToken);
+        var mount = await GetAsync(mountId, cancellationToken);
+
+        if (rider is null || mount is null)
+        {
+            return false;
+        }
+
+        if (rider.MapId != mount.MapId || !rider.Location.InRange(mount.Location, MountInteractionRange))
+        {
+            return false;
+        }
+
+        if (
+            rider.MountedMobileId != Serial.Zero ||
+            rider.RiderMobileId != Serial.Zero ||
+            mount.MountedMobileId != Serial.Zero ||
+            mount.RiderMobileId != Serial.Zero
+        )
+        {
+            return false;
+        }
+
+        rider.MountedMobileId = mount.Id;
+        rider.MountedDisplayItemId = ResolveMountedDisplayItemId(mount);
+        mount.RiderMobileId = rider.Id;
+
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(rider, cancellationToken);
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mount, cancellationToken);
+
+        return true;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> DismountAsync(Serial riderId, CancellationToken cancellationToken = default)
+    {
+        if (riderId == Serial.Zero)
+        {
+            return false;
+        }
+
+        var rider = await GetAsync(riderId, cancellationToken);
+
+        if (rider is null || rider.MountedMobileId == Serial.Zero)
+        {
+            return false;
+        }
+
+        var mountId = rider.MountedMobileId;
+        rider.MountedMobileId = Serial.Zero;
+        rider.MountedDisplayItemId = 0;
+        await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(rider, cancellationToken);
+
+        var mount = await GetAsync(mountId, cancellationToken);
+
+        if (mount is not null && mount.RiderMobileId == riderId)
+        {
+            mount.RiderMobileId = Serial.Zero;
+            await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mount, cancellationToken);
+        }
+
+        return true;
     }
 
     /// <inheritdoc />
@@ -155,6 +230,41 @@ public sealed class MobileService : IMobileService
         var mobile = await SpawnFromTemplateAsync(templateId, location, mapId, accountId, cancellationToken);
 
         return (true, mobile);
+    }
+
+    private static int ResolveMountedDisplayItemId(UOMobileEntity mount)
+    {
+        if (mount.TryGetCustomInteger(MountedDisplayItemIdKey, out var mountedDisplayItemId))
+        {
+            return (int)mountedDisplayItemId;
+        }
+
+        if (mount.TryGetCustomString(MountedDisplayItemIdKey, out var mountedDisplayItemIdRaw) &&
+            TryParseDisplayItemId(mountedDisplayItemIdRaw, out var parsedMountedDisplayItemId))
+        {
+            return parsedMountedDisplayItemId;
+        }
+
+        return mount.Body;
+    }
+
+    private static bool TryParseDisplayItemId(string? value, out int itemId)
+    {
+        itemId = 0;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        var trimmed = value.Trim();
+
+        if (trimmed.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return int.TryParse(trimmed.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out itemId);
+        }
+
+        return int.TryParse(trimmed, NumberStyles.Integer, CultureInfo.InvariantCulture, out itemId);
     }
 
     private async Task ApplyTemplateEquipmentAsync(

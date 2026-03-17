@@ -241,6 +241,11 @@ public sealed class DispatchEventsService
         _ = cancellationToken;
         ArgumentNullException.ThrowIfNull(mobile);
 
+        if (mobile.RiderMobileId != Serial.Zero)
+        {
+            return Task.FromResult(0);
+        }
+
         var players = _spatialWorldService.GetPlayersInRange(mobile.Location, Math.Max(0, range), mapId);
         var recipients = 0;
 

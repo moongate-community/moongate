@@ -900,6 +900,8 @@ public class PersistenceUnitOfWorkTests
                 IsFrozen = false,
                 IsPoisoned = false,
                 IsBlessed = false,
+                MountedMobileId = (Serial)0x00000011,
+                MountedDisplayItemId = 0x3E9F,
                 Notoriety = Notoriety.Innocent,
                 CreatedUtc = new(2026, 2, 19, 12, 0, 0, DateTimeKind.Utc),
                 LastLoginUtc = new(2026, 2, 19, 13, 0, 0, DateTimeKind.Utc),
@@ -911,6 +913,20 @@ public class PersistenceUnitOfWorkTests
         persistedMobile!.SetSkill(UOSkillName.Alchemy, 500, cap: 900, lockState: UOSkillLock.Locked);
         persistedMobile.SetSkill(UOSkillName.Magery, 725, 700, 1000, UOSkillLock.Down);
         await unitOfWork.Mobiles.UpsertAsync(persistedMobile);
+        await unitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000011,
+                AccountId = Serial.Zero,
+                Name = "snapshot-mount",
+                Title = "the horse",
+                MapId = 1,
+                Location = new(10, 20, 0),
+                RiderMobileId = (Serial)0x00000010,
+                CreatedUtc = new(2026, 2, 19, 12, 0, 0, DateTimeKind.Utc),
+                LastLoginUtc = new(2026, 2, 19, 13, 0, 0, DateTimeKind.Utc)
+            }
+        );
 
         await unitOfWork.Items.UpsertAsync(
             new()
@@ -1046,6 +1062,9 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.EffectiveStrength, Is.EqualTo(64));
                 Assert.That(loadedMobile.EffectiveFireResistance, Is.EqualTo(21));
                 Assert.That(loadedMobile.EffectiveLuck, Is.EqualTo(72));
+                Assert.That(loadedMobile.MountedMobileId, Is.EqualTo((Serial)0x00000011));
+                Assert.That(loadedMobile.MountedDisplayItemId, Is.EqualTo(0x3E9F));
+                Assert.That(loadedMobile.IsMounted, Is.True);
                 Assert.That(loadedMobile.BackpackId, Is.EqualTo((Serial)0x40000020));
                 Assert.That(loadedMobile.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo((Serial)0x40000021));
                 Assert.That(loadedMobile.EquippedItemIds[ItemLayerType.Pants], Is.EqualTo((Serial)0x40000022));

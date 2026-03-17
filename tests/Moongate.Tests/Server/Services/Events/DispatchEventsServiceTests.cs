@@ -298,6 +298,32 @@ public sealed class DispatchEventsServiceTests
     }
 
     [Test]
+    public async Task DispatchMobileUpdateAsync_ShouldSkipMountedCreatureStandaloneUpdates()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var mountedCreature = new UOMobileEntity
+        {
+            Id = (Serial)0x00000090u,
+            MapId = 1,
+            Location = new(100, 100, 0),
+            RiderMobileId = (Serial)0x00000091u
+        };
+
+        var recipients = await service.DispatchMobileUpdateAsync(mountedCreature, 1, 18, true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(recipients, Is.EqualTo(0));
+                Assert.That(queue.TryDequeue(out _), Is.False);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForPlayEffectToPlayerEvent_ShouldEnqueuePacketOnlyForTargetCharacterSession()
     {
         var spatial = new DispatchEventsTestSpatialWorldService();

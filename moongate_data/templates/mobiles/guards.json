@@ -1,0 +1,222 @@
+[
+  {
+    "type": "mobile",
+    "id": "warrior_guard_male_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town warrior guard NPC inspired by ModernUO WarriorGuard.",
+    "tags": [
+      "npc",
+      "guard",
+      "warrior",
+      "town",
+      "male"
+    ],
+    "body": "0x0190",
+    "strength": 100,
+    "dexterity": 125,
+    "intelligence": 25,
+    "hits": 100,
+    "brain": "guard",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "plate_chest",
+        "layer": "InnerTorso"
+      },
+      {
+        "itemTemplateId": "plate_arms",
+        "layer": "Arms"
+      },
+      {
+        "itemTemplateId": "plate_legs",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "body_sash",
+        "layer": "Waist"
+      },
+      {
+        "itemTemplateId": "halberd",
+        "layer": "TwoHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "skills": {
+      "Anatomy": 1200,
+      "Tactics": 1200,
+      "Swords": 1200,
+      "MagicResist": 1200,
+      "DetectHidden": 1000
+    },
+    "title": "the guard"
+  },
+  {
+    "type": "mobile",
+    "id": "warrior_guard_female_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town female warrior guard NPC inspired by ModernUO WarriorGuard.",
+    "tags": [
+      "npc",
+      "guard",
+      "warrior",
+      "town",
+      "female"
+    ],
+    "body": "0x0191",
+    "strength": 100,
+    "dexterity": 125,
+    "intelligence": 25,
+    "hits": 100,
+    "brain": "guard",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "leather_skirt",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "female_plate_chest",
+        "layer": "InnerTorso"
+      },
+      {
+        "itemTemplateId": "halberd",
+        "layer": "TwoHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "skills": {
+      "Anatomy": 1200,
+      "Tactics": 1200,
+      "Swords": 1200,
+      "MagicResist": 1200,
+      "DetectHidden": 1000
+    },
+    "title": "the guard"
+  },
+  {
+    "type": "mobile",
+    "id": "archer_guard_male_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town male archer guard NPC inspired by ModernUO ArcherGuard.",
+    "tags": [
+      "npc",
+      "guard",
+      "archer",
+      "town",
+      "male"
+    ],
+    "body": "0x0190",
+    "strength": 100,
+    "dexterity": 125,
+    "intelligence": 25,
+    "hits": 100,
+    "brain": "guard",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "studded_chest",
+        "layer": "InnerTorso"
+      },
+      {
+        "itemTemplateId": "studded_arms",
+        "layer": "Arms"
+      },
+      {
+        "itemTemplateId": "studded_gloves",
+        "layer": "Gloves"
+      },
+      {
+        "itemTemplateId": "studded_gorget",
+        "layer": "Neck"
+      },
+      {
+        "itemTemplateId": "studded_legs",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "skull_cap",
+        "layer": "Helm"
+      },
+      {
+        "itemTemplateId": "bow",
+        "layer": "TwoHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "skills": {
+      "Anatomy": 1200,
+      "Tactics": 1200,
+      "Archery": 1200,
+      "MagicResist": 1200,
+      "DetectHidden": 1000
+    },
+    "title": "the guard"
+  },
+  {
+    "type": "mobile",
+    "id": "archer_guard_female_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town female archer guard NPC inspired by ModernUO ArcherGuard.",
+    "tags": [
+      "npc",
+      "guard",
+      "archer",
+      "town",
+      "female"
+    ],
+    "body": "0x0191",
+    "strength": 100,
+    "dexterity": 125,
+    "intelligence": 25,
+    "hits": 100,
+    "brain": "guard",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "studded_chest",
+        "layer": "InnerTorso"
+      },
+      {
+        "itemTemplateId": "studded_arms",
+        "layer": "Arms"
+      },
+      {
+        "itemTemplateId": "studded_gloves",
+        "layer": "Gloves"
+      },
+      {
+        "itemTemplateId": "studded_gorget",
+        "layer": "Neck"
+      },
+      {
+        "itemTemplateId": "studded_legs",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "skull_cap",
+        "layer": "Helm"
+      },
+      {
+        "itemTemplateId": "bow",
+        "layer": "TwoHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "skills": {
+      "Anatomy": 1200,
+      "Tactics": 1200,
+      "Archery": 1200,
+      "MagicResist": 1200,
+      "DetectHidden": 1000
+    },
+    "title": "the guard"
+  }
+]

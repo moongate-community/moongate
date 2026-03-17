@@ -808,6 +808,76 @@ public sealed class MobileHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_ShouldNotSendMountedCreaturesAsStandaloneMobiles()
+    {
+        var movingPlayerId = (Serial)0x00003010u;
+        var mountedCreatureId = (Serial)0x00003011u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(100, 100, 0);
+        var newLocation = new Point3D(132, 132, 0);
+        var centerSector = new MapSector(1, 8, 8);
+        centerSector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = mountedCreatureId,
+                Name = "mounted-horse",
+                IsPlayer = false,
+                Location = newLocation,
+                MapId = 1,
+                RiderMobileId = (Serial)0x00003012u
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, 8, 8)] = centerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               if (location == oldLocation)
+                                               {
+                                                   return new(1, 6, 6);
+                                               }
+
+                                               if (location == newLocation)
+                                               {
+                                                   return centerSector;
+                                               }
+
+                                               return null;
+                                           };
+
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.False);
+    }
+
+    [Test]
     public async Task HandleAsync_ForMobilePositionChanged_WhenMapChanges_ShouldDeleteOldRangeEntitiesBeforeResync()
     {
         var movingPlayerId = (Serial)0x00000995u;

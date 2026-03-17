@@ -17,6 +17,7 @@ public class UOMobileEntity : IMobileEntity
 {
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
+    private const uint MountVirtualSerialMask = 0x3EEEEEEE;
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
     private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
     private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
@@ -583,9 +584,39 @@ public class UOMobileEntity : IMobileEntity
     public bool IsInvulnerable { get; set; }
 
     /// <summary>
+    /// Gets or sets the mounted companion mobile identifier for this rider.
+    /// </summary>
+    public Serial MountedMobileId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the rider mobile identifier for this mount.
+    /// </summary>
+    public Serial RiderMobileId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the visual item identifier projected on the mount layer while this mobile is mounted.
+    /// </summary>
+    public int MountedDisplayItemId { get; set; }
+
+    /// <summary>
     /// Gets or sets whether the mobile is mounted.
     /// </summary>
-    public bool IsMounted { get; set; }
+    public bool IsMounted
+    {
+        get => MountedMobileId != Serial.Zero;
+        set
+        {
+            if (!value)
+            {
+                MountedMobileId = Serial.Zero;
+                MountedDisplayItemId = 0;
+            }
+            else if (MountedMobileId == Serial.Zero)
+            {
+                MountedMobileId = Id;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the notoriety level.
@@ -862,6 +893,27 @@ public class UOMobileEntity : IMobileEntity
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
 
         return _customProperties.Remove(key);
+    }
+
+    /// <summary>
+    /// Tries to build the virtual mount-layer item reference used for client sync.
+    /// </summary>
+    public bool TryGetMountDisplayItemReference(out ItemReference itemReference)
+    {
+        if (MountedDisplayItemId <= 0)
+        {
+            itemReference = default;
+
+            return false;
+        }
+
+        itemReference = new(
+            (Serial)(Serial.ItemOffset | (Id.Value & MountVirtualSerialMask)),
+            MountedDisplayItemId,
+            0
+        );
+
+        return true;
     }
 
     /// <summary>

@@ -338,6 +338,61 @@ public sealed class PlayerLoginWorldSyncServiceTests
         );
     }
 
+    [Test]
+    public async Task SyncAsync_ShouldNotSendMountedCreaturesAsStandaloneMobiles()
+    {
+        var playerId = (Serial)0x00004030u;
+        var mountedCreatureId = (Serial)0x00005030u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = mountedCreatureId,
+                Name = "mounted-horse",
+                Location = spawnLocation,
+                MapId = 1,
+                RiderMobileId = (Serial)0x00005031u
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.NearbyMobiles.Add(
+            new UOMobileEntity
+            {
+                Id = mountedCreatureId,
+                Name = "mounted-horse",
+                Location = spawnLocation,
+                MapId = 1,
+                RiderMobileId = (Serial)0x00005031u
+            }
+        );
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.False);
+    }
+
     private static UOMobileEntity CreatePlayer(Serial id, Point3D location)
         => new()
         {

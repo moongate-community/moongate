@@ -152,6 +152,12 @@ public sealed class MobileSnapshot
 
     public bool IsMounted { get; set; }
 
+    public uint MountedMobileId { get; set; }
+
+    public uint RiderMobileId { get; set; }
+
+    public int MountedDisplayItemId { get; set; }
+
     public byte Notoriety { get; set; }
 
     public long CreatedUtcTicks { get; set; }

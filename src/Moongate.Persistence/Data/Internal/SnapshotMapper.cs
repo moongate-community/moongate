@@ -406,7 +406,9 @@ internal static class SnapshotMapper
             IsPoisoned = snapshot.IsPoisoned,
             IsBlessed = snapshot.IsBlessed,
             IsInvulnerable = snapshot.IsInvulnerable,
-            IsMounted = snapshot.IsMounted,
+            MountedMobileId = (Serial)snapshot.MountedMobileId,
+            RiderMobileId = (Serial)snapshot.RiderMobileId,
+            MountedDisplayItemId = snapshot.MountedDisplayItemId,
             Notoriety = (Notoriety)snapshot.Notoriety,
             CreatedUtc = new(snapshot.CreatedUtcTicks, DateTimeKind.Utc),
             LastLoginUtc = new(snapshot.LastLoginUtcTicks, DateTimeKind.Utc)
@@ -651,6 +653,9 @@ internal static class SnapshotMapper
             IsBlessed = entity.IsBlessed,
             IsInvulnerable = entity.IsInvulnerable,
             IsMounted = entity.IsMounted,
+            MountedMobileId = (uint)entity.MountedMobileId,
+            RiderMobileId = (uint)entity.RiderMobileId,
+            MountedDisplayItemId = entity.MountedDisplayItemId,
             Notoriety = (byte)entity.Notoriety,
             CreatedUtcTicks = entity.CreatedUtc.Ticks,
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks

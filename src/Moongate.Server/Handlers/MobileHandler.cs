@@ -366,7 +366,7 @@ public class MobileHandler
 
         foreach (var otherMobile in targetSector.GetMobiles())
         {
-            if (otherMobile.Id == mobileEntity.Id)
+            if (otherMobile.Id == mobileEntity.Id || otherMobile.RiderMobileId != Serial.Zero)
             {
                 continue;
             }
