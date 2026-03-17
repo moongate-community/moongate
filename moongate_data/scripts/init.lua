@@ -1,6 +1,7 @@
 require("ai.behavior")
 require("ai.behaviors")
 require("ai.brains.guard")
+require("ai.brains.town_banker")
 require("ai.brains.utility_npc")
 require("ai.lilly")
 require("ai.orion")
