@@ -36,7 +36,41 @@ Common shipped command scripts:
 - `moongate_data/scripts/commands/gm/set_world_light.lua`
 - `moongate_data/scripts/commands/gm/teleports.lua`
 
+Common shipped helper scripts:
+
+- `moongate_data/scripts/common/tick.lua`
+
 ## Real Script Examples
+
+### Helper Script: Tick
+
+`common.tick` is a small utility for recurring brain cadences.
+
+```lua
+local tick = require("common.tick")
+
+local cadence = tick.state({
+    move = 5000,
+    speech = 2000,
+})
+
+local now = time.now_ms()
+
+tick.run(cadence, "move", now, function()
+    npc:move(random.direction())
+end)
+
+tick.run(cadence, "speech", now, function()
+    npc:say("Hello there.")
+end)
+```
+
+The helper exposes:
+
+- `tick.state(intervals, start_ms?)`
+- `tick.ready(state, key, now_ms)`
+- `tick.run(state, key, now_ms, action?)`
+- `tick.reset(state, key, now_ms, interval_ms?)`
 
 ### Item Script: Apple
 

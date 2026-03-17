@@ -12,13 +12,13 @@ public sealed class HelpLuaAssetTests
         var initLuaPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "init.lua");
 
         Assert.That(File.Exists(initLuaPath), Is.True, $"Missing script bootstrap: {initLuaPath}");
-        Assert.That(File.ReadAllText(initLuaPath), Does.Contain("require(\"misc.help\")"));
+        Assert.That(File.ReadAllText(initLuaPath), Does.Contain("require(\"interaction.init\")"));
     }
 
     [Test]
     public void HelpBridgeScript_ShouldRequireHelpGumpModule()
     {
-        var helpLuaPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "misc", "help.lua");
+        var helpLuaPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "interaction", "help.lua");
 
         Assert.That(File.Exists(helpLuaPath), Is.True, $"Missing help bridge script: {helpLuaPath}");
         Assert.That(File.ReadAllText(helpLuaPath), Does.Contain("require(\"gumps.help\")"));

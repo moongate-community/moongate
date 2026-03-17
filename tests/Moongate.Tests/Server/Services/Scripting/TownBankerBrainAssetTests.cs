@@ -11,7 +11,7 @@ public sealed class TownBankerBrainAssetTests
         var initScriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "init.lua");
         var initScript = File.ReadAllText(initScriptPath);
 
-        Assert.That(initScript, Does.Contain("require(\"ai.brains.town_banker\")"));
+        Assert.That(initScript, Does.Contain("require(\"ai.init\")"));
     }
 
     [Test]

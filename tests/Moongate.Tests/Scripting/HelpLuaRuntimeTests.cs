@@ -27,20 +27,27 @@ public sealed class HelpLuaRuntimeTests
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
         var luarcDir = temp.Path;
-        Directory.CreateDirectory(Path.Combine(scriptsDir, "misc"));
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "interaction"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
         Directory.CreateDirectory(luarcDir);
 
         var repoRoot = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
         File.Copy(
-            Path.Combine(repoRoot, "moongate_data", "scripts", "misc", "help.lua"),
-            Path.Combine(scriptsDir, "misc", "help.lua")
+            Path.Combine(repoRoot, "moongate_data", "scripts", "interaction", "help.lua"),
+            Path.Combine(scriptsDir, "interaction", "help.lua")
         );
         File.Copy(
             Path.Combine(repoRoot, "moongate_data", "scripts", "gumps", "help.lua"),
             Path.Combine(scriptsDir, "gumps", "help.lua")
         );
-        await File.WriteAllTextAsync(Path.Combine(scriptsDir, "init.lua"), "require(\"misc.help\")\n");
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "init.lua"),
+            "require(\"interaction.init\")\n"
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "interaction", "init.lua"),
+            "require(\"interaction.help\")\n"
+        );
 
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessionService = new FakeGameNetworkSessionService();

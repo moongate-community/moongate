@@ -11,14 +11,14 @@ public sealed class LillyBrainAssetTests
         var initScriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "init.lua");
         var initScript = File.ReadAllText(initScriptPath);
 
-        Assert.That(initScript, Does.Contain("require(\"ai.lilly\")"));
+        Assert.That(initScript, Does.Contain("require(\"ai.init\")"));
     }
 
     [Test]
     public void LillyBrainScript_ShouldEnsureAiDialogueIsInitializedBeforeListenerAndIdle()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "lilly.lua");
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "npcs", "lilly.lua");
         var script = File.ReadAllText(scriptPath);
 
         Assert.Multiple(
@@ -35,7 +35,7 @@ public sealed class LillyBrainAssetTests
     public void LillyBrainScript_ShouldUseSnakeCaseSpeakerNameProperty()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "lilly.lua");
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "npcs", "lilly.lua");
         var script = File.ReadAllText(scriptPath);
 
         Assert.Multiple(

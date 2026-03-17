@@ -42,8 +42,8 @@ script modules (AI brains, commands, item scripts):
 
 ```lua
 -- init.lua - main entry point
--- Require AI brains
-require("ai/orion")
+-- Require AI domain bootstrap
+require("ai.init")
 
 -- Require GM commands
 require("commands/gm/eclipse")
@@ -118,19 +118,35 @@ For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
 For background-safe named jobs callable from Lua, see [Async Jobs](async-jobs.md).
+For recurring coroutine cadences in NPC brains, see [Tick Helper](tick.md).
 
 ### NPC Brain Example
 
-`mobileTemplate.brain = "orion"` resolves to table `orion` in `scripts/ai/orion.lua`.
+`mobileTemplate.brain = "orion"` resolves to table `orion` in `scripts/ai/npcs/orion.lua`.
 
 ```lua
+local tick = require("common.tick")
+
 orion = {}
+
+local state = {
+    cadence = tick.state({
+        move = 5000,
+        speech = 2000,
+        sound = 3000,
+    }),
+}
 
 function orion.brain_loop(npc_id)
     while true do
         local npc = mobile.get(npc_id)
+
         if npc ~= nil then
-            npc:move(random.direction())
+            local now = time.now_ms()
+
+            tick.run(state.cadence, "move", now, function()
+                npc:move(random.direction())
+            end)
         end
 
         coroutine.yield(250)
@@ -296,7 +312,7 @@ NPC templates can bind a Lua brain through `brain`:
 }
 ```
 
-The value `brain: "orion"` resolves to `scripts/ai/orion.lua`.
+The value `brain: "orion"` resolves to table `orion`, loaded from `scripts/ai/npcs/orion.lua`.
 
 Real brain script (Orion the cat NPC):
 
@@ -788,11 +804,9 @@ commands_gm_set_world_light = {
 
 ```lua
 -- ai/orion.lua
--- Coroutine-based brain for a cat NPC with random movement, speech, and sounds
+-- Coroutine-based brain for a cat NPC with recurring cadences.
 
-local MOVE_INTERVAL  = 1000
-local SPEECH_INTERVAL = 2000
-local SOUND_INTERVAL  = 3000
+local tick = require("common.tick")
 
 local speeches = {
     "Meow!",
@@ -802,21 +816,27 @@ local speeches = {
 }
 
 function brain_loop(npc_id)
-    local last_move, last_speech, last_sound = 0, 0, 0
+    local cadence = tick.state({
+        move = 1000,
+        speech = 2000,
+        sound = 3000,
+    })
+
     while true do
         local now = os.clock() * 1000
-        if now - last_move >= MOVE_INTERVAL then
+
+        tick.run(cadence, "move", now, function()
             npc.random_move(npc_id)
-            last_move = now
-        end
-        if now - last_speech >= SPEECH_INTERVAL then
+        end)
+
+        tick.run(cadence, "speech", now, function()
             npc.say(npc_id, speeches[math.random(#speeches)])
-            last_speech = now
-        end
-        if now - last_sound >= SOUND_INTERVAL then
+        end)
+
+        tick.run(cadence, "sound", now, function()
             npc.play_sound(npc_id, 0xDB)
-            last_sound = now
-        end
+        end)
+
         coroutine.yield(250)
     end
 end

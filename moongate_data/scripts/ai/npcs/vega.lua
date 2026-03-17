@@ -1,13 +1,13 @@
+local tick = require("common.tick")
+
 vega = {}
 
-local MOVE_INTERVAL_MS = 1100
-local SPEECH_INTERVAL_MS = 2200
-local SOUND_INTERVAL_MS = 3200
-
 local state = {
-    last_move_ms = 0,
-    last_speech_ms = 0,
-    last_sound_ms = 0,
+    cadence = tick.state({
+        move = 1100,
+        speech = 2200,
+        sound = 3200,
+    }),
 }
 
 local MESSAGES = {
@@ -27,26 +27,23 @@ function vega.brain_loop(npc_id)
         if npc ~= nil then
             local now = time.now_ms()
 
-            if now - state.last_move_ms >= MOVE_INTERVAL_MS then
+            tick.run(state.cadence, "move", now, function()
                 npc:move(random.direction())
-                state.last_move_ms = now
-            end
+            end)
 
-            if now - state.last_speech_ms >= SPEECH_INTERVAL_MS then
+            tick.run(state.cadence, "speech", now, function()
                 local message = random.element(MESSAGES)
                 if message ~= nil then
                     npc:say(message)
                 end
-                state.last_speech_ms = now
-            end
+            end)
 
-            if now - state.last_sound_ms >= SOUND_INTERVAL_MS then
+            tick.run(state.cadence, "sound", now, function()
                 local sound_id = random.element(SOUNDS)
                 if sound_id ~= nil then
                     npc:play_sound(sound_id)
                 end
-                state.last_sound_ms = now
-            end
+            end)
         end
 
         coroutine.yield(250)

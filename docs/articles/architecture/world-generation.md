@@ -176,7 +176,7 @@ Locations use a hierarchical structure: map, category, subcategory, named locati
 }
 ```
 
-The `brain` field links to a Lua script at `scripts/ai/orion.lua`.
+The `brain` field links to table `orion`, loaded from `scripts/ai/npcs/orion.lua` through `scripts/ai/init.lua`.
 
 ### Item Template
 
