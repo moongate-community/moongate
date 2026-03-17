@@ -1,0 +1,68 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.weaponsmith",
+    "name": "Weaponsmith Vendor",
+    "category": "vendors",
+    "description": "Sell profile for basic town weaponsmith vendors.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "dagger",
+        "price": 18,
+        "maxStock": 20,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "broadsword",
+        "price": 42,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "longsword",
+        "price": 45,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "bow",
+        "price": 36,
+        "maxStock": 8,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "arrow",
+        "price": 3,
+        "maxStock": 100,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "dagger",
+        "price": 7,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "broadsword",
+        "price": 16,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "longsword",
+        "price": 18,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "bow",
+        "price": 14,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "arrow",
+        "price": 1,
+        "enabled": true
+      }
+    ]
+  }
+]
