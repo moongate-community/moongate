@@ -25,7 +25,7 @@
     "armorRating": 18,
     "fame": 600,
     "karma": -600,
-    "notoriety": "Enemy",
+    "notoriety": "CanBeAttacked",
     "brain": "None",
     "fixedEquipment": [],
     "randomEquipment": [],
@@ -58,7 +58,7 @@
     "armorRating": 40,
     "fame": 3000,
     "karma": -3000,
-    "notoriety": "Enemy",
+    "notoriety": "CanBeAttacked",
     "brain": "None",
     "fixedEquipment": [
       {

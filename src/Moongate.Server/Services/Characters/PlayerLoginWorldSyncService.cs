@@ -4,8 +4,10 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Characters;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Interaction;
 using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -23,17 +25,20 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
     private static readonly ILogger Logger = Log.ForContext<PlayerLoginWorldSyncService>();
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
+    private readonly INotorietyService _notorietyService;
     private readonly int _mobileSyncRange;
 
     public PlayerLoginWorldSyncService(
         ISpatialWorldService spatialWorldService,
         IOutgoingPacketQueue outgoingPacketQueue,
-        MoongateConfig moongateConfig
+        MoongateConfig moongateConfig,
+        INotorietyService? notorietyService = null
     )
     {
         _ = moongateConfig;
         _spatialWorldService = spatialWorldService;
         _outgoingPacketQueue = outgoingPacketQueue;
+        _notorietyService = notorietyService ?? new NotorietyService();
         _mobileSyncRange = Math.Max(
             DefaultMobileSyncRange,
             _spatialWorldService.GetUpdateBroadcastSectorRadius() * MapSectorConsts.SectorSize
@@ -208,6 +213,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
                 new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+                {
+                    ResolvedNotoriety = _notorietyService.Compute(mobileEntity, otherMobile)
+                }
             );
             _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
             stats.MobilesSent++;
@@ -303,6 +311,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
                 new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+                {
+                    ResolvedNotoriety = _notorietyService.Compute(mobileEntity, otherMobile)
+                }
             );
             _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
             stats.MobilesSent++;

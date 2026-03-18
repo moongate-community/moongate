@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.Events;
@@ -15,6 +16,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Events;
 
@@ -29,6 +31,8 @@ public sealed class DispatchEventsServiceTests
         public int LastMapId { get; private set; }
 
         public Point3D LastLocation { get; private set; } = Point3D.Zero;
+
+        public List<GameSession> PlayersInRange { get; } = [];
 
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
 
@@ -75,7 +79,13 @@ public sealed class DispatchEventsServiceTests
             int mapId,
             GameSession? excludeSession = null
         )
-            => [];
+            => [.. PlayersInRange.Where(
+                session =>
+                    session != excludeSession &&
+                    session.Character is not null &&
+                    session.Character.MapId == mapId &&
+                    session.Character.Location.InRange(location, range)
+            )];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
             => [];
@@ -136,6 +146,20 @@ public sealed class DispatchEventsServiceTests
 
         public bool TryGetByCharacterId(Serial characterId, out GameSession session)
             => Map.TryGetValue(characterId, out session!);
+    }
+
+    private sealed class DispatchEventsTestNotorietyService : INotorietyService
+    {
+        public int ComputeCallCount { get; private set; }
+
+        public Notoriety Compute(UOMobileEntity source, UOMobileEntity target)
+        {
+            ComputeCallCount++;
+
+            return target.Notoriety == Notoriety.Enemy
+                       ? Notoriety.CanBeAttacked
+                       : target.Notoriety;
+        }
     }
 
     [Test]
@@ -271,30 +295,52 @@ public sealed class DispatchEventsServiceTests
         var spatial = new DispatchEventsTestSpatialWorldService();
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessions = new DispatchEventsTestGameNetworkSessionService();
-        var service = new DispatchEventsService(spatial, queue, sessions);
+        var notoriety = new DispatchEventsTestNotorietyService();
+        var service = new DispatchEventsService(spatial, queue, sessions, notoriety);
         var mobile = new UOMobileEntity
         {
             Id = (Serial)0x00000002u,
             MapId = 1,
             Location = new(111, 222, 7),
-            IsWarMode = true
+            IsWarMode = true,
+            Notoriety = Notoriety.Enemy
         };
+        var viewerCharacter = new UOMobileEntity
+        {
+            Id = (Serial)0x00000003u,
+            MapId = 1,
+            Location = new(112, 222, 7),
+            Notoriety = Notoriety.Innocent,
+            IsPlayer = true
+        };
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var viewerSession = new GameSession(new(client))
+        {
+            CharacterId = viewerCharacter.Id,
+            Character = viewerCharacter
+        };
+        sessions.Map[viewerCharacter.Id] = viewerSession;
+        spatial.PlayersInRange.Add(viewerSession);
 
         await service.HandleAsync(new MobileWarModeChangedEvent(mobile));
+        var dequeued = queue.TryDequeue(out var outbound);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(1));
-                Assert.That(spatial.LastMapId, Is.EqualTo(1));
-                Assert.That(spatial.LastLocation, Is.EqualTo(new Point3D(111, 222, 7)));
-                Assert.That(spatial.LastPacket, Is.TypeOf<MobileMovingPacket>());
+                Assert.That(spatial.BroadcastCallCount, Is.EqualTo(0));
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.SessionId, Is.EqualTo(viewerSession.SessionId));
+                Assert.That(outbound.Packet, Is.TypeOf<MobileMovingPacket>());
+                Assert.That(queue.TryDequeue(out _), Is.False);
+                Assert.That(notoriety.ComputeCallCount, Is.EqualTo(1));
             }
         );
 
-        var packet = (MobileMovingPacket)spatial.LastPacket!;
+        var packet = (MobileMovingPacket)outbound.Packet;
         Assert.That(packet.Mobile, Is.Not.Null);
         Assert.That(packet.Mobile!.IsWarMode, Is.True);
+        Assert.That(packet.ResolvedNotoriety, Is.EqualTo(Notoriety.CanBeAttacked));
     }
 
     [Test]

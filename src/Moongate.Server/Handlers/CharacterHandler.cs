@@ -45,6 +45,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly ICombatService? _combatService;
+    private readonly INotorietyService? _notorietyService;
     private readonly ILightService? _lightService;
     private readonly IBackgroundJobService _backgroundJobService;
 
@@ -56,6 +57,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService spatialWorldService,
         ICombatService? combatService = null,
+        INotorietyService? notorietyService = null,
         ILightService? lightService = null,
         IBackgroundJobService? backgroundJobService = null
     ) : base(outgoingPacketQueue)
@@ -66,6 +68,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
         _combatService = combatService;
+        _notorietyService = notorietyService;
         _lightService = lightService;
         _backgroundJobService = backgroundJobService ?? throw new ArgumentNullException(nameof(backgroundJobService));
 
@@ -98,7 +101,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         session.CharacterId = characterId;
         session.Character = character;
         session.MoveSequence = 0;
-        session.SelfNotoriety = (byte)character.Notoriety;
+        session.SelfNotoriety = (byte)(_notorietyService?.Compute(character, character) ?? character.Notoriety);
         session.IsMounted = character.IsMounted;
         session.MoveCredit = 0;
         session.MoveTime = Environment.TickCount64;

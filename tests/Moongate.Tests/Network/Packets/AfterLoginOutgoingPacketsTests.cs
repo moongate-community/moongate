@@ -241,6 +241,23 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
+    public void MobileIncomingPacket_Write_ShouldSerializeResolvedNotorietyOverride()
+    {
+        var beholder = CreateMobile();
+        var beheld = CreateMobile();
+        beheld.Notoriety = Notoriety.Enemy;
+
+        var packet = new MobileIncomingPacket(beholder, beheld)
+        {
+            ResolvedNotoriety = Notoriety.CanBeAttacked
+        };
+
+        var data = Write(packet);
+
+        Assert.That(data[18], Is.EqualTo((byte)Notoriety.CanBeAttacked));
+    }
+
+    [Test]
     public void MobileIncomingPacket_Write_ShouldUseVirtualHairSerialsWithoutItemCollisions()
     {
         var beholder = CreateMobile();

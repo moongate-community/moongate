@@ -9,10 +9,12 @@ using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Services.Interaction;
 using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -43,6 +45,7 @@ public class MobileHandler
     private readonly int _sectorEnterSyncRadius;
     private readonly int _mobileSyncRange;
     private readonly IDispatchEventsService _dispatchEventsService;
+    private readonly INotorietyService _notorietyService;
 
     public MobileHandler(
         ISpatialWorldService spatialWorldService,
@@ -52,7 +55,8 @@ public class MobileHandler
         IGameNetworkSessionService gameNetworkSessionService,
         IOutgoingPacketQueue outgoingPacketQueue,
         MoongateConfig moongateConfig,
-        ILightService? lightService = null
+        ILightService? lightService = null,
+        INotorietyService? notorietyService = null
     )
     {
         _spatialWorldService = spatialWorldService;
@@ -62,6 +66,7 @@ public class MobileHandler
         _dispatchEventsService = dispatchEventsService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _outgoingPacketQueue = outgoingPacketQueue;
+        _notorietyService = notorietyService ?? new NotorietyService();
         _sectorEnterSyncRadius = Math.Max(0, moongateConfig.Spatial.SectorEnterSyncRadius);
         _mobileSyncRange = Math.Max(
             DefaultMobileSyncRange,
@@ -383,6 +388,9 @@ public class MobileHandler
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
                 new MobileIncomingPacket(mobileEntity, otherMobile, true, true)
+                {
+                    ResolvedNotoriety = _notorietyService.Compute(mobileEntity, otherMobile)
+                }
             );
             _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
             WornItemPacketHelper.EnqueueVisibleWornItems(

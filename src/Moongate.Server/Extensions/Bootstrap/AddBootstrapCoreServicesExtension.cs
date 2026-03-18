@@ -107,6 +107,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IBulletinBoardService, BulletinBoardService>(Reuse.Singleton);
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
+        container.Register<INotorietyService, NotorietyService>(Reuse.Singleton);
         container.Register<ICombatService, CombatService>(Reuse.Singleton);
         container.Register<IDeathService, DeathService>(Reuse.Singleton);
         container.Register<MobileCombatSoundResolver>(Reuse.Singleton);

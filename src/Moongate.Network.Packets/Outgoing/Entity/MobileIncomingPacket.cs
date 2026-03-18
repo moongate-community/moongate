@@ -27,6 +27,8 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
 
     public bool NewMobileIncoming { get; set; } = true;
 
+    public Notoriety? ResolvedNotoriety { get; set; }
+
     public MobileIncomingPacket()
         : base(0x78) { }
 
@@ -65,7 +67,7 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
         writer.Write((byte)Beheld.Direction);
         writer.Write(Beheld.SkinHue);
         writer.Write(Beheld.GetPacketFlags(StygianAbyss));
-        writer.Write((byte)Beheld.Notoriety);
+        writer.Write((byte)(ResolvedNotoriety ?? Beheld.Notoriety));
 
         foreach (var (layer, item) in Beheld.EquippedItemReferences)
         {
