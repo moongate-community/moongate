@@ -33,6 +33,65 @@ public class UOMobileEntityTests
                 Assert.That(item.ContainerPosition.Y, Is.EqualTo(0));
                 Assert.That(item.EquippedMobileId, Is.EqualTo(mobile.Id));
                 Assert.That(item.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(1));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
+    public void HydrateEquipmentRuntime_WhenWeaponEquipped_ShouldSetDisplayedWeaponDamage()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000078
+        };
+        var scimitar = new UOItemEntity
+        {
+            Id = (Serial)0x40000078,
+            ItemId = 0x13B6,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.OneHanded,
+            CombatStats = new()
+            {
+                DamageMin = 13,
+                DamageMax = 15
+            }
+        };
+
+        mobile.HydrateEquipmentRuntime([scimitar]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(13));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(15));
+            }
+        );
+    }
+
+    [Test]
+    public void HydrateEquipmentRuntime_WhenNoWeaponEquipped_ShouldUseUnarmedDisplayedDamage()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000079
+        };
+        var shirt = new UOItemEntity
+        {
+            Id = (Serial)0x40000079,
+            ItemId = 0x1517,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.Shirt
+        };
+
+        mobile.HydrateEquipmentRuntime([shirt]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(1));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(4));
             }
         );
     }

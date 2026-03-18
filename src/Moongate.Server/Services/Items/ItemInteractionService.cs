@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -114,6 +115,11 @@ public class ItemInteractionService : IItemInteractionService
         if (item.IsContainer)
         {
             Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
+
+            if (CorpsePacketHelper.IsCorpse(item))
+            {
+                Enqueue(session, new CorpseClothingPacket(item));
+            }
         }
 
         return true;

@@ -17,6 +17,8 @@ public class UOMobileEntity : IMobileEntity
 {
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
+    private const int DefaultUnarmedMinWeaponDamage = 1;
+    private const int DefaultUnarmedMaxWeaponDamage = 4;
     private const uint MountVirtualSerialMask = 0x3EEEEEEE;
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
     private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
@@ -691,6 +693,7 @@ public class UOMobileEntity : IMobileEntity
         item.ContainerPosition = Point2D.Zero;
         item.EquippedMobileId = Id;
         item.EquippedLayer = layer;
+        RecalculateDisplayedWeaponDamage();
     }
 
     /// <summary>
@@ -701,6 +704,7 @@ public class UOMobileEntity : IMobileEntity
         EquippedItemIds[layer] = itemId;
         _equippedItemReferences.Remove(layer);
         _equippedItemsRuntime.Remove(layer);
+        RecalculateDisplayedWeaponDamage();
     }
 
     /// <summary>
@@ -896,6 +900,8 @@ public class UOMobileEntity : IMobileEntity
             _equippedItemReferences[layer.Value] = new(item.Id, item.ItemId, item.Hue);
             _equippedItemsRuntime[layer.Value] = item;
         }
+
+        RecalculateDisplayedWeaponDamage();
     }
 
     /// <summary>
@@ -1257,7 +1263,55 @@ public class UOMobileEntity : IMobileEntity
             item.EquippedLayer = null;
         }
 
+        RecalculateDisplayedWeaponDamage();
+
         return removed;
+    }
+
+    private void RecalculateDisplayedWeaponDamage()
+    {
+        if (TryGetEquippedWeaponWithCombatStats(out var weapon))
+        {
+            MinWeaponDamage = Math.Max(0, weapon.CombatStats?.DamageMin ?? DefaultUnarmedMinWeaponDamage);
+            MaxWeaponDamage = Math.Max(MinWeaponDamage, weapon.CombatStats?.DamageMax ?? DefaultUnarmedMaxWeaponDamage);
+
+            return;
+        }
+
+        MinWeaponDamage = DefaultUnarmedMinWeaponDamage;
+        MaxWeaponDamage = DefaultUnarmedMaxWeaponDamage;
+    }
+
+    private bool TryGetEquippedWeaponWithCombatStats(out UOItemEntity weapon)
+    {
+        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.OneHanded, out weapon))
+        {
+            return true;
+        }
+
+        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.TwoHanded, out weapon))
+        {
+            return true;
+        }
+
+        weapon = null!;
+
+        return false;
+    }
+
+    private bool TryGetEquippedWeaponWithCombatStats(ItemLayerType layer, out UOItemEntity weapon)
+    {
+        if (_equippedItemsRuntime.TryGetValue(layer, out var equippedItem) &&
+            equippedItem.CombatStats is { DamageMin: > 0, DamageMax: > 0 })
+        {
+            weapon = equippedItem;
+
+            return true;
+        }
+
+        weapon = null!;
+
+        return false;
     }
 
     private static SkillEntry CreateSkillEntry(SkillInfo skillInfo)

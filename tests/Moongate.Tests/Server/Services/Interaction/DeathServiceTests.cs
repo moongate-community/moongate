@@ -365,6 +365,107 @@ public sealed class DeathServiceTests
     }
 
     [Test]
+    public async Task ForceDeathAsync_WhenNpcIsAlive_ShouldMarkDeadAndCreateCorpse()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var config = new MoongateConfig
+        {
+            Game = new MoongateGameConfig
+            {
+                CorpseDecaySeconds = 300
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000030u,
+            Name = "Zombie",
+            Body = 0x0003,
+            MapId = 1,
+            Location = new(90, 190, 5),
+            Hits = 30,
+            MaxHits = 30,
+            IsAlive = true
+        };
+        mobileService.Mobiles[victim.Id] = victim;
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            config
+        );
+
+        var handled = await service.ForceDeathAsync(victim, null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(victim.IsAlive, Is.False);
+                Assert.That(victim.Hits, Is.EqualTo(0));
+                Assert.That(itemService.Items.Values.Any(item => item.ItemId == 0x2006), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task ForceDeathAsync_WhenPlayerIsAlive_ShouldMarkDeadAndPersistWithoutCorpse()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var config = new MoongateConfig
+        {
+            Game = new MoongateGameConfig
+            {
+                CorpseDecaySeconds = 300
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000031u,
+            Name = "Tommy",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(95, 195, 0),
+            Hits = 42,
+            MaxHits = 42,
+            IsAlive = true
+        };
+        mobileService.Mobiles[victim.Id] = victim;
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            config
+        );
+
+        var handled = await service.ForceDeathAsync(victim, null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(victim.IsAlive, Is.False);
+                Assert.That(victim.Hits, Is.EqualTo(0));
+                Assert.That(mobileService.Mobiles[victim.Id].IsAlive, Is.False);
+                Assert.That(itemService.Items.Values.Any(item => item.ItemId == 0x2006), Is.False);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleDeathAsync_WhenNpcDies_ShouldCreateCorpseMoveLootScheduleDecayAndBroadcastAnimation()
     {
         var mobileService = new InMemoryMobileService();

@@ -148,6 +148,13 @@ public sealed class CombatServiceTests
     {
         public List<(UOMobileEntity Victim, UOMobileEntity? Killer)> Calls { get; } = [];
 
+        public Task<bool> ForceDeathAsync(
+            UOMobileEntity victim,
+            UOMobileEntity? killer,
+            CancellationToken cancellationToken = default
+        )
+            => HandleDeathAsync(victim, killer, cancellationToken);
+
         public Task<bool> HandleDeathAsync(
             UOMobileEntity victim,
             UOMobileEntity? killer,

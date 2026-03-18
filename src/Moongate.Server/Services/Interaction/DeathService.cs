@@ -61,6 +61,20 @@ public sealed class DeathService : IDeathService
         _luaBrainRunner = luaBrainRunner;
     }
 
+    public async Task<bool> ForceDeathAsync(
+        UOMobileEntity victim,
+        UOMobileEntity? killer,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(victim);
+
+        victim.Hits = 0;
+        victim.IsAlive = false;
+
+        return await HandleDeathAsync(victim, killer, cancellationToken);
+    }
+
     public async Task<bool> HandleDeathAsync(
         UOMobileEntity victim,
         UOMobileEntity? killer,

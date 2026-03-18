@@ -210,6 +210,56 @@ public class ItemInteractionServiceTests
     }
 
     [Test]
+    public async Task HandleDoubleClickAsync_WhenCorpseContainer_ShouldEnqueueCorpseClothingPacket()
+    {
+        TileData.ItemTable[0x2006] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new TestItemService();
+        var bookService = new TestBookService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = new ItemInteractionService(itemService, eventBus, bookService, queue);
+        var corpseId = (Serial)0x40000031u;
+        var chestId = (Serial)0x40000032u;
+        var corpse = new UOItemEntity
+        {
+            Id = corpseId,
+            ItemId = 0x2006,
+            ParentContainerId = (Serial)0x40000001u
+        };
+        corpse.SetCustomBoolean("is_corpse", true);
+        var chest = new UOItemEntity
+        {
+            Id = chestId,
+            ItemId = 0x1415,
+            ParentContainerId = corpseId
+        };
+        corpse.AddItem(chest, Point2D.Zero);
+        corpse.Items[0].SetCustomInteger("corpse_equipped_layer", (byte)ItemLayerType.InnerTorso);
+        itemService.ItemsById[corpseId] = corpse;
+        itemService.ItemsById[chestId] = chest;
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await service.HandleDoubleClickAsync(session, new() { TargetSerial = corpseId });
+
+        var packetTypes = new List<Type>();
+
+        while (queue.TryDequeue(out var outbound))
+        {
+            packetTypes.Add(outbound.Packet.GetType());
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(packetTypes, Does.Contain(typeof(DrawContainerAndAddItemCombinedPacket)));
+                Assert.That(packetTypes, Does.Contain(typeof(CorpseClothingPacket)));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleDoubleClickAsync_WhenDoubleClickItemWithoutScriptHook_ShouldNotPublishItemDoubleClickEvent()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
