@@ -64,4 +64,32 @@ public sealed class LuaMobileRef
 
         return recipients > 0;
     }
+
+    public bool Yell(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Yell)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Whisper(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Whisper)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
 }

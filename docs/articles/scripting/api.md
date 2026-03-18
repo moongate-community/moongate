@@ -81,14 +81,21 @@ local npc = mobile.get(serial)
 if npc then
     npc:say("Welcome, traveler.")
     npc:emote("*growls softly*")
+    npc:yell("Intruder!")
+    npc:whisper("Keep your voice down.")
 end
 ```
 
 Runtime behavior:
 
 - player `UnicodeSpeech` is broadcast to nearby players in world range
-- incoming player text wrapped as `*text*` is coerced to `Emote`
+- incoming player text supports shorthand coercion:
+  - `*text*` -> `Emote`
+  - `!text` -> `Yell`
+  - `;text` -> `Whisper`
 - `npc:emote(text)` sends `ChatMessageType.Emote` overhead speech
+- `npc:yell(text)` sends `ChatMessageType.Yell` overhead speech
+- `npc:whisper(text)` sends `ChatMessageType.Whisper` overhead speech
 - current speech ranges are:
   - `Whisper` -> `1`
   - `Regular` / `Emote` -> `12`

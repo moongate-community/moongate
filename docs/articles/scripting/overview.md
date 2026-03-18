@@ -166,10 +166,16 @@ NPC scripts can now emit real world emotes through the mobile proxy:
 local npc = mobile.get(npc_id)
 if npc then
     npc:emote("*stares at you*")
+    npc:yell("Back away!")
+    npc:whisper("...they are watching.")
 end
 ```
 
-Player-side world emotes follow the same speech pipeline. If the incoming player text is wrapped as `*text*`, Moongate treats it as an emote automatically before broadcasting it to nearby players and NPC listeners.
+Player-side world speech follows the same pipeline. Incoming shorthand is normalized before broadcast to nearby players and NPC listeners:
+
+- `*text*` -> emote
+- `!text` -> yell
+- `;text` -> whisper
 
 ### Item Script Example
 

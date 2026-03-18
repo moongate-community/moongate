@@ -89,7 +89,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x73` | Ping Message | C -> S | `PingMessagePacket` | `handler` | `PingPongHandler` | Keepalive |
 | `0xC8` | Client View Range | C -> S | `ClientViewRangePacket` | `handler` | `ClientViewRangeHandler` | View range update |
 | `0x34` | Get Player Status | C -> S | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
-| `0xAD` | Unicode Speech | C -> S | `UnicodeSpeechPacket` | `handler` | `SpeechHandler` | In-game commands and world speech/emotes; `*text*` is coerced to emote |
+| `0xAD` | Unicode Speech | C -> S | `UnicodeSpeechPacket` | `handler` | `SpeechHandler` | In-game commands and world speech/emotes; `*text*` -> emote, `!text` -> yell, `;text` -> whisper |
 | `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `ChatHandler` | Opens classic conference chat and creates runtime chat user |
 | `0xB3` | Chat Text | C -> S | `ChatTextPacket` | `handler` | `ChatHandler` | Conference chat actions (`message`, `join`, `pm`, `ignore`, `ops`, `voice`, `kick`, `whois`, `emote`) |
 | `0x6C` | Target Cursor Commands | C -> S | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Target callbacks |

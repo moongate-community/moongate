@@ -394,6 +394,34 @@ public sealed class LuaMobileProxy
         return recipients > 0;
     }
 
+    public bool Yell(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Yell)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Whisper(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Whisper)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
     public void SetEffect(
         int itemId,
         int speed = 10,

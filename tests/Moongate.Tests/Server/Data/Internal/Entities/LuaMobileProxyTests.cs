@@ -820,6 +820,62 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
+    public void Yell_ShouldUseSpeakAsMobileAsyncWithYellMessageType()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService { SpeakAsMobileResult = 2 };
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
+
+        var sent = proxy.Yell("HEY");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True);
+                Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
+                Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
+                Assert.That(speechService.LastSpokenText, Is.EqualTo("HEY"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Yell));
+            }
+        );
+    }
+
+    [Test]
+    public void Whisper_ShouldUseSpeakAsMobileAsyncWithWhisperMessageType()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService { SpeakAsMobileResult = 2 };
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
+
+        var sent = proxy.Whisper("psst");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True);
+                Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
+                Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
+                Assert.That(speechService.LastSpokenText, Is.EqualTo("psst"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Whisper));
+            }
+        );
+    }
+
+    [Test]
     public void SetEffect_ShouldPublishMobilePlayEffectEvent()
     {
         var mobile = new UOMobileEntity

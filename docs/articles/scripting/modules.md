@@ -44,6 +44,8 @@ if npc then
   npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
   npc:say("Hello there.")
   npc:emote("*looks furious*")
+  npc:yell("Leave now!")
+  npc:whisper("Not so loud...")
 end
 ```
 
@@ -51,8 +53,13 @@ Speech-related runtime notes:
 
 - `npc:say(text)` emits regular world speech
 - `npc:emote(text)` emits world emote speech with `ChatMessageType.Emote`
+- `npc:yell(text)` emits world yell speech with `ChatMessageType.Yell`
+- `npc:whisper(text)` emits world whisper speech with `ChatMessageType.Whisper`
 - player incoming speech uses the same world speech path
-- incoming player text wrapped as `*text*` is treated as an emote automatically
+- incoming player text shorthand is normalized automatically:
+  - `*text*` -> emote
+  - `!text` -> yell
+  - `;text` -> whisper
 
 `combat` runtime helpers:
 
