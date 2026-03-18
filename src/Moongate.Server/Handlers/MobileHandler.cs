@@ -449,7 +449,7 @@ public class MobileHandler
 
         await _speechService.SendMessageFromServerAsync(
             session,
-            $"Sector: {newSector.SectorX} {newSector.SectorY} Items: {itemCount} e Mobiles: {mobileCount}"
+            $"[DEBUG] Sector: {newSector.SectorX} {newSector.SectorY} Items: {itemCount} e Mobiles: {mobileCount}"
         );
 
         for (var sectorX = newSector.SectorX - _sectorEnterSyncRadius;
