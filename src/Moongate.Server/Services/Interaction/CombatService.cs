@@ -88,6 +88,10 @@ public sealed class CombatService : ICombatService
 
         await PersistMobileAsync(attacker, cancellationToken);
         await PublishWarModeChangedAsync(attacker, cancellationToken);
+        await _gameEventBusService.PublishAsync(
+            new CombatStartedEvent(attacker.Id, defender.Id, attacker.MapId, attacker.Location, attacker),
+            cancellationToken
+        );
         SendChangeCombatant(attacker.Id, defender.Id);
         ScheduleSwing(attacker.Id, delay);
 
@@ -375,6 +379,7 @@ public sealed class CombatService : ICombatService
                     attacker.MapId,
                     attacker.Location,
                     damage,
+                    attacker,
                     defender
                 )
             );
@@ -386,7 +391,9 @@ public sealed class CombatService : ICombatService
                     attacker.Id,
                     defender.Id,
                     attacker.MapId,
-                    attacker.Location
+                    attacker.Location,
+                    attacker,
+                    defender
                 )
             );
         }

@@ -458,6 +458,16 @@ internal static class SnapshotMapper
             }
         }
 
+        if (snapshot.SoundSlots is { Length: > 0 } && snapshot.SoundIds is { Length: > 0 })
+        {
+            var soundLength = Math.Min(snapshot.SoundSlots.Length, snapshot.SoundIds.Length);
+
+            for (var i = 0; i < soundLength; i++)
+            {
+                entity.Sounds[(MobileSoundType)snapshot.SoundSlots[i]] = snapshot.SoundIds[i];
+            }
+        }
+
         return entity;
     }
 
@@ -504,6 +514,17 @@ internal static class SnapshotMapper
                                }
                            )
                            .ToArray();
+        var soundEntries = entity.Sounds
+                                 .OrderBy(static pair => (byte)pair.Key)
+                                 .ToArray();
+        var soundSlots = new byte[soundEntries.Length];
+        var soundIds = new int[soundEntries.Length];
+
+        for (var i = 0; i < soundEntries.Length; i++)
+        {
+            soundSlots[i] = (byte)soundEntries[i].Key;
+            soundIds[i] = soundEntries[i].Value;
+        }
 
         return new()
         {
@@ -632,6 +653,8 @@ internal static class SnapshotMapper
                 DefenseChanceIncrease = entity.ModifierCaps.DefenseChanceIncrease
             },
             Skills = skills,
+            SoundSlots = soundSlots,
+            SoundIds = soundIds,
             BaseLuck = entity.BaseLuck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,
             BackpackId = (uint)entity.BackpackId,

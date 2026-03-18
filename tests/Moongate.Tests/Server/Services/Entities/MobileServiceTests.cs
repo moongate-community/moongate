@@ -111,6 +111,11 @@ public class MobileServiceTests
 
         public List<Serial> Unregistered { get; } = [];
 
+        public List<(Serial MobileId, LuaBrainCombatHookContext Context)> CombatHooks { get; } = [];
+
+        public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
+            => CombatHooks.Add((mobileId, combatContext));
+
         public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
         {
             _ = mobileId;

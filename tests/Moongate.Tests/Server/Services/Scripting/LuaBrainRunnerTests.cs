@@ -173,6 +173,93 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
+    public async Task TickAllAsync_WhenCombatHitHookIsQueued_ShouldDispatchOnAttack()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x640,
+            Name = "fighter",
+            BrainId = "fighter_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        runner.Register(npc, npc.BrainId);
+        runner.EnqueueCombatHook(
+            npc.Id,
+            new LuaBrainCombatHookContext(
+                LuaBrainCombatHookType.Attack,
+                (Serial)0x777,
+                new Dictionary<string, object?>
+                {
+                    ["damage"] = 6
+                }
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var attackCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_attack");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(attackCall.FunctionName, Is.EqualTo("on_attack"));
+                Assert.That(attackCall.Args.Length, Is.EqualTo(2));
+                Assert.That(attackCall.Args[0], Is.EqualTo((uint)(Serial)0x777));
+                Assert.That(attackCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenCombatMissHookIsQueued_ShouldDispatchOnMissedByAttack()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x650,
+            Name = "fighter",
+            BrainId = "fighter_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        runner.Register(npc, npc.BrainId);
+        runner.EnqueueCombatHook(
+            npc.Id,
+            new LuaBrainCombatHookContext(
+                LuaBrainCombatHookType.MissedByAttack,
+                (Serial)0x778,
+                new Dictionary<string, object?>()
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var missCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_missed_by_attack");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(missCall.FunctionName, Is.EqualTo("on_missed_by_attack"));
+                Assert.That(missCall.Args.Length, Is.EqualTo(2));
+                Assert.That(missCall.Args[0], Is.EqualTo((uint)(Serial)0x778));
+                Assert.That(missCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_WhenMobileMovesIntoNpcRange_ShouldInvokeOnEventInRange()
     {
         using var temp = new TempDirectory();

@@ -97,6 +97,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         mobile.RecalculateMaxStats();
         InitializeTemplateSkills(mobile, template);
+        mobile.Sounds = new(template.Sounds);
 
         if (template.MaxHits > 0)
         {

@@ -119,6 +119,25 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void Sounds_ShouldDefaultEmptyAndResolveStoredEntries()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.Sounds, Is.Empty);
+        Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out _), Is.False);
+
+        mobile.Sounds[MobileSoundType.Attack] = 0x023B;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out var soundId), Is.True);
+                Assert.That(soundId, Is.EqualTo(0x023B));
+            }
+        );
+    }
+
+    [Test]
     public void ApplyAndRemoveRuntimeModifier_ShouldUpdateEffectiveValues()
     {
         var mobile = new UOMobileEntity

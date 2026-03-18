@@ -5,6 +5,7 @@ using Moongate.Core.Types;
 using Moongate.Email.Data;
 using Moongate.Email.Services;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Internal.Interaction;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
@@ -107,6 +108,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
         container.Register<ICombatService, CombatService>(Reuse.Singleton);
+        container.Register<MobileCombatSoundResolver>(Reuse.Singleton);
         container.Register<IPlayerSellBuyService, PlayerSellBuyService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);

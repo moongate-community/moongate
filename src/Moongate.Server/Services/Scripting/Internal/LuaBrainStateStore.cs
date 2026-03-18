@@ -34,6 +34,17 @@ internal sealed class LuaBrainStateStore
         }
     }
 
+    public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
+    {
+        lock (_sync)
+        {
+            if (_states.TryGetValue(mobileId, out var state))
+            {
+                state.PendingCombatHooks.Enqueue(combatContext);
+            }
+        }
+    }
+
     public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range)
     {
         lock (_sync)

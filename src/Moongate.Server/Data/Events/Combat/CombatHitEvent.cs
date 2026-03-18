@@ -15,6 +15,7 @@ public readonly record struct CombatHitEvent(
     int MapId,
     Point3D Location,
     int Damage,
+    UOMobileEntity Attacker,
     UOMobileEntity Defender
 ) : IGameEvent
 {
@@ -24,7 +25,8 @@ public readonly record struct CombatHitEvent(
         int mapId,
         Point3D location,
         int damage,
+        UOMobileEntity attacker,
         UOMobileEntity defender
     )
-        : this(GameEventBase.CreateNow(), attackerId, defenderId, mapId, location, damage, defender) { }
+        : this(GameEventBase.CreateNow(), attackerId, defenderId, mapId, location, damage, attacker, defender) { }
 }

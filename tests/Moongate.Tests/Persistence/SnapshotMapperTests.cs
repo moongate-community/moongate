@@ -131,6 +131,36 @@ public class SnapshotMapperTests
     }
 
     [Test]
+    public void ToMobileSnapshot_ShouldPreserveSounds()
+    {
+        var entity = new UOMobileEntity
+        {
+            Id = (Serial)0x102u,
+            Name = "sounds",
+            Location = new(0, 0, 0),
+            Sounds =
+            {
+                [MobileSoundType.StartAttack] = 0x0135,
+                [MobileSoundType.Attack] = 0x023B,
+                [MobileSoundType.Defend] = 0x0140
+            }
+        };
+
+        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
+        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored.Sounds, Has.Count.EqualTo(3));
+                Assert.That(restored.Sounds[MobileSoundType.StartAttack], Is.EqualTo(0x0135));
+                Assert.That(restored.Sounds[MobileSoundType.Attack], Is.EqualTo(0x023B));
+                Assert.That(restored.Sounds[MobileSoundType.Defend], Is.EqualTo(0x0140));
+            }
+        );
+    }
+
+    [Test]
     public void ToMobileSnapshot_ShouldPreserveEquippedItems_InLayerOrder()
     {
         var entity = new UOMobileEntity

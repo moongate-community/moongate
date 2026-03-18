@@ -31,6 +31,10 @@ internal static class LuaBrainLifecycle
             state.OnSpeechFunction = null;
             state.OnDeathFunction = null;
             state.OnSpawnFunction = null;
+            state.OnAttackFunction = null;
+            state.OnMissedAttackFunction = null;
+            state.OnAttackedFunction = null;
+            state.OnMissedByAttackFunction = null;
             state.OnInRangeFunction = null;
             state.OnOutRangeFunction = null;
             state.OnGetContextMenusFunction = null;
@@ -43,6 +47,10 @@ internal static class LuaBrainLifecycle
         state.OnSpeechFunction = hooks.OnSpeechFunction;
         state.OnDeathFunction = hooks.OnDeathFunction;
         state.OnSpawnFunction = hooks.OnSpawnFunction;
+        state.OnAttackFunction = hooks.OnAttackFunction;
+        state.OnMissedAttackFunction = hooks.OnMissedAttackFunction;
+        state.OnAttackedFunction = hooks.OnAttackedFunction;
+        state.OnMissedByAttackFunction = hooks.OnMissedByAttackFunction;
         state.OnInRangeFunction = hooks.OnInRangeFunction;
         state.OnOutRangeFunction = hooks.OnOutRangeFunction;
         state.OnGetContextMenusFunction = hooks.OnGetContextMenusFunction;

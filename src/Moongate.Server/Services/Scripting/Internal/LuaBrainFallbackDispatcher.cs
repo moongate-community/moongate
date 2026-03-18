@@ -22,6 +22,30 @@ internal static class LuaBrainFallbackDispatcher
             scriptEngineService.CallFunction("on_event", "spawn", 0u, payload);
         }
 
+        while (state.PendingCombatHooks.Count > 0)
+        {
+            var combat = state.PendingCombatHooks.Dequeue();
+            var eventName = combat.HookType switch
+            {
+                LuaBrainCombatHookType.Attack => "attack",
+                LuaBrainCombatHookType.MissedAttack => "missed_attack",
+                LuaBrainCombatHookType.Attacked => "attacked",
+                LuaBrainCombatHookType.MissedByAttack => "missed_by_attack",
+                _ => "attack"
+            };
+            var hookName = combat.HookType switch
+            {
+                LuaBrainCombatHookType.Attack => "on_attack",
+                LuaBrainCombatHookType.MissedAttack => "on_missed_attack",
+                LuaBrainCombatHookType.Attacked => "on_attacked",
+                LuaBrainCombatHookType.MissedByAttack => "on_missed_by_attack",
+                _ => "on_attack"
+            };
+
+            scriptEngineService.CallFunction("on_event", eventName, (uint)combat.OtherMobileId, combat.Payload);
+            scriptEngineService.CallFunction(hookName, (uint)combat.OtherMobileId, combat.Payload);
+        }
+
         while (state.PendingSpeech.Count > 0)
         {
             var speech = state.PendingSpeech.Dequeue();

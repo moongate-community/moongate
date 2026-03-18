@@ -354,6 +354,11 @@ public class UOMobileEntity : IMobileEntity
     public Dictionary<UOSkillName, SkillEntry> Skills { get; set; } = [];
 
     /// <summary>
+    /// Gets or sets runtime sound slots copied from the mobile template.
+    /// </summary>
+    public Dictionary<MobileSoundType, int> Sounds { get; set; } = [];
+
+    /// <summary>
     /// Gets or sets the base fire resistance.
     /// </summary>
     public int FireResistance
@@ -963,6 +968,12 @@ public class UOMobileEntity : IMobileEntity
 
         return true;
     }
+
+    /// <summary>
+    /// Tries to get a configured sound id for the requested mobile sound slot.
+    /// </summary>
+    public bool TryGetSound(MobileSoundType type, out int soundId)
+        => Sounds.TryGetValue(type, out soundId);
 
     /// <summary>
     /// Removes a runtime modifier delta from the aggregated runtime modifiers.

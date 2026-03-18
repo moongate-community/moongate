@@ -146,6 +146,12 @@ public sealed class ContextMenuServiceTests
 
         public bool HandleSelectionResult { get; } = true;
 
+        public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
+        {
+            _ = mobileId;
+            _ = combatContext;
+        }
+
         public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
         {
             _ = mobileId;

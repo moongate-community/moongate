@@ -79,7 +79,7 @@ public sealed class CombatHitStatusRefreshHandlerTests
         spatial.SessionsInRange.Add(nearSession);
         spatial.SessionsInRange.Add(farSession);
 
-        await handler.HandleAsync(new CombatHitEvent((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, defender));
+        await handler.HandleAsync(new CombatHitEvent((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, new UOMobileEntity(), defender));
 
         Assert.Multiple(
             () =>
@@ -110,7 +110,7 @@ public sealed class CombatHitStatusRefreshHandlerTests
             IsPlayer = true
         };
 
-        await handler.HandleAsync(new CombatHitEvent((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, defender));
+        await handler.HandleAsync(new CombatHitEvent((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, new UOMobileEntity(), defender));
 
         Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(0));
     }
