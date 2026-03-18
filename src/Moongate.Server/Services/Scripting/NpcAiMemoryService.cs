@@ -6,7 +6,7 @@ using Moongate.UO.Data.Ids;
 namespace Moongate.Server.Services.Scripting;
 
 /// <summary>
-/// Persists long-term NPC memories as plain text files under templates/npc_memories.
+/// Persists long-term NPC memories as plain text files under runtime/npc_memories.
 /// </summary>
 public sealed class NpcAiMemoryService : INpcAiMemoryService
 {
@@ -15,7 +15,7 @@ public sealed class NpcAiMemoryService : INpcAiMemoryService
     public NpcAiMemoryService(DirectoriesConfig directoriesConfig)
     {
         ArgumentNullException.ThrowIfNull(directoriesConfig);
-        _memoriesRootPath = Path.Combine(directoriesConfig[DirectoryType.Templates], "npc_memories");
+        _memoriesRootPath = Path.Combine(directoriesConfig.Root, "runtime", "npc_memories");
     }
 
     public string LoadOrCreate(Serial npcId, string npcName)

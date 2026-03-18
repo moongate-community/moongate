@@ -48,6 +48,7 @@
   - `BenchmarkDotNet.Artifacts/`
   - `artifacts/`
   - runtime/cache/log/save/database folders under `moongate_data/`
+  - runtime NPC memory files under `moongate_data/templates/npc_memories/*.txt` except `.gitkeep`
 
 ## C# Conventions Summary
 - Follow `CODE_CONVENTION.md` in full.
@@ -98,4 +99,5 @@
 ## Repo-Specific Notes
 - Changes under `moongate_data/` often need matching updates in Lua scripts, templates, tests, or docs.
 - Treat asset names, template names, and script references as contract points. Keep them synchronized.
+- NPC memory files under `moongate_data/templates/npc_memories/` are runtime-local state and must never be committed. Keep only `.gitkeep` tracked.
 - Keep documentation grounded in current runtime behavior, not intended future behavior.

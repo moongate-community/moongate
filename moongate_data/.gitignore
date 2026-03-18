@@ -7,3 +7,7 @@ save/
 .luarc/
 scripts/definitions.lua
 scripts/.luarc.json
+
+# Runtime NPC memories stay local; keep only the directory placeholder in git
+templates/npc_memories/*.txt
+!templates/npc_memories/.gitkeep

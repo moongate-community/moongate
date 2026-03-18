@@ -17,7 +17,7 @@ public sealed class NpcAiMemoryServiceTests
         var serial = (Serial)0x12314u;
 
         var memory = service.LoadOrCreate(serial, "Lilly");
-        var expectedPath = Path.Combine(tempDirectory.Path, "templates", "npc_memories", "0x012314.txt");
+        var expectedPath = Path.Combine(tempDirectory.Path, "runtime", "npc_memories", "0x012314.txt");
 
         Assert.Multiple(
             () =>
