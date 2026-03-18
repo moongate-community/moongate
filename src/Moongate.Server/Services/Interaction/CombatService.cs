@@ -213,10 +213,35 @@ public sealed class CombatService : ICombatService
         }
 
         var rolledDamage = Random.Shared.Next(minDamage, maxDamage + 1);
-        var bonusMultiplier = 1.0 + Math.Max(0, attacker.EffectiveDamageIncrease) / 100.0;
 
-        return Math.Max(1, (int)Math.Round(rolledDamage * bonusMultiplier, MidpointRounding.AwayFromZero));
+        return Math.Max(1, ScaleDamageAosLike(attacker, rolledDamage));
     }
+
+    private static int ScaleDamageAosLike(UOMobileEntity attacker, int rolledDamage)
+    {
+        var strengthBonus = GetBonus(attacker.EffectiveStrength, 0.300, 100.0, 5.00);
+        var anatomyBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Anatomy), 0.500, 100.0, 5.00);
+        var tacticsBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Tactics), 0.625, 100.0, 6.25);
+        var damageIncreaseBonus = Math.Clamp(Math.Max(0, attacker.EffectiveDamageIncrease), 0, 100) / 100.0;
+        var totalBonus = strengthBonus + anatomyBonus + tacticsBonus + damageIncreaseBonus;
+
+        return (int)(rolledDamage + rolledDamage * totalBonus);
+    }
+
+    private static double GetBonus(double value, double scalar, double threshold, double offset)
+    {
+        var bonus = value * scalar;
+
+        if (value >= threshold)
+        {
+            bonus += offset;
+        }
+
+        return bonus / 100.0;
+    }
+
+    private static double GetSkillValue(UOMobileEntity mobile, UOSkillName skillName)
+        => (mobile.GetSkill(skillName)?.Value ?? 0.0) / 10.0;
 
     private async Task<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
     {
