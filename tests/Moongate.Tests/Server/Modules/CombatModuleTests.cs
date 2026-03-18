@@ -3,6 +3,7 @@ using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules;
 using Moongate.UO.Data.Bodies;
@@ -18,6 +19,35 @@ namespace Moongate.Tests.Server.Modules;
 
 public sealed class CombatModuleTests
 {
+    private sealed class RecordingCombatService : ICombatService
+    {
+        public Serial LastAttackerId { get; private set; }
+        public Serial LastDefenderId { get; private set; }
+        public int ClearCalls { get; private set; }
+
+        public Task<bool> ClearCombatantAsync(Serial attackerId, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            LastAttackerId = attackerId;
+            ClearCalls++;
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> TrySetCombatantAsync(
+            Serial attackerId,
+            Serial defenderId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            LastAttackerId = attackerId;
+            LastDefenderId = defenderId;
+
+            return Task.FromResult(true);
+        }
+    }
+
     private sealed class CombatTestGameEventBusService : IGameEventBusService
     {
         public List<IGameEvent> PublishedEvents { get; } = [];
@@ -108,28 +138,27 @@ public sealed class CombatModuleTests
     }
 
     [Test]
-    public void SetTarget_AndClearTarget_ShouldUpdateCustomProperty()
+    public void SetTarget_AndClearTarget_ShouldDelegateToCombatService()
     {
         var spatial = new CombatTestSpatialWorldService();
         var npc = new UOMobileEntity { Id = (Serial)0x401u, MapId = 1, Location = new(100, 100, 0) };
         var target = new UOMobileEntity { Id = (Serial)0x402u, IsPlayer = true, MapId = 1, Location = new(101, 100, 0) };
         spatial.AddMobile(npc);
         spatial.AddMobile(target);
-        var module = new CombatModule(spatial, new CombatTestGameEventBusService());
+        var combatService = new RecordingCombatService();
+        var module = new CombatModule(spatial, new CombatTestGameEventBusService(), combatService);
 
         var set = module.SetTarget((uint)npc.Id, (uint)target.Id);
-        var hasTarget = npc.TryGetCustomInteger("ai_target_serial", out var targetValue);
         var cleared = module.ClearTarget((uint)npc.Id);
-        var hasAfterClear = npc.TryGetCustomInteger("ai_target_serial", out _);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(set, Is.True);
-                Assert.That(hasTarget, Is.True);
-                Assert.That(targetValue, Is.EqualTo((long)(uint)target.Id));
                 Assert.That(cleared, Is.True);
-                Assert.That(hasAfterClear, Is.False);
+                Assert.That(combatService.LastAttackerId, Is.EqualTo(npc.Id));
+                Assert.That(combatService.LastDefenderId, Is.EqualTo(target.Id));
+                Assert.That(combatService.ClearCalls, Is.EqualTo(1));
             }
         );
     }
@@ -152,7 +181,7 @@ public sealed class CombatModuleTests
         spatial.AddMobile(npc);
         spatial.AddMobile(target);
         var eventBus = new CombatTestGameEventBusService();
-        var module = new CombatModule(spatial, eventBus);
+        var module = new CombatModule(spatial, eventBus, new RecordingCombatService());
 
         var swung = module.Swing((uint)npc.Id, (uint)target.Id);
 

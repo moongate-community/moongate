@@ -304,6 +304,31 @@ public class UOMobileEntity : IMobileEntity
     public int Weight { get; set; }
 
     /// <summary>
+    /// Gets or sets the current combat target.
+    /// </summary>
+    public Serial CombatantId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the scheduled next combat resolution time in UTC.
+    /// </summary>
+    public DateTime? NextCombatAtUtc { get; set; }
+
+    /// <summary>
+    /// Gets or sets the last time this mobile participated in combat in UTC.
+    /// </summary>
+    public DateTime? LastCombatAtUtc { get; set; }
+
+    /// <summary>
+    /// Gets or sets recent incoming aggression records for this mobile.
+    /// </summary>
+    public List<AggressorInfo> Aggressors { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets recent outgoing aggression records for this mobile.
+    /// </summary>
+    public List<AggressorInfo> Aggressed { get; set; } = [];
+
+    /// <summary>
     /// Gets or sets the carrying capacity used by the modern status packet.
     /// </summary>
     public int MaxWeight { get; set; }
@@ -499,6 +524,15 @@ public class UOMobileEntity : IMobileEntity
     /// Gets or sets whether the mobile is in war mode.
     /// </summary>
     public bool IsWarMode { get; set; }
+
+    /// <summary>
+    /// Gets or sets the legacy warmode alias backed by <see cref="IsWarMode" />.
+    /// </summary>
+    public bool Warmode
+    {
+        get => IsWarMode;
+        set => IsWarMode = value;
+    }
 
     /// <summary>
     /// Gets or sets the hunger level.
@@ -707,6 +741,15 @@ public class UOMobileEntity : IMobileEntity
     /// <param name="item">Equipped item entity.</param>
     public void EquipItem(ItemLayerType layer, UOItemEntity item)
         => AddEquippedItem(layer, item);
+
+    /// <summary>
+    /// Clears the current combat state for this mobile.
+    /// </summary>
+    public void ClearCombatState()
+    {
+        CombatantId = Serial.Zero;
+        NextCombatAtUtc = null;
+    }
 
     /// <summary>
     /// Resolves the current body value, falling back to race defaults when needed.
@@ -957,6 +1000,35 @@ public class UOMobileEntity : IMobileEntity
         {
             RuntimeModifiers = null;
         }
+    }
+
+    /// <summary>
+    /// Refreshes or appends a recent aggression relationship.
+    /// </summary>
+    public void RefreshAggressor(
+        Serial attackerId,
+        Serial defenderId,
+        DateTime nowUtc,
+        bool isCriminal = false,
+        bool canReportMurder = false
+    )
+    {
+        RefreshAggressorList(Aggressors, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+        RefreshAggressorList(Aggressed, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+    }
+
+    /// <summary>
+    /// Removes expired aggression entries from both aggression collections.
+    /// </summary>
+    public void ExpireAggressors(DateTime nowUtc, TimeSpan timeout)
+    {
+        if (timeout <= TimeSpan.Zero)
+        {
+            return;
+        }
+
+        ExpireAggressorList(Aggressors, nowUtc, timeout);
+        ExpireAggressorList(Aggressed, nowUtc, timeout);
     }
 
     /// <summary>
@@ -1220,6 +1292,31 @@ public class UOMobileEntity : IMobileEntity
         }
 
         return total;
+    }
+
+    private static void ExpireAggressorList(List<AggressorInfo> entries, DateTime nowUtc, TimeSpan timeout)
+        => entries.RemoveAll(entry => nowUtc - entry.LastCombatAtUtc >= timeout);
+
+    private static void RefreshAggressorList(
+        List<AggressorInfo> entries,
+        Serial attackerId,
+        Serial defenderId,
+        DateTime nowUtc,
+        bool isCriminal,
+        bool canReportMurder
+    )
+    {
+        for (var i = 0; i < entries.Count; i++)
+        {
+            if (entries[i].AttackerId == attackerId && entries[i].DefenderId == defenderId)
+            {
+                entries[i] = new(attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+
+                return;
+            }
+        }
+
+        entries.Add(new(attackerId, defenderId, nowUtc, isCriminal, canReportMurder));
     }
 
     private static bool IsZero(MobileModifiers modifiers)

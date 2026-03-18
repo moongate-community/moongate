@@ -38,6 +38,87 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void CombatState_ShouldDefaultToNoCombatantAndEmptyAggressorLists()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.CombatantId, Is.EqualTo(Serial.Zero));
+                Assert.That(mobile.Warmode, Is.False);
+                Assert.That(mobile.NextCombatAtUtc, Is.Null);
+                Assert.That(mobile.LastCombatAtUtc, Is.Null);
+                Assert.That(mobile.Aggressors, Is.Empty);
+                Assert.That(mobile.Aggressed, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public void WarmodeAlias_ShouldMapToIsWarMode()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Warmode = true
+        };
+
+        Assert.That(mobile.IsWarMode, Is.True);
+
+        mobile.IsWarMode = false;
+
+        Assert.That(mobile.Warmode, Is.False);
+    }
+
+    [Test]
+    public void RefreshAggressor_ShouldAddAndUpdateExistingEntries()
+    {
+        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
+        var later = now.AddSeconds(30);
+        var attackerId = (Serial)0x00000010;
+        var defenderId = (Serial)0x00000020;
+        var mobile = new UOMobileEntity();
+
+        mobile.RefreshAggressor(attackerId, defenderId, now);
+        mobile.RefreshAggressor(attackerId, defenderId, later, isCriminal: true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressors[0].LastCombatAtUtc, Is.EqualTo(later));
+                Assert.That(mobile.Aggressors[0].IsCriminal, Is.True);
+                Assert.That(mobile.Aggressed[0].LastCombatAtUtc, Is.EqualTo(later));
+            }
+        );
+    }
+
+    [Test]
+    public void ExpireAggressors_ShouldRemoveTimedOutEntries()
+    {
+        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
+        var mobile = new UOMobileEntity();
+
+        mobile.Aggressors.Add(new((Serial)0x10, (Serial)0x20, now.AddMinutes(-3), false, false));
+        mobile.Aggressors.Add(new((Serial)0x11, (Serial)0x21, now.AddSeconds(-30), false, false));
+        mobile.Aggressed.Add(new((Serial)0x12, (Serial)0x22, now.AddMinutes(-4), false, false));
+        mobile.Aggressed.Add(new((Serial)0x13, (Serial)0x23, now.AddSeconds(-10), false, false));
+
+        mobile.ExpireAggressors(now, TimeSpan.FromMinutes(2));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressors[0].AttackerId, Is.EqualTo((Serial)0x11));
+                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressed[0].AttackerId, Is.EqualTo((Serial)0x13));
+            }
+        );
+    }
+
+    [Test]
     public void ApplyAndRemoveRuntimeModifier_ShouldUpdateEffectiveValues()
     {
         var mobile = new UOMobileEntity

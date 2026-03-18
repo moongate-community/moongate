@@ -93,7 +93,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x00` | Legacy create character | C -> S | `?Packet=0x00` | `CreateCharacterPacket` | `parse-only` | Legacy character creation path is not wired |
 | `0x01` | Disconnect notification | C -> S | `?Packet=0x01` | `DisconnectNotificationPacket` | `parse-only` | Session shutdown is not modeled via gameplay listener |
 | `0x03` | Talk request | C -> S | `?Packet=0x03` | `TalkRequestPacket` | `parse-only` | Legacy speech path not wired; Unicode path is used |
-| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `parse-only` | No combat targeting flow yet |
+| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, enters warmode, schedules melee swing |
 | `0x12` | Skill or action use request | C -> S | `?Packet=0x12` | `RequestSkillUsePacket` | `parse-only` | Skill-use flow still missing |
 | `0x2C` | Resurrection menu | both | `?Packet=0x2C` | `ResurrectionMenuPacket` | `parse-only` | No resurrect handler yet |
 | `0x3B` | Buy items | C -> S | `?Packet=0x3B` | `BuyItemsPacket` | `parse-only` | Vendor buy flow missing |
@@ -152,7 +152,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0x2A` | Blood | S -> C | `?Packet=0x2A` | `missing` | No blood effect packet |
 | `0x2B` | God mode / path packet family | S -> C | `?Packet=0x2B` | `missing` | Not targeted |
 | `0x2D` | Mobile attributes | S -> C | `?Packet=0x2D` | `missing` | No dedicated mob-attributes packet |
-| `0x2F` | Fight occurring | S -> C | `?Packet=0x2F` | `missing` | Combat animation/status flow incomplete |
+| `0x2F` | Fight occurring | S -> C | `?Packet=0x2F` | `FightOccurringPacket` | `outgoing` | `CombatService` | Sent when a scheduled melee swing is attempted |
 | `0x30` | Attack ok | S -> C | `?Packet=0x30` | `missing` | Combat target confirmation not implemented |
 | `0x31` | Attack ended | S -> C | `?Packet=0x31` | `missing` | Combat target clear not implemented |
 | `0x32` | Legacy unknown | S -> C | `?Packet=0x32` | `missing` | Left undocumented/unused in Moongate |
@@ -207,7 +207,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0xA3` | Client prompt / speech family | S -> C | `?Packet=0xA3` | `missing` | Not modeled |
 | `0xA5` | Open web browser | S -> C | `?Packet=0xA5` | `missing` | Not used |
 | `0xA6` | Tip window | S -> C | `?Packet=0xA6` | `missing` | Tip UI absent |
-| `0xAA` | Open paperdoll alt / skill family | S -> C | `?Packet=0xAA` | `missing` | Not modeled |
+| `0xAA` | Allow/refuse attack | S -> C | `?Packet=0xAA` | `ChangeCombatantPacket` | `outgoing` | `CombatService` | Current combatant serial or `Serial.Zero` |
 | `0xAB` | Text entry dialog | S -> C | `?Packet=0xAB` | `missing` | Text entry flow absent |
 | `0xAC` | Server list alt / game family | S -> C | `?Packet=0xAC` | `missing` | Not modeled |
 | `0xAF` | Death animation | S -> C | `?Packet=0xAF` | `missing` | Packet class exists in Moongate, but no documented runtime flow yet |

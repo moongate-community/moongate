@@ -15,6 +15,7 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -43,6 +44,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly ICombatService? _combatService;
     private readonly ILightService? _lightService;
     private readonly IBackgroundJobService _backgroundJobService;
 
@@ -53,6 +55,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IGameEventBusService gameEventBusService,
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService spatialWorldService,
+        ICombatService? combatService = null,
         ILightService? lightService = null,
         IBackgroundJobService? backgroundJobService = null
     ) : base(outgoingPacketQueue)
@@ -62,6 +65,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _combatService = combatService;
         _lightService = lightService;
         _backgroundJobService = backgroundJobService ?? throw new ArgumentNullException(nameof(backgroundJobService));
 
@@ -202,6 +206,12 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         }
 
         session.Character.IsWarMode = requestWarModePacket.IsWarMode;
+
+        if (!requestWarModePacket.IsWarMode)
+        {
+            _combatService?.ClearCombatantAsync(session.Character.Id).GetAwaiter().GetResult();
+        }
+
         Enqueue(session, new WarModePacket(session.Character));
 
         return true;

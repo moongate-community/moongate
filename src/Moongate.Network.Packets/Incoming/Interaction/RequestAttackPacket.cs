@@ -12,9 +12,20 @@ namespace Moongate.Network.Packets.Incoming.Interaction;
 /// </summary>
 public class RequestAttackPacket : BaseGameNetworkPacket
 {
+    public uint TargetId { get; private set; }
+
     public RequestAttackPacket()
         : base(0x05, 5) { }
 
     protected override bool ParsePayload(ref SpanReader reader)
-        => true;
+    {
+        if (reader.Remaining != 4)
+        {
+            return false;
+        }
+
+        TargetId = reader.ReadUInt32();
+
+        return reader.Remaining == 0;
+    }
 }

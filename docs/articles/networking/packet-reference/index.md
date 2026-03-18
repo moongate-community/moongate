@@ -51,7 +51,7 @@ Generated packet pages: `201`
 | `0x2C` | Resurrection Menu | `implemented` | Both | 2 bytes | ResurrectionMenuPacket | [0x2C.md](0x2C.md) |
 | `0x2D` | Mob Attributes | `placeholder` | Server | 17 bytes | None | [0x2D.md](0x2D.md) |
 | `0x2E` | Worn Item | `implemented` | Server | 15 bytes | WornItemPacket | [0x2E.md](0x2E.md) |
-| `0x2F` | Fight Occuring | `placeholder` | Server | 10 bytes | None | [0x2F.md](0x2F.md) |
+| `0x2F` | Fight Occuring | `implemented` | Server | 10 bytes | FightOccurringPacket | [0x2F.md](0x2F.md) |
 | `0x30` | Attack Ok | `placeholder` | Server | 5 | None | [0x30.md](0x30.md) |
 | `0x31` | Attack Ended | `placeholder` | Server | 1 byte | None | [0x31.md](0x31.md) |
 | `0x32` | Unknown | `placeholder` | Server | 2 Bytes | None | [0x32.md](0x32.md) |
@@ -147,7 +147,7 @@ Generated packet pages: `201`
 | `0xA7` | Request Tip/Notice Window | `implemented` | Client | 4 Bytes | RequestTipNoticeWindowPacket | [0xA7.md](0xA7.md) |
 | `0xA8` | Game Server List | `implemented` | Server | Variable | ServerListPacket | [0xA8.md](0xA8.md) |
 | `0xA9` | Characters / Starting Locations | `implemented` | Server | Variable | CharactersStartingLocationsPacket | [0xA9.md](0xA9.md) |
-| `0xAA` | Allow/Refuse Attack | `placeholder` | Server | 5 Bytes | None | [0xAA.md](0xAA.md) |
+| `0xAA` | Allow/Refuse Attack | `implemented` | Server | 5 Bytes | ChangeCombatantPacket | [0xAA.md](0xAA.md) |
 | `0xAB` | Gump Text Entry Dialog | `placeholder` | Server | Variable | None | [0xAB.md](0xAB.md) |
 | `0xAC` | Gump Text Entry Dialog Reply | `placeholder` | Client | Variable | None | [0xAC.md](0xAC.md) |
 | `0xAD` | Unicode/Ascii speech request | `implemented` | Client | Variable | UnicodeSpeechPacket | [0xAD.md](0xAD.md) |

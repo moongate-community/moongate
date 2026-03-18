@@ -1125,4 +1125,59 @@ public sealed class LuaMobileProxyTests
 
         Assert.That(proxy.IsMountable, Is.True);
     }
+
+    [Test]
+    public void SetTarget_ShouldUpdateCombatantStateOnUnderlyingMobile()
+    {
+        var attacker = new UOMobileEntity { Id = (Serial)0x1234u };
+        var defender = new UOMobileEntity { Id = (Serial)0x5678u };
+        var proxy = new LuaMobileProxy(
+            attacker,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+        var target = new LuaMobileProxy(
+            defender,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        proxy.SetTarget(target);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(proxy.HasTarget(), Is.True);
+                Assert.That(attacker.CombatantId, Is.EqualTo(defender.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void ClearTarget_ShouldResetCombatantStateOnUnderlyingMobile()
+    {
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            CombatantId = (Serial)0x5678u
+        };
+        var proxy = new LuaMobileProxy(
+            attacker,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        proxy.ClearTarget();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(proxy.HasTarget(), Is.False);
+                Assert.That(attacker.CombatantId, Is.EqualTo(Serial.Zero));
+            }
+        );
+    }
 }
