@@ -91,7 +91,15 @@ Current core modules for behavior scripts:
 
 - `perception` (distance, nearby friend/enemy lookup, range checks)
 - `steering` (follow/evade/wander/stop movement primitives)
-- `combat` (targeting and swing hooks)
+- `combat` (target selection into the server combat loop; `set_target` / `clear_target`)
+
+`combat.set_target(...)` does not calculate hit or damage in Lua.
+It delegates to `CombatService`, which owns:
+
+- warmode and `CombatantId`
+- swing scheduling through `TimerWheelService`
+- melee hit/damage resolution
+- region/map harmful-action gate on actual attack attempt
 - `npc_state` (typed state variables)
 - `time`, `random`, `mobile` (general runtime helpers)
 

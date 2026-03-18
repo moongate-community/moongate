@@ -115,7 +115,7 @@ Moongate v2 is **actively in development**. The following features are implement
 
 ### Planned
 
-- [ ] Combat mechanics
+- [x] Combat v1 baseline (melee auto-attack, combatant state, warmode, timer-wheel scheduling)
 - [ ] Skill system
 - [ ] Item system completion (vendor/trade/economy semantics)
 - [ ] House/shelter system

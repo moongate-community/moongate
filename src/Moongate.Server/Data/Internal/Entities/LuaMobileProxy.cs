@@ -76,7 +76,10 @@ public sealed class LuaMobileProxy
         => _ = spellId;
 
     public void ClearTarget()
-        => _target = null;
+    {
+        _target = null;
+        Mobile.CombatantId = Moongate.UO.Data.Ids.Serial.Zero;
+    }
 
     public bool DisableWar()
     {
@@ -203,7 +206,7 @@ public sealed class LuaMobileProxy
     }
 
     public bool HasTarget()
-        => _target is not null;
+        => Mobile.CombatantId != Moongate.UO.Data.Ids.Serial.Zero || _target is not null;
 
     public bool IsAlive()
         => Mobile.IsAlive;
@@ -418,7 +421,10 @@ public sealed class LuaMobileProxy
     }
 
     public void SetTarget(LuaMobileProxy? target)
-        => _target = target;
+    {
+        _target = target;
+        Mobile.CombatantId = target?.Mobile.Id ?? Moongate.UO.Data.Ids.Serial.Zero;
+    }
 
     public bool SetWarMode(bool isEnabled)
         => isEnabled ? EnableWar() : DisableWar();

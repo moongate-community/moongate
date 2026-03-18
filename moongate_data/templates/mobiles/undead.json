@@ -1,0 +1,34 @@
+[
+  {
+    "type": "mobile",
+    "id": "zombie_npc",
+    "category": "monster",
+    "description": "Static zombie template for spawn and combat testing.",
+    "tags": [
+      "monster",
+      "undead",
+      "zombie",
+      "test"
+    ],
+    "body": "0x0003",
+    "skinHue": 0,
+    "hairHue": 0,
+    "hairStyle": 0,
+    "strength": 58,
+    "dexterity": 40,
+    "intelligence": 33,
+    "hits": 35,
+    "mana": 0,
+    "stamina": 40,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 18,
+    "fame": 600,
+    "karma": -600,
+    "notoriety": "Enemy",
+    "brain": "None",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a zombie"
+  }
+]

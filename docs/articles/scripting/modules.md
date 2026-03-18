@@ -13,6 +13,7 @@ The following modules are available in the default server runtime:
 - `log`
 - `command`
 - `speech`
+- `combat`
 - `mobile`
 - `item`
 - `door`
@@ -42,6 +43,14 @@ local npc = mobile.get(serial)
 if npc then
   npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
 end
+```
+
+`combat` runtime helpers:
+
+```lua
+combat.set_target(npcSerial, targetSerial) -- hands control to the server combat loop
+combat.clear_target(npcSerial)             -- clears combatant and pending swing
+combat.swing(npcSerial, targetSerial)      -- animation helper only, not authoritative combat
 ```
 
 `gump` supports two modes:
