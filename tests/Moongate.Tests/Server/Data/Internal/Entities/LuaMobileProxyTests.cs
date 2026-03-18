@@ -35,6 +35,8 @@ public sealed class LuaMobileProxyTests
 
         public string? LastSpokenText { get; private set; }
 
+        public ChatMessageType LastMessageType { get; private set; } = ChatMessageType.Regular;
+
         public int SpeakAsMobileResult { get; set; } = 1;
 
         public Task<int> BroadcastFromServerAsync(
@@ -115,6 +117,7 @@ public sealed class LuaMobileProxyTests
             LastSpeakAsMobileCallCount++;
             LastSpeaker = speaker;
             LastSpokenText = text;
+            LastMessageType = messageType;
 
             return Task.FromResult(SpeakAsMobileResult);
         }
@@ -783,6 +786,35 @@ public sealed class LuaMobileProxyTests
                 Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
                 Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
                 Assert.That(speechService.LastSpokenText, Is.EqualTo("miaow"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Regular));
+            }
+        );
+    }
+
+    [Test]
+    public void Emote_ShouldUseSpeakAsMobileAsyncWithEmoteMessageType()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService { SpeakAsMobileResult = 2 };
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
+
+        var sent = proxy.Emote("*grrr*");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True);
+                Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
+                Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
+                Assert.That(speechService.LastSpokenText, Is.EqualTo("*grrr*"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Emote));
             }
         );
     }

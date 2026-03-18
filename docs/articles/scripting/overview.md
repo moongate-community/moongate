@@ -158,6 +158,19 @@ function orion.on_speech(ctx)
 end
 ```
 
+### World Emotes
+
+NPC scripts can now emit real world emotes through the mobile proxy:
+
+```lua
+local npc = mobile.get(npc_id)
+if npc then
+    npc:emote("*stares at you*")
+end
+```
+
+Player-side world emotes follow the same speech pipeline. If the incoming player text is wrapped as `*text*`, Moongate treats it as an emote automatically before broadcasting it to nearby players and NPC listeners.
+
 ### Item Script Example
 
 `item.script_id = "apple"` resolves to table `apple` in `scripts/items/apple.lua`.

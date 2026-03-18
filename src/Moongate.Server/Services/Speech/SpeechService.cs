@@ -22,6 +22,9 @@ namespace Moongate.Server.Services.Speech;
 public sealed class SpeechService : ISpeechService
 {
     private const int DefaultNpcHearingRange = 12;
+    private const int DefaultSpeechRange = 12;
+    private const int WhisperSpeechRange = 1;
+    private const int YellSpeechRange = 18;
     private readonly ICommandSystemService _commandSystemService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -130,16 +133,28 @@ public sealed class SpeechService : ISpeechService
             return null;
         }
 
-        await PublishSpeechHeardEventsAsync(session, text, speechPacket.MessageType, cancellationToken);
+        if (session.Character is null)
+        {
+            return null;
+        }
 
-        return SpeechMessageFactory.CreateFromSpeaker(
+        var effectiveMessageType = ResolveIncomingMessageType(speechPacket.MessageType, text);
+        var speechRange = ResolveSpeechRange(effectiveMessageType);
+
+        await _dispatchEventsService.DispatchMobileSpeechAsync(
             session.Character,
-            speechPacket.MessageType,
+            text,
+            speechRange,
+            effectiveMessageType,
             speechPacket.Hue,
             speechPacket.Font,
             speechPacket.Language,
-            text
+            cancellationToken
         );
+
+        await PublishSpeechHeardEventsAsync(session, text, effectiveMessageType, cancellationToken);
+
+        return null;
     }
 
     public async Task<bool> SendMessageFromServerAsync(
@@ -265,4 +280,28 @@ public sealed class SpeechService : ISpeechService
             );
         }
     }
+
+    private static ChatMessageType ResolveIncomingMessageType(ChatMessageType messageType, string text)
+    {
+        if (messageType != ChatMessageType.Regular)
+        {
+            return messageType;
+        }
+
+        return IsAsteriskWrappedEmote(text) ? ChatMessageType.Emote : messageType;
+    }
+
+    private static bool IsAsteriskWrappedEmote(string text)
+        => text.Length >= 3 &&
+           text[0] == '*' &&
+           text[^1] == '*' &&
+           !string.IsNullOrWhiteSpace(text[1..^1]);
+
+    private static int ResolveSpeechRange(ChatMessageType messageType)
+        => messageType switch
+        {
+            ChatMessageType.Whisper => WhisperSpeechRange,
+            ChatMessageType.Yell => YellSpeechRange,
+            _ => DefaultSpeechRange
+        };
 }
