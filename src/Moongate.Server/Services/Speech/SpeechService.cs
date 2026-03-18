@@ -139,6 +139,7 @@ public sealed class SpeechService : ISpeechService
         }
 
         var effectiveMessageType = ResolveIncomingMessageType(speechPacket.MessageType, text);
+        text = NormalizeIncomingText(effectiveMessageType, text);
         var speechRange = ResolveSpeechRange(effectiveMessageType);
 
         await _dispatchEventsService.DispatchMobileSpeechAsync(
@@ -288,8 +289,26 @@ public sealed class SpeechService : ISpeechService
             return messageType;
         }
 
-        return IsAsteriskWrappedEmote(text) ? ChatMessageType.Emote : messageType;
+        if (IsAsteriskWrappedEmote(text))
+        {
+            return ChatMessageType.Emote;
+        }
+
+        return text[0] switch
+        {
+            '!' when text.Length > 1 => ChatMessageType.Yell,
+            ';' when text.Length > 1 => ChatMessageType.Whisper,
+            _ => messageType
+        };
     }
+
+    private static string NormalizeIncomingText(ChatMessageType messageType, string text)
+        => messageType switch
+        {
+            ChatMessageType.Yell when text[0] == '!' => text[1..].TrimStart(),
+            ChatMessageType.Whisper when text[0] == ';' => text[1..].TrimStart(),
+            _ => text
+        };
 
     private static bool IsAsteriskWrappedEmote(string text)
         => text.Length >= 3 &&
