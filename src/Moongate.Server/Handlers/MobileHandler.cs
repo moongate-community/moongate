@@ -344,7 +344,9 @@ public class MobileHandler
     private void SyncLoadedSectorForPlayer(
         GameSession session,
         UOMobileEntity mobileEntity,
-        MapSector? targetSector
+        MapSector? targetSector,
+        Point3D visibleCenter,
+        int visibleRange
     )
     {
         if (targetSector is null)
@@ -356,6 +358,7 @@ public class MobileHandler
         {
             if (item.ParentContainerId != Serial.Zero ||
                 item.EquippedMobileId != Serial.Zero ||
+                !visibleCenter.InRange(item.Location, visibleRange) ||
                 !ItemVisibilityHelper.CanSessionSeeItem(session, item))
             {
                 continue;
@@ -366,14 +369,16 @@ public class MobileHandler
 
         foreach (var otherMobile in targetSector.GetMobiles())
         {
-            if (otherMobile.Id == mobileEntity.Id || otherMobile.RiderMobileId != Serial.Zero)
+            if (otherMobile.Id == mobileEntity.Id ||
+                otherMobile.RiderMobileId != Serial.Zero ||
+                !visibleCenter.InRange(otherMobile.Location, visibleRange))
             {
                 continue;
             }
 
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
-                new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+                new MobileIncomingPacket(mobileEntity, otherMobile, true, true)
             );
             _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(otherMobile, 1));
             WornItemPacketHelper.EnqueueVisibleWornItems(
@@ -425,7 +430,9 @@ public class MobileHandler
                         sectorX,
                         sectorY,
                         newLocation.Z
-                    )
+                    ),
+                    newLocation,
+                    session.ViewRange
                 );
             }
 
@@ -462,7 +469,9 @@ public class MobileHandler
                         sectorX,
                         sectorY,
                         newLocation.Z
-                    )
+                    ),
+                    newLocation,
+                    session.ViewRange
                 );
             }
         }

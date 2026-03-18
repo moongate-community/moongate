@@ -98,11 +98,27 @@ public sealed class MobileModule
             return false;
         }
 
-        var mounted = _mobileService.TryMountAsync((Serial)riderId, (Serial)mountId).GetAwaiter().GetResult();
+        var riderSerial = (Serial)riderId;
+        var mountSerial = (Serial)mountId;
+        var rider = ResolveRiderForMount(riderSerial);
+        var mount = TryResolveRuntimeMobile(mountSerial) ??
+                    _mobileService.GetAsync(mountSerial).GetAwaiter().GetResult();
+
+        if (rider is not null)
+        {
+            _mobileService.CreateOrUpdateAsync(rider).GetAwaiter().GetResult();
+        }
+
+        if (mount is not null)
+        {
+            _mobileService.CreateOrUpdateAsync(mount).GetAwaiter().GetResult();
+        }
+
+        var mounted = _mobileService.TryMountAsync(riderSerial, mountSerial).GetAwaiter().GetResult();
 
         if (mounted)
         {
-            RefreshMountedSession((Serial)riderId, (Serial)mountId, true);
+            RefreshMountedSession(riderSerial, mountSerial, true);
         }
 
         return mounted;
@@ -183,6 +199,17 @@ public sealed class MobileModule
         }
 
         return null;
+    }
+
+    private UOMobileEntity? ResolveRiderForMount(Serial riderId)
+    {
+        if (_gameNetworkSessionService.TryGetByCharacterId(riderId, out var session) && session.Character is not null)
+        {
+            return session.Character;
+        }
+
+        return TryResolveRuntimeMobile(riderId) ??
+               _mobileService?.GetAsync(riderId).GetAwaiter().GetResult();
     }
 
     private void RefreshMountedSession(Serial riderId, Serial mountId, bool isMounted)

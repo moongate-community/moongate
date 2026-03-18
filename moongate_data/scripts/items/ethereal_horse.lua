@@ -5,9 +5,11 @@ local function resolve_mount(token, rider)
     local mount_id = tonumber(token:get_prop(MOUNT_MOBILE_ID_PROP) or 0)
     if mount_id ~= nil and mount_id > 0 then
         local existing_mount = mobile.get(mount_id)
-        if existing_mount ~= nil then
+        if existing_mount ~= nil and existing_mount.is_mountable then
             return existing_mount
         end
+
+        token:set_prop(MOUNT_MOBILE_ID_PROP, 0)
     end
 
     local spawned_mount = mobile.spawn(MOUNT_TEMPLATE_ID, {
@@ -58,7 +60,7 @@ local function toggle_mount(ctx)
         mount:teleport(rider.map_id, rider.location_x, rider.location_y, rider.location_z)
     end
 
-    mobile.try_mount(rider_serial, mount.serial)
+    mobile.try_mount(rider.serial, mount.serial)
 end
 
 items_ethereal_horse = {

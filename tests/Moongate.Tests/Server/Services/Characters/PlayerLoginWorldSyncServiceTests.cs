@@ -160,7 +160,7 @@ public sealed class PlayerLoginWorldSyncServiceTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var session = CreateSession(playerId);
         session.AccountType = AccountType.Regular;
-        var spawnLocation = new Point3D(132, 132, 0);
+        var spawnLocation = new Point3D(143, 132, 0);
         var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
         var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
         var sector = new MapSector(1, sectorX, sectorY);
@@ -208,7 +208,7 @@ public sealed class PlayerLoginWorldSyncServiceTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var session = CreateSession(playerId);
 
-        var spawnLocation = new Point3D(132, 132, 0);
+        var spawnLocation = new Point3D(143, 132, 0);
         var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
         var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
         var centerSector = new MapSector(1, centerSectorX, centerSectorY);
@@ -225,7 +225,7 @@ public sealed class PlayerLoginWorldSyncServiceTests
             }
         );
 
-        var outerLocation = new Point3D(spawnLocation.X + MapSectorConsts.SectorSize * 2, spawnLocation.Y, 0);
+        var outerLocation = new Point3D((centerSectorX + 2) << MapSectorConsts.SectorShift, spawnLocation.Y, 0);
         var outerSectorX = outerLocation.X >> MapSectorConsts.SectorShift;
         var outerSectorY = outerLocation.Y >> MapSectorConsts.SectorShift;
         var outerSector = new MapSector(1, outerSectorX, outerSectorY);
@@ -284,6 +284,80 @@ public sealed class PlayerLoginWorldSyncServiceTests
                             .ToList();
 
         Assert.That(objectPackets.Select(packet => packet.Serial), Contains.Item(outerItemId));
+    }
+
+    [Test]
+    public async Task SyncAsync_ShouldNotRefillItemsOutsideSessionViewRange()
+    {
+        var playerId = (Serial)0x00004021u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        session.ViewRange = 5;
+
+        var spawnLocation = new Point3D(132, 132, 0);
+        var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
+
+        var outerLocation = new Point3D(spawnLocation.X + MapSectorConsts.SectorSize * 2, spawnLocation.Y, 0);
+        var outerSectorX = outerLocation.X >> MapSectorConsts.SectorShift;
+        var outerSectorY = outerLocation.Y >> MapSectorConsts.SectorShift;
+        var outerItemId = (Serial)0x40000093u;
+        var outerSector = new MapSector(1, outerSectorX, outerSectorY);
+        outerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = outerItemId,
+                Name = "outer-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = outerLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService
+        {
+            NearbyItems =
+            [
+                new()
+                {
+                    Id = outerItemId,
+                    Name = "outer-item",
+                    ItemId = 0x0EED,
+                    ParentContainerId = Serial.Zero,
+                    EquippedMobileId = Serial.Zero,
+                    Location = outerLocation,
+                    MapId = 1
+                }
+            ]
+        };
+        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
+        spatial.SectorsByCoordinate[(1, outerSectorX, outerSectorY)] = outerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue);
+        var objectPackets = packets
+                            .Where(packet => packet.Packet is ObjectInformationPacket)
+                            .Select(packet => (ObjectInformationPacket)packet.Packet)
+                            .ToList();
+
+        Assert.That(objectPackets.Select(packet => packet.Serial), Does.Not.Contain(outerItemId));
     }
 
     [Test]

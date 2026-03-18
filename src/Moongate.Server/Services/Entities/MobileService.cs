@@ -100,6 +100,11 @@ public sealed class MobileService : IMobileService
     {
         if (riderId == Serial.Zero || mountId == Serial.Zero || riderId == mountId)
         {
+            _logger.Debug(
+                "TryMountAsync rejected invalid ids Rider={RiderId} Mount={MountId}",
+                riderId,
+                mountId
+            );
             return false;
         }
 
@@ -108,16 +113,38 @@ public sealed class MobileService : IMobileService
 
         if (rider is null || mount is null)
         {
+            _logger.Debug(
+                "TryMountAsync missing entities RiderFound={RiderFound} MountFound={MountFound} Rider={RiderId} Mount={MountId}",
+                rider is not null,
+                mount is not null,
+                riderId,
+                mountId
+            );
             return false;
         }
 
         if (!mount.IsMountable)
         {
+            _logger.Debug(
+                "TryMountAsync rejected non-mountable target Rider={RiderId} Mount={MountId} MountedDisplayItemId={MountedDisplayItemId}",
+                riderId,
+                mountId,
+                ResolveMountedDisplayItemId(mount)
+            );
             return false;
         }
 
         if (rider.MapId != mount.MapId || !rider.Location.InRange(mount.Location, MountInteractionRange))
         {
+            _logger.Debug(
+                "TryMountAsync rejected range/map Rider={RiderId} Mount={MountId} RiderMap={RiderMap} MountMap={MountMap} RiderLocation={RiderLocation} MountLocation={MountLocation}",
+                riderId,
+                mountId,
+                rider.MapId,
+                mount.MapId,
+                rider.Location,
+                mount.Location
+            );
             return false;
         }
 
@@ -128,6 +155,15 @@ public sealed class MobileService : IMobileService
             mount.RiderMobileId != Serial.Zero
         )
         {
+            _logger.Debug(
+                "TryMountAsync rejected occupied state Rider={RiderId} Mount={MountId} RiderMountedMobileId={RiderMountedMobileId} RiderMobileId={RiderMobileId} MountMountedMobileId={MountMountedMobileId} MountRiderMobileId={MountRiderMobileId}",
+                riderId,
+                mountId,
+                rider.MountedMobileId,
+                rider.RiderMobileId,
+                mount.MountedMobileId,
+                mount.RiderMobileId
+            );
             return false;
         }
 
@@ -137,6 +173,13 @@ public sealed class MobileService : IMobileService
 
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(rider, cancellationToken);
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mount, cancellationToken);
+
+        _logger.Debug(
+            "TryMountAsync linked Rider={RiderId} Mount={MountId} MountedDisplayItemId={MountedDisplayItemId}",
+            riderId,
+            mountId,
+            rider.MountedDisplayItemId
+        );
 
         return true;
     }

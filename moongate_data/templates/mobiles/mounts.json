@@ -3,7 +3,7 @@
     "type": "mobile",
     "id": "ethereal_horse_mount",
     "category": "mount",
-    "description": "Personal horse used by ethereal mount tokens.",
+    "description": "Personal horse used by mount tokens.",
     "tags": ["mount", "horse", "ethereal"],
     "body": "0x00E2",
     "skinHue": 0,
@@ -19,12 +19,12 @@
     "params": {
       "mounted_display_item_id": {
         "type": "string",
-        "value": "0x3EAA"
+        "value": "0x3EA0"
       }
     },
     "fixedEquipment": [],
     "randomEquipment": [],
-    "name": "ethereal horse",
-    "title": "an ethereal horse"
+    "name": "horse",
+    "title": "a horse"
   }
 ]

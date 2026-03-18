@@ -7,6 +7,7 @@ using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Utils;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
@@ -104,7 +105,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
                         mobileEntity,
                         ResolveLoadedSector(loadedSectors, mobileEntity.MapId, sectorX, sectorY, mobileEntity.Location.Z),
                         sentItemSerials,
-                        sentMobileSerials
+                        sentMobileSerials,
+                        mobileEntity.Location,
+                        session.ViewRange
                     )
                 );
             }
@@ -162,6 +165,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         LoginSectorSyncStats stats
     )
     {
+        var visibleCenter = mobileEntity.Location;
+        var visibleRange = session.ViewRange;
+
         foreach (var item in _spatialWorldService.GetNearbyItems(
                      mobileEntity.Location,
                      _mobileSyncRange,
@@ -170,6 +176,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         {
             if (item.ParentContainerId != Serial.Zero ||
                 item.EquippedMobileId != Serial.Zero ||
+                !visibleCenter.InRange(item.Location, visibleRange) ||
                 !ItemVisibilityHelper.CanSessionSeeItem(session, item) ||
                 !sentItemSerials.Add(item.Id))
             {
@@ -188,6 +195,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         {
             if (otherMobile.Id == mobileEntity.Id ||
                 otherMobile.RiderMobileId != Serial.Zero ||
+                !visibleCenter.InRange(otherMobile.Location, visibleRange) ||
                 !sentMobileSerials.Add(otherMobile.Id))
             {
                 continue;
@@ -245,7 +253,9 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         UOMobileEntity mobileEntity,
         MapSector? targetSector,
         HashSet<Serial> sentItemSerials,
-        HashSet<Serial> sentMobileSerials
+        HashSet<Serial> sentMobileSerials,
+        Point3D visibleCenter,
+        int visibleRange
     )
     {
         var stats = new SectorSyncStats();
@@ -261,6 +271,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         {
             if (item.ParentContainerId != Serial.Zero ||
                 item.EquippedMobileId != Serial.Zero ||
+                !visibleCenter.InRange(item.Location, visibleRange) ||
                 !ItemVisibilityHelper.CanSessionSeeItem(session, item) ||
                 !sentItemSerials.Add(item.Id))
             {
@@ -275,6 +286,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
         {
             if (otherMobile.Id == mobileEntity.Id ||
                 otherMobile.RiderMobileId != Serial.Zero ||
+                !visibleCenter.InRange(otherMobile.Location, visibleRange) ||
                 !sentMobileSerials.Add(otherMobile.Id))
             {
                 continue;

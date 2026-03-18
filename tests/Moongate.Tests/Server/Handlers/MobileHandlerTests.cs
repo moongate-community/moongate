@@ -710,6 +710,68 @@ public sealed class MobileHandlerTests
 
     [Test]
     public async Task
+        HandleAsync_ForMobilePositionChanged_WhenEnteringNewSector_ShouldTreatSectorSnapshotMobilesAsNewIncoming()
+    {
+        var movingPlayerId = (Serial)0x0000A100u;
+        var npcId = (Serial)0x0000A200u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(100, 100, 0);
+        var newLocation = new Point3D(132, 132, 0);
+        var newSector = new MapSector(1, 8, 8);
+        newSector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = npcId,
+                IsPlayer = false,
+                Name = "guard",
+                Location = newLocation,
+                MapId = 1,
+                BaseBody = 0x0190
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocationResolver = (_, location) => location == oldLocation ? new(1, 6, 6) : newSector
+        };
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var mobileIncomingPackets = DequeueAll(queue)
+                                   .Select(packet => packet.Packet)
+                                   .OfType<MobileIncomingPacket>()
+                                   .ToList();
+
+        Assert.That(mobileIncomingPackets, Is.Not.Empty);
+        Assert.That(mobileIncomingPackets.All(packet => packet.NewMobileIncoming), Is.True);
+    }
+
+    [Test]
+    public async Task
         HandleAsync_ForMobilePositionChanged_WhenEnteringNewSector_ShouldSendSnapshotForNeighborSectorsWithinRadius()
     {
         var movingPlayerId = (Serial)0x00003000u;
@@ -850,6 +912,73 @@ public sealed class MobileHandlerTests
                                            };
 
         var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(
+                movingSession.SessionId,
+                movingPlayerId,
+                1,
+                1,
+                oldLocation,
+                newLocation
+            )
+        );
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.False);
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenEnteringNewSector_ShouldNotSendMobilesOutsidePlayerViewRange()
+    {
+        var movingPlayerId = (Serial)0x0000B100u;
+        var farNpcId = (Serial)0x0000B200u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        movingSession.ViewRange = 5;
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(100, 100, 0);
+        var newLocation = new Point3D(132, 132, 0);
+        var centerSector = new MapSector(1, 8, 8);
+        centerSector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = farNpcId,
+                IsPlayer = false,
+                Name = "far-guard",
+                Location = new Point3D(145, 132, 0),
+                MapId = 1,
+                BaseBody = 0x0190
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocationResolver = (_, location) => location == oldLocation ? new(1, 6, 6) : centerSector
+        };
+        var characterService = new MobileHandlerTestCharacterService(
+            new()
+            {
+                Id = movingPlayerId,
+                IsPlayer = true,
+                Name = "player",
+                Location = newLocation,
+                MapId = 1
+            }
+        );
         var speechService = new MobileHandlerTestSpeechService();
         var handler = new MobileHandler(
             spatial,
@@ -1328,7 +1457,7 @@ public sealed class MobileHandlerTests
     }
 
     [Test]
-    public async Task HandleAsync_ForMobilePositionChanged_WhenNearSectorEdge_ShouldPreloadAdjacentSectors()
+    public async Task HandleAsync_ForMobilePositionChanged_WhenNearSectorEdge_ShouldNotSendPreloadItemsOutsideViewRange()
     {
         var movingPlayerId = (Serial)0x00003002u;
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -1408,7 +1537,7 @@ public sealed class MobileHandlerTests
                 packet => packet.Packet is ObjectInformationPacket objectInfoPacket &&
                           objectInfoPacket.Serial == (Serial)0x40000031u
             ),
-            Is.True
+            Is.False
         );
     }
 
@@ -1482,7 +1611,7 @@ public sealed class MobileHandlerTests
 
     [Test]
     public async Task
-        HandleAsync_ForMobilePositionChanged_WhenSectorOverlapsOldRadius_ShouldStillResyncAllSectorsInNewRadius()
+        HandleAsync_ForMobilePositionChanged_WhenSectorOverlapsOldRadius_ShouldNotResyncItemsOutsideViewRange()
     {
         var movingPlayerId = (Serial)0x00003001u;
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -1567,7 +1696,7 @@ public sealed class MobileHandlerTests
                 packet => packet.Packet is ObjectInformationPacket objectInfoPacket &&
                           objectInfoPacket.Serial == (Serial)0x40000030u
             ),
-            Is.True
+            Is.False
         );
     }
 

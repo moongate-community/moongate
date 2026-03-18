@@ -68,6 +68,8 @@ public sealed class LuaMobileProxy
 
     public bool IsOnline => _gameNetworkSessionService.TryGetByCharacterId(Mobile.Id, out _);
 
+    public bool IsMountable => Mobile.IsMountable;
+
     public void CastSpell(int spellId)
 
         // TODO: Implement spell casting primitive for brain point 5.

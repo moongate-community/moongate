@@ -1107,4 +1107,22 @@ public sealed class LuaMobileProxyTests
             }
         );
     }
+
+    [Test]
+    public void IsMountable_ShouldReflectUnderlyingMobileState()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            IsMountable = true
+        };
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        Assert.That(proxy.IsMountable, Is.True);
+    }
 }
