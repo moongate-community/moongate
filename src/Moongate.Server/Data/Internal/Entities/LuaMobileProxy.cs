@@ -380,6 +380,20 @@ public sealed class LuaMobileProxy
         return recipients > 0;
     }
 
+    public bool Emote(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Emote)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
     public void SetEffect(
         int itemId,
         int speed = 10,

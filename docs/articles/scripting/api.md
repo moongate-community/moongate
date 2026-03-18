@@ -72,6 +72,29 @@ The helper exposes:
 - `tick.run(state, key, now_ms, action?)`
 - `tick.reset(state, key, now_ms, interval_ms?)`
 
+### World Speech And Emotes
+
+Player world speech and NPC speech use the same runtime packet family.
+
+```lua
+local npc = mobile.get(serial)
+if npc then
+    npc:say("Welcome, traveler.")
+    npc:emote("*growls softly*")
+end
+```
+
+Runtime behavior:
+
+- player `UnicodeSpeech` is broadcast to nearby players in world range
+- incoming player text wrapped as `*text*` is coerced to `Emote`
+- `npc:emote(text)` sends `ChatMessageType.Emote` overhead speech
+- current speech ranges are:
+  - `Whisper` -> `1`
+  - `Regular` / `Emote` -> `12`
+  - `Yell` -> `18`
+- NPC brain speech listeners still receive `speech_type`, so Lua can react differently to regular speech versus emotes
+
 ### Item Script: Apple
 
 ```lua
