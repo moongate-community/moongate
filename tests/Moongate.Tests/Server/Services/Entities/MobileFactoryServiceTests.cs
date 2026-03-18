@@ -124,6 +124,46 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldCopyTemplateSounds()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "sound_mobile",
+                Name = "Sound Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                Sounds = new()
+                {
+                    [MobileSoundType.StartAttack] = 0x0135,
+                    [MobileSoundType.Attack] = 0x023B,
+                    [MobileSoundType.Defend] = 0x0140
+                }
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("sound_mobile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Sounds, Has.Count.EqualTo(3));
+                Assert.That(mobile.Sounds[MobileSoundType.StartAttack], Is.EqualTo(0x0135));
+                Assert.That(mobile.Sounds[MobileSoundType.Attack], Is.EqualTo(0x023B));
+                Assert.That(mobile.Sounds[MobileSoundType.Defend], Is.EqualTo(0x0140));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldInitializeFullSkillTableAndApplyTemplateSkillValues()
     {
         using var temp = new TempDirectory();

@@ -286,6 +286,7 @@ public sealed class CombatServiceTests
                 Assert.That(timerService.RegisteredTimers, Has.Count.EqualTo(1));
                 Assert.That(timerService.RegisteredTimers[0].Name, Is.EqualTo($"combat:{(uint)attacker.Id}"));
                 Assert.That(eventBus.Events.Any(gameEvent => gameEvent is MobileWarModeChangedEvent), Is.True);
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent.GetType().Name == "CombatStartedEvent"), Is.True);
             }
         );
 
@@ -363,6 +364,16 @@ public sealed class CombatServiceTests
                 Assert.That(timerService.UnregisteredNames, Contains.Item($"combat:{(uint)attacker.Id}"));
             }
         );
+
+        var hitEvent = eventBus.Events.OfType<CombatHitEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hitEvent.Attacker, Is.SameAs(attacker));
+                Assert.That(hitEvent.Defender, Is.SameAs(defender));
+            }
+        );
     }
 
     [Test]
@@ -437,6 +448,16 @@ public sealed class CombatServiceTests
                 Assert.That(attacker.LastCombatAtUtc, Is.Not.Null);
                 Assert.That(defender.LastCombatAtUtc, Is.Not.Null);
                 Assert.That(timerService.RegisteredTimers, Has.Count.EqualTo(1));
+            }
+        );
+
+        var missEvent = eventBus.Events.OfType<CombatMissEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(missEvent.Attacker, Is.SameAs(attacker));
+                Assert.That(missEvent.Defender, Is.SameAs(defender));
             }
         );
     }

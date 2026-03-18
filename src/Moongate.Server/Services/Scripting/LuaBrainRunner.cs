@@ -68,6 +68,10 @@ public sealed class LuaBrainRunner
     }
 
     /// <inheritdoc />
+    public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
+        => _stateStore.EnqueueCombatHook(mobileId, combatContext);
+
+    /// <inheritdoc />
     public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
         => _stateStore.EnqueueDeath(mobileId, deathContext);
 
@@ -187,6 +191,7 @@ public sealed class LuaBrainRunner
             state.PendingSpeech.Clear();
             state.PendingDeath.Clear();
             state.PendingSpawn.Clear();
+            state.PendingCombatHooks.Clear();
             state.PendingInRange.Clear();
             state.PendingOutRange.Clear();
             LuaBrainLifecycle.InitializeRuntimeState(_luaScript, state, _logger);

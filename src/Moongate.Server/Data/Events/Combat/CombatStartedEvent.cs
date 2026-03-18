@@ -6,25 +6,23 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Server.Data.Events.Combat;
 
 /// <summary>
-/// Raised when a scheduled melee swing resolves as a miss.
+/// Raised when a combatant is successfully engaged and the first swing is scheduled.
 /// </summary>
-public readonly record struct CombatMissEvent(
+public readonly record struct CombatStartedEvent(
     GameEventBase BaseEvent,
     Serial AttackerId,
     Serial DefenderId,
     int MapId,
     Point3D Location,
-    UOMobileEntity Attacker,
-    UOMobileEntity Defender
+    UOMobileEntity Attacker
 ) : IGameEvent
 {
-    public CombatMissEvent(
+    public CombatStartedEvent(
         Serial attackerId,
         Serial defenderId,
         int mapId,
         Point3D location,
-        UOMobileEntity attacker,
-        UOMobileEntity defender
+        UOMobileEntity attacker
     )
-        : this(GameEventBase.CreateNow(), attackerId, defenderId, mapId, location, attacker, defender) { }
+        : this(GameEventBase.CreateNow(), attackerId, defenderId, mapId, location, attacker) { }
 }

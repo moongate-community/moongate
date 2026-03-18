@@ -38,6 +38,14 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnSpawnFunction { get; set; }
 
+    public DynValue? OnAttackFunction { get; set; }
+
+    public DynValue? OnMissedAttackFunction { get; set; }
+
+    public DynValue? OnAttackedFunction { get; set; }
+
+    public DynValue? OnMissedByAttackFunction { get; set; }
+
     public DynValue? OnInRangeFunction { get; set; }
 
     public DynValue? OnOutRangeFunction { get; set; }
@@ -53,6 +61,8 @@ public sealed class LuaBrainRuntimeState
     public Queue<LuaBrainDeathContext> PendingDeath { get; } = new();
 
     public Queue<MobileSpawnedFromSpawnerEvent> PendingSpawn { get; } = new();
+
+    public Queue<LuaBrainCombatHookContext> PendingCombatHooks { get; } = new();
 
     public Queue<LuaBrainInRangeContext> PendingInRange { get; } = new();
 

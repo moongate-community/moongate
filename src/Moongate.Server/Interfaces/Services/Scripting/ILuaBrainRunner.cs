@@ -19,6 +19,13 @@ public interface ILuaBrainRunner
       IGameEventListener<MobileSpawnedFromSpawnerEvent>
 {
     /// <summary>
+    /// Enqueues a combat outcome hook payload for deferred brain processing.
+    /// </summary>
+    /// <param name="mobileId">Npc id receiving the combat notification.</param>
+    /// <param name="combatContext">Combat payload.</param>
+    void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext);
+
+    /// <summary>
     /// Enqueues an NPC death hook payload for deferred brain processing.
     /// </summary>
     /// <param name="mobileId">Npc id receiving the death notification.</param>
