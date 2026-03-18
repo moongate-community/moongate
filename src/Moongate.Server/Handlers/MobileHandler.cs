@@ -365,6 +365,10 @@ public class MobileHandler
             }
 
             _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
+            CorpsePacketHelper.EnqueueVisibleCorpsePackets(
+                item,
+                packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
+            );
         }
 
         foreach (var otherMobile in targetSector.GetMobiles())

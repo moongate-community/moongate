@@ -34,7 +34,11 @@ public sealed class LuaBrainRuntimeState
 
     public DynValue? OnEventFunction { get; set; }
 
+    public DynValue? OnBeforeDeathFunction { get; set; }
+
     public DynValue? OnDeathFunction { get; set; }
+
+    public DynValue? OnAfterDeathFunction { get; set; }
 
     public DynValue? OnSpawnFunction { get; set; }
 

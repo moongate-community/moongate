@@ -612,6 +612,78 @@ public class ItemHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_ItemAddedInSectorEvent_WhenItemIsCorpse_ShouldSendCorpseContentsAndClothing()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatial = new ItemHandlerTestSpatialWorldService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            spatial,
+            new ItemHandlerTestMobileService()
+        );
+
+        var corpseId = (Serial)0x40000098u;
+        var chestId = (Serial)0x40000099u;
+        var corpse = new UOItemEntity
+        {
+            Id = corpseId,
+            ItemId = 0x2006,
+            Location = new(100, 100, 0),
+            MapId = 1
+        };
+        corpse.SetCustomBoolean("is_corpse", true);
+        var chest = new UOItemEntity
+        {
+            Id = chestId,
+            ItemId = 0x1415,
+            ParentContainerId = corpseId
+        };
+        chest.SetCustomInteger("corpse_equipped_layer", (byte)ItemLayerType.InnerTorso);
+        corpse.AddItem(chest, Point2D.Zero);
+        itemService.ItemsById[corpseId] = corpse;
+        itemService.ItemsById[chestId] = chest;
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000021u,
+            Character = new()
+            {
+                Id = (Serial)0x00000021u,
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        };
+        sessionService.Add(session);
+        spatial.SessionsInRange.Add(session);
+
+        await handler.HandleAsync(new ItemAddedInSectorEvent(corpseId, 1, 6, 6));
+
+        var packetTypes = new List<Type>();
+
+        while (queue.TryDequeue(out var outbound))
+        {
+            packetTypes.Add(outbound.Packet.GetType());
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packetTypes, Does.Contain(typeof(ObjectInformationPacket)));
+                Assert.That(packetTypes, Does.Contain(typeof(AddMultipleItemsToContainerPacket)));
+                Assert.That(packetTypes, Does.Contain(typeof(CorpseClothingPacket)));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ItemMovedEvent_ShouldLoadCorrectItemAndContainer()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();

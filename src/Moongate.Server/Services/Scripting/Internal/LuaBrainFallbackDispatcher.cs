@@ -72,9 +72,21 @@ internal static class LuaBrainFallbackDispatcher
         {
             var death = state.PendingDeath.Dequeue();
             var byCharacterId = death.ByCharacterId.HasValue ? (uint)death.ByCharacterId.Value : 0u;
+            var eventName = death.HookType switch
+            {
+                LuaBrainDeathHookType.BeforeDeath => "before_death",
+                LuaBrainDeathHookType.AfterDeath => "after_death",
+                _ => "death"
+            };
+            var hookName = death.HookType switch
+            {
+                LuaBrainDeathHookType.BeforeDeath => "on_before_death",
+                LuaBrainDeathHookType.AfterDeath => "on_after_death",
+                _ => "on_death"
+            };
 
-            scriptEngineService.CallFunction("on_event", "death", byCharacterId, death.Context);
-            scriptEngineService.CallFunction("on_death", byCharacterId, death.Context);
+            scriptEngineService.CallFunction("on_event", eventName, byCharacterId, death.Context);
+            scriptEngineService.CallFunction(hookName, byCharacterId, death.Context);
         }
 
         while (state.PendingInRange.Count > 0)

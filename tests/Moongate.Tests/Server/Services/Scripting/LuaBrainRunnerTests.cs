@@ -447,6 +447,7 @@ public sealed class LuaBrainRunnerTests
             Location = new(100, 100, 0)
         };
         var deathContext = new LuaBrainDeathContext(
+            LuaBrainDeathHookType.Death,
             (Serial)0x07,
             new() { ["reason"] = "test" }
         );
@@ -471,6 +472,63 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(onDeathCall.Args.Length, Is.EqualTo(2));
                 Assert.That(onDeathCall.Args[0], Is.EqualTo((uint)0x07));
                 Assert.That(onDeathCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenBeforeAndAfterDeathAreQueued_ShouldInvokeSpecificHooks()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x62,
+            Name = "orion",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
+        runner.EnqueueDeath(
+            npc.Id,
+            new LuaBrainDeathContext(
+                LuaBrainDeathHookType.BeforeDeath,
+                (Serial)0x08,
+                new() { ["reason"] = "test_before" }
+            )
+        );
+        runner.EnqueueDeath(
+            npc.Id,
+            new LuaBrainDeathContext(
+                LuaBrainDeathHookType.AfterDeath,
+                (Serial)0x08,
+                new() { ["reason"] = "test_after" }
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var beforeEventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "before_death")
+        );
+        var beforeCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_before_death");
+        var afterEventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "after_death")
+        );
+        var afterCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_after_death");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(beforeEventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(beforeCall.FunctionName, Is.EqualTo("on_before_death"));
+                Assert.That(afterEventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(afterCall.FunctionName, Is.EqualTo("on_after_death"));
             }
         );
     }
@@ -581,7 +639,7 @@ public sealed class LuaBrainRunnerTests
         );
         runner.EnqueueDeath(
             npc.Id,
-            new((Serial)0x07, new() { ["reason"] = "test" })
+            new(LuaBrainDeathHookType.Death, (Serial)0x07, new() { ["reason"] = "test" })
         );
 
         await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());

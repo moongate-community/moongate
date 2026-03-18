@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
+using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -144,6 +145,7 @@ public class ItemHandler
             }
 
             Enqueue(session, ItemPacketHelper.CreateObjectInformationPacket(item, session));
+            CorpsePacketHelper.EnqueueVisibleCorpsePackets(item, packet => Enqueue(session, packet));
         }
     }
 

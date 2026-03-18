@@ -144,6 +144,23 @@ public sealed class CombatServiceTests
             => Task.FromResult((false, (UOMobileEntity?)null));
     }
 
+    private sealed class DeathServiceSpy : IDeathService
+    {
+        public List<(UOMobileEntity Victim, UOMobileEntity? Killer)> Calls { get; } = [];
+
+        public Task<bool> HandleDeathAsync(
+            UOMobileEntity victim,
+            UOMobileEntity? killer,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            Calls.Add((victim, killer));
+
+            return Task.FromResult(true);
+        }
+    }
+
     private sealed class CombatTestSpatialWorldService : ISpatialWorldService
     {
         public JsonRegion? ResolvedRegion { get; set; }
@@ -272,7 +289,8 @@ public sealed class CombatServiceTests
             outgoingQueue,
             timerService,
             spatial,
-            eventBus
+            eventBus,
+            new DeathServiceSpy()
         );
 
         var result = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
@@ -342,7 +360,8 @@ public sealed class CombatServiceTests
             outgoingQueue,
             timerService,
             spatial,
-            eventBus
+            eventBus,
+            new DeathServiceSpy()
         );
 
         var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
@@ -431,7 +450,8 @@ public sealed class CombatServiceTests
             outgoingQueue,
             timerService,
             spatial,
-            eventBus
+            eventBus,
+            new DeathServiceSpy()
         );
 
         var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
@@ -519,7 +539,8 @@ public sealed class CombatServiceTests
             outgoingQueue,
             timerService,
             spatial,
-            eventBus
+            eventBus,
+            new DeathServiceSpy()
         );
 
         var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
@@ -536,6 +557,74 @@ public sealed class CombatServiceTests
                     eventBus.Events.Any(gameEvent => gameEvent.GetType().Name == "CombatAttemptEvent"),
                     Is.True
                 );
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenHitIsLethal_ShouldDelegateToDeathService()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var deathService = new DeathServiceSpy();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000012u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50,
+            MinWeaponDamage = 10,
+            MaxWeaponDamage = 10
+        };
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000013u,
+            MapId = 0,
+            Location = new(101, 100, 0),
+            Hits = 10,
+            MaxHits = 10
+        };
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            deathService
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(deathService.Calls, Has.Count.EqualTo(1));
+                Assert.That(deathService.Calls[0].Victim, Is.SameAs(defender));
+                Assert.That(deathService.Calls[0].Killer, Is.SameAs(attacker));
+                Assert.That(attacker.CombatantId, Is.EqualTo(Serial.Zero));
             }
         );
     }

@@ -38,6 +38,7 @@ public sealed class CombatService : ICombatService
     private readonly ITimerService _timerService;
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IDeathService _deathService;
     private readonly Lock _syncRoot = new();
     private readonly Dictionary<Serial, int> _combatSequences = [];
 
@@ -47,7 +48,8 @@ public sealed class CombatService : ICombatService
         IOutgoingPacketQueue outgoingPacketQueue,
         ITimerService timerService,
         ISpatialWorldService spatialWorldService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        IDeathService deathService
     )
     {
         _mobileService = mobileService;
@@ -56,6 +58,7 @@ public sealed class CombatService : ICombatService
         _timerService = timerService;
         _spatialWorldService = spatialWorldService;
         _gameEventBusService = gameEventBusService;
+        _deathService = deathService;
     }
 
     public async Task<bool> TrySetCombatantAsync(
@@ -410,6 +413,7 @@ public sealed class CombatService : ICombatService
 
         if (!defender.IsAlive)
         {
+            await _deathService.HandleDeathAsync(defender, attacker, CancellationToken.None);
             await ClearCombatantAsync(attacker.Id);
             return;
         }

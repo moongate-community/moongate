@@ -413,6 +413,69 @@ public sealed class PlayerLoginWorldSyncServiceTests
     }
 
     [Test]
+    public async Task SyncAsync_WhenCorpseIsVisible_ShouldSendCorpseContentsAndClothing()
+    {
+        var playerId = (Serial)0x00004031u;
+        var corpseId = (Serial)0x400000A1u;
+        var chestId = (Serial)0x400000A2u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        var spawnLocation = new Point3D(132, 132, 0);
+        var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
+        var corpse = new UOItemEntity
+        {
+            Id = corpseId,
+            Name = "a corpse",
+            ItemId = 0x2006,
+            ParentContainerId = Serial.Zero,
+            EquippedMobileId = Serial.Zero,
+            Location = spawnLocation,
+            MapId = 1
+        };
+        corpse.SetCustomBoolean("is_corpse", true);
+        var chest = new UOItemEntity
+        {
+            Id = chestId,
+            ItemId = 0x1415,
+            ParentContainerId = corpseId
+        };
+        chest.SetCustomInteger("corpse_equipped_layer", (byte)ItemLayerType.InnerTorso);
+        corpse.AddItem(chest, Point2D.Zero);
+        centerSector.AddEntity(corpse);
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var sector)
+                                                          ? sector
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue).Select(outbound => outbound.Packet.GetType()).ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packets, Does.Contain(typeof(ObjectInformationPacket)));
+                Assert.That(packets, Does.Contain(typeof(AddMultipleItemsToContainerPacket)));
+                Assert.That(packets, Does.Contain(typeof(CorpseClothingPacket)));
+            }
+        );
+    }
+
+    [Test]
     public async Task SyncAsync_ShouldNotSendMountedCreaturesAsStandaloneMobiles()
     {
         var playerId = (Serial)0x00004030u;

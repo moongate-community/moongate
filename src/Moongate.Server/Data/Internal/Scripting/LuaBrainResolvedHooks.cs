@@ -8,7 +8,9 @@ namespace Moongate.Server.Data.Internal.Scripting;
 public sealed record LuaBrainResolvedHooks(
     DynValue? BrainLoopFunction,
     DynValue? OnSpeechFunction,
+    DynValue? OnBeforeDeathFunction,
     DynValue? OnDeathFunction,
+    DynValue? OnAfterDeathFunction,
     DynValue? OnSpawnFunction,
     DynValue? OnAttackFunction,
     DynValue? OnMissedAttackFunction,

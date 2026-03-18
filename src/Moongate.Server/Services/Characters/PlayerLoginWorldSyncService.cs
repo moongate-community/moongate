@@ -184,6 +184,10 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             }
 
             _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
+            CorpsePacketHelper.EnqueueVisibleCorpsePackets(
+                item,
+                packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
+            );
             stats.ItemsSent++;
         }
 
@@ -279,6 +283,10 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             }
 
             _outgoingPacketQueue.Enqueue(session.SessionId, ItemPacketHelper.CreateObjectInformationPacket(item, session));
+            CorpsePacketHelper.EnqueueVisibleCorpsePackets(
+                item,
+                packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
+            );
             stats.ItemsSent++;
         }
 
