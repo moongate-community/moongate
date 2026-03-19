@@ -445,6 +445,22 @@ Notes:
 - `eventObject` fields for speech: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, `location` (`x`, `y`, `z`).
 - Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
 
+Global script callbacks are a separate path from NPC brain events.
+
+Example:
+
+```lua
+function on_aggressive_action(event)
+    log.info(
+        "Aggressive action: attacker={0} defender={1}",
+        tostring(event.attacker_id),
+        tostring(event.defender_id)
+    )
+end
+```
+
+Use this style for shard-level rules and observers. Use brain `on_event(...)` only for NPC-local behavior.
+
 ## Item `ScriptId` Hooks
 
 Moongate supports item-scoped script dispatch through `IItemScriptDispatcher`.
