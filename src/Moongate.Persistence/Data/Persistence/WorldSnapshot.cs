@@ -21,4 +21,6 @@ public sealed class WorldSnapshot
     public ItemSnapshot[] Items { get; set; } = [];
 
     public BulletinBoardMessageSnapshot[] BulletinBoardMessages { get; set; } = [];
+
+    public HelpTicketSnapshot[] HelpTickets { get; set; } = [];
 }

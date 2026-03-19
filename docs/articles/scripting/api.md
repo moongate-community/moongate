@@ -12,6 +12,7 @@ The following modules are currently wired in runtime:
 - `log`
 - `command`
 - `speech`
+- `help_tickets`
 - `mobile`
 - `item`
 - `bulletin`
@@ -28,7 +29,7 @@ The following modules are currently wired in runtime:
 - `map` (`to_id`)
 - `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-18 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+19 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
@@ -41,6 +42,7 @@ Common shipped helper scripts:
 - `moongate_data/scripts/common/tick.lua`
 - `moongate_data/scripts/common/dialogue.lua`
 - `moongate_data/scripts/common/npc_dialogue.lua`
+- `moongate_data/scripts/common/scheduled_events.lua`
 
 ## Real Script Examples
 
@@ -114,7 +116,7 @@ local dialogue = require("common.dialogue")
 return dialogue.conversation("innkeeper", {
     start = "start",
     topics = {
-        room = { "room", "stanza" }
+        room = { "room", "bed" }
     },
     topic_routes = {
         room = "room_offer"
@@ -153,6 +155,100 @@ Available context helpers include:
 - `ctx:add_memory_number(key, delta)`
 - `ctx:get_memory_text(key)`
 - `ctx:set_memory_text(key, value)`
+
+### Scheduled Events
+
+The scheduled event DSL ships as a helper script with runtime support from the `scheduled_events` module.
+
+```lua
+local scheduled_events = require("common.scheduled_events")
+
+return scheduled_events.event("town_crier_morning", {
+    trigger_name = "town_crier_announcement",
+    recurrence = "weekly",
+    time = "09:00",
+    time_zone = "Europe/Rome",
+    days_of_week = { "monday", "wednesday" },
+    payload = {
+        message = "Hear ye!"
+    }
+})
+```
+
+Supported recurrence values:
+
+- `once`
+- `daily`
+- `weekly`
+- `monthly`
+
+Key fields:
+
+- `enabled`
+- `trigger_name`
+- `recurrence`
+- `time`
+- `time_zone`
+- `start_at`
+- `days_of_week`
+- `day_of_month`
+- `payload`
+
+When a scheduled event fires, the global script bridge invokes:
+
+```lua
+function on_scheduled_event(event)
+    if event.trigger_name == "town_crier_announcement" then
+        log.info("Scheduled event fired: " .. event.event_id)
+    end
+end
+```
+
+Current payload fields exposed through the event object:
+
+- `event.event_id`
+- `event.trigger_name`
+- `event.scheduled_at_utc`
+- `event.fired_at_utc`
+- `event.recurrence_type`
+- `event.payload`
+
+### Help Ticketing
+
+The in-game help flow is still entered through `0x9B` and Lua `on_help_request(...)`, but the default gump now drives a ticket wizard:
+
+1. category selection
+2. free-text entry
+3. ticket persistence
+4. `TicketOpenedEvent` publication
+
+Lua submit helpers are exposed through `help_tickets`:
+
+```lua
+local help_tickets = require("help_tickets")
+
+help_tickets.submit(session_id, "Question", "I am stuck near Britain bank.")
+```
+
+Supported category names:
+
+- `Question`
+- `Stuck`
+- `Bug`
+- `Account`
+- `Suggestion`
+- `Other`
+- `VerbalHarassment`
+- `PhysicalHarassment`
+
+Persisted tickets store:
+
+- sender account and character ids
+- category
+- message
+- map id and location
+- status (`Open`, `Assigned`, `Closed`)
+- timestamps for creation, assignment, closing, and last update
 
 ### Item Script: Apple
 
@@ -697,6 +793,16 @@ Map = {
 
 ## Callbacks
 
+Moongate currently exposes two different callback styles:
+
+- global script callbacks such as `on_player_connected(...)`, `on_aggressive_action(...)`, and `on_ticket_opened(...)`
+- NPC brain callbacks such as `on_event(...)`, `on_speech(...)`, `on_death(...)`
+
+These are not the same thing:
+
+- global callbacks come from the game event bus through `GameEventScriptBridgeService`
+- brain callbacks are dispatched to one NPC brain instance at a time
+
 ### Server Callbacks
 
 ```lua
@@ -728,6 +834,71 @@ function on_item_created(item)          -- Item created
 function on_item_deleted(item)          -- Item deleted
 function on_weather_changed(weather)    -- Weather changed
 ```
+
+### Global Game Event Bridge
+
+Some gameplay events are forwarded automatically to Lua global callbacks by naming convention:
+
+```lua
+function on_aggressive_action(event)
+    log.info(
+        "Aggressive action: attacker={0} defender={1}",
+        tostring(event.attacker_id),
+        tostring(event.defender_id)
+    )
+end
+```
+
+Current behavior:
+
+- event type `AggressiveActionEvent` maps to Lua callback `on_aggressive_action`
+- this callback is global script-side, not an NPC brain hook
+- it is intended for shard-level reactions such as:
+  - guarded region checks
+  - no-combat zone logic
+  - analytics or logging
+
+Current payload fields for `on_aggressive_action(event)`:
+
+- `attacker_id`
+- `defender_id`
+- `map_id`
+- `location`
+- `attacker`
+- `defender`
+
+Help tickets also enter the global bridge:
+
+```lua
+function on_ticket_opened(event)
+    log.info(
+        "Ticket opened: id={0} category={1} sender={2}",
+        tostring(event.ticket_id),
+        tostring(event.category),
+        tostring(event.sender_character_id)
+    )
+end
+```
+
+Current behavior:
+
+- event type `TicketOpenedEvent` maps to Lua callback `on_ticket_opened`
+- this callback is global script-side, not an NPC brain hook
+- it is intended for shard-level reactions such as:
+  - staff alerting
+  - Discord/webhook bridges
+  - analytics or audit trails
+
+Current payload fields for `on_ticket_opened(event)`:
+
+- `ticket_id`
+- `sender_character_id`
+- `sender_account_id`
+- `category`
+- `message`
+- `map_id`
+- `location`
+- `created_at_utc`
 
 ## Item Script Dispatcher API
 

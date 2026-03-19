@@ -62,7 +62,9 @@ Current gameplay examples:
 - `HelpHandler` listens to `RequestHelpPacket` (`0x9B`)
   - delegates to `HelpRequestService`
   - bridges into Lua `on_help_request(session_id, character_id)`
-  - opens the custom help gump from `moongate_data/scripts/gumps/help.lua`
+  - opens the custom help gump wizard from `moongate_data/scripts/gumps/help.lua`
+  - the wizard selects a ticket category, collects free text, then persists a `HelpTicket`
+  - successful submit publishes `TicketOpenedEvent` and can be observed in Lua through `on_ticket_opened(event)`
 
 ## Pragmatic POL Coverage Matrix
 
@@ -96,7 +98,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
 | `0xB1` | Gump Menu Selection | C -> S | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump button replies |
-| `0x9B` | Request Help | C -> S | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService` | Opens the Lua custom help gump |
+| `0x9B` | Request Help | C -> S | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService` | Opens the Lua help-ticket wizard and submits persisted tickets through `help_tickets` |
 | `0x05` | Request Attack | C -> S | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, forces warmode, schedules melee swing |
 | `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use / open flows |
 | `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels / tooltip-side behavior |

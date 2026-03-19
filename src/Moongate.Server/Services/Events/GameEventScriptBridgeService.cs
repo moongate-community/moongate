@@ -36,6 +36,11 @@ public class GameEventScriptBridgeService : IGameEventScriptBridgeService, IGame
 
     private static string GetScriptFunctionNameForEvent(IGameEvent gameEvent)
     {
+        if (gameEvent.GetType().Name == "ScheduledEventTriggeredEvent")
+        {
+            return "on_scheduled_event";
+        }
+
         var eventName = gameEvent.GetType().Name.ToSnakeCase();
 
         if (eventName.EndsWith("_event", StringComparison.Ordinal))

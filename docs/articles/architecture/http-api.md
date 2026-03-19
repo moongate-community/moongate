@@ -65,6 +65,16 @@ When `enableJwt` is true, protected endpoints require a Bearer token obtained fr
 |--------|------|-------------|
 | GET | `/api/sessions/active` | List active in-game sessions |
 
+### Help Tickets
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/help-tickets` | List persisted help tickets for staff with server-side pagination and filters |
+| GET | `/api/help-tickets/{ticketId}` | Get one persisted help ticket for staff |
+| PUT | `/api/help-tickets/{ticketId}/assign-to-me` | Assign a help ticket to the authenticated staff account |
+| PUT | `/api/help-tickets/{ticketId}/status` | Update a help ticket status for staff |
+| GET | `/api/help-tickets/me` | List the authenticated player's open or assigned tickets |
+
 ### Commands
 
 | Method | Path | Description |
@@ -260,6 +270,87 @@ Response shape:
   }
 ]
 ```
+
+### Help Ticket Admin Queue
+
+All staff ticket endpoints require an authenticated administrative user when JWT is enabled.
+
+Paged staff queue:
+
+```bash
+curl -s "$BASE_URL/api/help-tickets?page=1&pageSize=20&status=Open&assignedToMe=false" \
+  -H "$AUTH_HEADER"
+```
+
+Response shape:
+
+```json
+{
+  "page": 1,
+  "pageSize": 20,
+  "totalCount": 42,
+  "items": [
+    {
+      "ticketId": "1001",
+      "senderCharacterId": "2",
+      "senderAccountId": "1",
+      "category": "Question",
+      "message": "I am stuck near Britain bank.",
+      "status": "Open",
+      "mapId": 0,
+      "x": 1496,
+      "y": 1628,
+      "z": 20,
+      "createdAtUtc": "2026-03-19T10:15:00Z",
+      "assignedAtUtc": null,
+      "closedAtUtc": null,
+      "lastUpdatedAtUtc": "2026-03-19T10:15:00Z",
+      "assignedToCharacterId": "",
+      "assignedToAccountId": ""
+    }
+  ]
+}
+```
+
+Supported query string parameters for `GET /api/help-tickets`:
+
+- `page` defaults to `1` when omitted or invalid
+- `pageSize` defaults to `50` and is clamped to `200`
+- `status` accepts `Open`, `Assigned`, `Closed`
+- `category` accepts `Question`, `Stuck`, `Bug`, `Account`, `Suggestion`, `Other`, `VerbalHarassment`, `PhysicalHarassment`
+- `assignedToMe=true` filters by the authenticated staff account
+
+Single ticket detail:
+
+```bash
+curl -s "$BASE_URL/api/help-tickets/1001" -H "$AUTH_HEADER"
+```
+
+Take ownership:
+
+```bash
+curl -s -X PUT "$BASE_URL/api/help-tickets/1001/assign-to-me" \
+  -H "$AUTH_HEADER"
+```
+
+Update status:
+
+```bash
+curl -s -X PUT "$BASE_URL/api/help-tickets/1001/status" \
+  -H "$AUTH_HEADER" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Closed"
+  }'
+```
+
+Player-facing ticket list:
+
+```bash
+curl -s "$BASE_URL/api/help-tickets/me" -H "$AUTH_HEADER"
+```
+
+The `/me` endpoint returns the authenticated player's currently open or assigned tickets.
 
 ### Execute Console Command via HTTP
 

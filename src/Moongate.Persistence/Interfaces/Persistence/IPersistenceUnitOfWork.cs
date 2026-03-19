@@ -29,6 +29,11 @@ public interface IPersistenceUnitOfWork
     IBulletinBoardMessageRepository BulletinBoardMessages { get; }
 
     /// <summary>
+    /// Gets the help ticket repository.
+    /// </summary>
+    IHelpTicketRepository HelpTickets => throw new NotSupportedException();
+
+    /// <summary>
     /// Allocates the next progressive account serial identifier.
     /// </summary>
     Serial AllocateNextAccountId();

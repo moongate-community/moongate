@@ -117,6 +117,10 @@ For the behavior-based NPC AI architecture, see [NPC Behaviors](npc-behaviors.md
 For deterministic topic-and-option dialogue trees, see [Authored Dialogues](authored-dialogues.md).
 For OpenAI-backed NPC speech and deterministic-to-generative fallback patterns, see
 [Intelligent NPC Dialogue](intelligent-npcs.md).
+For shard-level timed callbacks and recurring Lua-driven calendar behavior, see
+[Scheduled Events](scheduled-events.md).
+For in-game help tickets opened from the client help button and persisted for staff review, see the
+`help_tickets` module and global `on_ticket_opened(event)` callback in the scripting API reference.
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
@@ -180,6 +184,23 @@ Player-side world speech follows the same pipeline. Incoming shorthand is normal
 - `!text` -> yell
 - `;text` -> whisper
 
+### Help Ticketing Example
+
+The client help button (`0x9B`) still enters Lua through `on_help_request(session_id, character_id)`.
+The default help scripts now open a category picker and then a text-entry gump before submitting
+through `help_tickets`.
+
+```lua
+function on_ticket_opened(event)
+    log.info(
+        "Help ticket opened: id={0}, category={1}, sender={2}",
+        tostring(event.ticket_id),
+        tostring(event.category),
+        tostring(event.sender_character_id)
+    )
+end
+```
+
 ### Authored Dialogue Example
 
 ```lua
@@ -216,6 +237,32 @@ end
 Example conversation asset:
 
 - `moongate_data/scripts/dialogs/innkeeper.lua`
+
+### Scheduled Event Example
+
+```lua
+local scheduled_events = require("common.scheduled_events")
+
+return scheduled_events.event("town_crier_morning", {
+    trigger_name = "town_crier_announcement",
+    recurrence = "daily",
+    time = "09:00",
+    time_zone = "Europe/Rome",
+    payload = {
+        message = "Hear ye!"
+    }
+})
+```
+
+Global scripts can react with:
+
+```lua
+function on_scheduled_event(event)
+    if event.trigger_name == "town_crier_announcement" then
+        log.info("Announcement fired: " .. event.event_id)
+    end
+end
+```
 
 ### Item Script Example
 
@@ -444,6 +491,22 @@ Notes:
 - Current event type: `speech_heard`.
 - `eventObject` fields for speech: `listener_npc_id`, `speaker_id`, `text`, `speech_type`, `map_id`, `location` (`x`, `y`, `z`).
 - Legacy `on_speech(listener_npc_id, speaker_id, text, speech_type, map_id, x, y, z)` remains supported for compatibility.
+
+Global script callbacks are a separate path from NPC brain events.
+
+Example:
+
+```lua
+function on_aggressive_action(event)
+    log.info(
+        "Aggressive action: attacker={0} defender={1}",
+        tostring(event.attacker_id),
+        tostring(event.defender_id)
+    )
+end
+```
+
+Use this style for shard-level rules and observers. Use brain `on_event(...)` only for NPC-local behavior.
 
 ## Item `ScriptId` Hooks
 

@@ -77,6 +77,50 @@ internal static class SnapshotMapper
             BodyLines = [.. entity.BodyLines]
         };
 
+    public static HelpTicketEntity ToHelpTicketEntity(HelpTicketSnapshot snapshot)
+        => new()
+        {
+            Id = (Serial)snapshot.Id,
+            SenderCharacterId = (Serial)snapshot.SenderCharacterId,
+            SenderAccountId = (Serial)snapshot.SenderAccountId,
+            Category = (HelpTicketCategory)snapshot.Category,
+            Message = snapshot.Message,
+            MapId = snapshot.MapId,
+            Location = new(snapshot.X, snapshot.Y, snapshot.Z),
+            Status = (HelpTicketStatus)snapshot.Status,
+            AssignedToCharacterId = (Serial)snapshot.AssignedToCharacterId,
+            AssignedToAccountId = (Serial)snapshot.AssignedToAccountId,
+            CreatedAtUtc = new(snapshot.CreatedAtUtcTicks, DateTimeKind.Utc),
+            AssignedAtUtc = snapshot.AssignedAtUtcTicks is null
+                                ? null
+                                : new DateTime(snapshot.AssignedAtUtcTicks.Value, DateTimeKind.Utc),
+            ClosedAtUtc = snapshot.ClosedAtUtcTicks is null
+                              ? null
+                              : new DateTime(snapshot.ClosedAtUtcTicks.Value, DateTimeKind.Utc),
+            LastUpdatedAtUtc = new(snapshot.LastUpdatedAtUtcTicks, DateTimeKind.Utc)
+        };
+
+    public static HelpTicketSnapshot ToHelpTicketSnapshot(HelpTicketEntity entity)
+        => new()
+        {
+            Id = (uint)entity.Id,
+            SenderCharacterId = (uint)entity.SenderCharacterId,
+            SenderAccountId = (uint)entity.SenderAccountId,
+            Category = (byte)entity.Category,
+            Message = entity.Message,
+            MapId = entity.MapId,
+            X = entity.Location.X,
+            Y = entity.Location.Y,
+            Z = entity.Location.Z,
+            Status = (byte)entity.Status,
+            AssignedToCharacterId = (uint)entity.AssignedToCharacterId,
+            AssignedToAccountId = (uint)entity.AssignedToAccountId,
+            CreatedAtUtcTicks = entity.CreatedAtUtc.Ticks,
+            AssignedAtUtcTicks = entity.AssignedAtUtc?.Ticks,
+            ClosedAtUtcTicks = entity.ClosedAtUtc?.Ticks,
+            LastUpdatedAtUtcTicks = entity.LastUpdatedAtUtc.Ticks
+        };
+
     public static UOItemEntity ToItemEntity(ItemSnapshot snapshot)
     {
         var entity = new UOItemEntity

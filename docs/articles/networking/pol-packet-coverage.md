@@ -106,7 +106,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x95` | Dye window | both | `?Packet=0x95` | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `implemented` | Classic dye tub flow wired through `DyeColorService` and Lua `dye` module |
 | `0x98` | All names | C -> S | `?Packet=0x98` | `AllNamesPacket` | `parse-only` | 3D all-names flow missing |
 | `0x9A` | Console entry prompt | C -> S | `?Packet=0x9A` | `ConsoleEntryPromptPacket` | `parse-only` | No gameplay listener |
-| `0x9B` | Request help | C -> S | `?Packet=0x9B` | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService -> Lua on_help_request / gumps.help` |
+| `0x9B` | Request help | C -> S | `?Packet=0x9B` | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService -> Lua on_help_request / gumps.help` | Opens the Lua help-ticket wizard, persists a `HelpTicket`, and emits `TicketOpenedEvent` |
 | `0x9F` | Sell list reply | C -> S | `?Packet=0x9F` | `SellListReplyPacket` | `parse-only` | Vendor sell flow missing |
 | `0xA4` | Client spy | C -> S | `?Packet=0xA4` | `ClientSpyPacket` | `parse-only` | No behavior attached |
 | `0xA7` | Request tip / notice window | C -> S | `?Packet=0xA7` | `RequestTipNoticeWindowPacket` | `parse-only` | Tip flow missing |

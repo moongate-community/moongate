@@ -16,6 +16,7 @@ using Moongate.Server.Http.Json;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Metrics.Data;
@@ -47,6 +48,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
     private readonly IGameNetworkSessionService? _gameNetworkSessionService;
     private readonly ICommandSystemService? _commandSystemService;
     private readonly IMapImageService? _mapImageService;
+    private readonly IHelpTicketService? _helpTicketService;
     private readonly bool _isUiEnabled;
     private readonly string? _uiDistPath;
     private readonly MoongateHttpBranding _branding;
@@ -62,7 +64,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
         IArtService? artService = null,
         IGameNetworkSessionService? gameNetworkSessionService = null,
         ICommandSystemService? commandSystemService = null,
-        IMapImageService? mapImageService = null
+        IMapImageService? mapImageService = null,
+        IHelpTicketService? helpTicketService = null
     )
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -88,6 +91,7 @@ public sealed class MoongateHttpService : IMoongateHttpService
         _gameNetworkSessionService = gameNetworkSessionService;
         _commandSystemService = commandSystemService;
         _mapImageService = mapImageService;
+        _helpTicketService = helpTicketService;
         _isUiEnabled = options.IsUiEnabled;
         _uiDistPath = options.UiDistPath;
         _branding = new()
@@ -167,7 +171,8 @@ public sealed class MoongateHttpService : IMoongateHttpService
             _artService,
             _gameNetworkSessionService,
             _commandSystemService,
-            _mapImageService
+            _mapImageService,
+            _helpTicketService
         );
 
         app.MapMoongateHttpRoutes(routeContext);

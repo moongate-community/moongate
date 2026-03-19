@@ -18,6 +18,9 @@ internal static class JournalPayloadCodec
             MessagePackSerializer.Deserialize<BulletinBoardMessageSnapshot>(payload)!
         );
 
+    public static HelpTicketEntity DecodeHelpTicket(byte[] payload)
+        => SnapshotMapper.ToHelpTicketEntity(MessagePackSerializer.Deserialize<HelpTicketSnapshot>(payload)!);
+
     public static UOItemEntity DecodeItem(byte[] payload)
         => SnapshotMapper.ToItemEntity(MessagePackSerializer.Deserialize<ItemSnapshot>(payload)!);
 
@@ -32,6 +35,9 @@ internal static class JournalPayloadCodec
 
     public static byte[] EncodeBulletinBoardMessage(BulletinBoardMessageEntity message)
         => MessagePackSerializer.Serialize(SnapshotMapper.ToBulletinBoardMessageSnapshot(message));
+
+    public static byte[] EncodeHelpTicket(HelpTicketEntity ticket)
+        => MessagePackSerializer.Serialize(SnapshotMapper.ToHelpTicketSnapshot(ticket));
 
     public static byte[] EncodeItem(UOItemEntity item)
         => MessagePackSerializer.Serialize(SnapshotMapper.ToItemSnapshot(item));
