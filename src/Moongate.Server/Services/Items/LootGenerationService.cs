@@ -49,15 +49,19 @@ public sealed class LootGenerationService : ILootGenerationService
             return container;
         }
 
-        if (container.TryGetCustomBoolean(ItemCustomParamKeys.Loot.Generated, out var alreadyGenerated) &&
-            alreadyGenerated)
+        if (!TryResolveContainerTemplate(container, out var containerTemplate) ||
+            containerTemplate is null ||
+            containerTemplate.LootTables.Count == 0)
         {
             return container;
         }
 
-        if (!TryResolveContainerTemplate(container, out var containerTemplate) ||
-            containerTemplate is null ||
-            containerTemplate.LootTables.Count == 0)
+        var refillDelay = LootContainerTemplateHelper.GetRefillDelay(containerTemplate);
+        var alreadyGenerated = container.TryGetCustomBoolean(ItemCustomParamKeys.Loot.Generated, out var generated) &&
+                               generated;
+        var refillDue = alreadyGenerated && IsRefillDue(container, refillDelay);
+
+        if (alreadyGenerated && !refillDue)
         {
             return container;
         }
@@ -95,12 +99,26 @@ public sealed class LootGenerationService : ILootGenerationService
 
         var refreshedContainer = await _itemService.GetItemAsync(container.Id) ?? container;
         refreshedContainer.SetCustomBoolean(ItemCustomParamKeys.Loot.Generated, true);
+
+        if (createdAnyLoot || refillDelay is null)
+        {
+            refreshedContainer.RemoveCustomProperty(ItemCustomParamKeys.Loot.RefillReadyAtUtc);
+        }
+        else if (refreshedContainer.Items.Count == 0)
+        {
+            var nextRefillReadyAtUtc = DateTime.UtcNow.Add(refillDelay.Value);
+            refreshedContainer.SetCustomString(
+                ItemCustomParamKeys.Loot.RefillReadyAtUtc,
+                nextRefillReadyAtUtc.ToString("O", CultureInfo.InvariantCulture)
+            );
+        }
+
         await _itemService.UpsertItemAsync(refreshedContainer);
 
         if (createdAnyLoot)
         {
             _logger.Debug(
-                "Generated first-open loot for container {ContainerId} using template {TemplateId}",
+                "Generated container loot for container {ContainerId} using template {TemplateId}",
                 container.Id,
                 containerTemplate.Id
             );
@@ -249,5 +267,22 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
+    }
+
+    private static bool IsRefillDue(UOItemEntity container, TimeSpan? refillDelay)
+    {
+        if (refillDelay is null || container.Items.Count > 0)
+        {
+            return false;
+        }
+
+        return container.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyAtRaw) &&
+               DateTime.TryParse(
+                   refillReadyAtRaw,
+                   CultureInfo.InvariantCulture,
+                   DateTimeStyles.RoundtripKind,
+                   out var refillReadyAtUtc
+               ) &&
+               refillReadyAtUtc <= DateTime.UtcNow;
     }
 }

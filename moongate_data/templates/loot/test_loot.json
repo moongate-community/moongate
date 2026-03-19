@@ -1,0 +1,37 @@
+[
+  {
+    "type": "loot",
+    "id": "loot_test_chest_basic",
+    "name": "Loot Test Chest Basic",
+    "category": "Test",
+    "description": "Basic weighted loot table for first-open chest testing.",
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "weight": 5,
+        "amount": 125
+      },
+      {
+        "itemTemplateId": "bandage",
+        "weight": 3,
+        "amount": 10
+      },
+      {
+        "itemTemplateId": "arrow",
+        "weight": 3,
+        "amount": 25
+      },
+      {
+        "itemTemplateId": "lockpick",
+        "weight": 2,
+        "amount": 5
+      },
+      {
+        "itemTemplateId": "torch",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,6 +1,7 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Services.Entities;
@@ -13,8 +14,10 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
+using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using System.Globalization;
 
 namespace Moongate.Tests.Server.Services.Items;
 
@@ -23,6 +26,7 @@ public class ItemServiceTests
     private sealed class ItemServiceTestsItemFactoryService : IItemFactoryService
     {
         public string? LastTemplateId { get; private set; }
+        public Dictionary<string, ItemTemplateDefinition> Templates { get; } = new(StringComparer.OrdinalIgnoreCase);
 
         public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
         {
@@ -43,9 +47,7 @@ public class ItemServiceTests
 
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
         {
-            template = null;
-
-            return false;
+            return Templates.TryGetValue(itemTemplateId, out template);
         }
     }
 
@@ -246,6 +248,82 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.MapId, Is.EqualTo(5));
                 Assert.That(reloadedContainer, Is.Not.Null);
                 Assert.That(reloadedContainer!.ContainedItemIds.Contains(itemId), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task MoveItemToWorldAsync_WhenRemovingLastItemFromRefillableLootContainer_ShouldSetRefillReadyAtUtc()
+    {
+        TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["loot_test_chest"] = new()
+        {
+            Id = "loot_test_chest",
+            Description = "Refillable loot test chest",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x0E75",
+            ScriptId = "none",
+            LootTables = ["loot_test_chest_basic"],
+            Params = new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["loot_refillable"] = new() { Type = ItemTemplateParamType.String, Value = "true" },
+                ["loot_refill_seconds"] = new() { Type = ItemTemplateParamType.String, Value = "300" }
+            }
+        };
+        IItemService service = new ItemService(
+            persistence,
+            new NetworkServiceTestGameEventBusService(),
+            itemFactory
+        );
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+        var container = new UOItemEntity
+        {
+            Id = containerId,
+            ItemId = 0x0E75,
+            MapId = 1
+        };
+        container.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "loot_test_chest");
+        var containedItem = new UOItemEntity
+        {
+            Id = itemId,
+            ItemId = 0x0EED,
+            MapId = 1
+        };
+        container.AddItem(containedItem, Point2D.Zero);
+        await persistence.UnitOfWork.Items.UpsertAsync(container);
+        await persistence.UnitOfWork.Items.UpsertAsync(containedItem);
+        var before = DateTime.UtcNow;
+
+        var moved = await service.MoveItemToWorldAsync(itemId, new Point3D(10, 20, 0), 1);
+
+        var reloadedContainer = await persistence.UnitOfWork.Items.GetByIdAsync(containerId);
+        var after = DateTime.UtcNow;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moved, Is.True);
+                Assert.That(reloadedContainer, Is.Not.Null);
+                Assert.That(reloadedContainer!.ContainedItemIds, Is.Empty);
+                Assert.That(
+                    reloadedContainer.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyRaw),
+                    Is.True
+                );
+                Assert.That(
+                    DateTime.TryParse(
+                        refillReadyRaw,
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.RoundtripKind,
+                        out var refillReadyAtUtc
+                    ),
+                    Is.True
+                );
+                Assert.That(refillReadyAtUtc, Is.GreaterThanOrEqualTo(before.AddSeconds(300)));
+                Assert.That(refillReadyAtUtc, Is.LessThanOrEqualTo(after.AddSeconds(301)));
             }
         );
     }

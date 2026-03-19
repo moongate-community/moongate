@@ -11,6 +11,7 @@ public static class ItemCustomParamKeys
     public static class Loot
     {
         public const string Generated = "loot_generated";
+        public const string RefillReadyAtUtc = "loot_refill_ready_at_utc";
     }
 
     public static class Book

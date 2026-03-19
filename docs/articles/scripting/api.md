@@ -421,6 +421,71 @@ Book templates can also declare writability directly in the `.txt` file:
 
 When present, `[ReadOnly]` takes precedence over fallback `writable` metadata.
 
+### Lootable Container Template
+
+Container item templates can also declare weighted loot generation with `lootTables`.
+This is meant for chests and similar containers that should populate their contents
+from `moongate_data/templates/loot/*.json`.
+
+Example chest template:
+
+```json
+{
+  "type": "item",
+  "id": "loot_test_chest",
+  "base_item": "metal_chest",
+  "name": "Loot Test Chest",
+  "category": "Test Containers",
+  "itemId": "0x0E40",
+  "scriptId": "items.loot_test_chest",
+  "isMovable": true,
+  "containerLayoutId": "metal_chest",
+  "lootTables": ["loot_test_chest_basic"],
+  "params": {
+    "loot_refillable": {
+      "type": "string",
+      "value": "true"
+    },
+    "loot_refill_seconds": {
+      "type": "string",
+      "value": "300"
+    }
+  },
+  "tags": ["container", "loot"]
+}
+```
+
+Example loot table:
+
+```json
+{
+  "type": "loot",
+  "id": "loot_test_chest_basic",
+  "name": "Loot Test Chest Basic",
+  "category": "Test",
+  "noDropWeight": 0,
+  "entries": [
+    { "itemTemplateId": "gold", "weight": 5, "amount": 125 },
+    { "itemTemplateId": "bandage", "weight": 3, "amount": 10 }
+  ]
+}
+```
+
+Runtime behavior:
+
+- `lootTables` are rolled the first time the container is opened
+- generated contents are then persisted like any normal container contents
+- if `loot_refillable = true`, the container can refill later
+- refill is lazy, not timer-driven:
+  the container is marked ready only after it becomes empty, and loot is regenerated on a later open once `loot_refill_seconds` has elapsed
+- if the container still has items inside, no refill happens
+
+Runtime custom metadata used internally:
+
+- `item_template_id`
+- `loot_generated`
+- `loot_refill_ready_at_utc`
+
 ### GM Command: Eclipse
 
 ```lua
