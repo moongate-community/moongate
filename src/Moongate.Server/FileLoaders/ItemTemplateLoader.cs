@@ -140,6 +140,11 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.Container = [..parent.Container];
         }
 
+        if (child.LootTables.Count == 0 && parent.LootTables.Count > 0)
+        {
+            child.LootTables = [..parent.LootTables];
+        }
+
         if (child.FlippableItemIds.Count == 0 && parent.FlippableItemIds.Count > 0)
         {
             child.FlippableItemIds = [..parent.FlippableItemIds];

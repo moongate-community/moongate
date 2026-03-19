@@ -28,6 +28,7 @@ public class ItemInteractionService : IItemInteractionService
     private readonly ICharacterService? _characterService;
     private readonly IItemBookService _itemBookService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
+    private readonly ILootGenerationService? _lootGenerationService;
 
     public ItemInteractionService(
         IItemService itemService,
@@ -35,7 +36,8 @@ public class ItemInteractionService : IItemInteractionService
         IItemBookService itemBookService,
         IOutgoingPacketQueue outgoingPacketQueue,
         IItemScriptDispatcher? itemScriptDispatcher = null,
-        ICharacterService? characterService = null
+        ICharacterService? characterService = null,
+        ILootGenerationService? lootGenerationService = null
     )
     {
         _itemService = itemService;
@@ -44,6 +46,7 @@ public class ItemInteractionService : IItemInteractionService
         _outgoingPacketQueue = outgoingPacketQueue;
         _itemScriptDispatcher = itemScriptDispatcher;
         _characterService = characterService;
+        _lootGenerationService = lootGenerationService;
     }
 
     public async Task<bool> HandleDoubleClickAsync(
@@ -52,8 +55,6 @@ public class ItemInteractionService : IItemInteractionService
         CancellationToken cancellationToken = default
     )
     {
-        _ = cancellationToken;
-
         if (packet.TargetSerial.IsMobile)
         {
             await _gameEventBusService.PublishAsync(
@@ -114,6 +115,11 @@ public class ItemInteractionService : IItemInteractionService
 
         if (item.IsContainer)
         {
+            if (_lootGenerationService is not null)
+            {
+                item = await _lootGenerationService.EnsureLootGeneratedAsync(item, cancellationToken);
+            }
+
             Enqueue(session, new DrawContainerAndAddItemCombinedPacket(item));
 
             if (CorpsePacketHelper.IsCorpse(item))

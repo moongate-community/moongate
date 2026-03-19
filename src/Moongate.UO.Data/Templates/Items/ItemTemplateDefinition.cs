@@ -16,6 +16,8 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public List<string> Container { get; set; } = [];
 
+    public List<string> LootTables { get; set; } = [];
+
     public string Description { get; set; }
 
     public bool Dyeable { get; set; }

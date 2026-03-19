@@ -21,18 +21,21 @@ public sealed class TemplateValidationLoader : IFileLoader
     private readonly IMobileTemplateService _mobileTemplateService;
     private readonly ISellProfileTemplateService _sellProfileTemplateService;
     private readonly IBookTemplateService _bookTemplateService;
+    private readonly ILootTemplateService _lootTemplateService;
 
     public TemplateValidationLoader(
         IItemTemplateService itemTemplateService,
         IMobileTemplateService mobileTemplateService,
         ISellProfileTemplateService sellProfileTemplateService,
-        IBookTemplateService bookTemplateService
+        IBookTemplateService bookTemplateService,
+        ILootTemplateService lootTemplateService
     )
     {
         _itemTemplateService = itemTemplateService;
         _mobileTemplateService = mobileTemplateService;
         _sellProfileTemplateService = sellProfileTemplateService;
         _bookTemplateService = bookTemplateService;
+        _lootTemplateService = lootTemplateService;
     }
 
     public Task LoadAsync()
@@ -148,6 +151,25 @@ public sealed class TemplateValidationLoader : IFileLoader
 
             ValidateBookTemplate(item, errors);
             ValidateItemContainerLayout(item, errors);
+            ValidateItemLootTables(item, errors);
+        }
+    }
+
+    private void ValidateItemLootTables(ItemTemplateDefinition item, List<string> errors)
+    {
+        foreach (var lootTableId in item.LootTables)
+        {
+            if (string.IsNullOrWhiteSpace(lootTableId))
+            {
+                errors.Add($"Item template '{item.Id}' has an empty loot table id.");
+
+                continue;
+            }
+
+            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
+            {
+                errors.Add($"Item template '{item.Id}' references missing loot table '{lootTableId}'.");
+            }
         }
     }
 

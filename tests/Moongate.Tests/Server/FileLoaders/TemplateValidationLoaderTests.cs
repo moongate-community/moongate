@@ -5,6 +5,7 @@ using Moongate.Server.Services.Scripting;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 
@@ -18,6 +19,7 @@ public class TemplateValidationLoaderTests
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
         var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
         var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
 
@@ -39,7 +41,13 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
@@ -50,6 +58,7 @@ public class TemplateValidationLoaderTests
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
         var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
         var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
 
@@ -70,7 +79,13 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
@@ -81,6 +96,7 @@ public class TemplateValidationLoaderTests
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
         var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
         var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
 
@@ -105,7 +121,13 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
@@ -116,6 +138,7 @@ public class TemplateValidationLoaderTests
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
         var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
         var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
 
@@ -133,7 +156,54 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenItemReferencesMissingLootTable_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+        ContainerLayoutSystem.ContainerSizesById["wooden_chest"] = new("wooden_chest", 7, 4, "Wooden Chest");
+
+        itemService.Upsert(
+            new()
+            {
+                Id = "item.loot_chest",
+                Name = "Loot Chest",
+                Category = "containers",
+                Description = "loot chest",
+                ItemId = "0x0E40",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.loot_chest",
+                Weight = 1,
+                Tags = ["container"],
+                ContainerLayoutId = "wooden_chest",
+                LootTables = ["missing_loot"]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
 
         Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
     }
@@ -144,9 +214,28 @@ public class TemplateValidationLoaderTests
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
         var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
         var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
         ContainerLayoutSystem.ContainerSizesById["backpack"] = new("backpack", 7, 4, "Backpack");
+        lootTemplateService.Upsert(
+            new LootTemplateDefinition
+            {
+                Id = "minor_treasure",
+                Name = "Minor Treasure",
+                Category = "loot",
+                Description = "test",
+                Entries =
+                [
+                    new()
+                    {
+                        ItemTemplateId = "item.shirt",
+                        Weight = 1,
+                        Amount = 1
+                    }
+                ]
+            }
+        );
 
         itemService.Upsert(
             new()
@@ -162,7 +251,8 @@ public class TemplateValidationLoaderTests
                 ScriptId = "none",
                 Weight = 1,
                 Tags = ["container"],
-                ContainerLayoutId = "backpack"
+                ContainerLayoutId = "backpack",
+                LootTables = ["minor_treasure"]
             }
         );
 
@@ -219,7 +309,13 @@ public class TemplateValidationLoaderTests
             }
         );
 
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
 
         Assert.That(async () => await loader.LoadAsync(), Throws.Nothing);
     }

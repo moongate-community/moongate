@@ -99,6 +99,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IPlayerLoginWorldSyncService, PlayerLoginWorldSyncService>(Reuse.Singleton);
         container.Register<IItemService, ItemService>(Reuse.Singleton);
         container.Register<IItemBookService, ItemBookService>(Reuse.Singleton);
+        container.Register<ILootGenerationService, LootGenerationService>(Reuse.Singleton);
         container.Register<IItemInteractionService, ItemInteractionService>(Reuse.Singleton);
         container.Register<IItemManipulationService, ItemManipulationService>(Reuse.Singleton);
         container.Register<IPlayerDragService, PlayerDragService>(Reuse.Singleton);
@@ -143,6 +144,7 @@ public static class AddBootstrapCoreServicesExtension
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);
         container.RegisterDelegate<IMapImageService>(_ => new MapImageService(), Reuse.Singleton);
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
+        container.Register<ILootTemplateService, LootTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<ISellProfileTemplateService, SellProfileTemplateService>(Reuse.Singleton);
         container.Register<IStartupTemplateService, StartupTemplateService>(Reuse.Singleton);

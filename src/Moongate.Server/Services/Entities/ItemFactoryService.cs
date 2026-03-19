@@ -71,6 +71,7 @@ public sealed class ItemFactoryService : IItemFactoryService
             EquippedMobileId = Serial.Zero,
             EquippedLayer = null
         };
+        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, template.Id);
 
         var itemFromTile = TileData.ItemTable[item.ItemId];
 
