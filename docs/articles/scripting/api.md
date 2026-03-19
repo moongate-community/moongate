@@ -116,7 +116,7 @@ local dialogue = require("common.dialogue")
 return dialogue.conversation("innkeeper", {
     start = "start",
     topics = {
-        room = { "room", "stanza" }
+        room = { "room", "bed" }
     },
     topic_routes = {
         room = "room_offer"

@@ -37,7 +37,7 @@ return dialogue.conversation("innkeeper", {
     start = "start",
 
     topics = {
-        room = { "room", "stanza", "letto", "sleep" },
+        room = { "room", "bed", "sleep" },
         rumor = { "rumor", "gossip", "news" },
     },
 
@@ -48,37 +48,37 @@ return dialogue.conversation("innkeeper", {
 
     nodes = {
         start = dialogue.node {
-            text = "Benvenuto alla Locanda del Cervo Rosso. Cosa ti serve?",
+            text = "Welcome to the Red Deer Inn. What do you need?",
             options = {
-                dialogue.option { text = "Una stanza", goto_ = "room_offer" },
-                dialogue.option { text = "Voci di corridoio", goto_ = "rumors" },
+                dialogue.option { text = "A room", goto_ = "room_offer" },
+                dialogue.option { text = "Rumors", goto_ = "rumors" },
             }
         },
 
         room_offer = dialogue.node {
-            text = "Una stanza costa 15 monete d'oro.",
+            text = "A room costs 15 gold coins.",
             options = {
-                dialogue.option { text = "Accetto", goto_ = "room_done" },
-                dialogue.option { text = "No grazie", goto_ = "bye" },
+                dialogue.option { text = "Accept", goto_ = "room_done" },
+                dialogue.option { text = "No thanks", goto_ = "bye" },
             }
         },
 
         room_done = dialogue.node {
-            text = "La stanza al piano di sopra e' tua per la notte.",
+            text = "The upstairs room is yours for the night.",
             options = {
-                dialogue.option { text = "Grazie", goto_ = "bye" },
+                dialogue.option { text = "Thanks", goto_ = "bye" },
             }
         },
 
         rumors = dialogue.node {
-            text = "Dicono che vecchie miniere a nord siano di nuovo abitate.",
+            text = "They say the old mines to the north are inhabited again.",
             options = {
-                dialogue.option { text = "Interessante", goto_ = "bye" },
+                dialogue.option { text = "Interesting", goto_ = "bye" },
             }
         },
 
         bye = dialogue.node {
-            text = "Buona permanenza.",
+            text = "Enjoy your stay.",
             options = {}
         }
     }
@@ -101,7 +101,7 @@ Options can define:
 
 ```lua
 dialogue.option {
-    text = "Accetto",
+    text = "Accept",
     condition = function(ctx)
         return ctx:has_item("gold_coin", 15)
     end,

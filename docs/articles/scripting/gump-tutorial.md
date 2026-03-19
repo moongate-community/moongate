@@ -1,27 +1,27 @@
 # Gump Tutorial
 
-Tutorial pratico per creare gump Lua in Moongate v2.
+Practical tutorial for creating Lua gumps in Moongate v2.
 
-## Obiettivo
+## Goal
 
-Alla fine di questa guida saprai:
+By the end of this guide, you will know how to:
 
-- inviare un gump semplice a un player
-- gestire i click dei bottoni
-- usare il layout file-based (`gump.send_layout`)
-- caricare testo esterno da `scripts/texts` dentro un `htmlgump`
-- eseguire comandi server dal callback
+- send a simple gump to a player
+- handle button clicks
+- use the file-based layout approach (`gump.send_layout`)
+- load external text from `scripts/texts` into an `htmlgump`
+- execute server commands from the callback
 
-## Prerequisiti
+## Prerequisites
 
-- script runtime attivo
-- file `moongate_data/scripts/init.lua` caricato
-- modulo `gump` disponibile (default runtime)
-- modulo `text` disponibile (default runtime)
+- active script runtime
+- `moongate_data/scripts/init.lua` loaded
+- `gump` module available (default runtime)
+- `text` module available (default runtime)
 
-## 1) Gump base con runtime builder
+## 1) Basic gump with the runtime builder
 
-Questo approccio costruisce il gump a runtime.
+This approach builds the gump at runtime.
 
 ```lua
 local SIMPLE_GUMP_ID = 0xB120
@@ -38,9 +38,9 @@ local function open_simple_gump(session_id, character_id)
 end
 ```
 
-## 2) Callback bottone con `gump.on`
+## 2) Button callback with `gump.on`
 
-I callback ricevono `ctx` (session, character, button).
+Callbacks receive `ctx` (session, character, button).
 
 ```lua
 gump.on(0xB120, 101, function(ctx)
@@ -50,9 +50,9 @@ gump.on(0xB120, 101, function(ctx)
 end)
 ```
 
-## 3) Layout file-based (consigliato)
+## 3) File-based layout (recommended)
 
-Questo approccio è più pulito quando il gump cresce.
+This approach is cleaner when the gump grows.
 
 File: `moongate_data/scripts/gumps/tutorial_menu.lua`
 
@@ -96,7 +96,7 @@ end
 return tutorial_menu
 ```
 
-## 4) Aprire il gump da un comando GM
+## 4) Open the gump from a GM command
 
 File: `moongate_data/scripts/commands/gm/tutorial_gump.lua`
 
@@ -119,17 +119,17 @@ end, {
 })
 ```
 
-Poi in `init.lua`:
+Then in `init.lua`:
 
 ```lua
 require("commands/gm/tutorial_gump")
 ```
 
-Uso in-game:
+In-game usage:
 
 - `.tutorial_gump`
 
-## 5) Testo esterno in `htmlgump`
+## 5) External text in `htmlgump`
 
 File: `moongate_data/scripts/texts/welcome_player.txt`
 
@@ -140,7 +140,7 @@ Welcome to {{ shard.name }}, {{ player.name }}.
 Website: {{ shard.website_url }} # visible line
 ```
 
-Uso da Lua:
+Usage from Lua:
 
 ```lua
 local body = text.render("welcome_player.txt", {
@@ -155,32 +155,32 @@ g:html(20, 20, 380, 180, body, true, true)
 gump.send(session_id, g, character_id or 0, 0xB500, 120, 80)
 ```
 
-Note:
+Notes:
 
-- i file stanno sotto `moongate_data/scripts/texts/**`
-- la sintassi è Scriban (`{{ ... }}`)
-- `shard.name` e `shard.website_url` sono disponibili di default
-- `#` commenta la riga o la parte finale della riga
-- `\#` mantiene un `#` letterale
+- files live under `moongate_data/scripts/texts/**`
+- the syntax is Scriban (`{{ ... }}`)
+- `shard.name` and `shard.website_url` are available by default
+- `#` comments out the line or the trailing part of the line
+- `\#` keeps a literal `#`
 
-## 6) Troubleshooting rapido
+## 6) Quick troubleshooting
 
-- Errore “Failed to open ... gump”
-  - verifica `ctx.session_id` valido
-  - verifica che il file richiesto da `require` esista
-- Click bottone non intercettato
-  - controlla `onclick` nel componente (`"on_click"`)
-  - controlla `layout.handlers.on_click`
-  - verifica `button_id` usato nel confronto
-- Gump vuoto o “rotto”
-  - usa prima solo `background + label`
-  - aggiungi componenti uno per volta
+- Error “Failed to open ... gump”
+  - verify that `ctx.session_id` is valid
+  - verify that the file required by `require` exists
+- Button click not handled
+  - check `onclick` in the component (`"on_click"`)
+  - check `layout.handlers.on_click`
+  - verify the `button_id` used in the comparison
+- Empty or “broken” gump
+  - start with only `background + label`
+  - add components one at a time
 
 ## Best Practices
 
-- usa `gump.send_layout` per gump complessi
-- usa `text.render(...)` per testo lungo, messaggi di benvenuto, regole, libri
-- tieni `ui` e `handlers` nello stesso file modulo
-- usa costanti per `gumpId` e `buttonId`
-- non usare fallback “magici” su `sender_serial`
-- logga i click importanti durante debug
+- use `gump.send_layout` for complex gumps
+- use `text.render(...)` for long text, welcome messages, rules, and books
+- keep `ui` and `handlers` in the same module file
+- use constants for `gumpId` and `buttonId`
+- do not rely on “magic” fallbacks for `sender_serial`
+- log important clicks during debugging
