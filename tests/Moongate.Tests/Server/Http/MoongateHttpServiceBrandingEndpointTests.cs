@@ -10,6 +10,15 @@ namespace Moongate.Tests.Server.Http;
 
 public class MoongateHttpServiceBrandingEndpointTests
 {
+    private sealed class BrandingPayload
+    {
+        public string? ShardName { get; set; }
+
+        public string? AdminLoginLogoUrl { get; set; }
+
+        public string? PlayerLoginLogoUrl { get; set; }
+    }
+
     [Test]
     public async Task BrandingEndpoint_ShouldReturnConfiguredShardNameAndLoginLogos()
     {
@@ -59,15 +68,7 @@ public class MoongateHttpServiceBrandingEndpointTests
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
         var endpoint = (IPEndPoint)listener.LocalEndpoint;
+
         return endpoint.Port;
-    }
-
-    private sealed class BrandingPayload
-    {
-        public string? ShardName { get; set; }
-
-        public string? AdminLoginLogoUrl { get; set; }
-
-        public string? PlayerLoginLogoUrl { get; set; }
     }
 }

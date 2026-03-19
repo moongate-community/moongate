@@ -11,6 +11,8 @@ public class MoongateGameConfig
 
     public int TimerWheelSize { get; set; } = 512;
 
+    public int CorpseDecaySeconds { get; set; } = 300;
+
     public bool IdleCpuEnabled { get; set; } = true;
 
     public int IdleSleepMilliseconds { get; set; } = 1;

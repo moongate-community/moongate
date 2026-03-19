@@ -11,7 +11,6 @@ using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
@@ -261,6 +260,9 @@ public class LuaScriptEngineServiceTests
         public UOItemEntity? ItemToReturn { get; set; }
         public Serial LastRequestedItemId { get; private set; }
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
         {
             _ = generateNewSerial;
@@ -382,9 +384,6 @@ public class LuaScriptEngineServiceTests
 
             return Task.CompletedTask;
         }
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     private sealed class LuaScriptEngineServiceTestsTimerService : ITimerService
@@ -830,182 +829,6 @@ public class LuaScriptEngineServiceTests
                 Assert.That(layout, Does.Contain("{ tooltip 101 }"));
             }
         );
-    }
-
-    [Test]
-    public async Task StartAsync_WithTextModule_ShouldRenderTemplateFromFile()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var textsDir = Path.Combine(scriptsDir, "texts");
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(textsDir);
-        Directory.CreateDirectory(luarcDir);
-        await File.WriteAllTextAsync(
-            Path.Combine(textsDir, "welcome_player.txt"),
-            "Welcome to {{ shard.name }}, {{ player.name }}."
-        );
-
-        var container = new Container();
-        container.RegisterInstance<ITextTemplateService>(
-            new TextTemplateService(
-                dirs,
-                new MoongateConfig
-                {
-                    Game = new() { ShardName = "Test Shard" }
-                }
-            )
-        );
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(TextModule))],
-            container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            """
-            (function()
-                local ctx = {
-                    player = {
-                        name = "Tommy"
-                    }
-                }
-
-                return text.render("welcome_player.txt", ctx)
-            end)()
-            """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo("Welcome to Test Shard, Tommy."));
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WithTextModule_ShouldReturnNilWhenTemplateIsMissing()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(Path.Combine(scriptsDir, "texts"));
-        Directory.CreateDirectory(luarcDir);
-
-        var container = new Container();
-        container.RegisterInstance<ITextTemplateService>(new TextTemplateService(dirs, new MoongateConfig()));
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(TextModule))],
-            container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            """
-            (function()
-                local value = text.render("missing.txt", {})
-                return value == nil
-            end)()
-            """
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo(true));
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WithTextModuleAndGumpModule_ShouldSendRenderedHtmlText()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var textsDir = Path.Combine(scriptsDir, "texts");
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(textsDir);
-        Directory.CreateDirectory(luarcDir);
-        await File.WriteAllTextAsync(
-            Path.Combine(textsDir, "welcome_player.txt"),
-            "<CENTER>Welcome to {{ shard.name }}, {{ player.name }}.</CENTER>"
-        );
-
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000055u
-        };
-        sessionService.Add(session);
-
-        var container = new Container();
-        container.RegisterInstance<IOutgoingPacketQueue>(queue);
-        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
-        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
-        container.RegisterInstance<ITextTemplateService>(
-            new TextTemplateService(
-                dirs,
-                new MoongateConfig
-                {
-                    Game = new() { ShardName = "Test Shard" }
-                }
-            )
-        );
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [new(typeof(TextModule)), new(typeof(GumpModule))],
-            container,
-            new(luarcDir, scriptsDir, "0.1.0"),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction(
-            $$"""
-              (function()
-                  local body = text.render("welcome_player.txt", {
-                      player = {
-                          name = "Tommy"
-                      }
-                  })
-
-                  local g = gump.create()
-                  g:html(20, 20, 220, 80, body, true, true)
-                  return gump.send({{session.SessionId}}, g, {{(uint)session.CharacterId}}, 0xB501, 120, 80)
-              end)()
-              """
-        );
-
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Data, Is.EqualTo(true));
-        Assert.That(queue.TryDequeue(out var outbound), Is.True);
-        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-
-        var gump = (CompressedGumpPacket)outbound.Packet;
-        Assert.That(gump.TextLines, Is.EqualTo(new[] { "<CENTER>Welcome to Test Shard, Tommy.</CENTER>" }));
     }
 
     [Test]
@@ -1717,6 +1540,182 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
+    public async Task StartAsync_WithTextModule_ShouldRenderTemplateFromFile()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var textsDir = Path.Combine(scriptsDir, "texts");
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(textsDir);
+        Directory.CreateDirectory(luarcDir);
+        await File.WriteAllTextAsync(
+            Path.Combine(textsDir, "welcome_player.txt"),
+            "Welcome to {{ shard.name }}, {{ player.name }}."
+        );
+
+        var container = new Container();
+        container.RegisterInstance<ITextTemplateService>(
+            new TextTemplateService(
+                dirs,
+                new()
+                {
+                    Game = new() { ShardName = "Test Shard" }
+                }
+            )
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TextModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local ctx = {
+                    player = {
+                        name = "Tommy"
+                    }
+                }
+
+                return text.render("welcome_player.txt", ctx)
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo("Welcome to Test Shard, Tommy."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithTextModule_ShouldReturnNilWhenTemplateIsMissing()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "texts"));
+        Directory.CreateDirectory(luarcDir);
+
+        var container = new Container();
+        container.RegisterInstance<ITextTemplateService>(new TextTemplateService(dirs, new()));
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TextModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            """
+            (function()
+                local value = text.render("missing.txt", {})
+                return value == nil
+            end)()
+            """
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithTextModuleAndGumpModule_ShouldSendRenderedHtmlText()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var textsDir = Path.Combine(scriptsDir, "texts");
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(textsDir);
+        Directory.CreateDirectory(luarcDir);
+        await File.WriteAllTextAsync(
+            Path.Combine(textsDir, "welcome_player.txt"),
+            "<CENTER>Welcome to {{ shard.name }}, {{ player.name }}.</CENTER>"
+        );
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000055u
+        };
+        sessionService.Add(session);
+
+        var container = new Container();
+        container.RegisterInstance<IOutgoingPacketQueue>(queue);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IGumpScriptDispatcherService>(new GumpScriptDispatcherService());
+        container.RegisterInstance<ITextTemplateService>(
+            new TextTemplateService(
+                dirs,
+                new()
+                {
+                    Game = new() { ShardName = "Test Shard" }
+                }
+            )
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [new(typeof(TextModule)), new(typeof(GumpModule))],
+            container,
+            new(luarcDir, scriptsDir, "0.1.0"),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction(
+            $$"""
+              (function()
+                  local body = text.render("welcome_player.txt", {
+                      player = {
+                          name = "Tommy"
+                      }
+                  })
+
+                  local g = gump.create()
+                  g:html(20, 20, 220, 80, body, true, true)
+                  return gump.send({{session.SessionId}}, g, {{(uint)session.CharacterId}}, 0xB501, 120, 80)
+              end)()
+              """
+        );
+
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Data, Is.EqualTo(true));
+        Assert.That(queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var gump = (CompressedGumpPacket)outbound.Packet;
+        Assert.That(gump.TextLines, Is.EqualTo(new[] { "<CENTER>Welcome to Test Shard, Tommy.</CENTER>" }));
+    }
+
+    [Test]
     public async Task StartAsync_WithTimerModule_ShouldRegisterNamedTimerFromLua()
     {
         using var temp = new TempDirectory();
@@ -1773,6 +1772,143 @@ public class LuaScriptEngineServiceTests
         var name = service.ToScriptEngineFunctionName("HelloWorldMethod");
 
         Assert.That(name, Is.EqualTo("hello_world_method"));
+    }
+
+    [Test]
+    public async Task StartAsync_WhenLuaPluginExists_ShouldLoadPluginEntryScript()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var pluginsDir = dirs[DirectoryType.Plugins];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "helpplus"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "helpplus", "plugin.lua"),
+            """
+            return {
+              id = "helpplus",
+              name = "Help Plus",
+              version = "0.1.0",
+              entry = "init.lua",
+            }
+            """
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "helpplus", "init.lua"),
+            """
+            HELPLUS_PLUGIN_LOADED = true
+            """
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction("(function() return HELPLUS_PLUGIN_LOADED == true end)()");
+
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Data, Is.EqualTo(true));
+    }
+
+    [Test]
+    public async Task StartAsync_WhenPluginIdIsDuplicated_ShouldSkipSecondPluginEntry()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var pluginsDir = dirs[DirectoryType.Plugins];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "alpha"));
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "beta"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "alpha", "plugin.lua"),
+            """return { id = "shared", entry = "init.lua" }"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "alpha", "init.lua"),
+            """PLUGIN_ALPHA = true"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "beta", "plugin.lua"),
+            """return { id = "shared", entry = "init.lua" }"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "beta", "init.lua"),
+            """PLUGIN_BETA = true"""
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
+            []
+        );
+
+        await service.StartAsync();
+
+        var alphaResult = service.ExecuteFunction("(function() return PLUGIN_ALPHA == true end)()");
+        var betaResult = service.ExecuteFunction("(function() return PLUGIN_BETA == true end)()");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(alphaResult.Success, Is.True);
+                Assert.That(alphaResult.Data, Is.EqualTo(true));
+                Assert.That(betaResult.Success, Is.True);
+                Assert.That(betaResult.Data, Is.EqualTo(false));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WhenPluginManifestDoesNotReturnTable_ShouldSkipPlugin()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var pluginsDir = dirs[DirectoryType.Plugins];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "broken"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "broken", "plugin.lua"),
+            "return \"invalid\""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "broken", "init.lua"),
+            """BROKEN_PLUGIN_LOADED = true"""
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction("(function() return BROKEN_PLUGIN_LOADED == true end)()");
+
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Data, Is.EqualTo(false));
     }
 
     private static byte[] BuildGumpResponsePacket(uint serial, uint gumpId, uint buttonId)

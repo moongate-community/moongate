@@ -18,15 +18,15 @@ public sealed class MoongateSpatialConfig
 
     /// <summary>
     /// Gets or sets the sector radius used to send item/mobile snapshots when a player enters a new sector.
-    /// A value of <c>3</c> sends snapshots for a 7x7 sector area centered on the entered sector.
+    /// A value of <c>2</c> sends snapshots for a 5x5 sector area centered on the entered sector.
     /// </summary>
-    public int SectorEnterSyncRadius { get; set; } = 3;
+    public int SectorEnterSyncRadius { get; set; } = 2;
 
     /// <summary>
     /// Gets or sets the lazy-load radius (in sectors) used when a sector is accessed.
-    /// A value of <c>3</c> loads a 7x7 area centered on the requested sector.
+    /// A value of <c>1</c> loads a 3x3 area centered on the requested sector.
     /// </summary>
-    public int LazySectorEntityLoadRadius { get; set; } = 3;
+    public int LazySectorEntityLoadRadius { get; set; } = 1;
 
     /// <summary>
     /// Gets or sets the sector radius used for live update broadcast (item/mobile changes).

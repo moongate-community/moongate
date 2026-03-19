@@ -1,6 +1,7 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
@@ -24,12 +25,12 @@ public sealed class DyeModule
         }
 
         return _dyeColorService.BeginAsync(
-                                sessionId,
-                                (Serial)dyeTubSerial,
-                                callback is null ? null : CreateLuaTargetCallback(callback)
-                            )
-                            .GetAwaiter()
-                            .GetResult();
+                                   sessionId,
+                                   (Serial)dyeTubSerial,
+                                   callback is null ? null : CreateLuaTargetCallback(callback)
+                               )
+                               .GetAwaiter()
+                               .GetResult();
     }
 
     [ScriptFunction("send_dyeable", "Opens the dye window directly for a known dyeable item.")]
@@ -43,18 +44,18 @@ public sealed class DyeModule
         return _dyeColorService.SendDyeableAsync(sessionId, (Serial)itemSerial, (ushort)model).GetAwaiter().GetResult();
     }
 
-    private static Func<Moongate.UO.Data.Persistence.Entities.UOItemEntity, bool> CreateLuaTargetCallback(Closure callback)
+    private static Func<UOItemEntity, bool> CreateLuaTargetCallback(Closure callback)
         => item =>
            {
                try
                {
-                    var result = callback.OwnerScript.Call(callback, DynValue.NewNumber((uint)item.Id));
+                   var result = callback.OwnerScript.Call(callback, DynValue.NewNumber((uint)item.Id));
 
-                    return result.Type != DataType.Boolean || result.Boolean;
-                }
-                catch
-                {
-                    return false;
-                }
-            };
+                   return result.Type != DataType.Boolean || result.Boolean;
+               }
+               catch
+               {
+                   return false;
+               }
+           };
 }

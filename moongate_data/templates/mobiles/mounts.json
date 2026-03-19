@@ -1,0 +1,30 @@
+[
+  {
+    "type": "mobile",
+    "id": "ethereal_horse_mount",
+    "category": "mount",
+    "description": "Personal horse used by mount tokens.",
+    "tags": ["mount", "horse", "ethereal"],
+    "body": "0x00E2",
+    "skinHue": 0,
+    "hairHue": 0,
+    "hairStyle": 0,
+    "strength": 50,
+    "dexterity": 60,
+    "intelligence": 10,
+    "hits": 50,
+    "mana": 0,
+    "stamina": 60,
+    "brain": "None",
+    "params": {
+      "mounted_display_item_id": {
+        "type": "string",
+        "value": "0x3EA0"
+      }
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "name": "horse",
+    "title": "a horse"
+  }
+]

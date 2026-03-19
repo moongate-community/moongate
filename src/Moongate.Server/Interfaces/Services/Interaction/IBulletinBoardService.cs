@@ -18,24 +18,6 @@ public interface IBulletinBoardService
     Task<bool> OpenBoardAsync(long sessionId, Serial boardId);
 
     /// <summary>
-    /// Sends a single message summary for the specified board message.
-    /// </summary>
-    /// <param name="session">Source session.</param>
-    /// <param name="boardId">Bulletin board item serial identifier.</param>
-    /// <param name="messageId">Bulletin board message serial identifier.</param>
-    /// <returns><see langword="true" /> when the message summary was sent; otherwise <see langword="false" />.</returns>
-    Task<bool> SendSummaryAsync(GameSession session, uint boardId, uint messageId);
-
-    /// <summary>
-    /// Sends the full message body for the specified bulletin board message.
-    /// </summary>
-    /// <param name="session">Source session.</param>
-    /// <param name="boardId">Bulletin board item serial identifier.</param>
-    /// <param name="messageId">Bulletin board message serial identifier.</param>
-    /// <returns><see langword="true" /> when the full message was sent; otherwise <see langword="false" />.</returns>
-    Task<bool> SendMessageAsync(GameSession session, uint boardId, uint messageId);
-
-    /// <summary>
     /// Persists a new top-level post or reply from the client bulletin board packet payload.
     /// </summary>
     /// <param name="session">Source session.</param>
@@ -51,4 +33,22 @@ public interface IBulletinBoardService
     /// <param name="messageId">Bulletin board message serial identifier.</param>
     /// <returns><see langword="true" /> when the message was removed; otherwise <see langword="false" />.</returns>
     Task<bool> RemoveMessageAsync(GameSession session, uint boardId, uint messageId);
+
+    /// <summary>
+    /// Sends the full message body for the specified bulletin board message.
+    /// </summary>
+    /// <param name="session">Source session.</param>
+    /// <param name="boardId">Bulletin board item serial identifier.</param>
+    /// <param name="messageId">Bulletin board message serial identifier.</param>
+    /// <returns><see langword="true" /> when the full message was sent; otherwise <see langword="false" />.</returns>
+    Task<bool> SendMessageAsync(GameSession session, uint boardId, uint messageId);
+
+    /// <summary>
+    /// Sends a single message summary for the specified board message.
+    /// </summary>
+    /// <param name="session">Source session.</param>
+    /// <param name="boardId">Bulletin board item serial identifier.</param>
+    /// <param name="messageId">Bulletin board message serial identifier.</param>
+    /// <returns><see langword="true" /> when the message summary was sent; otherwise <see langword="false" />.</returns>
+    Task<bool> SendSummaryAsync(GameSession session, uint boardId, uint messageId);
 }

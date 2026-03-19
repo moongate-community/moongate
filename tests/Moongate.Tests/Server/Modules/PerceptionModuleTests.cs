@@ -22,14 +22,14 @@ public sealed class PerceptionModuleTests
         {
             _mobiles.Add(mobile);
             var key = (
-                mobile.MapId,
-                mobile.Location.X >> MapSectorConsts.SectorShift,
-                mobile.Location.Y >> MapSectorConsts.SectorShift
-            );
+                          mobile.MapId,
+                          mobile.Location.X >> MapSectorConsts.SectorShift,
+                          mobile.Location.Y >> MapSectorConsts.SectorShift
+                      );
 
             if (!_sectors.TryGetValue(key, out var sector))
             {
-                sector = new MapSector(key.MapId, key.Item2, key.Item3);
+                sector = new(key.MapId, key.Item2, key.Item3);
                 _sectors[key] = sector;
             }
 
@@ -97,6 +97,30 @@ public sealed class PerceptionModuleTests
     }
 
     [Test]
+    public void Distance_AndInRange_ShouldReturnExpectedValues()
+    {
+        var spatial = new PerceptionTestSpatialWorldService();
+        var a = new UOMobileEntity { Id = (Serial)0x20u, MapId = 1, Location = new(100, 100, 0) };
+        var b = new UOMobileEntity { Id = (Serial)0x21u, MapId = 1, Location = new(103, 104, 0) };
+        spatial.AddMobile(a);
+        spatial.AddMobile(b);
+        var module = new PerceptionModule(spatial);
+
+        var distance = module.Distance((uint)a.Id, (uint)b.Id);
+        var inRange5 = module.InRange((uint)a.Id, (uint)b.Id, 5);
+        var inRange4 = module.InRange((uint)a.Id, (uint)b.Id, 4);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(distance, Is.EqualTo(5));
+                Assert.That(inRange5, Is.True);
+                Assert.That(inRange4, Is.False);
+            }
+        );
+    }
+
+    [Test]
     public void FindNearestEnemy_AndFriend_ShouldResolveClosestMobiles()
     {
         var spatial = new PerceptionTestSpatialWorldService();
@@ -118,30 +142,6 @@ public sealed class PerceptionModuleTests
             {
                 Assert.That(nearestEnemy, Is.EqualTo((uint)enemyNear.Id));
                 Assert.That(nearestFriend, Is.EqualTo((uint)friendNear.Id));
-            }
-        );
-    }
-
-    [Test]
-    public void Distance_AndInRange_ShouldReturnExpectedValues()
-    {
-        var spatial = new PerceptionTestSpatialWorldService();
-        var a = new UOMobileEntity { Id = (Serial)0x20u, MapId = 1, Location = new(100, 100, 0) };
-        var b = new UOMobileEntity { Id = (Serial)0x21u, MapId = 1, Location = new(103, 104, 0) };
-        spatial.AddMobile(a);
-        spatial.AddMobile(b);
-        var module = new PerceptionModule(spatial);
-
-        var distance = module.Distance((uint)a.Id, (uint)b.Id);
-        var inRange5 = module.InRange((uint)a.Id, (uint)b.Id, 5);
-        var inRange4 = module.InRange((uint)a.Id, (uint)b.Id, 4);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(distance, Is.EqualTo(5));
-                Assert.That(inRange5, Is.True);
-                Assert.That(inRange4, Is.False);
             }
         );
     }

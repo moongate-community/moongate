@@ -101,32 +101,13 @@ public sealed class PasswordCommand : ICommandExecutor
         await UpdateByUsernameAsync(context, context.Arguments[0], context.Arguments[1]);
     }
 
-    private async Task UpdateOwnPasswordAsync(CommandSystemContext context, GameSession session, string newPassword)
+    private async Task<UOAccountEntity?> ResolveAccountByUsernameAsync(string username)
     {
-        if (session.AccountId == Serial.Zero)
-        {
-            context.PrintError("Failed to update password: no account is associated with this session.");
+        var accounts = await _accountService.GetAccountsAsync();
 
-            return;
-        }
-
-        if (string.IsNullOrWhiteSpace(newPassword))
-        {
-            context.PrintError("Password cannot be empty.");
-
-            return;
-        }
-
-        var updatedAccount = await _accountService.UpdateAccountAsync(session.AccountId, password: newPassword);
-
-        if (updatedAccount is null)
-        {
-            context.PrintError("Failed to update password for the current account.");
-
-            return;
-        }
-
-        context.Print("Password updated for account '{0}'.", updatedAccount.Username);
+        return accounts.FirstOrDefault(
+            account => string.Equals(account.Username, username, StringComparison.OrdinalIgnoreCase)
+        );
     }
 
     private async Task UpdateByUsernameAsync(CommandSystemContext context, string username, string newPassword)
@@ -159,12 +140,31 @@ public sealed class PasswordCommand : ICommandExecutor
         context.Print("Password updated for account '{0}'.", updatedAccount.Username);
     }
 
-    private async Task<UOAccountEntity?> ResolveAccountByUsernameAsync(string username)
+    private async Task UpdateOwnPasswordAsync(CommandSystemContext context, GameSession session, string newPassword)
     {
-        var accounts = await _accountService.GetAccountsAsync();
+        if (session.AccountId == Serial.Zero)
+        {
+            context.PrintError("Failed to update password: no account is associated with this session.");
 
-        return accounts.FirstOrDefault(
-            account => string.Equals(account.Username, username, StringComparison.OrdinalIgnoreCase)
-        );
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(newPassword))
+        {
+            context.PrintError("Password cannot be empty.");
+
+            return;
+        }
+
+        var updatedAccount = await _accountService.UpdateAccountAsync(session.AccountId, password: newPassword);
+
+        if (updatedAccount is null)
+        {
+            context.PrintError("Failed to update password for the current account.");
+
+            return;
+        }
+
+        context.Print("Password updated for account '{0}'.", updatedAccount.Username);
     }
 }

@@ -26,6 +26,9 @@ public sealed class AddItemBackpackCommandTests
         public bool MoveToContainerResult { get; set; }
         public UOItemEntity SpawnedItem { get; set; } = new() { Id = (Serial)0x40000100u };
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -87,9 +90,6 @@ public sealed class AddItemBackpackCommandTests
             => Task.CompletedTask;
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
     }
 

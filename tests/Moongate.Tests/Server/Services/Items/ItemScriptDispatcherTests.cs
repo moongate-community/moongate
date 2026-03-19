@@ -19,6 +19,9 @@ public class ItemScriptDispatcherTests
 {
     private sealed class ItemScriptDispatcherTestItemService : IItemService
     {
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => throw new NotSupportedException();
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => throw new NotSupportedException();
 
@@ -67,9 +70,6 @@ public class ItemScriptDispatcherTests
             => throw new NotSupportedException();
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => throw new NotSupportedException();
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => throw new NotSupportedException();
     }
 

@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Internal.Commands;
@@ -46,8 +47,8 @@ public sealed class UnlockDoorCommand : ICommandExecutor
         await _gameEventBusService.PublishAsync(
             new TargetRequestCursorEvent(
                 context.SessionId,
-                Moongate.Network.Packets.Types.Targeting.TargetCursorSelectionType.SelectObject,
-                Moongate.Network.Packets.Types.Targeting.TargetCursorType.Neutral,
+                TargetCursorSelectionType.SelectObject,
+                TargetCursorType.Neutral,
                 callback =>
                 {
                     try

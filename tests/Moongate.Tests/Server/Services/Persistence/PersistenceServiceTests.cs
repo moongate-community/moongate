@@ -60,6 +60,7 @@ public class PersistenceServiceTests
                 () =>
                 {
                     job();
+
                     return Task.CompletedTask;
                 }
             );
@@ -71,7 +72,8 @@ public class PersistenceServiceTests
             _queued.Enqueue(job);
         }
 
-        public int ExecutePendingOnGameLoop(int maxActions = 100) => 0;
+        public int ExecutePendingOnGameLoop(int maxActions = 100)
+            => 0;
 
         public void PostToGameLoop(Action action) { }
 
@@ -79,17 +81,15 @@ public class PersistenceServiceTests
             Func<TResult> backgroundJob,
             Action<TResult> onGameLoopResult,
             Action<Exception>? onGameLoopError = null
-        ) => throw new NotSupportedException();
+        )
+            => throw new NotSupportedException();
 
         public void RunBackgroundAndPostResultAsync<TResult>(
             Func<Task<TResult>> backgroundJob,
             Action<TResult> onGameLoopResult,
             Action<Exception>? onGameLoopError = null
-        ) => throw new NotSupportedException();
-
-        public void Start(int? workerCount = null) { }
-
-        public Task StopAsync() => Task.CompletedTask;
+        )
+            => throw new NotSupportedException();
 
         public async Task RunNextAsync()
         {
@@ -100,6 +100,11 @@ public class PersistenceServiceTests
 
             await _queued.Dequeue()();
         }
+
+        public void Start(int? workerCount = null) { }
+
+        public Task StopAsync()
+            => Task.CompletedTask;
     }
 
     [Test]
@@ -136,6 +141,37 @@ public class PersistenceServiceTests
 
         var snapshotPath = Path.Combine(directories[DirectoryType.Save], "world.snapshot.bin");
         Assert.That(File.Exists(snapshotPath), Is.True);
+    }
+
+    [Test]
+    public async Task ScheduledAutosaveBackgroundJob_ShouldCompleteSaveAndUpdateMetrics()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var timerSpy = new TimerServiceSpy();
+        var backgroundSpy = new BackgroundJobServiceSpy();
+        using var service = new PersistenceService(
+            directories,
+            timerSpy,
+            backgroundSpy,
+            new(),
+            new NetworkServiceTestGameEventBusService()
+        );
+
+        await service.StartAsync();
+        timerSpy.LastCallback!.Invoke();
+        await backgroundSpy.RunNextAsync();
+
+        var snapshot = service.GetMetricsSnapshot();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(snapshot.TotalSaves, Is.GreaterThanOrEqualTo(1));
+                Assert.That(snapshot.LastSaveTimestampUtc, Is.Not.Null);
+                Assert.That(File.Exists(Path.Combine(directories[DirectoryType.Save], "world.snapshot.bin")), Is.True);
+            }
+        );
     }
 
     [Test]
@@ -205,7 +241,7 @@ public class PersistenceServiceTests
             directories,
             timerSpy,
             backgroundSpy,
-            new MoongateConfig(),
+            new(),
             new NetworkServiceTestGameEventBusService()
         );
 
@@ -227,7 +263,7 @@ public class PersistenceServiceTests
             directories,
             timerSpy,
             backgroundSpy,
-            new MoongateConfig(),
+            new(),
             new NetworkServiceTestGameEventBusService()
         );
 
@@ -237,37 +273,6 @@ public class PersistenceServiceTests
         timerSpy.LastCallback.Invoke();
 
         Assert.That(backgroundSpy.EnqueuedJobsCount, Is.EqualTo(1));
-    }
-
-    [Test]
-    public async Task ScheduledAutosaveBackgroundJob_ShouldCompleteSaveAndUpdateMetrics()
-    {
-        using var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var timerSpy = new TimerServiceSpy();
-        var backgroundSpy = new BackgroundJobServiceSpy();
-        using var service = new PersistenceService(
-            directories,
-            timerSpy,
-            backgroundSpy,
-            new MoongateConfig(),
-            new NetworkServiceTestGameEventBusService()
-        );
-
-        await service.StartAsync();
-        timerSpy.LastCallback!.Invoke();
-        await backgroundSpy.RunNextAsync();
-
-        var snapshot = service.GetMetricsSnapshot();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(snapshot.TotalSaves, Is.GreaterThanOrEqualTo(1));
-                Assert.That(snapshot.LastSaveTimestampUtc, Is.Not.Null);
-                Assert.That(File.Exists(Path.Combine(directories[DirectoryType.Save], "world.snapshot.bin")), Is.True);
-            }
-        );
     }
 
     private static PersistenceService CreatePersistenceService(DirectoriesConfig directoriesConfig)

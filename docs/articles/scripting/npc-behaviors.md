@@ -15,7 +15,7 @@ Keep NPC AI maintainable by separating:
 ```text
 moongate_data/scripts/ai/
 ├── behavior.lua                 # behavior registry
-├── lib/
+├── runners/
 │   └── utility_runner.lua       # utility/priority behavior runner
 ├── behaviors/
 │   ├── init.lua
@@ -33,6 +33,7 @@ Each brain table can expose:
 
 - `brain_loop(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
+- `on_speech(npc_id, speaker_id, text, speech_type, map_id, x, y, z)` optional
 - `on_death(by_character, context)` optional
 
 In templates:
@@ -91,7 +92,15 @@ Current core modules for behavior scripts:
 
 - `perception` (distance, nearby friend/enemy lookup, range checks)
 - `steering` (follow/evade/wander/stop movement primitives)
-- `combat` (targeting and swing hooks)
+- `combat` (target selection into the server combat loop; `set_target` / `clear_target`)
+
+`combat.set_target(...)` does not calculate hit or damage in Lua.
+It delegates to `CombatService`, which owns:
+
+- warmode and `CombatantId`
+- swing scheduling through `TimerWheelService`
+- melee hit/damage resolution
+- region/map harmful-action gate on actual attack attempt
 - `npc_state` (typed state variables)
 - `time`, `random`, `mobile` (general runtime helpers)
 
@@ -101,3 +110,4 @@ Current core modules for behavior scripts:
 - Store tunables in blackboard keys instead of hardcoding in multiple files.
 - Use `on_event` for reactive AI (speech, in-range, out-range), and `brain_loop` for tactical polling.
 - Return explicit delay values from behaviors to control tick frequency.
+- For conversational NPCs, prefer `common.npc_dialogue` so deterministic dialogue can claim speech before `ai_dialogue` fallback.

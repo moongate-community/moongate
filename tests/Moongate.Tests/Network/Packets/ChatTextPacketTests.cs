@@ -26,6 +26,17 @@ public class ChatTextPacketTests
     }
 
     [Test]
+    public void TryParse_ShouldReturnFalse_WhenDeclaredLengthDoesNotMatchBuffer()
+    {
+        var packet = new ChatTextPacket();
+        var data = BuildPayload("ENU", ChatActionType.Message, "hello conference");
+        data[1] = 0x00;
+        data[2] = 0x03;
+
+        Assert.That(packet.TryParse(data), Is.False);
+    }
+
+    [Test]
     public void TryParse_ShouldSupportEmptyUnicodePayload_ForCloseAction()
     {
         var packet = new ChatTextPacket();
@@ -42,17 +53,6 @@ public class ChatTextPacketTests
                 Assert.That(packet.Payload, Is.EqualTo(string.Empty));
             }
         );
-    }
-
-    [Test]
-    public void TryParse_ShouldReturnFalse_WhenDeclaredLengthDoesNotMatchBuffer()
-    {
-        var packet = new ChatTextPacket();
-        var data = BuildPayload("ENU", ChatActionType.Message, "hello conference");
-        data[1] = 0x00;
-        data[2] = 0x03;
-
-        Assert.That(packet.TryParse(data), Is.False);
     }
 
     private static byte[] BuildPayload(string language, ChatActionType actionId, string payload)

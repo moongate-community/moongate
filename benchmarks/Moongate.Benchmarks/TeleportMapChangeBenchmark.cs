@@ -1,7 +1,6 @@
 using System.Net.Sockets;
 using BenchmarkDotNet.Attributes;
 using Moongate.Network.Client;
-using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Speech;
@@ -32,10 +31,7 @@ using Moongate.UO.Data.Utils;
 
 namespace Moongate.Benchmarks;
 
-[MemoryDiagnoser]
-[InvocationCount(1)]
-[WarmupCount(3)]
-[IterationCount(12)]
+[MemoryDiagnoser, InvocationCount(1), WarmupCount(3), IterationCount(12)]
 public class TeleportMapChangeBenchmark : IDisposable
 {
     private const int SourceMapId = 1;
@@ -50,369 +46,6 @@ public class TeleportMapChangeBenchmark : IDisposable
 
     private BenchmarkScenario _crossMapScenario = null!;
     private BenchmarkScenario _sameMapScenario = null!;
-
-    [IterationSetup]
-    public void IterationSetup()
-    {
-        CleanupClients();
-        _crossMapScenario = CreateScenario(
-            currentMapId: DestinationMapId,
-            currentLocation: DestinationLocation,
-            oldMapId: SourceMapId,
-            oldLocation: SourceLocation,
-            newMapId: DestinationMapId,
-            newLocation: DestinationLocation,
-            observers:
-            [
-                BuildObserver((Serial)0x7000_0002u, SourceMapId, SourceLocation),
-                BuildObserver((Serial)0x7000_0003u, DestinationMapId, DestinationLocation)
-            ],
-            seedWorld: static (itemService, mobileService) =>
-            {
-                SeedOldWorld(itemService, mobileService);
-                SeedDestinationWorld(itemService, mobileService);
-            }
-        );
-        _sameMapScenario = CreateScenario(
-            currentMapId: SameMapId,
-            currentLocation: SameMapDestinationLocation,
-            oldMapId: SameMapId,
-            oldLocation: SameMapSourceLocation,
-            newMapId: SameMapId,
-            newLocation: SameMapDestinationLocation,
-            observers:
-            [
-                BuildObserver((Serial)0x7000_0012u, SameMapId, SameMapSourceLocation),
-                BuildObserver((Serial)0x7000_0013u, SameMapId, SameMapDestinationLocation)
-            ],
-            seedWorld: static (itemService, mobileService) => SeedSameMapWorld(itemService, mobileService)
-        );
-    }
-
-    [IterationCleanup]
-    public void IterationCleanup()
-        => CleanupClients();
-
-    [Benchmark]
-    public async Task<int> HandleCrossMapTeleport_ColdDestination()
-    {
-        _crossMapScenario.OutgoingQueue.Reset();
-        _crossMapScenario.SpeechService.Reset();
-
-        await _crossMapScenario.Handler.HandleAsync(_crossMapScenario.GameEvent);
-
-        return _crossMapScenario.OutgoingQueue.EnqueuedCount + _crossMapScenario.SpeechService.MessagesSent;
-    }
-
-    [Benchmark]
-    public async Task<int> HandleSameMapTeleport_ColdDestination_WithSelfRefresh()
-    {
-        _sameMapScenario.OutgoingQueue.Reset();
-        _sameMapScenario.SpeechService.Reset();
-
-        await _sameMapScenario.Handler.HandleAsync(_sameMapScenario.GameEvent);
-
-        return _sameMapScenario.OutgoingQueue.EnqueuedCount + _sameMapScenario.SpeechService.MessagesSent;
-    }
-
-    public void Dispose()
-    {
-        CleanupClients();
-        GC.SuppressFinalize(this);
-    }
-
-    private void CleanupClients()
-    {
-        foreach (var client in _clients)
-        {
-            client.Dispose();
-        }
-
-        _clients.Clear();
-    }
-
-    private static UOMobileEntity BuildMovingPlayer(int mapId, Point3D location)
-        => new()
-        {
-            Id = (Serial)0x7000_0001u,
-            Name = "benchmark-player",
-            IsPlayer = true,
-            MapId = mapId,
-            Location = location,
-            Strength = 50,
-            Dexterity = 50,
-            Intelligence = 25,
-            Hits = 50,
-            MaxHits = 50,
-            Mana = 25,
-            MaxMana = 25,
-            Stamina = 40,
-            MaxStamina = 40
-        };
-
-    private static UOMobileEntity BuildObserver(Serial id, int mapId, Point3D origin)
-        => new()
-        {
-            Id = id,
-            Name = $"observer-{id.Value}",
-            IsPlayer = true,
-            MapId = mapId,
-            Location = new(origin.X + 4, origin.Y + 3, origin.Z),
-            Hits = 50,
-            MaxHits = 50
-        };
-
-    private static UOItemEntity BuildBackpack()
-    {
-        var backpack = new UOItemEntity
-        {
-            Id = (Serial)0x4000_1000u,
-            Name = "benchmark-backpack",
-            ItemId = 0x0E75,
-            MapId = DestinationMapId,
-            Location = DestinationLocation
-        };
-
-        backpack.AddItem(
-            new UOItemEntity
-            {
-                Id = (Serial)0x4000_1001u,
-                Name = "bandage",
-                ItemId = 0x0E21,
-                Amount = 25
-            },
-            new Point2D(42, 60)
-        );
-
-        return backpack;
-    }
-
-    private static UOItemEntity BuildEquippedItem(Serial id, ushort itemId, short hue)
-        => new()
-        {
-            Id = id,
-            ItemId = itemId,
-            Hue = hue,
-            Amount = 1
-        };
-
-    private BenchmarkScenario CreateScenario(
-        int currentMapId,
-        Point3D currentLocation,
-        int oldMapId,
-        Point3D oldLocation,
-        int newMapId,
-        Point3D newLocation,
-        IReadOnlyList<UOMobileEntity> observers,
-        Action<BenchmarkItemService, BenchmarkMobileService> seedWorld
-    )
-    {
-        var outgoingQueue = new CountingOutgoingPacketQueue();
-        var speechService = new BenchmarkSpeechService();
-        var sessions = new BenchmarkGameNetworkSessionService();
-        var itemService = new BenchmarkItemService();
-        var mobileService = new BenchmarkMobileService();
-        var movingPlayer = BuildMovingPlayer(currentMapId, currentLocation);
-        var backpack = BuildBackpack();
-        movingPlayer.AddEquippedItem(ItemLayerType.Backpack, backpack);
-        movingPlayer.BackpackId = backpack.Id;
-        movingPlayer.AddEquippedItem(ItemLayerType.Shirt, BuildEquippedItem((Serial)0x4000_1010u, 0x1F7B, 0x0455));
-        movingPlayer.AddEquippedItem(ItemLayerType.Pants, BuildEquippedItem((Serial)0x4000_1011u, 0x152E, 0x03E9));
-        var characterService = new BenchmarkCharacterService(movingPlayer, backpack);
-
-        seedWorld(itemService, mobileService);
-
-        var spatialWorld = new SpatialWorldService(
-            sessions,
-            new NoOpGameEventBusService(),
-            characterService,
-            itemService,
-            mobileService,
-            outgoingQueue,
-            new NoOpTeleportersDataService(),
-            CreateBenchmarkConfig()
-        );
-
-        var movingSession = CreateSession(movingPlayer);
-        sessions.Add(movingSession);
-
-        foreach (var observer in observers)
-        {
-            sessions.Add(CreateSession(observer));
-        }
-
-        var dispatchEvents = new DispatchEventsService(spatialWorld, outgoingQueue, sessions);
-        var handler = new MobileHandler(
-            spatialWorld,
-            characterService,
-            speechService,
-            dispatchEvents,
-            sessions,
-            outgoingQueue,
-            CreateBenchmarkConfig(),
-            new FixedLightService()
-        );
-
-        return new(
-            handler,
-            outgoingQueue,
-            speechService,
-            new MobilePositionChangedEvent(
-                movingSession.SessionId,
-                movingPlayer.Id,
-                oldMapId,
-                newMapId,
-                oldLocation,
-                newLocation,
-                isTeleport: true
-            )
-        );
-    }
-
-    private static MoongateConfig CreateBenchmarkConfig()
-        => new()
-        {
-            Spatial = new()
-            {
-                SectorEnterSyncRadius = 3,
-                SectorUpdateBroadcastRadius = 3,
-                LazySectorEntityLoadRadius = 3
-            }
-        };
-
-    private static void SeedOldWorld(BenchmarkItemService itemService, BenchmarkMobileService mobileService)
-    {
-        var centerSectorX = SourceLocation.X >> MapSectorConsts.SectorShift;
-        var centerSectorY = SourceLocation.Y >> MapSectorConsts.SectorShift;
-        var serialSeed = 0x4100_0000u;
-
-        for (var sectorX = centerSectorX - 3; sectorX <= centerSectorX + 3; sectorX++)
-        {
-            for (var sectorY = centerSectorY - 3; sectorY <= centerSectorY + 3; sectorY++)
-            {
-                itemService.ItemsBySector[(SourceMapId, sectorX, sectorY)] =
-                [
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, SourceMapId, "old-item-a"),
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, SourceMapId, "old-item-b")
-                ];
-
-                mobileService.MobilesBySector[(SourceMapId, sectorX, sectorY)] =
-                [
-                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, SourceMapId, "old-npc")
-                ];
-            }
-        }
-    }
-
-    private static void SeedDestinationWorld(BenchmarkItemService itemService, BenchmarkMobileService mobileService)
-    {
-        var centerSectorX = DestinationLocation.X >> MapSectorConsts.SectorShift;
-        var centerSectorY = DestinationLocation.Y >> MapSectorConsts.SectorShift;
-        var serialSeed = 0x4200_0000u;
-
-        for (var sectorX = centerSectorX - 3; sectorX <= centerSectorX + 3; sectorX++)
-        {
-            for (var sectorY = centerSectorY - 3; sectorY <= centerSectorY + 3; sectorY++)
-            {
-                itemService.ItemsBySector[(DestinationMapId, sectorX, sectorY)] =
-                [
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-item-a"),
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-item-b"),
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-item-c")
-                ];
-
-                mobileService.MobilesBySector[(DestinationMapId, sectorX, sectorY)] =
-                [
-                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-npc-a"),
-                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-npc-b")
-                ];
-            }
-        }
-    }
-
-    private static void SeedSameMapWorld(BenchmarkItemService itemService, BenchmarkMobileService mobileService)
-    {
-        SeedArea(itemService, mobileService, SameMapId, SameMapSourceLocation, 0x4300_0000u, "same-old");
-        SeedArea(itemService, mobileService, SameMapId, SameMapDestinationLocation, 0x4400_0000u, "same-dest");
-    }
-
-    private static void SeedArea(
-        BenchmarkItemService itemService,
-        BenchmarkMobileService mobileService,
-        int mapId,
-        Point3D center,
-        uint serialSeed,
-        string prefix
-    )
-    {
-        var centerSectorX = center.X >> MapSectorConsts.SectorShift;
-        var centerSectorY = center.Y >> MapSectorConsts.SectorShift;
-
-        for (var sectorX = centerSectorX - 3; sectorX <= centerSectorX + 3; sectorX++)
-        {
-            for (var sectorY = centerSectorY - 3; sectorY <= centerSectorY + 3; sectorY++)
-            {
-                itemService.ItemsBySector[(mapId, sectorX, sectorY)] =
-                [
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-item-a"),
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-item-b"),
-                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-item-c")
-                ];
-
-                mobileService.MobilesBySector[(mapId, sectorX, sectorY)] =
-                [
-                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-npc-a"),
-                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-npc-b")
-                ];
-            }
-        }
-    }
-
-    private static UOItemEntity CreateGroundItem(Serial id, int sectorX, int sectorY, int mapId, string name)
-        => new()
-        {
-            Id = id,
-            Name = name,
-            ItemId = 0x0EED,
-            Amount = 1,
-            MapId = mapId,
-            ParentContainerId = Serial.Zero,
-            EquippedMobileId = Serial.Zero,
-            Location = new(
-                (sectorX << MapSectorConsts.SectorShift) + 4,
-                (sectorY << MapSectorConsts.SectorShift) + 5,
-                0
-            )
-        };
-
-    private static UOMobileEntity CreateNpc(Serial id, int sectorX, int sectorY, int mapId, string name)
-        => new()
-        {
-            Id = id,
-            Name = name,
-            IsPlayer = false,
-            MapId = mapId,
-            Location = new(
-                (sectorX << MapSectorConsts.SectorShift) + 7,
-                (sectorY << MapSectorConsts.SectorShift) + 8,
-                0
-            ),
-            Hits = 35,
-            MaxHits = 35
-        };
-
-    private GameSession CreateSession(UOMobileEntity character)
-    {
-        var client = new MoongateTCPClient(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        _clients.Add(client);
-
-        return new(new GameNetworkSession(client))
-        {
-            CharacterId = character.Id,
-            Character = character,
-            AccountType = AccountType.Regular
-        };
-    }
 
     private sealed class NoOpGameEventBusService : IGameEventBusService
     {
@@ -433,6 +66,9 @@ public class TeleportMapChangeBenchmark : IDisposable
 
         public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
             => [];
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+            => _ = entries;
 
         public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
         {
@@ -455,9 +91,6 @@ public class TeleportMapChangeBenchmark : IDisposable
 
             return false;
         }
-
-        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
-            => _ = entries;
     }
 
     private sealed class BenchmarkGameNetworkSessionService : IGameNetworkSessionService
@@ -653,6 +286,9 @@ public class TeleportMapChangeBenchmark : IDisposable
     {
         public Dictionary<(int MapId, int SectorX, int SectorY), List<UOItemEntity>> ItemsBySector { get; } = [];
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -680,7 +316,7 @@ public class TeleportMapChangeBenchmark : IDisposable
             => Task.FromResult(
                 ItemsBySector.TryGetValue((mapId, sectorX, sectorY), out var items)
                     ? items
-                    : new List<UOItemEntity>()
+                    : new()
             );
 
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
@@ -706,9 +342,6 @@ public class TeleportMapChangeBenchmark : IDisposable
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     private sealed class BenchmarkMobileService : IMobileService
@@ -733,7 +366,7 @@ public class TeleportMapChangeBenchmark : IDisposable
             => Task.FromResult(
                 MobilesBySector.TryGetValue((mapId, sectorX, sectorY), out var mobiles)
                     ? mobiles
-                    : new List<UOMobileEntity>()
+                    : new()
             );
 
         public Task<UOMobileEntity> SpawnFromTemplateAsync(
@@ -763,7 +396,7 @@ public class TeleportMapChangeBenchmark : IDisposable
             => Task.FromResult(
                 (
                     true,
-                    (UOMobileEntity?)new UOMobileEntity
+                    (UOMobileEntity?)new()
                     {
                         Id = (Serial)0x7999_0002u,
                         Name = templateId,
@@ -772,5 +405,366 @@ public class TeleportMapChangeBenchmark : IDisposable
                     }
                 )
             );
+    }
+
+    public void Dispose()
+    {
+        CleanupClients();
+        GC.SuppressFinalize(this);
+    }
+
+    [Benchmark]
+    public async Task<int> HandleCrossMapTeleport_ColdDestination()
+    {
+        _crossMapScenario.OutgoingQueue.Reset();
+        _crossMapScenario.SpeechService.Reset();
+
+        await _crossMapScenario.Handler.HandleAsync(_crossMapScenario.GameEvent);
+
+        return _crossMapScenario.OutgoingQueue.EnqueuedCount + _crossMapScenario.SpeechService.MessagesSent;
+    }
+
+    [Benchmark]
+    public async Task<int> HandleSameMapTeleport_ColdDestination_WithSelfRefresh()
+    {
+        _sameMapScenario.OutgoingQueue.Reset();
+        _sameMapScenario.SpeechService.Reset();
+
+        await _sameMapScenario.Handler.HandleAsync(_sameMapScenario.GameEvent);
+
+        return _sameMapScenario.OutgoingQueue.EnqueuedCount + _sameMapScenario.SpeechService.MessagesSent;
+    }
+
+    [IterationCleanup]
+    public void IterationCleanup()
+        => CleanupClients();
+
+    [IterationSetup]
+    public void IterationSetup()
+    {
+        CleanupClients();
+        _crossMapScenario = CreateScenario(
+            DestinationMapId,
+            DestinationLocation,
+            SourceMapId,
+            SourceLocation,
+            DestinationMapId,
+            DestinationLocation,
+            [
+                BuildObserver((Serial)0x7000_0002u, SourceMapId, SourceLocation),
+                BuildObserver((Serial)0x7000_0003u, DestinationMapId, DestinationLocation)
+            ],
+            static (itemService, mobileService) =>
+            {
+                SeedOldWorld(itemService, mobileService);
+                SeedDestinationWorld(itemService, mobileService);
+            }
+        );
+        _sameMapScenario = CreateScenario(
+            SameMapId,
+            SameMapDestinationLocation,
+            SameMapId,
+            SameMapSourceLocation,
+            SameMapId,
+            SameMapDestinationLocation,
+            [
+                BuildObserver((Serial)0x7000_0012u, SameMapId, SameMapSourceLocation),
+                BuildObserver((Serial)0x7000_0013u, SameMapId, SameMapDestinationLocation)
+            ],
+            static (itemService, mobileService) => SeedSameMapWorld(itemService, mobileService)
+        );
+    }
+
+    private static UOItemEntity BuildBackpack()
+    {
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x4000_1000u,
+            Name = "benchmark-backpack",
+            ItemId = 0x0E75,
+            MapId = DestinationMapId,
+            Location = DestinationLocation
+        };
+
+        backpack.AddItem(
+            new UOItemEntity
+            {
+                Id = (Serial)0x4000_1001u,
+                Name = "bandage",
+                ItemId = 0x0E21,
+                Amount = 25
+            },
+            new(42, 60)
+        );
+
+        return backpack;
+    }
+
+    private static UOItemEntity BuildEquippedItem(Serial id, ushort itemId, short hue)
+        => new()
+        {
+            Id = id,
+            ItemId = itemId,
+            Hue = hue,
+            Amount = 1
+        };
+
+    private static UOMobileEntity BuildMovingPlayer(int mapId, Point3D location)
+        => new()
+        {
+            Id = (Serial)0x7000_0001u,
+            Name = "benchmark-player",
+            IsPlayer = true,
+            MapId = mapId,
+            Location = location,
+            Strength = 50,
+            Dexterity = 50,
+            Intelligence = 25,
+            Hits = 50,
+            MaxHits = 50,
+            Mana = 25,
+            MaxMana = 25,
+            Stamina = 40,
+            MaxStamina = 40
+        };
+
+    private static UOMobileEntity BuildObserver(Serial id, int mapId, Point3D origin)
+        => new()
+        {
+            Id = id,
+            Name = $"observer-{id.Value}",
+            IsPlayer = true,
+            MapId = mapId,
+            Location = new(origin.X + 4, origin.Y + 3, origin.Z),
+            Hits = 50,
+            MaxHits = 50
+        };
+
+    private void CleanupClients()
+    {
+        foreach (var client in _clients)
+        {
+            client.Dispose();
+        }
+
+        _clients.Clear();
+    }
+
+    private static MoongateConfig CreateBenchmarkConfig()
+        => new()
+        {
+            Spatial = new()
+            {
+                SectorEnterSyncRadius = 3,
+                SectorUpdateBroadcastRadius = 3,
+                LazySectorEntityLoadRadius = 3
+            }
+        };
+
+    private static UOItemEntity CreateGroundItem(Serial id, int sectorX, int sectorY, int mapId, string name)
+        => new()
+        {
+            Id = id,
+            Name = name,
+            ItemId = 0x0EED,
+            Amount = 1,
+            MapId = mapId,
+            ParentContainerId = Serial.Zero,
+            EquippedMobileId = Serial.Zero,
+            Location = new(
+                (sectorX << MapSectorConsts.SectorShift) + 4,
+                (sectorY << MapSectorConsts.SectorShift) + 5,
+                0
+            )
+        };
+
+    private static UOMobileEntity CreateNpc(Serial id, int sectorX, int sectorY, int mapId, string name)
+        => new()
+        {
+            Id = id,
+            Name = name,
+            IsPlayer = false,
+            MapId = mapId,
+            Location = new(
+                (sectorX << MapSectorConsts.SectorShift) + 7,
+                (sectorY << MapSectorConsts.SectorShift) + 8,
+                0
+            ),
+            Hits = 35,
+            MaxHits = 35
+        };
+
+    private BenchmarkScenario CreateScenario(
+        int currentMapId,
+        Point3D currentLocation,
+        int oldMapId,
+        Point3D oldLocation,
+        int newMapId,
+        Point3D newLocation,
+        IReadOnlyList<UOMobileEntity> observers,
+        Action<BenchmarkItemService, BenchmarkMobileService> seedWorld
+    )
+    {
+        var outgoingQueue = new CountingOutgoingPacketQueue();
+        var speechService = new BenchmarkSpeechService();
+        var sessions = new BenchmarkGameNetworkSessionService();
+        var itemService = new BenchmarkItemService();
+        var mobileService = new BenchmarkMobileService();
+        var movingPlayer = BuildMovingPlayer(currentMapId, currentLocation);
+        var backpack = BuildBackpack();
+        movingPlayer.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        movingPlayer.BackpackId = backpack.Id;
+        movingPlayer.AddEquippedItem(ItemLayerType.Shirt, BuildEquippedItem((Serial)0x4000_1010u, 0x1F7B, 0x0455));
+        movingPlayer.AddEquippedItem(ItemLayerType.Pants, BuildEquippedItem((Serial)0x4000_1011u, 0x152E, 0x03E9));
+        var characterService = new BenchmarkCharacterService(movingPlayer, backpack);
+
+        seedWorld(itemService, mobileService);
+
+        var spatialWorld = new SpatialWorldService(
+            sessions,
+            new NoOpGameEventBusService(),
+            characterService,
+            itemService,
+            mobileService,
+            outgoingQueue,
+            new NoOpTeleportersDataService(),
+            CreateBenchmarkConfig()
+        );
+
+        var movingSession = CreateSession(movingPlayer);
+        sessions.Add(movingSession);
+
+        foreach (var observer in observers)
+        {
+            sessions.Add(CreateSession(observer));
+        }
+
+        var dispatchEvents = new DispatchEventsService(spatialWorld, outgoingQueue, sessions);
+        var handler = new MobileHandler(
+            spatialWorld,
+            characterService,
+            speechService,
+            dispatchEvents,
+            sessions,
+            outgoingQueue,
+            CreateBenchmarkConfig(),
+            new FixedLightService()
+        );
+
+        return new(
+            handler,
+            outgoingQueue,
+            speechService,
+            new(
+                movingSession.SessionId,
+                movingPlayer.Id,
+                oldMapId,
+                newMapId,
+                oldLocation,
+                newLocation,
+                true
+            )
+        );
+    }
+
+    private GameSession CreateSession(UOMobileEntity character)
+    {
+        var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        _clients.Add(client);
+
+        return new(new(client))
+        {
+            CharacterId = character.Id,
+            Character = character,
+            AccountType = AccountType.Regular
+        };
+    }
+
+    private static void SeedArea(
+        BenchmarkItemService itemService,
+        BenchmarkMobileService mobileService,
+        int mapId,
+        Point3D center,
+        uint serialSeed,
+        string prefix
+    )
+    {
+        var centerSectorX = center.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = center.Y >> MapSectorConsts.SectorShift;
+
+        for (var sectorX = centerSectorX - 3; sectorX <= centerSectorX + 3; sectorX++)
+        {
+            for (var sectorY = centerSectorY - 3; sectorY <= centerSectorY + 3; sectorY++)
+            {
+                itemService.ItemsBySector[(mapId, sectorX, sectorY)] =
+                [
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-item-a"),
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-item-b"),
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-item-c")
+                ];
+
+                mobileService.MobilesBySector[(mapId, sectorX, sectorY)] =
+                [
+                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-npc-a"),
+                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, mapId, $"{prefix}-npc-b")
+                ];
+            }
+        }
+    }
+
+    private static void SeedDestinationWorld(BenchmarkItemService itemService, BenchmarkMobileService mobileService)
+    {
+        var centerSectorX = DestinationLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = DestinationLocation.Y >> MapSectorConsts.SectorShift;
+        var serialSeed = 0x4200_0000u;
+
+        for (var sectorX = centerSectorX - 3; sectorX <= centerSectorX + 3; sectorX++)
+        {
+            for (var sectorY = centerSectorY - 3; sectorY <= centerSectorY + 3; sectorY++)
+            {
+                itemService.ItemsBySector[(DestinationMapId, sectorX, sectorY)] =
+                [
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-item-a"),
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-item-b"),
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-item-c")
+                ];
+
+                mobileService.MobilesBySector[(DestinationMapId, sectorX, sectorY)] =
+                [
+                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-npc-a"),
+                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, DestinationMapId, "dest-npc-b")
+                ];
+            }
+        }
+    }
+
+    private static void SeedOldWorld(BenchmarkItemService itemService, BenchmarkMobileService mobileService)
+    {
+        var centerSectorX = SourceLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = SourceLocation.Y >> MapSectorConsts.SectorShift;
+        var serialSeed = 0x4100_0000u;
+
+        for (var sectorX = centerSectorX - 3; sectorX <= centerSectorX + 3; sectorX++)
+        {
+            for (var sectorY = centerSectorY - 3; sectorY <= centerSectorY + 3; sectorY++)
+            {
+                itemService.ItemsBySector[(SourceMapId, sectorX, sectorY)] =
+                [
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, SourceMapId, "old-item-a"),
+                    CreateGroundItem((Serial)serialSeed++, sectorX, sectorY, SourceMapId, "old-item-b")
+                ];
+
+                mobileService.MobilesBySector[(SourceMapId, sectorX, sectorY)] =
+                [
+                    CreateNpc((Serial)serialSeed++, sectorX, sectorY, SourceMapId, "old-npc")
+                ];
+            }
+        }
+    }
+
+    private static void SeedSameMapWorld(BenchmarkItemService itemService, BenchmarkMobileService mobileService)
+    {
+        SeedArea(itemService, mobileService, SameMapId, SameMapSourceLocation, 0x4300_0000u, "same-old");
+        SeedArea(itemService, mobileService, SameMapId, SameMapDestinationLocation, 0x4400_0000u, "same-dest");
     }
 }

@@ -38,8 +38,8 @@
   "Spatial": {
     "LazySectorItemLoadEnabled": true,
     "SectorWarmupRadius": 1,
-    "SectorEnterSyncRadius": 3,
-    "LazySectorEntityLoadRadius": 3,
+    "SectorEnterSyncRadius": 2,
+    "LazySectorEntityLoadRadius": 1,
     "SectorUpdateBroadcastRadius": 3,
     "LightWorldStartUtc": "1997-09-01T00:00:00Z",
     "LightSecondsPerUoMinute": 5.0
@@ -47,6 +47,18 @@
   "Scripting": {
     "EnableFileWatcher": true,
     "LuaBrainMaxBrainsPerTick": 0
+  },
+  "Llm": {
+    "IsEnabled": true,
+    "ApiKey": null,
+    "Model": "gpt-5-mini",
+    "BaseUrl": null,
+    "ListenerCooldownMilliseconds": 60000,
+    "IdleCooldownMilliseconds": 300000,
+    "IdleNearbyPlayerRange": 12,
+    "SpeechRange": 12,
+    "MaxMemoryCharacters": 4000,
+    "MaxOutputTokenCount": 1200
   },
   "Email": {
     "IsEnabled": false,

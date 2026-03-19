@@ -4,7 +4,7 @@ Do not edit manually. Re-run the generator instead.
 -->
 # Allow/Refuse Attack (0xAA)
 
-- Status: `placeholder`
+- Status: `implemented`
 - Direction: `Server`
 - Length: `5 Bytes`
 - POL reference: <https://docs.polserver.com/packets/index.php?Packet=0xAA>
@@ -12,11 +12,17 @@ Do not edit manually. Re-run the generator instead.
 
 ## Moongate Packet Classes
 
-- None yet
+- `ChangeCombatantPacket` (Outgoing, Fixed, length `5`) from `src/Moongate.Network.Packets/Outgoing/Combat/ChangeCombatantPacket.cs`
 
 ## Current Moongate Behavior
 
-Moongate does not currently implement this opcode. This page is a placeholder generated from the POL catalog.
+Moongate emits this packet when combat target state changes.
+
+Current behavior:
+
+- attacker receives defender serial when `CombatService.TrySetCombatantAsync(...)` succeeds
+- attacker receives `Serial.Zero` when combat target is cleared
+- `CharacterHandler` also clears the combatant when the player explicitly turns war mode off
 
 ## Packet Build
 

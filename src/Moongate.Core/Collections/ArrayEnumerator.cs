@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 
 namespace Moongate.Core.Collections;
 
@@ -13,31 +12,15 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
 {
     private readonly T[] _array;
     private int _index;
-    private T? _current;
 
     public ArrayEnumerator(T[] array)
     {
         _array = array;
         _index = 0;
-        _current = default;
+        Current = default;
     }
 
-    public void Dispose() { }
-
-    public bool MoveNext()
-    {
-        var localList = _array;
-
-        if ((uint)_index < (uint)localList.Length)
-        {
-            _current = localList[_index++];
-            return true;
-        }
-
-        return false;
-    }
-
-    public T? Current => _current!;
+    public T? Current { get; private set; }
 
     object IEnumerator.Current
     {
@@ -48,13 +31,29 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
                 throw new InvalidOperationException(nameof(_index));
             }
 
-            return _current!;
+            return Current!;
         }
+    }
+
+    public void Dispose() { }
+
+    public bool MoveNext()
+    {
+        var localList = _array;
+
+        if ((uint)_index < (uint)localList.Length)
+        {
+            Current = localList[_index++];
+
+            return true;
+        }
+
+        return false;
     }
 
     void IEnumerator.Reset()
     {
         _index = 0;
-        _current = default;
+        Current = default;
     }
 }

@@ -1,0 +1,76 @@
+[
+  {
+    "type": "mobile",
+    "id": "zombie_npc",
+    "category": "monster",
+    "description": "Static zombie template for spawn and combat testing.",
+    "tags": [
+      "monster",
+      "undead",
+      "zombie",
+      "test"
+    ],
+    "body": "0x0003",
+    "skinHue": 0,
+    "hairHue": 0,
+    "hairStyle": 0,
+    "strength": 58,
+    "dexterity": 40,
+    "intelligence": 33,
+    "hits": 35,
+    "mana": 0,
+    "stamina": 40,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 18,
+    "fame": 600,
+    "karma": -600,
+    "notoriety": "CanBeAttacked",
+    "brain": "None",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a zombie"
+  },
+  {
+    "type": "mobile",
+    "id": "skeletal_knight_npc",
+    "category": "monster",
+    "description": "Static skeletal knight template for corpse and loot testing.",
+    "tags": [
+      "monster",
+      "undead",
+      "skeleton",
+      "knight",
+      "test"
+    ],
+    "body": "0x0093",
+    "skinHue": 0,
+    "hairHue": 0,
+    "hairStyle": 0,
+    "strength": 220,
+    "dexterity": 85,
+    "intelligence": 48,
+    "hits": 135,
+    "mana": 0,
+    "stamina": 85,
+    "minDamage": 8,
+    "maxDamage": 18,
+    "armorRating": 40,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "None",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "scimitar",
+        "layer": "OneHanded"
+      },
+      {
+        "itemTemplateId": "wooden_shield",
+        "layer": "TwoHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "a skeletal knight"
+  }
+]

@@ -5,13 +5,18 @@ using Moongate.Core.Types;
 using Moongate.Email.Data;
 using Moongate.Email.Services;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Internal.Interaction;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Interfaces.Services.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Messaging;
 using Moongate.Server.Interfaces.Services.Movement;
@@ -40,6 +45,7 @@ using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.World;
+using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Maps;
 using Moongate.UO.Data.Interfaces.Names;
@@ -62,6 +68,7 @@ public static class AddBootstrapCoreServicesExtension
     {
         container.Register<IMessageBusService, MessageBusService>(Reuse.Singleton);
         container.Register<IBackgroundJobService, BackgroundJobService>(Reuse.Singleton);
+        container.Register<IAsyncWorkSchedulerService, AsyncWorkSchedulerService>(Reuse.Singleton);
         container.Register<IGameEventBusService, GameEventBusService>(Reuse.Singleton);
         container.Register<IDispatchEventsService, DispatchEventsService>(Reuse.Singleton);
         container.Register<IServerLifetimeService, ServerLifetimeService>(Reuse.Singleton);
@@ -73,6 +80,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IDoorLockService, DoorLockService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<IMobileModifierAggregationService, MobileModifierAggregationService>(Reuse.Singleton);
+        container.RegisterInstance(new MountTileData());
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
         container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
         container.Register<IPlaceholderResolverService, PlaceholderResolverService>(Reuse.Singleton);
@@ -88,16 +96,46 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ITimerService, TimerWheelService>(Reuse.Singleton);
         container.Register<IAccountService, AccountService>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
+        container.Register<IPlayerLoginWorldSyncService, PlayerLoginWorldSyncService>(Reuse.Singleton);
         container.Register<IItemService, ItemService>(Reuse.Singleton);
+        container.Register<IItemBookService, ItemBookService>(Reuse.Singleton);
+        container.Register<IItemInteractionService, ItemInteractionService>(Reuse.Singleton);
+        container.Register<IItemManipulationService, ItemManipulationService>(Reuse.Singleton);
         container.Register<IPlayerDragService, PlayerDragService>(Reuse.Singleton);
         container.Register<IPlayerTargetService, PlayerTargetService>(Reuse.Singleton);
         container.Register<IDyeColorService, DyeColorService>(Reuse.Singleton);
         container.Register<IBulletinBoardService, BulletinBoardService>(Reuse.Singleton);
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
+        container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
+        container.Register<INotorietyService, NotorietyService>(Reuse.Singleton);
+        container.Register<ICombatService, CombatService>(Reuse.Singleton);
+        container.Register<IDeathService, DeathService>(Reuse.Singleton);
+        container.Register<MobileCombatSoundResolver>(Reuse.Singleton);
+        container.Register<IPlayerSellBuyService, PlayerSellBuyService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
         container.Register<IGumpScriptDispatcherService, GumpScriptDispatcherService>(Reuse.Singleton);
         container.Register<ITextTemplateService, TextTemplateService>(Reuse.Singleton);
         container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
+        container.Register<INpcAiPromptService, NpcAiPromptService>(Reuse.Singleton);
+        container.Register<INpcAiMemoryService, NpcAiMemoryService>(Reuse.Singleton);
+        container.Register<IDialogueDefinitionService, DialogueDefinitionService>(Reuse.Singleton);
+        container.Register<IDialogueMemoryService, DialogueMemoryService>(Reuse.Singleton);
+        container.Register<IDialogueRuntimeService, DialogueRuntimeService>(Reuse.Singleton);
+        container.Register<INpcAiRuntimeStateService, NpcAiRuntimeStateService>(Reuse.Singleton);
+        container.Register<IOpenAiNpcDialogueClient, OpenAiNpcDialogueClient>(Reuse.Singleton);
+        container.Register<INpcDialogueService, NpcDialogueService>(Reuse.Singleton);
+        container.Register<AsyncLuaValueConverter>(Reuse.Singleton);
+        container.Register<EchoAsyncLuaJobHandler>(Reuse.Singleton);
+        container.RegisterDelegate<IAsyncLuaJobRegistry>(
+            resolver =>
+            {
+                var registry = new AsyncLuaJobRegistry();
+                _ = registry.TryRegister(resolver.Resolve<EchoAsyncLuaJobHandler>());
+                return registry;
+            },
+            Reuse.Singleton
+        );
+        container.Register<IAsyncLuaJobService, AsyncLuaJobService>(Reuse.Singleton);
         container.Register<ILuaBrainRegistry, LuaBrainRegistry>(Reuse.Singleton);
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.RegisterDelegate<IArtService>(_ => new ArtService(), Reuse.Singleton);

@@ -6,9 +6,11 @@ using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Interaction;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -33,6 +35,7 @@ public sealed class DispatchEventsService
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly INotorietyService _notorietyService;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DispatchEventsService" /> class.
@@ -40,12 +43,14 @@ public sealed class DispatchEventsService
     public DispatchEventsService(
         ISpatialWorldService spatialWorldService,
         IOutgoingPacketQueue outgoingPacketQueue,
-        IGameNetworkSessionService gameNetworkSessionService
+        IGameNetworkSessionService gameNetworkSessionService,
+        INotorietyService? notorietyService = null
     )
     {
         _spatialWorldService = spatialWorldService;
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _notorietyService = notorietyService ?? new NotorietyService();
     }
 
     public Task<bool> DispatchEffectToPlayerAsync(
@@ -96,6 +101,34 @@ public sealed class DispatchEventsService
         );
 
         return Task.FromResult(true);
+    }
+
+    public Task<int> DispatchMobileAnimationAsync(
+        Serial mobileId,
+        int mapId,
+        Point3D location,
+        short action,
+        short frameCount = 5,
+        short repeatCount = 1,
+        bool forward = true,
+        bool repeat = false,
+        byte delay = 0,
+        int? range = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+        var packet = new MobileAnimationPacket(
+            mobileId,
+            action,
+            frameCount,
+            repeatCount,
+            forward,
+            repeat,
+            delay
+        );
+
+        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
     }
 
     public Task<int> DispatchMobileEffectAsync(
@@ -158,34 +191,6 @@ public sealed class DispatchEventsService
         return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
     }
 
-    public Task<int> DispatchMobileAnimationAsync(
-        Serial mobileId,
-        int mapId,
-        Point3D location,
-        short action,
-        short frameCount = 5,
-        short repeatCount = 1,
-        bool forward = true,
-        bool repeat = false,
-        byte delay = 0,
-        int? range = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _ = cancellationToken;
-        var packet = new MobileAnimationPacket(
-            mobileId,
-            action,
-            frameCount,
-            repeatCount,
-            forward,
-            repeat,
-            delay
-        );
-
-        return _spatialWorldService.BroadcastToPlayersAsync(packet, mapId, location, range);
-    }
-
     /// <inheritdoc />
     public Task<int> DispatchMobileSpeechAsync(
         UOMobileEntity speaker,
@@ -241,6 +246,11 @@ public sealed class DispatchEventsService
         _ = cancellationToken;
         ArgumentNullException.ThrowIfNull(mobile);
 
+        if (mobile.RiderMobileId != Serial.Zero)
+        {
+            return Task.FromResult(0);
+        }
+
         var players = _spatialWorldService.GetPlayersInRange(mobile.Location, Math.Max(0, range), mapId);
         var recipients = 0;
 
@@ -256,6 +266,9 @@ public sealed class DispatchEventsService
                 _outgoingPacketQueue.Enqueue(
                     playerSession.SessionId,
                     new MobileIncomingPacket(playerSession.Character, mobile, stygianAbyss)
+                    {
+                        ResolvedNotoriety = _notorietyService.Compute(playerSession.Character, mobile)
+                    }
                 );
                 _outgoingPacketQueue.Enqueue(playerSession.SessionId, new PlayerStatusPacket(mobile, 1));
                 WornItemPacketHelper.EnqueueVisibleWornItems(
@@ -265,7 +278,13 @@ public sealed class DispatchEventsService
             }
             else
             {
-                _outgoingPacketQueue.Enqueue(playerSession.SessionId, new MobileMovingPacket(mobile, stygianAbyss));
+                _outgoingPacketQueue.Enqueue(
+                    playerSession.SessionId,
+                    new MobileMovingPacket(mobile, stygianAbyss)
+                    {
+                        ResolvedNotoriety = _notorietyService.Compute(playerSession.Character, mobile)
+                    }
+                );
             }
 
             recipients++;
@@ -303,12 +322,25 @@ public sealed class DispatchEventsService
     public Task HandleAsync(MobileWarModeChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
+        var recipients = _spatialWorldService.GetPlayersInRange(gameEvent.Mobile.Location, MapSectorConsts.MaxViewRange, gameEvent.Mobile.MapId);
 
-        return _spatialWorldService.BroadcastToPlayersAsync(
-            new MobileMovingPacket(gameEvent.Mobile),
-            gameEvent.Mobile.MapId,
-            gameEvent.Mobile.Location
-        );
+        foreach (var session in recipients)
+        {
+            if (session.CharacterId == gameEvent.Mobile.Id || session.Character is null)
+            {
+                continue;
+            }
+
+            _outgoingPacketQueue.Enqueue(
+                session.SessionId,
+                new MobileMovingPacket(gameEvent.Mobile)
+                {
+                    ResolvedNotoriety = _notorietyService.Compute(session.Character, gameEvent.Mobile)
+                }
+            );
+        }
+
+        return Task.CompletedTask;
     }
 
     public Task HandleAsync(MobilePlayAnimationEvent gameEvent, CancellationToken cancellationToken = default)

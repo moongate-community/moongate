@@ -42,7 +42,6 @@ public static class TeleportEffectUtils
             0,
             0,
             Serial.Zero,
-            DefaultLayer,
-            0
+            DefaultLayer
         );
 }

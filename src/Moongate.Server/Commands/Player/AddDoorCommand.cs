@@ -14,7 +14,6 @@ using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.World;
 using Moongate.Server.Types.Commands;
 using Moongate.Server.Utils;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Commands.Player;
@@ -119,29 +118,10 @@ public sealed class AddDoorCommand : ICommandExecutor
         );
     }
 
-    private bool TryResolveMapId(long sessionId, out int mapId)
-    {
-        mapId = 0;
-
-        if (!_gameSessionService.TryGet(sessionId, out var session))
-        {
-            return false;
-        }
-
-        mapId = session.Character?.MapId ??
-                _characterService.GetCharacterAsync(session.CharacterId)
-                                 .GetAwaiter()
-                                 .GetResult()
-                                 ?.MapId ??
-                1;
-
-        return true;
-    }
-
     private static string GetTemplateId(string doorType)
         => string.Equals(doorType, MetalDoorType, StringComparison.OrdinalIgnoreCase)
-            ? MetalDoorTemplateId
-            : WoodDoorTemplateId;
+               ? MetalDoorTemplateId
+               : WoodDoorTemplateId;
 
     private static bool TryParseDoorType(string[] arguments, out string doorType)
     {
@@ -172,5 +152,24 @@ public sealed class AddDoorCommand : ICommandExecutor
         }
 
         return false;
+    }
+
+    private bool TryResolveMapId(long sessionId, out int mapId)
+    {
+        mapId = 0;
+
+        if (!_gameSessionService.TryGet(sessionId, out var session))
+        {
+            return false;
+        }
+
+        mapId = session.Character?.MapId ??
+                _characterService.GetCharacterAsync(session.CharacterId)
+                                 .GetAwaiter()
+                                 .GetResult()
+                                 ?.MapId ??
+                1;
+
+        return true;
     }
 }

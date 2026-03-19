@@ -44,20 +44,23 @@ public interface IPersistenceUnitOfWork
     Serial AllocateNextMobileId();
 
     /// <summary>
-    /// Loads state from snapshot and replays journal entries.
-    /// </summary>
-    ValueTask InitializeAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Captures a consistent snapshot artifact from in-memory state.
     /// </summary>
     ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
         => ValueTask.FromException<CapturedWorldSnapshot>(new NotSupportedException());
 
     /// <summary>
+    /// Loads state from snapshot and replays journal entries.
+    /// </summary>
+    ValueTask InitializeAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Writes a captured snapshot and trims journal entries included in it.
     /// </summary>
-    ValueTask SaveCapturedSnapshotAsync(CapturedWorldSnapshot capturedSnapshot, CancellationToken cancellationToken = default)
+    ValueTask SaveCapturedSnapshotAsync(
+        CapturedWorldSnapshot capturedSnapshot,
+        CancellationToken cancellationToken = default
+    )
         => ValueTask.FromException(new NotSupportedException());
 
     /// <summary>

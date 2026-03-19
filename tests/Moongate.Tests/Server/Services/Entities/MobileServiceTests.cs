@@ -1,10 +1,14 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Persistence.Data.Persistence;
+using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
@@ -24,6 +28,8 @@ namespace Moongate.Tests.Server.Services.Entities;
 
 public class MobileServiceTests
 {
+    private static readonly MountTileData DefaultMountTileData = CreateMountTileData(0x3EAA);
+
     private sealed class TestItemFactoryService : IItemFactoryService
     {
         public Func<string, UOItemEntity> CreateItemFromTemplateImpl { get; init; } =
@@ -105,17 +111,16 @@ public class MobileServiceTests
 
         public List<Serial> Unregistered { get; } = [];
 
+        public List<(Serial MobileId, LuaBrainCombatHookContext Context)> CombatHooks { get; } = [];
+
+        public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
+            => CombatHooks.Add((mobileId, combatContext));
+
         public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
         {
             _ = mobileId;
             _ = deathContext;
         }
-
-        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-            => _ = gameEvent;
-
-        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
-            => _ = gameEvent;
 
         public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3)
         {
@@ -124,27 +129,21 @@ public class MobileServiceTests
             _ = range;
         }
 
-        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
+        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
+            => _ = gameEvent;
+
+        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
+            => _ = gameEvent;
+
+        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester
+        )
         {
             _ = mobile;
             _ = requester;
 
             return [];
-        }
-
-        public bool TryHandleContextMenuSelection(
-            UOMobileEntity mobile,
-            UOMobileEntity? requester,
-            string menuKey,
-            long sessionId
-        )
-        {
-            _ = mobile;
-            _ = requester;
-            _ = menuKey;
-            _ = sessionId;
-
-            return false;
         }
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
@@ -196,8 +195,237 @@ public class MobileServiceTests
             return ValueTask.CompletedTask;
         }
 
+        public bool TryHandleContextMenuSelection(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester,
+            string menuKey,
+            long sessionId
+        )
+        {
+            _ = mobile;
+            _ = requester;
+            _ = menuKey;
+            _ = sessionId;
+
+            return false;
+        }
+
         public void Unregister(Serial mobileId)
             => Unregistered.Add(mobileId);
+    }
+
+    private sealed class CountingPersistenceService : IPersistenceService
+    {
+        public CountingPersistenceService(IPersistenceUnitOfWork unitOfWork)
+        {
+            UnitOfWork = unitOfWork;
+        }
+
+        public IPersistenceUnitOfWork UnitOfWork { get; }
+
+        public void Dispose() { }
+
+        public Task SaveAsync(CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+
+            return Task.CompletedTask;
+        }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+    }
+
+    private sealed class CountingPersistenceUnitOfWork : IPersistenceUnitOfWork
+    {
+        public CountingPersistenceUnitOfWork(
+            IMobileRepository mobiles,
+            IItemRepository items
+        )
+        {
+            Mobiles = mobiles;
+            Items = items;
+            Accounts = new NullAccountRepository();
+            BulletinBoardMessages = new NullBulletinBoardMessageRepository();
+        }
+
+        public IAccountRepository Accounts { get; }
+        public IMobileRepository Mobiles { get; }
+        public IItemRepository Items { get; }
+        public IBulletinBoardMessageRepository BulletinBoardMessages { get; }
+
+        public Serial AllocateNextAccountId()
+            => (Serial)1u;
+
+        public Serial AllocateNextItemId()
+            => (Serial)1u;
+
+        public Serial AllocateNextMobileId()
+            => (Serial)1u;
+
+        public ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromException<CapturedWorldSnapshot>(new NotSupportedException());
+
+        public ValueTask InitializeAsync(CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
+
+        public ValueTask SaveCapturedSnapshotAsync(
+            CapturedWorldSnapshot capturedSnapshot,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromException(new NotSupportedException());
+
+        public ValueTask SaveSnapshotAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class CountingMobileRepository : IMobileRepository
+    {
+        private readonly IReadOnlyList<UOMobileEntity> _mobiles;
+
+        public CountingMobileRepository(IReadOnlyList<UOMobileEntity> mobiles)
+        {
+            _mobiles = mobiles;
+        }
+
+        public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(_mobiles.Count);
+
+        public ValueTask<IReadOnlyCollection<UOMobileEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<UOMobileEntity>>(_mobiles);
+
+        public ValueTask<UOMobileEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(_mobiles.FirstOrDefault(mobile => mobile.Id == id));
+
+        public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
+            Func<UOMobileEntity, bool> predicate,
+            Func<UOMobileEntity, TResult> selector,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyList<TResult>>([.. _mobiles.Where(predicate).Select(selector)]);
+
+        public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class CountingItemRepository : IItemRepository
+    {
+        private readonly IReadOnlyList<UOItemEntity> _items;
+
+        public CountingItemRepository(IReadOnlyList<UOItemEntity> items)
+        {
+            _items = items;
+        }
+
+        public int QueryCallCount { get; private set; }
+        public int GetByIdCallCount { get; private set; }
+
+        public ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+
+        public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(_items.Count);
+
+        public ValueTask<IReadOnlyCollection<UOItemEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<UOItemEntity>>(_items);
+
+        public ValueTask<UOItemEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
+        {
+            GetByIdCallCount++;
+
+            return ValueTask.FromResult(_items.FirstOrDefault(item => item.Id == id));
+        }
+
+        public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
+            Func<UOItemEntity, bool> predicate,
+            Func<UOItemEntity, TResult> selector,
+            CancellationToken cancellationToken = default
+        )
+        {
+            QueryCallCount++;
+
+            return ValueTask.FromResult<IReadOnlyList<TResult>>([.. _items.Where(predicate).Select(selector)]);
+        }
+
+        public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(UOItemEntity item, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class NullAccountRepository : IAccountRepository
+    {
+        public ValueTask<bool> AddAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult(0);
+
+        public ValueTask<bool> ExistsAsync(
+            Func<UOAccountEntity, bool> predicate,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult(false);
+
+        public ValueTask<IReadOnlyCollection<UOAccountEntity>> GetAllAsync(CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<IReadOnlyCollection<UOAccountEntity>>(Array.Empty<UOAccountEntity>());
+
+        public ValueTask<UOAccountEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromResult<UOAccountEntity?>(null);
+
+        public ValueTask<UOAccountEntity?> GetByUsernameAsync(
+            string username,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<UOAccountEntity?>(null);
+
+        public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
+            Func<UOAccountEntity, bool> predicate,
+            Func<UOAccountEntity, TResult> selector,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyList<TResult>>(Array.Empty<TResult>());
+
+        public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
+    }
+
+    private sealed class NullBulletinBoardMessageRepository : IBulletinBoardMessageRepository
+    {
+        public ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyCollection<BulletinBoardMessageEntity>>(
+                Array.Empty<BulletinBoardMessageEntity>()
+            );
+
+        public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
+            Serial boardId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<IReadOnlyList<BulletinBoardMessageEntity>>(Array.Empty<BulletinBoardMessageEntity>());
+
+        public ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(
+            Serial messageId,
+            CancellationToken cancellationToken = default
+        )
+            => ValueTask.FromResult<BulletinBoardMessageEntity?>(null);
+
+        public ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default)
+            => ValueTask.FromException<bool>(new NotSupportedException());
+
+        public ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default)
+            => ValueTask.FromException(new NotSupportedException());
     }
 
     [Test]
@@ -209,7 +437,14 @@ public class MobileServiceTests
         var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
         var mobile = new UOMobileEntity
         {
             Id = Serial.Zero,
@@ -238,7 +473,14 @@ public class MobileServiceTests
         var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
         var id = persistence.UnitOfWork.AllocateNextMobileId();
 
         await persistence.UnitOfWork.Mobiles.UpsertAsync(
@@ -272,7 +514,14 @@ public class MobileServiceTests
         var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
         var id = persistence.UnitOfWork.AllocateNextMobileId();
 
         await persistence.UnitOfWork.Mobiles.UpsertAsync(
@@ -290,6 +539,363 @@ public class MobileServiceTests
     }
 
     [Test]
+    public async Task GetAsync_ShouldMarkMobileAsMountable_WhenMountedDisplayItemIdIsInLoadedTiles()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        var mountTileData = CreateMountTileData(0x3EAA);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            mountTileData
+        );
+        var id = persistence.UnitOfWork.AllocateNextMobileId();
+        var mobile = new UOMobileEntity
+        {
+            Id = id,
+            Name = "horse"
+        };
+        mobile.SetCustomString("mounted_display_item_id", "0x3EAA");
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(mobile);
+
+        var loaded = await service.GetAsync(id);
+
+        Assert.That(loaded, Is.Not.Null);
+        Assert.That(loaded!.IsMountable, Is.True);
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldLinkRiderAndMount_WhenMobilesShareMapAndLocation()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            CreateMountableMobile(
+                mountId,
+                "horse",
+                1,
+                new(100, 100, 0)
+            )
+        );
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var mount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(mount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(mountId));
+                Assert.That(rider.MountedDisplayItemId, Is.EqualTo(0x3EAA));
+                Assert.That(rider.IsMounted, Is.True);
+                Assert.That(mount!.RiderMobileId, Is.EqualTo(riderId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldLinkRiderAndMount_WhenMountIsWithinInteractionRange()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            CreateMountableMobile(mountId, "horse", 1, new(101, 100, 0))
+        );
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var mount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(mount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(mountId));
+                Assert.That(mount!.RiderMobileId, Is.EqualTo(riderId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldPreferMountedDisplayItemIdCustomProperty_WhenPresent()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        var mount = new UOMobileEntity
+            {
+                Id = mountId,
+                Name = "horse",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            };
+        mount.SetCustomInteger("mounted_display_item_id", 0x3EAA);
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(mount);
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(rider!.MountedDisplayItemId, Is.EqualTo(0x3EAA));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldParseMountedDisplayItemIdFromStringCustomProperty_WhenPresent()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        var mount = new UOMobileEntity
+        {
+            Id = mountId,
+            Name = "horse",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        mount.SetCustomString("mounted_display_item_id", "0x3EAA");
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(mount);
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(rider!.MountedDisplayItemId, Is.EqualTo(0x3EAA));
+            }
+        );
+    }
+
+    [Test]
+    public async Task DismountAsync_ShouldClearRiderAndMountRelationship()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0),
+                MountedMobileId = mountId
+            }
+        );
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mountId,
+                Name = "horse",
+                MapId = 1,
+                Location = new(100, 100, 0),
+                RiderMobileId = riderId
+            }
+        );
+
+        var dismounted = await service.DismountAsync(riderId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var mount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dismounted, Is.True);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(mount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(Serial.Zero));
+                Assert.That(rider.MountedDisplayItemId, Is.EqualTo(0));
+                Assert.That(rider.IsMounted, Is.False);
+                Assert.That(mount!.RiderMobileId, Is.EqualTo(Serial.Zero));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryMountAsync_ShouldRejectMount_WhenMountedDisplayItemIdIsNotInLoadedTiles()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        var mountTileData = CreateMountTileData(0x3EAA);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            mountTileData
+        );
+        var riderId = persistence.UnitOfWork.AllocateNextMobileId();
+        var mountId = persistence.UnitOfWork.AllocateNextMobileId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = riderId,
+                Name = "rider",
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        );
+        var mount = new UOMobileEntity
+        {
+            Id = mountId,
+            Name = "ostard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        mount.SetCustomString("mounted_display_item_id", "0x3EAF");
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(mount);
+
+        var mounted = await service.TryMountAsync(riderId, mountId);
+        var rider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+        var persistedMount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mounted, Is.False);
+                Assert.That(rider, Is.Not.Null);
+                Assert.That(persistedMount, Is.Not.Null);
+                Assert.That(rider!.MountedMobileId, Is.EqualTo(Serial.Zero));
+                Assert.That(persistedMount!.RiderMobileId, Is.EqualTo(Serial.Zero));
+            }
+        );
+    }
+
+    [Test]
     public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateEquippedItemReferences()
     {
         using var temp = new TempDirectory();
@@ -298,7 +904,14 @@ public class MobileServiceTests
         var itemFactory = new TestItemFactoryService();
         var templateService = new TestMobileTemplateService();
         var luaBrainRunner = new TestLuaBrainRunner();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
 
         var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
         var equippedItemId = persistence.UnitOfWork.AllocateNextItemId();
@@ -346,6 +959,90 @@ public class MobileServiceTests
     }
 
     [Test]
+    public async Task GetPersistentMobilesInSectorAsync_ShouldHydrateSectorEquipmentWithSingleBulkItemQuery()
+    {
+        var firstMobileId = (Serial)0x00000011u;
+        var secondMobileId = (Serial)0x00000012u;
+        var firstEquippedItemId = (Serial)0x00001011u;
+        var secondEquippedItemId = (Serial)0x00001012u;
+        var mobiles = new List<UOMobileEntity>
+        {
+            new()
+            {
+                Id = firstMobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(130, 130, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Shirt] = firstEquippedItemId
+                }
+            },
+            new()
+            {
+                Id = secondMobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(131, 131, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.Pants] = secondEquippedItemId
+                }
+            }
+        };
+        var items = new List<UOItemEntity>
+        {
+            new()
+            {
+                Id = firstEquippedItemId,
+                ItemId = 0x1517,
+                EquippedMobileId = firstMobileId,
+                EquippedLayer = ItemLayerType.Shirt
+            },
+            new()
+            {
+                Id = secondEquippedItemId,
+                ItemId = 0x152E,
+                EquippedMobileId = secondMobileId,
+                EquippedLayer = ItemLayerType.Pants
+            }
+        };
+        var itemRepository = new CountingItemRepository(items);
+        var mobileRepository = new CountingMobileRepository(mobiles);
+        var persistence =
+            new CountingPersistenceService(new CountingPersistenceUnitOfWork(mobileRepository, itemRepository));
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+        var sectorX = 130 >> MapSectorConsts.SectorShift;
+        var sectorY = 130 >> MapSectorConsts.SectorShift;
+
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, sectorX, sectorY);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loaded, Has.Count.EqualTo(2));
+                Assert.That(itemRepository.QueryCallCount, Is.EqualTo(1));
+                Assert.That(itemRepository.GetByIdCallCount, Is.EqualTo(0));
+                Assert.That(
+                    loaded.All(mobile => mobile.EquippedItemReferences.Count == 1),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
     public async Task SpawnFromTemplateAsync_ShouldUseFactoryAndPersistMobile()
     {
         using var temp = new TempDirectory();
@@ -388,7 +1085,14 @@ public class MobileServiceTests
                                              AccountId = accountId ?? Serial.Zero
                                          }
         };
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
 
         var spawned = await service.SpawnFromTemplateAsync(
                           "orc",
@@ -426,7 +1130,14 @@ public class MobileServiceTests
         var luaBrainRunner = new TestLuaBrainRunner();
         var factory = new TestMobileFactoryService();
         var itemFactory = new TestItemFactoryService();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
 
         var result = await service.TrySpawnFromTemplateAsync("missing_template", new(10, 10, 0), 0);
 
@@ -465,7 +1176,14 @@ public class MobileServiceTests
                                          }
         };
         var itemFactory = new TestItemFactoryService();
-        IMobileService service = new MobileService(persistence, factory, itemFactory, templateService, luaBrainRunner);
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
 
         var result = await service.TrySpawnFromTemplateAsync("orc", new(42, 66, 0), 1);
         var persisted = await persistence.UnitOfWork.Mobiles.GetByIdAsync(expectedId);
@@ -500,5 +1218,27 @@ public class MobileServiceTests
         await persistence.StartAsync();
 
         return persistence;
+    }
+
+    private static MountTileData CreateMountTileData(params int[] itemIds)
+    {
+        var mountTileData = new MountTileData();
+        mountTileData.Replace(itemIds);
+
+        return mountTileData;
+    }
+
+    private static UOMobileEntity CreateMountableMobile(Serial id, string name, int mapId, Point3D location)
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = id,
+            Name = name,
+            MapId = mapId,
+            Location = location
+        };
+        mobile.SetCustomString("mounted_display_item_id", "0x3EAA");
+
+        return mobile;
     }
 }

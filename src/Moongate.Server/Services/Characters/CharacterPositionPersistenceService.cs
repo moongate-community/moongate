@@ -6,6 +6,7 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.UO.Data.Geometry;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Utils;
 using Serilog;
 
@@ -70,9 +71,9 @@ public sealed class CharacterPositionPersistenceService
         }
 
         var persistedMobile = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(
-            gameEvent.MobileId,
-            cancellationToken
-        );
+                                  gameEvent.MobileId,
+                                  cancellationToken
+                              );
 
         if (persistedMobile is null)
         {
@@ -82,6 +83,25 @@ public sealed class CharacterPositionPersistenceService
         persistedMobile.Location = gameEvent.NewLocation;
         persistedMobile.MapId = gameEvent.MapId;
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(persistedMobile, cancellationToken);
+
+        var mountedMobileId = persistedMobile.MountedMobileId != Serial.Zero
+            ? persistedMobile.MountedMobileId
+            : session.Character.MountedMobileId;
+
+        if (mountedMobileId != Serial.Zero)
+        {
+            var persistedMount = await _persistenceService.UnitOfWork.Mobiles.GetByIdAsync(
+                                     mountedMobileId,
+                                     cancellationToken
+                                 );
+
+            if (persistedMount is not null)
+            {
+                persistedMount.Location = gameEvent.NewLocation;
+                persistedMount.MapId = gameEvent.MapId;
+                await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(persistedMount, cancellationToken);
+            }
+        }
 
         session.Character.Location = gameEvent.NewLocation;
         session.Character.MapId = gameEvent.MapId;

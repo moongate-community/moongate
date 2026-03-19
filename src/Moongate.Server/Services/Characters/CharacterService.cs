@@ -276,21 +276,6 @@ public class CharacterService : ICharacterService
             EquippedLayer = item.EquippedLayer
         };
 
-    private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)
-    {
-        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                                 item => item.ParentContainerId == container.Id,
-                                 static item => item
-                             );
-
-        foreach (var item in containedItems)
-        {
-            var cloned = CloneItem(item);
-            container.AddItem(cloned, item.ContainerPosition);
-            await HydrateContainedItemsRecursiveAsync(cloned);
-        }
-    }
-
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);
 
@@ -439,5 +424,20 @@ public class CharacterService : ICharacterService
         }
 
         character.HydrateEquipmentRuntime(equippedItems);
+    }
+
+    private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)
+    {
+        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                 item => item.ParentContainerId == container.Id,
+                                 static item => item
+                             );
+
+        foreach (var item in containedItems)
+        {
+            var cloned = CloneItem(item);
+            container.AddItem(cloned, item.ContainerPosition);
+            await HydrateContainedItemsRecursiveAsync(cloned);
+        }
     }
 }

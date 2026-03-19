@@ -22,18 +22,27 @@ public class TeleportersDataLoaderTests
             => [..Entries.Where(entry => entry.SourceMapId == mapId)];
 
         public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
-            => [
+            =>
+            [
                 ..Entries.Where(
-                      entry =>
-                          entry.SourceMapId == mapId &&
-                          (entry.SourceLocation.X >> MapSectorConsts.SectorShift) == sectorX &&
-                          (entry.SourceLocation.Y >> MapSectorConsts.SectorShift) == sectorY
-                  )
+                    entry =>
+                        entry.SourceMapId == mapId &&
+                        entry.SourceLocation.X >> MapSectorConsts.SectorShift == sectorX &&
+                        entry.SourceLocation.Y >> MapSectorConsts.SectorShift == sectorY
+                )
             ];
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
 
         public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
         {
-            entry = Entries.FirstOrDefault(candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location);
+            entry = Entries.FirstOrDefault(
+                candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location
+            );
 
             return entry != default;
         }
@@ -60,12 +69,6 @@ public class TeleportersDataLoaderTests
             destinationLocation = location;
 
             return false;
-        }
-
-        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
-        {
-            Entries.Clear();
-            Entries.AddRange(entries);
         }
     }
 

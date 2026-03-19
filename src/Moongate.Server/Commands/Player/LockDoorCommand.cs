@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Internal.Commands;
@@ -7,7 +8,6 @@ using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -61,8 +61,8 @@ public sealed class LockDoorCommand : ICommandExecutor
         await _gameEventBusService.PublishAsync(
             new TargetRequestCursorEvent(
                 context.SessionId,
-                Moongate.Network.Packets.Types.Targeting.TargetCursorSelectionType.SelectObject,
-                Moongate.Network.Packets.Types.Targeting.TargetCursorType.Neutral,
+                TargetCursorSelectionType.SelectObject,
+                TargetCursorType.Neutral,
                 callback =>
                 {
                     try
@@ -76,6 +76,16 @@ public sealed class LockDoorCommand : ICommandExecutor
                 }
             )
         );
+    }
+
+    private static string BuildKeyName(UOItemEntity? door)
+    {
+        if (door is null || string.IsNullOrWhiteSpace(door.Name))
+        {
+            return "Key";
+        }
+
+        return $"{door.Name}'s key";
     }
 
     private void HandleTargetSelection(CommandSystemContext context, Serial targetSerial, Serial backpackId)
@@ -101,19 +111,9 @@ public sealed class LockDoorCommand : ICommandExecutor
         key.SetCustomString(ItemCustomParamKeys.Key.LockId, result.LockId);
         key.Name = BuildKeyName(door);
         _itemService.UpsertItemAsync(key).GetAwaiter().GetResult();
-        _itemService.MoveItemToContainerAsync(key.Id, backpackId, new Point2D(1, 1), context.SessionId).GetAwaiter().GetResult();
+        _itemService.MoveItemToContainerAsync(key.Id, backpackId, new(1, 1), context.SessionId).GetAwaiter().GetResult();
 
         context.Print("Door locked. Key created with lock id {0}.", result.LockId);
-    }
-
-    private static string BuildKeyName(UOItemEntity? door)
-    {
-        if (door is null || string.IsNullOrWhiteSpace(door.Name))
-        {
-            return "Key";
-        }
-
-        return $"{door.Name}'s key";
     }
 
     private static Serial ResolveBackpackId(UOMobileEntity character)

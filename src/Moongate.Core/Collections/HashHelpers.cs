@@ -18,35 +18,46 @@ internal static class HashHelpers
         1674319, 2009191, 2411033, 2893249, 3471899, 4166287, 4999559, 5999471, 7199369
     ];
 
-    public static bool IsPrime(int candidate)
+    public static int ExpandPrime(int oldSize)
     {
-        if ((candidate & 1) != 0)
-        {
-            var limit = (int)Math.Sqrt(candidate);
-            for (var divisor = 3; divisor <= limit; divisor += 2)
-            {
-                if (candidate % divisor == 0)
-                {
-                    return false;
-                }
-            }
+        var newSize = 2 * oldSize;
 
-            return true;
+        if ((uint)newSize > MaxPrimeArrayLength && MaxPrimeArrayLength > oldSize)
+        {
+            Debug.Assert(MaxPrimeArrayLength == GetPrime(MaxPrimeArrayLength), "Invalid MaxPrimeArrayLength");
+
+            return MaxPrimeArrayLength;
         }
 
-        return candidate == 2;
+        return GetPrime(newSize);
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint FastMod(uint value, uint divisor, ulong multiplier)
+    {
+        var highbits = (uint)(((((multiplier * value) >> 32) + 1) * divisor) >> 32);
+
+        Debug.Assert(highbits == value % divisor);
+
+        return highbits;
+    }
+
+    public static ulong GetFastModMultiplier(uint divisor)
+        => ulong.MaxValue / divisor + 1;
 
     public static int GetPrime(int min)
     {
         if (min < 0)
         {
-            throw new ArgumentException("Hashtable's capacity overflowed and went negative. Check load factor, capacity and the current size of the table.");
+            throw new ArgumentException(
+                "Hashtable's capacity overflowed and went negative. Check load factor, capacity and the current size of the table."
+            );
         }
 
         for (var i = 0; i < primes.Length; i++)
         {
             var prime = primes[i];
+
             if (prime >= min)
             {
                 return prime;
@@ -64,28 +75,23 @@ internal static class HashHelpers
         return min;
     }
 
-    public static int ExpandPrime(int oldSize)
+    public static bool IsPrime(int candidate)
     {
-        var newSize = 2 * oldSize;
-
-        if ((uint)newSize > MaxPrimeArrayLength && MaxPrimeArrayLength > oldSize)
+        if ((candidate & 1) != 0)
         {
-            Debug.Assert(MaxPrimeArrayLength == GetPrime(MaxPrimeArrayLength), "Invalid MaxPrimeArrayLength");
-            return MaxPrimeArrayLength;
+            var limit = (int)Math.Sqrt(candidate);
+
+            for (var divisor = 3; divisor <= limit; divisor += 2)
+            {
+                if (candidate % divisor == 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
-        return GetPrime(newSize);
-    }
-
-    public static ulong GetFastModMultiplier(uint divisor) =>
-        ulong.MaxValue / divisor + 1;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static uint FastMod(uint value, uint divisor, ulong multiplier)
-    {
-        var highbits = (uint)(((((multiplier * value) >> 32) + 1) * divisor) >> 32);
-
-        Debug.Assert(highbits == value % divisor);
-        return highbits;
+        return candidate == 2;
     }
 }

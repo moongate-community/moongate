@@ -27,6 +27,9 @@ public sealed class GmBodyCommandTests
         public List<(Serial ItemId, Serial ContainerId)> MovesToContainer { get; } = [];
         public List<(Serial ItemId, Serial MobileId, ItemLayerType Layer)> Equips { get; } = [];
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -89,9 +92,6 @@ public sealed class GmBodyCommandTests
             => Task.CompletedTask;
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
     }
 
@@ -166,7 +166,7 @@ public sealed class GmBodyCommandTests
 
     private sealed class GmBodyTestItemFactoryService : IItemFactoryService
     {
-        public List<string> BagContainer { get; set; } =
+        public List<string> BagContainer { get; } =
         [
             "gm_hiding_stone",
             "gm_ethereal",
@@ -191,7 +191,7 @@ public sealed class GmBodyCommandTests
                 return false;
             }
 
-            definition = new ItemTemplateDefinition
+            definition = new()
             {
                 Id = "gm_body_bag",
                 Container = [.. BagContainer]
@@ -236,7 +236,7 @@ public sealed class GmBodyCommandTests
 
         var characterService = new GmBodyTestCharacterService
         {
-            CharacterToReturn = new UOMobileEntity
+            CharacterToReturn = new()
             {
                 Id = session.CharacterId,
                 BackpackId = (Serial)0x40000011u

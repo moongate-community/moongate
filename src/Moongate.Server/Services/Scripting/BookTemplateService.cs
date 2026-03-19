@@ -36,12 +36,14 @@ public sealed class BookTemplateService : IBookTemplateService
         if (!TryResolveBookPath(bookId, out var templatePath))
         {
             Logger.Warning("Rejected book template path '{BookId}'.", bookId);
+
             return false;
         }
 
         if (!File.Exists(templatePath))
         {
             Logger.Warning("Book template '{Path}' was not found.", templatePath);
+
             return false;
         }
 
@@ -49,7 +51,11 @@ public sealed class BookTemplateService : IBookTemplateService
 
         if (!TryParseMetadata(source, out var title, out var author, out var readOnly, out var body))
         {
-            Logger.Error("Invalid book template '{Path}': missing [Title] or [Author], or invalid [ReadOnly].", templatePath);
+            Logger.Error(
+                "Invalid book template '{Path}': missing [Title] or [Author], or invalid [ReadOnly].",
+                templatePath
+            );
+
             return false;
         }
 
@@ -59,11 +65,14 @@ public sealed class BookTemplateService : IBookTemplateService
 
         if (titleTemplate.HasErrors || authorTemplate.HasErrors || bodyTemplate.HasErrors)
         {
-            var firstError = titleTemplate.Messages.Concat(authorTemplate.Messages)
-                                         .Concat(bodyTemplate.Messages)
-                                         .FirstOrDefault()
-                                         ?.Message ?? "unknown parse error";
+            var firstError = titleTemplate.Messages
+                                          .Concat(authorTemplate.Messages)
+                                          .Concat(bodyTemplate.Messages)
+                                          .FirstOrDefault()
+                                          ?.Message ??
+                             "unknown parse error";
             Logger.Error("Invalid book template '{Path}': {Error}", templatePath, firstError);
+
             return false;
         }
 
@@ -72,7 +81,7 @@ public sealed class BookTemplateService : IBookTemplateService
 
         try
         {
-            book = new BookTemplateContent
+            book = new()
             {
                 Title = titleTemplate.Render(context).Trim(),
                 Author = authorTemplate.Render(context).Trim(),
@@ -85,109 +94,9 @@ public sealed class BookTemplateService : IBookTemplateService
         catch (Exception ex)
         {
             Logger.Error(ex, "Failed to render book template '{Path}'.", templatePath);
+
             return false;
         }
-    }
-
-    private ScriptObject CreateGlobalScriptObject(IReadOnlyDictionary<string, object?>? model)
-    {
-        var globals = new ScriptObject
-        {
-            ["shard"] = new ScriptObject
-            {
-                ["name"] = _config.Game.ShardName,
-                ["website_url"] = _config.Http.WebsiteUrl
-            }
-        };
-
-        if (model is null)
-        {
-            return globals;
-        }
-
-        foreach (var (key, value) in model)
-        {
-            globals[key] = ConvertValue(value);
-        }
-
-        return globals;
-    }
-
-    private bool TryResolveBookPath(string bookId, out string templatePath)
-    {
-        templatePath = string.Empty;
-
-        var normalized = bookId.Trim();
-
-        if (Path.IsPathRooted(normalized))
-        {
-            return false;
-        }
-
-        var fileName = normalized.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) ? normalized : $"{normalized}.txt";
-        var fullRootPath = Path.GetFullPath(_booksRootPath);
-        var candidatePath = Path.GetFullPath(Path.Combine(fullRootPath, fileName));
-
-        if (!candidatePath.StartsWith(fullRootPath, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        templatePath = candidatePath;
-        return true;
-    }
-
-    private static bool TryParseMetadata(
-        string source,
-        out string title,
-        out string author,
-        out bool? readOnly,
-        out string body
-    )
-    {
-        title = string.Empty;
-        author = string.Empty;
-        readOnly = null;
-        body = string.Empty;
-
-        var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal)
-                          .Replace('\r', '\n')
-                          .Split('\n');
-        var bodyLines = new List<string>();
-
-        foreach (var line in lines)
-        {
-            if (line.StartsWith("[Title]", StringComparison.OrdinalIgnoreCase))
-            {
-                title = line[7..].Trim();
-                continue;
-            }
-
-            if (line.StartsWith("[Author]", StringComparison.OrdinalIgnoreCase))
-            {
-                author = line[8..].Trim();
-                continue;
-            }
-
-            if (line.StartsWith("[ReadOnly]", StringComparison.OrdinalIgnoreCase))
-            {
-                var value = line[10..].Trim();
-
-                if (!bool.TryParse(value, out var parsed))
-                {
-                    return false;
-                }
-
-                readOnly = parsed;
-                continue;
-            }
-
-            bodyLines.Add(line);
-        }
-
-        body = string.Join('\n', bodyLines).Trim();
-
-        return !string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(author);
     }
 
     private static object? ConvertValue(object? value)
@@ -246,6 +155,30 @@ public sealed class BookTemplateService : IBookTemplateService
         return value;
     }
 
+    private ScriptObject CreateGlobalScriptObject(IReadOnlyDictionary<string, object?>? model)
+    {
+        var globals = new ScriptObject
+        {
+            ["shard"] = new ScriptObject
+            {
+                ["name"] = _config.Game.ShardName,
+                ["website_url"] = _config.Http.WebsiteUrl
+            }
+        };
+
+        if (model is null)
+        {
+            return globals;
+        }
+
+        foreach (var (key, value) in model)
+        {
+            globals[key] = ConvertValue(value);
+        }
+
+        return globals;
+    }
+
     private static string PreprocessTemplateSource(string source)
     {
         if (string.IsNullOrEmpty(source))
@@ -263,6 +196,7 @@ public sealed class BookTemplateService : IBookTemplateService
             if (string.IsNullOrWhiteSpace(line))
             {
                 processedLines.Add(string.Empty);
+
                 continue;
             }
 
@@ -293,12 +227,14 @@ public sealed class BookTemplateService : IBookTemplateService
 
                 builder.Append(character);
                 escaped = false;
+
                 continue;
             }
 
             if (character == '\\')
             {
                 escaped = true;
+
                 continue;
             }
 
@@ -316,5 +252,86 @@ public sealed class BookTemplateService : IBookTemplateService
         }
 
         return builder.ToString().TrimEnd();
+    }
+
+    private static bool TryParseMetadata(
+        string source,
+        out string title,
+        out string author,
+        out bool? readOnly,
+        out string body
+    )
+    {
+        title = string.Empty;
+        author = string.Empty;
+        readOnly = null;
+        body = string.Empty;
+
+        var lines = source.Replace("\r\n", "\n", StringComparison.Ordinal)
+                          .Replace('\r', '\n')
+                          .Split('\n');
+        var bodyLines = new List<string>();
+
+        foreach (var line in lines)
+        {
+            if (line.StartsWith("[Title]", StringComparison.OrdinalIgnoreCase))
+            {
+                title = line[7..].Trim();
+
+                continue;
+            }
+
+            if (line.StartsWith("[Author]", StringComparison.OrdinalIgnoreCase))
+            {
+                author = line[8..].Trim();
+
+                continue;
+            }
+
+            if (line.StartsWith("[ReadOnly]", StringComparison.OrdinalIgnoreCase))
+            {
+                var value = line[10..].Trim();
+
+                if (!bool.TryParse(value, out var parsed))
+                {
+                    return false;
+                }
+
+                readOnly = parsed;
+
+                continue;
+            }
+
+            bodyLines.Add(line);
+        }
+
+        body = string.Join('\n', bodyLines).Trim();
+
+        return !string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(author);
+    }
+
+    private bool TryResolveBookPath(string bookId, out string templatePath)
+    {
+        templatePath = string.Empty;
+
+        var normalized = bookId.Trim();
+
+        if (Path.IsPathRooted(normalized))
+        {
+            return false;
+        }
+
+        var fileName = normalized.EndsWith(".txt", StringComparison.OrdinalIgnoreCase) ? normalized : $"{normalized}.txt";
+        var fullRootPath = Path.GetFullPath(_booksRootPath);
+        var candidatePath = Path.GetFullPath(Path.Combine(fullRootPath, fileName));
+
+        if (!candidatePath.StartsWith(fullRootPath, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        templatePath = candidatePath;
+
+        return true;
     }
 }

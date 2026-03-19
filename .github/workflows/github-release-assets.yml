@@ -87,6 +87,8 @@ jobs:
   release:
     needs: [build]
     runs-on: ubuntu-latest
+    env:
+      DISCORD_CHANGELOG_WEBHOOK_URL: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK_URL }}
 
     steps:
       - name: Checkout
@@ -145,13 +147,11 @@ jobs:
           fail_on_unmatched_files: true
 
       - name: Skip Discord changelog webhook
-        if: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK_URL == '' }}
+        if: ${{ env.DISCORD_CHANGELOG_WEBHOOK_URL == '' }}
         run: echo "DISCORD_CHANGELOG_WEBHOOK_URL is not configured; skipping Discord changelog post."
 
       - name: Post changelog to Discord
-        if: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK_URL != '' }}
-        env:
-          DISCORD_CHANGELOG_WEBHOOK_URL: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK_URL }}
+        if: ${{ env.DISCORD_CHANGELOG_WEBHOOK_URL != '' }}
         run: >
           python3 scripts/discord_changelog_webhook.py
           --version "${{ steps.version.outputs.version }}"

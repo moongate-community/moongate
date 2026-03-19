@@ -9,8 +9,14 @@ namespace Moongate.Server.Services.Scripting.Internal;
 internal static class LuaBrainPendingEventDispatcher
 {
     private static readonly DynValue SpeechHeardEventName = DynValue.NewString("speech_heard");
+    private static readonly DynValue BeforeDeathEventName = DynValue.NewString("before_death");
     private static readonly DynValue DeathEventName = DynValue.NewString("death");
+    private static readonly DynValue AfterDeathEventName = DynValue.NewString("after_death");
     private static readonly DynValue SpawnEventName = DynValue.NewString("spawn");
+    private static readonly DynValue AttackEventName = DynValue.NewString("attack");
+    private static readonly DynValue MissedAttackEventName = DynValue.NewString("missed_attack");
+    private static readonly DynValue AttackedEventName = DynValue.NewString("attacked");
+    private static readonly DynValue MissedByAttackEventName = DynValue.NewString("missed_by_attack");
     private static readonly DynValue InRangeEventName = DynValue.NewString("in_range");
     private static readonly DynValue OutRangeEventName = DynValue.NewString("out_range");
 
@@ -22,96 +28,23 @@ internal static class LuaBrainPendingEventDispatcher
         DispatchPendingSpeech(luaScript, state);
         DispatchPendingDeath(luaScript, state);
         DispatchPendingSpawn(luaScript, state);
+        DispatchPendingCombat(luaScript, state);
         DispatchPendingInRange(luaScript, state);
         DispatchPendingOutRange(luaScript, state);
     }
 
-    private static void DispatchPendingDeath(Script luaScript, LuaBrainRuntimeState state)
+    private static void DispatchPendingCombat(Script luaScript, LuaBrainRuntimeState state)
     {
-        while (state.PendingDeath.Count > 0)
+        while (state.PendingCombatHooks.Count > 0)
         {
-            var death = state.PendingDeath.Dequeue();
-            var byCharacter = death.ByCharacterId.HasValue
-                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
-                                  : DynValue.Nil;
+            var combat = state.PendingCombatHooks.Dequeue();
+            var actorId = DynValue.NewNumber((uint)combat.OtherMobileId);
+            var payload = DynValue.FromObject(luaScript, combat.Payload);
+            var hookFunction = ResolveCombatHook(state, combat.HookType);
 
-            if (state.OnEventFunction is not null)
+            if (hookFunction is not null)
             {
-                luaScript.Call(
-                    state.OnEventFunction,
-                    DeathEventName,
-                    byCharacter,
-                    death.Context
-                );
-
-                continue;
-            }
-
-            if (state.OnDeathFunction is null)
-            {
-                continue;
-            }
-
-            luaScript.Call(
-                state.OnDeathFunction,
-                byCharacter,
-                death.Context
-            );
-        }
-    }
-
-    private static void DispatchPendingSpeech(Script luaScript, LuaBrainRuntimeState state)
-    {
-        while (state.PendingSpeech.Count > 0)
-        {
-            var speech = state.PendingSpeech.Dequeue();
-
-            if (state.OnEventFunction is not null)
-            {
-                luaScript.Call(
-                    state.OnEventFunction,
-                    SpeechHeardEventName,
-                    (uint)speech.SpeakerId,
-                    LuaBrainPayloadFactory.BuildSpeechEventPayload(speech)
-                );
-
-                continue;
-            }
-
-            if (state.OnSpeechFunction is null)
-            {
-                continue;
-            }
-
-            luaScript.Call(
-                state.OnSpeechFunction,
-                (uint)speech.ListenerNpcId,
-                (uint)speech.SpeakerId,
-                speech.Text,
-                (byte)speech.SpeechType,
-                speech.MapId,
-                speech.Location.X,
-                speech.Location.Y,
-                speech.Location.Z
-            );
-        }
-    }
-
-    private static void DispatchPendingSpawn(Script luaScript, LuaBrainRuntimeState state)
-    {
-        while (state.PendingSpawn.Count > 0)
-        {
-            var spawn = state.PendingSpawn.Dequeue();
-            var payload = LuaBrainPayloadFactory.BuildSpawnEventPayload(spawn);
-
-            if (state.OnSpawnFunction is not null)
-            {
-                luaScript.Call(
-                    state.OnSpawnFunction,
-                    (uint)state.MobileId,
-                    payload
-                );
-
+                luaScript.Call(hookFunction, actorId, payload);
                 continue;
             }
 
@@ -122,9 +55,43 @@ internal static class LuaBrainPendingEventDispatcher
 
             luaScript.Call(
                 state.OnEventFunction,
-                SpawnEventName,
-                0u,
+                ResolveCombatEventName(combat.HookType),
+                actorId,
                 payload
+            );
+        }
+    }
+
+    private static void DispatchPendingDeath(Script luaScript, LuaBrainRuntimeState state)
+    {
+        while (state.PendingDeath.Count > 0)
+        {
+            var death = state.PendingDeath.Dequeue();
+            var byCharacter = death.ByCharacterId.HasValue
+                                  ? DynValue.NewNumber((uint)death.ByCharacterId.Value)
+                                  : DynValue.Nil;
+            var eventName = ResolveDeathEventName(death.HookType);
+            var hookFunction = ResolveDeathHook(state, death.HookType);
+
+            if (state.OnEventFunction is not null)
+            {
+                luaScript.Call(
+                    state.OnEventFunction,
+                    eventName,
+                    byCharacter,
+                    death.Context
+                );
+            }
+
+            if (hookFunction is null)
+            {
+                continue;
+            }
+
+            luaScript.Call(
+                hookFunction,
+                byCharacter,
+                death.Context
             );
         }
     }
@@ -193,4 +160,110 @@ internal static class LuaBrainPendingEventDispatcher
         }
     }
 
+    private static void DispatchPendingSpawn(Script luaScript, LuaBrainRuntimeState state)
+    {
+        while (state.PendingSpawn.Count > 0)
+        {
+            var spawn = state.PendingSpawn.Dequeue();
+            var payload = LuaBrainPayloadFactory.BuildSpawnEventPayload(spawn);
+
+            if (state.OnSpawnFunction is not null)
+            {
+                luaScript.Call(
+                    state.OnSpawnFunction,
+                    (uint)state.MobileId,
+                    payload
+                );
+
+                continue;
+            }
+
+            if (state.OnEventFunction is null)
+            {
+                continue;
+            }
+
+            luaScript.Call(
+                state.OnEventFunction,
+                SpawnEventName,
+                0u,
+                payload
+            );
+        }
+    }
+
+    private static void DispatchPendingSpeech(Script luaScript, LuaBrainRuntimeState state)
+    {
+        while (state.PendingSpeech.Count > 0)
+        {
+            var speech = state.PendingSpeech.Dequeue();
+
+            if (state.OnEventFunction is not null)
+            {
+                luaScript.Call(
+                    state.OnEventFunction,
+                    SpeechHeardEventName,
+                    (uint)speech.SpeakerId,
+                    LuaBrainPayloadFactory.BuildSpeechEventPayload(speech)
+                );
+
+                continue;
+            }
+
+            if (state.OnSpeechFunction is null)
+            {
+                continue;
+            }
+
+            luaScript.Call(
+                state.OnSpeechFunction,
+                (uint)speech.ListenerNpcId,
+                (uint)speech.SpeakerId,
+                speech.Text,
+                (byte)speech.SpeechType,
+                speech.MapId,
+                speech.Location.X,
+                speech.Location.Y,
+                speech.Location.Z
+            );
+        }
+    }
+
+    private static DynValue? ResolveCombatHook(LuaBrainRuntimeState state, LuaBrainCombatHookType hookType)
+        => hookType switch
+        {
+            LuaBrainCombatHookType.Attack => state.OnAttackFunction,
+            LuaBrainCombatHookType.MissedAttack => state.OnMissedAttackFunction,
+            LuaBrainCombatHookType.Attacked => state.OnAttackedFunction,
+            LuaBrainCombatHookType.MissedByAttack => state.OnMissedByAttackFunction,
+            _ => null
+        };
+
+    private static DynValue ResolveCombatEventName(LuaBrainCombatHookType hookType)
+        => hookType switch
+        {
+            LuaBrainCombatHookType.Attack => AttackEventName,
+            LuaBrainCombatHookType.MissedAttack => MissedAttackEventName,
+            LuaBrainCombatHookType.Attacked => AttackedEventName,
+            LuaBrainCombatHookType.MissedByAttack => MissedByAttackEventName,
+            _ => AttackEventName
+        };
+
+    private static DynValue? ResolveDeathHook(LuaBrainRuntimeState state, LuaBrainDeathHookType hookType)
+        => hookType switch
+        {
+            LuaBrainDeathHookType.BeforeDeath => state.OnBeforeDeathFunction,
+            LuaBrainDeathHookType.Death => state.OnDeathFunction,
+            LuaBrainDeathHookType.AfterDeath => state.OnAfterDeathFunction,
+            _ => state.OnDeathFunction
+        };
+
+    private static DynValue ResolveDeathEventName(LuaBrainDeathHookType hookType)
+        => hookType switch
+        {
+            LuaBrainDeathHookType.BeforeDeath => BeforeDeathEventName,
+            LuaBrainDeathHookType.Death => DeathEventName,
+            LuaBrainDeathHookType.AfterDeath => AfterDeathEventName,
+            _ => DeathEventName
+        };
 }

@@ -13,6 +13,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.Items;
 using Moongate.Tests.Server.Services.Spatial;
@@ -28,6 +29,149 @@ namespace Moongate.Tests.Server.Handlers;
 
 public class ItemHandlerTests
 {
+    private sealed class ItemHandlerTestItemBookService : IItemBookService
+    {
+        public bool TryEnqueueBookCalled { get; private set; }
+
+        public GameSession? LastSession { get; private set; }
+
+        public UOItemEntity? LastItem { get; private set; }
+
+        public bool TryEnqueueBookResult { get; set; }
+
+        public Task<bool> HandleBookHeaderAsync(
+            GameSession session,
+            BookHeaderNewPacket packet,
+            CancellationToken cancellationToken = default
+        )
+            => throw new NotSupportedException();
+
+        public Task<bool> HandleBookPagesAsync(
+            GameSession session,
+            BookPagesPacket packet,
+            CancellationToken cancellationToken = default
+        )
+            => throw new NotSupportedException();
+
+        public Task<bool> TryEnqueueBookAsync(
+            GameSession session,
+            UOItemEntity item,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            TryEnqueueBookCalled = true;
+            LastSession = session;
+            LastItem = item;
+
+            return Task.FromResult(TryEnqueueBookResult);
+        }
+    }
+
+    private sealed class ItemHandlerTestItemInteractionService : IItemInteractionService
+    {
+        public bool SingleClickCalled { get; private set; }
+
+        public bool DoubleClickCalled { get; private set; }
+
+        public GameSession? LastSession { get; private set; }
+
+        public Serial LastTargetSerial { get; private set; }
+
+        public bool SingleClickResult { get; } = true;
+
+        public bool DoubleClickResult { get; } = true;
+
+        public Task<bool> HandleDoubleClickAsync(
+            GameSession session,
+            DoubleClickPacket packet,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            DoubleClickCalled = true;
+            LastSession = session;
+            LastTargetSerial = packet.TargetSerial;
+
+            return Task.FromResult(DoubleClickResult);
+        }
+
+        public Task<bool> HandleSingleClickAsync(
+            GameSession session,
+            SingleClickPacket packet,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            SingleClickCalled = true;
+            LastSession = session;
+            LastTargetSerial = packet.TargetSerial;
+
+            return Task.FromResult(SingleClickResult);
+        }
+    }
+
+    private sealed class ItemHandlerTestItemManipulationService : IItemManipulationService
+    {
+        public bool PickUpCalled { get; private set; }
+
+        public bool DropCalled { get; private set; }
+
+        public bool DropWearCalled { get; private set; }
+
+        public GameSession? LastSession { get; private set; }
+
+        public Serial LastItemSerial { get; private set; }
+
+        public bool PickUpResult { get; } = true;
+
+        public bool DropResult { get; } = true;
+
+        public bool DropWearResult { get; } = true;
+
+        public Task<bool> HandleDropItemAsync(
+            GameSession session,
+            DropItemPacket packet,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            DropCalled = true;
+            LastSession = session;
+            LastItemSerial = packet.ItemSerial;
+
+            return Task.FromResult(DropResult);
+        }
+
+        public Task<bool> HandleDropWearItemAsync(
+            GameSession session,
+            DropWearItemPacket packet,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            DropWearCalled = true;
+            LastSession = session;
+            LastItemSerial = packet.ItemSerial;
+
+            return Task.FromResult(DropWearResult);
+        }
+
+        public Task<bool> HandlePickUpItemAsync(
+            GameSession session,
+            PickUpItemPacket packet,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            PickUpCalled = true;
+            LastSession = session;
+            LastItemSerial = packet.ItemSerial;
+
+            return Task.FromResult(PickUpResult);
+        }
+    }
+
     private sealed class ItemHandlerTestItemService : IItemService
     {
         public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
@@ -41,6 +185,9 @@ public class ItemHandlerTests
         public ItemLayerType LastEquipLayer { get; private set; }
 
         public bool EquipItemResult { get; set; }
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => throw new NotSupportedException();
@@ -152,9 +299,6 @@ public class ItemHandlerTests
 
             return Task.CompletedTask;
         }
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     private sealed class ItemHandlerTestMobileService : IMobileService
@@ -372,6 +516,174 @@ public class ItemHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_ItemAddedInSectorEvent_ShouldFilterBySessionAccountType()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatial = new ItemHandlerTestSpatialWorldService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            spatial,
+            new ItemHandlerTestMobileService()
+        );
+
+        var itemId = (Serial)0x40000061u;
+        itemService.ItemsById[itemId] = new()
+        {
+            Id = itemId,
+            ItemId = 0x0EED,
+            Location = new(100, 100, 0),
+            MapId = 1,
+            Visibility = AccountType.GameMaster
+        };
+
+        using var regularClient =
+            new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var regularSession = new GameSession(new(regularClient))
+        {
+            CharacterId = (Serial)0x00000011u,
+            Character = new()
+            {
+                Id = (Serial)0x00000011u,
+                MapId = 1,
+                Location = new(100, 100, 0)
+            },
+            AccountType = AccountType.Regular
+        };
+        sessionService.Add(regularSession);
+        spatial.SessionsInRange.Add(regularSession);
+
+        await handler.HandleAsync(new ItemAddedInSectorEvent(itemId, 1, 6, 6));
+
+        Assert.That(queue.TryDequeue(out _), Is.False);
+    }
+
+    [Test]
+    public async Task HandleAsync_ItemAddedInSectorEvent_WhenSessionIsGameMaster_ShouldSendMovableFlag()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService
+        {
+            ItemsById =
+            {
+                [(Serial)0x40000099u] = new()
+                {
+                    Id = (Serial)0x40000099u,
+                    ItemId = 0x0EED,
+                    MapId = 0,
+                    Location = new(100, 100, 0)
+                }
+            }
+        };
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatialService = new ItemHandlerTestSpatialWorldService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var gmSession = new GameSession(new(client))
+        {
+            AccountType = AccountType.GameMaster
+        };
+        spatialService.SessionsInRange.Add(gmSession);
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            spatialService,
+            new ItemHandlerTestMobileService()
+        );
+
+        await handler.HandleAsync(
+            new ItemAddedInSectorEvent((Serial)0x40000099u, 0, 0, 0),
+            CancellationToken.None
+        );
+
+        Assert.That(queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<ObjectInformationPacket>());
+        Assert.That(((ObjectInformationPacket)outbound.Packet).Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
+    }
+
+    [Test]
+    public async Task HandleAsync_ItemAddedInSectorEvent_WhenItemIsCorpse_ShouldSendCorpseContentsAndClothing()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatial = new ItemHandlerTestSpatialWorldService();
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            spatial,
+            new ItemHandlerTestMobileService()
+        );
+
+        var corpseId = (Serial)0x40000098u;
+        var chestId = (Serial)0x40000099u;
+        var corpse = new UOItemEntity
+        {
+            Id = corpseId,
+            ItemId = 0x2006,
+            Location = new(100, 100, 0),
+            MapId = 1
+        };
+        corpse.SetCustomBoolean("is_corpse", true);
+        var chest = new UOItemEntity
+        {
+            Id = chestId,
+            ItemId = 0x1415,
+            ParentContainerId = corpseId
+        };
+        chest.SetCustomInteger("corpse_equipped_layer", (byte)ItemLayerType.InnerTorso);
+        corpse.AddItem(chest, Point2D.Zero);
+        itemService.ItemsById[corpseId] = corpse;
+        itemService.ItemsById[chestId] = chest;
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000021u,
+            Character = new()
+            {
+                Id = (Serial)0x00000021u,
+                MapId = 1,
+                Location = new(100, 100, 0)
+            }
+        };
+        sessionService.Add(session);
+        spatial.SessionsInRange.Add(session);
+
+        await handler.HandleAsync(new ItemAddedInSectorEvent(corpseId, 1, 6, 6));
+
+        var packetTypes = new List<Type>();
+
+        while (queue.TryDequeue(out var outbound))
+        {
+            packetTypes.Add(outbound.Packet.GetType());
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packetTypes, Does.Contain(typeof(ObjectInformationPacket)));
+                Assert.That(packetTypes, Does.Contain(typeof(AddMultipleItemsToContainerPacket)));
+                Assert.That(packetTypes, Does.Contain(typeof(CorpseClothingPacket)));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ItemMovedEvent_ShouldLoadCorrectItemAndContainer()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -437,54 +749,6 @@ public class ItemHandlerTests
                 Assert.That(draw.Container!.Id, Is.EqualTo(containerId));
             }
         );
-    }
-
-    [Test]
-    public async Task HandleAsync_ItemAddedInSectorEvent_ShouldFilterBySessionAccountType()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        var spatial = new ItemHandlerTestSpatialWorldService();
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            sessionService,
-            new PlayerDragService(),
-            spatial,
-            new ItemHandlerTestMobileService()
-        );
-
-        var itemId = (Serial)0x40000061u;
-        itemService.ItemsById[itemId] = new()
-        {
-            Id = itemId,
-            ItemId = 0x0EED,
-            Location = new(100, 100, 0),
-            MapId = 1,
-            Visibility = AccountType.GameMaster
-        };
-
-        using var regularClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var regularSession = new GameSession(new(regularClient))
-        {
-            CharacterId = (Serial)0x00000011u,
-            Character = new()
-            {
-                Id = (Serial)0x00000011u,
-                MapId = 1,
-                Location = new(100, 100, 0)
-            },
-            AccountType = AccountType.Regular
-        };
-        sessionService.Add(regularSession);
-        spatial.SessionsInRange.Add(regularSession);
-
-        await handler.HandleAsync(new ItemAddedInSectorEvent(itemId, 1, 6, 6));
-
-        Assert.That(queue.TryDequeue(out _), Is.False);
     }
 
     [Test]
@@ -712,463 +976,6 @@ public class ItemHandlerTests
     }
 
     [Test]
-    public async Task HandlePacketAsync_WhenDoubleClickReadonlyBook_ShouldEnqueueClassicBookPackets()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var targetSerial = (Serial)0x40000021u;
-        var item = new UOItemEntity
-        {
-            Id = targetSerial,
-            ItemId = 0x0FF0,
-            ParentContainerId = (Serial)0x40000001u,
-            ScriptId = "none"
-        };
-        item.SetCustomString("book_title", "Welcome");
-        item.SetCustomString("book_author", "Archivist");
-        item.SetCustomString("book_content", "Line 1\nLine 2\nLine 3");
-        itemService.ItemsById[targetSerial] = item;
-
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            new FakeGameNetworkSessionService(),
-            new PlayerDragService(),
-            new RegionDataLoaderTestSpatialWorldService(),
-            new ItemHandlerTestMobileService()
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-
-        var handled = await handler.HandlePacketAsync(
-                          session,
-                          new DoubleClickPacket
-                          {
-                              TargetSerial = targetSerial
-                          }
-                      );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(queue.TryDequeue(out var headerOutbound), Is.True);
-                Assert.That(headerOutbound.Packet, Is.TypeOf<BookHeaderNewPacket>());
-                var header = (BookHeaderNewPacket)headerOutbound.Packet;
-                Assert.That(header.BookSerial, Is.EqualTo(targetSerial.Value));
-                Assert.That(header.IsWritable, Is.False);
-                Assert.That(header.Title, Is.EqualTo("Welcome"));
-                Assert.That(header.Author, Is.EqualTo("Archivist"));
-                Assert.That(header.PageCount, Is.EqualTo(1));
-
-                Assert.That(queue.TryDequeue(out var pagesOutbound), Is.True);
-                Assert.That(pagesOutbound.Packet, Is.TypeOf<BookPagesPacket>());
-                var pages = (BookPagesPacket)pagesOutbound.Packet;
-                Assert.That(pages.BookSerial, Is.EqualTo(targetSerial.Value));
-                Assert.That(pages.Pages, Has.Count.EqualTo(1));
-                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
-                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2", "Line 3" }));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenReadonlyBookPageIsRequested_ShouldEnqueueRequestedPage()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var targetSerial = (Serial)0x40000022u;
-        var item = new UOItemEntity
-        {
-            Id = targetSerial,
-            ItemId = 0x0FF0,
-            ParentContainerId = (Serial)0x40000001u,
-            ScriptId = "none"
-        };
-        item.SetCustomString("book_title", "Welcome");
-        item.SetCustomString("book_author", "Archivist");
-        item.SetCustomString("book_content", "Line 1\nLine 2\nLine 3");
-        itemService.ItemsById[targetSerial] = item;
-
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            new FakeGameNetworkSessionService(),
-            new PlayerDragService(),
-            new RegionDataLoaderTestSpatialWorldService(),
-            new ItemHandlerTestMobileService()
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-
-        var handled = await handler.HandlePacketAsync(
-                          session,
-                          new BookPagesPacket
-                          {
-                              BookSerial = targetSerial.Value,
-                              PageCount = 1,
-                              Pages =
-                              {
-                                  new()
-                                  {
-                                      PageNumber = 1,
-                                      LineCount = 0xFFFF
-                                  }
-                              }
-                          }
-                      );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(queue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<BookPagesPacket>());
-                var pages = (BookPagesPacket)outbound.Packet;
-                Assert.That(pages.BookSerial, Is.EqualTo(targetSerial.Value));
-                Assert.That(pages.Pages, Has.Count.EqualTo(1));
-                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
-                Assert.That(pages.Pages[0].LineCount, Is.EqualTo(3));
-                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2", "Line 3" }));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenDoubleClickWritableBookInBackpack_ShouldEnqueueWritableBookPackets()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var playerId = (Serial)0x00000002u;
-        var backpackId = (Serial)0x40000001u;
-        var targetSerial = (Serial)0x40000023u;
-        itemService.ItemsById[backpackId] = new()
-        {
-            Id = backpackId,
-            ItemId = 0x0E75,
-            ParentContainerId = Serial.Zero
-        };
-        var item = new UOItemEntity
-        {
-            Id = targetSerial,
-            ItemId = 0x0FF0,
-            ParentContainerId = backpackId,
-            ScriptId = "none"
-        };
-        item.SetCustomString("book_title", "Blank Notes");
-        item.SetCustomString("book_author", "Tommy");
-        item.SetCustomString("book_content", "Line 1\nLine 2");
-        item.SetCustomString("book_writable", "true");
-        item.SetCustomInteger("book_pages", 20);
-        itemService.ItemsById[targetSerial] = item;
-
-        var mobileService = new ItemHandlerTestMobileService
-        {
-            Mobile = new()
-            {
-                Id = playerId,
-                BackpackId = backpackId
-            }
-        };
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            new FakeGameNetworkSessionService(),
-            new PlayerDragService(),
-            new RegionDataLoaderTestSpatialWorldService(),
-            mobileService
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = playerId,
-            Character = new()
-            {
-                Id = playerId
-            }
-        };
-
-        var handled = await handler.HandlePacketAsync(
-                          session,
-                          new DoubleClickPacket
-                          {
-                              TargetSerial = targetSerial
-                          }
-                      );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(queue.TryDequeue(out var headerOutbound), Is.True);
-                Assert.That(headerOutbound.Packet, Is.TypeOf<BookHeaderNewPacket>());
-                var header = (BookHeaderNewPacket)headerOutbound.Packet;
-                Assert.That(header.BookSerial, Is.EqualTo(targetSerial.Value));
-                Assert.That(header.Flag1, Is.True);
-                Assert.That(header.IsWritable, Is.True);
-                Assert.That(header.Title, Is.EqualTo("Blank Notes"));
-                Assert.That(header.Author, Is.EqualTo("Tommy"));
-                Assert.That(header.PageCount, Is.EqualTo(20));
-
-                Assert.That(queue.TryDequeue(out var pagesOutbound), Is.True);
-                Assert.That(pagesOutbound.Packet, Is.TypeOf<BookPagesPacket>());
-                var pages = (BookPagesPacket)pagesOutbound.Packet;
-                Assert.That(pages.Pages, Has.Count.EqualTo(20));
-                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
-                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2" }));
-                Assert.That(pages.Pages[19].PageNumber, Is.EqualTo(20));
-                Assert.That(pages.Pages[19].Lines, Is.Empty);
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenWritableBookNewHeaderIsSaved_ShouldPersistTitleAndAuthor()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var playerId = (Serial)0x00000002u;
-        var backpackId = (Serial)0x40000001u;
-        var targetSerial = (Serial)0x40000024u;
-        itemService.ItemsById[backpackId] = new()
-        {
-            Id = backpackId,
-            ItemId = 0x0E75,
-            ParentContainerId = Serial.Zero
-        };
-        var item = new UOItemEntity
-        {
-            Id = targetSerial,
-            ItemId = 0x0FF0,
-            ParentContainerId = backpackId,
-            ScriptId = "none"
-        };
-        item.SetCustomString("book_title", "Old Title");
-        item.SetCustomString("book_author", "Old Author");
-        item.SetCustomString("book_content", "Line 1");
-        item.SetCustomString("book_writable", "true");
-        itemService.ItemsById[targetSerial] = item;
-
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            new FakeGameNetworkSessionService(),
-            new PlayerDragService(),
-            new RegionDataLoaderTestSpatialWorldService(),
-            new ItemHandlerTestMobileService
-            {
-                Mobile = new()
-                {
-                    Id = playerId,
-                    BackpackId = backpackId
-                }
-            }
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = playerId,
-            Character = new()
-            {
-                Id = playerId
-            }
-        };
-
-        var handled = await handler.HandlePacketAsync(
-                          session,
-                          new BookHeaderNewPacket
-                          {
-                              BookSerial = targetSerial.Value,
-                              Flag1 = false,
-                              IsWritable = true,
-                              PageCount = 1,
-                              Title = "New Title",
-                              Author = "New Author"
-                          }
-                      );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
-                Assert.That(title, Is.EqualTo("New Title"));
-                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
-                Assert.That(author, Is.EqualTo("New Author"));
-                Assert.That(queue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<ObjectPropertyList>());
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenWritableBookPageContentIsSaved_ShouldPersistUpdatedLines()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var playerId = (Serial)0x00000002u;
-        var backpackId = (Serial)0x40000001u;
-        var targetSerial = (Serial)0x40000025u;
-        itemService.ItemsById[backpackId] = new()
-        {
-            Id = backpackId,
-            ItemId = 0x0E75,
-            ParentContainerId = Serial.Zero
-        };
-        var item = new UOItemEntity
-        {
-            Id = targetSerial,
-            ItemId = 0x0FF0,
-            ParentContainerId = backpackId,
-            ScriptId = "none"
-        };
-        item.SetCustomString("book_title", "Journal");
-        item.SetCustomString("book_author", "Tommy");
-        item.SetCustomString("book_content", "A1\nA2\nA3\nA4\nA5\nA6\nA7\nA8\nB1\nB2");
-        item.SetCustomString("book_writable", "true");
-        itemService.ItemsById[targetSerial] = item;
-
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            new FakeGameNetworkSessionService(),
-            new PlayerDragService(),
-            new RegionDataLoaderTestSpatialWorldService(),
-            new ItemHandlerTestMobileService
-            {
-                Mobile = new()
-                {
-                    Id = playerId,
-                    BackpackId = backpackId
-                }
-            }
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = playerId,
-            Character = new()
-            {
-                Id = playerId
-            }
-        };
-
-        var handled = await handler.HandlePacketAsync(
-                          session,
-                          new BookPagesPacket
-                          {
-                              BookSerial = targetSerial.Value,
-                              PageCount = 1,
-                              Pages =
-                              {
-                                  new()
-                                  {
-                                      PageNumber = 2,
-                                      LineCount = 2,
-                                      Lines = { "Updated B1", "Updated B2" }
-                                  }
-                              }
-                          }
-                      );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
-                Assert.That(
-                    content,
-                    Is.EqualTo("A1\nA2\nA3\nA4\nA5\nA6\nA7\nA8\nUpdated B1\nUpdated B2")
-                );
-                Assert.That(queue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<ObjectPropertyList>());
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenWritableBookWriteIsRequestedOutsideBackpackOrEquipment_ShouldIgnoreUpdate()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService();
-        var playerId = (Serial)0x00000002u;
-        var targetSerial = (Serial)0x40000026u;
-        var item = new UOItemEntity
-        {
-            Id = targetSerial,
-            ItemId = 0x0FF0,
-            ParentContainerId = Serial.Zero,
-            EquippedMobileId = Serial.Zero,
-            ScriptId = "none"
-        };
-        item.SetCustomString("book_title", "Journal");
-        item.SetCustomString("book_author", "Tommy");
-        item.SetCustomString("book_content", "Line 1");
-        item.SetCustomString("book_writable", "true");
-        itemService.ItemsById[targetSerial] = item;
-
-        var handler = new ItemHandler(
-            new BasePacketListenerTestOutgoingPacketQueue(),
-            itemService,
-            eventBus,
-            new FakeGameNetworkSessionService(),
-            new PlayerDragService(),
-            new RegionDataLoaderTestSpatialWorldService(),
-            new ItemHandlerTestMobileService
-            {
-                Mobile = new()
-                {
-                    Id = playerId,
-                    BackpackId = (Serial)0x40000001u
-                }
-            }
-        );
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = playerId,
-            Character = new()
-            {
-                Id = playerId
-            }
-        };
-
-        var handled = await handler.HandlePacketAsync(
-                          session,
-                          new BookHeaderNewPacket
-                          {
-                              BookSerial = targetSerial.Value,
-                              Flag1 = false,
-                              IsWritable = true,
-                              PageCount = 1,
-                              Title = "Blocked",
-                              Author = "Blocked"
-                          }
-                      );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
-                Assert.That(title, Is.EqualTo("Journal"));
-                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
-                Assert.That(author, Is.EqualTo("Tommy"));
-            }
-        );
-    }
-
-    [Test]
     public async Task HandlePacketAsync_ShouldPublishItemSingleClickEvent()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -1205,6 +1012,43 @@ public class ItemHandlerTests
                 Assert.That(handled, Is.True);
                 Assert.That(singleClickEvent.ItemSerial, Is.EqualTo(targetSerial));
                 Assert.That(singleClickEvent.SessionId, Is.EqualTo(session.SessionId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClick_ShouldDelegateToItemInteractionService()
+    {
+        var interactionService = new ItemHandlerTestItemInteractionService();
+        var targetSerial = (Serial)0x40000091u;
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new ItemHandlerTestItemService(),
+            new NetworkServiceTestGameEventBusService(),
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            itemInteractionService: interactionService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DoubleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(interactionService.DoubleClickCalled, Is.True);
+                Assert.That(interactionService.LastSession, Is.SameAs(session));
+                Assert.That(interactionService.LastTargetSerial, Is.EqualTo(targetSerial));
             }
         );
     }
@@ -1346,6 +1190,246 @@ public class ItemHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickReadonlyBook_ShouldDelegateToItemBookService()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var itemBookService = new ItemHandlerTestItemBookService
+        {
+            TryEnqueueBookResult = true
+        };
+        var targetSerial = (Serial)0x4000002Au;
+        itemService.ItemsById[targetSerial] = new()
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = (Serial)0x40000001u,
+            ScriptId = "none"
+        };
+
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            itemBookService: itemBookService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DoubleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(itemBookService.TryEnqueueBookCalled, Is.True);
+                Assert.That(itemBookService.LastSession, Is.SameAs(session));
+                Assert.That(itemBookService.LastItem?.Id, Is.EqualTo(targetSerial));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickReadonlyBook_ShouldEnqueueClassicBookPackets()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var targetSerial = (Serial)0x40000021u;
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = (Serial)0x40000001u,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Welcome");
+        item.SetCustomString("book_author", "Archivist");
+        item.SetCustomString("book_content", "Line 1\nLine 2\nLine 3");
+        itemService.ItemsById[targetSerial] = item;
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DoubleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(queue.TryDequeue(out var headerOutbound), Is.True);
+                Assert.That(headerOutbound.Packet, Is.TypeOf<BookHeaderNewPacket>());
+                var header = (BookHeaderNewPacket)headerOutbound.Packet;
+                Assert.That(header.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(header.IsWritable, Is.False);
+                Assert.That(header.Title, Is.EqualTo("Welcome"));
+                Assert.That(header.Author, Is.EqualTo("Archivist"));
+                Assert.That(header.PageCount, Is.EqualTo(1));
+
+                Assert.That(queue.TryDequeue(out var pagesOutbound), Is.True);
+                Assert.That(pagesOutbound.Packet, Is.TypeOf<BookPagesPacket>());
+                var pages = (BookPagesPacket)pagesOutbound.Packet;
+                Assert.That(pages.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(pages.Pages, Has.Count.EqualTo(1));
+                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
+                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2", "Line 3" }));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDoubleClickWritableBookInBackpack_ShouldEnqueueWritableBookPackets()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var playerId = (Serial)0x00000002u;
+        var backpackId = (Serial)0x40000001u;
+        var targetSerial = (Serial)0x40000023u;
+        itemService.ItemsById[backpackId] = new()
+        {
+            Id = backpackId,
+            ItemId = 0x0E75,
+            ParentContainerId = Serial.Zero
+        };
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = backpackId,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Blank Notes");
+        item.SetCustomString("book_author", "Tommy");
+        item.SetCustomString("book_content", "Line 1\nLine 2");
+        item.SetCustomString("book_writable", "true");
+        item.SetCustomInteger("book_pages", 20);
+        itemService.ItemsById[targetSerial] = item;
+
+        var mobileService = new ItemHandlerTestMobileService
+        {
+            Mobile = new()
+            {
+                Id = playerId,
+                BackpackId = backpackId
+            }
+        };
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            mobileService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = playerId,
+            Character = new()
+            {
+                Id = playerId
+            }
+        };
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DoubleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(queue.TryDequeue(out var headerOutbound), Is.True);
+                Assert.That(headerOutbound.Packet, Is.TypeOf<BookHeaderNewPacket>());
+                var header = (BookHeaderNewPacket)headerOutbound.Packet;
+                Assert.That(header.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(header.Flag1, Is.True);
+                Assert.That(header.IsWritable, Is.True);
+                Assert.That(header.Title, Is.EqualTo("Blank Notes"));
+                Assert.That(header.Author, Is.EqualTo("Tommy"));
+                Assert.That(header.PageCount, Is.EqualTo(20));
+
+                Assert.That(queue.TryDequeue(out var pagesOutbound), Is.True);
+                Assert.That(pagesOutbound.Packet, Is.TypeOf<BookPagesPacket>());
+                var pages = (BookPagesPacket)pagesOutbound.Packet;
+                Assert.That(pages.Pages, Has.Count.EqualTo(20));
+                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
+                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2" }));
+                Assert.That(pages.Pages[19].PageNumber, Is.EqualTo(20));
+                Assert.That(pages.Pages[19].Lines, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDrop_ShouldDelegateToItemManipulationService()
+    {
+        var manipulationService = new ItemHandlerTestItemManipulationService();
+        var targetSerial = (Serial)0x400000A1u;
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new ItemHandlerTestItemService(),
+            new NetworkServiceTestGameEventBusService(),
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            itemManipulationService: manipulationService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DropItemPacket
+                          {
+                              ItemSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(manipulationService.DropCalled, Is.True);
+                Assert.That(manipulationService.LastSession, Is.SameAs(session));
+                Assert.That(manipulationService.LastItemSerial, Is.EqualTo(targetSerial));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_WhenDropStacksIntoExistingContainerStack_ShouldRefreshParentContainer()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -1429,6 +1513,45 @@ public class ItemHandlerTests
                 var draw = (DrawContainerAndAddItemCombinedPacket)outbound.Packet;
                 Assert.That(draw.Container, Is.Not.Null);
                 Assert.That(draw.Container!.Id, Is.EqualTo(bankId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenDropWear_ShouldDelegateToItemManipulationService()
+    {
+        var manipulationService = new ItemHandlerTestItemManipulationService();
+        var targetSerial = (Serial)0x400000A2u;
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new ItemHandlerTestItemService(),
+            new NetworkServiceTestGameEventBusService(),
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            itemManipulationService: manipulationService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new DropWearItemPacket
+                          {
+                              ItemSerial = targetSerial,
+                              PlayerSerial = (Serial)0x00000002u,
+                              Layer = ItemLayerType.Pants
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(manipulationService.DropWearCalled, Is.True);
+                Assert.That(manipulationService.LastSession, Is.SameAs(session));
+                Assert.That(manipulationService.LastItemSerial, Is.EqualTo(targetSerial));
             }
         );
     }
@@ -1561,6 +1684,145 @@ public class ItemHandlerTests
             {
                 Assert.That(handled, Is.False);
                 Assert.That(itemService.EquipCalled, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenPickUp_ShouldDelegateToItemManipulationService()
+    {
+        var manipulationService = new ItemHandlerTestItemManipulationService();
+        var targetSerial = (Serial)0x400000A0u;
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new ItemHandlerTestItemService(),
+            new NetworkServiceTestGameEventBusService(),
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            itemManipulationService: manipulationService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new PickUpItemPacket
+                          {
+                              ItemSerial = targetSerial,
+                              StackAmount = 1
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(manipulationService.PickUpCalled, Is.True);
+                Assert.That(manipulationService.LastSession, Is.SameAs(session));
+                Assert.That(manipulationService.LastItemSerial, Is.EqualTo(targetSerial));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenReadonlyBookPageIsRequested_ShouldEnqueueRequestedPage()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var targetSerial = (Serial)0x40000022u;
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = (Serial)0x40000001u,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Welcome");
+        item.SetCustomString("book_author", "Archivist");
+        item.SetCustomString("book_content", "Line 1\nLine 2\nLine 3");
+        itemService.ItemsById[targetSerial] = item;
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService()
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new BookPagesPacket
+                          {
+                              BookSerial = targetSerial.Value,
+                              PageCount = 1,
+                              Pages =
+                              {
+                                  new()
+                                  {
+                                      PageNumber = 1,
+                                      LineCount = 0xFFFF
+                                  }
+                              }
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<BookPagesPacket>());
+                var pages = (BookPagesPacket)outbound.Packet;
+                Assert.That(pages.BookSerial, Is.EqualTo(targetSerial.Value));
+                Assert.That(pages.Pages, Has.Count.EqualTo(1));
+                Assert.That(pages.Pages[0].PageNumber, Is.EqualTo(1));
+                Assert.That(pages.Pages[0].LineCount, Is.EqualTo(3));
+                Assert.That(pages.Pages[0].Lines, Is.EqualTo(new[] { "Line 1", "Line 2", "Line 3" }));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenSingleClick_ShouldDelegateToItemInteractionService()
+    {
+        var interactionService = new ItemHandlerTestItemInteractionService();
+        var targetSerial = (Serial)0x40000090u;
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            new ItemHandlerTestItemService(),
+            new NetworkServiceTestGameEventBusService(),
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService(),
+            itemInteractionService: interactionService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new SingleClickPacket
+                          {
+                              TargetSerial = targetSerial
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(interactionService.SingleClickCalled, Is.True);
+                Assert.That(interactionService.LastSession, Is.SameAs(session));
+                Assert.That(interactionService.LastTargetSerial, Is.EqualTo(targetSerial));
             }
         );
     }
@@ -1832,49 +2094,242 @@ public class ItemHandlerTests
     }
 
     [Test]
-    public async Task HandleAsync_ItemAddedInSectorEvent_WhenSessionIsGameMaster_ShouldSendMovableFlag()
+    public async Task HandlePacketAsync_WhenWritableBookNewHeaderIsSaved_ShouldPersistTitleAndAuthor()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService
-        {
-            ItemsById =
-            {
-                [(Serial)0x40000099u] = new()
-                {
-                    Id = (Serial)0x40000099u,
-                    ItemId = 0x0EED,
-                    MapId = 0,
-                    Location = new(100, 100, 0)
-                }
-            }
-        };
+        var itemService = new ItemHandlerTestItemService();
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        var spatialService = new ItemHandlerTestSpatialWorldService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var gmSession = new GameSession(new(client))
+        var playerId = (Serial)0x00000002u;
+        var backpackId = (Serial)0x40000001u;
+        var targetSerial = (Serial)0x40000024u;
+        itemService.ItemsById[backpackId] = new()
         {
-            AccountType = AccountType.GameMaster
+            Id = backpackId,
+            ItemId = 0x0E75,
+            ParentContainerId = Serial.Zero
         };
-        spatialService.SessionsInRange.Add(gmSession);
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = backpackId,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Old Title");
+        item.SetCustomString("book_author", "Old Author");
+        item.SetCustomString("book_content", "Line 1");
+        item.SetCustomString("book_writable", "true");
+        itemService.ItemsById[targetSerial] = item;
 
         var handler = new ItemHandler(
             queue,
             itemService,
             eventBus,
-            sessionService,
+            new FakeGameNetworkSessionService(),
             new PlayerDragService(),
-            spatialService,
-            new ItemHandlerTestMobileService()
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService
+            {
+                Mobile = new()
+                {
+                    Id = playerId,
+                    BackpackId = backpackId
+                }
+            }
         );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = playerId,
+            Character = new()
+            {
+                Id = playerId
+            }
+        };
 
-        await handler.HandleAsync(
-            new ItemAddedInSectorEvent((Serial)0x40000099u, 0, 0, 0),
-            CancellationToken.None
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new BookHeaderNewPacket
+                          {
+                              BookSerial = targetSerial.Value,
+                              Flag1 = false,
+                              IsWritable = true,
+                              PageCount = 1,
+                              Title = "New Title",
+                              Author = "New Author"
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
+                Assert.That(title, Is.EqualTo("New Title"));
+                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
+                Assert.That(author, Is.EqualTo("New Author"));
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<ObjectPropertyList>());
+            }
         );
+    }
 
-        Assert.That(queue.TryDequeue(out var outbound), Is.True);
-        Assert.That(outbound.Packet, Is.TypeOf<ObjectInformationPacket>());
-        Assert.That(((ObjectInformationPacket)outbound.Packet).Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
+    [Test]
+    public async Task HandlePacketAsync_WhenWritableBookPageContentIsSaved_ShouldPersistUpdatedLines()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var playerId = (Serial)0x00000002u;
+        var backpackId = (Serial)0x40000001u;
+        var targetSerial = (Serial)0x40000025u;
+        itemService.ItemsById[backpackId] = new()
+        {
+            Id = backpackId,
+            ItemId = 0x0E75,
+            ParentContainerId = Serial.Zero
+        };
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = backpackId,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Journal");
+        item.SetCustomString("book_author", "Tommy");
+        item.SetCustomString("book_content", "A1\nA2\nA3\nA4\nA5\nA6\nA7\nA8\nB1\nB2");
+        item.SetCustomString("book_writable", "true");
+        itemService.ItemsById[targetSerial] = item;
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService
+            {
+                Mobile = new()
+                {
+                    Id = playerId,
+                    BackpackId = backpackId
+                }
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = playerId,
+            Character = new()
+            {
+                Id = playerId
+            }
+        };
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new BookPagesPacket
+                          {
+                              BookSerial = targetSerial.Value,
+                              PageCount = 1,
+                              Pages =
+                              {
+                                  new()
+                                  {
+                                      PageNumber = 2,
+                                      LineCount = 2,
+                                      Lines = { "Updated B1", "Updated B2" }
+                                  }
+                              }
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(item.TryGetCustomString("book_content", out var content), Is.True);
+                Assert.That(
+                    content,
+                    Is.EqualTo("A1\nA2\nA3\nA4\nA5\nA6\nA7\nA8\nUpdated B1\nUpdated B2")
+                );
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<ObjectPropertyList>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenWritableBookWriteIsRequestedOutsideBackpackOrEquipment_ShouldIgnoreUpdate()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService();
+        var playerId = (Serial)0x00000002u;
+        var targetSerial = (Serial)0x40000026u;
+        var item = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0FF0,
+            ParentContainerId = Serial.Zero,
+            EquippedMobileId = Serial.Zero,
+            ScriptId = "none"
+        };
+        item.SetCustomString("book_title", "Journal");
+        item.SetCustomString("book_author", "Tommy");
+        item.SetCustomString("book_content", "Line 1");
+        item.SetCustomString("book_writable", "true");
+        itemService.ItemsById[targetSerial] = item;
+
+        var handler = new ItemHandler(
+            new BasePacketListenerTestOutgoingPacketQueue(),
+            itemService,
+            eventBus,
+            new FakeGameNetworkSessionService(),
+            new PlayerDragService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            new ItemHandlerTestMobileService
+            {
+                Mobile = new()
+                {
+                    Id = playerId,
+                    BackpackId = (Serial)0x40000001u
+                }
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = playerId,
+            Character = new()
+            {
+                Id = playerId
+            }
+        };
+
+        var handled = await handler.HandlePacketAsync(
+                          session,
+                          new BookHeaderNewPacket
+                          {
+                              BookSerial = targetSerial.Value,
+                              Flag1 = false,
+                              IsWritable = true,
+                              PageCount = 1,
+                              Title = "Blocked",
+                              Author = "Blocked"
+                          }
+                      );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(item.TryGetCustomString("book_title", out var title), Is.True);
+                Assert.That(title, Is.EqualTo("Journal"));
+                Assert.That(item.TryGetCustomString("book_author", out var author), Is.True);
+                Assert.That(author, Is.EqualTo("Tommy"));
+            }
+        );
     }
 }

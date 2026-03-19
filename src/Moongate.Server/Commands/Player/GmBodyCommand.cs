@@ -87,7 +87,7 @@ public sealed class GmBodyCommand : ICommandExecutor
 
             var bag = await _itemService.SpawnFromTemplateAsync(BagTemplateId);
 
-            if (!await _itemService.MoveItemToContainerAsync(bag.Id, backpackId, new Point2D(1, 1), context.SessionId))
+            if (!await _itemService.MoveItemToContainerAsync(bag.Id, backpackId, new(1, 1), context.SessionId))
             {
                 context.Print("Failed to setup GM body: could not add GM bag to backpack.");
 

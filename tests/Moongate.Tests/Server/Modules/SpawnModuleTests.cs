@@ -15,6 +15,12 @@ public sealed class SpawnModuleTests
         public int GetTrackedSpawnerCount()
             => 0;
 
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+
         public Task<bool> TriggerAsync(Serial spawnerItemId, CancellationToken cancellationToken = default)
         {
             _ = cancellationToken;
@@ -25,12 +31,6 @@ public sealed class SpawnModuleTests
 
         public Task<bool> TriggerAsync(UOItemEntity spawnerItem, CancellationToken cancellationToken = default)
             => TriggerAsync(spawnerItem.Id, cancellationToken);
-
-        public Task StartAsync()
-            => Task.CompletedTask;
-
-        public Task StopAsync()
-            => Task.CompletedTask;
     }
 
     [Test]

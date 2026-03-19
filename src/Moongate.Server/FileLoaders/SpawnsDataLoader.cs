@@ -118,7 +118,11 @@ public class SpawnsDataLoader : IFileLoader
                         spawn.Team,
                         spawn.HomeRange,
                         spawn.WalkingRange,
-                        [..spawn.Entries.Select(static item => new SpawnEntryDefinition(item.Name, item.MaxCount, item.Probability))]
+                        [
+                            ..spawn.Entries.Select(
+                                static item => new SpawnEntryDefinition(item.Name, item.MaxCount, item.Probability)
+                            )
+                        ]
                     )
                 );
                 importedFromFile++;
@@ -132,6 +136,11 @@ public class SpawnsDataLoader : IFileLoader
 
         return Task.CompletedTask;
     }
+
+    private static SpawnDefinitionKind ResolveKind(string? rawType)
+        => string.Equals(rawType, "ProximitySpawner", StringComparison.OrdinalIgnoreCase)
+               ? SpawnDefinitionKind.ProximitySpawner
+               : SpawnDefinitionKind.Spawner;
 
     private static string ResolveSourceGroup(string rootDirectory, string filePath)
     {
@@ -180,9 +189,4 @@ public class SpawnsDataLoader : IFileLoader
 
         return false;
     }
-
-    private static SpawnDefinitionKind ResolveKind(string? rawType)
-        => string.Equals(rawType, "ProximitySpawner", StringComparison.OrdinalIgnoreCase)
-               ? SpawnDefinitionKind.ProximitySpawner
-               : SpawnDefinitionKind.Spawner;
 }

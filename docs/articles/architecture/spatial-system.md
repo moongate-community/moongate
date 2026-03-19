@@ -29,8 +29,8 @@ Spatial behavior is controlled by `MoongateSpatialConfig` in `moongate.json`:
   "Spatial": {
     "LazySectorItemLoadEnabled": true,
     "SectorWarmupRadius": 1,
-    "SectorEnterSyncRadius": 3,
-    "LazySectorEntityLoadRadius": 3,
+    "SectorEnterSyncRadius": 2,
+    "LazySectorEntityLoadRadius": 1,
     "SectorUpdateBroadcastRadius": 3,
     "LightWorldStartUtc": "1997-09-01T00:00:00Z",
     "LightSecondsPerUoMinute": 5.0
@@ -42,8 +42,8 @@ Spatial behavior is controlled by `MoongateSpatialConfig` in `moongate.json`:
 |---------|---------|-------------|
 | `LazySectorItemLoadEnabled` | true | Enable on-demand sector loading from persistence |
 | `SectorWarmupRadius` | 1 | Radius around player login sector to preload (3x3 area) |
-| `SectorEnterSyncRadius` | 3 | Radius for sending item/mobile snapshots on sector entry (7x7 area) |
-| `LazySectorEntityLoadRadius` | 3 | Radius for lazy-loading entities when a sector is accessed (7x7 area) |
+| `SectorEnterSyncRadius` | 2 | Radius for sending item/mobile snapshots on sector entry (5x5 area) |
+| `LazySectorEntityLoadRadius` | 1 | Radius for lazy-loading entities when a sector is accessed (3x3 area) |
 | `SectorUpdateBroadcastRadius` | 3 | Radius for live update broadcasts (7x7 area) |
 
 The radius values define a square area: radius 1 means 3x3 sectors, radius 3 means 7x7 sectors centered on the player.
@@ -55,6 +55,8 @@ Like Minecraft chunks that load around the player and unload when distant, Moong
 1. **Login warmup**: when a player logs in, `WarmupAroundSectorAsync` preloads sectors within `SectorWarmupRadius` around the spawn point.
 2. **Movement warmup**: when a player crosses a sector boundary, adjacent sectors are warmed via `WarmupSectorsFireAndForget`.
 3. **Lazy load**: when any code accesses a sector that has not been loaded yet, `EnsureSingleSectorLoadedAsync` loads persistent NPCs and ground items from the repository.
+
+Login world sync itself is now handled by a dedicated login bootstrap path, not by the generic `MobileHandler` movement/teleport flow. The login path does a small sector snapshot first and then refills the player's actual visible range, keeping login-specific sync policy separate from generic mobile orchestration.
 
 Load tasks are deduplicated: if a sector is already being loaded, subsequent requests reuse the in-flight task instead of triggering a second load. This prevents thundering herd issues when multiple systems access the same sector concurrently.
 

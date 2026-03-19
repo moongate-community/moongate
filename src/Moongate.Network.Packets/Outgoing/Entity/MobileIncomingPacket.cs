@@ -27,6 +27,8 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
 
     public bool NewMobileIncoming { get; set; } = true;
 
+    public Notoriety? ResolvedNotoriety { get; set; }
+
     public MobileIncomingPacket()
         : base(0x78) { }
 
@@ -65,7 +67,7 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
         writer.Write((byte)Beheld.Direction);
         writer.Write(Beheld.SkinHue);
         writer.Write(Beheld.GetPacketFlags(StygianAbyss));
-        writer.Write((byte)Beheld.Notoriety);
+        writer.Write((byte)(ResolvedNotoriety ?? Beheld.Notoriety));
 
         foreach (var (layer, item) in Beheld.EquippedItemReferences)
         {
@@ -97,6 +99,20 @@ public class MobileIncomingPacket : BaseGameNetworkPacket
             if (writeHue)
             {
                 writer.Write((ushort)item.Hue);
+            }
+        }
+
+        if (Beheld.TryGetMountDisplayItemReference(out var mountReference) &&
+            !layers[(byte)ItemLayerType.Mount])
+        {
+            layers[(byte)ItemLayerType.Mount] = true;
+            writer.Write(mountReference.Id.Value);
+            writer.Write((ushort)(mountReference.ItemId & itemIdMask));
+            writer.Write((byte)ItemLayerType.Mount);
+
+            if (NewMobileIncoming)
+            {
+                writer.Write((ushort)mountReference.Hue);
             }
         }
 

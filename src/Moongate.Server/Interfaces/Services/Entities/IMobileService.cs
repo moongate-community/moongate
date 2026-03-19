@@ -33,6 +33,25 @@ public interface IMobileService
     Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Tries to link a rider mobile to a mount mobile.
+    /// </summary>
+    /// <param name="riderId">Rider mobile identifier.</param>
+    /// <param name="mountId">Mount mobile identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns><see langword="true" /> when the relationship was created; otherwise <see langword="false" />.</returns>
+    Task<bool> TryMountAsync(Serial riderId, Serial mountId, CancellationToken cancellationToken = default)
+        => Task.FromResult(false);
+
+    /// <summary>
+    /// Removes the current mount relationship for a rider mobile.
+    /// </summary>
+    /// <param name="riderId">Rider mobile identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns><see langword="true" /> when a mount relationship existed and was cleared; otherwise <see langword="false" />.</returns>
+    Task<bool> DismountAsync(Serial riderId, CancellationToken cancellationToken = default)
+        => Task.FromResult(false);
+
+    /// <summary>
     /// Loads persisted world mobiles (non-player) that belong to a specific sector.
     /// </summary>
     /// <param name="mapId">Map identifier.</param>

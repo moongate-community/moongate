@@ -17,7 +17,7 @@ internal static class LuaBrainContextMenuParser
             return [];
         }
 
-        var entries = new List<LuaBrainContextMenuEntry>(capacity: 8);
+        var entries = new List<LuaBrainContextMenuEntry>(8);
 
         for (var index = 1; index <= MaxContextMenuEntries; index++)
         {

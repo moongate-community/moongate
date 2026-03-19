@@ -8,59 +8,276 @@ namespace Moongate.Tests.UO.Data.Persistence.Entities;
 public class UOMobileEntityTests
 {
     [Test]
-    public void TypedMobileState_ShouldBeInitializedByDefault()
+    public void AddEquippedItem_WithEntity_ShouldTrackSlotAndUpdateItemOwnership()
     {
-        var mobile = new UOMobileEntity();
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000077
+        };
+
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000077,
+            ParentContainerId = (Serial)0x40000050,
+            ContainerPosition = new(10, 20)
+        };
+
+        mobile.AddEquippedItem(ItemLayerType.Shirt, item);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(mobile.BaseStats, Is.Not.Null);
-                Assert.That(mobile.BaseResistances, Is.Not.Null);
-                Assert.That(mobile.Resources, Is.Not.Null);
-                Assert.That(mobile.EquipmentModifiers, Is.Null);
-                Assert.That(mobile.RuntimeModifiers, Is.Null);
+                Assert.That(mobile.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo(item.Id));
+                Assert.That(item.ParentContainerId, Is.EqualTo(Serial.Zero));
+                Assert.That(item.ContainerPosition.X, Is.EqualTo(0));
+                Assert.That(item.ContainerPosition.Y, Is.EqualTo(0));
+                Assert.That(item.EquippedMobileId, Is.EqualTo(mobile.Id));
+                Assert.That(item.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(1));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(4));
             }
         );
     }
 
     [Test]
-    public void LegacyScalarProperties_ShouldReadAndWriteTypedBaseState()
+    public void HydrateEquipmentRuntime_WhenWeaponEquipped_ShouldSetDisplayedWeaponDamage()
     {
-        var mobile = new UOMobileEntity();
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000078
+        };
+        var scimitar = new UOItemEntity
+        {
+            Id = (Serial)0x40000078,
+            ItemId = 0x13B6,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.OneHanded,
+            CombatStats = new()
+            {
+                DamageMin = 13,
+                DamageMax = 15
+            }
+        };
 
-        mobile.Strength = 60;
-        mobile.Dexterity = 50;
-        mobile.Intelligence = 40;
-        mobile.Hits = 55;
-        mobile.MaxHits = 70;
-        mobile.Mana = 35;
-        mobile.MaxMana = 45;
-        mobile.Stamina = 25;
-        mobile.MaxStamina = 65;
-        mobile.FireResistance = 10;
-        mobile.ColdResistance = 11;
-        mobile.PoisonResistance = 12;
-        mobile.EnergyResistance = 13;
-        mobile.Luck = 100;
+        mobile.HydrateEquipmentRuntime([scimitar]);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(mobile.BaseStats.Strength, Is.EqualTo(60));
-                Assert.That(mobile.BaseStats.Dexterity, Is.EqualTo(50));
-                Assert.That(mobile.BaseStats.Intelligence, Is.EqualTo(40));
-                Assert.That(mobile.Resources.Hits, Is.EqualTo(55));
-                Assert.That(mobile.Resources.MaxHits, Is.EqualTo(70));
-                Assert.That(mobile.Resources.Mana, Is.EqualTo(35));
-                Assert.That(mobile.Resources.MaxMana, Is.EqualTo(45));
-                Assert.That(mobile.Resources.Stamina, Is.EqualTo(25));
-                Assert.That(mobile.Resources.MaxStamina, Is.EqualTo(65));
-                Assert.That(mobile.BaseResistances.Fire, Is.EqualTo(10));
-                Assert.That(mobile.BaseResistances.Cold, Is.EqualTo(11));
-                Assert.That(mobile.BaseResistances.Poison, Is.EqualTo(12));
-                Assert.That(mobile.BaseResistances.Energy, Is.EqualTo(13));
-                Assert.That(mobile.BaseLuck, Is.EqualTo(100));
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(13));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(15));
+            }
+        );
+    }
+
+    [Test]
+    public void HydrateEquipmentRuntime_WhenNoWeaponEquipped_ShouldUseUnarmedDisplayedDamage()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000079
+        };
+        var shirt = new UOItemEntity
+        {
+            Id = (Serial)0x40000079,
+            ItemId = 0x1517,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.Shirt
+        };
+
+        mobile.HydrateEquipmentRuntime([shirt]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(1));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
+    public void CombatState_ShouldDefaultToNoCombatantAndEmptyAggressorLists()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.CombatantId, Is.EqualTo(Serial.Zero));
+                Assert.That(mobile.Warmode, Is.False);
+                Assert.That(mobile.NextCombatAtUtc, Is.Null);
+                Assert.That(mobile.LastCombatAtUtc, Is.Null);
+                Assert.That(mobile.Aggressors, Is.Empty);
+                Assert.That(mobile.Aggressed, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public void WarmodeAlias_ShouldMapToIsWarMode()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Warmode = true
+        };
+
+        Assert.That(mobile.IsWarMode, Is.True);
+
+        mobile.IsWarMode = false;
+
+        Assert.That(mobile.Warmode, Is.False);
+    }
+
+    [Test]
+    public void RefreshAggressor_ShouldAddAndUpdateExistingEntries()
+    {
+        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
+        var later = now.AddSeconds(30);
+        var attackerId = (Serial)0x00000010;
+        var defenderId = (Serial)0x00000020;
+        var mobile = new UOMobileEntity();
+
+        mobile.RefreshAggressor(attackerId, defenderId, now);
+        mobile.RefreshAggressor(attackerId, defenderId, later, isCriminal: true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressors[0].LastCombatAtUtc, Is.EqualTo(later));
+                Assert.That(mobile.Aggressors[0].IsCriminal, Is.True);
+                Assert.That(mobile.Aggressed[0].LastCombatAtUtc, Is.EqualTo(later));
+            }
+        );
+    }
+
+    [Test]
+    public void ExpireAggressors_ShouldRemoveTimedOutEntries()
+    {
+        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
+        var mobile = new UOMobileEntity();
+
+        mobile.Aggressors.Add(new((Serial)0x10, (Serial)0x20, now.AddMinutes(-3), false, false));
+        mobile.Aggressors.Add(new((Serial)0x11, (Serial)0x21, now.AddSeconds(-30), false, false));
+        mobile.Aggressed.Add(new((Serial)0x12, (Serial)0x22, now.AddMinutes(-4), false, false));
+        mobile.Aggressed.Add(new((Serial)0x13, (Serial)0x23, now.AddSeconds(-10), false, false));
+
+        mobile.ExpireAggressors(now, TimeSpan.FromMinutes(2));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressors[0].AttackerId, Is.EqualTo((Serial)0x11));
+                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressed[0].AttackerId, Is.EqualTo((Serial)0x13));
+            }
+        );
+    }
+
+    [Test]
+    public void Sounds_ShouldDefaultEmptyAndResolveStoredEntries()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.Sounds, Is.Empty);
+        Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out _), Is.False);
+
+        mobile.Sounds[MobileSoundType.Attack] = 0x023B;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out var soundId), Is.True);
+                Assert.That(soundId, Is.EqualTo(0x023B));
+            }
+        );
+    }
+
+    [Test]
+    public void ApplyAndRemoveRuntimeModifier_ShouldUpdateEffectiveValues()
+    {
+        var mobile = new UOMobileEntity
+        {
+            BaseStats = new()
+            {
+                Strength = 60
+            },
+            BaseResistances = new()
+            {
+                Fire = 10
+            },
+            BaseLuck = 100
+        };
+        var delta = new MobileModifierDelta
+        {
+            StrengthBonus = 5,
+            FireResist = 3,
+            Luck = 20
+        };
+
+        mobile.ApplyRuntimeModifier(delta);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.RuntimeModifiers, Is.Not.Null);
+                Assert.That(mobile.EffectiveStrength, Is.EqualTo(65));
+                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(13));
+                Assert.That(mobile.EffectiveLuck, Is.EqualTo(120));
+            }
+        );
+
+        mobile.RemoveRuntimeModifier(delta);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.RuntimeModifiers, Is.Null);
+                Assert.That(mobile.EffectiveStrength, Is.EqualTo(60));
+                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(10));
+                Assert.That(mobile.EffectiveLuck, Is.EqualTo(100));
+            }
+        );
+    }
+
+    [Test]
+    public void BodyProperty_WhenSet_ShouldReturnExplicitBody()
+    {
+        var mobile = new UOMobileEntity();
+
+        mobile.Body = 0x0191;
+
+        Assert.That((int)mobile.Body, Is.EqualTo(0x0191));
+    }
+
+    [Test]
+    public void CustomProperties_ShouldStoreTypedValues()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001003
+        };
+
+        mobile.SetCustomInteger("owner_id", 1234);
+        mobile.SetCustomBoolean("is_boss", true);
+        mobile.SetCustomDouble("scale", 1.5d);
+        mobile.SetCustomString("title_suffix", "the brave");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetCustomInteger("owner_id", out var ownerId), Is.True);
+                Assert.That(ownerId, Is.EqualTo(1234));
+                Assert.That(mobile.TryGetCustomBoolean("is_boss", out var isBoss), Is.True);
+                Assert.That(isBoss, Is.True);
+                Assert.That(mobile.TryGetCustomDouble("scale", out var scale), Is.True);
+                Assert.That(scale, Is.EqualTo(1.5d));
+                Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
+                Assert.That(titleSuffix, Is.EqualTo("the brave"));
+                Assert.That(mobile.CustomProperties, Has.Count.EqualTo(4));
             }
         );
     }
@@ -150,75 +367,6 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void AddEquippedItem_WithEntity_ShouldTrackSlotAndUpdateItemOwnership()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00000077
-        };
-
-        var item = new UOItemEntity
-        {
-            Id = (Serial)0x40000077,
-            ParentContainerId = (Serial)0x40000050,
-            ContainerPosition = new(10, 20)
-        };
-
-        mobile.AddEquippedItem(ItemLayerType.Shirt, item);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo(item.Id));
-                Assert.That(item.ParentContainerId, Is.EqualTo(Serial.Zero));
-                Assert.That(item.ContainerPosition.X, Is.EqualTo(0));
-                Assert.That(item.ContainerPosition.Y, Is.EqualTo(0));
-                Assert.That(item.EquippedMobileId, Is.EqualTo(mobile.Id));
-                Assert.That(item.EquippedLayer, Is.EqualTo(ItemLayerType.Shirt));
-            }
-        );
-    }
-
-    [Test]
-    public void BodyProperty_WhenSet_ShouldReturnExplicitBody()
-    {
-        var mobile = new UOMobileEntity();
-
-        mobile.Body = 0x0191;
-
-        Assert.That((int)mobile.Body, Is.EqualTo(0x0191));
-    }
-
-    [Test]
-    public void CustomProperties_ShouldStoreTypedValues()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00001003
-        };
-
-        mobile.SetCustomInteger("owner_id", 1234);
-        mobile.SetCustomBoolean("is_boss", true);
-        mobile.SetCustomDouble("scale", 1.5d);
-        mobile.SetCustomString("title_suffix", "the brave");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.TryGetCustomInteger("owner_id", out var ownerId), Is.True);
-                Assert.That(ownerId, Is.EqualTo(1234));
-                Assert.That(mobile.TryGetCustomBoolean("is_boss", out var isBoss), Is.True);
-                Assert.That(isBoss, Is.True);
-                Assert.That(mobile.TryGetCustomDouble("scale", out var scale), Is.True);
-                Assert.That(scale, Is.EqualTo(1.5d));
-                Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
-                Assert.That(titleSuffix, Is.EqualTo("the brave"));
-                Assert.That(mobile.CustomProperties, Has.Count.EqualTo(4));
-            }
-        );
-    }
-
-    [Test]
     public void EquipItem_ShouldPopulatePersistedIdsAndRuntimeReference()
     {
         var mobile = new UOMobileEntity
@@ -248,57 +396,27 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void Skills_ShouldStoreEntriesBySkillName()
+    public void GetEquippedItemsRuntime_ShouldReturnEquippedRuntimeItems()
     {
-        SkillInfo.Table =
-        [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence)
-        ];
-        var mobile = new UOMobileEntity();
-        var entry = new SkillEntry
+        var mobile = new UOMobileEntity
         {
-            Skill = SkillInfo.Table[0],
-            Value = 500,
-            Base = 500,
-            Cap = 1000,
-            Lock = UOSkillLock.Locked
+            Id = (Serial)0x00001021
+        };
+        var shirt = new UOItemEntity
+        {
+            Id = (Serial)0x40002021,
+            ItemId = 0x1517
+        };
+        var shoes = new UOItemEntity
+        {
+            Id = (Serial)0x40002022,
+            ItemId = 0x170F
         };
 
-        mobile.Skills[UOSkillName.Alchemy] = entry;
+        mobile.AddEquippedItem(ItemLayerType.Shirt, shirt);
+        mobile.AddEquippedItem(ItemLayerType.Shoes, shoes);
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.Skills, Has.Count.EqualTo(1));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(500));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Locked));
-            }
-        );
-    }
-
-    [Test]
-    public void InitializeSkills_ShouldPopulateFullSkillTableWithDefaults()
-    {
-        SkillInfo.Table =
-        [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(1, "Anatomy", 100, 0, 0, "Biologist", 0, 0, 0, 1, "Anatomy", Stat.Strength, Stat.Intelligence)
-        ];
-        var mobile = new UOMobileEntity();
-
-        mobile.InitializeSkills();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.Skills, Has.Count.EqualTo(2));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(0));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Base, Is.EqualTo(0));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Cap, Is.EqualTo(1000));
-                Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Up));
-                Assert.That(mobile.Skills[UOSkillName.Anatomy].Value, Is.EqualTo(0));
-            }
-        );
+        Assert.That(mobile.GetEquippedItemsRuntime(), Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -339,98 +457,37 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void HiddenAndBlessedAliases_ShouldMapToIsHiddenAndIsBlessed()
+    public void Gold_ShouldNotLoopOnContainerCycles()
     {
         var mobile = new UOMobileEntity
         {
-            Hidden = true,
-            Blessed = true
+            Id = (Serial)0x00001020
         };
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.IsHidden, Is.True);
-                Assert.That(mobile.IsBlessed, Is.True);
-                mobile.IsHidden = false;
-                mobile.IsBlessed = false;
-                Assert.That(mobile.Hidden, Is.False);
-                Assert.That(mobile.Blessed, Is.False);
-            }
-        );
-    }
-
-    [Test]
-    public void HydrateEquipmentRuntime_ShouldBuildReferencesForOwnedEquippedItems()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00001002,
-            EquippedItemIds = new()
-            {
-                [ItemLayerType.Shirt] = (Serial)0x40002010
-            }
-        };
-
-        var shirt = new UOItemEntity
+        var backpack = new UOItemEntity
         {
             Id = (Serial)0x40002010,
-            ItemId = 0x1517,
-            Hue = 0x000A,
-            EquippedMobileId = mobile.Id,
-            EquippedLayer = ItemLayerType.Shirt
+            ItemId = 0x0E75
         };
-
-        mobile.HydrateEquipmentRuntime([shirt]);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.TryGetEquippedReference(ItemLayerType.Shirt, out var reference), Is.True);
-                Assert.That(reference.Id, Is.EqualTo(shirt.Id));
-                Assert.That(reference.ItemId, Is.EqualTo(shirt.ItemId));
-                Assert.That(reference.Hue, Is.EqualTo(shirt.Hue));
-            }
-        );
-    }
-
-    [Test]
-    public void OverrideBody_ShouldReplaceCurrentBody()
-    {
-        var mobile = new UOMobileEntity();
-
-        mobile.SetBody(0x0190);
-        mobile.OverrideBody(0x0191);
-
-        Assert.That((int)mobile.GetBody(), Is.EqualTo(0x0191));
-    }
-
-    [Test]
-    public void RecalculateMaxStats_ShouldSetMinimumCapsAndClampCurrentValues()
-    {
-        var mobile = new UOMobileEntity
+        var pouch = new UOItemEntity
         {
-            Strength = 0,
-            Dexterity = 0,
-            Intelligence = 0,
-            Hits = 99,
-            Stamina = 99,
-            Mana = 99
+            Id = (Serial)0x40002011,
+            ItemId = 0x0E79
+        };
+        var gold = new UOItemEntity
+        {
+            Id = (Serial)0x40002012,
+            ItemId = 0x0EED,
+            Amount = 10
         };
 
-        mobile.RecalculateMaxStats();
+        backpack.AddItem(pouch, new(1, 1));
+        pouch.AddItem(gold, new(2, 2));
+        pouch.AddItem(backpack, new(3, 3));
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.MaxHits, Is.EqualTo(1));
-                Assert.That(mobile.MaxStamina, Is.EqualTo(1));
-                Assert.That(mobile.MaxMana, Is.EqualTo(1));
-                Assert.That(mobile.Hits, Is.EqualTo(1));
-                Assert.That(mobile.Stamina, Is.EqualTo(1));
-                Assert.That(mobile.Mana, Is.EqualTo(1));
-            }
-        );
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+
+        Assert.That(mobile.Gold, Is.EqualTo(10));
     }
 
     [Test]
@@ -498,37 +555,290 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void Gold_ShouldNotLoopOnContainerCycles()
+    public void HiddenAndBlessedAliases_ShouldMapToIsHiddenAndIsBlessed()
     {
         var mobile = new UOMobileEntity
         {
-            Id = (Serial)0x00001020
+            Hidden = true,
+            Blessed = true
         };
 
-        var backpack = new UOItemEntity
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.IsHidden, Is.True);
+                Assert.That(mobile.IsBlessed, Is.True);
+                mobile.IsHidden = false;
+                mobile.IsBlessed = false;
+                Assert.That(mobile.Hidden, Is.False);
+                Assert.That(mobile.Blessed, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void IsMounted_ShouldReflectMountedMobileRelationship()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.IsMounted, Is.False);
+
+        mobile.MountedMobileId = (Serial)0x00002000;
+
+        Assert.That(mobile.IsMounted, Is.True);
+
+        mobile.MountedMobileId = Serial.Zero;
+
+        Assert.That(mobile.IsMounted, Is.False);
+    }
+
+    [Test]
+    public void TryGetMountDisplayItemReference_ShouldReturnVirtualMountLayerReference_WhenConfigured()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000045u,
+            MountedDisplayItemId = 0x3E9F
+        };
+
+        var found = mobile.TryGetMountDisplayItemReference(out var itemReference);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.True);
+                Assert.That(itemReference.ItemId, Is.EqualTo(0x3E9F));
+                Assert.That(itemReference.Id, Is.Not.EqualTo(Serial.Zero));
+                Assert.That(itemReference.Id.IsItem, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public void HydrateEquipmentRuntime_ShouldBuildReferencesForOwnedEquippedItems()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001002,
+            EquippedItemIds = new()
+            {
+                [ItemLayerType.Shirt] = (Serial)0x40002010
+            }
+        };
+
+        var shirt = new UOItemEntity
         {
             Id = (Serial)0x40002010,
-            ItemId = 0x0E75
+            ItemId = 0x1517,
+            Hue = 0x000A,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.Shirt
         };
-        var pouch = new UOItemEntity
+
+        mobile.HydrateEquipmentRuntime([shirt]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetEquippedReference(ItemLayerType.Shirt, out var reference), Is.True);
+                Assert.That(reference.Id, Is.EqualTo(shirt.Id));
+                Assert.That(reference.ItemId, Is.EqualTo(shirt.ItemId));
+                Assert.That(reference.Hue, Is.EqualTo(shirt.Hue));
+            }
+        );
+    }
+
+    [Test]
+    public void InitializeSkills_ShouldPopulateFullSkillTableWithDefaults()
+    {
+        SkillInfo.Table =
+        [
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                1,
+                "Anatomy",
+                100,
+                0,
+                0,
+                "Biologist",
+                0,
+                0,
+                0,
+                1,
+                "Anatomy",
+                Stat.Strength,
+                Stat.Intelligence
+            )
+        ];
+        var mobile = new UOMobileEntity();
+
+        mobile.InitializeSkills();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Skills, Has.Count.EqualTo(2));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(0));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Base, Is.EqualTo(0));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Cap, Is.EqualTo(1000));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.Skills[UOSkillName.Anatomy].Value, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public void LegacyScalarProperties_ShouldReadAndWriteTypedBaseState()
+    {
+        var mobile = new UOMobileEntity();
+
+        mobile.Strength = 60;
+        mobile.Dexterity = 50;
+        mobile.Intelligence = 40;
+        mobile.Hits = 55;
+        mobile.MaxHits = 70;
+        mobile.Mana = 35;
+        mobile.MaxMana = 45;
+        mobile.Stamina = 25;
+        mobile.MaxStamina = 65;
+        mobile.FireResistance = 10;
+        mobile.ColdResistance = 11;
+        mobile.PoisonResistance = 12;
+        mobile.EnergyResistance = 13;
+        mobile.Luck = 100;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.BaseStats.Strength, Is.EqualTo(60));
+                Assert.That(mobile.BaseStats.Dexterity, Is.EqualTo(50));
+                Assert.That(mobile.BaseStats.Intelligence, Is.EqualTo(40));
+                Assert.That(mobile.Resources.Hits, Is.EqualTo(55));
+                Assert.That(mobile.Resources.MaxHits, Is.EqualTo(70));
+                Assert.That(mobile.Resources.Mana, Is.EqualTo(35));
+                Assert.That(mobile.Resources.MaxMana, Is.EqualTo(45));
+                Assert.That(mobile.Resources.Stamina, Is.EqualTo(25));
+                Assert.That(mobile.Resources.MaxStamina, Is.EqualTo(65));
+                Assert.That(mobile.BaseResistances.Fire, Is.EqualTo(10));
+                Assert.That(mobile.BaseResistances.Cold, Is.EqualTo(11));
+                Assert.That(mobile.BaseResistances.Poison, Is.EqualTo(12));
+                Assert.That(mobile.BaseResistances.Energy, Is.EqualTo(13));
+                Assert.That(mobile.BaseLuck, Is.EqualTo(100));
+            }
+        );
+    }
+
+    [Test]
+    public void OverrideBody_ShouldReplaceCurrentBody()
+    {
+        var mobile = new UOMobileEntity();
+
+        mobile.SetBody(0x0190);
+        mobile.OverrideBody(0x0191);
+
+        Assert.That((int)mobile.GetBody(), Is.EqualTo(0x0191));
+    }
+
+    [Test]
+    public void RecalculateMaxStats_ShouldSetMinimumCapsAndClampCurrentValues()
+    {
+        var mobile = new UOMobileEntity
         {
-            Id = (Serial)0x40002011,
-            ItemId = 0x0E79
+            Strength = 0,
+            Dexterity = 0,
+            Intelligence = 0,
+            Hits = 99,
+            Stamina = 99,
+            Mana = 99
         };
-        var gold = new UOItemEntity
+
+        mobile.RecalculateMaxStats();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MaxHits, Is.EqualTo(1));
+                Assert.That(mobile.MaxStamina, Is.EqualTo(1));
+                Assert.That(mobile.MaxMana, Is.EqualTo(1));
+                Assert.That(mobile.Hits, Is.EqualTo(1));
+                Assert.That(mobile.Stamina, Is.EqualTo(1));
+                Assert.That(mobile.Mana, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void Skills_ShouldStoreEntriesBySkillName()
+    {
+        SkillInfo.Table =
+        [
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            )
+        ];
+        var mobile = new UOMobileEntity();
+        var entry = new SkillEntry
         {
-            Id = (Serial)0x40002012,
-            ItemId = 0x0EED,
-            Amount = 10
+            Skill = SkillInfo.Table[0],
+            Value = 500,
+            Base = 500,
+            Cap = 1000,
+            Lock = UOSkillLock.Locked
         };
 
-        backpack.AddItem(pouch, new(1, 1));
-        pouch.AddItem(gold, new(2, 2));
-        pouch.AddItem(backpack, new(3, 3));
+        mobile.Skills[UOSkillName.Alchemy] = entry;
 
-        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Skills, Has.Count.EqualTo(1));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(500));
+                Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Locked));
+            }
+        );
+    }
 
-        Assert.That(mobile.Gold, Is.EqualTo(10));
+    [Test]
+    public void TypedMobileState_ShouldBeInitializedByDefault()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.BaseStats, Is.Not.Null);
+                Assert.That(mobile.BaseResistances, Is.Not.Null);
+                Assert.That(mobile.Resources, Is.Not.Null);
+                Assert.That(mobile.EquipmentModifiers, Is.Null);
+                Assert.That(mobile.RuntimeModifiers, Is.Null);
+            }
+        );
     }
 
     [Test]
@@ -556,77 +866,6 @@ public class UOMobileEntityTests
                 Assert.That(mobile.TryGetEquippedReference(ItemLayerType.Pants, out _), Is.False);
                 Assert.That(item.EquippedMobileId, Is.EqualTo(Serial.Zero));
                 Assert.That(item.EquippedLayer, Is.Null);
-            }
-        );
-    }
-
-    [Test]
-    public void GetEquippedItemsRuntime_ShouldReturnEquippedRuntimeItems()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00001021
-        };
-        var shirt = new UOItemEntity
-        {
-            Id = (Serial)0x40002021,
-            ItemId = 0x1517
-        };
-        var shoes = new UOItemEntity
-        {
-            Id = (Serial)0x40002022,
-            ItemId = 0x170F
-        };
-
-        mobile.AddEquippedItem(ItemLayerType.Shirt, shirt);
-        mobile.AddEquippedItem(ItemLayerType.Shoes, shoes);
-
-        Assert.That(mobile.GetEquippedItemsRuntime(), Has.Count.EqualTo(2));
-    }
-
-    [Test]
-    public void ApplyAndRemoveRuntimeModifier_ShouldUpdateEffectiveValues()
-    {
-        var mobile = new UOMobileEntity
-        {
-            BaseStats = new()
-            {
-                Strength = 60
-            },
-            BaseResistances = new()
-            {
-                Fire = 10
-            },
-            BaseLuck = 100
-        };
-        var delta = new MobileModifierDelta
-        {
-            StrengthBonus = 5,
-            FireResist = 3,
-            Luck = 20
-        };
-
-        mobile.ApplyRuntimeModifier(delta);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.RuntimeModifiers, Is.Not.Null);
-                Assert.That(mobile.EffectiveStrength, Is.EqualTo(65));
-                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(13));
-                Assert.That(mobile.EffectiveLuck, Is.EqualTo(120));
-            }
-        );
-
-        mobile.RemoveRuntimeModifier(delta);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.RuntimeModifiers, Is.Null);
-                Assert.That(mobile.EffectiveStrength, Is.EqualTo(60));
-                Assert.That(mobile.EffectiveFireResistance, Is.EqualTo(10));
-                Assert.That(mobile.EffectiveLuck, Is.EqualTo(100));
             }
         );
     }

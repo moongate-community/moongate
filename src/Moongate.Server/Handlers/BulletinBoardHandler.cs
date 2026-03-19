@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Data.BulletinBoard;
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
@@ -6,7 +7,6 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Listeners.Base;
-using Moongate.Network.Packets.Data.BulletinBoard;
 
 namespace Moongate.Server.Handlers;
 
@@ -30,10 +30,22 @@ public sealed class BulletinBoardHandler : BasePacketListener
 
         return boardPacket.Subcommand switch
         {
-            BulletinBoardSubcommand.RequestMessage => await _bulletinBoardService.SendMessageAsync(session, boardPacket.BoardId, boardPacket.MessageId),
-            BulletinBoardSubcommand.RequestMessageSummary => await _bulletinBoardService.SendSummaryAsync(session, boardPacket.BoardId, boardPacket.MessageId),
+            BulletinBoardSubcommand.RequestMessage => await _bulletinBoardService.SendMessageAsync(
+                                                          session,
+                                                          boardPacket.BoardId,
+                                                          boardPacket.MessageId
+                                                      ),
+            BulletinBoardSubcommand.RequestMessageSummary => await _bulletinBoardService.SendSummaryAsync(
+                                                                 session,
+                                                                 boardPacket.BoardId,
+                                                                 boardPacket.MessageId
+                                                             ),
             BulletinBoardSubcommand.PostMessage => await _bulletinBoardService.PostMessageAsync(session, boardPacket),
-            BulletinBoardSubcommand.RemovePostedMessage => await _bulletinBoardService.RemoveMessageAsync(session, boardPacket.BoardId, boardPacket.MessageId),
+            BulletinBoardSubcommand.RemovePostedMessage => await _bulletinBoardService.RemoveMessageAsync(
+                                                               session,
+                                                               boardPacket.BoardId,
+                                                               boardPacket.MessageId
+                                                           ),
             _ => true
         };
     }

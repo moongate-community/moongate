@@ -5,10 +5,10 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Events.Spatial;
-using Moongate.Server.Data.World;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -34,6 +34,9 @@ public sealed class SpatialWorldServiceTests
         public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
 
         public List<(int MapId, int SectorX, int SectorY)> LoadRequests { get; } = [];
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => throw new NotSupportedException();
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => throw new NotSupportedException();
@@ -92,9 +95,6 @@ public sealed class SpatialWorldServiceTests
             => throw new NotSupportedException();
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => throw new NotSupportedException();
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => throw new NotSupportedException();
     }
 
@@ -188,18 +188,27 @@ public sealed class SpatialWorldServiceTests
             => [.. Entries.Where(entry => entry.SourceMapId == mapId)];
 
         public IReadOnlyList<TeleporterEntry> GetEntriesBySourceSector(int mapId, int sectorX, int sectorY)
-            => [
+            =>
+            [
                 ..Entries.Where(
-                      entry =>
-                          entry.SourceMapId == mapId &&
-                          (entry.SourceLocation.X >> MapSectorConsts.SectorShift) == sectorX &&
-                          (entry.SourceLocation.Y >> MapSectorConsts.SectorShift) == sectorY
-                  )
+                    entry =>
+                        entry.SourceMapId == mapId &&
+                        entry.SourceLocation.X >> MapSectorConsts.SectorShift == sectorX &&
+                        entry.SourceLocation.Y >> MapSectorConsts.SectorShift == sectorY
+                )
             ];
+
+        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+        {
+            Entries.Clear();
+            Entries.AddRange(entries);
+        }
 
         public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
         {
-            entry = Entries.FirstOrDefault(candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location);
+            entry = Entries.FirstOrDefault(
+                candidate => candidate.SourceMapId == mapId && candidate.SourceLocation == location
+            );
 
             return entry != default;
         }
@@ -226,12 +235,6 @@ public sealed class SpatialWorldServiceTests
             destinationLocation = location;
 
             return false;
-        }
-
-        public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
-        {
-            Entries.Clear();
-            Entries.AddRange(entries);
         }
     }
 
@@ -720,7 +723,10 @@ public sealed class SpatialWorldServiceTests
                 Assert.That(players.Select(static session => session.SessionId), Contains.Item(nearSession.SessionId));
                 Assert.That(players.Select(static session => session.SessionId), Contains.Item(secondNearSession.SessionId));
                 Assert.That(players.Select(static session => session.SessionId), Does.Not.Contain(farSession.SessionId));
-                Assert.That(players.Select(static session => session.SessionId), Does.Not.Contain(otherMapSession.SessionId));
+                Assert.That(
+                    players.Select(static session => session.SessionId),
+                    Does.Not.Contain(otherMapSession.SessionId)
+                );
                 Assert.That(mobileService.LoadRequests, Is.Empty);
             }
         );
@@ -853,7 +859,7 @@ public sealed class SpatialWorldServiceTests
             () =>
             {
                 Assert.That(sector, Is.Not.Null);
-                Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.GreaterThanOrEqualTo(49));
+                Assert.That(mobileService.LoadRequests.Distinct().Count(), Is.GreaterThanOrEqualTo(9));
                 Assert.That(mobileService.LoadRequests, Has.Member((0, 9, 8)));
                 Assert.That(nearby.Select(static mobile => mobile.Id), Contains.Item(npc.Id));
                 Assert.That(nearby.Select(static mobile => mobile.Id), Does.Not.Contain(persistedPlayer.Id));
@@ -930,26 +936,6 @@ public sealed class SpatialWorldServiceTests
     }
 
     [Test]
-    public async Task HandleAsync_NpcPositionChanged_ShouldResolveMobileFromSpatialIndex()
-    {
-        var sessions = new FakeGameNetworkSessionService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var service = CreateService(
-            sessions,
-            eventBus,
-            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false }
-        );
-        var npc = CreateMobile(0x900, 100, 100, 0, false);
-        service.AddOrUpdateMobile(npc);
-        eventBus.Events.Clear();
-
-        await service.HandleAsync(new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0)));
-
-        var nearby = service.GetNearbyMobiles(new(200, 200, 0), 5, 0);
-        Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
-    }
-
-    [Test]
     public async Task HandleAsync_NpcPositionChanged_OnTeleporterSource_ShouldMoveNpcToTeleportDestination()
     {
         var sessions = new FakeGameNetworkSessionService();
@@ -980,6 +966,26 @@ public sealed class SpatialWorldServiceTests
         await service.HandleAsync(new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0)));
 
         var nearby = service.GetNearbyMobiles(new(500, 500, 10), 5, 1);
+        Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
+    }
+
+    [Test]
+    public async Task HandleAsync_NpcPositionChanged_ShouldResolveMobileFromSpatialIndex()
+    {
+        var sessions = new FakeGameNetworkSessionService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var service = CreateService(
+            sessions,
+            eventBus,
+            spatialConfig: new() { SectorWarmupRadius = 0, LazySectorItemLoadEnabled = false }
+        );
+        var npc = CreateMobile(0x900, 100, 100, 0, false);
+        service.AddOrUpdateMobile(npc);
+        eventBus.Events.Clear();
+
+        await service.HandleAsync(new MobilePositionChangedEvent(0, npc.Id, 0, 0, new(100, 100, 0), new(200, 200, 0)));
+
+        var nearby = service.GetNearbyMobiles(new(200, 200, 0), 5, 0);
         Assert.That(nearby.Select(static m => m.Id), Contains.Item(npc.Id));
     }
 

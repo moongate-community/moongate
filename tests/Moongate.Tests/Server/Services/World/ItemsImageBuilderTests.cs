@@ -67,6 +67,47 @@ public class ItemsImageBuilderTests
     }
 
     [Test]
+    public async Task GenerateAsync_ShouldCropTransparentBorderAndApplyFourPixelPadding()
+    {
+        using var context = new TestContext();
+        context.ItemTemplateService.Upsert(
+            new()
+            {
+                Id = "tiny_item",
+                Name = "Tiny Item",
+                Category = "test",
+                ItemId = "0x1F9E"
+            }
+        );
+
+        var source = new Image<Rgba32>(10, 10);
+        source[4, 5] = new(255, 255, 255, 255);
+        context.ArtService.AddArt(0x1F9E, source);
+
+        var service = CreateService(context);
+
+        await service.GenerateAsync();
+
+        var outputPath = Path.Combine(
+            context.DirectoriesConfig[DirectoryType.Images],
+            "items",
+            "tiny_item_1F9E.png"
+        );
+
+        using var generated = await Image.LoadAsync<Rgba32>(outputPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(generated.Width, Is.EqualTo(9));
+                Assert.That(generated.Height, Is.EqualTo(9));
+                Assert.That(generated[4, 4].A, Is.EqualTo(255));
+                Assert.That(generated[0, 0].A, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
     public async Task GenerateAsync_ShouldSkipInvalidItemIdWithoutThrowing()
     {
         using var context = new TestContext();
@@ -125,47 +166,6 @@ public class ItemsImageBuilderTests
                 Assert.That(File.Exists(Path.Combine(destinationPath, "brick_1F9E.png")), Is.True);
                 Assert.That(File.Exists(Path.Combine(destinationPath, "invalid_art.png")), Is.False);
                 Assert.That(logs.Any(static x => x.Contains("Items image export completed.")), Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public async Task GenerateAsync_ShouldCropTransparentBorderAndApplyFourPixelPadding()
-    {
-        using var context = new TestContext();
-        context.ItemTemplateService.Upsert(
-            new()
-            {
-                Id = "tiny_item",
-                Name = "Tiny Item",
-                Category = "test",
-                ItemId = "0x1F9E"
-            }
-        );
-
-        var source = new Image<Rgba32>(10, 10);
-        source[4, 5] = new(255, 255, 255, 255);
-        context.ArtService.AddArt(0x1F9E, source);
-
-        var service = CreateService(context);
-
-        await service.GenerateAsync();
-
-        var outputPath = Path.Combine(
-            context.DirectoriesConfig[DirectoryType.Images],
-            "items",
-            "tiny_item_1F9E.png"
-        );
-
-        using var generated = await Image.LoadAsync<Rgba32>(outputPath);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(generated.Width, Is.EqualTo(9));
-                Assert.That(generated.Height, Is.EqualTo(9));
-                Assert.That(generated[4, 4].A, Is.EqualTo(255));
-                Assert.That(generated[0, 0].A, Is.EqualTo(0));
             }
         );
     }

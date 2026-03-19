@@ -21,7 +21,6 @@ namespace Moongate.Server.Data.Internal.Entities;
 public sealed class LuaMobileProxy
 {
     private readonly ILogger _logger = Log.ForContext<LuaMobileProxy>();
-    private readonly UOMobileEntity _mobile;
     private readonly ISpeechService _speechService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpatialWorldService? _spatialWorldService;
@@ -43,7 +42,7 @@ public sealed class LuaMobileProxy
         IBackgroundJobService? backgroundJobService = null
     )
     {
-        _mobile = mobile;
+        Mobile = mobile;
         _speechService = speechService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
@@ -53,19 +52,23 @@ public sealed class LuaMobileProxy
         _backgroundJobService = backgroundJobService;
     }
 
-    public uint Serial => (uint)_mobile.Id;
+    public uint Serial => (uint)Mobile.Id;
 
-    public string Name => _mobile.Name ?? string.Empty;
+    public string Name => Mobile.Name ?? string.Empty;
 
-    public int MapId => _mobile.MapId;
+    internal UOMobileEntity Mobile { get; }
 
-    public int LocationX => _mobile.Location.X;
+    public int MapId => Mobile.MapId;
 
-    public int LocationY => _mobile.Location.Y;
+    public int LocationX => Mobile.Location.X;
 
-    public int LocationZ => _mobile.Location.Z;
+    public int LocationY => Mobile.Location.Y;
 
-    public bool IsOnline => _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out _);
+    public int LocationZ => Mobile.Location.Z;
+
+    public bool IsOnline => _gameNetworkSessionService.TryGetByCharacterId(Mobile.Id, out _);
+
+    public bool IsMountable => Mobile.IsMountable;
 
     public void CastSpell(int spellId)
 
@@ -73,18 +76,21 @@ public sealed class LuaMobileProxy
         => _ = spellId;
 
     public void ClearTarget()
-        => _target = null;
+    {
+        _target = null;
+        Mobile.CombatantId = Moongate.UO.Data.Ids.Serial.Zero;
+    }
 
     public bool DisableWar()
     {
-        _mobile.IsWarMode = false;
+        Mobile.IsWarMode = false;
 
         if (_gameEventBusService is null)
         {
             return false;
         }
 
-        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
+        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(Mobile))
                             .AsTask()
                             .GetAwaiter()
                             .GetResult();
@@ -99,19 +105,19 @@ public sealed class LuaMobileProxy
             return int.MaxValue;
         }
 
-        return (int)Math.Round(_mobile.Location.GetDistance(new(target.LocationX, target.LocationY, target.LocationZ)));
+        return (int)Math.Round(Mobile.Location.GetDistance(new(target.LocationX, target.LocationY, target.LocationZ)));
     }
 
     public bool EnableWar()
     {
-        _mobile.IsWarMode = true;
+        Mobile.IsWarMode = true;
 
         if (_gameEventBusService is null)
         {
             return false;
         }
 
-        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(_mobile))
+        _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(Mobile))
                             .AsTask()
                             .GetAwaiter()
                             .GetResult();
@@ -126,8 +132,8 @@ public sealed class LuaMobileProxy
             return null;
         }
 
-        var mobile = _spatialWorldService.GetNearbyMobiles(_mobile.Location, range, _mobile.MapId)
-                                         .FirstOrDefault(entity => entity.Id != _mobile.Id && entity.IsPlayer);
+        var mobile = _spatialWorldService.GetNearbyMobiles(Mobile.Location, range, Mobile.MapId)
+                                         .FirstOrDefault(entity => entity.Id != Mobile.Id && entity.IsPlayer);
 
         if (mobile is null)
         {
@@ -152,8 +158,8 @@ public sealed class LuaMobileProxy
             return null;
         }
 
-        var mobile = _spatialWorldService.GetNearbyMobiles(_mobile.Location, range, _mobile.MapId)
-                                         .FirstOrDefault(entity => entity.Id != _mobile.Id && !entity.IsPlayer);
+        var mobile = _spatialWorldService.GetNearbyMobiles(Mobile.Location, range, Mobile.MapId)
+                                         .FirstOrDefault(entity => entity.Id != Mobile.Id && !entity.IsPlayer);
 
         if (mobile is null)
         {
@@ -178,17 +184,20 @@ public sealed class LuaMobileProxy
 
     public double GetHpPercent()
     {
-        if (_mobile.MaxHits <= 0)
+        if (Mobile.MaxHits <= 0)
         {
             return 0;
         }
 
-        return Math.Clamp((double)_mobile.Hits / _mobile.MaxHits, 0, 1);
+        return Math.Clamp((double)Mobile.Hits / Mobile.MaxHits, 0, 1);
     }
+
+    public LuaMobileProxy? GetTarget()
+        => _target;
 
     public int GetWalkingRange()
     {
-        if (_mobile.TryGetCustomInteger("walking_range", out var walkingRange))
+        if (Mobile.TryGetCustomInteger("walking_range", out var walkingRange))
         {
             return (int)Math.Clamp(walkingRange, int.MinValue, int.MaxValue);
         }
@@ -196,14 +205,11 @@ public sealed class LuaMobileProxy
         return 0;
     }
 
-    public LuaMobileProxy? GetTarget()
-        => _target;
-
     public bool HasTarget()
-        => _target is not null;
+        => Mobile.CombatantId != Moongate.UO.Data.Ids.Serial.Zero || _target is not null;
 
     public bool IsAlive()
-        => _mobile.IsAlive;
+        => Mobile.IsAlive;
 
     public bool IsInRange(LuaMobileProxy? target, int range)
     {
@@ -212,7 +218,7 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        return _mobile.Location.InRange(new(target.LocationX, target.LocationY, target.LocationZ), range);
+        return Mobile.Location.InRange(new(target.LocationX, target.LocationY, target.LocationZ), range);
     }
 
     public bool Move(DirectionType direction)
@@ -222,32 +228,32 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        var oldLocation = _mobile.Location;
-        var oldMapId = _mobile.MapId;
+        var oldLocation = Mobile.Location;
+        var oldMapId = Mobile.MapId;
 
-        if (!_movementValidationService.TryResolveMove(_mobile, direction, out var newLocation))
+        if (!_movementValidationService.TryResolveMove(Mobile, direction, out var newLocation))
         {
             return false;
         }
 
-        _mobile.Location = newLocation;
-        _mobile.Direction = direction;
+        Mobile.Location = newLocation;
+        Mobile.Direction = direction;
 
         if (_gameEventBusService is not null && oldLocation != newLocation)
         {
-            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
+            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(Mobile.Id, out var session)
                                 ? session.SessionId
                                 : -1;
 
             _gameEventBusService.PublishAsync(
                                     new MobilePositionChangedEvent(
                                         sessionId,
-                                        _mobile.Id,
+                                        Mobile.Id,
                                         oldMapId,
-                                        _mobile.MapId,
+                                        Mobile.MapId,
                                         oldLocation,
                                         newLocation,
-                                        isTeleport: true
+                                        true
                                     )
                                 )
                                 .AsTask()
@@ -265,14 +271,14 @@ public sealed class LuaMobileProxy
             return;
         }
 
-        if (target.MapId != _mobile.MapId)
+        if (target.MapId != Mobile.MapId)
         {
             return;
         }
 
         var targetLocation = new Point3D(target.LocationX, target.LocationY, target.LocationZ);
 
-        if (!_pathfindingService.TryFindPath(_mobile, targetLocation, out var path) || path.Count == 0)
+        if (!_pathfindingService.TryFindPath(Mobile, targetLocation, out var path) || path.Count == 0)
         {
             return;
         }
@@ -289,9 +295,9 @@ public sealed class LuaMobileProxy
 
         _gameEventBusService.PublishAsync(
                                 new MobilePlayAnimationEvent(
-                                    _mobile.Id,
-                                    _mobile.MapId,
-                                    _mobile.Location,
+                                    Mobile.Id,
+                                    Mobile.MapId,
+                                    Mobile.Location,
                                     AnimationUtils.ClampActionToPacket(animId)
                                 )
                             )
@@ -317,16 +323,16 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        if (!AnimationUtils.TryResolveAnimation(intent, _mobile.Body.Type, _mobile.IsMounted, out var animation))
+        if (!AnimationUtils.TryResolveAnimation(intent, Mobile.Body.Type, Mobile.IsMounted, out var animation))
         {
             return false;
         }
 
         _gameEventBusService.PublishAsync(
                                 new MobilePlayAnimationEvent(
-                                    _mobile.Id,
-                                    _mobile.MapId,
-                                    _mobile.Location,
+                                    Mobile.Id,
+                                    Mobile.MapId,
+                                    Mobile.Location,
                                     animation.Action,
                                     animation.FrameCount,
                                     animation.RepeatCount,
@@ -342,15 +348,6 @@ public sealed class LuaMobileProxy
         return true;
     }
 
-    public void UseAnimation(int animId)
-        => PlayAnimation(animId);
-
-    public bool UseAnimation(string intentName)
-        => PlayAnimationIntent(intentName);
-
-    public bool UseAnimation(AnimationIntent intent)
-        => PlayAnimationIntent(intent);
-
     public void PlaySound(int soundId)
     {
         if (_gameEventBusService is null || soundId < 0)
@@ -360,9 +357,9 @@ public sealed class LuaMobileProxy
 
         _gameEventBusService.PublishAsync(
                                 new MobilePlaySoundEvent(
-                                    _mobile.Id,
-                                    _mobile.MapId,
-                                    _mobile.Location,
+                                    Mobile.Id,
+                                    Mobile.MapId,
+                                    Mobile.Location,
                                     (ushort)Math.Min(soundId, ushort.MaxValue)
                                 )
                             )
@@ -378,7 +375,49 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text).GetAwaiter().GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Emote(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Emote)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Yell(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Yell)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Whisper(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Whisper)
+                                       .GetAwaiter()
+                                       .GetResult();
 
         return recipients > 0;
     }
@@ -403,9 +442,9 @@ public sealed class LuaMobileProxy
 
         _gameEventBusService.PublishAsync(
                                 new MobilePlayEffectEvent(
-                                    _mobile.Id,
-                                    _mobile.MapId,
-                                    _mobile.Location,
+                                    Mobile.Id,
+                                    Mobile.MapId,
+                                    Mobile.Location,
                                     (ushort)Math.Min(itemId, ushort.MaxValue),
                                     (byte)Math.Clamp(speed, byte.MinValue, byte.MaxValue),
                                     (byte)Math.Clamp(duration, byte.MinValue, byte.MaxValue),
@@ -424,7 +463,10 @@ public sealed class LuaMobileProxy
     }
 
     public void SetTarget(LuaMobileProxy? target)
-        => _target = target;
+    {
+        _target = target;
+        Mobile.CombatantId = target?.Mobile.Id ?? Moongate.UO.Data.Ids.Serial.Zero;
+    }
 
     public bool SetWarMode(bool isEnabled)
         => isEnabled ? EnableWar() : DisableWar();
@@ -448,34 +490,43 @@ public sealed class LuaMobileProxy
             return false;
         }
 
-        var oldLocation = _mobile.Location;
-        var oldMapId = _mobile.MapId;
+        var oldLocation = Mobile.Location;
+        var oldMapId = Mobile.MapId;
         var newLocation = new Point3D(x, y, z);
 
-        _mobile.MapId = mapId;
-        _mobile.Location = newLocation;
+        Mobile.MapId = mapId;
+        Mobile.Location = newLocation;
 
-        if (_gameEventBusService is not null && (oldMapId != _mobile.MapId || oldLocation != newLocation))
+        if (_gameEventBusService is not null && (oldMapId != Mobile.MapId || oldLocation != newLocation))
         {
-            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(_mobile.Id, out var session)
+            var sessionId = _gameNetworkSessionService.TryGetByCharacterId(Mobile.Id, out var session)
                                 ? session.SessionId
                                 : -1;
 
             PublishPositionChangedAsync(
-                new MobilePositionChangedEvent(
+                new(
                     sessionId,
-                    _mobile.Id,
+                    Mobile.Id,
                     oldMapId,
-                    _mobile.MapId,
+                    Mobile.MapId,
                     oldLocation,
                     newLocation,
-                    isTeleport: true
+                    true
                 )
             );
         }
 
         return true;
     }
+
+    public void UseAnimation(int animId)
+        => PlayAnimation(animId);
+
+    public bool UseAnimation(string intentName)
+        => PlayAnimationIntent(intentName);
+
+    public bool UseAnimation(AnimationIntent intent)
+        => PlayAnimationIntent(intent);
 
     public void WalkTo(int x, int y)
     {
@@ -552,6 +603,13 @@ public sealed class LuaMobileProxy
         }
     }
 
+    private static bool SetIntent(AnimationIntent value, out AnimationIntent intent)
+    {
+        intent = value;
+
+        return true;
+    }
+
     private static bool TryParseAnimationIntent(string intentName, out AnimationIntent intent)
     {
         intent = default;
@@ -573,12 +631,5 @@ public sealed class LuaMobileProxy
             "hurt"            => SetIntent(AnimationIntent.Hurt, out intent),
             _                 => Enum.TryParse(intentName, true, out intent)
         };
-    }
-
-    private static bool SetIntent(AnimationIntent value, out AnimationIntent intent)
-    {
-        intent = value;
-
-        return true;
     }
 }

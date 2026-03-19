@@ -51,7 +51,7 @@ Generated packet pages: `201`
 | `0x2C` | Resurrection Menu | `implemented` | Both | 2 bytes | ResurrectionMenuPacket | [0x2C.md](0x2C.md) |
 | `0x2D` | Mob Attributes | `placeholder` | Server | 17 bytes | None | [0x2D.md](0x2D.md) |
 | `0x2E` | Worn Item | `implemented` | Server | 15 bytes | WornItemPacket | [0x2E.md](0x2E.md) |
-| `0x2F` | Fight Occuring | `placeholder` | Server | 10 bytes | None | [0x2F.md](0x2F.md) |
+| `0x2F` | Fight Occuring | `implemented` | Server | 10 bytes | FightOccurringPacket | [0x2F.md](0x2F.md) |
 | `0x30` | Attack Ok | `placeholder` | Server | 5 | None | [0x30.md](0x30.md) |
 | `0x31` | Attack Ended | `placeholder` | Server | 1 byte | None | [0x31.md](0x31.md) |
 | `0x32` | Unknown | `placeholder` | Server | 2 Bytes | None | [0x32.md](0x32.md) |
@@ -110,7 +110,7 @@ Generated packet pages: `201`
 | `0x71` | Bulletin Board Messages | `implemented` | Both | Variable | BulletinBoardMessagesPacket | [0x71.md](0x71.md) |
 | `0x72` | Request War Mode | `implemented` | Both | 5 Bytes | RequestWarModePacket, WarModePacket | [0x72.md](0x72.md) |
 | `0x73` | Ping Message | `implemented` | Both | 2 Bytes | PingMessagePacket | [0x73.md](0x73.md) |
-| `0x74` | Open Buy Window | `placeholder` | Server | Variable | None | [0x74.md](0x74.md) |
+| `0x74` | Open Buy Window | `implemented` | Server | Variable | VendorBuyListPacket | [0x74.md](0x74.md) |
 | `0x75` | Rename Character | `implemented` | Client | 35 Bytes | RenameCharacterPacket | [0x75.md](0x75.md) |
 | `0x76` | New Subserver | `implemented` | Server | 16 Bytes | ServerChangePacket | [0x76.md](0x76.md) |
 | `0x77` | Update Player | `implemented` | Server | 17 | MobileMovingPacket | [0x77.md](0x77.md) |
@@ -135,7 +135,7 @@ Generated packet pages: `201`
 | `0x9A` | Console Entry Prompt | `implemented` | Both | Variable | ConsoleEntryPromptPacket | [0x9A.md](0x9A.md) |
 | `0x9B` | Request Help | `implemented` | Client | 258 Bytes | RequestHelpPacket | [0x9B.md](0x9B.md) |
 | `0x9C` | Request Assistance | `placeholder` | Server | 53 | None | [0x9C.md](0x9C.md) |
-| `0x9E` | Sell List | `placeholder` | Server | Variable | None | [0x9E.md](0x9E.md) |
+| `0x9E` | Sell List | `implemented` | Server | Variable | VendorSellListPacket | [0x9E.md](0x9E.md) |
 | `0x9F` | Sell List Reply | `implemented` | Client | Variable | SellListReplyPacket | [0x9F.md](0x9F.md) |
 | `0xA0` | Select Server | `implemented` | Client | 3 Bytes | ServerSelectPacket | [0xA0.md](0xA0.md) |
 | `0xA1` | Update Current Health | `placeholder` | Server | 9 Bytes | None | [0xA1.md](0xA1.md) |
@@ -147,7 +147,7 @@ Generated packet pages: `201`
 | `0xA7` | Request Tip/Notice Window | `implemented` | Client | 4 Bytes | RequestTipNoticeWindowPacket | [0xA7.md](0xA7.md) |
 | `0xA8` | Game Server List | `implemented` | Server | Variable | ServerListPacket | [0xA8.md](0xA8.md) |
 | `0xA9` | Characters / Starting Locations | `implemented` | Server | Variable | CharactersStartingLocationsPacket | [0xA9.md](0xA9.md) |
-| `0xAA` | Allow/Refuse Attack | `placeholder` | Server | 5 Bytes | None | [0xAA.md](0xAA.md) |
+| `0xAA` | Allow/Refuse Attack | `implemented` | Server | 5 Bytes | ChangeCombatantPacket | [0xAA.md](0xAA.md) |
 | `0xAB` | Gump Text Entry Dialog | `placeholder` | Server | Variable | None | [0xAB.md](0xAB.md) |
 | `0xAC` | Gump Text Entry Dialog Reply | `placeholder` | Client | Variable | None | [0xAC.md](0xAC.md) |
 | `0xAD` | Unicode/Ascii speech request | `implemented` | Client | Variable | UnicodeSpeechPacket | [0xAD.md](0xAD.md) |

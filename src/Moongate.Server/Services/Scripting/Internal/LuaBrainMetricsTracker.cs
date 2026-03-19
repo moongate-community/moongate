@@ -15,6 +15,26 @@ internal sealed class LuaBrainMetricsTracker
     private double _tickDurationTotalMilliseconds;
     private double _tickDurationMaxMilliseconds;
 
+    public LuaBrainMetricsSnapshot CreateSnapshot()
+    {
+        lock (_sync)
+        {
+            var averageTickMilliseconds = _processedTicksTotal == 0
+                                              ? 0
+                                              : _tickDurationTotalMilliseconds / _processedTicksTotal;
+
+            return new(
+                _dueBrainsTotal,
+                _processedBrainsTotal,
+                _deferredBrainsTotal,
+                _processedTicksTotal,
+                _tickDurationTotalMilliseconds,
+                averageTickMilliseconds,
+                _tickDurationMaxMilliseconds
+            );
+        }
+    }
+
     public void RecordTick(int dueCount, int processedCount, double elapsedMilliseconds)
     {
         var deferredCount = Math.Max(0, dueCount - processedCount);
@@ -31,26 +51,6 @@ internal sealed class LuaBrainMetricsTracker
             {
                 _tickDurationMaxMilliseconds = elapsedMilliseconds;
             }
-        }
-    }
-
-    public LuaBrainMetricsSnapshot CreateSnapshot()
-    {
-        lock (_sync)
-        {
-            var averageTickMilliseconds = _processedTicksTotal == 0
-                ? 0
-                : _tickDurationTotalMilliseconds / _processedTicksTotal;
-
-            return new(
-                _dueBrainsTotal,
-                _processedBrainsTotal,
-                _deferredBrainsTotal,
-                _processedTicksTotal,
-                _tickDurationTotalMilliseconds,
-                averageTickMilliseconds,
-                _tickDurationMaxMilliseconds
-            );
         }
     }
 }

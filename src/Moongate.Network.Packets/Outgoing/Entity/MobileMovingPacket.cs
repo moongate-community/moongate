@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
@@ -12,6 +13,8 @@ public sealed class MobileMovingPacket : BaseGameNetworkPacket
     public UOMobileEntity? Mobile { get; set; }
 
     public bool StygianAbyss { get; set; } = true;
+
+    public Notoriety? ResolvedNotoriety { get; set; }
 
     public MobileMovingPacket()
         : base(0x77, 17) { }
@@ -39,7 +42,7 @@ public sealed class MobileMovingPacket : BaseGameNetworkPacket
         writer.Write((byte)Mobile.Direction);
         writer.Write(Mobile.SkinHue);
         writer.Write(Mobile.GetPacketFlags(StygianAbyss));
-        writer.Write((byte)Mobile.Notoriety);
+        writer.Write((byte)(ResolvedNotoriety ?? Mobile.Notoriety));
     }
 
     protected override bool ParsePayload(ref SpanReader reader)

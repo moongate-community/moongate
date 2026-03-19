@@ -73,6 +73,10 @@ Command source and authorization rules:
 - Console commands are always treated as `AccountType.Administrator`.
 - In-game commands use the authenticated `GameSession.AccountType`.
 - In-game command input is triggered by Unicode speech starting with `.` (example: `.help`).
+- World speech shorthand also supports:
+  - `*text*` for emote
+  - `!text` for yell
+  - `;text` for whisper
 
 ### Register a New C# Command
 

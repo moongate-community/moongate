@@ -11,28 +11,31 @@ public static class RadarCol
 
     public static ushort[] Colors { get; } = Load();
 
+    public static (byte R, byte G, byte B) FromRgb555(ushort color)
+    {
+        var r = (color >> 10) & 0x1F;
+        var g = (color >> 5) & 0x1F;
+        var b = color & 0x1F;
+
+        return (
+                   (byte)((r << 3) | (r >> 2)),
+                   (byte)((g << 3) | (g >> 2)),
+                   (byte)((b << 3) | (b >> 2))
+               );
+    }
+
     public static (byte R, byte G, byte B) GetLandColor(int tileId)
     {
         var color = Colors[tileId & 0x3FFF];
+
         return FromRgb555(color);
     }
 
     public static (byte R, byte G, byte B) GetStaticColor(int tileId)
     {
         var color = Colors[(tileId & 0x3FFF) + 0x4000];
-        return FromRgb555(color);
-    }
 
-    public static (byte R, byte G, byte B) FromRgb555(ushort color)
-    {
-        var r = (color >> 10) & 0x1F;
-        var g = (color >> 5) & 0x1F;
-        var b = color & 0x1F;
-        return (
-            (byte)((r << 3) | (r >> 2)),
-            (byte)((g << 3) | (g >> 2)),
-            (byte)((b << 3) | (b >> 2))
-        );
+        return FromRgb555(color);
     }
 
     private static ushort[] Load()

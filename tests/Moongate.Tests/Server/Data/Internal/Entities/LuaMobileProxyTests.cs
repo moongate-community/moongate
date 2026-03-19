@@ -6,16 +6,16 @@ using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
-using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Bodies;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
@@ -34,6 +34,8 @@ public sealed class LuaMobileProxyTests
         public UOMobileEntity? LastSpeaker { get; private set; }
 
         public string? LastSpokenText { get; private set; }
+
+        public ChatMessageType LastMessageType { get; private set; } = ChatMessageType.Regular;
 
         public int SpeakAsMobileResult { get; set; } = 1;
 
@@ -115,6 +117,7 @@ public sealed class LuaMobileProxyTests
             LastSpeakAsMobileCallCount++;
             LastSpeaker = speaker;
             LastSpokenText = text;
+            LastMessageType = messageType;
 
             return Task.FromResult(SpeakAsMobileResult);
         }
@@ -404,13 +407,15 @@ public sealed class LuaMobileProxyTests
             Func<TResult> backgroundJob,
             Action<TResult> onGameLoopResult,
             Action<Exception>? onGameLoopError = null
-        ) => throw new NotSupportedException();
+        )
+            => throw new NotSupportedException();
 
         public void RunBackgroundAndPostResultAsync<TResult>(
             Func<Task<TResult>> backgroundJob,
             Action<TResult> onGameLoopResult,
             Action<Exception>? onGameLoopError = null
-        ) => throw new NotSupportedException();
+        )
+            => throw new NotSupportedException();
 
         public void Start(int? workerCount = null)
             => throw new NotSupportedException();
@@ -524,6 +529,51 @@ public sealed class LuaMobileProxyTests
                 Assert.That(gameEventBusService.LastMobileWarModeChangedEvent!.Value.Mobile.IsWarMode, Is.True);
             }
         );
+    }
+
+    [Test]
+    public void GetWalkingRange_WhenCustomPropertyExists_ShouldReturnValue()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        mobile.SetCustomInteger("walking_range", 10);
+
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        var walkingRange = proxy.GetWalkingRange();
+
+        Assert.That(walkingRange, Is.EqualTo(10));
+    }
+
+    [Test]
+    public void GetWalkingRange_WhenCustomPropertyMissing_ShouldReturnZero()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        var walkingRange = proxy.GetWalkingRange();
+
+        Assert.That(walkingRange, Is.EqualTo(0));
     }
 
     [Test]
@@ -736,12 +786,13 @@ public sealed class LuaMobileProxyTests
                 Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
                 Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
                 Assert.That(speechService.LastSpokenText, Is.EqualTo("miaow"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Regular));
             }
         );
     }
 
     [Test]
-    public void GetWalkingRange_WhenCustomPropertyExists_ShouldReturnValue()
+    public void Emote_ShouldUseSpeakAsMobileAsyncWithEmoteMessageType()
     {
         var mobile = new UOMobileEntity
         {
@@ -749,22 +800,27 @@ public sealed class LuaMobileProxyTests
             MapId = 1,
             Location = new(100, 200, 5)
         };
-        mobile.SetCustomInteger("walking_range", 10);
+        var speechService = new LuaMobileProxyTestSpeechService { SpeakAsMobileResult = 2 };
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
 
-        var proxy = new LuaMobileProxy(
-            mobile,
-            new LuaMobileProxyTestSpeechService(),
-            new LuaMobileProxyTestGameNetworkSessionService(),
-            new LuaMobileProxyTestSpatialWorldService()
+        var sent = proxy.Emote("*grrr*");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True);
+                Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
+                Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
+                Assert.That(speechService.LastSpokenText, Is.EqualTo("*grrr*"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Emote));
+            }
         );
-
-        var walkingRange = proxy.GetWalkingRange();
-
-        Assert.That(walkingRange, Is.EqualTo(10));
     }
 
     [Test]
-    public void GetWalkingRange_WhenCustomPropertyMissing_ShouldReturnZero()
+    public void Yell_ShouldUseSpeakAsMobileAsyncWithYellMessageType()
     {
         var mobile = new UOMobileEntity
         {
@@ -772,17 +828,51 @@ public sealed class LuaMobileProxyTests
             MapId = 1,
             Location = new(100, 200, 5)
         };
+        var speechService = new LuaMobileProxyTestSpeechService { SpeakAsMobileResult = 2 };
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
 
-        var proxy = new LuaMobileProxy(
-            mobile,
-            new LuaMobileProxyTestSpeechService(),
-            new LuaMobileProxyTestGameNetworkSessionService(),
-            new LuaMobileProxyTestSpatialWorldService()
+        var sent = proxy.Yell("HEY");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True);
+                Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
+                Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
+                Assert.That(speechService.LastSpokenText, Is.EqualTo("HEY"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Yell));
+            }
         );
+    }
 
-        var walkingRange = proxy.GetWalkingRange();
+    [Test]
+    public void Whisper_ShouldUseSpeakAsMobileAsyncWithWhisperMessageType()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var speechService = new LuaMobileProxyTestSpeechService { SpeakAsMobileResult = 2 };
+        var gameNetworkSessionService = new LuaMobileProxyTestGameNetworkSessionService();
+        var spatialWorldService = new LuaMobileProxyTestSpatialWorldService();
+        var proxy = new LuaMobileProxy(mobile, speechService, gameNetworkSessionService, spatialWorldService);
 
-        Assert.That(walkingRange, Is.EqualTo(0));
+        var sent = proxy.Whisper("psst");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(sent, Is.True);
+                Assert.That(speechService.LastSpeakAsMobileCallCount, Is.EqualTo(1));
+                Assert.That(speechService.LastSpeaker, Is.SameAs(mobile));
+                Assert.That(speechService.LastSpokenText, Is.EqualTo("psst"));
+                Assert.That(speechService.LastMessageType, Is.EqualTo(ChatMessageType.Whisper));
+            }
+        );
     }
 
     [Test]
@@ -891,6 +981,39 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
+    public void Teleport_ShouldNotBlockOnEventDispatch()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var gameEventBusService = new LuaMobileProxyBlockingGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService
+        );
+
+        var teleported = proxy.Teleport(2, 4500, 1300, 20);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(2));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(4500, 1300, 20)));
+                Assert.That(gameEventBusService.PublishCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public void Teleport_ShouldUpdateMapAndLocationAndPublishPositionEvent()
     {
         var mobile = new UOMobileEntity
@@ -936,74 +1059,6 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
-    public void Teleport_WhenOnlyMapChanges_ShouldPublishPositionEvent()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x1234u,
-            MapId = 1,
-            Location = new(100, 200, 5)
-        };
-        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
-        var proxy = new LuaMobileProxy(
-            mobile,
-            new LuaMobileProxyTestSpeechService(),
-            new LuaMobileProxyTestGameNetworkSessionService(),
-            new LuaMobileProxyTestSpatialWorldService(),
-            null,
-            null,
-            gameEventBusService
-        );
-
-        var teleported = proxy.Teleport(2, 100, 200, 5);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(teleported, Is.True);
-                Assert.That(mobile.MapId, Is.EqualTo(2));
-                Assert.That(mobile.Location, Is.EqualTo(new Point3D(100, 200, 5)));
-                Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
-                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.OldMapId, Is.EqualTo(1));
-                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.MapId, Is.EqualTo(2));
-            }
-        );
-    }
-
-    [Test]
-    public void Teleport_ShouldNotBlockOnEventDispatch()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x1234u,
-            MapId = 1,
-            Location = new(100, 200, 5)
-        };
-        var gameEventBusService = new LuaMobileProxyBlockingGameEventBusService();
-        var proxy = new LuaMobileProxy(
-            mobile,
-            new LuaMobileProxyTestSpeechService(),
-            new LuaMobileProxyTestGameNetworkSessionService(),
-            new LuaMobileProxyTestSpatialWorldService(),
-            null,
-            null,
-            gameEventBusService
-        );
-
-        var teleported = proxy.Teleport(2, 4500, 1300, 20);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(teleported, Is.True);
-                Assert.That(mobile.MapId, Is.EqualTo(2));
-                Assert.That(mobile.Location, Is.EqualTo(new Point3D(4500, 1300, 20)));
-                Assert.That(gameEventBusService.PublishCalls, Is.EqualTo(1));
-            }
-        );
-    }
-
-    [Test]
     public void Teleport_WhenBackgroundJobServiceExists_ShouldPostPublishToGameLoop()
     {
         var mobile = new UOMobileEntity
@@ -1039,7 +1094,7 @@ public sealed class LuaMobileProxyTests
     }
 
     [Test]
-    public void UseAnimation_WithRawAction_ShouldPublishMobilePlayAnimationEvent()
+    public void Teleport_WhenOnlyMapChanges_ShouldPublishPositionEvent()
     {
         var mobile = new UOMobileEntity
         {
@@ -1058,13 +1113,17 @@ public sealed class LuaMobileProxyTests
             gameEventBusService
         );
 
-        proxy.UseAnimation(32);
+        var teleported = proxy.Teleport(2, 100, 200, 5);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent.HasValue, Is.True);
-                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent!.Value.Action, Is.EqualTo((short)32));
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(2));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.OldMapId, Is.EqualTo(1));
+                Assert.That(gameEventBusService.LastMobilePositionChangedEvent!.Value.MapId, Is.EqualTo(2));
             }
         );
     }
@@ -1102,6 +1161,110 @@ public sealed class LuaMobileProxyTests
                 Assert.That(ok, Is.True);
                 Assert.That(gameEventBusService.LastMobilePlayAnimationEvent.HasValue, Is.True);
                 Assert.That(gameEventBusService.LastMobilePlayAnimationEvent!.Value.Action, Is.EqualTo((short)9));
+            }
+        );
+    }
+
+    [Test]
+    public void UseAnimation_WithRawAction_ShouldPublishMobilePlayAnimationEvent()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var gameEventBusService = new LuaMobileProxyTestGameEventBusService();
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService(),
+            null,
+            null,
+            gameEventBusService
+        );
+
+        proxy.UseAnimation(32);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent.HasValue, Is.True);
+                Assert.That(gameEventBusService.LastMobilePlayAnimationEvent!.Value.Action, Is.EqualTo((short)32));
+            }
+        );
+    }
+
+    [Test]
+    public void IsMountable_ShouldReflectUnderlyingMobileState()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            IsMountable = true
+        };
+        var proxy = new LuaMobileProxy(
+            mobile,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        Assert.That(proxy.IsMountable, Is.True);
+    }
+
+    [Test]
+    public void SetTarget_ShouldUpdateCombatantStateOnUnderlyingMobile()
+    {
+        var attacker = new UOMobileEntity { Id = (Serial)0x1234u };
+        var defender = new UOMobileEntity { Id = (Serial)0x5678u };
+        var proxy = new LuaMobileProxy(
+            attacker,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+        var target = new LuaMobileProxy(
+            defender,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        proxy.SetTarget(target);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(proxy.HasTarget(), Is.True);
+                Assert.That(attacker.CombatantId, Is.EqualTo(defender.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void ClearTarget_ShouldResetCombatantStateOnUnderlyingMobile()
+    {
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x1234u,
+            CombatantId = (Serial)0x5678u
+        };
+        var proxy = new LuaMobileProxy(
+            attacker,
+            new LuaMobileProxyTestSpeechService(),
+            new LuaMobileProxyTestGameNetworkSessionService(),
+            new LuaMobileProxyTestSpatialWorldService()
+        );
+
+        proxy.ClearTarget();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(proxy.HasTarget(), Is.False);
+                Assert.That(attacker.CombatantId, Is.EqualTo(Serial.Zero));
             }
         );
     }

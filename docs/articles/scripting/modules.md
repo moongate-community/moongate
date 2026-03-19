@@ -13,6 +13,9 @@ The following modules are available in the default server runtime:
 - `log`
 - `command`
 - `speech`
+- `dialogue`
+- `ai_dialogue`
+- `combat`
 - `mobile`
 - `item`
 - `door`
@@ -41,7 +44,65 @@ effect.send_to_player(characterId, x, y, z, itemId, speed, duration, hue, render
 local npc = mobile.get(serial)
 if npc then
   npc:SetEffect(0x3728, 10, 10, 0, 0, 2023)
+  npc:say("Hello there.")
+  npc:emote("*looks furious*")
+  npc:yell("Leave now!")
+  npc:whisper("Not so loud...")
 end
+```
+
+Speech-related runtime notes:
+
+- `npc:say(text)` emits regular world speech
+- `npc:emote(text)` emits world emote speech with `ChatMessageType.Emote`
+- `npc:yell(text)` emits world yell speech with `ChatMessageType.Yell`
+- `npc:whisper(text)` emits world whisper speech with `ChatMessageType.Whisper`
+- player incoming speech uses the same world speech path
+- incoming player text shorthand is normalized automatically:
+  - `*text*` -> emote
+  - `!text` -> yell
+  - `;text` -> whisper
+
+`dialogue` runtime helpers:
+
+```lua
+dialogue.register("innkeeper", definition)
+dialogue.init(npc, "innkeeper")
+dialogue.listener(npc, speaker, text)
+```
+
+The repository also ships DSL helpers in `common.dialogue`:
+
+```lua
+local dialogue = require("common.dialogue")
+```
+
+`dialogue` is a standalone authored feature. It does not require `ai_dialogue` or any OpenAI configuration.
+
+`ai_dialogue` runtime helpers:
+
+```lua
+ai_dialogue.init(npc, "innkeeper.txt")
+ai_dialogue.listener(npc, speaker, text)
+ai_dialogue.idle(npc)
+```
+
+`ai_dialogue` is separate and optional. It is only needed when you want OpenAI-backed generative replies.
+
+Recommended bridge helper:
+
+```lua
+local npc_dialogue = require("common.npc_dialogue")
+```
+
+Use `common.npc_dialogue` only when you explicitly want both systems together.
+
+`combat` runtime helpers:
+
+```lua
+combat.set_target(npcSerial, targetSerial) -- hands control to the server combat loop
+combat.clear_target(npcSerial)             -- clears combatant and pending swing
+combat.swing(npcSerial, targetSerial)      -- animation helper only, not authoritative combat
 ```
 
 `gump` supports two modes:

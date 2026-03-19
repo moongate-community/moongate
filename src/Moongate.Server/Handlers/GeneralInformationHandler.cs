@@ -80,19 +80,6 @@ public class GeneralInformationHandler : BasePacketListener
         return true;
     }
 
-    private ValueTask HandleCastTargetedSpellAsync(GameSession session, ReadOnlySpan<byte> payload)
-    {
-        if (payload.Length != 6)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        var spellId = BinaryPrimitives.ReadUInt16BigEndian(payload);
-        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
-
-        return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
-    }
-
     private ValueTask HandleAction3DClientAsync(GameSession session, ReadOnlySpan<byte> payload)
     {
         if (session.Character is null)
@@ -101,8 +88,8 @@ public class GeneralInformationHandler : BasePacketListener
         }
 
         if (
-            !AnimationUtils.TryReadClientAction3D(payload, out var action)
-            || !AnimationUtils.IsValidClientAction3DAnimation(action)
+            !AnimationUtils.TryReadClientAction3D(payload, out var action) ||
+            !AnimationUtils.IsValidClientAction3DAnimation(action)
         )
         {
             return ValueTask.CompletedTask;
@@ -118,6 +105,19 @@ public class GeneralInformationHandler : BasePacketListener
         );
     }
 
+    private ValueTask HandleCastTargetedSpellAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (payload.Length != 6)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var spellId = BinaryPrimitives.ReadUInt16BigEndian(payload);
+        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
+
+        return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
+    }
+
     private ValueTask HandlePartySystemAsync(GameSession session, ReadOnlySpan<byte> payload)
     {
         if (payload.IsEmpty)
@@ -131,43 +131,6 @@ public class GeneralInformationHandler : BasePacketListener
         return _gameEventBusService.PublishAsync(
             new PartySystemCommandEvent(session.SessionId, subcommand, subcommandPayload)
         );
-    }
-
-    private ValueTask HandleStatLockChangeAsync(GameSession session, ReadOnlySpan<byte> payload)
-    {
-        if (payload.Length != 2)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        var statIndex = payload[0];
-        var lockState = payload[1];
-
-        if (statIndex > 2 || lockState > 2)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        return _gameEventBusService.PublishAsync(
-            new StatLockChangeRequestedEvent(session.SessionId, (Stat)statIndex, (UOSkillLock)lockState)
-        );
-    }
-
-    private ValueTask HandleRequestPopupMenuAsync(GameSession session, ReadOnlySpan<byte> payload)
-    {
-        if (!SupportsContextMenu(session))
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        if (payload.Length != 4)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload);
-
-        return _gameEventBusService.PublishAsync(new ContextMenuRequestedEvent(session.SessionId, targetSerial));
     }
 
     private ValueTask HandlePopupEntrySelectionAsync(GameSession session, ReadOnlySpan<byte> payload)
@@ -190,14 +153,41 @@ public class GeneralInformationHandler : BasePacketListener
         );
     }
 
-    private static bool SupportsContextMenu(GameSession session)
+    private ValueTask HandleRequestPopupMenuAsync(GameSession session, ReadOnlySpan<byte> payload)
     {
-        if (session.ClientVersion is null)
+        if (!SupportsContextMenu(session))
         {
-            return false;
+            return ValueTask.CompletedTask;
         }
 
-        return session.ClientVersion.ProtocolChanges.HasFlag(ProtocolChanges.StygianAbyss);
+        if (payload.Length != 4)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload);
+
+        return _gameEventBusService.PublishAsync(new ContextMenuRequestedEvent(session.SessionId, targetSerial));
+    }
+
+    private ValueTask HandleStatLockChangeAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (payload.Length != 2)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var statIndex = payload[0];
+        var lockState = payload[1];
+
+        if (statIndex > 2 || lockState > 2)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        return _gameEventBusService.PublishAsync(
+            new StatLockChangeRequestedEvent(session.SessionId, (Stat)statIndex, (UOSkillLock)lockState)
+        );
     }
 
     private ValueTask HandleUseTargetedItemAsync(GameSession session, ReadOnlySpan<byte> payload)
@@ -224,5 +214,15 @@ public class GeneralInformationHandler : BasePacketListener
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
 
         return _gameEventBusService.PublishAsync(new TargetedSkillUseEvent(session.SessionId, skillId, targetSerial));
+    }
+
+    private static bool SupportsContextMenu(GameSession session)
+    {
+        if (session.ClientVersion is null)
+        {
+            return false;
+        }
+
+        return session.ClientVersion.ProtocolChanges.HasFlag(ProtocolChanges.StygianAbyss);
     }
 }

@@ -2,9 +2,9 @@ using System.Diagnostics;
 using System.Globalization;
 using Humanizer;
 using Moongate.Core.Extensions.Strings;
-using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -80,49 +80,6 @@ public class SpawnDecorationsCommand : ICommandExecutor
         }
     }
 
-    private async Task DecorateMapAsync(int mapId, CommandSystemContext context)
-    {
-        var decorations = _seedDataService.GetDecorationsByMap(mapId);
-
-        var startTime = Stopwatch.GetTimestamp();
-        var spawnedCount = 0;
-
-        foreach (var decoration in decorations)
-        {
-            var found = _itemFactoryService.TryGetItemTemplate(decoration.TypeName, out _);
-
-            UOItemEntity item = null;
-
-            if (found)
-            {
-                item = _itemFactoryService.CreateItemFromTemplate(decoration.TypeName);
-            }
-            else
-            {
-                item = _itemFactoryService.CreateItemFromTemplate("static");
-            }
-
-
-
-            if (decoration.ItemId != Serial.Zero)
-            {
-                item.ItemId = (int)decoration.ItemId.Value;
-            }
-
-            item.MapId = mapId;
-            item.Location = decoration.Location;
-
-            ApplyDecorationParameters(item, decoration.Parameters);
-
-            await _itemService.CreateItemAsync(item);
-            spawnedCount++;
-        }
-
-        context.Print(
-            $"Finished spawning decorations for map {mapId}. Spawned {spawnedCount} decorations in {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds.Milliseconds().Humanize()} seconds."
-        );
-    }
-
     private static void ApplyDecorationParameters(UOItemEntity item, IReadOnlyDictionary<string, string> parameters)
     {
         if (parameters.Count == 0)
@@ -170,6 +127,7 @@ public class SpawnDecorationsCommand : ICommandExecutor
                 Point3D.TryParse(value, null, out var pointDest))
             {
                 item.SetCustomLocation(key, pointDest);
+
                 continue;
             }
 
@@ -177,29 +135,74 @@ public class SpawnDecorationsCommand : ICommandExecutor
                 TryParseDelayMilliseconds(value, out var delayMilliseconds))
             {
                 item.SetCustomInteger("delay_ms", delayMilliseconds);
+
                 continue;
             }
 
             if (bool.TryParse(value, out var boolValue))
             {
                 item.SetCustomBoolean(key, boolValue);
+
                 continue;
             }
 
             if (TryParseInteger(value, out var integerValue))
             {
                 item.SetCustomInteger(key, integerValue);
+
                 continue;
             }
 
             if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var doubleValue))
             {
                 item.SetCustomDouble(key, doubleValue);
+
                 continue;
             }
 
             item.SetCustomString(key, value);
         }
+    }
+
+    private async Task DecorateMapAsync(int mapId, CommandSystemContext context)
+    {
+        var decorations = _seedDataService.GetDecorationsByMap(mapId);
+
+        var startTime = Stopwatch.GetTimestamp();
+        var spawnedCount = 0;
+
+        foreach (var decoration in decorations)
+        {
+            var found = _itemFactoryService.TryGetItemTemplate(decoration.TypeName, out _);
+
+            UOItemEntity item = null;
+
+            if (found)
+            {
+                item = _itemFactoryService.CreateItemFromTemplate(decoration.TypeName);
+            }
+            else
+            {
+                item = _itemFactoryService.CreateItemFromTemplate("static");
+            }
+
+            if (decoration.ItemId != Serial.Zero)
+            {
+                item.ItemId = (int)decoration.ItemId.Value;
+            }
+
+            item.MapId = mapId;
+            item.Location = decoration.Location;
+
+            ApplyDecorationParameters(item, decoration.Parameters);
+
+            await _itemService.CreateItemAsync(item);
+            spawnedCount++;
+        }
+
+        context.Print(
+            $"Finished spawning decorations for map {mapId}. Spawned {spawnedCount} decorations in {Stopwatch.GetElapsedTime(startTime).TotalMilliseconds.Milliseconds().Humanize()} seconds."
+        );
     }
 
     private static string NormalizeCustomKey(string rawKey)
@@ -232,7 +235,8 @@ public class SpawnDecorationsCommand : ICommandExecutor
 
         if (Serial.TryParse(value, CultureInfo.InvariantCulture, out var serial))
         {
-            parsed = (long)(uint)serial;
+            parsed = (uint)serial;
+
             return true;
         }
 

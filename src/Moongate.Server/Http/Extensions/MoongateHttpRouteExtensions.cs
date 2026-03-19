@@ -1,20 +1,20 @@
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.Tokens;
-using Moongate.Core.Utils;
 using Moongate.Core.Types;
+using Moongate.Core.Utils;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Http.Data;
 using Moongate.Server.Http.Internal;
 using Moongate.Server.Http.Json;
-using Moongate.Server.Interfaces.Characters;
-using Moongate.Server.Utils;
 using Moongate.Server.Types.Commands;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
@@ -63,7 +63,10 @@ internal static class MoongateHttpRouteExtensions
                    .WithSummary("Returns running server version metadata.")
                    .Produces<MoongateHttpServerVersion>(StatusCodes.Status200OK, "application/json");
 
-        systemGroup.MapGet("/api/branding", () => Results.Json(context.Branding, MoongateHttpJsonContext.Default.MoongateHttpBranding))
+        systemGroup.MapGet(
+                       "/api/branding",
+                       () => Results.Json(context.Branding, MoongateHttpJsonContext.Default.MoongateHttpBranding)
+                   )
                    .WithName("Branding")
                    .WithSummary("Returns public branding metadata for login pages.")
                    .Produces<MoongateHttpBranding>(StatusCodes.Status200OK, "application/json");
@@ -376,6 +379,54 @@ internal static class MoongateHttpRouteExtensions
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
+    private static UOItemEntity? FindContainer(UOItemEntity root, Serial containerId)
+    {
+        if (root.Id == containerId)
+        {
+            return root;
+        }
+
+        foreach (var item in root.Items)
+        {
+            if (item.Id == containerId)
+            {
+                return item;
+            }
+
+            if (item.Items.Count == 0)
+            {
+                continue;
+            }
+
+            var nested = FindContainer(item, containerId);
+
+            if (nested is not null)
+            {
+                return nested;
+            }
+        }
+
+        return null;
+    }
+
+    private static IEnumerable<UOItemEntity> FlattenContainerItems(UOItemEntity container)
+    {
+        foreach (var item in container.Items.OrderBy(static child => child.Name ?? string.Empty, StringComparer.Ordinal))
+        {
+            yield return item;
+
+            if (item.Items.Count == 0)
+            {
+                continue;
+            }
+
+            foreach (var descendant in FlattenContainerItems(item))
+            {
+                yield return descendant;
+            }
+        }
+    }
+
     private static IResult HandleCreateUser(
         MoongateHttpRouteContext context,
         MoongateHttpCreateUserRequest request,
@@ -569,6 +620,7 @@ internal static class MoongateHttpRouteExtensions
         }
 
         using var normalized = ItemImageNormalizer.CropAndPad(image);
+
         using (var stream = File.Create(cachePath))
         {
             normalized.Save(stream, new PngEncoder());
@@ -664,6 +716,85 @@ internal static class MoongateHttpRouteExtensions
         return Results.File(cachePath, "image/png");
     }
 
+    private static IResult HandleGetPortalCharacterInventory(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        string characterId,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        var accountId = ResolveAuthenticatedAccountId(user);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var parsedCharacterId = ParseAccountIdOrNull(characterId);
+
+        if (parsedCharacterId is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var character = context.CharacterService!.GetCharacterAsync(parsedCharacterId.Value).GetAwaiter().GetResult();
+
+        if (character is null || character.AccountId != accountId.Value)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var backpack = context.CharacterService.GetBackpackWithItemsAsync(character).GetAwaiter().GetResult();
+        var bankBox = context.CharacterService.GetBankBoxWithItemsAsync(character).GetAwaiter().GetResult();
+        var items = MapPortalInventoryItems(character, backpack);
+        var bankItems = MapPortalContainerItems(bankBox, "Bank");
+        var response = new MoongateHttpPortalInventory
+        {
+            CharacterId = character.Id.Value.ToString(),
+            CharacterName = character.Name ?? character.Id.Value.ToString(),
+            Items = items,
+            BankItems = bankItems
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpPortalInventory);
+    }
+
+    private static IResult HandleGetPortalMe(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken
+    )
+    {
+        _ = cancellationToken;
+
+        var accountIdClaim = user.FindFirst("account_id")?.Value;
+        var accountId = string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var account = context.AccountService!.GetAccountAsync(accountId.Value).GetAwaiter().GetResult();
+
+        if (account is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var characters = context.CharacterService!
+                                .GetCharactersForAccountAsync(accountId.Value)
+                                .GetAwaiter()
+                                .GetResult();
+
+        return Results.Json(
+            MapPortalAccount(account, characters),
+            MoongateHttpJsonContext.Default.MoongateHttpPortalAccount
+        );
+    }
+
     private static IResult HandleGetUserById(
         MoongateHttpRouteContext context,
         string accountId,
@@ -712,80 +843,88 @@ internal static class MoongateHttpRouteExtensions
         return TypedResults.Text("ok");
     }
 
-    private static IResult HandleGetPortalMe(
+    private static IResult HandleLogin(
         MoongateHttpRouteContext context,
-        ClaimsPrincipal user,
+        MoongateHttpLoginRequest request,
         CancellationToken cancellationToken
     )
     {
-        _ = cancellationToken;
-
-        var accountIdClaim = user.FindFirst("account_id")?.Value;
-        var accountId = string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
-
-        if (accountId is null)
+        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
         {
-            return TypedResults.Unauthorized();
+            return TypedResults.Text("username and password are required", statusCode: StatusCodes.Status400BadRequest);
         }
 
-        var account = context.AccountService!.GetAccountAsync(accountId.Value).GetAwaiter().GetResult();
+        var account = context.AccountService!
+                             .LoginAsync(request.Username, request.Password)
+                             .GetAwaiter()
+                             .GetResult();
 
         if (account is null)
         {
-            return TypedResults.NotFound();
-        }
-
-        var characters = context.CharacterService!
-                                .GetCharactersForAccountAsync(accountId.Value)
-                                .GetAwaiter()
-                                .GetResult();
-
-        return Results.Json(MapPortalAccount(account, characters), MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
-    }
-
-    private static IResult HandleGetPortalCharacterInventory(
-        MoongateHttpRouteContext context,
-        ClaimsPrincipal user,
-        string characterId,
-        CancellationToken cancellationToken
-    )
-    {
-        _ = cancellationToken;
-
-        var accountId = ResolveAuthenticatedAccountId(user);
-
-        if (accountId is null)
-        {
             return TypedResults.Unauthorized();
         }
 
-        var parsedCharacterId = ParseAccountIdOrNull(characterId);
-
-        if (parsedCharacterId is null)
+        var user = new MoongateHttpAuthenticatedUser
         {
-            return TypedResults.NotFound();
-        }
-
-        var character = context.CharacterService!.GetCharacterAsync(parsedCharacterId.Value).GetAwaiter().GetResult();
-
-        if (character is null || character.AccountId != accountId.Value)
-        {
-            return TypedResults.NotFound();
-        }
-
-        var backpack = context.CharacterService.GetBackpackWithItemsAsync(character).GetAwaiter().GetResult();
-        var bankBox = context.CharacterService.GetBankBoxWithItemsAsync(character).GetAwaiter().GetResult();
-        var items = MapPortalInventoryItems(character, backpack);
-        var bankItems = MapPortalContainerItems(bankBox, "Bank");
-        var response = new MoongateHttpPortalInventory
-        {
-            CharacterId = character.Id.Value.ToString(),
-            CharacterName = character.Name ?? character.Id.Value.ToString(),
-            Items = items,
-            BankItems = bankItems
+            AccountId = account.Id.Value.ToString(),
+            Username = account.Username,
+            Role = account.AccountType.ToString()
         };
 
-        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpPortalInventory);
+        var expiresAtUtc = DateTimeOffset.UtcNow.AddMinutes(context.JwtOptions.ExpirationMinutes);
+        var token = CreateJwtToken(user, expiresAtUtc, context.JwtOptions);
+
+        var response = new MoongateHttpLoginResponse
+        {
+            AccessToken = token,
+            TokenType = "Bearer",
+            ExpiresAtUtc = expiresAtUtc,
+            AccountId = user.AccountId,
+            Username = user.Username,
+            Role = user.Role
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpLoginResponse);
+    }
+
+    private static IResult HandleMetrics(MoongateHttpRouteContext context, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        if (context.MetricsHttpSnapshotFactory is null)
+        {
+            return TypedResults.Text("metrics endpoint is not configured", statusCode: StatusCodes.Status404NotFound);
+        }
+
+        var snapshot = context.MetricsHttpSnapshotFactory.CreateSnapshot();
+
+        if (snapshot is null)
+        {
+            return TypedResults.Text(
+                "metrics are currently unavailable",
+                statusCode: StatusCodes.Status503ServiceUnavailable
+            );
+        }
+
+        var payload = MoongateHttpService.BuildPrometheusPayload(snapshot);
+
+        return TypedResults.Text(payload, "text/plain; version=0.0.4", Encoding.UTF8, StatusCodes.Status200OK);
+    }
+
+    private static IResult HandleRoot()
+        => TypedResults.Text("Moongate HTTP Service is running.");
+
+    private static IResult HandleServerVersion(CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        var response = new MoongateHttpServerVersion
+        {
+            Version = VersionUtils.Version,
+            Codename = VersionUtils.Codename
+        };
+
+        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpServerVersion);
     }
 
     private static IResult HandleUpdatePortalMe(
@@ -825,7 +964,10 @@ internal static class MoongateHttpRouteExtensions
                                 .GetAwaiter()
                                 .GetResult();
 
-        return Results.Json(MapPortalAccount(updated, characters), MoongateHttpJsonContext.Default.MoongateHttpPortalAccount);
+        return Results.Json(
+            MapPortalAccount(updated, characters),
+            MoongateHttpJsonContext.Default.MoongateHttpPortalAccount
+        );
     }
 
     private static IResult HandleUpdatePortalPassword(
@@ -890,272 +1032,6 @@ internal static class MoongateHttpRouteExtensions
         return TypedResults.Ok();
     }
 
-    private static IResult HandleLogin(
-        MoongateHttpRouteContext context,
-        MoongateHttpLoginRequest request,
-        CancellationToken cancellationToken
-    )
-    {
-        if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
-        {
-            return TypedResults.Text("username and password are required", statusCode: StatusCodes.Status400BadRequest);
-        }
-
-        var account = context.AccountService!
-                             .LoginAsync(request.Username, request.Password)
-                             .GetAwaiter()
-                             .GetResult();
-
-        if (account is null)
-        {
-            return TypedResults.Unauthorized();
-        }
-
-        var user = new MoongateHttpAuthenticatedUser
-        {
-            AccountId = account.Id.Value.ToString(),
-            Username = account.Username,
-            Role = account.AccountType.ToString()
-        };
-
-        var expiresAtUtc = DateTimeOffset.UtcNow.AddMinutes(context.JwtOptions.ExpirationMinutes);
-        var token = CreateJwtToken(user, expiresAtUtc, context.JwtOptions);
-
-        var response = new MoongateHttpLoginResponse
-        {
-            AccessToken = token,
-            TokenType = "Bearer",
-            ExpiresAtUtc = expiresAtUtc,
-            AccountId = user.AccountId,
-            Username = user.Username,
-            Role = user.Role
-        };
-
-        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpLoginResponse);
-    }
-
-    private static string ResolveMapName(int mapId)
-        => mapId switch
-        {
-            0 => "Felucca",
-            1 => "Trammel",
-            2 => "Ilshenar",
-            3 => "Malas",
-            4 => "Tokuno",
-            5 => "TerMur",
-            _ => $"Map {mapId}"
-        };
-
-    private static Serial? ResolveAuthenticatedAccountId(ClaimsPrincipal user)
-    {
-        var accountIdClaim = user.FindFirst("account_id")?.Value;
-        return string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
-    }
-
-    private static IReadOnlyList<MoongateHttpPortalInventoryItem> MapPortalInventoryItems(
-        UOMobileEntity character,
-        UOItemEntity? backpack
-    )
-    {
-        var items = new List<MoongateHttpPortalInventoryItem>();
-
-        foreach (var item in character.GetEquippedItemsRuntime()
-                                      .Where(static equipped => equipped.EquippedLayer != ItemLayerType.Bank)
-                                      .OrderBy(static equipped => equipped.EquippedLayer?.ToString(), StringComparer.Ordinal))
-        {
-            var layerLabel = item.EquippedLayer is null ? null : ResolveLayerLabel(item.EquippedLayer.Value);
-            items.Add(MapPortalInventoryItem(item, $"Equipped: {layerLabel}", layerLabel, null));
-        }
-
-        items.AddRange(MapPortalContainerItems(backpack, "Backpack"));
-
-        return items;
-    }
-
-    private static IReadOnlyList<MoongateHttpPortalInventoryItem> MapPortalContainerItems(
-        UOItemEntity? rootContainer,
-        string rootLabel
-    )
-    {
-        if (rootContainer is null)
-        {
-            return [];
-        }
-
-        var items = new List<MoongateHttpPortalInventoryItem>();
-
-        foreach (var item in FlattenContainerItems(rootContainer))
-        {
-            var container = item.ParentContainerId == rootContainer.Id
-                ? null
-                : FindContainer(rootContainer, item.ParentContainerId);
-            var location = item.ParentContainerId == rootContainer.Id
-                ? rootLabel
-                : $"Container: {container?.Name ?? item.ParentContainerId.Value.ToString()}";
-
-            items.Add(MapPortalInventoryItem(item, location, null, container));
-        }
-
-        return items;
-    }
-
-    private static IEnumerable<UOItemEntity> FlattenContainerItems(UOItemEntity container)
-    {
-        foreach (var item in container.Items.OrderBy(static child => child.Name ?? string.Empty, StringComparer.Ordinal))
-        {
-            yield return item;
-
-            if (item.Items.Count == 0)
-            {
-                continue;
-            }
-
-            foreach (var descendant in FlattenContainerItems(item))
-            {
-                yield return descendant;
-            }
-        }
-    }
-
-    private static UOItemEntity? FindContainer(UOItemEntity root, Serial containerId)
-    {
-        if (root.Id == containerId)
-        {
-            return root;
-        }
-
-        foreach (var item in root.Items)
-        {
-            if (item.Id == containerId)
-            {
-                return item;
-            }
-
-            if (item.Items.Count == 0)
-            {
-                continue;
-            }
-
-            var nested = FindContainer(item, containerId);
-
-            if (nested is not null)
-            {
-                return nested;
-            }
-        }
-
-        return null;
-    }
-
-    private static MoongateHttpPortalInventoryItem MapPortalInventoryItem(
-        UOItemEntity item,
-        string location,
-        string? layer,
-        UOItemEntity? container
-    )
-        => new()
-        {
-            ItemId = $"0x{item.ItemId:X4}",
-            Serial = item.Id.Value.ToString(),
-            Name = item.Name ?? $"0x{item.ItemId:X4}",
-            Graphic = item.ItemId,
-            Hue = item.Hue,
-            Amount = item.Amount,
-            Location = location,
-            Layer = layer,
-            ContainerSerial = container is null ? null : container.Id.Value.ToString(),
-            ContainerName = container?.Name,
-            ImageUrl = $"/api/item-templates/by-item-id/0x{item.ItemId:X4}/image"
-        };
-
-    private static string ResolveLayerLabel(ItemLayerType layer)
-        => layer switch
-        {
-            ItemLayerType.OneHanded or ItemLayerType.FirstValid => "OneHanded",
-            ItemLayerType.TwoHanded => "TwoHanded",
-            ItemLayerType.InnerTorso => "InnerTorso",
-            ItemLayerType.MiddleTorso => "MiddleTorso",
-            ItemLayerType.OuterTorso => "OuterTorso",
-            ItemLayerType.OuterLegs => "OuterLegs",
-            ItemLayerType.InnerLegs or ItemLayerType.LastUserValid => "InnerLegs",
-            ItemLayerType.LastValid => "Bank",
-            _ => layer.ToString()
-        };
-
-    private static MoongateHttpPortalAccount MapPortalAccount(UOAccountEntity account, IReadOnlyList<UOMobileEntity> characters)
-        => new()
-        {
-            AccountId = account.Id.Value.ToString(),
-            Username = account.Username,
-            Email = account.Email,
-            AccountType = account.AccountType.ToString(),
-            Characters = characters.Select(
-                                     static character => new MoongateHttpPortalCharacter
-                                     {
-                                         CharacterId = character.Id.Value.ToString(),
-                                         Name = character.Name,
-                                         MapId = character.MapId,
-                                         MapName = ResolveMapName(character.MapId),
-                                         X = character.Location.X,
-                                         Y = character.Location.Y
-                                     }
-                                 )
-                                 .ToList()
-        };
-
-    private static bool IsValidEmail(string email)
-    {
-        try
-        {
-            _ = new System.Net.Mail.MailAddress(email);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    private static IResult HandleMetrics(MoongateHttpRouteContext context, CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-
-        if (context.MetricsHttpSnapshotFactory is null)
-        {
-            return TypedResults.Text("metrics endpoint is not configured", statusCode: StatusCodes.Status404NotFound);
-        }
-
-        var snapshot = context.MetricsHttpSnapshotFactory.CreateSnapshot();
-
-        if (snapshot is null)
-        {
-            return TypedResults.Text(
-                "metrics are currently unavailable",
-                statusCode: StatusCodes.Status503ServiceUnavailable
-            );
-        }
-
-        var payload = MoongateHttpService.BuildPrometheusPayload(snapshot);
-
-        return TypedResults.Text(payload, "text/plain; version=0.0.4", Encoding.UTF8, StatusCodes.Status200OK);
-    }
-
-    private static IResult HandleRoot()
-        => TypedResults.Text("Moongate HTTP Service is running.");
-
-    private static IResult HandleServerVersion(CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-
-        var response = new MoongateHttpServerVersion
-        {
-            Version = VersionUtils.Version,
-            Codename = VersionUtils.Codename
-        };
-
-        return Results.Json(response, MoongateHttpJsonContext.Default.MoongateHttpServerVersion);
-    }
-
     private static IResult HandleUpdateUser(
         MoongateHttpRouteContext context,
         string accountId,
@@ -1211,6 +1087,20 @@ internal static class MoongateHttpRouteExtensions
                    : TypedResults.Ok(MapAccountToHttpUser(updated));
     }
 
+    private static bool IsValidEmail(string email)
+    {
+        try
+        {
+            _ = new MailAddress(email);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private static MoongateHttpUser MapAccountToHttpUser(UOAccountEntity account)
         => new()
         {
@@ -1222,24 +1112,6 @@ internal static class MoongateHttpRouteExtensions
             CreatedUtc = account.CreatedUtc,
             LastLoginUtc = account.LastLoginUtc,
             CharacterCount = account.CharacterIds.Count
-        };
-
-    private static MoongateHttpItemTemplateSummary MapItemTemplateToHttpSummary(ItemTemplateDefinition template)
-        => new()
-        {
-            Id = template.Id,
-            Name = template.Name,
-            Category = template.Category,
-            ItemId = template.ItemId,
-            Params = template.Params.ToDictionary(
-                static kvp => kvp.Key,
-                static kvp => new ItemTemplateParamDefinition
-                {
-                    Type = kvp.Value.Type,
-                    Value = kvp.Value.Value
-                },
-                StringComparer.OrdinalIgnoreCase
-            )
         };
 
     private static MoongateHttpItemTemplateDetail MapItemTemplateToHttpDetail(
@@ -1292,8 +1164,154 @@ internal static class MoongateHttpRouteExtensions
             )
         };
 
+    private static MoongateHttpItemTemplateSummary MapItemTemplateToHttpSummary(ItemTemplateDefinition template)
+        => new()
+        {
+            Id = template.Id,
+            Name = template.Name,
+            Category = template.Category,
+            ItemId = template.ItemId,
+            Params = template.Params.ToDictionary(
+                static kvp => kvp.Key,
+                static kvp => new ItemTemplateParamDefinition
+                {
+                    Type = kvp.Value.Type,
+                    Value = kvp.Value.Value
+                },
+                StringComparer.OrdinalIgnoreCase
+            )
+        };
+
+    private static MoongateHttpPortalAccount MapPortalAccount(
+        UOAccountEntity account,
+        IReadOnlyList<UOMobileEntity> characters
+    )
+        => new()
+        {
+            AccountId = account.Id.Value.ToString(),
+            Username = account.Username,
+            Email = account.Email,
+            AccountType = account.AccountType.ToString(),
+            Characters = characters.Select(
+                                       static character => new MoongateHttpPortalCharacter
+                                       {
+                                           CharacterId = character.Id.Value.ToString(),
+                                           Name = character.Name,
+                                           MapId = character.MapId,
+                                           MapName = ResolveMapName(character.MapId),
+                                           X = character.Location.X,
+                                           Y = character.Location.Y
+                                       }
+                                   )
+                                   .ToList()
+        };
+
+    private static IReadOnlyList<MoongateHttpPortalInventoryItem> MapPortalContainerItems(
+        UOItemEntity? rootContainer,
+        string rootLabel
+    )
+    {
+        if (rootContainer is null)
+        {
+            return [];
+        }
+
+        var items = new List<MoongateHttpPortalInventoryItem>();
+
+        foreach (var item in FlattenContainerItems(rootContainer))
+        {
+            var container = item.ParentContainerId == rootContainer.Id
+                                ? null
+                                : FindContainer(rootContainer, item.ParentContainerId);
+            var location = item.ParentContainerId == rootContainer.Id
+                               ? rootLabel
+                               : $"Container: {container?.Name ?? item.ParentContainerId.Value.ToString()}";
+
+            items.Add(MapPortalInventoryItem(item, location, null, container));
+        }
+
+        return items;
+    }
+
+    private static MoongateHttpPortalInventoryItem MapPortalInventoryItem(
+        UOItemEntity item,
+        string location,
+        string? layer,
+        UOItemEntity? container
+    )
+        => new()
+        {
+            ItemId = $"0x{item.ItemId:X4}",
+            Serial = item.Id.Value.ToString(),
+            Name = item.Name ?? $"0x{item.ItemId:X4}",
+            Graphic = item.ItemId,
+            Hue = item.Hue,
+            Amount = item.Amount,
+            Location = location,
+            Layer = layer,
+            ContainerSerial = container is null ? null : container.Id.Value.ToString(),
+            ContainerName = container?.Name,
+            ImageUrl = $"/api/item-templates/by-item-id/0x{item.ItemId:X4}/image"
+        };
+
+    private static IReadOnlyList<MoongateHttpPortalInventoryItem> MapPortalInventoryItems(
+        UOMobileEntity character,
+        UOItemEntity? backpack
+    )
+    {
+        var items = new List<MoongateHttpPortalInventoryItem>();
+
+        foreach (var item in character.GetEquippedItemsRuntime()
+                                      .Where(static equipped => equipped.EquippedLayer != ItemLayerType.Bank)
+                                      .OrderBy(
+                                          static equipped => equipped.EquippedLayer?.ToString(),
+                                          StringComparer.Ordinal
+                                      ))
+        {
+            var layerLabel = item.EquippedLayer is null ? null : ResolveLayerLabel(item.EquippedLayer.Value);
+            items.Add(MapPortalInventoryItem(item, $"Equipped: {layerLabel}", layerLabel, null));
+        }
+
+        items.AddRange(MapPortalContainerItems(backpack, "Backpack"));
+
+        return items;
+    }
+
     private static Serial? ParseAccountIdOrNull(string accountId)
         => uint.TryParse(accountId, out var parsedId) ? (Serial)parsedId : null;
+
+    private static Serial? ResolveAuthenticatedAccountId(ClaimsPrincipal user)
+    {
+        var accountIdClaim = user.FindFirst("account_id")?.Value;
+
+        return string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
+    }
+
+    private static string ResolveLayerLabel(ItemLayerType layer)
+        => layer switch
+        {
+            ItemLayerType.OneHanded or ItemLayerType.FirstValid    => "OneHanded",
+            ItemLayerType.TwoHanded                                => "TwoHanded",
+            ItemLayerType.InnerTorso                               => "InnerTorso",
+            ItemLayerType.MiddleTorso                              => "MiddleTorso",
+            ItemLayerType.OuterTorso                               => "OuterTorso",
+            ItemLayerType.OuterLegs                                => "OuterLegs",
+            ItemLayerType.InnerLegs or ItemLayerType.LastUserValid => "InnerLegs",
+            ItemLayerType.LastValid                                => "Bank",
+            _                                                      => layer.ToString()
+        };
+
+    private static string ResolveMapName(int mapId)
+        => mapId switch
+        {
+            0 => "Felucca",
+            1 => "Trammel",
+            2 => "Ilshenar",
+            3 => "Malas",
+            4 => "Tokuno",
+            5 => "TerMur",
+            _ => $"Map {mapId}"
+        };
 
     private static bool TryParseHexItemId(string itemIdText, out int itemId)
     {

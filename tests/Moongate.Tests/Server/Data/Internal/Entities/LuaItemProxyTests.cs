@@ -33,6 +33,9 @@ public sealed class LuaItemProxyTests
         public bool MoveToContainerResult { get; set; } = true;
         public bool EquipResult { get; set; } = true;
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -101,9 +104,6 @@ public sealed class LuaItemProxyTests
         }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
     }
 
@@ -270,6 +270,50 @@ public sealed class LuaItemProxyTests
     }
 
     [Test]
+    public void Flip_ShouldReturnFalse_WhenFlippableDataIsMissing()
+    {
+        var item = CreateItem();
+        var itemService = new LuaItemProxyTestItemService();
+        var proxy = new LuaItemProxy(item, itemService);
+
+        var result = proxy.Flip();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.False);
+                Assert.That(item.ItemId, Is.EqualTo(0x0675));
+                Assert.That(itemService.UpsertCalls, Is.Zero);
+            }
+        );
+    }
+
+    [Test]
+    public void Flip_ShouldRotateToNextFlippableItemId_AndPersist()
+    {
+        var item = CreateItem();
+        item.SetCustomString("flippable_item_ids", "0x0675,0x0676,0x0677");
+
+        var itemService = new LuaItemProxyTestItemService();
+        var proxy = new LuaItemProxy(item, itemService);
+
+        var first = proxy.Flip();
+        var second = proxy.Flip();
+        var third = proxy.Flip();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(first, Is.True);
+                Assert.That(second, Is.True);
+                Assert.That(third, Is.True);
+                Assert.That(item.ItemId, Is.EqualTo(0x0675));
+                Assert.That(itemService.UpsertCalls, Is.EqualTo(3));
+            }
+        );
+    }
+
+    [Test]
     public void PlacementActions_ShouldCallItemService()
     {
         var item = CreateItem();
@@ -374,50 +418,6 @@ public sealed class LuaItemProxyTests
                 Assert.That(spatial.BroadcastCalls, Is.EqualTo(1));
                 Assert.That(spatial.LastPacket, Is.TypeOf<PlaySoundEffectPacket>());
                 Assert.That(speech.SendCalls, Is.EqualTo(1));
-            }
-        );
-    }
-
-    [Test]
-    public void Flip_ShouldReturnFalse_WhenFlippableDataIsMissing()
-    {
-        var item = CreateItem();
-        var itemService = new LuaItemProxyTestItemService();
-        var proxy = new LuaItemProxy(item, itemService);
-
-        var result = proxy.Flip();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result, Is.False);
-                Assert.That(item.ItemId, Is.EqualTo(0x0675));
-                Assert.That(itemService.UpsertCalls, Is.Zero);
-            }
-        );
-    }
-
-    [Test]
-    public void Flip_ShouldRotateToNextFlippableItemId_AndPersist()
-    {
-        var item = CreateItem();
-        item.SetCustomString("flippable_item_ids", "0x0675,0x0676,0x0677");
-
-        var itemService = new LuaItemProxyTestItemService();
-        var proxy = new LuaItemProxy(item, itemService);
-
-        var first = proxy.Flip();
-        var second = proxy.Flip();
-        var third = proxy.Flip();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(first, Is.True);
-                Assert.That(second, Is.True);
-                Assert.That(third, Is.True);
-                Assert.That(item.ItemId, Is.EqualTo(0x0675));
-                Assert.That(itemService.UpsertCalls, Is.EqualTo(3));
             }
         );
     }

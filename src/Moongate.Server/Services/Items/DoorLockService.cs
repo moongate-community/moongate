@@ -31,8 +31,8 @@ public sealed class DoorLockService : IDoorLockService
 
         var lockId = door.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var existingLockId) &&
                      !string.IsNullOrWhiteSpace(existingLockId)
-            ? existingLockId
-            : Guid.NewGuid().ToString("N");
+                         ? existingLockId
+                         : Guid.NewGuid().ToString("N");
 
         ApplyLock(door, lockId!);
         await _itemService.UpsertItemAsync(door);
@@ -85,6 +85,9 @@ public sealed class DoorLockService : IDoorLockService
         door.RemoveCustomProperty(ItemCustomParamKeys.Door.LockId);
     }
 
+    private bool IsSupportedDoor(UOItemEntity item)
+        => item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
+
     private async Task<UOItemEntity?> TryGetLinkedDoorAsync(UOItemEntity door)
     {
         if (!door.TryGetCustomInteger(ItemCustomParamKeys.Door.LinkSerial, out var linkedSerialValue) ||
@@ -98,7 +101,4 @@ public sealed class DoorLockService : IDoorLockService
 
         return linkedDoor is not null && IsSupportedDoor(linkedDoor) ? linkedDoor : null;
     }
-
-    private bool IsSupportedDoor(UOItemEntity item)
-        => item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
 }

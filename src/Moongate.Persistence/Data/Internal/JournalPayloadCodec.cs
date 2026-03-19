@@ -13,11 +13,13 @@ internal static class JournalPayloadCodec
     public static UOAccountEntity DecodeAccount(byte[] payload)
         => SnapshotMapper.ToAccountEntity(MessagePackSerializer.Deserialize<AccountSnapshot>(payload)!);
 
+    public static BulletinBoardMessageEntity DecodeBulletinBoardMessage(byte[] payload)
+        => SnapshotMapper.ToBulletinBoardMessageEntity(
+            MessagePackSerializer.Deserialize<BulletinBoardMessageSnapshot>(payload)!
+        );
+
     public static UOItemEntity DecodeItem(byte[] payload)
         => SnapshotMapper.ToItemEntity(MessagePackSerializer.Deserialize<ItemSnapshot>(payload)!);
-
-    public static BulletinBoardMessageEntity DecodeBulletinBoardMessage(byte[] payload)
-        => SnapshotMapper.ToBulletinBoardMessageEntity(MessagePackSerializer.Deserialize<BulletinBoardMessageSnapshot>(payload)!);
 
     public static UOMobileEntity DecodeMobile(byte[] payload)
         => SnapshotMapper.ToMobileEntity(MessagePackSerializer.Deserialize<MobileSnapshot>(payload)!);
@@ -28,11 +30,11 @@ internal static class JournalPayloadCodec
     public static byte[] EncodeAccount(UOAccountEntity account)
         => MessagePackSerializer.Serialize(SnapshotMapper.ToAccountSnapshot(account));
 
-    public static byte[] EncodeItem(UOItemEntity item)
-        => MessagePackSerializer.Serialize(SnapshotMapper.ToItemSnapshot(item));
-
     public static byte[] EncodeBulletinBoardMessage(BulletinBoardMessageEntity message)
         => MessagePackSerializer.Serialize(SnapshotMapper.ToBulletinBoardMessageSnapshot(message));
+
+    public static byte[] EncodeItem(UOItemEntity item)
+        => MessagePackSerializer.Serialize(SnapshotMapper.ToItemSnapshot(item));
 
     public static byte[] EncodeMobile(UOMobileEntity mobile)
         => MessagePackSerializer.Serialize(SnapshotMapper.ToMobileSnapshot(mobile));

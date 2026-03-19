@@ -1,12 +1,11 @@
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Listeners.Base;
-
-using Moongate.Network.Packets.Incoming.Speech;
 
 namespace Moongate.Server.Handlers;
 

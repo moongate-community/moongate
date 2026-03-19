@@ -120,13 +120,79 @@ public class SpeechServiceTests
     }
 
     [Test]
-    public async Task ProcessIncomingSpeechAsync_ShouldReturnEchoPacket_ForRegularSpeech()
+    public async Task ProcessIncomingSpeechAsync_ShouldBroadcastRegularSpeechToNearbyPlayers()
     {
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
         var gameEventBusService = new GameEventBusService();
-        var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
+        var spatialWorldService = new SpeechServiceTestsSpatialWorldService();
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService,
+            spatialWorldService,
+            new DispatchEventsService(spatialWorldService, outgoingPacketQueue, gameNetworkSessionService)
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        using var nearbyClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            Character = new()
+            {
+                Id = (Serial)0x00000002,
+                Name = "Tom",
+                BaseBody = 0x0190
+            }
+        };
+        var nearbySession = new GameSession(new(nearbyClient))
+        {
+            Character = new()
+            {
+                Id = (Serial)0x00000003,
+                Name = "Jerry",
+                BaseBody = 0x0190
+            }
+        };
+        spatialWorldService.PlayersInRange.Add(session);
+        spatialWorldService.PlayersInRange.Add(nearbySession);
+
+        var packet = new UnicodeSpeechPacket
+        {
+            MessageType = ChatMessageType.Regular,
+            Hue = 0x0035,
+            Font = 0x0003,
+            Language = "ENU",
+            Text = "hello"
+        };
+
+        var result = await speechService.ProcessIncomingSpeechAsync(session, packet);
+        var dequeuedA = outgoingPacketQueue.TryDequeue(out var outboundA);
+        var dequeuedB = outgoingPacketQueue.TryDequeue(out var outboundB);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Null);
+                Assert.That(commandSystemService.ExecuteCallCount, Is.EqualTo(0));
+                Assert.That(dequeuedA, Is.True);
+                Assert.That(dequeuedB, Is.True);
+                Assert.That(outboundA.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+                Assert.That(outboundB.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task ProcessIncomingSpeechAsync_WhenTextIsWrappedInAsterisks_ShouldBroadcastAsEmote()
+    {
+        var commandSystemService = new MockCommandSystemService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
+        var gameEventBusService = new GameEventBusService();
+        var spatialWorldService = new SpeechServiceTestsSpatialWorldService();
         var speechService = new SpeechService(
             commandSystemService,
             outgoingPacketQueue,
@@ -146,6 +212,7 @@ public class SpeechServiceTests
                 BaseBody = 0x0190
             }
         };
+        spatialWorldService.PlayersInRange.Add(session);
 
         var packet = new UnicodeSpeechPacket
         {
@@ -153,16 +220,144 @@ public class SpeechServiceTests
             Hue = 0x0035,
             Font = 0x0003,
             Language = "ENU",
-            Text = "hello"
+            Text = "*grrr*"
         };
 
         var result = await speechService.ProcessIncomingSpeechAsync(session, packet);
+        var dequeued = outgoingPacketQueue.TryDequeue(out var outbound);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(result, Is.TypeOf<UnicodeSpeechMessagePacket>());
-                Assert.That(commandSystemService.ExecuteCallCount, Is.EqualTo(0));
+                Assert.That(result, Is.Null);
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+            }
+        );
+
+        var speechMessagePacket = (UnicodeSpeechMessagePacket)outbound.Packet;
+
+        Assert.That(speechMessagePacket.MessageType, Is.EqualTo(ChatMessageType.Emote));
+    }
+
+    [Test]
+    public async Task ProcessIncomingSpeechAsync_WhenSpeechStartsWithExclamationMark_ShouldBroadcastAsYellWithoutPrefix()
+    {
+        var commandSystemService = new MockCommandSystemService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
+        var gameEventBusService = new GameEventBusService();
+        var spatialWorldService = new SpeechServiceTestsSpatialWorldService();
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService,
+            spatialWorldService,
+            new DispatchEventsService(spatialWorldService, outgoingPacketQueue, gameNetworkSessionService)
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            Character = new()
+            {
+                Id = (Serial)0x00000002,
+                Name = "Tom",
+                BaseBody = 0x0190
+            }
+        };
+        spatialWorldService.PlayersInRange.Add(session);
+
+        var packet = new UnicodeSpeechPacket
+        {
+            MessageType = ChatMessageType.Regular,
+            Hue = 0x0035,
+            Font = 0x0003,
+            Language = "ENU",
+            Text = "!hello"
+        };
+
+        var result = await speechService.ProcessIncomingSpeechAsync(session, packet);
+        var dequeued = outgoingPacketQueue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Null);
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+            }
+        );
+
+        var speechMessagePacket = (UnicodeSpeechMessagePacket)outbound.Packet;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(speechMessagePacket.MessageType, Is.EqualTo(ChatMessageType.Yell));
+                Assert.That(speechMessagePacket.Text, Is.EqualTo("hello"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ProcessIncomingSpeechAsync_WhenSpeechStartsWithSemicolon_ShouldBroadcastAsWhisperWithoutPrefix()
+    {
+        var commandSystemService = new MockCommandSystemService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
+        var gameEventBusService = new GameEventBusService();
+        var spatialWorldService = new SpeechServiceTestsSpatialWorldService();
+        var speechService = new SpeechService(
+            commandSystemService,
+            outgoingPacketQueue,
+            gameNetworkSessionService,
+            gameEventBusService,
+            spatialWorldService,
+            new DispatchEventsService(spatialWorldService, outgoingPacketQueue, gameNetworkSessionService)
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            Character = new()
+            {
+                Id = (Serial)0x00000002,
+                Name = "Tom",
+                BaseBody = 0x0190
+            }
+        };
+        spatialWorldService.PlayersInRange.Add(session);
+
+        var packet = new UnicodeSpeechPacket
+        {
+            MessageType = ChatMessageType.Regular,
+            Hue = 0x0035,
+            Font = 0x0003,
+            Language = "ENU",
+            Text = ";hello"
+        };
+
+        var result = await speechService.ProcessIncomingSpeechAsync(session, packet);
+        var dequeued = outgoingPacketQueue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Null);
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+            }
+        );
+
+        var speechMessagePacket = (UnicodeSpeechMessagePacket)outbound.Packet;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(speechMessagePacket.MessageType, Is.EqualTo(ChatMessageType.Whisper));
+                Assert.That(speechMessagePacket.Text, Is.EqualTo("hello"));
             }
         );
     }

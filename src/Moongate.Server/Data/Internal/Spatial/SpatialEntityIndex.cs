@@ -1,13 +1,15 @@
+using System.Diagnostics;
+using Moongate.Core.Collections;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
-using Moongate.Core.Collections;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Utils;
+using Serilog;
 
 namespace Moongate.Server.Data.Internal.Spatial;
 
@@ -16,6 +18,7 @@ namespace Moongate.Server.Data.Internal.Spatial;
 /// </summary>
 internal sealed class SpatialEntityIndex
 {
+    private static readonly ILogger Logger = Log.ForContext<SpatialEntityIndex>();
     private readonly Lock _sync = new();
     private readonly Dictionary<int, SpatialMapIndex> _mapIndices = [];
     private readonly Dictionary<Serial, SpatialEntityLocation> _entityLocations = [];
@@ -359,6 +362,7 @@ internal sealed class SpatialEntityIndex
         }
 
         var radius = Math.Max(0, _spatialConfig.LazySectorEntityLoadRadius);
+        var stopwatch = Stopwatch.StartNew();
         var loadTasks = new List<Task>();
 
         for (var x = sectorX - radius; x <= sectorX + radius; x++)
@@ -370,6 +374,20 @@ internal sealed class SpatialEntityIndex
         }
 
         await Task.WhenAll(loadTasks).ConfigureAwait(false);
+        stopwatch.Stop();
+
+        if (stopwatch.ElapsedMilliseconds >= 25)
+        {
+            Logger.Warning(
+                "Spatial sector load batch map={MapId} anchorSectorX={SectorX} anchorSectorY={SectorY} radius={Radius} requestedSectors={RequestedSectors} total={TotalMs:0.###}ms",
+                mapId,
+                sectorX,
+                sectorY,
+                radius,
+                loadTasks.Count,
+                stopwatch.Elapsed.TotalMilliseconds
+            );
+        }
     }
 
     private async Task EnsureSingleSectorLoadedAsync(
@@ -473,6 +491,8 @@ internal sealed class SpatialEntityIndex
     private async Task LoadSectorEntitiesAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+        var totalStopwatch = Stopwatch.StartNew();
+        var mobilesStopwatch = Stopwatch.StartNew();
 
         var mobiles = await _mobileService.GetPersistentMobilesInSectorAsync(
                           mapId,
@@ -480,6 +500,9 @@ internal sealed class SpatialEntityIndex
                           sectorY,
                           cancellationToken
                       );
+        mobilesStopwatch.Stop();
+        var mobileIndexStopwatch = Stopwatch.StartNew();
+        var mobilesIndexed = 0;
 
         foreach (var mobile in mobiles)
         {
@@ -492,19 +515,47 @@ internal sealed class SpatialEntityIndex
 
             var (mobileSectorX, mobileSectorY) = GetSectorCoordinates(mobile.Location);
             var isNew = AddOrUpdateMobileInternal(mobile, mapId, mobileSectorX, mobileSectorY);
+            mobilesIndexed++;
 
             if (isNew)
             {
                 _onMobileAddedToWorld?.Invoke(mobile);
             }
         }
+        mobileIndexStopwatch.Stop();
+        var itemsStopwatch = Stopwatch.StartNew();
 
         var items = await _itemService.GetGroundItemsInSectorAsync(mapId, sectorX, sectorY);
+        itemsStopwatch.Stop();
+        var itemIndexStopwatch = Stopwatch.StartNew();
+        var itemsIndexed = 0;
 
         foreach (var item in items)
         {
             cancellationToken.ThrowIfCancellationRequested();
             AddOrUpdateItemInternal(item, mapId, sectorX, sectorY);
+            itemsIndexed++;
+        }
+        itemIndexStopwatch.Stop();
+        totalStopwatch.Stop();
+
+        if (totalStopwatch.ElapsedMilliseconds >= 25)
+        {
+            Logger.Warning(
+                "Spatial sector cold load map={MapId} sectorX={SectorX} sectorY={SectorY} total={TotalMs:0.###}ms mobilesQuery={MobilesQueryMs:0.###}ms mobileIndex={MobileIndexMs:0.###}ms itemsQuery={ItemsQueryMs:0.###}ms itemIndex={ItemIndexMs:0.###}ms mobilesLoaded={MobilesLoaded} mobilesIndexed={MobilesIndexed} itemsLoaded={ItemsLoaded} itemsIndexed={ItemsIndexed}",
+                mapId,
+                sectorX,
+                sectorY,
+                totalStopwatch.Elapsed.TotalMilliseconds,
+                mobilesStopwatch.Elapsed.TotalMilliseconds,
+                mobileIndexStopwatch.Elapsed.TotalMilliseconds,
+                itemsStopwatch.Elapsed.TotalMilliseconds,
+                itemIndexStopwatch.Elapsed.TotalMilliseconds,
+                mobiles.Count,
+                mobilesIndexed,
+                items.Count,
+                itemsIndexed
+            );
         }
     }
 

@@ -1,0 +1,68 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.provisioner",
+    "name": "Provisioner Vendor",
+    "category": "vendors",
+    "description": "Sell profile for basic town provisioners.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "apple",
+        "price": 5,
+        "maxStock": 40,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "bread_loaf",
+        "price": 7,
+        "maxStock": 30,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "cheese_wedge",
+        "price": 6,
+        "maxStock": 25,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "torch",
+        "price": 8,
+        "maxStock": 20,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "candle",
+        "price": 4,
+        "maxStock": 20,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "apple",
+        "price": 2,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "bread_loaf",
+        "price": 3,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "cheese_wedge",
+        "price": 2,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "torch",
+        "price": 3,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "candle",
+        "price": 1,
+        "enabled": true
+      }
+    ]
+  }
+]

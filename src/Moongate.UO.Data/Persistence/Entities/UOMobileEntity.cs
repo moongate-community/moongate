@@ -17,6 +17,9 @@ public class UOMobileEntity : IMobileEntity
 {
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
+    private const int DefaultUnarmedMinWeaponDamage = 1;
+    private const int DefaultUnarmedMaxWeaponDamage = 4;
+    private const uint MountVirtualSerialMask = 0x3EEEEEEE;
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
     private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
     private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
@@ -303,6 +306,31 @@ public class UOMobileEntity : IMobileEntity
     public int Weight { get; set; }
 
     /// <summary>
+    /// Gets or sets the current combat target.
+    /// </summary>
+    public Serial CombatantId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the scheduled next combat resolution time in UTC.
+    /// </summary>
+    public DateTime? NextCombatAtUtc { get; set; }
+
+    /// <summary>
+    /// Gets or sets the last time this mobile participated in combat in UTC.
+    /// </summary>
+    public DateTime? LastCombatAtUtc { get; set; }
+
+    /// <summary>
+    /// Gets or sets recent incoming aggression records for this mobile.
+    /// </summary>
+    public List<AggressorInfo> Aggressors { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets recent outgoing aggression records for this mobile.
+    /// </summary>
+    public List<AggressorInfo> Aggressed { get; set; } = [];
+
+    /// <summary>
     /// Gets or sets the carrying capacity used by the modern status packet.
     /// </summary>
     public int MaxWeight { get; set; }
@@ -326,6 +354,11 @@ public class UOMobileEntity : IMobileEntity
     /// Gets or sets the persisted skill table keyed by UO skill id.
     /// </summary>
     public Dictionary<UOSkillName, SkillEntry> Skills { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets runtime sound slots copied from the mobile template.
+    /// </summary>
+    public Dictionary<MobileSoundType, int> Sounds { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the base fire resistance.
@@ -401,26 +434,22 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets the effective fire resistance after equipment and runtime modifiers.
     /// </summary>
-    public int EffectiveFireResistance
-        => FireResistance + GetModifierValue(static modifier => modifier.FireResist);
+    public int EffectiveFireResistance => FireResistance + GetModifierValue(static modifier => modifier.FireResist);
 
     /// <summary>
     /// Gets the effective cold resistance after equipment and runtime modifiers.
     /// </summary>
-    public int EffectiveColdResistance
-        => ColdResistance + GetModifierValue(static modifier => modifier.ColdResist);
+    public int EffectiveColdResistance => ColdResistance + GetModifierValue(static modifier => modifier.ColdResist);
 
     /// <summary>
     /// Gets the effective poison resistance after equipment and runtime modifiers.
     /// </summary>
-    public int EffectivePoisonResistance
-        => PoisonResistance + GetModifierValue(static modifier => modifier.PoisonResist);
+    public int EffectivePoisonResistance => PoisonResistance + GetModifierValue(static modifier => modifier.PoisonResist);
 
     /// <summary>
     /// Gets the effective energy resistance after equipment and runtime modifiers.
     /// </summary>
-    public int EffectiveEnergyResistance
-        => EnergyResistance + GetModifierValue(static modifier => modifier.EnergyResist);
+    public int EffectiveEnergyResistance => EnergyResistance + GetModifierValue(static modifier => modifier.EnergyResist);
 
     /// <summary>
     /// Gets the effective luck after equipment and runtime modifiers.
@@ -489,12 +518,6 @@ public class UOMobileEntity : IMobileEntity
     public IReadOnlyDictionary<ItemLayerType, ItemReference> EquippedItemReferences => _equippedItemReferences;
 
     /// <summary>
-    /// Gets the runtime equipped item entities resolved for this mobile.
-    /// </summary>
-    public IReadOnlyCollection<UOItemEntity> GetEquippedItemsRuntime()
-        => _equippedItemsRuntime.Values;
-
-    /// <summary>
     /// Gets runtime total gold in backpack and bank box.
     /// </summary>
     public int Gold => GetGold();
@@ -508,6 +531,15 @@ public class UOMobileEntity : IMobileEntity
     /// Gets or sets whether the mobile is in war mode.
     /// </summary>
     public bool IsWarMode { get; set; }
+
+    /// <summary>
+    /// Gets or sets the legacy warmode alias backed by <see cref="IsWarMode" />.
+    /// </summary>
+    public bool Warmode
+    {
+        get => IsWarMode;
+        set => IsWarMode = value;
+    }
 
     /// <summary>
     /// Gets or sets the hunger level.
@@ -593,9 +625,44 @@ public class UOMobileEntity : IMobileEntity
     public bool IsInvulnerable { get; set; }
 
     /// <summary>
+    /// Gets or sets the mounted companion mobile identifier for this rider.
+    /// </summary>
+    public Serial MountedMobileId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the rider mobile identifier for this mount.
+    /// </summary>
+    public Serial RiderMobileId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the visual item identifier projected on the mount layer while this mobile is mounted.
+    /// </summary>
+    public int MountedDisplayItemId { get; set; }
+
+    /// <summary>
+    /// Gets or sets whether this mobile can be mounted according to loaded mount tile data.
+    /// </summary>
+    public bool IsMountable { get; set; }
+
+    /// <summary>
     /// Gets or sets whether the mobile is mounted.
     /// </summary>
-    public bool IsMounted { get; set; }
+    public bool IsMounted
+    {
+        get => MountedMobileId != Serial.Zero;
+        set
+        {
+            if (!value)
+            {
+                MountedMobileId = Serial.Zero;
+                MountedDisplayItemId = 0;
+            }
+            else if (MountedMobileId == Serial.Zero)
+            {
+                MountedMobileId = Id;
+            }
+        }
+    }
 
     /// <summary>
     /// Gets or sets the notoriety level.
@@ -626,6 +693,7 @@ public class UOMobileEntity : IMobileEntity
         item.ContainerPosition = Point2D.Zero;
         item.EquippedMobileId = Id;
         item.EquippedLayer = layer;
+        RecalculateDisplayedWeaponDamage();
     }
 
     /// <summary>
@@ -636,42 +704,7 @@ public class UOMobileEntity : IMobileEntity
         EquippedItemIds[layer] = itemId;
         _equippedItemReferences.Remove(layer);
         _equippedItemsRuntime.Remove(layer);
-    }
-
-    /// <summary>
-    /// Clears all custom properties.
-    /// </summary>
-    public void ClearCustomProperties()
-        => _customProperties.Clear();
-
-    /// <summary>
-    /// Equips an item and updates both persisted references and runtime cache.
-    /// </summary>
-    /// <param name="layer">Target item layer.</param>
-    /// <param name="item">Equipped item entity.</param>
-    public void EquipItem(ItemLayerType layer, UOItemEntity item)
-        => AddEquippedItem(layer, item);
-
-    /// <summary>
-    /// Resolves the current body value, falling back to race defaults when needed.
-    /// </summary>
-    public virtual Body GetBody()
-    {
-        if (BaseBody is Body baseBody)
-        {
-            if (baseBody == 0x00)
-            {
-                var raceForAliveBody = Race;
-
-                return raceForAliveBody is null ? 0x00 : (Body)raceForAliveBody.Body(this);
-            }
-
-            return baseBody;
-        }
-
-        var fallbackRace = Race ?? (Race.Races.Length > 0 ? Race.Races[0] : null);
-
-        return fallbackRace is null ? 0x00 : (Body)fallbackRace.Body(this);
+        RecalculateDisplayedWeaponDamage();
     }
 
     /// <summary>
@@ -703,6 +736,57 @@ public class UOMobileEntity : IMobileEntity
         RuntimeModifiers.Luck += delta.Luck;
         RuntimeModifiers.SpellChanneling += delta.SpellChanneling;
     }
+
+    /// <summary>
+    /// Clears all custom properties.
+    /// </summary>
+    public void ClearCustomProperties()
+        => _customProperties.Clear();
+
+    /// <summary>
+    /// Equips an item and updates both persisted references and runtime cache.
+    /// </summary>
+    /// <param name="layer">Target item layer.</param>
+    /// <param name="item">Equipped item entity.</param>
+    public void EquipItem(ItemLayerType layer, UOItemEntity item)
+        => AddEquippedItem(layer, item);
+
+    /// <summary>
+    /// Clears the current combat state for this mobile.
+    /// </summary>
+    public void ClearCombatState()
+    {
+        CombatantId = Serial.Zero;
+        NextCombatAtUtc = null;
+    }
+
+    /// <summary>
+    /// Resolves the current body value, falling back to race defaults when needed.
+    /// </summary>
+    public virtual Body GetBody()
+    {
+        if (BaseBody is Body baseBody)
+        {
+            if (baseBody == 0x00)
+            {
+                var raceForAliveBody = Race;
+
+                return raceForAliveBody is null ? 0x00 : (Body)raceForAliveBody.Body(this);
+            }
+
+            return baseBody;
+        }
+
+        var fallbackRace = Race ?? (Race.Races.Length > 0 ? Race.Races[0] : null);
+
+        return fallbackRace is null ? 0x00 : (Body)fallbackRace.Body(this);
+    }
+
+    /// <summary>
+    /// Gets the runtime equipped item entities resolved for this mobile.
+    /// </summary>
+    public IReadOnlyCollection<UOItemEntity> GetEquippedItemsRuntime()
+        => _equippedItemsRuntime.Values;
 
     /// <summary>
     /// Gets runtime equipped-item reference for a layer, if present.
@@ -775,6 +859,12 @@ public class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
+    /// Gets a skill entry by skill name when present.
+    /// </summary>
+    public SkillEntry? GetSkill(UOSkillName skillName)
+        => Skills.GetValueOrDefault(skillName);
+
+    /// <summary>
     /// Gets whether an item is equipped in the specified layer.
     /// </summary>
     /// <param name="layer">Equipment layer.</param>
@@ -810,19 +900,9 @@ public class UOMobileEntity : IMobileEntity
             _equippedItemReferences[layer.Value] = new(item.Id, item.ItemId, item.Hue);
             _equippedItemsRuntime[layer.Value] = item;
         }
+
+        RecalculateDisplayedWeaponDamage();
     }
-
-    /// <summary>
-    /// Overrides the resolved body with an explicit body value.
-    /// </summary>
-    public void OverrideBody(Body body)
-        => SetBody(body);
-
-    /// <summary>
-    /// Gets a skill entry by skill name when present.
-    /// </summary>
-    public SkillEntry? GetSkill(UOSkillName skillName)
-        => Skills.GetValueOrDefault(skillName);
 
     /// <summary>
     /// Initializes the persisted skill table from the loaded skill metadata table.
@@ -841,6 +921,12 @@ public class UOMobileEntity : IMobileEntity
             Skills[(UOSkillName)skillInfo.SkillID] = CreateSkillEntry(skillInfo);
         }
     }
+
+    /// <summary>
+    /// Overrides the resolved body with an explicit body value.
+    /// </summary>
+    public void OverrideBody(Body body)
+        => SetBody(body);
 
     /// <summary>
     /// Recomputes max stat caps from base stats and clamps current values.
@@ -867,6 +953,33 @@ public class UOMobileEntity : IMobileEntity
 
         return _customProperties.Remove(key);
     }
+
+    /// <summary>
+    /// Tries to build the virtual mount-layer item reference used for client sync.
+    /// </summary>
+    public bool TryGetMountDisplayItemReference(out ItemReference itemReference)
+    {
+        if (MountedDisplayItemId <= 0)
+        {
+            itemReference = default;
+
+            return false;
+        }
+
+        itemReference = new(
+            (Serial)(Serial.ItemOffset | (Id.Value & MountVirtualSerialMask)),
+            MountedDisplayItemId,
+            0
+        );
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a configured sound id for the requested mobile sound slot.
+    /// </summary>
+    public bool TryGetSound(MobileSoundType type, out int soundId)
+        => Sounds.TryGetValue(type, out soundId);
 
     /// <summary>
     /// Removes a runtime modifier delta from the aggregated runtime modifiers.
@@ -907,34 +1020,39 @@ public class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
+    /// Refreshes or appends a recent aggression relationship.
+    /// </summary>
+    public void RefreshAggressor(
+        Serial attackerId,
+        Serial defenderId,
+        DateTime nowUtc,
+        bool isCriminal = false,
+        bool canReportMurder = false
+    )
+    {
+        RefreshAggressorList(Aggressors, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+        RefreshAggressorList(Aggressed, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+    }
+
+    /// <summary>
+    /// Removes expired aggression entries from both aggression collections.
+    /// </summary>
+    public void ExpireAggressors(DateTime nowUtc, TimeSpan timeout)
+    {
+        if (timeout <= TimeSpan.Zero)
+        {
+            return;
+        }
+
+        ExpireAggressorList(Aggressors, nowUtc, timeout);
+        ExpireAggressorList(Aggressed, nowUtc, timeout);
+    }
+
+    /// <summary>
     /// Sets the explicit base body override.
     /// </summary>
     public void SetBody(Body body)
         => BaseBody = body;
-
-    /// <summary>
-    /// Sets or replaces a persisted skill entry.
-    /// </summary>
-    public SkillEntry SetSkill(
-        UOSkillName skillName,
-        int value,
-        int? baseValue = null,
-        int cap = DefaultSkillCap,
-        UOSkillLock lockState = UOSkillLock.Up
-    )
-    {
-        var skillInfo = ResolveSkillInfo(skillName);
-        var entry = Skills.TryGetValue(skillName, out var existing) ? existing : CreateSkillEntry(skillInfo);
-
-        entry.Skill = skillInfo;
-        entry.Value = value;
-        entry.Base = baseValue ?? value;
-        entry.Cap = cap;
-        entry.Lock = lockState;
-        Skills[skillName] = entry;
-
-        return entry;
-    }
 
     /// <summary>
     /// Sets a boolean custom property.
@@ -1007,6 +1125,30 @@ public class UOMobileEntity : IMobileEntity
                 StringValue = value
             }
         );
+
+    /// <summary>
+    /// Sets or replaces a persisted skill entry.
+    /// </summary>
+    public SkillEntry SetSkill(
+        UOSkillName skillName,
+        int value,
+        int? baseValue = null,
+        int cap = DefaultSkillCap,
+        UOSkillLock lockState = UOSkillLock.Up
+    )
+    {
+        var skillInfo = ResolveSkillInfo(skillName);
+        var entry = Skills.TryGetValue(skillName, out var existing) ? existing : CreateSkillEntry(skillInfo);
+
+        entry.Skill = skillInfo;
+        entry.Value = value;
+        entry.Base = baseValue ?? value;
+        entry.Cap = cap;
+        entry.Lock = lockState;
+        Skills[skillName] = entry;
+
+        return entry;
+    }
 
     /// <summary>
     /// Returns a diagnostic string for the mobile.
@@ -1121,8 +1263,66 @@ public class UOMobileEntity : IMobileEntity
             item.EquippedLayer = null;
         }
 
+        RecalculateDisplayedWeaponDamage();
+
         return removed;
     }
+
+    private void RecalculateDisplayedWeaponDamage()
+    {
+        if (TryGetEquippedWeaponWithCombatStats(out var weapon))
+        {
+            MinWeaponDamage = Math.Max(0, weapon.CombatStats?.DamageMin ?? DefaultUnarmedMinWeaponDamage);
+            MaxWeaponDamage = Math.Max(MinWeaponDamage, weapon.CombatStats?.DamageMax ?? DefaultUnarmedMaxWeaponDamage);
+
+            return;
+        }
+
+        MinWeaponDamage = DefaultUnarmedMinWeaponDamage;
+        MaxWeaponDamage = DefaultUnarmedMaxWeaponDamage;
+    }
+
+    private bool TryGetEquippedWeaponWithCombatStats(out UOItemEntity weapon)
+    {
+        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.OneHanded, out weapon))
+        {
+            return true;
+        }
+
+        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.TwoHanded, out weapon))
+        {
+            return true;
+        }
+
+        weapon = null!;
+
+        return false;
+    }
+
+    private bool TryGetEquippedWeaponWithCombatStats(ItemLayerType layer, out UOItemEntity weapon)
+    {
+        if (_equippedItemsRuntime.TryGetValue(layer, out var equippedItem) &&
+            equippedItem.CombatStats is { DamageMin: > 0, DamageMax: > 0 })
+        {
+            weapon = equippedItem;
+
+            return true;
+        }
+
+        weapon = null!;
+
+        return false;
+    }
+
+    private static SkillEntry CreateSkillEntry(SkillInfo skillInfo)
+        => new()
+        {
+            Skill = skillInfo,
+            Value = 0,
+            Base = 0,
+            Cap = DefaultSkillCap,
+            Lock = UOSkillLock.Up
+        };
 
     private int GetGold()
     {
@@ -1140,6 +1340,121 @@ public class UOMobileEntity : IMobileEntity
         }
 
         return total >= int.MaxValue ? int.MaxValue : (int)total;
+    }
+
+    private int GetModifierValue(Func<MobileModifiers, int> selector)
+    {
+        var total = 0;
+
+        if (EquipmentModifiers is not null)
+        {
+            total += selector(EquipmentModifiers);
+        }
+
+        if (RuntimeModifiers is not null)
+        {
+            total += selector(RuntimeModifiers);
+        }
+
+        return total;
+    }
+
+    private static void ExpireAggressorList(List<AggressorInfo> entries, DateTime nowUtc, TimeSpan timeout)
+        => entries.RemoveAll(entry => nowUtc - entry.LastCombatAtUtc >= timeout);
+
+    private static void RefreshAggressorList(
+        List<AggressorInfo> entries,
+        Serial attackerId,
+        Serial defenderId,
+        DateTime nowUtc,
+        bool isCriminal,
+        bool canReportMurder
+    )
+    {
+        for (var i = 0; i < entries.Count; i++)
+        {
+            if (entries[i].AttackerId == attackerId && entries[i].DefenderId == defenderId)
+            {
+                entries[i] = new(attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+
+                return;
+            }
+        }
+
+        entries.Add(new(attackerId, defenderId, nowUtc, isCriminal, canReportMurder));
+    }
+
+    private static bool IsZero(MobileModifiers modifiers)
+        => modifiers.StrengthBonus == 0 &&
+           modifiers.DexterityBonus == 0 &&
+           modifiers.IntelligenceBonus == 0 &&
+           modifiers.PhysicalResist == 0 &&
+           modifiers.FireResist == 0 &&
+           modifiers.ColdResist == 0 &&
+           modifiers.PoisonResist == 0 &&
+           modifiers.EnergyResist == 0 &&
+           modifiers.HitChanceIncrease == 0 &&
+           modifiers.DefenseChanceIncrease == 0 &&
+           modifiers.DamageIncrease == 0 &&
+           modifiers.SwingSpeedIncrease == 0 &&
+           modifiers.SpellDamageIncrease == 0 &&
+           modifiers.FasterCasting == 0 &&
+           modifiers.FasterCastRecovery == 0 &&
+           modifiers.LowerManaCost == 0 &&
+           modifiers.LowerReagentCost == 0 &&
+           modifiers.Luck == 0 &&
+           modifiers.SpellChanneling == 0;
+
+    private static SkillInfo ResolveSkillInfo(UOSkillName skillName)
+    {
+        foreach (var skillInfo in SkillInfo.Table)
+        {
+            if (skillInfo.SkillID == (int)skillName)
+            {
+                return skillInfo;
+            }
+        }
+
+        return new(
+            (int)skillName,
+            skillName.ToString(),
+            0,
+            0,
+            0,
+            string.Empty,
+            0,
+            0,
+            0,
+            1,
+            skillName.ToString(),
+            Stat.Strength,
+            Stat.Strength
+        );
+    }
+
+    private static long SumGoldRecursive(UOItemEntity container, HashSet<Serial> visited)
+    {
+        if (!visited.Add(container.Id))
+        {
+            return 0;
+        }
+
+        long total = 0;
+
+        foreach (var child in container.Items)
+        {
+            if (child.ItemId == GoldItemId)
+            {
+                total += Math.Max(0, child.Amount);
+            }
+
+            if (child.Items.Count > 0)
+            {
+                total += SumGoldRecursive(child, visited);
+            }
+        }
+
+        return total;
     }
 
     private bool TryGetBackpackRuntime(out UOItemEntity backpack)
@@ -1173,104 +1488,4 @@ public class UOMobileEntity : IMobileEntity
 
     private bool TryGetBankBoxRuntime(out UOItemEntity bankBox)
         => _equippedItemsRuntime.TryGetValue(ItemLayerType.Bank, out bankBox);
-
-    private int GetModifierValue(Func<MobileModifiers, int> selector)
-    {
-        var total = 0;
-
-        if (EquipmentModifiers is not null)
-        {
-            total += selector(EquipmentModifiers);
-        }
-
-        if (RuntimeModifiers is not null)
-        {
-            total += selector(RuntimeModifiers);
-        }
-
-        return total;
-    }
-
-    private static SkillEntry CreateSkillEntry(SkillInfo skillInfo)
-        => new()
-        {
-            Skill = skillInfo,
-            Value = 0,
-            Base = 0,
-            Cap = DefaultSkillCap,
-            Lock = UOSkillLock.Up
-        };
-
-    private static SkillInfo ResolveSkillInfo(UOSkillName skillName)
-    {
-        foreach (var skillInfo in SkillInfo.Table)
-        {
-            if (skillInfo.SkillID == (int)skillName)
-            {
-                return skillInfo;
-            }
-        }
-
-        return new(
-            (int)skillName,
-            skillName.ToString(),
-            0,
-            0,
-            0,
-            string.Empty,
-            0,
-            0,
-            0,
-            1,
-            skillName.ToString(),
-            Stat.Strength,
-            Stat.Strength
-        );
-    }
-
-    private static bool IsZero(MobileModifiers modifiers)
-        => modifiers.StrengthBonus == 0 &&
-           modifiers.DexterityBonus == 0 &&
-           modifiers.IntelligenceBonus == 0 &&
-           modifiers.PhysicalResist == 0 &&
-           modifiers.FireResist == 0 &&
-           modifiers.ColdResist == 0 &&
-           modifiers.PoisonResist == 0 &&
-           modifiers.EnergyResist == 0 &&
-           modifiers.HitChanceIncrease == 0 &&
-           modifiers.DefenseChanceIncrease == 0 &&
-           modifiers.DamageIncrease == 0 &&
-           modifiers.SwingSpeedIncrease == 0 &&
-           modifiers.SpellDamageIncrease == 0 &&
-           modifiers.FasterCasting == 0 &&
-           modifiers.FasterCastRecovery == 0 &&
-           modifiers.LowerManaCost == 0 &&
-           modifiers.LowerReagentCost == 0 &&
-           modifiers.Luck == 0 &&
-           modifiers.SpellChanneling == 0;
-
-    private static long SumGoldRecursive(UOItemEntity container, HashSet<Serial> visited)
-    {
-        if (!visited.Add(container.Id))
-        {
-            return 0;
-        }
-
-        long total = 0;
-
-        foreach (var child in container.Items)
-        {
-            if (child.ItemId == GoldItemId)
-            {
-                total += Math.Max(0, child.Amount);
-            }
-
-            if (child.Items.Count > 0)
-            {
-                total += SumGoldRecursive(child, visited);
-            }
-        }
-
-        return total;
-    }
 }

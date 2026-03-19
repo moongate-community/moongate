@@ -35,6 +35,30 @@ internal sealed class PidFileGuard : IDisposable
             }
         );
 
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+
+        if (!File.Exists(_pidFilePath))
+        {
+            return;
+        }
+
+        var existingRaw = ReadPidFile(_pidFilePath);
+
+        if (!int.TryParse(existingRaw, out var existingPid) || existingPid != _currentProcessId)
+        {
+            return;
+        }
+
+        File.Delete(_pidFilePath);
+    }
+
     internal static PidFileGuard Acquire(
         string rootDirectory,
         Func<int> currentProcessIdProvider,
@@ -68,31 +92,7 @@ internal sealed class PidFileGuard : IDisposable
 
         File.WriteAllText(pidFilePath, currentProcessId.ToString(), Utf8WithoutBom);
 
-        return new PidFileGuard(pidFilePath, currentProcessId);
-    }
-
-    public void Dispose()
-    {
-        if (_disposed)
-        {
-            return;
-        }
-
-        _disposed = true;
-
-        if (!File.Exists(_pidFilePath))
-        {
-            return;
-        }
-
-        var existingRaw = ReadPidFile(_pidFilePath);
-
-        if (!int.TryParse(existingRaw, out var existingPid) || existingPid != _currentProcessId)
-        {
-            return;
-        }
-
-        File.Delete(_pidFilePath);
+        return new(pidFilePath, currentProcessId);
     }
 
     private static string ReadPidFile(string pidFilePath)

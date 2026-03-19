@@ -1,9 +1,9 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules.Internal;
-using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Modules;
@@ -15,17 +15,19 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class CombatModule
 {
-    private const string TargetSerialKey = "ai_target_serial";
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly ICombatService _combatService;
 
     public CombatModule(
         ISpatialWorldService spatialWorldService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        ICombatService combatService
     )
     {
         _spatialWorldService = spatialWorldService;
         _gameEventBusService = gameEventBusService;
+        _combatService = combatService;
     }
 
     [ScriptFunction("cast", "Spell cast primitive placeholder. Returns false when no cast is executed.")]
@@ -47,7 +49,7 @@ public sealed class CombatModule
             return false;
         }
 
-        return npc!.RemoveCustomProperty(TargetSerialKey);
+        return _combatService.ClearCombatantAsync(npc!.Id).GetAwaiter().GetResult();
     }
 
     [ScriptFunction("set_target", "Sets combat target serial for the given npc.")]
@@ -60,9 +62,9 @@ public sealed class CombatModule
             return false;
         }
 
-        npc!.SetCustomInteger(TargetSerialKey, targetSerial);
-
-        return true;
+        return _combatService.TrySetCombatantAsync(npc!.Id, (Moongate.UO.Data.Ids.Serial)targetSerial)
+                             .GetAwaiter()
+                             .GetResult();
     }
 
     [ScriptFunction("swing", "Broadcasts a swing animation intent when target is in melee range.")]

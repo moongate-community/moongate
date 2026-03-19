@@ -1,9 +1,9 @@
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.World;
-using Moongate.Server.Data.Internal.Scripting;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -107,19 +107,37 @@ public sealed class DoorService : IDoorService
         return true;
     }
 
-    private bool IsClosedAndLocked(UOItemEntity item)
+    private async Task<bool> ContainsMatchingKeyRecursiveAsync(Serial itemId, string lockId, HashSet<Serial> visited)
     {
-        if (!_doorDataService.TryGetToggleDefinition(item.ItemId, out var state) || !state.IsClosed)
+        if (!visited.Add(itemId))
         {
             return false;
         }
 
-        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var locked) || !locked)
+        var item = await _itemService.GetItemAsync(itemId);
+
+        if (item is null)
         {
             return false;
         }
 
-        return item.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var lockId) && !string.IsNullOrWhiteSpace(lockId);
+        if (item.TryGetCustomString(ItemCustomParamKeys.Key.LockId, out var itemLockId) &&
+            string.Equals(itemLockId, lockId, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        var containedItems = await _itemService.GetItemsInContainerAsync(item.Id);
+
+        foreach (var containedItem in containedItems)
+        {
+            if (await ContainsMatchingKeyRecursiveAsync(containedItem.Id, lockId, visited))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private async Task<bool> HasMatchingKeyAsync(long sessionId, UOItemEntity door)
@@ -167,41 +185,21 @@ public sealed class DoorService : IDoorService
         return false;
     }
 
-    private async Task<bool> ContainsMatchingKeyRecursiveAsync(Serial itemId, string lockId, HashSet<Serial> visited)
+    private bool IsClosedAndLocked(UOItemEntity item)
     {
-        if (!visited.Add(itemId))
+        if (!_doorDataService.TryGetToggleDefinition(item.ItemId, out var state) || !state.IsClosed)
         {
             return false;
         }
 
-        var item = await _itemService.GetItemAsync(itemId);
-
-        if (item is null)
+        if (!item.TryGetCustomBoolean(ItemCustomParamKeys.Door.Locked, out var locked) || !locked)
         {
             return false;
         }
 
-        if (item.TryGetCustomString(ItemCustomParamKeys.Key.LockId, out var itemLockId) &&
-            string.Equals(itemLockId, lockId, StringComparison.Ordinal))
-        {
-            return true;
-        }
-
-        var containedItems = await _itemService.GetItemsInContainerAsync(item.Id);
-
-        foreach (var containedItem in containedItems)
-        {
-            if (await ContainsMatchingKeyRecursiveAsync(containedItem.Id, lockId, visited))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return item.TryGetCustomString(ItemCustomParamKeys.Door.LockId, out var lockId) &&
+               !string.IsNullOrWhiteSpace(lockId);
     }
-
-    private bool IsSupportedDoor(UOItemEntity item)
-        => item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
 
     private bool IsOpen(UOItemEntity item)
     {
@@ -213,6 +211,9 @@ public sealed class DoorService : IDoorService
         return !state.IsClosed;
     }
 
+    private bool IsSupportedDoor(UOItemEntity item)
+        => item.IsDoor || _doorDataService.TryGetToggleDefinition(item.ItemId, out _);
+
     private async Task<bool> ToggleCoreAsync(UOItemEntity item)
     {
         if (!_doorDataService.TryGetToggleDefinition(item.ItemId, out var state))
@@ -221,16 +222,16 @@ public sealed class DoorService : IDoorService
         }
 
         var targetLocation = state.IsClosed
-            ? new Point3D(
-                item.Location.X + state.Offset.X,
-                item.Location.Y + state.Offset.Y,
-                item.Location.Z + state.Offset.Z
-            )
-            : new Point3D(
-                item.Location.X - state.Offset.X,
-                item.Location.Y - state.Offset.Y,
-                item.Location.Z - state.Offset.Z
-            );
+                                 ? new(
+                                     item.Location.X + state.Offset.X,
+                                     item.Location.Y + state.Offset.Y,
+                                     item.Location.Z + state.Offset.Z
+                                 )
+                                 : new Point3D(
+                                     item.Location.X - state.Offset.X,
+                                     item.Location.Y - state.Offset.Y,
+                                     item.Location.Z - state.Offset.Z
+                                 );
 
         var moved = await _itemService.MoveItemToWorldAsync(item.Id, targetLocation, item.MapId);
 

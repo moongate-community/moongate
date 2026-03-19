@@ -28,8 +28,7 @@ public sealed class TimerModule
             name,
             TimeSpan.FromMilliseconds(delayMs),
             CreateSafeCallback(name, callback),
-            TimeSpan.FromMilliseconds(delayMs),
-            false
+            TimeSpan.FromMilliseconds(delayMs)
         );
     }
 

@@ -50,7 +50,9 @@ public sealed class ItemModule
     [ScriptFunction("spawn", "Spawns an item template at world position { x, y, z, map_id }.")]
     public LuaItemProxy? Spawn(string itemTemplateId, Table? position, int amount = 1)
     {
-        if (string.IsNullOrWhiteSpace(itemTemplateId) || amount <= 0 || !TryParsePosition(position, out var location, out var mapId))
+        if (string.IsNullOrWhiteSpace(itemTemplateId) ||
+            amount <= 0 ||
+            !TryParsePosition(position, out var location, out var mapId))
         {
             return null;
         }
@@ -76,27 +78,16 @@ public sealed class ItemModule
         return new(resolved, _itemService, _spatialWorldService, _speechService);
     }
 
-    private static bool TryParsePosition(Table? position, out Point3D location, out int mapId)
+    private static void RegisterLuaTypeIfNeeded()
     {
-        location = Point3D.Zero;
-        mapId = 0;
-
-        if (position is null)
+        if (_isLuaItemProxyTypeRegistered)
         {
-            return false;
+            return;
         }
 
-        if (!TryGetRequiredInt(position, "x", out var x) ||
-            !TryGetRequiredInt(position, "y", out var y) ||
-            !TryGetRequiredInt(position, "z", out var z) ||
-            !TryGetRequiredInt(position, "map_id", out mapId))
-        {
-            return false;
-        }
-
-        location = new(x, y, z);
-
-        return true;
+        var type = typeof(LuaItemProxy);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
+        _isLuaItemProxyTypeRegistered = true;
     }
 
     private static bool TryGetRequiredInt(Table table, string key, out int value)
@@ -119,15 +110,26 @@ public sealed class ItemModule
         }
     }
 
-    private static void RegisterLuaTypeIfNeeded()
+    private static bool TryParsePosition(Table? position, out Point3D location, out int mapId)
     {
-        if (_isLuaItemProxyTypeRegistered)
+        location = Point3D.Zero;
+        mapId = 0;
+
+        if (position is null)
         {
-            return;
+            return false;
         }
 
-        var type = typeof(LuaItemProxy);
-        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
-        _isLuaItemProxyTypeRegistered = true;
+        if (!TryGetRequiredInt(position, "x", out var x) ||
+            !TryGetRequiredInt(position, "y", out var y) ||
+            !TryGetRequiredInt(position, "z", out var z) ||
+            !TryGetRequiredInt(position, "map_id", out mapId))
+        {
+            return false;
+        }
+
+        location = new(x, y, z);
+
+        return true;
     }
 }

@@ -30,6 +30,57 @@ Main methods:
 - `RunBackgroundAndPostResult<TResult>(Func<TResult> backgroundWork, Action<TResult> onGameLoop, Action<Exception>? onError = null)`
 - `RunBackgroundAndPostResultAsync<TResult>(Func<Task<TResult>> backgroundWork, Action<TResult> onGameLoop, Action<Exception>? onError = null)`
 
+## Async Work Scheduler
+
+For higher-level async features that need dedupe and keyed scheduling, Moongate also exposes:
+
+- `IAsyncWorkSchedulerService.TrySchedule<TKey, TResult>(...)`
+
+This sits above `IBackgroundJobService` and adds:
+
+- keyed in-flight deduplication
+- a named logical queue per feature
+- background execution for the expensive part
+- game-loop callback for the final apply step
+
+Typical use cases:
+
+- OpenAI-backed NPC dialogue
+- slow external API calls
+- expensive data preparation that must later mutate game state safely
+
+Example:
+
+```csharp
+_asyncWorkSchedulerService.TrySchedule(
+    "npc-dialogue",
+    npc.Id,
+    cancellationToken => _openAiNpcDialogueClient.GenerateAsync(request, cancellationToken),
+    response =>
+    {
+        // Runs back on the game loop.
+        ApplyDialogueResult(npc, response);
+    },
+    ex => _logger.Error(ex, "NPC dialogue generation failed for {NpcId}.", npc.Id),
+    TimeSpan.FromSeconds(30)
+);
+```
+
+Use `IBackgroundJobService` directly when you only need raw background execution.
+Use `IAsyncWorkSchedulerService` when you need feature-level dedupe and safe result application.
+
+## Lua Async Jobs
+
+Lua scripts can also use the higher-level `async_job` module for named background jobs.
+
+That path is built on top of `IAsyncWorkSchedulerService` and keeps the same contract:
+
+- background work off the game loop
+- completion callback back on the game loop
+- no world mutation from the worker
+
+See [Async Jobs](../scripting/async-jobs.md).
+
 ## Events
 
 For event-driven orchestration:

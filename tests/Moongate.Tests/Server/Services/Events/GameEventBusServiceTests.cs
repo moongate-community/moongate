@@ -104,6 +104,42 @@ public class GameEventBusServiceTests
     }
 
     [Test]
+    public async Task PublishAsync_WhenListenerIsSlow_ShouldLogWarningWithListenerType()
+    {
+        var previousLogger = Log.Logger;
+        var sink = new CapturingSink();
+        Log.Logger = new LoggerConfiguration()
+                     .MinimumLevel
+                     .Verbose()
+                     .WriteTo
+                     .Sink(sink)
+                     .CreateLogger();
+
+        try
+        {
+            var bus = new GameEventBusService();
+            bus.RegisterListener(new DelayedConnectedListener(150));
+
+            await bus.PublishAsync(new PlayerConnectedEvent(7, null, 1));
+
+            Assert.That(
+                sink.Events.Any(
+                    logEvent =>
+                        logEvent.Level == LogEventLevel.Warning &&
+                        logEvent.MessageTemplate.Text.Contains("Slow game event listener") &&
+                        logEvent.Properties.TryGetValue("ListenerType", out var listenerType) &&
+                        listenerType.ToString().Contains(nameof(DelayedConnectedListener))
+                ),
+                Is.True
+            );
+        }
+        finally
+        {
+            Log.Logger = previousLogger;
+        }
+    }
+
+    [Test]
     public async Task PublishAsync_WhenOneListenerFails_ShouldContinueOtherListeners()
     {
         var bus = new GameEventBusService();
@@ -117,38 +153,5 @@ public class GameEventBusServiceTests
 
         Assert.That(tracking.Received.Count, Is.EqualTo(1));
         Assert.That(tracking.Received[0].SessionId, Is.EqualTo(7));
-    }
-
-    [Test]
-    public async Task PublishAsync_WhenListenerIsSlow_ShouldLogWarningWithListenerType()
-    {
-        var previousLogger = Log.Logger;
-        var sink = new CapturingSink();
-        Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
-            .WriteTo.Sink(sink)
-            .CreateLogger();
-
-        try
-        {
-            var bus = new GameEventBusService();
-            bus.RegisterListener(new DelayedConnectedListener(150));
-
-            await bus.PublishAsync(new PlayerConnectedEvent(7, null, 1));
-
-            Assert.That(
-                sink.Events.Any(logEvent =>
-                    logEvent.Level == LogEventLevel.Warning &&
-                    logEvent.MessageTemplate.Text.Contains("Slow game event listener") &&
-                    logEvent.Properties.TryGetValue("ListenerType", out var listenerType) &&
-                    listenerType.ToString().Contains(nameof(DelayedConnectedListener))
-                ),
-                Is.True
-            );
-        }
-        finally
-        {
-            Log.Logger = previousLogger;
-        }
     }
 }

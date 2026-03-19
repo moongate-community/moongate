@@ -26,42 +26,21 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
-    public void DrawContainerAndAddItemCombinedPacket_Write_ShouldSerializeTwoPackets()
+    public void DeleteObjectPacket_Write_ShouldSerializeExpectedPayload()
     {
-        var container = new UOItemEntity
-        {
-            Id = (Serial)0x40000040,
-            GumpId = 0x003C
-        };
-        var item = new UOItemEntity
-        {
-            Id = (Serial)0x40000041,
-            ItemId = 0x0EED,
-            Hue = 0x0444
-        };
-        container.AddItem(item, new(12, 34));
-
-        var packet = new DrawContainerAndAddItemCombinedPacket(container);
+        var packet = new DeleteObjectPacket((Serial)0x40000042u);
 
         var data = Write(packet);
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(data[0], Is.EqualTo(0x24));
-                Assert.That(data[9], Is.EqualTo(0x3C));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(10, 2)), Is.EqualTo((ushort)(5 + 20)));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(12, 2)), Is.EqualTo((ushort)1));
-            }
-        );
+        Assert.That(data, Is.EqualTo(new byte[] { 0x1D, 0x40, 0x00, 0x00, 0x42 }));
     }
 
     [Test]
     public void DrawContainerAndAddItemCombinedPacket_Write_ShouldFallbackToContainerDefinitionGump_WhenEntityGumpIsMissing()
     {
         var previous = ContainerLayoutSystem.ContainerBagDefsByItemId.TryGetValue(0x0E76, out var originalDefinition)
-            ? originalDefinition
-            : null;
+                           ? originalDefinition
+                           : null;
 
         try
         {
@@ -102,6 +81,37 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
+    public void DrawContainerAndAddItemCombinedPacket_Write_ShouldSerializeTwoPackets()
+    {
+        var container = new UOItemEntity
+        {
+            Id = (Serial)0x40000040,
+            GumpId = 0x003C
+        };
+        var item = new UOItemEntity
+        {
+            Id = (Serial)0x40000041,
+            ItemId = 0x0EED,
+            Hue = 0x0444
+        };
+        container.AddItem(item, new(12, 34));
+
+        var packet = new DrawContainerAndAddItemCombinedPacket(container);
+
+        var data = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data[0], Is.EqualTo(0x24));
+                Assert.That(data[9], Is.EqualTo(0x3C));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(10, 2)), Is.EqualTo((ushort)(5 + 20)));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(12, 2)), Is.EqualTo((ushort)1));
+            }
+        );
+    }
+
+    [Test]
     public void DrawPlayerPacket_Write_ShouldSerializeExpectedFields()
     {
         var mobile = CreateMobile();
@@ -118,16 +128,6 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(8, 2)), Is.EqualTo((ushort)mobile.SkinHue));
             }
         );
-    }
-
-    [Test]
-    public void DeleteObjectPacket_Write_ShouldSerializeExpectedPayload()
-    {
-        var packet = new DeleteObjectPacket((Serial)0x40000042u);
-
-        var data = Write(packet);
-
-        Assert.That(data, Is.EqualTo(new byte[] { 0x1D, 0x40, 0x00, 0x00, 0x42 }));
     }
 
     [Test]
@@ -241,6 +241,23 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
+    public void MobileIncomingPacket_Write_ShouldSerializeResolvedNotorietyOverride()
+    {
+        var beholder = CreateMobile();
+        var beheld = CreateMobile();
+        beheld.Notoriety = Notoriety.Enemy;
+
+        var packet = new MobileIncomingPacket(beholder, beheld)
+        {
+            ResolvedNotoriety = Notoriety.CanBeAttacked
+        };
+
+        var data = Write(packet);
+
+        Assert.That(data[18], Is.EqualTo((byte)Notoriety.CanBeAttacked));
+    }
+
+    [Test]
     public void MobileIncomingPacket_Write_ShouldUseVirtualHairSerialsWithoutItemCollisions()
     {
         var beholder = CreateMobile();
@@ -302,6 +319,51 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(hairSerial, Is.Not.EqualTo(equipped.Id.Value));
                 Assert.That(facialHairSerial, Is.Not.EqualTo(equipped.Id.Value));
                 Assert.That(hairSerial, Is.Not.EqualTo(facialHairSerial));
+            }
+        );
+    }
+
+    [Test]
+    public void MobileIncomingPacket_Write_ShouldProjectMountedDisplayItemOnMountLayer()
+    {
+        var beholder = CreateMobile();
+        var beheld = CreateMobile();
+        beheld.MountedDisplayItemId = 0x3E9F;
+
+        var packet = new MobileIncomingPacket(beholder, beheld);
+        var data = Write(packet);
+
+        var entryOffset = 19;
+        var mountSerial = 0u;
+        var mountItemId = 0u;
+
+        while (entryOffset + 4 <= data.Length)
+        {
+            var serial = BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(entryOffset, 4));
+
+            if (serial == 0)
+            {
+                break;
+            }
+
+            var itemId = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(entryOffset + 4, 2));
+            var layer = data[entryOffset + 6];
+
+            if (layer == (byte)ItemLayerType.Mount)
+            {
+                mountSerial = serial;
+                mountItemId = itemId;
+                break;
+            }
+
+            entryOffset += 9;
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mountSerial, Is.Not.EqualTo(0u));
+                Assert.That(mountItemId, Is.EqualTo((ushort)0x3E9F));
             }
         );
     }

@@ -221,17 +221,54 @@ dotnet run --project benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj -
 Latest measured dry-run values on Apple M4 Max / .NET 10:
 
 - cross-map cold destination
-  - median: `2.696 ms`
-  - mean: `3.964 ms`
-  - max first-iteration outlier: `17.800 ms`
-  - allocated: `1.77 MB`
+  - median: `2.850 ms`
+  - mean: `4.284 ms`
+  - max first-iteration outlier: `19.939 ms`
+  - allocated: `1.85 MB`
 - same-map cold destination with self refresh
-  - median: `1.684 ms`
-  - mean: `2.536 ms`
-  - max first-iteration outlier: `11.828 ms`
-  - allocated: `1.17 MB`
+  - median: `1.947 ms`
+  - mean: `2.908 ms`
+  - max first-iteration outlier: `13.514 ms`
+  - allocated: `1.22 MB`
 
-The first-iteration spikes are expected for cold paths. The steady-state samples clustered around `2.6-2.8 ms` for cross-map and `1.64-1.72 ms` for same-map.
+The first-iteration spikes are expected for cold paths. The steady-state samples clustered around `2.7-3.0 ms` for cross-map and `1.83-2.00 ms` for same-map.
+
+## Login World Sync
+
+We also hit a concrete login stall on cold sectors:
+
+- `LoginCharacterPacket` originally waited for `CharacterHandler`
+- `CharacterHandler` published `PlayerCharacterLoggedInEvent`
+- login world sync then ran as part of the generic `MobileHandler` path
+
+That made the `0x5D` login packet inherit cold sector load and broad visibility sync cost.
+
+The runtime path is now narrower:
+
+- `CharacterHandler` keeps the packet-critical bootstrap lean
+- `PlayerCharacterLoggedInEvent` is deferred off the `0x5D` critical path
+- `PlayerLoginWorldSyncHandler` and `PlayerLoginWorldSyncService` own the login-specific mini snapshot plus visible-range refill
+- bulk mobile equipment hydration and smaller lazy-load defaults reduce cold-sector cost before the refill runs
+
+This keeps login-specific world sync policy separate from generic movement and teleport orchestration, which makes the path easier to reason about and cheaper to profile.
+
+## Item Handler Split
+
+`ItemHandler` also grew into a broad packet entry point for unrelated behaviors:
+
+- books
+- click/use interaction
+- pickup/drop/equip manipulation
+- item event refresh fan-out
+
+That boundary has now been narrowed without changing packet ownership:
+
+- `ItemHandler` remains the packet/event router
+- `ItemBookService` owns book read/write flows
+- `ItemInteractionService` owns single-click and double-click interaction flows
+- `ItemManipulationService` owns pickup, drop, equip, and wear-refresh orchestration
+
+This keeps protocol wiring stable while moving behavior-heavy item logic into smaller units that are easier to test and profile.
 
 ## Event Listener Pattern
 

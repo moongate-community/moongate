@@ -49,6 +49,30 @@ public class TeleportersDataService : ITeleportersDataService
         }
     }
 
+    public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
+    {
+        lock (_sync)
+        {
+            _entries = [.. entries];
+            _entriesBySourceMap = entries.GroupBy(static entry => entry.SourceMapId)
+                                         .ToDictionary(
+                                             static grouping => grouping.Key,
+                                             static grouping => grouping.ToList()
+                                         );
+            _entriesBySourceSector = entries.GroupBy(
+                                                static entry => (
+                                                                    entry.SourceMapId,
+                                                                    entry.SourceLocation.X >> MapSectorConsts.SectorShift,
+                                                                    entry.SourceLocation.Y >> MapSectorConsts.SectorShift
+                                                                )
+                                            )
+                                            .ToDictionary(
+                                                static grouping => grouping.Key,
+                                                static grouping => grouping.ToList()
+                                            );
+        }
+    }
+
     public bool TryGetEntryAtLocation(int mapId, Point3D location, out TeleporterEntry entry)
     {
         var sectorX = location.X >> MapSectorConsts.SectorShift;
@@ -101,29 +125,5 @@ public class TeleportersDataService : ITeleportersDataService
         destinationLocation = currentLocation;
 
         return true;
-    }
-
-    public void SetEntries(IReadOnlyList<TeleporterEntry> entries)
-    {
-        lock (_sync)
-        {
-            _entries = [.. entries];
-            _entriesBySourceMap = entries.GroupBy(static entry => entry.SourceMapId)
-                                         .ToDictionary(
-                                             static grouping => grouping.Key,
-                                             static grouping => grouping.ToList()
-                                         );
-            _entriesBySourceSector = entries.GroupBy(
-                                                static entry => (
-                                                                    entry.SourceMapId,
-                                                                    entry.SourceLocation.X >> MapSectorConsts.SectorShift,
-                                                                    entry.SourceLocation.Y >> MapSectorConsts.SectorShift
-                                                                )
-                                            )
-                                            .ToDictionary(
-                                                static grouping => grouping.Key,
-                                                static grouping => grouping.ToList()
-                                            );
-        }
     }
 }

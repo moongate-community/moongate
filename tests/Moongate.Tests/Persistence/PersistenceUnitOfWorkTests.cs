@@ -156,6 +156,76 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
+    public async Task BulletinBoardMessages_ShouldPersistAcrossSnapshotReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await firstUnitOfWork.InitializeAsync();
+
+        var message = new BulletinBoardMessageEntity
+        {
+            MessageId = (Serial)(Serial.ItemOffset + 50),
+            BoardId = (Serial)0x40000055u,
+            ParentId = Serial.Zero,
+            OwnerCharacterId = (Serial)0x00000042u,
+            Author = "Poster",
+            Subject = "Hello",
+            PostedAtUtc = new(2026, 3, 13, 12, 30, 0, DateTimeKind.Utc)
+        };
+        message.BodyLines.AddRange(["alpha", "beta"]);
+
+        await firstUnitOfWork.BulletinBoardMessages.UpsertAsync(message);
+        await firstUnitOfWork.SaveSnapshotAsync();
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await secondUnitOfWork.InitializeAsync();
+
+        var restored = await secondUnitOfWork.BulletinBoardMessages.GetByIdAsync(message.MessageId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored, Is.Not.Null);
+                Assert.That(restored!.BoardId, Is.EqualTo(message.BoardId));
+                Assert.That(restored.Subject, Is.EqualTo("Hello"));
+                Assert.That(restored.BodyLines, Is.EqualTo(new[] { "alpha", "beta" }));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CaptureSnapshotAsync_ShouldReturnSnapshotAndCapturedSequenceId()
+    {
+        using var tempDirectory = new TempDirectory();
+        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await unitOfWork.InitializeAsync();
+
+        await unitOfWork.Accounts.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000010,
+                Username = "capture-user",
+                PasswordHash = "pw"
+            }
+        );
+
+        await unitOfWork.Mobiles.UpsertAsync(new() { Id = (Serial)0x00000020, IsPlayer = true, IsAlive = true });
+        await unitOfWork.Items.UpsertAsync(new() { Id = (Serial)(Serial.ItemOffset + 5), ItemId = 0x0EED });
+
+        var captured = await unitOfWork.CaptureSnapshotAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(captured.Snapshot.Accounts, Has.Length.EqualTo(1));
+                Assert.That(captured.Snapshot.Mobiles, Has.Length.EqualTo(1));
+                Assert.That(captured.Snapshot.Items, Has.Length.EqualTo(1));
+                Assert.That(captured.CapturedLastSequenceId, Is.GreaterThan(0));
+            }
+        );
+    }
+
+    [Test]
     public async Task ConcurrentAccountUpserts_ShouldRemainConsistentAfterReload()
     {
         using var tempDirectory = new TempDirectory();
@@ -255,120 +325,6 @@ public class PersistenceUnitOfWorkTests
 
         var count = await reloadedUnitOfWork.Accounts.CountAsync();
         Assert.That(count, Is.Zero);
-    }
-
-    [Test]
-    public async Task BulletinBoardMessages_ShouldPersistAcrossSnapshotReload()
-    {
-        using var tempDirectory = new TempDirectory();
-        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await firstUnitOfWork.InitializeAsync();
-
-        var message = new BulletinBoardMessageEntity
-        {
-            MessageId = (Serial)(Serial.ItemOffset + 50),
-            BoardId = (Serial)0x40000055u,
-            ParentId = Serial.Zero,
-            OwnerCharacterId = (Serial)0x00000042u,
-            Author = "Poster",
-            Subject = "Hello",
-            PostedAtUtc = new DateTime(2026, 3, 13, 12, 30, 0, DateTimeKind.Utc)
-        };
-        message.BodyLines.AddRange(["alpha", "beta"]);
-
-        await firstUnitOfWork.BulletinBoardMessages.UpsertAsync(message);
-        await firstUnitOfWork.SaveSnapshotAsync();
-
-        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await secondUnitOfWork.InitializeAsync();
-
-        var restored = await secondUnitOfWork.BulletinBoardMessages.GetByIdAsync(message.MessageId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(restored, Is.Not.Null);
-                Assert.That(restored!.BoardId, Is.EqualTo(message.BoardId));
-                Assert.That(restored.Subject, Is.EqualTo("Hello"));
-                Assert.That(restored.BodyLines, Is.EqualTo(new[] { "alpha", "beta" }));
-            }
-        );
-    }
-
-    [Test]
-    public async Task CaptureSnapshotAsync_ShouldReturnSnapshotAndCapturedSequenceId()
-    {
-        using var tempDirectory = new TempDirectory();
-        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await unitOfWork.InitializeAsync();
-
-        await unitOfWork.Accounts.UpsertAsync(
-            new()
-            {
-                Id = (Serial)0x00000010,
-                Username = "capture-user",
-                PasswordHash = "pw"
-            }
-        );
-
-        await unitOfWork.Mobiles.UpsertAsync(new() { Id = (Serial)0x00000020, IsPlayer = true, IsAlive = true });
-        await unitOfWork.Items.UpsertAsync(new() { Id = (Serial)(Serial.ItemOffset + 5), ItemId = 0x0EED });
-
-        var captured = await unitOfWork.CaptureSnapshotAsync();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(captured.Snapshot.Accounts, Has.Length.EqualTo(1));
-                Assert.That(captured.Snapshot.Mobiles, Has.Length.EqualTo(1));
-                Assert.That(captured.Snapshot.Items, Has.Length.EqualTo(1));
-                Assert.That(captured.CapturedLastSequenceId, Is.GreaterThan(0));
-            }
-        );
-    }
-
-    [Test]
-    public async Task SaveCapturedSnapshotAsync_ShouldPreserveJournalEntriesWrittenAfterCapture()
-    {
-        using var tempDirectory = new TempDirectory();
-        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await unitOfWork.InitializeAsync();
-
-        await unitOfWork.Accounts.UpsertAsync(
-            new()
-            {
-                Id = (Serial)0x00000050,
-                Username = "captured-user",
-                PasswordHash = "pw"
-            }
-        );
-
-        var captured = await unitOfWork.CaptureSnapshotAsync();
-
-        await unitOfWork.Accounts.UpsertAsync(
-            new()
-            {
-                Id = (Serial)0x00000051,
-                Username = "after-capture",
-                PasswordHash = "pw"
-            }
-        );
-
-        await unitOfWork.SaveCapturedSnapshotAsync(captured);
-
-        var reloadedUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await reloadedUnitOfWork.InitializeAsync();
-
-        var capturedAccount = await reloadedUnitOfWork.Accounts.GetByUsernameAsync("captured-user");
-        var afterCaptureAccount = await reloadedUnitOfWork.Accounts.GetByUsernameAsync("after-capture");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(capturedAccount, Is.Not.Null);
-                Assert.That(afterCaptureAccount, Is.Not.Null);
-            }
-        );
     }
 
     [Test]
@@ -765,12 +721,84 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
+    public async Task SaveCapturedSnapshotAsync_ShouldPreserveJournalEntriesWrittenAfterCapture()
+    {
+        using var tempDirectory = new TempDirectory();
+        var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await unitOfWork.InitializeAsync();
+
+        await unitOfWork.Accounts.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000050,
+                Username = "captured-user",
+                PasswordHash = "pw"
+            }
+        );
+
+        var captured = await unitOfWork.CaptureSnapshotAsync();
+
+        await unitOfWork.Accounts.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000051,
+                Username = "after-capture",
+                PasswordHash = "pw"
+            }
+        );
+
+        await unitOfWork.SaveCapturedSnapshotAsync(captured);
+
+        var reloadedUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await reloadedUnitOfWork.InitializeAsync();
+
+        var capturedAccount = await reloadedUnitOfWork.Accounts.GetByUsernameAsync("captured-user");
+        var afterCaptureAccount = await reloadedUnitOfWork.Accounts.GetByUsernameAsync("after-capture");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(capturedAccount, Is.Not.Null);
+                Assert.That(afterCaptureAccount, Is.Not.Null);
+            }
+        );
+    }
+
+    [Test]
     public async Task SaveSnapshotAsync_ShouldPersistAllEntities()
     {
         SkillInfo.Table =
         [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(25, "Magery", 0, 0, 100, "Wizard", 0, 0, 0, 1, "Magery", Stat.Intelligence, Stat.Intelligence)
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                25,
+                "Magery",
+                0,
+                0,
+                100,
+                "Wizard",
+                0,
+                0,
+                0,
+                1,
+                "Magery",
+                Stat.Intelligence,
+                Stat.Intelligence
+            )
         ];
         using var tempDirectory = new TempDirectory();
         var unitOfWork = CreateUnitOfWork(tempDirectory.Path);
@@ -872,6 +900,8 @@ public class PersistenceUnitOfWorkTests
                 IsFrozen = false,
                 IsPoisoned = false,
                 IsBlessed = false,
+                MountedMobileId = (Serial)0x00000011,
+                MountedDisplayItemId = 0x3E9F,
                 Notoriety = Notoriety.Innocent,
                 CreatedUtc = new(2026, 2, 19, 12, 0, 0, DateTimeKind.Utc),
                 LastLoginUtc = new(2026, 2, 19, 13, 0, 0, DateTimeKind.Utc),
@@ -881,8 +911,22 @@ public class PersistenceUnitOfWorkTests
         var persistedMobile = await unitOfWork.Mobiles.GetByIdAsync((Serial)0x00000010);
         Assert.That(persistedMobile, Is.Not.Null);
         persistedMobile!.SetSkill(UOSkillName.Alchemy, 500, cap: 900, lockState: UOSkillLock.Locked);
-        persistedMobile.SetSkill(UOSkillName.Magery, 725, baseValue: 700, cap: 1000, lockState: UOSkillLock.Down);
+        persistedMobile.SetSkill(UOSkillName.Magery, 725, 700, 1000, UOSkillLock.Down);
         await unitOfWork.Mobiles.UpsertAsync(persistedMobile);
+        await unitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = (Serial)0x00000011,
+                AccountId = Serial.Zero,
+                Name = "snapshot-mount",
+                Title = "the horse",
+                MapId = 1,
+                Location = new(10, 20, 0),
+                RiderMobileId = (Serial)0x00000010,
+                CreatedUtc = new(2026, 2, 19, 12, 0, 0, DateTimeKind.Utc),
+                LastLoginUtc = new(2026, 2, 19, 13, 0, 0, DateTimeKind.Utc)
+            }
+        );
 
         await unitOfWork.Items.UpsertAsync(
             new()
@@ -899,7 +943,7 @@ public class PersistenceUnitOfWorkTests
                 Direction = DirectionType.West,
                 MapId = 1,
                 Location = new(10, 20, 0),
-                CombatStats = new ItemCombatStats
+                CombatStats = new()
                 {
                     MinStrength = 40,
                     DamageMin = 11,
@@ -911,7 +955,7 @@ public class PersistenceUnitOfWorkTests
                     MaxDurability = 45,
                     CurrentDurability = 40
                 },
-                Modifiers = new ItemModifiers
+                Modifiers = new()
                 {
                     StrengthBonus = 5,
                     PhysicalResist = 12,
@@ -1018,6 +1062,9 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(loadedMobile.EffectiveStrength, Is.EqualTo(64));
                 Assert.That(loadedMobile.EffectiveFireResistance, Is.EqualTo(21));
                 Assert.That(loadedMobile.EffectiveLuck, Is.EqualTo(72));
+                Assert.That(loadedMobile.MountedMobileId, Is.EqualTo((Serial)0x00000011));
+                Assert.That(loadedMobile.MountedDisplayItemId, Is.EqualTo(0x3E9F));
+                Assert.That(loadedMobile.IsMounted, Is.True);
                 Assert.That(loadedMobile.BackpackId, Is.EqualTo((Serial)0x40000020));
                 Assert.That(loadedMobile.EquippedItemIds[ItemLayerType.Shirt], Is.EqualTo((Serial)0x40000021));
                 Assert.That(loadedMobile.EquippedItemIds[ItemLayerType.Pants], Is.EqualTo((Serial)0x40000022));

@@ -22,11 +22,17 @@ internal static class LuaBrainHookBinder
             return false;
         }
 
-        hooks = new LuaBrainResolvedHooks(
+        hooks = new(
             ResolveTableFunction(table, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick"),
             ResolveTableFunction(table, "on_speech", "OnSpeech"),
+            ResolveTableFunction(table, "on_before_death", "OnBeforeDeath"),
             ResolveTableFunction(table, "on_death", "OnDeath"),
+            ResolveTableFunction(table, "on_after_death", "OnAfterDeath"),
             ResolveTableFunction(table, "on_spawn", "OnSpawn"),
+            ResolveTableFunction(table, "on_attack", "OnAttack"),
+            ResolveTableFunction(table, "on_missed_attack", "OnMissedAttack"),
+            ResolveTableFunction(table, "on_attacked", "OnAttacked"),
+            ResolveTableFunction(table, "on_missed_by_attack", "OnMissedByAttack"),
             ResolveTableFunction(table, "in_range", "on_in_range", "OnInRange"),
             ResolveTableFunction(table, "out_range", "on_out_range", "OnOutRange"),
             ResolveTableFunction(table, "get_context_menus", "GetContextMenus"),

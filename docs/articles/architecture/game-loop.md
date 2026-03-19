@@ -79,6 +79,14 @@ _backgroundJobService.RunBackgroundAndPostResult(
 
 This preserves deterministic world-state updates while still using parallelism for heavy tasks.
 
+The login path uses the same boundary explicitly:
+
+- `CharacterHandler` completes the packet-critical bootstrap first
+- `PlayerCharacterLoggedInEvent` is then handled by `PlayerLoginWorldSyncHandler`
+- `PlayerLoginWorldSyncService` performs the login-specific mini snapshot and visible-range refill
+
+This keeps login bootstrap policy out of the generic movement and teleport flow handled by `MobileHandler`.
+
 ## Metrics
 
 `GameLoopService` exposes:

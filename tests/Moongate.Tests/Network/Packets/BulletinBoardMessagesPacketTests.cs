@@ -10,61 +10,11 @@ public sealed class BulletinBoardMessagesPacketTests
     private delegate void PacketPayloadWriter(ref SpanWriter writer);
 
     [Test]
-    public void TryParse_WithRequestMessage_ShouldReadBoardAndMessageIds()
-    {
-        var raw = BuildPacket(
-            BulletinBoardSubcommand.RequestMessage,
-            (ref SpanWriter writer) =>
-            {
-                writer.Write(0x40000010u);
-                writer.Write(0x40000020u);
-            }
-        );
-
-        var packet = new BulletinBoardMessagesPacket();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(packet.TryParse(raw), Is.True);
-                Assert.That(packet.Subcommand, Is.EqualTo(BulletinBoardSubcommand.RequestMessage));
-                Assert.That(packet.BoardId, Is.EqualTo(0x40000010u));
-                Assert.That(packet.MessageId, Is.EqualTo(0x40000020u));
-            }
-        );
-    }
-
-    [Test]
-    public void TryParse_WithRequestMessageSummary_ShouldReadBoardAndMessageIds()
-    {
-        var raw = BuildPacket(
-            BulletinBoardSubcommand.RequestMessageSummary,
-            (ref SpanWriter writer) =>
-            {
-                writer.Write(0x40000011u);
-                writer.Write(0x40000021u);
-            }
-        );
-
-        var packet = new BulletinBoardMessagesPacket();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(packet.TryParse(raw), Is.True);
-                Assert.That(packet.Subcommand, Is.EqualTo(BulletinBoardSubcommand.RequestMessageSummary));
-                Assert.That(packet.BoardId, Is.EqualTo(0x40000011u));
-                Assert.That(packet.MessageId, Is.EqualTo(0x40000021u));
-            }
-        );
-    }
-
-    [Test]
     public void TryParse_WithPostMessage_ShouldReadParentSubjectAndBody()
     {
         var raw = BuildPacket(
             BulletinBoardSubcommand.PostMessage,
-            (ref SpanWriter writer) =>
+            (ref writer) =>
             {
                 writer.Write(0x40000012u);
                 writer.Write(0x40000022u);
@@ -95,7 +45,7 @@ public sealed class BulletinBoardMessagesPacketTests
     {
         var raw = BuildPacket(
             BulletinBoardSubcommand.RemovePostedMessage,
-            (ref SpanWriter writer) =>
+            (ref writer) =>
             {
                 writer.Write(0x40000013u);
                 writer.Write(0x40000023u);
@@ -116,9 +66,59 @@ public sealed class BulletinBoardMessagesPacketTests
     }
 
     [Test]
+    public void TryParse_WithRequestMessage_ShouldReadBoardAndMessageIds()
+    {
+        var raw = BuildPacket(
+            BulletinBoardSubcommand.RequestMessage,
+            (ref writer) =>
+            {
+                writer.Write(0x40000010u);
+                writer.Write(0x40000020u);
+            }
+        );
+
+        var packet = new BulletinBoardMessagesPacket();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.TryParse(raw), Is.True);
+                Assert.That(packet.Subcommand, Is.EqualTo(BulletinBoardSubcommand.RequestMessage));
+                Assert.That(packet.BoardId, Is.EqualTo(0x40000010u));
+                Assert.That(packet.MessageId, Is.EqualTo(0x40000020u));
+            }
+        );
+    }
+
+    [Test]
+    public void TryParse_WithRequestMessageSummary_ShouldReadBoardAndMessageIds()
+    {
+        var raw = BuildPacket(
+            BulletinBoardSubcommand.RequestMessageSummary,
+            (ref writer) =>
+            {
+                writer.Write(0x40000011u);
+                writer.Write(0x40000021u);
+            }
+        );
+
+        var packet = new BulletinBoardMessagesPacket();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(packet.TryParse(raw), Is.True);
+                Assert.That(packet.Subcommand, Is.EqualTo(BulletinBoardSubcommand.RequestMessageSummary));
+                Assert.That(packet.BoardId, Is.EqualTo(0x40000011u));
+                Assert.That(packet.MessageId, Is.EqualTo(0x40000021u));
+            }
+        );
+    }
+
+    [Test]
     public void TryParse_WithServerOnlySubcommand_ShouldFail()
     {
-        var raw = BuildPacket(BulletinBoardSubcommand.DisplayBulletinBoard, (ref SpanWriter _) => { });
+        var raw = BuildPacket(BulletinBoardSubcommand.DisplayBulletinBoard, (ref _) => { });
         var packet = new BulletinBoardMessagesPacket();
 
         Assert.That(packet.TryParse(raw), Is.False);

@@ -21,8 +21,7 @@ public static class EffectsFactory
             0,
             false,
             false,
-            hue,
-            0
+            hue
         );
 
     public static GraphicalEffectPacket CreateGraphical(

@@ -148,8 +148,13 @@ Published docs: <https://moongate-community.github.io/moongate/>
 - Cross-map teleport cold-destination benchmark: `TeleportMapChangeBenchmark.HandleCrossMapTeleport_ColdDestination`
 - Same-map teleport cold-destination benchmark with self refresh: `TeleportMapChangeBenchmark.HandleSameMapTeleport_ColdDestination_WithSelfRefresh`
   - Dry run on Apple M4 Max / .NET 10:
-    - cross-map median `2.696 ms`, mean `3.964 ms`, first cold outlier `17.800 ms`, allocated `1.77 MB`
-    - same-map median `1.684 ms`, mean `2.536 ms`, first cold outlier `11.828 ms`, allocated `1.17 MB`
+    - cross-map median `2.850 ms`, mean `4.284 ms`, first cold outlier `19.939 ms`, allocated `1.85 MB`
+    - same-map median `1.947 ms`, mean `2.908 ms`, first cold outlier `13.514 ms`, allocated `1.22 MB`
+- Intelligent NPC dialogue scheduling benchmark: `NpcDialogueSchedulingBenchmark`
+  - Dry run on Apple M4 Max / .NET 10:
+    - queue listener median `2.729 us`, mean `183.0 us`, first cold outlier `2.133 ms`, allocated `592 B`
+    - schedule and complete median `1.170 ms`, mean `1.258 ms`, first cold outlier `2.169 ms`, allocated `1552 B`
+    - reject duplicate in-flight median `1.270 ms`, mean `1.073 ms`, first cold outlier `2.696 ms`, allocated `1288 B`
 - Black-box socket stress tool: `tools/Moongate.Stress`
 - Guide: `docs/articles/operations/stress-test.md`
 - Packet handler performance guide: `docs/articles/networking/packet-handler-performance.md`

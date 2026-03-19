@@ -36,7 +36,123 @@ Common shipped command scripts:
 - `moongate_data/scripts/commands/gm/set_world_light.lua`
 - `moongate_data/scripts/commands/gm/teleports.lua`
 
+Common shipped helper scripts:
+
+- `moongate_data/scripts/common/tick.lua`
+- `moongate_data/scripts/common/dialogue.lua`
+- `moongate_data/scripts/common/npc_dialogue.lua`
+
 ## Real Script Examples
+
+### Helper Script: Tick
+
+`common.tick` is a small utility for recurring brain cadences.
+
+```lua
+local tick = require("common.tick")
+
+local cadence = tick.state({
+    move = 5000,
+    speech = 2000,
+})
+
+local now = time.now_ms()
+
+tick.run(cadence, "move", now, function()
+    npc:move(random.direction())
+end)
+
+tick.run(cadence, "speech", now, function()
+    npc:say("Hello there.")
+end)
+```
+
+The helper exposes:
+
+- `tick.state(intervals, start_ms?)`
+- `tick.ready(state, key, now_ms)`
+- `tick.run(state, key, now_ms, action?)`
+- `tick.reset(state, key, now_ms, interval_ms?)`
+
+### World Speech And Emotes
+
+Player world speech and NPC speech use the same runtime packet family.
+
+```lua
+local npc = mobile.get(serial)
+if npc then
+    npc:say("Welcome, traveler.")
+    npc:emote("*growls softly*")
+    npc:yell("Intruder!")
+    npc:whisper("Keep your voice down.")
+end
+```
+
+Runtime behavior:
+
+- player `UnicodeSpeech` is broadcast to nearby players in world range
+- incoming player text supports shorthand coercion:
+  - `*text*` -> `Emote`
+  - `!text` -> `Yell`
+  - `;text` -> `Whisper`
+- `npc:emote(text)` sends `ChatMessageType.Emote` overhead speech
+- `npc:yell(text)` sends `ChatMessageType.Yell` overhead speech
+- `npc:whisper(text)` sends `ChatMessageType.Whisper` overhead speech
+- current speech ranges are:
+  - `Whisper` -> `1`
+  - `Regular` / `Emote` -> `12`
+  - `Yell` -> `18`
+- NPC brain speech listeners still receive `speech_type`, so Lua can react differently to regular speech versus emotes
+
+### Authored Dialogue Helpers
+
+The deterministic dialogue DSL ships as helper scripts, with runtime support provided by the `dialogue` module.
+
+```lua
+local dialogue = require("common.dialogue")
+
+return dialogue.conversation("innkeeper", {
+    start = "start",
+    topics = {
+        room = { "room", "stanza" }
+    },
+    topic_routes = {
+        room = "room_offer"
+    },
+    nodes = {
+        start = dialogue.node {
+            text = "Welcome.",
+            options = {
+                dialogue.option { text = "A room", goto_ = "room_offer" }
+            }
+        },
+        room_offer = dialogue.node {
+            text = "A room costs 15 gold.",
+            options = {}
+        }
+    }
+})
+```
+
+Runtime notes:
+
+- `goto_` is normalized to `goto`
+- option numbers are selected by nearby player speech like `1`, `2`, `3`
+- authored dialogue is meant to run before `ai_dialogue` fallback when both are configured
+
+Persistent dialogue memory is stored per `npc <-> mobile` under:
+
+- `moongate_data/runtime/dialogue_memory/<npc_serial>.json`
+
+Available context helpers include:
+
+- `ctx:get_memory_flag(key)`
+- `ctx:set_memory_flag(key, value)`
+- `ctx:get_memory_number(key)`
+- `ctx:set_memory_number(key, value)`
+- `ctx:add_memory_number(key, delta)`
+- `ctx:get_memory_text(key)`
+- `ctx:set_memory_text(key, value)`
 
 ### Item Script: Apple
 
@@ -764,6 +880,33 @@ Supported file-based element types currently include:
 - `text_entry`, `text_entry_limited`
 - `tooltip`
 - `button`, `button_page`
+
+## `async_job` Module
+
+Named background jobs callable from Lua:
+
+```lua
+async_job.run("echo", "req-1", { text = "hello" })
+async_job.try_run("echo", "npc:1", "req-2", { text = "world" })
+```
+
+Global completion callbacks:
+
+```lua
+function on_async_job_result(job_name, request_id, result)
+end
+
+function on_async_job_error(job_name, request_id, message)
+end
+```
+
+Payload and result values must be plain Lua data:
+
+- `nil`
+- `boolean`
+- `number`
+- `string`
+- nested tables / arrays of the same
 
 ### ItemScriptContext (`ctx` payload)
 

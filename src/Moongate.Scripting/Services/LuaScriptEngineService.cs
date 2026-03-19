@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Linq;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Extensions.Strings;
@@ -49,6 +50,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     // Thread-safe collections
     private readonly ConcurrentDictionary<string, Action<object[]>> _callbacks = new();
     private readonly ConcurrentDictionary<string, object> _constants = new();
+    private readonly ConcurrentDictionary<string, LuaPluginManifest> _loadedPlugins = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, byte>> _manualModuleFunctions = new();
 
     private readonly DirectoriesConfig _directoriesConfig;
@@ -626,6 +628,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         _loadedModules.Clear();
+        _loadedPlugins.Clear();
         _callbacks.Clear();
         _constants.Clear();
         _isInitialized = false;
@@ -1065,7 +1068,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             {
                 // Configure MoonSharp options
                 DebugPrint = s => _logger.Debug("[Lua] {Message}", s),
-                ScriptLoader = new LuaScriptLoader(_engineConfig.ScriptsDirectory)
+                ScriptLoader = new LuaScriptLoader(_engineConfig.ScriptsDirectory, _engineConfig.PluginsDirectory)
             }
         };
 
@@ -1088,6 +1091,105 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                 ExecuteScriptFile(file);
             }
         }
+
+        ExecutePluginsBootstrap();
+    }
+
+    private void ExecutePluginsBootstrap()
+    {
+        var pluginsDirectory = _engineConfig.PluginsDirectory;
+
+        _loadedPlugins.Clear();
+
+        if (string.IsNullOrWhiteSpace(pluginsDirectory) || !Directory.Exists(pluginsDirectory))
+        {
+            return;
+        }
+
+        foreach (var pluginPath in Directory.EnumerateDirectories(pluginsDirectory).OrderBy(path => path, StringComparer.Ordinal))
+        {
+            var manifestPath = Path.Combine(pluginPath, "plugin.lua");
+
+            if (!File.Exists(manifestPath))
+            {
+                continue;
+            }
+
+            try
+            {
+                var manifest = LoadPluginManifest(manifestPath);
+
+                if (manifest is null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(manifest.Id) || string.IsNullOrWhiteSpace(manifest.Entry))
+                {
+                    _logger.Warning("Skipping Lua plugin at {PluginPath}: missing id or entry", pluginPath);
+
+                    continue;
+                }
+
+                if (!_loadedPlugins.TryAdd(manifest.Id, manifest))
+                {
+                    _logger.Warning("Skipping Lua plugin at {PluginPath}: duplicate plugin id {PluginId}", pluginPath, manifest.Id);
+
+                    continue;
+                }
+
+                var entryPath = Path.Combine(pluginPath, manifest.Entry);
+
+                if (!File.Exists(entryPath))
+                {
+                    _loadedPlugins.TryRemove(manifest.Id, out _);
+                    _logger.Warning(
+                        "Skipping Lua plugin {PluginId}: entry script not found at {EntryPath}",
+                        manifest.Id,
+                        entryPath
+                    );
+
+                    continue;
+                }
+
+                _logger.Information("Executing Lua plugin {PluginId} entry {Entry}", manifest.Id, manifest.Entry);
+                ExecuteScriptFile(entryPath);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to load Lua plugin manifest from {ManifestPath}", manifestPath);
+            }
+        }
+    }
+
+    private LuaPluginManifest? LoadPluginManifest(string manifestPath)
+    {
+        var content = File.ReadAllText(manifestPath);
+        var manifestScript = new Script();
+        var result = manifestScript.DoString(content, null, manifestPath);
+
+        if (result.Type != DataType.Table)
+        {
+            _logger.Warning("Skipping Lua plugin manifest at {ManifestPath}: manifest did not return a table", manifestPath);
+
+            return null;
+        }
+
+        var table = result.Table;
+
+        return new(
+            GetStringField(table, "id"),
+            GetStringField(table, "name"),
+            GetStringField(table, "version"),
+            GetStringField(table, "entry")
+        );
+    }
+
+    private static string? GetStringField(Table table, string key)
+    {
+        var dyn = table.Get(key);
+
+        return dyn.Type == DataType.String ? dyn.String : null;
     }
 
     /// <summary>
@@ -1254,6 +1356,17 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             globalsList.Add(userData.UserType.Name);
         }
 
+        var workspaceLibrary = new List<string>
+        {
+            _engineConfig.ScriptsDirectory,
+            _engineConfig.LuarcDirectory
+        };
+
+        if (!string.IsNullOrWhiteSpace(_engineConfig.PluginsDirectory))
+        {
+            workspaceLibrary.Add(_engineConfig.PluginsDirectory);
+        }
+
         var luarcConfig = new LuarcConfig
         {
             Runtime = new()
@@ -1263,16 +1376,14 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                     "?.lua",
                     "?/init.lua",
                     "modules/?.lua",
-                    "modules/?/init.lua"
+                    "modules/?/init.lua",
+                    "plugin/?/?.lua",
+                    "plugin/?/?/init.lua"
                 ]
             },
             Workspace = new()
             {
-                Library =
-                [
-                    _engineConfig.ScriptsDirectory,
-                    _engineConfig.LuarcDirectory
-                ]
+                Library = [.. workspaceLibrary]
             },
             Diagnostics = new()
             {

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Text;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Config;
@@ -80,54 +81,6 @@ public sealed class TextTemplateService : ITextTemplateService
         }
     }
 
-    private ScriptObject CreateGlobalScriptObject(IReadOnlyDictionary<string, object?>? model)
-    {
-        var globals = new ScriptObject
-        {
-            ["shard"] = new ScriptObject
-            {
-                ["name"] = _config.Game.ShardName,
-                ["website_url"] = _config.Http.WebsiteUrl
-            }
-        };
-
-        if (model is null)
-        {
-            return globals;
-        }
-
-        foreach (var (key, value) in model)
-        {
-            globals[key] = ConvertValue(value);
-        }
-
-        return globals;
-    }
-
-    private bool TryResolveTemplatePath(string relativePath, out string templatePath)
-    {
-        templatePath = string.Empty;
-
-        var normalized = relativePath.Trim();
-
-        if (Path.IsPathRooted(normalized))
-        {
-            return false;
-        }
-
-        var fullRootPath = Path.GetFullPath(_textsRootPath);
-        var candidatePath = Path.GetFullPath(Path.Combine(fullRootPath, normalized));
-
-        if (!candidatePath.StartsWith(fullRootPath, StringComparison.Ordinal))
-        {
-            return false;
-        }
-
-        templatePath = candidatePath;
-
-        return true;
-    }
-
     private static object? ConvertValue(object? value)
     {
         if (value is null)
@@ -184,6 +137,30 @@ public sealed class TextTemplateService : ITextTemplateService
         return value;
     }
 
+    private ScriptObject CreateGlobalScriptObject(IReadOnlyDictionary<string, object?>? model)
+    {
+        var globals = new ScriptObject
+        {
+            ["shard"] = new ScriptObject
+            {
+                ["name"] = _config.Game.ShardName,
+                ["website_url"] = _config.Http.WebsiteUrl
+            }
+        };
+
+        if (model is null)
+        {
+            return globals;
+        }
+
+        foreach (var (key, value) in model)
+        {
+            globals[key] = ConvertValue(value);
+        }
+
+        return globals;
+    }
+
     private static string PreprocessTemplateSource(string source)
     {
         if (string.IsNullOrEmpty(source))
@@ -218,7 +195,7 @@ public sealed class TextTemplateService : ITextTemplateService
 
     private static string StripInlineComment(string line)
     {
-        var builder = new System.Text.StringBuilder(line.Length);
+        var builder = new StringBuilder(line.Length);
         var escaped = false;
 
         foreach (var character in line)
@@ -257,5 +234,29 @@ public sealed class TextTemplateService : ITextTemplateService
         }
 
         return builder.ToString().TrimEnd();
+    }
+
+    private bool TryResolveTemplatePath(string relativePath, out string templatePath)
+    {
+        templatePath = string.Empty;
+
+        var normalized = relativePath.Trim();
+
+        if (Path.IsPathRooted(normalized))
+        {
+            return false;
+        }
+
+        var fullRootPath = Path.GetFullPath(_textsRootPath);
+        var candidatePath = Path.GetFullPath(Path.Combine(fullRootPath, normalized));
+
+        if (!candidatePath.StartsWith(fullRootPath, StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        templatePath = candidatePath;
+
+        return true;
     }
 }

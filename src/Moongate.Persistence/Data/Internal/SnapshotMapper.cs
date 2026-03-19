@@ -2,7 +2,6 @@ using Moongate.Persistence.Data.Persistence;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Persistence.Data.Internal;
@@ -42,6 +41,40 @@ internal static class SnapshotMapper
             CreatedUtcTicks = entity.CreatedUtc.Ticks,
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks,
             CharacterIds = [.. entity.CharacterIds.Select(serial => (uint)serial)]
+        };
+
+    public static BulletinBoardMessageEntity ToBulletinBoardMessageEntity(BulletinBoardMessageSnapshot snapshot)
+    {
+        var entity = new BulletinBoardMessageEntity
+        {
+            MessageId = (Serial)snapshot.MessageId,
+            BoardId = (Serial)snapshot.BoardId,
+            ParentId = (Serial)snapshot.ParentId,
+            OwnerCharacterId = (Serial)snapshot.OwnerCharacterId,
+            Author = snapshot.Author,
+            Subject = snapshot.Subject,
+            PostedAtUtc = new(snapshot.PostedAtUtcTicks, DateTimeKind.Utc)
+        };
+
+        if (snapshot.BodyLines.Length > 0)
+        {
+            entity.BodyLines.AddRange(snapshot.BodyLines);
+        }
+
+        return entity;
+    }
+
+    public static BulletinBoardMessageSnapshot ToBulletinBoardMessageSnapshot(BulletinBoardMessageEntity entity)
+        => new()
+        {
+            MessageId = (uint)entity.MessageId,
+            BoardId = (uint)entity.BoardId,
+            ParentId = (uint)entity.ParentId,
+            OwnerCharacterId = (uint)entity.OwnerCharacterId,
+            Author = entity.Author,
+            Subject = entity.Subject,
+            PostedAtUtcTicks = entity.PostedAtUtc.Ticks,
+            BodyLines = [.. entity.BodyLines]
         };
 
     public static UOItemEntity ToItemEntity(ItemSnapshot snapshot)
@@ -217,40 +250,6 @@ internal static class SnapshotMapper
             ]
         };
 
-    public static BulletinBoardMessageEntity ToBulletinBoardMessageEntity(BulletinBoardMessageSnapshot snapshot)
-    {
-        var entity = new BulletinBoardMessageEntity
-        {
-            MessageId = (Serial)snapshot.MessageId,
-            BoardId = (Serial)snapshot.BoardId,
-            ParentId = (Serial)snapshot.ParentId,
-            OwnerCharacterId = (Serial)snapshot.OwnerCharacterId,
-            Author = snapshot.Author,
-            Subject = snapshot.Subject,
-            PostedAtUtc = new DateTime(snapshot.PostedAtUtcTicks, DateTimeKind.Utc)
-        };
-
-        if (snapshot.BodyLines.Length > 0)
-        {
-            entity.BodyLines.AddRange(snapshot.BodyLines);
-        }
-
-        return entity;
-    }
-
-    public static BulletinBoardMessageSnapshot ToBulletinBoardMessageSnapshot(BulletinBoardMessageEntity entity)
-        => new()
-        {
-            MessageId = (uint)entity.MessageId,
-            BoardId = (uint)entity.BoardId,
-            ParentId = (uint)entity.ParentId,
-            OwnerCharacterId = (uint)entity.OwnerCharacterId,
-            Author = entity.Author,
-            Subject = entity.Subject,
-            PostedAtUtcTicks = entity.PostedAtUtc.Ticks,
-            BodyLines = [.. entity.BodyLines]
-        };
-
     public static UOMobileEntity ToMobileEntity(MobileSnapshot snapshot)
     {
         var entity = new UOMobileEntity
@@ -407,7 +406,9 @@ internal static class SnapshotMapper
             IsPoisoned = snapshot.IsPoisoned,
             IsBlessed = snapshot.IsBlessed,
             IsInvulnerable = snapshot.IsInvulnerable,
-            IsMounted = snapshot.IsMounted,
+            MountedMobileId = (Serial)snapshot.MountedMobileId,
+            RiderMobileId = (Serial)snapshot.RiderMobileId,
+            MountedDisplayItemId = snapshot.MountedDisplayItemId,
             Notoriety = (Notoriety)snapshot.Notoriety,
             CreatedUtc = new(snapshot.CreatedUtcTicks, DateTimeKind.Utc),
             LastLoginUtc = new(snapshot.LastLoginUtcTicks, DateTimeKind.Utc)
@@ -457,6 +458,16 @@ internal static class SnapshotMapper
             }
         }
 
+        if (snapshot.SoundSlots is { Length: > 0 } && snapshot.SoundIds is { Length: > 0 })
+        {
+            var soundLength = Math.Min(snapshot.SoundSlots.Length, snapshot.SoundIds.Length);
+
+            for (var i = 0; i < soundLength; i++)
+            {
+                entity.Sounds[(MobileSoundType)snapshot.SoundSlots[i]] = snapshot.SoundIds[i];
+            }
+        }
+
         return entity;
     }
 
@@ -493,16 +504,27 @@ internal static class SnapshotMapper
         var skills = entity.Skills
                            .OrderBy(static pair => (int)pair.Key)
                            .Select(
-                                static pair => new MobileSkillEntrySnapshot
-                                {
-                                    SkillId = (int)pair.Key,
-                                    Value = pair.Value.Value,
-                                    Base = pair.Value.Base,
-                                    Cap = pair.Value.Cap,
-                                    Lock = (byte)pair.Value.Lock
-                                }
-                            )
+                               static pair => new MobileSkillEntrySnapshot
+                               {
+                                   SkillId = (int)pair.Key,
+                                   Value = pair.Value.Value,
+                                   Base = pair.Value.Base,
+                                   Cap = pair.Value.Cap,
+                                   Lock = (byte)pair.Value.Lock
+                               }
+                           )
                            .ToArray();
+        var soundEntries = entity.Sounds
+                                 .OrderBy(static pair => (byte)pair.Key)
+                                 .ToArray();
+        var soundSlots = new byte[soundEntries.Length];
+        var soundIds = new int[soundEntries.Length];
+
+        for (var i = 0; i < soundEntries.Length; i++)
+        {
+            soundSlots[i] = (byte)soundEntries[i].Key;
+            soundIds[i] = soundEntries[i].Value;
+        }
 
         return new()
         {
@@ -631,6 +653,8 @@ internal static class SnapshotMapper
                 DefenseChanceIncrease = entity.ModifierCaps.DefenseChanceIncrease
             },
             Skills = skills,
+            SoundSlots = soundSlots,
+            SoundIds = soundIds,
             BaseLuck = entity.BaseLuck,
             BaseBodyId = entity.BaseBody is null ? null : (int)entity.BaseBody.Value,
             BackpackId = (uint)entity.BackpackId,
@@ -652,6 +676,9 @@ internal static class SnapshotMapper
             IsBlessed = entity.IsBlessed,
             IsInvulnerable = entity.IsInvulnerable,
             IsMounted = entity.IsMounted,
+            MountedMobileId = (uint)entity.MountedMobileId,
+            RiderMobileId = (uint)entity.RiderMobileId,
+            MountedDisplayItemId = entity.MountedDisplayItemId,
             Notoriety = (byte)entity.Notoriety,
             CreatedUtcTicks = entity.CreatedUtc.Ticks,
             LastLoginUtcTicks = entity.LastLoginUtc.Ticks

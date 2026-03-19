@@ -2,7 +2,6 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Services.Events;
@@ -16,13 +15,34 @@ namespace Moongate.Tests.Server.Handlers;
 
 public class SpeechHandlerTests
 {
+    private sealed class SpeechHandlerTestsSpatialWorldService : RegionDataLoaderTestSpatialWorldService
+    {
+        public List<GameSession> PlayersInRange { get; } = [];
+
+        public override List<GameSession> GetPlayersInRange(
+            Moongate.UO.Data.Geometry.Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return excludeSession is null
+                       ? [.. PlayersInRange]
+                       : [.. PlayersInRange.Where(session => session != excludeSession)];
+        }
+    }
+
     [Test]
-    public async Task HandlePacketAsync_ShouldEnqueueUnicodeSpeechMessagePacket_ForSenderSession()
+    public async Task HandlePacketAsync_ShouldBroadcastUnicodeSpeechMessagePacket_ToNearbyPlayers()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
         var gameEventBusService = new NetworkServiceTestGameEventBusService();
-        var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
+        var spatialWorldService = new SpeechHandlerTestsSpatialWorldService();
         var handler = new SpeechHandler(
             queue,
             new SpeechService(
@@ -35,6 +55,7 @@ public class SpeechHandlerTests
             )
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        using var nearbyClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client))
         {
@@ -45,6 +66,17 @@ public class SpeechHandlerTests
                 BaseBody = 0x0190
             }
         };
+        var nearbySession = new GameSession(new(nearbyClient))
+        {
+            Character = new()
+            {
+                Id = (Serial)0x00000003,
+                Name = "Jerry",
+                BaseBody = 0x0190
+            }
+        };
+        spatialWorldService.PlayersInRange.Add(session);
+        spatialWorldService.PlayersInRange.Add(nearbySession);
 
         var packet = new UnicodeSpeechPacket
         {
@@ -56,19 +88,21 @@ public class SpeechHandlerTests
         };
 
         var handled = await handler.HandlePacketAsync(session, packet);
-        var dequeued = queue.TryDequeue(out var outbound);
+        var dequeuedA = queue.TryDequeue(out var outboundA);
+        var dequeuedB = queue.TryDequeue(out var outboundB);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(handled, Is.True);
-                Assert.That(dequeued, Is.True);
-                Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(outbound.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+                Assert.That(dequeuedA, Is.True);
+                Assert.That(dequeuedB, Is.True);
+                Assert.That(outboundA.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+                Assert.That(outboundB.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
             }
         );
 
-        var speechMessagePacket = (UnicodeSpeechMessagePacket)outbound.Packet;
+        var speechMessagePacket = (UnicodeSpeechMessagePacket)outboundA.Packet;
 
         Assert.Multiple(
             () =>

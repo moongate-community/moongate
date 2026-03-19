@@ -1,6 +1,7 @@
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Data.Internal.Entities;
 
@@ -46,6 +47,48 @@ public sealed class LuaMobileRef
         }
 
         var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Emote(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Emote)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Yell(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Yell)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Whisper(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Whisper)
+                                       .GetAwaiter()
+                                       .GetResult();
 
         return recipients > 0;
     }

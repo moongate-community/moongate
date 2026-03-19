@@ -3,12 +3,12 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.World;
-using Moongate.UO.Data.Templates.Items;
 using Moongate.Server.Services.World;
 using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 
@@ -34,6 +34,13 @@ public class DoorGeneratorBuilderTests
         private uint _nextSerial = 0x40001000;
 
         public List<UOItemEntity> UpsertedItems { get; } = [];
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+        {
+            UpsertedItems.AddRange(items);
+
+            return Task.CompletedTask;
+        }
 
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => throw new NotSupportedException();
@@ -95,13 +102,6 @@ public class DoorGeneratorBuilderTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-        {
-            UpsertedItems.AddRange(items);
-
-            return Task.CompletedTask;
-        }
     }
 
     private sealed class FakeItemFactoryService : IItemFactoryService

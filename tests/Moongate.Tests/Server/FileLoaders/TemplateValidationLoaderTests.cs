@@ -1,19 +1,49 @@
-using Moongate.Server.FileLoaders;
-using Moongate.Server.Services.Scripting;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.FileLoaders;
+using Moongate.Server.Services.Scripting;
+using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Services.Templates;
-using Moongate.UO.Data.Templates.SellProfiles;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
-using Moongate.Server.Data.Config;
-using Moongate.Tests.TestSupport;
 
 namespace Moongate.Tests.Server.FileLoaders;
 
 public class TemplateValidationLoaderTests
 {
+    [Test]
+    public void LoadAsync_WhenBookTemplateReferencesMissingBookFile_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        itemService.Upsert(
+            new()
+            {
+                Id = "welcome_book",
+                Name = "Welcome Book",
+                Category = "books",
+                Description = "welcome",
+                ItemId = "0x0FF0",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 1,
+                Tags = ["book"],
+                BookId = "missing_book"
+            }
+        );
+
+        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
     [Test]
     public void LoadAsync_WhenContainerItemHasMissingLayoutId_ShouldThrow()
     {
@@ -72,6 +102,34 @@ public class TemplateValidationLoaderTests
                         Layer = ItemLayerType.Shirt
                     }
                 ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileReferencesMissingSellProfile_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "vendor_missing_profile",
+                Name = "Vendor",
+                Category = "vendors",
+                Description = "vendor",
+                Body = 0x11,
+                SkinHue = HueSpec.FromValue(779),
+                HairHue = HueSpec.FromValue(0),
+                SellProfileId = "missing_profile"
             }
         );
 
@@ -166,66 +224,6 @@ public class TemplateValidationLoaderTests
         Assert.That(async () => await loader.LoadAsync(), Throws.Nothing);
     }
 
-    [Test]
-    public void LoadAsync_WhenMobileReferencesMissingSellProfile_ShouldThrow()
-    {
-        var itemService = new ItemTemplateService();
-        var mobileService = new MobileTemplateService();
-        var sellProfileService = new SellProfileTemplateService();
-        using var tempDirectory = new TempDirectory();
-        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
-
-        mobileService.Upsert(
-            new()
-            {
-                Id = "vendor_missing_profile",
-                Name = "Vendor",
-                Category = "vendors",
-                Description = "vendor",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(779),
-                HairHue = HueSpec.FromValue(0),
-                SellProfileId = "missing_profile"
-            }
-        );
-
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
-
-        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
-    }
-
-    [Test]
-    public void LoadAsync_WhenBookTemplateReferencesMissingBookFile_ShouldThrow()
-    {
-        var itemService = new ItemTemplateService();
-        var mobileService = new MobileTemplateService();
-        var sellProfileService = new SellProfileTemplateService();
-        using var tempDirectory = new TempDirectory();
-        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
-
-        itemService.Upsert(
-            new()
-            {
-                Id = "welcome_book",
-                Name = "Welcome Book",
-                Category = "books",
-                Description = "welcome",
-                ItemId = "0x0FF0",
-                Hue = HueSpec.FromValue(0),
-                GoldValue = GoldValueSpec.FromValue(0),
-                LootType = LootType.Regular,
-                ScriptId = "none",
-                Weight = 1,
-                Tags = ["book"],
-                BookId = "missing_book"
-            }
-        );
-
-        var loader = new TemplateValidationLoader(itemService, mobileService, sellProfileService, bookTemplateService);
-
-        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
-    }
-
     [SetUp]
     public void SetUp()
     {
@@ -245,6 +243,6 @@ public class TemplateValidationLoaderTests
             DirectoryType.Cache
         );
 
-        return new BookTemplateService(directoriesConfig, new MoongateConfig());
+        return new(directoriesConfig, new());
     }
 }

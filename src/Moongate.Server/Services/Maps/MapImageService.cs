@@ -72,7 +72,7 @@ public sealed class MapImageService : IMapImageService
                             }
                         }
 
-                        image[px, py] = new Rgb24(r, g, b);
+                        image[px, py] = new(r, g, b);
                     }
                 }
             }

@@ -7,10 +7,10 @@ using Moongate.Server.Data.Events.Interaction;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
-using Moongate.Server.Interfaces.Services.Events;
-using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Interaction;
@@ -19,7 +19,6 @@ using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
-using Moongate.UO.Data.Version;
 
 namespace Moongate.Tests.Server.Services.Interaction;
 
@@ -30,6 +29,9 @@ public sealed class ContextMenuServiceTests
         private readonly Dictionary<long, GameSession> _sessions = [];
 
         public int Count => _sessions.Count;
+
+        public void Add(GameSession session)
+            => _sessions[session.SessionId] = session;
 
         public void Clear()
             => _sessions.Clear();
@@ -62,9 +64,6 @@ public sealed class ContextMenuServiceTests
 
             return false;
         }
-
-        public void Add(GameSession session)
-            => _sessions[session.SessionId] = session;
     }
 
     private sealed class ContextMenuTestMobileService : IMobileService
@@ -145,19 +144,19 @@ public sealed class ContextMenuServiceTests
 
         public string? LastSelectedKey { get; private set; }
 
-        public bool HandleSelectionResult { get; set; } = true;
+        public bool HandleSelectionResult { get; } = true;
+
+        public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
+        {
+            _ = mobileId;
+            _ = combatContext;
+        }
 
         public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
         {
             _ = mobileId;
             _ = deathContext;
         }
-
-        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
-            => _ = gameEvent;
-
-        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
-            => _ = gameEvent;
 
         public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = 3)
         {
@@ -166,45 +165,22 @@ public sealed class ContextMenuServiceTests
             _ = range;
         }
 
-        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
+        public void EnqueueSpawn(MobileSpawnedFromSpawnerEvent gameEvent)
+            => _ = gameEvent;
+
+        public void EnqueueSpeech(SpeechHeardEvent gameEvent)
+            => _ = gameEvent;
+
+        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester
+        )
         {
             _ = mobile;
             _ = requester;
 
             return Entries;
         }
-
-        public bool TryHandleContextMenuSelection(
-            UOMobileEntity mobile,
-            UOMobileEntity? requester,
-            string menuKey,
-            long sessionId
-        )
-        {
-            _ = mobile;
-            _ = requester;
-            _ = sessionId;
-            LastSelectedKey = menuKey;
-
-            return HandleSelectionResult;
-        }
-
-        public void Register(UOMobileEntity mobile, string brainId)
-        {
-            _ = mobile;
-            _ = brainId;
-        }
-
-        public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
-        {
-            _ = nowMilliseconds;
-            _ = cancellationToken;
-
-            return ValueTask.CompletedTask;
-        }
-
-        public void Unregister(Serial mobileId)
-            => _ = mobileId;
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
         {
@@ -238,62 +214,43 @@ public sealed class ContextMenuServiceTests
             return Task.CompletedTask;
         }
 
+        public void Register(UOMobileEntity mobile, string brainId)
+        {
+            _ = mobile;
+            _ = brainId;
+        }
+
         public Task StartAsync()
             => Task.CompletedTask;
 
         public Task StopAsync()
             => Task.CompletedTask;
-    }
 
-    [Test]
-    public async Task HandleAsync_ForContextMenuRequestedEvent_ShouldEnqueueDisplayContextMenuPacket()
-    {
-        var sessions = new ContextMenuTestGameNetworkSessionService();
-        var mobiles = new ContextMenuTestMobileService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-        var eventBus = new GameEventBusService();
-        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus);
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-
-        var session = new GameSession(new(client));
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
-        session.Character = new UOMobileEntity
+        public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
         {
-            Id = (Serial)0x00000001u,
-            MapId = 0,
-            Location = new Point3D(100, 100, 0)
-        };
-        sessions.Add(session);
+            _ = nowMilliseconds;
+            _ = cancellationToken;
 
-        var target = new UOMobileEntity
+            return ValueTask.CompletedTask;
+        }
+
+        public bool TryHandleContextMenuSelection(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester,
+            string menuKey,
+            long sessionId
+        )
         {
-            Id = (Serial)0x00000009u,
-            Name = "Vendor",
-            MapId = 0,
-            Location = new Point3D(101, 100, 0)
-        };
-        target.SetCustomString("sell_profile_id", "blacksmith_vendor");
-        mobiles.MobilesById[target.Id] = target;
+            _ = mobile;
+            _ = requester;
+            _ = sessionId;
+            LastSelectedKey = menuKey;
 
-        await service.HandleAsync(new ContextMenuRequestedEvent(session.SessionId, target.Id));
+            return HandleSelectionResult;
+        }
 
-        var dequeued = outgoing.TryDequeue(out var outgoingPacket);
-
-        Assert.That(dequeued, Is.True);
-        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
-        var packet = (GeneralInformationPacket)outgoingPacket.Packet;
-        Assert.That(packet.SubcommandType, Is.EqualTo(GeneralInformationSubcommandType.DisplayPopupContextMenu));
-
-        var payload = packet.SubcommandData.ToArray();
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(payload[0], Is.EqualTo(0x00));
-                Assert.That(payload[1], Is.EqualTo(0x01));
-                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(payload.AsSpan(2, 4)), Is.EqualTo((uint)0x00000009));
-                Assert.That(payload[6], Is.EqualTo(3));
-            }
-        );
+        public void Unregister(Serial mobileId)
+            => _ = mobileId;
     }
 
     [Test]
@@ -307,12 +264,12 @@ public sealed class ContextMenuServiceTests
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client));
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
-        session.Character = new UOMobileEntity
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
         {
             Id = (Serial)0x00000001u,
             MapId = 0,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
         sessions.Add(session);
 
@@ -321,7 +278,7 @@ public sealed class ContextMenuServiceTests
             Id = (Serial)0x00000002u,
             Name = "Guard",
             MapId = 0,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
         mobiles.MobilesById[target.Id] = target;
 
@@ -349,12 +306,12 @@ public sealed class ContextMenuServiceTests
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client));
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
-        session.Character = new UOMobileEntity
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
         {
             Id = (Serial)0x00000001u,
             MapId = 0,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
         sessions.Add(session);
 
@@ -363,7 +320,7 @@ public sealed class ContextMenuServiceTests
             Id = (Serial)0x0000002Au,
             Name = "Vendor",
             MapId = 0,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
         vendor.SetCustomString("sell_profile_id", "vendor.blacksmith");
         mobiles.MobilesById[vendor.Id] = vendor;
@@ -396,12 +353,12 @@ public sealed class ContextMenuServiceTests
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client));
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
-        session.Character = new UOMobileEntity
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
         {
             Id = (Serial)0x00000001u,
             MapId = 0,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
         sessions.Add(session);
 
@@ -410,7 +367,7 @@ public sealed class ContextMenuServiceTests
             Id = (Serial)0x0000002Bu,
             Name = "Vendor",
             MapId = 0,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
         vendor.SetCustomString("sell_profile_id", "vendor.blacksmith");
         mobiles.MobilesById[vendor.Id] = vendor;
@@ -431,7 +388,7 @@ public sealed class ContextMenuServiceTests
     }
 
     [Test]
-    public async Task SendContextMenuAsync_WhenRegularAndTargetOutOfRange_ShouldReturnFalse()
+    public async Task HandleAsync_ForContextMenuRequestedEvent_ShouldEnqueueDisplayContextMenuPacket()
     {
         var sessions = new ContextMenuTestGameNetworkSessionService();
         var mobiles = new ContextMenuTestMobileService();
@@ -440,72 +397,45 @@ public sealed class ContextMenuServiceTests
         var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus);
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
-        var session = new GameSession(new(client))
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
         {
-            AccountType = AccountType.Regular,
-            Character = new UOMobileEntity
-            {
-                Id = (Serial)0x00000001u,
-                MapId = 0,
-                Location = new Point3D(100, 100, 0)
-            }
+            Id = (Serial)0x00000001u,
+            MapId = 0,
+            Location = new(100, 100, 0)
         };
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
         sessions.Add(session);
 
         var target = new UOMobileEntity
         {
-            Id = (Serial)0x00000030u,
-            Name = "Far",
+            Id = (Serial)0x00000009u,
+            Name = "Vendor",
             MapId = 0,
-            Location = new Point3D(200, 200, 0)
+            Location = new(101, 100, 0)
         };
-        target.SetCustomString("sell_profile_id", "vendor.blacksmith");
+        target.SetCustomString("sell_profile_id", "blacksmith_vendor");
         mobiles.MobilesById[target.Id] = target;
 
-        var result = await service.SendContextMenuAsync(session.SessionId, target.Id);
+        await service.HandleAsync(new ContextMenuRequestedEvent(session.SessionId, target.Id));
 
-        Assert.That(result, Is.False);
-        Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(0));
-    }
+        var dequeued = outgoing.TryDequeue(out var outgoingPacket);
 
-    [Test]
-    public async Task SendContextMenuAsync_WhenGameMasterAndTargetOutOfRange_ShouldReturnTrue()
-    {
-        var sessions = new ContextMenuTestGameNetworkSessionService();
-        var mobiles = new ContextMenuTestMobileService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-        var eventBus = new GameEventBusService();
-        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus);
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        Assert.That(dequeued, Is.True);
+        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
+        var packet = (GeneralInformationPacket)outgoingPacket.Packet;
+        Assert.That(packet.SubcommandType, Is.EqualTo(GeneralInformationSubcommandType.DisplayPopupContextMenu));
 
-        var session = new GameSession(new(client))
-        {
-            AccountType = AccountType.GameMaster,
-            Character = new UOMobileEntity
+        var payload = packet.SubcommandData.ToArray();
+        Assert.Multiple(
+            () =>
             {
-                Id = (Serial)0x00000001u,
-                MapId = 0,
-                Location = new Point3D(100, 100, 0)
+                Assert.That(payload[0], Is.EqualTo(0x00));
+                Assert.That(payload[1], Is.EqualTo(0x01));
+                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(payload.AsSpan(2, 4)), Is.EqualTo((uint)0x00000009));
+                Assert.That(payload[6], Is.EqualTo(3));
             }
-        };
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
-        sessions.Add(session);
-
-        var target = new UOMobileEntity
-        {
-            Id = (Serial)0x00000031u,
-            Name = "Far",
-            MapId = 0,
-            Location = new Point3D(200, 200, 0)
-        };
-        target.SetCustomString("sell_profile_id", "vendor.blacksmith");
-        mobiles.MobilesById[target.Id] = target;
-
-        var result = await service.SendContextMenuAsync(session.SessionId, target.Id);
-
-        Assert.That(result, Is.True);
-        Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(1));
+        );
     }
 
     [Test]
@@ -522,14 +452,14 @@ public sealed class ContextMenuServiceTests
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000001u,
                 MapId = 0,
-                Location = new Point3D(100, 100, 0)
+                Location = new(100, 100, 0)
             }
         };
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        session.SetClientVersion(new("7.0.114.0"));
         sessions.Add(session);
 
         var target = new UOMobileEntity
@@ -537,7 +467,7 @@ public sealed class ContextMenuServiceTests
             Id = (Serial)0x00000009u,
             Name = "Orion",
             MapId = 0,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
         mobiles.MobilesById[target.Id] = target;
 
@@ -573,14 +503,14 @@ public sealed class ContextMenuServiceTests
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000001u,
                 MapId = 0,
-                Location = new Point3D(100, 100, 0)
+                Location = new(100, 100, 0)
             }
         };
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        session.SetClientVersion(new("7.0.114.0"));
         sessions.Add(session);
 
         var target = new UOMobileEntity
@@ -588,7 +518,7 @@ public sealed class ContextMenuServiceTests
             Id = (Serial)0x00000009u,
             Name = "Orion",
             MapId = 0,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
         mobiles.MobilesById[target.Id] = target;
 
@@ -605,7 +535,7 @@ public sealed class ContextMenuServiceTests
         // 2 valid script entries
         Assert.That(entryCount, Is.EqualTo(2));
 
-        var tags = new List<ushort>(capacity: entryCount);
+        var tags = new List<ushort>(entryCount);
         var offset = 7;
 
         for (var index = 0; index < entryCount; index++)
@@ -657,6 +587,45 @@ public sealed class ContextMenuServiceTests
     }
 
     [Test]
+    public async Task SendContextMenuAsync_WhenGameMasterAndTargetOutOfRange_ShouldReturnTrue()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            AccountType = AccountType.GameMaster,
+            Character = new()
+            {
+                Id = (Serial)0x00000001u,
+                MapId = 0,
+                Location = new(100, 100, 0)
+            }
+        };
+        session.SetClientVersion(new("7.0.114.0"));
+        sessions.Add(session);
+
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000031u,
+            Name = "Far",
+            MapId = 0,
+            Location = new(200, 200, 0)
+        };
+        target.SetCustomString("sell_profile_id", "vendor.blacksmith");
+        mobiles.MobilesById[target.Id] = target;
+
+        var result = await service.SendContextMenuAsync(session.SessionId, target.Id);
+
+        Assert.That(result, Is.True);
+        Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(1));
+    }
+
+    [Test]
     public async Task SendContextMenuAsync_WhenNpcHasCustomEntries_ShouldNotIncludePaperdollEntry()
     {
         var sessions = new ContextMenuTestGameNetworkSessionService();
@@ -670,14 +639,14 @@ public sealed class ContextMenuServiceTests
 
         var session = new GameSession(new(client))
         {
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x00000001u,
                 MapId = 0,
-                Location = new Point3D(100, 100, 0)
+                Location = new(100, 100, 0)
             }
         };
-        session.SetClientVersion(new ClientVersion("7.0.114.0"));
+        session.SetClientVersion(new("7.0.114.0"));
         sessions.Add(session);
 
         var target = new UOMobileEntity
@@ -686,7 +655,7 @@ public sealed class ContextMenuServiceTests
             Name = "Orion",
             IsPlayer = false,
             MapId = 0,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
         mobiles.MobilesById[target.Id] = target;
 
@@ -704,5 +673,44 @@ public sealed class ContextMenuServiceTests
         var firstClilocOffset = BinaryPrimitives.ReadUInt16BigEndian(payload[9..11]);
         Assert.That(firstTag, Is.EqualTo(1000));
         Assert.That(firstClilocOffset, Is.EqualTo(6135));
+    }
+
+    [Test]
+    public async Task SendContextMenuAsync_WhenRegularAndTargetOutOfRange_ShouldReturnFalse()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client))
+        {
+            AccountType = AccountType.Regular,
+            Character = new()
+            {
+                Id = (Serial)0x00000001u,
+                MapId = 0,
+                Location = new(100, 100, 0)
+            }
+        };
+        session.SetClientVersion(new("7.0.114.0"));
+        sessions.Add(session);
+
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000030u,
+            Name = "Far",
+            MapId = 0,
+            Location = new(200, 200, 0)
+        };
+        target.SetCustomString("sell_profile_id", "vendor.blacksmith");
+        mobiles.MobilesById[target.Id] = target;
+
+        var result = await service.SendContextMenuAsync(session.SessionId, target.Id);
+
+        Assert.That(result, Is.False);
+        Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(0));
     }
 }

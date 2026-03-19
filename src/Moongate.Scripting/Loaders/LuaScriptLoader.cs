@@ -12,16 +12,18 @@ public class LuaScriptLoader : ScriptLoaderBase
 {
     private readonly ILogger _logger = Log.ForContext<LuaScriptLoader>();
     private readonly string _scriptsDirectory;
+    private readonly string? _pluginsDirectory;
 
     /// <summary>
     /// Initializes a new instance of the LuaScriptLoader class.
     /// </summary>
     /// <param name="directoriesConfig">The directories configuration to resolve the scripts directory.</param>
-    public LuaScriptLoader(string rootDirectory)
+    public LuaScriptLoader(string rootDirectory, string? pluginsDirectory = null)
     {
         ArgumentNullException.ThrowIfNull(rootDirectory);
 
         _scriptsDirectory = rootDirectory;
+        _pluginsDirectory = string.IsNullOrWhiteSpace(pluginsDirectory) ? null : pluginsDirectory;
 
         // Configure default module search paths
         ModulePaths =
@@ -95,6 +97,13 @@ public class LuaScriptLoader : ScriptLoaderBase
     /// <returns>The full path to the module file, or null if not found.</returns>
     private string? ResolveModulePath(string moduleName)
     {
+        var pluginPath = ResolvePluginModulePath(moduleName);
+
+        if (pluginPath != null)
+        {
+            return pluginPath;
+        }
+
         // Try each module path pattern
         foreach (var pattern in ModulePaths)
         {
@@ -103,7 +112,7 @@ public class LuaScriptLoader : ScriptLoaderBase
 
             if (File.Exists(fullPath))
             {
-                _logger.Debug("Resolved module '{ModuleName}' to path: {FullPath}", moduleName, fullPath);
+                _logger.Verbose("Resolved module '{ModuleName}' to path: {FullPath}", moduleName, fullPath);
 
                 return fullPath;
             }
@@ -114,7 +123,66 @@ public class LuaScriptLoader : ScriptLoaderBase
 
         if (File.Exists(directPath))
         {
-            _logger.Debug("Resolved module '{ModuleName}' to direct path: {DirectPath}", moduleName, directPath);
+            _logger.Verbose("Resolved module '{ModuleName}' to direct path: {DirectPath}", moduleName, directPath);
+
+            return directPath;
+        }
+
+        return null;
+    }
+
+    private string? ResolvePluginModulePath(string moduleName)
+    {
+        if (_pluginsDirectory is null ||
+            !moduleName.StartsWith("plugin.", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
+        var pluginQualifiedName = moduleName.Substring("plugin.".Length);
+        var separatorIndex = pluginQualifiedName.IndexOf('.');
+
+        if (separatorIndex <= 0 || separatorIndex == pluginQualifiedName.Length - 1)
+        {
+            return null;
+        }
+
+        var pluginId = pluginQualifiedName.Substring(0, separatorIndex);
+        var relativeModuleName = pluginQualifiedName.Substring(separatorIndex + 1);
+        var relativeModulePath = relativeModuleName.Replace('.', Path.DirectorySeparatorChar);
+        var pluginRoot = Path.Combine(_pluginsDirectory, pluginId);
+
+        if (!Directory.Exists(pluginRoot))
+        {
+            return null;
+        }
+
+        foreach (var pattern in ModulePaths)
+        {
+            var fileName = pattern.Replace("?", relativeModulePath);
+            var fullPath = Path.Combine(pluginRoot, fileName);
+
+            if (File.Exists(fullPath))
+            {
+                _logger.Debug(
+                    "Resolved plugin module '{ModuleName}' to path: {FullPath}",
+                    moduleName,
+                    fullPath
+                );
+
+                return fullPath;
+            }
+        }
+
+        var directPath = Path.Combine(pluginRoot, relativeModulePath);
+
+        if (File.Exists(directPath))
+        {
+            _logger.Debug(
+                "Resolved plugin module '{ModuleName}' to direct path: {DirectPath}",
+                moduleName,
+                directPath
+            );
 
             return directPath;
         }

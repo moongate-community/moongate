@@ -44,35 +44,6 @@ public class PlayerStatusPacketTests
     }
 
     [Test]
-    public void Write_ShouldSerializeModernPlayerStatusHeader()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00000002,
-            Name = "Tommy",
-            Hits = 50,
-            MaxHits = 100
-        };
-        var packet = new PlayerStatusPacket(mobile);
-
-        var data = Write(packet);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(data.Length, Is.EqualTo(121));
-                Assert.That(data[0], Is.EqualTo(0x11));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)121));
-                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(3, 4)), Is.EqualTo(0x00000002u));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(37, 2)), Is.EqualTo((ushort)50));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(39, 2)), Is.EqualTo((ushort)100));
-                Assert.That(data[41], Is.EqualTo(0x00));
-                Assert.That(data[42], Is.EqualTo(PlayerStatusPacket.ModernVersion));
-            }
-        );
-    }
-
-    [Test]
     public void Write_ShouldSerializeModernEffectiveStatusValues()
     {
         var mobile = new UOMobileEntity
@@ -190,6 +161,35 @@ public class PlayerStatusPacketTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(115, 2)), Is.EqualTo((ushort)3));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(117, 2)), Is.EqualTo((ushort)2));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(119, 2)), Is.EqualTo((ushort)4));
+            }
+        );
+    }
+
+    [Test]
+    public void Write_ShouldSerializeModernPlayerStatusHeader()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002,
+            Name = "Tommy",
+            Hits = 50,
+            MaxHits = 100
+        };
+        var packet = new PlayerStatusPacket(mobile);
+
+        var data = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data.Length, Is.EqualTo(121));
+                Assert.That(data[0], Is.EqualTo(0x11));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)121));
+                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(3, 4)), Is.EqualTo(0x00000002u));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(37, 2)), Is.EqualTo((ushort)50));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(39, 2)), Is.EqualTo((ushort)100));
+                Assert.That(data[41], Is.EqualTo(0x00));
+                Assert.That(data[42], Is.EqualTo(PlayerStatusPacket.ModernVersion));
             }
         );
     }

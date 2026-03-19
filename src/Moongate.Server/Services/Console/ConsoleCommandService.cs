@@ -58,6 +58,7 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
         }
 
         _logger.Information("Interactive console prompt enabled.");
+
         try
         {
             _consoleUiService.LockInput();
@@ -69,7 +70,10 @@ public sealed class ConsoleCommandService : IConsoleCommandService, IDisposable
         }
         catch (Exception ex) when (ex is IOException or InvalidOperationException or ArgumentOutOfRangeException)
         {
-            _logger.Warning(ex, "Interactive console prompt disabled because the current terminal does not support prompt rendering.");
+            _logger.Warning(
+                ex,
+                "Interactive console prompt disabled because the current terminal does not support prompt rendering."
+            );
             _inputLoopTask = Task.CompletedTask;
         }
 

@@ -31,5 +31,7 @@ public class MoongateConfig
 
     public MoongateScriptingConfig Scripting { get; set; } = new();
 
+    public MoongateLlmConfig Llm { get; set; } = new();
+
     public MoongateEmailConfig Email { get; set; } = new();
 }

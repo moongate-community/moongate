@@ -110,6 +110,10 @@ public sealed class MobileSnapshot
 
     public MobileSkillEntrySnapshot[] Skills { get; set; } = [];
 
+    public byte[] SoundSlots { get; set; } = [];
+
+    public int[] SoundIds { get; set; } = [];
+
     public int BaseLuck { get; set; }
 
     public int? BaseBodyId { get; set; }
@@ -151,6 +155,12 @@ public sealed class MobileSnapshot
     public bool IsInvulnerable { get; set; }
 
     public bool IsMounted { get; set; }
+
+    public uint MountedMobileId { get; set; }
+
+    public uint RiderMobileId { get; set; }
+
+    public int MountedDisplayItemId { get; set; }
 
     public byte Notoriety { get; set; }
 

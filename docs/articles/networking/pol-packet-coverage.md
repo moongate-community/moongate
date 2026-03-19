@@ -25,12 +25,12 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | Opcode | Op Description | Direction | POL Page | Moongate Packet Class | Status | Runtime Wiring | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `0x02` | Move request | C -> S | `?Packet=0x02` | `MoveRequestPacket` | `handler` | `MovementHandler` | Core player movement |
-| `0x06` | Double click | C -> S | `?Packet=0x06` | `DoubleClickPacket` | `handler` | `ItemHandler` | Item use and open flows |
-| `0x07` | Pick up item | C -> S | `?Packet=0x07` | `PickUpItemPacket` | `handler` | `ItemHandler` | Drag start |
-| `0x08` | Drop item | C -> S | `?Packet=0x08` | `DropItemPacket` | `handler` | `ItemHandler` | World/container drop |
-| `0x09` | Single click | C -> S | `?Packet=0x09` | `SingleClickPacket` | `handler` | `ItemHandler` | Labels and inspect-style flows |
+| `0x06` | Double click | C -> S | `?Packet=0x06` | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use and open flows |
+| `0x07` | Pick up item | C -> S | `?Packet=0x07` | `PickUpItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Drag start |
+| `0x08` | Drop item | C -> S | `?Packet=0x08` | `DropItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | World/container drop |
+| `0x09` | Single click | C -> S | `?Packet=0x09` | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels and inspect-style flows |
 | `0x11` | Status bar info | S -> C | `?Packet=0x11` | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status packet |
-| `0x13` | Drop to wear | C -> S | `?Packet=0x13` | `DropWearItemPacket` | `handler` | `ItemHandler` | Equip flow |
+| `0x13` | Drop to wear | C -> S | `?Packet=0x13` | `DropWearItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Equip flow |
 | `0x1B` | Login confirm | S -> C | `?Packet=0x1B` | `LoginConfirmPacket` | `outgoing` | login flow | Character accepted |
 | `0x20` | Draw player | S -> C | `?Packet=0x20` | `DrawPlayerPacket` | `outgoing` | login and move flows | Controlled mobile draw |
 | `0x21` | Move reject | S -> C | `?Packet=0x21` | `MoveDenyPacket` | `outgoing` | movement flow | Reject or resync |
@@ -48,7 +48,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x5B` | Time | S -> C | `?Packet=0x5B` | `SetTimePacket` | `outgoing` | world presentation | World time |
 | `0x5D` | Login character | C -> S | `?Packet=0x5D` | `LoginCharacterPacket` | `handler` | `LoginHandler` | Character enters world |
 | `0x65` | Weather | S -> C | `?Packet=0x65` | `SetWeatherPacket` | `outgoing` | world presentation | Weather state |
-| `0x66` | Book pages | both | `?Packet=0x66` | `BookPagesPacket` | `handler` | `ItemHandler` | Page request and writable page save |
+| `0x66` | Book pages | both | `?Packet=0x66` | `BookPagesPacket` | `handler` | `ItemHandler -> ItemBookService` | Page request and writable page save |
 | `0x6C` | Target cursor commands | both | `?Packet=0x6C` | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Inbound target replies; outbound cursor flows use same opcode family in protocol |
 | `0x6D` | Play music | S -> C | `?Packet=0x6D` | `SetMusicPacket` | `outgoing` | world presentation | Music trigger |
 | `0x6E` | Character animation | S -> C | `?Packet=0x6E` | `MobileAnimationPacket` | `outgoing` | world presentation | Mobile anims |
@@ -93,7 +93,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x00` | Legacy create character | C -> S | `?Packet=0x00` | `CreateCharacterPacket` | `parse-only` | Legacy character creation path is not wired |
 | `0x01` | Disconnect notification | C -> S | `?Packet=0x01` | `DisconnectNotificationPacket` | `parse-only` | Session shutdown is not modeled via gameplay listener |
 | `0x03` | Talk request | C -> S | `?Packet=0x03` | `TalkRequestPacket` | `parse-only` | Legacy speech path not wired; Unicode path is used |
-| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `parse-only` | No combat targeting flow yet |
+| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, enters warmode, schedules melee swing |
 | `0x12` | Skill or action use request | C -> S | `?Packet=0x12` | `RequestSkillUsePacket` | `parse-only` | Skill-use flow still missing |
 | `0x2C` | Resurrection menu | both | `?Packet=0x2C` | `ResurrectionMenuPacket` | `parse-only` | No resurrect handler yet |
 | `0x3B` | Buy items | C -> S | `?Packet=0x3B` | `BuyItemsPacket` | `parse-only` | Vendor buy flow missing |
@@ -106,7 +106,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x95` | Dye window | both | `?Packet=0x95` | `DyeWindowPacket`, `DisplayDyeWindowPacket` | `implemented` | Classic dye tub flow wired through `DyeColorService` and Lua `dye` module |
 | `0x98` | All names | C -> S | `?Packet=0x98` | `AllNamesPacket` | `parse-only` | 3D all-names flow missing |
 | `0x9A` | Console entry prompt | C -> S | `?Packet=0x9A` | `ConsoleEntryPromptPacket` | `parse-only` | No gameplay listener |
-| `0x9B` | Request help | C -> S | `?Packet=0x9B` | `RequestHelpPacket` | `parse-only` | Help flow missing |
+| `0x9B` | Request help | C -> S | `?Packet=0x9B` | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService -> Lua on_help_request / gumps.help` |
 | `0x9F` | Sell list reply | C -> S | `?Packet=0x9F` | `SellListReplyPacket` | `parse-only` | Vendor sell flow missing |
 | `0xA4` | Client spy | C -> S | `?Packet=0xA4` | `ClientSpyPacket` | `parse-only` | No behavior attached |
 | `0xA7` | Request tip / notice window | C -> S | `?Packet=0xA7` | `RequestTipNoticeWindowPacket` | `parse-only` | Tip flow missing |
@@ -117,7 +117,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xC2` | Unicode text entry | C -> S | `?Packet=0xC2` | `UnicodeTextEntryPacket` | `parse-only` | Text entry flow missing |
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |
 | `0xD1` | Logout status | C -> S | `?Packet=0xD1` | `LogoutStatusPacket` | `parse-only` | No dedicated logout listener |
-| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler` | Writable `title` / `author` save for client `7.x` |
+| `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler -> ItemBookService` | Writable `title` / `author` save for client `7.x` |
 | `0xD7` | Generic AOS commands | C -> S | `?Packet=0xD7` | `GenericAosCommandsPacket` | `parse-only` | AoS subcommands not wired |
 | `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `parse-only` | Client-type-specific behavior missing |
 | `0xEC` | Equip macro | C -> S | `?Packet=0xEC` | `EquipMacroPacket` | `parse-only` | KR macro flow missing |
@@ -152,7 +152,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0x2A` | Blood | S -> C | `?Packet=0x2A` | `missing` | No blood effect packet |
 | `0x2B` | God mode / path packet family | S -> C | `?Packet=0x2B` | `missing` | Not targeted |
 | `0x2D` | Mobile attributes | S -> C | `?Packet=0x2D` | `missing` | No dedicated mob-attributes packet |
-| `0x2F` | Fight occurring | S -> C | `?Packet=0x2F` | `missing` | Combat animation/status flow incomplete |
+| `0x2F` | Fight occurring | S -> C | `?Packet=0x2F` | `FightOccurringPacket` | `outgoing` | `CombatService` | Sent when a scheduled melee swing is attempted |
 | `0x30` | Attack ok | S -> C | `?Packet=0x30` | `missing` | Combat target confirmation not implemented |
 | `0x31` | Attack ended | S -> C | `?Packet=0x31` | `missing` | Combat target clear not implemented |
 | `0x32` | Legacy unknown | S -> C | `?Packet=0x32` | `missing` | Left undocumented/unused in Moongate |
@@ -192,7 +192,7 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0x67` | New character animation family | S -> C | `?Packet=0x67` | `missing` | Not modeled |
 | `0x68` | New target / map family | S -> C | `?Packet=0x68` | `missing` | Not modeled |
 | `0x69` | Character animation alt | S -> C | `?Packet=0x69` | `missing` | Not modeled |
-| `0x74` | Open buy window | S -> C | `?Packet=0x74` | `missing` | Vendor buy UI not implemented |
+| `0x74` | Open buy window | S -> C | `?Packet=0x74` | `VendorBuyListPacket` | Classic vendor buy list implemented and used with `0x3C` + existing `DrawContainerPacket (0x24)` shop flow |
 | `0x77` | Update player | S -> C | `?Packet=0x77` | `missing` | Moongate uses other draw/move packets |
 | `0x7C` | Open dialog box | both | `?Packet=0x7C` | `missing` | Dialog box flow absent |
 | `0x86` | Resend characters after delete | S -> C | `?Packet=0x86` | `missing` | Character delete flow absent |
@@ -201,13 +201,13 @@ This section intentionally includes older or lower-priority packets so opcode ra
 | `0x90` | Display map | S -> C | `?Packet=0x90` | `missing` | Map display flow absent |
 | `0x99` | Multi-placement or GM packet | S -> C | `?Packet=0x99` | `missing` | Not modeled |
 | `0x9C` | Prompt response | S -> C | `?Packet=0x9C` | `missing` | Prompt flow absent |
-| `0x9E` | Vendor descriptions | S -> C | `?Packet=0x9E` | `missing` | Vendor UI flow absent |
+| `0x9E` | Vendor descriptions | S -> C | `?Packet=0x9E` | `VendorSellListPacket` | Classic vendor sell list implemented for context-menu sell flow |
 | `0xA1` | Attack cursor | S -> C | `?Packet=0xA1` | `missing` | Combat targeting UI absent |
 | `0xA2` | Character animation extended | S -> C | `?Packet=0xA2` | `missing` | Not modeled |
 | `0xA3` | Client prompt / speech family | S -> C | `?Packet=0xA3` | `missing` | Not modeled |
 | `0xA5` | Open web browser | S -> C | `?Packet=0xA5` | `missing` | Not used |
 | `0xA6` | Tip window | S -> C | `?Packet=0xA6` | `missing` | Tip UI absent |
-| `0xAA` | Open paperdoll alt / skill family | S -> C | `?Packet=0xAA` | `missing` | Not modeled |
+| `0xAA` | Allow/refuse attack | S -> C | `?Packet=0xAA` | `ChangeCombatantPacket` | `outgoing` | `CombatService` | Current combatant serial or `Serial.Zero` |
 | `0xAB` | Text entry dialog | S -> C | `?Packet=0xAB` | `missing` | Text entry flow absent |
 | `0xAC` | Server list alt / game family | S -> C | `?Packet=0xAC` | `missing` | Not modeled |
 | `0xAF` | Death animation | S -> C | `?Packet=0xAF` | `missing` | Packet class exists in Moongate, but no documented runtime flow yet |

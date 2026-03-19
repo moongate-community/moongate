@@ -1,0 +1,80 @@
+[
+  {
+    "type": "mobile",
+    "id": "weaponsmith_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town weaponsmith vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "weaponsmith",
+      "town"
+    ],
+    "strength": 80,
+    "dexterity": 60,
+    "intelligence": 45,
+    "hits": 80,
+    "brain": "town_blacksmith",
+    "sellProfileId": "vendor.weaponsmith",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "fancy_shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "half_apron",
+        "layer": "Waist"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "hatchet",
+        "layer": "OneHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "the weaponsmith"
+  },
+  {
+    "type": "mobile",
+    "id": "provisioner_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town provisioner vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "provisioner",
+      "town"
+    ],
+    "brain": "None",
+    "sellProfileId": "vendor.provisioner",
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "doublet",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "short_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "shoes",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "backpack",
+        "layer": "Backpack"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "the provisioner"
+  }
+]

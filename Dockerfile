@@ -10,7 +10,7 @@ RUN npm ci
 COPY ui/ ./
 RUN npm run build
 
-# Use latest .NET 10 SDK with security updates
+# Use latest .NET 10 SDK with security updates.
 FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS publish
 ARG BUILD_CONFIGURATION=Release
 ARG TARGETARCH
@@ -72,6 +72,7 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS final
 
 # Update Alpine packages to latest security patches
 RUN apk update && apk upgrade --no-cache
+RUN apk add --no-cache wget
 
 WORKDIR /opt/moongate
 
@@ -88,6 +89,9 @@ ENV MOONGATE_IS_DOCKER=true
 ENV MOONGATE_UI_DIST=/opt/moongate/ui/dist
 EXPOSE 2593/tcp
 EXPOSE 8088/tcp
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:8088/health | grep -q '^ok$' || exit 1
 
 USER moongate
 ENTRYPOINT ["/opt/moongate/Moongate.Server"]

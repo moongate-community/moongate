@@ -27,6 +27,34 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         _gameNetworkSessionService = gameNetworkSessionService;
     }
 
+    private enum VoiceMutation
+    {
+        Add,
+        Remove,
+        Toggle
+    }
+
+    private enum MembershipMutation
+    {
+        Add,
+        Remove,
+        Toggle
+    }
+
+    public Task HandleAsync(PlayerDisconnectedEvent gameEvent, CancellationToken cancellationToken = default)
+        => RemoveSessionAsync(gameEvent.SessionId, cancellationToken);
+
+    public Task HandleChatActionAsync(
+        GameSession session,
+        ChatTextPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = GetOrCreateUser(session);
+
+        return HandleActionAsync(user, packet.ActionId, packet.Payload);
+    }
+
     public Task OpenWindowAsync(GameSession session, CancellationToken cancellationToken = default)
     {
         var user = GetOrCreateUser(session);
@@ -41,19 +69,6 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         return Task.CompletedTask;
     }
 
-    public Task StartAsync()
-        => Task.CompletedTask;
-
-    public Task StopAsync()
-        => Task.CompletedTask;
-
-    public Task HandleChatActionAsync(GameSession session, ChatTextPacket packet, CancellationToken cancellationToken = default)
-    {
-        var user = GetOrCreateUser(session);
-
-        return HandleActionAsync(user, packet.ActionId, packet.Payload);
-    }
-
     public Task RemoveSessionAsync(long sessionId, CancellationToken cancellationToken = default)
     {
         if (!_usersBySessionId.TryGetValue(sessionId, out var user))
@@ -61,13 +76,211 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
             return Task.CompletedTask;
         }
 
-        RemoveUser(user, closeWindow: false);
+        RemoveUser(user, false);
 
         return Task.CompletedTask;
     }
 
-    public Task HandleAsync(PlayerDisconnectedEvent gameEvent, CancellationToken cancellationToken = default)
-        => RemoveSessionAsync(gameEvent.SessionId, cancellationToken);
+    public Task StartAsync()
+        => Task.CompletedTask;
+
+    public Task StopAsync()
+        => Task.CompletedTask;
+
+    private void AddIgnore(ChatUserState user, string param)
+    {
+        var target = FindUserByName(param);
+
+        if (target is null)
+        {
+            return;
+        }
+
+        if (!user.IgnoredSessionIds.Add(target.SessionId))
+        {
+            SendSystem(user.SessionId, 22, target.Username);
+
+            return;
+        }
+
+        SendSystem(user.SessionId, 23, target.Username);
+    }
+
+    private void AddUserToChannel(ChatChannelState channel, ChatUserState user, string? password = null)
+    {
+        if (channel.Members.ContainsKey(user.SessionId))
+        {
+            SendSystem(user.SessionId, 46, channel.Name);
+
+            return;
+        }
+
+        if (!ValidatePassword(channel, password))
+        {
+            SendSystem(user.SessionId, 34);
+
+            return;
+        }
+
+        if (TryGetCurrentChannel(user, out var current))
+        {
+            RemoveUserFromChannel(current, user);
+        }
+
+        var isFirstMember = channel.Members.Count == 0;
+        channel.Members[user.SessionId] = new()
+        {
+            SessionId = user.SessionId,
+            IsModerator = isFirstMember,
+            HasVoice = false
+        };
+        user.CurrentChannelName = channel.Name;
+
+        EnqueueCommand(user.SessionId, ChatCommandType.JoinedChannel, channel.Name);
+        BroadcastCommandToChannel(channel, ChatCommandType.AddUserToChannel, null, GetColorizedUsername(user, channel));
+
+        foreach (var member in channel.Members.Keys.ToArray())
+        {
+            var existingUser = _usersBySessionId[member];
+            EnqueueCommand(user.SessionId, ChatCommandType.AddUserToChannel, GetColorizedUsername(existingUser, channel));
+        }
+    }
+
+    private void BroadcastCommand(ChatCommandType command, string param1 = "", string param2 = "")
+    {
+        foreach (var user in _usersBySessionId.Values)
+        {
+            EnqueueCommand(user.SessionId, command, param1, param2);
+        }
+    }
+
+    private void BroadcastCommandToChannel(
+        ChatChannelState channel,
+        ChatCommandType command,
+        long? initiatorSessionId,
+        string param1 = "",
+        string param2 = ""
+    )
+    {
+        foreach (var member in channel.Members.Keys)
+        {
+            if (initiatorSessionId.HasValue && member == initiatorSessionId.Value)
+            {
+                continue;
+            }
+
+            EnqueueCommand(member, command, param1, param2);
+        }
+    }
+
+    private void BroadcastIgnorable(
+        ChatChannelState channel,
+        ushort number,
+        ChatUserState from,
+        string param1,
+        string param2
+    )
+    {
+        foreach (var member in channel.Members.Keys)
+        {
+            if (_usersBySessionId.TryGetValue(member, out var recipient) &&
+                !recipient.IgnoredSessionIds.Contains(from.SessionId))
+            {
+                SendSystem(member, number, param1, param2);
+            }
+        }
+    }
+
+    private void BroadcastMemberRefresh(ChatChannelState channel, ChatUserState target)
+        => BroadcastCommandToChannel(channel, ChatCommandType.AddUserToChannel, null, GetColorizedUsername(target, channel));
+
+    private bool CanTalk(ChatChannelState channel, long sessionId)
+    {
+        if (!channel.Members.TryGetValue(sessionId, out var member))
+        {
+            return false;
+        }
+
+        return !channel.VoiceRestricted || member.IsModerator || member.HasVoice;
+    }
+
+    private void CreateOrJoinChannel(ChatUserState user, string param)
+    {
+        ParseCreateChannel(param, out var name, out var password);
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return;
+        }
+
+        if (!_channelsByName.TryGetValue(name, out var channel))
+        {
+            channel = new()
+            {
+                Name = name,
+                Password = NormalizeOptional(password)
+            };
+            _channelsByName[name] = channel;
+            BroadcastCommand(ChatCommandType.AddChannel, channel.Name, "0");
+        }
+
+        AddUserToChannel(channel, user, NormalizeOptional(password));
+    }
+
+    private void EnqueueCommand(long sessionId, ChatCommandType command, string param1 = "", string param2 = "")
+        => _outgoingPacketQueue.Enqueue(sessionId, new ChatCommandPacket(command, param1, param2));
+
+    private ChatUserState? FindMemberInChannel(ChatChannelState channel, string username)
+    {
+        var target = FindUserByName(username);
+
+        return target is not null && channel.Members.ContainsKey(target.SessionId) ? target : null;
+    }
+
+    private ChatUserState? FindUserByName(string username)
+        => _usersBySessionId.Values.FirstOrDefault(
+            x => string.Equals(x.Username, username.Trim(), StringComparison.OrdinalIgnoreCase)
+        );
+
+    private static string GetColorizedUsername(ChatUserState user, ChatChannelState? channel)
+    {
+        if (channel is not null && channel.Members.TryGetValue(user.SessionId, out var member))
+        {
+            if (member.IsModerator)
+            {
+                return $"1{user.Username}";
+            }
+
+            if (member.HasVoice)
+            {
+                return $"2{user.Username}";
+            }
+        }
+
+        return $"0{user.Username}";
+    }
+
+    private ChatUserState GetOrCreateUser(GameSession session)
+    {
+        if (_usersBySessionId.TryGetValue(session.SessionId, out var existing))
+        {
+            return existing;
+        }
+
+        var username = string.IsNullOrWhiteSpace(session.Character?.Name)
+                           ? $"User{session.SessionId}"
+                           : session.Character.Name;
+        var user = new ChatUserState
+        {
+            SessionId = session.SessionId,
+            CharacterId = session.CharacterId,
+            Username = username,
+            CharacterName = session.Character?.Name ?? username
+        };
+        _usersBySessionId[session.SessionId] = user;
+
+        return user;
+    }
 
     private Task HandleActionAsync(ChatUserState user, ChatActionType actionId, string param)
     {
@@ -81,10 +294,12 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
 
                 passwordChannel.Password = NormalizeOptional(param);
                 SendSystem(user.SessionId, 60);
+
                 break;
 
             case ChatActionType.Close:
-                RemoveUser(user, closeWindow: true);
+                RemoveUser(user, true);
+
                 break;
 
             case ChatActionType.Message:
@@ -96,18 +311,22 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
                 if (!CanTalk(messageChannel, user.SessionId))
                 {
                     SendSystem(user.SessionId, 36);
+
                     return Task.CompletedTask;
                 }
 
                 BroadcastIgnorable(messageChannel, 57, user, GetColorizedUsername(user, messageChannel), param);
+
                 break;
 
             case ChatActionType.JoinConference:
                 JoinExistingChannel(user, param);
+
                 break;
 
             case ChatActionType.CreateConference:
                 CreateOrJoinChannel(user, param);
+
                 break;
 
             case ChatActionType.RenameConference:
@@ -117,96 +336,118 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
                 }
 
                 RenameChannel(renameChannel, NormalizeRequired(param));
+
                 break;
 
             case ChatActionType.SendPrivateMessage:
                 SendPrivateMessage(user, param);
+
                 break;
 
             case ChatActionType.Ignore:
                 AddIgnore(user, param);
+
                 break;
 
             case ChatActionType.StopIgnoring:
                 RemoveIgnore(user, param);
+
                 break;
 
             case ChatActionType.ToggleIgnore:
                 ToggleIgnore(user, param);
+
                 break;
 
             case ChatActionType.GrantSpeakingPrivileges:
                 UpdateVoice(user, param, VoiceMutation.Add);
+
                 break;
 
             case ChatActionType.RemoveSpeakingPrivileges:
                 UpdateVoice(user, param, VoiceMutation.Remove);
+
                 break;
 
             case ChatActionType.ToggleSpeakingPrivileges:
                 UpdateVoice(user, param, VoiceMutation.Toggle);
+
                 break;
 
             case ChatActionType.GrantModeratorStatus:
                 UpdateModerator(user, param, MembershipMutation.Add);
+
                 break;
 
             case ChatActionType.RemoveModeratorStatus:
                 UpdateModerator(user, param, MembershipMutation.Remove);
+
                 break;
 
             case ChatActionType.ToggleModeratorStatus:
                 UpdateModerator(user, param, MembershipMutation.Toggle);
+
                 break;
 
             case ChatActionType.DisablePrivateMessages:
                 user.ReceivePrivateMessages = false;
                 SendSystem(user.SessionId, 38);
+
                 break;
 
             case ChatActionType.EnablePrivateMessages:
                 user.ReceivePrivateMessages = true;
                 SendSystem(user.SessionId, 37);
+
                 break;
 
             case ChatActionType.TogglePrivateMessages:
                 user.ReceivePrivateMessages = !user.ReceivePrivateMessages;
                 SendSystem(user.SessionId, (ushort)(user.ReceivePrivateMessages ? 37 : 38));
+
                 break;
 
             case ChatActionType.ShowCharacterName:
                 user.ShowCharacterName = true;
                 SendSystem(user.SessionId, 39);
+
                 break;
 
             case ChatActionType.HideCharacterName:
                 user.ShowCharacterName = false;
                 SendSystem(user.SessionId, 40);
+
                 break;
 
             case ChatActionType.ToggleShowCharacterName:
                 user.ShowCharacterName = !user.ShowCharacterName;
                 SendSystem(user.SessionId, (ushort)(user.ShowCharacterName ? 39 : 40));
+
                 break;
 
             case ChatActionType.Whois:
                 QueryWhoIs(user, param);
+
                 break;
 
             case ChatActionType.Kick:
                 Kick(user, param);
+
                 break;
 
             case ChatActionType.RestrictDefaultSpeakingPrivileges:
                 SetDefaultVoiceRestricted(user, true);
+
                 break;
 
             case ChatActionType.AllowDefaultSpeakingPrivileges:
                 SetDefaultVoiceRestricted(user, false);
+
                 break;
 
             case ChatActionType.ToggleDefaultSpeakingPrivileges:
                 ToggleDefaultVoiceRestricted(user);
+
                 break;
 
             case ChatActionType.Emote:
@@ -218,10 +459,12 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
                 if (!CanTalk(emoteChannel, user.SessionId))
                 {
                     SendSystem(user.SessionId, 36);
+
                     return Task.CompletedTask;
                 }
 
                 BroadcastIgnorable(emoteChannel, 58, user, GetColorizedUsername(user, emoteChannel), param);
+
                 break;
         }
 
@@ -240,238 +483,18 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         if (!_channelsByName.TryGetValue(name, out var channel))
         {
             SendSystem(user.SessionId, 33, name);
+
             return;
         }
 
         if (!ValidatePassword(channel, password))
         {
             SendSystem(user.SessionId, 34);
+
             return;
         }
 
         AddUserToChannel(channel, user);
-    }
-
-    private void CreateOrJoinChannel(ChatUserState user, string param)
-    {
-        ParseCreateChannel(param, out var name, out var password);
-
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            return;
-        }
-
-        if (!_channelsByName.TryGetValue(name, out var channel))
-        {
-            channel = new ChatChannelState
-            {
-                Name = name,
-                Password = NormalizeOptional(password)
-            };
-            _channelsByName[name] = channel;
-            BroadcastCommand(ChatCommandType.AddChannel, channel.Name, "0");
-        }
-
-        AddUserToChannel(channel, user, NormalizeOptional(password));
-    }
-
-    private void AddIgnore(ChatUserState user, string param)
-    {
-        var target = FindUserByName(param);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        if (!user.IgnoredSessionIds.Add(target.SessionId))
-        {
-            SendSystem(user.SessionId, 22, target.Username);
-            return;
-        }
-
-        SendSystem(user.SessionId, 23, target.Username);
-    }
-
-    private void RemoveIgnore(ChatUserState user, string param)
-    {
-        var target = FindUserByName(param);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        if (!user.IgnoredSessionIds.Remove(target.SessionId))
-        {
-            SendSystem(user.SessionId, 25, target.Username);
-            return;
-        }
-
-        SendSystem(user.SessionId, 24, target.Username);
-
-        if (user.IgnoredSessionIds.Count == 0)
-        {
-            SendSystem(user.SessionId, 26);
-        }
-    }
-
-    private void ToggleIgnore(ChatUserState user, string param)
-    {
-        var target = FindUserByName(param);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        if (user.IgnoredSessionIds.Contains(target.SessionId))
-        {
-            RemoveIgnore(user, target.Username);
-        }
-        else
-        {
-            AddIgnore(user, target.Username);
-        }
-    }
-
-    private void SendPrivateMessage(ChatUserState from, string param)
-    {
-        var separator = param.IndexOf(' ');
-
-        if (separator <= 0 || separator >= param.Length - 1)
-        {
-            return;
-        }
-
-        var targetName = param[..separator].Trim();
-        var text = param[(separator + 1)..].Trim();
-        var target = FindUserByName(targetName);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        if (target.IgnoredSessionIds.Contains(from.SessionId))
-        {
-            SendSystem(from.SessionId, 35, target.Username);
-            return;
-        }
-
-        if (!target.ReceivePrivateMessages)
-        {
-            SendSystem(from.SessionId, 42, target.Username);
-            return;
-        }
-
-        var currentChannel = TryGetCurrentChannel(from, out var channel) ? channel : null;
-        SendSystem(target.SessionId, 59, GetColorizedUsername(from, currentChannel), text);
-    }
-
-    private void UpdateVoice(ChatUserState user, string param, VoiceMutation mutation)
-    {
-        if (!TryRequireModerator(user, out var channel))
-        {
-            return;
-        }
-
-        var target = FindMemberInChannel(channel, param);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        var member = channel.Members[target.SessionId];
-
-        switch (mutation)
-        {
-            case VoiceMutation.Add:
-                member.HasVoice = true;
-                SendSystem(target.SessionId, 54, user.Username);
-                SendSystemToChannel(channel, 52, target.SessionId, target.Username);
-                break;
-            case VoiceMutation.Remove:
-                member.HasVoice = false;
-                SendSystem(target.SessionId, 53, user.Username);
-                SendSystemToChannel(channel, 51, target.SessionId, target.Username);
-                break;
-            case VoiceMutation.Toggle:
-                member.HasVoice = !member.HasVoice;
-                SendSystem(target.SessionId, (ushort)(member.HasVoice ? 54 : 53), user.Username);
-                SendSystemToChannel(channel, (ushort)(member.HasVoice ? 52 : 51), target.SessionId, target.Username);
-                break;
-        }
-
-        BroadcastMemberRefresh(channel, target);
-    }
-
-    private void UpdateModerator(ChatUserState user, string param, MembershipMutation mutation)
-    {
-        if (!TryRequireModerator(user, out var channel))
-        {
-            return;
-        }
-
-        var target = FindMemberInChannel(channel, param);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        var member = channel.Members[target.SessionId];
-
-        switch (mutation)
-        {
-            case MembershipMutation.Add:
-                member.IsModerator = true;
-                member.HasVoice = false;
-                SendSystem(target.SessionId, 50, user.Username);
-                SendSystemToChannel(channel, 48, target.SessionId, target.Username);
-                break;
-            case MembershipMutation.Remove:
-                member.IsModerator = false;
-                SendSystem(target.SessionId, 49, user.Username);
-                SendSystemToChannel(channel, 47, target.SessionId, target.Username);
-                break;
-            case MembershipMutation.Toggle:
-                member.IsModerator = !member.IsModerator;
-                if (member.IsModerator)
-                {
-                    member.HasVoice = false;
-                    SendSystem(target.SessionId, 50, user.Username);
-                    SendSystemToChannel(channel, 48, target.SessionId, target.Username);
-                }
-                else
-                {
-                    SendSystem(target.SessionId, 49, user.Username);
-                    SendSystemToChannel(channel, 47, target.SessionId, target.Username);
-                }
-
-                break;
-        }
-
-        BroadcastMemberRefresh(channel, target);
-    }
-
-    private void QueryWhoIs(ChatUserState from, string param)
-    {
-        var target = FindUserByName(param);
-
-        if (target is null)
-        {
-            return;
-        }
-
-        if (!target.ShowCharacterName)
-        {
-            SendSystem(from.SessionId, 41, target.Username);
-            return;
-        }
-
-        SendSystem(from.SessionId, 43, target.Username, target.CharacterName);
     }
 
     private void Kick(ChatUserState from, string param)
@@ -493,83 +516,103 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         SendSystemToChannel(channel, 44, target.SessionId, target.Username);
     }
 
-    private void SetDefaultVoiceRestricted(ChatUserState user, bool restricted)
+    private static string? NormalizeOptional(string? value)
     {
-        if (!TryRequireModerator(user, out var channel))
-        {
-            return;
-        }
+        var trimmed = value?.Trim();
 
-        channel.VoiceRestricted = restricted;
-        SendSystemToChannel(channel, (ushort)(restricted ? 56 : 55));
+        return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
     }
 
-    private void ToggleDefaultVoiceRestricted(ChatUserState user)
+    private static string NormalizeRequired(string value)
+        => value.Trim();
+
+    private static void ParseCreateChannel(string param, out string name, out string? password)
     {
-        if (!TryRequireModerator(user, out var channel))
+        password = null;
+        param = param.Trim();
+        var start = param.IndexOf('{');
+
+        if (start >= 0)
         {
+            name = param[..start].Trim();
+            var end = param.IndexOf('}', start + 1);
+            password = end > start ? NormalizeOptional(param.Substring(start + 1, end - start - 1)) : null;
+
             return;
         }
 
-        channel.VoiceRestricted = !channel.VoiceRestricted;
-        SendSystemToChannel(channel, (ushort)(channel.VoiceRestricted ? 56 : 55));
+        name = param.Trim();
     }
 
-    private ChatUserState GetOrCreateUser(GameSession session)
+    private static void ParseJoinChannel(string param, out string name, out string? password)
     {
-        if (_usersBySessionId.TryGetValue(session.SessionId, out var existing))
+        name = param.Trim();
+        password = null;
+
+        var start = param.IndexOf('\"');
+
+        if (start >= 0)
         {
-            return existing;
+            var end = param.IndexOf('\"', start + 1);
+
+            if (end > start)
+            {
+                name = param.Substring(start + 1, end - start - 1).Trim();
+                password = NormalizeOptional(param[(end + 1)..]);
+
+                return;
+            }
         }
 
-        var username = string.IsNullOrWhiteSpace(session.Character?.Name) ? $"User{session.SessionId}" : session.Character.Name;
-        var user = new ChatUserState
-        {
-            SessionId = session.SessionId,
-            CharacterId = session.CharacterId,
-            Username = username,
-            CharacterName = session.Character?.Name ?? username
-        };
-        _usersBySessionId[session.SessionId] = user;
+        var separator = param.IndexOf(' ');
 
-        return user;
+        if (separator > 0)
+        {
+            name = param[..separator].Trim();
+            password = NormalizeOptional(param[(separator + 1)..]);
+        }
     }
 
-    private void AddUserToChannel(ChatChannelState channel, ChatUserState user, string? password = null)
+    private void QueryWhoIs(ChatUserState from, string param)
     {
-        if (channel.Members.ContainsKey(user.SessionId))
+        var target = FindUserByName(param);
+
+        if (target is null)
         {
-            SendSystem(user.SessionId, 46, channel.Name);
             return;
         }
 
-        if (!ValidatePassword(channel, password))
+        if (!target.ShowCharacterName)
         {
-            SendSystem(user.SessionId, 34);
+            SendSystem(from.SessionId, 41, target.Username);
+
             return;
         }
 
-        if (TryGetCurrentChannel(user, out var current))
+        SendSystem(from.SessionId, 43, target.Username, target.CharacterName);
+    }
+
+    private void RemoveIgnore(ChatUserState user, string param)
+    {
+        var target = FindUserByName(param);
+
+        if (target is null)
         {
-            RemoveUserFromChannel(current, user);
+            return;
         }
 
-        var isFirstMember = channel.Members.Count == 0;
-        channel.Members[user.SessionId] = new ChatChannelMemberState
+        if (!user.IgnoredSessionIds.Remove(target.SessionId))
         {
-            SessionId = user.SessionId,
-            IsModerator = isFirstMember,
-            HasVoice = false
-        };
-        user.CurrentChannelName = channel.Name;
+            SendSystem(user.SessionId, 25, target.Username);
 
-        EnqueueCommand(user.SessionId, ChatCommandType.JoinedChannel, channel.Name);
-        BroadcastCommandToChannel(channel, ChatCommandType.AddUserToChannel, null, GetColorizedUsername(user, channel));
+            return;
+        }
 
-        foreach (var member in channel.Members.Keys.ToArray())
+        SendSystem(user.SessionId, 24, target.Username);
+
+        if (user.IgnoredSessionIds.Count == 0)
         {
-            var existingUser = _usersBySessionId[member];
-            EnqueueCommand(user.SessionId, ChatCommandType.AddUserToChannel, GetColorizedUsername(existingUser, channel));
+            SendSystem(user.SessionId, 26);
         }
     }
 
@@ -634,23 +677,52 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         }
     }
 
-    private void BroadcastMemberRefresh(ChatChannelState channel, ChatUserState target)
+    private void SendPrivateMessage(ChatUserState from, string param)
     {
-        BroadcastCommandToChannel(channel, ChatCommandType.AddUserToChannel, null, GetColorizedUsername(target, channel));
-    }
+        var separator = param.IndexOf(' ');
 
-    private void BroadcastIgnorable(ChatChannelState channel, ushort number, ChatUserState from, string param1, string param2)
-    {
-        foreach (var member in channel.Members.Keys)
+        if (separator <= 0 || separator >= param.Length - 1)
         {
-            if (_usersBySessionId.TryGetValue(member, out var recipient) && !recipient.IgnoredSessionIds.Contains(from.SessionId))
-            {
-                SendSystem(member, number, param1, param2);
-            }
+            return;
         }
+
+        var targetName = param[..separator].Trim();
+        var text = param[(separator + 1)..].Trim();
+        var target = FindUserByName(targetName);
+
+        if (target is null)
+        {
+            return;
+        }
+
+        if (target.IgnoredSessionIds.Contains(from.SessionId))
+        {
+            SendSystem(from.SessionId, 35, target.Username);
+
+            return;
+        }
+
+        if (!target.ReceivePrivateMessages)
+        {
+            SendSystem(from.SessionId, 42, target.Username);
+
+            return;
+        }
+
+        var currentChannel = TryGetCurrentChannel(from, out var channel) ? channel : null;
+        SendSystem(target.SessionId, 59, GetColorizedUsername(from, currentChannel), text);
     }
 
-    private void SendSystemToChannel(ChatChannelState channel, ushort number, long? initiatorSessionId = null, string? param1 = null, string? param2 = null)
+    private void SendSystem(long sessionId, ushort number, string param1 = "", string param2 = "")
+        => _outgoingPacketQueue.Enqueue(sessionId, new ChatCommandPacket(number, param1, param2));
+
+    private void SendSystemToChannel(
+        ChatChannelState channel,
+        ushort number,
+        long? initiatorSessionId = null,
+        string? param1 = null,
+        string? param2 = null
+    )
     {
         foreach (var member in channel.Members.Keys)
         {
@@ -663,32 +735,46 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         }
     }
 
-    private void BroadcastCommand(ChatCommandType command, string param1 = "", string param2 = "")
+    private void SetDefaultVoiceRestricted(ChatUserState user, bool restricted)
     {
-        foreach (var user in _usersBySessionId.Values)
+        if (!TryRequireModerator(user, out var channel))
         {
-            EnqueueCommand(user.SessionId, command, param1, param2);
+            return;
         }
+
+        channel.VoiceRestricted = restricted;
+        SendSystemToChannel(channel, (ushort)(restricted ? 56 : 55));
     }
 
-    private void BroadcastCommandToChannel(ChatChannelState channel, ChatCommandType command, long? initiatorSessionId, string param1 = "", string param2 = "")
+    private void ToggleDefaultVoiceRestricted(ChatUserState user)
     {
-        foreach (var member in channel.Members.Keys)
+        if (!TryRequireModerator(user, out var channel))
         {
-            if (initiatorSessionId.HasValue && member == initiatorSessionId.Value)
-            {
-                continue;
-            }
-
-            EnqueueCommand(member, command, param1, param2);
+            return;
         }
+
+        channel.VoiceRestricted = !channel.VoiceRestricted;
+        SendSystemToChannel(channel, (ushort)(channel.VoiceRestricted ? 56 : 55));
     }
 
-    private void EnqueueCommand(long sessionId, ChatCommandType command, string param1 = "", string param2 = "")
-        => _outgoingPacketQueue.Enqueue(sessionId, new ChatCommandPacket(command, param1, param2));
+    private void ToggleIgnore(ChatUserState user, string param)
+    {
+        var target = FindUserByName(param);
 
-    private void SendSystem(long sessionId, ushort number, string param1 = "", string param2 = "")
-        => _outgoingPacketQueue.Enqueue(sessionId, new ChatCommandPacket(number, param1, param2));
+        if (target is null)
+        {
+            return;
+        }
+
+        if (user.IgnoredSessionIds.Contains(target.SessionId))
+        {
+            RemoveIgnore(user, target.Username);
+        }
+        else
+        {
+            AddIgnore(user, target.Username);
+        }
+    }
 
     private bool TryGetCurrentChannel(ChatUserState user, out ChatChannelState channel)
     {
@@ -731,115 +817,100 @@ public sealed class ChatSystemService : IChatSystemService, IGameEventListener<P
         return false;
     }
 
-    private bool CanTalk(ChatChannelState channel, long sessionId)
+    private void UpdateModerator(ChatUserState user, string param, MembershipMutation mutation)
     {
-        if (!channel.Members.TryGetValue(sessionId, out var member))
+        if (!TryRequireModerator(user, out var channel))
         {
-            return false;
+            return;
         }
 
-        return !channel.VoiceRestricted || member.IsModerator || member.HasVoice;
+        var target = FindMemberInChannel(channel, param);
+
+        if (target is null)
+        {
+            return;
+        }
+
+        var member = channel.Members[target.SessionId];
+
+        switch (mutation)
+        {
+            case MembershipMutation.Add:
+                member.IsModerator = true;
+                member.HasVoice = false;
+                SendSystem(target.SessionId, 50, user.Username);
+                SendSystemToChannel(channel, 48, target.SessionId, target.Username);
+
+                break;
+            case MembershipMutation.Remove:
+                member.IsModerator = false;
+                SendSystem(target.SessionId, 49, user.Username);
+                SendSystemToChannel(channel, 47, target.SessionId, target.Username);
+
+                break;
+            case MembershipMutation.Toggle:
+                member.IsModerator = !member.IsModerator;
+
+                if (member.IsModerator)
+                {
+                    member.HasVoice = false;
+                    SendSystem(target.SessionId, 50, user.Username);
+                    SendSystemToChannel(channel, 48, target.SessionId, target.Username);
+                }
+                else
+                {
+                    SendSystem(target.SessionId, 49, user.Username);
+                    SendSystemToChannel(channel, 47, target.SessionId, target.Username);
+                }
+
+                break;
+        }
+
+        BroadcastMemberRefresh(channel, target);
+    }
+
+    private void UpdateVoice(ChatUserState user, string param, VoiceMutation mutation)
+    {
+        if (!TryRequireModerator(user, out var channel))
+        {
+            return;
+        }
+
+        var target = FindMemberInChannel(channel, param);
+
+        if (target is null)
+        {
+            return;
+        }
+
+        var member = channel.Members[target.SessionId];
+
+        switch (mutation)
+        {
+            case VoiceMutation.Add:
+                member.HasVoice = true;
+                SendSystem(target.SessionId, 54, user.Username);
+                SendSystemToChannel(channel, 52, target.SessionId, target.Username);
+
+                break;
+            case VoiceMutation.Remove:
+                member.HasVoice = false;
+                SendSystem(target.SessionId, 53, user.Username);
+                SendSystemToChannel(channel, 51, target.SessionId, target.Username);
+
+                break;
+            case VoiceMutation.Toggle:
+                member.HasVoice = !member.HasVoice;
+                SendSystem(target.SessionId, (ushort)(member.HasVoice ? 54 : 53), user.Username);
+                SendSystemToChannel(channel, (ushort)(member.HasVoice ? 52 : 51), target.SessionId, target.Username);
+
+                break;
+        }
+
+        BroadcastMemberRefresh(channel, target);
     }
 
     private bool ValidatePassword(ChatChannelState channel, string? password)
         => string.IsNullOrWhiteSpace(channel.Password) ||
            string.Equals(channel.Password, NormalizeOptional(password), StringComparison.OrdinalIgnoreCase);
-
-    private ChatUserState? FindUserByName(string username)
-        => _usersBySessionId.Values.FirstOrDefault(x => string.Equals(x.Username, username.Trim(), StringComparison.OrdinalIgnoreCase));
-
-    private ChatUserState? FindMemberInChannel(ChatChannelState channel, string username)
-    {
-        var target = FindUserByName(username);
-
-        return target is not null && channel.Members.ContainsKey(target.SessionId) ? target : null;
-    }
-
-    private static string GetColorizedUsername(ChatUserState user, ChatChannelState? channel)
-    {
-        if (channel is not null && channel.Members.TryGetValue(user.SessionId, out var member))
-        {
-            if (member.IsModerator)
-            {
-                return $"1{user.Username}";
-            }
-
-            if (member.HasVoice)
-            {
-                return $"2{user.Username}";
-            }
-        }
-
-        return $"0{user.Username}";
-    }
-
-    private static string NormalizeRequired(string value)
-        => value.Trim();
-
-    private static string? NormalizeOptional(string? value)
-    {
-        var trimmed = value?.Trim();
-
-        return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
-    }
-
-    private static void ParseJoinChannel(string param, out string name, out string? password)
-    {
-        name = param.Trim();
-        password = null;
-
-        var start = param.IndexOf('\"');
-
-        if (start >= 0)
-        {
-            var end = param.IndexOf('\"', start + 1);
-
-            if (end > start)
-            {
-                name = param.Substring(start + 1, end - start - 1).Trim();
-                password = NormalizeOptional(param[(end + 1)..]);
-                return;
-            }
-        }
-
-        var separator = param.IndexOf(' ');
-
-        if (separator > 0)
-        {
-            name = param[..separator].Trim();
-            password = NormalizeOptional(param[(separator + 1)..]);
-        }
-    }
-
-    private static void ParseCreateChannel(string param, out string name, out string? password)
-    {
-        password = null;
-        param = param.Trim();
-        var start = param.IndexOf('{');
-
-        if (start >= 0)
-        {
-            name = param[..start].Trim();
-            var end = param.IndexOf('}', start + 1);
-            password = end > start ? NormalizeOptional(param.Substring(start + 1, end - start - 1)) : null;
-
-            return;
-        }
-
-        name = param.Trim();
-    }
-
-    private enum VoiceMutation
-    {
-        Add,
-        Remove,
-        Toggle
-    }
-
-    private enum MembershipMutation
-    {
-        Add,
-        Remove,
-        Toggle
-    }
 }

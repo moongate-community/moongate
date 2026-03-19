@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Moongate.Core.Data.Directories;
@@ -278,6 +278,29 @@ public sealed class MoongateHttpService : IMoongateHttpService
         return sb.ToString();
     }
 
+    private static void ApplyDocumentCacheHeaders(HttpResponse response)
+    {
+        response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+        response.Headers.Pragma = "no-cache";
+        response.Headers.Expires = "0";
+    }
+
+    private static void ApplyStaticAssetCacheHeaders(HttpContext context, string fileName)
+    {
+        if (string.Equals(fileName, "index.html", StringComparison.OrdinalIgnoreCase))
+        {
+            ApplyDocumentCacheHeaders(context.Response);
+
+            return;
+        }
+
+        var cacheControl = IsImmutableUiAsset(fileName)
+                               ? "public, max-age=31536000, immutable"
+                               : "public, max-age=600";
+
+        context.Response.Headers.CacheControl = cacheControl;
+    }
+
     private bool ConfigureUiHosting(WebApplication app)
     {
         ConfigureWebRootHosting(app);
@@ -347,48 +370,6 @@ public sealed class MoongateHttpService : IMoongateHttpService
         );
     }
 
-    private static void ApplyStaticAssetCacheHeaders(HttpContext context, string fileName)
-    {
-        if (string.Equals(fileName, "index.html", StringComparison.OrdinalIgnoreCase))
-        {
-            ApplyDocumentCacheHeaders(context.Response);
-            return;
-        }
-
-        var cacheControl = IsImmutableUiAsset(fileName)
-            ? "public, max-age=31536000, immutable"
-            : "public, max-age=600";
-
-        context.Response.Headers.CacheControl = cacheControl;
-    }
-
-    private static void ApplyDocumentCacheHeaders(HttpResponse response)
-    {
-        response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
-        response.Headers.Pragma = "no-cache";
-        response.Headers.Expires = "0";
-    }
-
-    private static bool IsImmutableUiAsset(string fileName)
-    {
-        var extension = Path.GetExtension(fileName);
-        if (string.IsNullOrWhiteSpace(extension))
-        {
-            return false;
-        }
-
-        return extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".css", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".webp", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".woff", StringComparison.OrdinalIgnoreCase) ||
-               extension.Equals(".woff2", StringComparison.OrdinalIgnoreCase);
-    }
-
     private static Logger CreateHttpLogger(string logPath, LogEventLevel minimumLogLevel)
         => new LoggerConfiguration()
            .MinimumLevel
@@ -428,6 +409,27 @@ public sealed class MoongateHttpService : IMoongateHttpService
             _                    => "untyped"
         };
 
+    private static bool IsImmutableUiAsset(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+
+        if (string.IsNullOrWhiteSpace(extension))
+        {
+            return false;
+        }
+
+        return extension.Equals(".js", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".css", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".png", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".jpg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".gif", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".svg", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".webp", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".woff", StringComparison.OrdinalIgnoreCase) ||
+               extension.Equals(".woff2", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string NormalizeLabelName(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -462,6 +464,23 @@ public sealed class MoongateHttpService : IMoongateHttpService
         }
 
         return new(buffer);
+    }
+
+    private static string? NormalizePublicAssetPath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return null;
+        }
+
+        var normalized = path.Replace('\\', '/').Trim();
+
+        if (!normalized.StartsWith('/'))
+        {
+            normalized = "/" + normalized;
+        }
+
+        return normalized;
     }
 
     private static string? ResolveUiDistPath(string? configuredPath)
@@ -518,22 +537,5 @@ public sealed class MoongateHttpService : IMoongateHttpService
                path.StartsWithSegments("/metrics", StringComparison.OrdinalIgnoreCase) ||
                path.StartsWithSegments("/openapi", StringComparison.OrdinalIgnoreCase) ||
                path.StartsWithSegments("/scalar", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static string? NormalizePublicAssetPath(string? path)
-    {
-        if (string.IsNullOrWhiteSpace(path))
-        {
-            return null;
-        }
-
-        var normalized = path.Replace('\\', '/').Trim();
-
-        if (!normalized.StartsWith('/'))
-        {
-            normalized = "/" + normalized;
-        }
-
-        return normalized;
     }
 }

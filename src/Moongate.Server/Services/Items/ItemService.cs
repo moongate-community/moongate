@@ -37,6 +37,21 @@ public sealed class ItemService : IItemService
         _mobileModifierAggregationService = mobileModifierAggregationService;
     }
 
+    public async Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+    {
+        ArgumentNullException.ThrowIfNull(items);
+
+        foreach (var item in items)
+        {
+            if (item.Id == Serial.Zero)
+            {
+                item.Id = _persistenceService.UnitOfWork.AllocateNextItemId();
+            }
+        }
+
+        await _persistenceService.UnitOfWork.Items.BulkUpsertAsync(items);
+    }
+
     public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
     {
         ArgumentNullException.ThrowIfNull(item);
@@ -378,21 +393,6 @@ public sealed class ItemService : IItemService
         }
     }
 
-    public async Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-    {
-        ArgumentNullException.ThrowIfNull(items);
-
-        foreach (var item in items)
-        {
-            if (item.Id == Serial.Zero)
-            {
-                item.Id = _persistenceService.UnitOfWork.AllocateNextItemId();
-            }
-        }
-
-        await _persistenceService.UnitOfWork.Items.BulkUpsertAsync(items);
-    }
-
     private async Task DetachFromCurrentOwnerAsync(UOItemEntity item)
     {
         if (item.ParentContainerId != Serial.Zero)
@@ -513,6 +513,9 @@ public sealed class ItemService : IItemService
             new ItemMovedEvent(sessionId, itemId, oldContainerId, newContainerId, oldLocation, newLocation, mapId)
         );
 
+    private void RecalculateEquipmentModifiers(UOMobileEntity mobile)
+        => _mobileModifierAggregationService?.RecalculateEquipmentModifiers(mobile);
+
     private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
     {
         if (!mobile.EquippedItemIds.TryGetValue(layer, out var currentItemId) || currentItemId == Serial.Zero)
@@ -531,10 +534,5 @@ public sealed class ItemService : IItemService
         {
             mobile.UnequipItem(layer);
         }
-    }
-
-    private void RecalculateEquipmentModifiers(UOMobileEntity mobile)
-    {
-        _mobileModifierAggregationService?.RecalculateEquipmentModifiers(mobile);
     }
 }

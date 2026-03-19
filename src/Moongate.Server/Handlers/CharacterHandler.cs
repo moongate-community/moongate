@@ -13,7 +13,9 @@ using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -42,7 +44,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly ICombatService? _combatService;
+    private readonly INotorietyService? _notorietyService;
     private readonly ILightService? _lightService;
+    private readonly IBackgroundJobService _backgroundJobService;
 
     public CharacterHandler(
         IOutgoingPacketQueue outgoingPacketQueue,
@@ -51,7 +56,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         IGameEventBusService gameEventBusService,
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService spatialWorldService,
-        ILightService? lightService = null
+        ICombatService? combatService = null,
+        INotorietyService? notorietyService = null,
+        ILightService? lightService = null,
+        IBackgroundJobService? backgroundJobService = null
     ) : base(outgoingPacketQueue)
     {
         _characterService = characterService;
@@ -59,7 +67,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         _gameEventBusService = gameEventBusService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _combatService = combatService;
+        _notorietyService = notorietyService;
         _lightService = lightService;
+        _backgroundJobService = backgroundJobService ?? throw new ArgumentNullException(nameof(backgroundJobService));
 
         _gameEventBusService.RegisterListener(this);
     }
@@ -90,7 +101,7 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         session.CharacterId = characterId;
         session.Character = character;
         session.MoveSequence = 0;
-        session.SelfNotoriety = (byte)character.Notoriety;
+        session.SelfNotoriety = (byte)(_notorietyService?.Compute(character, character) ?? character.Notoriety);
         session.IsMounted = character.IsMounted;
         session.MoveCredit = 0;
         session.MoveTime = Environment.TickCount64;
@@ -133,8 +144,9 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new SetMusicPacket(_spatialWorldService.GetMusic(character.MapId, character.Location)));
 
-        await _gameEventBusService.PublishAsync(
-            new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, character.Id)
+        var playerLoggedInEvent = new PlayerCharacterLoggedInEvent(session.SessionId, session.AccountId, character.Id);
+        _backgroundJobService.PostToGameLoop(
+            () => _gameEventBusService.PublishAsync(playerLoggedInEvent).AsTask().GetAwaiter().GetResult()
         );
 
         return true;
@@ -197,6 +209,12 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         }
 
         session.Character.IsWarMode = requestWarModePacket.IsWarMode;
+
+        if (!requestWarModePacket.IsWarMode)
+        {
+            _combatService?.ClearCombatantAsync(session.Character.Id).GetAwaiter().GetResult();
+        }
+
         Enqueue(session, new WarModePacket(session.Character));
 
         return true;

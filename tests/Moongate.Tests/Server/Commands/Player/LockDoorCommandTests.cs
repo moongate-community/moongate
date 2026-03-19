@@ -1,3 +1,5 @@
+using System.Net.Sockets;
+using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Commands.Player;
@@ -37,7 +39,7 @@ public sealed class LockDoorCommandTests
             return ValueTask.CompletedTask;
         }
 
-        public void RegisterListener<TEvent>(Moongate.Server.Interfaces.Services.Events.IGameEventListener<TEvent> listener)
+        public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener)
             where TEvent : IGameEvent
             => _ = listener;
 
@@ -57,7 +59,7 @@ public sealed class LockDoorCommandTests
     private sealed class LockDoorCommandTestDoorLockService : IDoorLockService
     {
         public Serial LastDoorId { get; private set; }
-        public DoorLockResult Result { get; set; } = new(true, "generated-lock");
+        public DoorLockResult Result { get; } = new(true, "generated-lock");
 
         public Task<DoorLockResult> LockDoorAsync(Serial doorId, CancellationToken cancellationToken = default)
         {
@@ -79,6 +81,9 @@ public sealed class LockDoorCommandTests
         public UOItemEntity SpawnedItem { get; } = new() { Id = (Serial)0x40000020u, ItemId = 0x100E, Name = "Key" };
         public UOItemEntity? DoorItem { get; set; }
 
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
         public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
             => item;
 
@@ -91,13 +96,13 @@ public sealed class LockDoorCommandTests
         public Task<bool> DeleteItemAsync(Serial itemId)
             => Task.FromResult(false);
 
-        public Task<Moongate.Server.Data.Items.DropItemToGroundResult?> DropItemToGroundAsync(
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
             Serial itemId,
             Point3D location,
             int mapId,
             long sessionId = 0
         )
-            => Task.FromResult<Moongate.Server.Data.Items.DropItemToGroundResult?>(null);
+            => Task.FromResult<DropItemToGroundResult?>(null);
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
             => Task.FromResult(false);
@@ -137,9 +142,6 @@ public sealed class LockDoorCommandTests
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
-
-        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
-            => Task.CompletedTask;
     }
 
     private sealed class LockDoorCommandTestGameNetworkSessionService : IGameNetworkSessionService
@@ -157,7 +159,7 @@ public sealed class LockDoorCommandTests
         public IReadOnlyCollection<GameSession> GetAll()
             => _sessions.Values.ToArray();
 
-        public GameSession GetOrCreate(Moongate.Network.Client.MoongateTCPClient client)
+        public GameSession GetOrCreate(MoongateTCPClient client)
             => throw new NotSupportedException();
 
         public bool Remove(long sessionId)
@@ -181,7 +183,7 @@ public sealed class LockDoorCommandTests
         var doorLockService = new LockDoorCommandTestDoorLockService();
         var itemService = new LockDoorCommandTestItemService
         {
-            DoorItem = new UOItemEntity
+            DoorItem = new()
             {
                 Id = (Serial)0x40000001u,
                 Name = "North gate",
@@ -194,11 +196,17 @@ public sealed class LockDoorCommandTests
             Id = (Serial)0x00000010u,
             BackpackId = (Serial)0x40000010u
         };
-        var session = new GameSession(new(new Moongate.Network.Client.MoongateTCPClient(new System.Net.Sockets.Socket(
-            System.Net.Sockets.AddressFamily.InterNetwork,
-            System.Net.Sockets.SocketType.Stream,
-            System.Net.Sockets.ProtocolType.Tcp
-        ))))
+        var session = new GameSession(
+            new(
+                new(
+                    new(
+                        AddressFamily.InterNetwork,
+                        SocketType.Stream,
+                        ProtocolType.Tcp
+                    )
+                )
+            )
+        )
         {
             CharacterId = character.Id,
             Character = character
@@ -224,7 +232,12 @@ public sealed class LockDoorCommandTests
                 Assert.That(itemService.SpawnedTemplateId, Is.EqualTo("key"));
                 Assert.That(itemService.LastMoveItemId, Is.EqualTo(itemService.SpawnedItem.Id));
                 Assert.That(itemService.LastContainerId, Is.EqualTo(character.BackpackId));
-                Assert.That(itemService.SpawnedItem.TryGetCustomString(ItemCustomParamKeys.Key.LockId, out var lockId) ? lockId : null, Is.EqualTo("generated-lock"));
+                Assert.That(
+                    itemService.SpawnedItem.TryGetCustomString(ItemCustomParamKeys.Key.LockId, out var lockId)
+                        ? lockId
+                        : null,
+                    Is.EqualTo("generated-lock")
+                );
                 Assert.That(itemService.SpawnedItem.Name, Is.EqualTo("North gate's key"));
             }
         );

@@ -31,17 +31,6 @@ public sealed class RandomModule
         return Directions[index];
     }
 
-    [ScriptFunction("int", "Returns a random integer in the inclusive range [min, max].")]
-    public int Int(int min, int max)
-    {
-        if (min > max)
-        {
-            (min, max) = (max, min);
-        }
-
-        return Random.Shared.Next(min, max + 1);
-    }
-
     [ScriptFunction("element", "Returns a random element from an array-like Lua table (1..n), or nil if empty.")]
     public DynValue Element(Table? values)
     {
@@ -60,5 +49,16 @@ public sealed class RandomModule
         var index = Random.Shared.Next(1, count + 1);
 
         return values.Get(index);
+    }
+
+    [ScriptFunction("int", "Returns a random integer in the inclusive range [min, max].")]
+    public int Int(int min, int max)
+    {
+        if (min > max)
+        {
+            (min, max) = (max, min);
+        }
+
+        return Random.Shared.Next(min, max + 1);
     }
 }

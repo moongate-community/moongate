@@ -4,7 +4,6 @@ using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Packets.Types.Targeting;
-using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -49,13 +48,13 @@ public sealed class DyeColorService : IDyeColorService
         _characterService = characterService;
     }
 
-    public Task StartAsync()
-        => Task.CompletedTask;
+    private sealed record PendingDyeRequest(Serial TargetSerial, Serial DyeTubSerial, ushort Model, DateTime CreatedAt);
 
-    public Task StopAsync()
-        => Task.CompletedTask;
-
-    public async Task<bool> BeginAsync(long sessionId, Serial dyeTubSerial, Func<UOItemEntity, bool>? targetSelectedCallback = null)
+    public async Task<bool> BeginAsync(
+        long sessionId,
+        Serial dyeTubSerial,
+        Func<UOItemEntity, bool>? targetSelectedCallback = null
+    )
     {
         if (!_gameNetworkSessionService.TryGet(sessionId, out var session) || session.CharacterId == Serial.Zero)
         {
@@ -83,25 +82,6 @@ public sealed class DyeColorService : IDyeColorService
             TargetCursorSelectionType.SelectObject,
             TargetCursorType.Helpful
         );
-
-        return true;
-    }
-
-    public async Task<bool> SendDyeableAsync(long sessionId, Serial itemSerial, ushort model = DisplayDyeWindowPacket.DefaultModel)
-    {
-        if (!_gameNetworkSessionService.TryGet(sessionId, out var session))
-        {
-            return false;
-        }
-
-        var item = await _itemService.GetItemAsync(itemSerial);
-
-        if (item is null || !await CanAccessItemAsync(session, item) || !IsDyeable(item))
-        {
-            return false;
-        }
-
-        OpenDyeWindow(session, item, model);
 
         return true;
     }
@@ -134,86 +114,34 @@ public sealed class DyeColorService : IDyeColorService
         return true;
     }
 
-    private void HandleTargetSelection(
-        GameSession session,
-        Serial dyeTubSerial,
-        TargetCursorCommandsPacket packet,
-        Func<UOItemEntity, bool>? targetSelectedCallback
+    public async Task<bool> SendDyeableAsync(
+        long sessionId,
+        Serial itemSerial,
+        ushort model = DisplayDyeWindowPacket.DefaultModel
     )
     {
-        if (packet.CursorType == TargetCursorType.CancelCurrentTargeting || packet.ClickedOnId == Serial.Zero)
+        if (!_gameNetworkSessionService.TryGet(sessionId, out var session))
         {
-            return;
+            return false;
         }
 
-        var item = _itemService.GetItemAsync(packet.ClickedOnId).GetAwaiter().GetResult();
+        var item = await _itemService.GetItemAsync(itemSerial);
 
-        if (item is null)
+        if (item is null || !await CanAccessItemAsync(session, item) || !IsDyeable(item))
         {
-            return;
+            return false;
         }
 
-        if (!CanAccessItemAsync(session, item).GetAwaiter().GetResult())
-        {
-            return;
-        }
+        OpenDyeWindow(session, item, model);
 
-        if (targetSelectedCallback is not null && !targetSelectedCallback(item))
-        {
-            return;
-        }
-
-        if (!IsDyeable(item))
-        {
-            return;
-        }
-
-        OpenDyeWindow(session, item, DisplayDyeWindowPacket.DefaultModel, dyeTubSerial);
+        return true;
     }
 
-    private void OpenDyeWindow(GameSession session, UOItemEntity item, ushort model, Serial dyeTubSerial = default)
-    {
-        _pendingRequests[session.SessionId] = new(item.Id, dyeTubSerial, model, DateTime.UtcNow);
-        _outgoingPacketQueue.Enqueue(session.SessionId, new DisplayDyeWindowPacket(item.Id, model));
-    }
+    public Task StartAsync()
+        => Task.CompletedTask;
 
-    private async Task RefreshVisualsAsync(GameSession session, UOItemEntity item)
-    {
-        if (item.EquippedMobileId != Serial.Zero && item.EquippedLayer is { } equippedLayer)
-        {
-            var character = await _characterService.GetCharacterAsync(item.EquippedMobileId);
-
-            if (character is not null)
-            {
-                var reference = new ItemReference(item.Id, item.ItemId, item.Hue);
-                await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
-                    new WornItemPacket(character, reference, equippedLayer),
-                    character.MapId,
-                    character.Location
-                );
-            }
-
-            return;
-        }
-
-        if (item.ParentContainerId != Serial.Zero)
-        {
-            var container = await _itemService.GetItemAsync(item.ParentContainerId);
-
-            if (container is not null)
-            {
-                _outgoingPacketQueue.Enqueue(session.SessionId, new DrawContainerAndAddItemCombinedPacket(container));
-            }
-
-            return;
-        }
-
-        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
-            ItemPacketHelper.CreateObjectInformationPacket(item, session),
-            item.MapId,
-            item.Location
-        );
-    }
+    public Task StopAsync()
+        => Task.CompletedTask;
 
     private async Task<bool> CanAccessItemAsync(GameSession session, UOItemEntity item)
     {
@@ -268,8 +196,89 @@ public sealed class DyeColorService : IDyeColorService
         return false;
     }
 
+    private void HandleTargetSelection(
+        GameSession session,
+        Serial dyeTubSerial,
+        TargetCursorCommandsPacket packet,
+        Func<UOItemEntity, bool>? targetSelectedCallback
+    )
+    {
+        if (packet.CursorType == TargetCursorType.CancelCurrentTargeting || packet.ClickedOnId == Serial.Zero)
+        {
+            return;
+        }
+
+        var item = _itemService.GetItemAsync(packet.ClickedOnId).GetAwaiter().GetResult();
+
+        if (item is null)
+        {
+            return;
+        }
+
+        if (!CanAccessItemAsync(session, item).GetAwaiter().GetResult())
+        {
+            return;
+        }
+
+        if (targetSelectedCallback is not null && !targetSelectedCallback(item))
+        {
+            return;
+        }
+
+        if (!IsDyeable(item))
+        {
+            return;
+        }
+
+        OpenDyeWindow(session, item, DisplayDyeWindowPacket.DefaultModel, dyeTubSerial);
+    }
+
     private static bool IsDyeable(UOItemEntity item)
         => item.TryGetCustomBoolean(ItemCustomParamKeys.Item.Dyeable, out var dyeable) && dyeable;
+
+    private void OpenDyeWindow(GameSession session, UOItemEntity item, ushort model, Serial dyeTubSerial = default)
+    {
+        _pendingRequests[session.SessionId] = new(item.Id, dyeTubSerial, model, DateTime.UtcNow);
+        _outgoingPacketQueue.Enqueue(session.SessionId, new DisplayDyeWindowPacket(item.Id, model));
+    }
+
+    private async Task RefreshVisualsAsync(GameSession session, UOItemEntity item)
+    {
+        if (item.EquippedMobileId != Serial.Zero && item.EquippedLayer is { } equippedLayer)
+        {
+            var character = await _characterService.GetCharacterAsync(item.EquippedMobileId);
+
+            if (character is not null)
+            {
+                var reference = new ItemReference(item.Id, item.ItemId, item.Hue);
+                await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+                    new WornItemPacket(character, reference, equippedLayer),
+                    character.MapId,
+                    character.Location
+                );
+            }
+
+            return;
+        }
+
+        if (item.ParentContainerId != Serial.Zero)
+        {
+            var container = await _itemService.GetItemAsync(item.ParentContainerId);
+
+            if (container is not null)
+            {
+                _outgoingPacketQueue.Enqueue(session.SessionId, new DrawContainerAndAddItemCombinedPacket(container));
+            }
+
+            return;
+        }
+
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            ItemPacketHelper.CreateObjectInformationPacket(item, session),
+            item.MapId,
+            item.Location
+        );
+    }
 
     private static Serial ResolveBackpackId(UOMobileEntity mobile)
     {
@@ -282,6 +291,4 @@ public sealed class DyeColorService : IDyeColorService
                    ? backpackId
                    : Serial.Zero;
     }
-
-    private sealed record PendingDyeRequest(Serial TargetSerial, Serial DyeTubSerial, ushort Model, DateTime CreatedAt);
 }

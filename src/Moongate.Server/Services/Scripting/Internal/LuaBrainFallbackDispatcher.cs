@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Scripting.Interfaces;
+using Moongate.Server.Data.Internal.Scripting;
 
 namespace Moongate.Server.Services.Scripting.Internal;
 
@@ -20,6 +20,30 @@ internal static class LuaBrainFallbackDispatcher
 
             scriptEngineService.CallFunction("on_spawn", (uint)state.MobileId, payload);
             scriptEngineService.CallFunction("on_event", "spawn", 0u, payload);
+        }
+
+        while (state.PendingCombatHooks.Count > 0)
+        {
+            var combat = state.PendingCombatHooks.Dequeue();
+            var eventName = combat.HookType switch
+            {
+                LuaBrainCombatHookType.Attack => "attack",
+                LuaBrainCombatHookType.MissedAttack => "missed_attack",
+                LuaBrainCombatHookType.Attacked => "attacked",
+                LuaBrainCombatHookType.MissedByAttack => "missed_by_attack",
+                _ => "attack"
+            };
+            var hookName = combat.HookType switch
+            {
+                LuaBrainCombatHookType.Attack => "on_attack",
+                LuaBrainCombatHookType.MissedAttack => "on_missed_attack",
+                LuaBrainCombatHookType.Attacked => "on_attacked",
+                LuaBrainCombatHookType.MissedByAttack => "on_missed_by_attack",
+                _ => "on_attack"
+            };
+
+            scriptEngineService.CallFunction("on_event", eventName, (uint)combat.OtherMobileId, combat.Payload);
+            scriptEngineService.CallFunction(hookName, (uint)combat.OtherMobileId, combat.Payload);
         }
 
         while (state.PendingSpeech.Count > 0)
@@ -48,9 +72,21 @@ internal static class LuaBrainFallbackDispatcher
         {
             var death = state.PendingDeath.Dequeue();
             var byCharacterId = death.ByCharacterId.HasValue ? (uint)death.ByCharacterId.Value : 0u;
+            var eventName = death.HookType switch
+            {
+                LuaBrainDeathHookType.BeforeDeath => "before_death",
+                LuaBrainDeathHookType.AfterDeath => "after_death",
+                _ => "death"
+            };
+            var hookName = death.HookType switch
+            {
+                LuaBrainDeathHookType.BeforeDeath => "on_before_death",
+                LuaBrainDeathHookType.AfterDeath => "on_after_death",
+                _ => "on_death"
+            };
 
-            scriptEngineService.CallFunction("on_event", "death", byCharacterId, death.Context);
-            scriptEngineService.CallFunction("on_death", byCharacterId, death.Context);
+            scriptEngineService.CallFunction("on_event", eventName, byCharacterId, death.Context);
+            scriptEngineService.CallFunction(hookName, byCharacterId, death.Context);
         }
 
         while (state.PendingInRange.Count > 0)
