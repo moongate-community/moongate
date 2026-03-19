@@ -2,12 +2,14 @@
 
 Moongate supports deterministic NPC dialogue trees authored in Lua.
 
+This feature is fully usable without OpenAI.
+
 Use this when you want:
 
 - quest or vendor conversations with fixed outcomes
 - reusable topic routing from nearby player speech
 - persistent per-NPC, per-player memory without calling OpenAI
-- deterministic dialogue before falling back to `ai_dialogue`
+- deterministic dialogue with no OpenAI dependency at all
 
 ## Files And Layout
 
@@ -163,6 +165,21 @@ Runtime files live under:
 
 - `moongate_data/runtime/dialogue_memory/<npc_serial>.json`
 
+## Relationship To OpenAI Dialogue
+
+`dialogue` and `ai_dialogue` are separate features:
+
+- `dialogue`
+  - deterministic
+  - authored in Lua
+  - no OpenAI required
+- `ai_dialogue`
+  - generative
+  - optional
+  - requires LLM configuration
+
+You can run authored dialogue alone by binding only a `conversation_id`.
+
 ## Authored Dialogue And OpenAI Together
 
 Use `common.npc_dialogue` when you want deterministic dialogue first and OpenAI as fallback.
@@ -205,6 +222,8 @@ Resolution order:
 1. active authored dialogue session and numeric option choice
 2. authored topic match
 3. `ai_dialogue.listener(...)` fallback if configured
+
+`common.npc_dialogue` is optional. If you do not want OpenAI at all, use only `dialogue.init(...)` and `dialogue.listener(...)`.
 
 ## Example Asset
 

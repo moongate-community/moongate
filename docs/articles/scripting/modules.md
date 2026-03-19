@@ -77,6 +77,8 @@ The repository also ships DSL helpers in `common.dialogue`:
 local dialogue = require("common.dialogue")
 ```
 
+`dialogue` is a standalone authored feature. It does not require `ai_dialogue` or any OpenAI configuration.
+
 `ai_dialogue` runtime helpers:
 
 ```lua
@@ -85,11 +87,15 @@ ai_dialogue.listener(npc, speaker, text)
 ai_dialogue.idle(npc)
 ```
 
+`ai_dialogue` is separate and optional. It is only needed when you want OpenAI-backed generative replies.
+
 Recommended bridge helper:
 
 ```lua
 local npc_dialogue = require("common.npc_dialogue")
 ```
+
+Use `common.npc_dialogue` only when you explicitly want both systems together.
 
 `combat` runtime helpers:
 

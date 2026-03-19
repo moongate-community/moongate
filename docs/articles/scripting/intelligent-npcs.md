@@ -6,7 +6,13 @@ Moongate can optionally use OpenAI to let selected NPC brains:
 - speak on their own when players are nearby
 - keep a compact long-term memory per NPC
 
-This is wired through the Lua module `ai_dialogue`. For NPCs that need deterministic dialogue first, pair it with `common.npc_dialogue`.
+This is wired through the Lua module `ai_dialogue`.
+
+This feature is separate from authored dialogue:
+
+- use `dialogue` for deterministic Lua conversation trees
+- use `ai_dialogue` for OpenAI-backed generative replies
+- use `common.npc_dialogue` only if you want deterministic dialogue first and OpenAI as fallback
 
 ## Configuration
 
