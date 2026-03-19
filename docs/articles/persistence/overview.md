@@ -11,8 +11,9 @@ The persistence layer provides:
 - MessagePack-CSharp source-generated serialization for compact binary payloads
 - Per-entry journal checksum validation
 - Thread-safe repositories over shared in-memory state
-- Typed snapshot storage for item combat/modifier state and mobile status/skill state
-- Dedicated persisted bulletin-board message storage keyed by board serial + message serial
+- Registry-driven entity descriptors with stable manual `TypeId` values
+- Bucket-based snapshots so new persisted entity kinds do not require `WorldSnapshot` changes
+- Generic journal records using `TypeId + Operation + Payload`
 
 ## Storage Structure
 
@@ -85,8 +86,9 @@ Current repositories:
 - `IMobileRepository`
 - `IItemRepository`
 - `IBulletinBoardMessageRepository`
+- `IHelpTicketRepository`
 
-They append journal entries on mutation and query from in-memory state.
+They append generic journal entries on mutation and query from in-memory state. Shared CRUD behavior is implemented once in a generic repository core, while domain repositories keep only domain-specific queries.
 
 ## Domain Snapshot Notes
 

@@ -7,6 +7,8 @@ This page documents the **actual** binary persistence format currently implement
 - Serializer: `MessagePack-CSharp` (source-generated contracts)
 - Snapshot container: `WorldSnapshot`
 - Journal payload item: `JournalEntry`
+- Snapshot shape: `EntitySnapshotBucket[]`
+- Journal routing: `TypeId + Operation + Payload`
 
 ## Snapshot File
 
@@ -77,9 +79,22 @@ No extra sidecar/checksum/history paths are currently configured.
 
 ## Current Entity Snapshot Shape
 
-The world snapshot stores typed mobile and item substructures rather than only flat scalar entities.
+`WorldSnapshot` stores an array of `EntitySnapshotBucket` values. Each bucket contains:
 
-`UOMobileEntity` currently persists:
+- `TypeId`
+- `TypeName`
+- `SchemaVersion`
+- `Payload`
+
+`Payload` is a MessagePack array of snapshot DTOs for one registered entity kind. Core descriptors currently cover:
+
+- accounts
+- mobiles
+- items
+- bulletin board messages
+- help tickets
+
+Within those buckets, `UOMobileEntity` currently persists:
 
 - `BaseStats`
 - `BaseResistances`
@@ -103,10 +118,6 @@ The world snapshot stores typed mobile and item substructures rather than only f
 - `CombatStats`
 - `Modifiers`
 
-`WorldSnapshot` also currently persists:
-
-- `BulletinBoardMessages`
-
 Each bulletin-board message snapshot stores:
 
 - `MessageId`
@@ -125,6 +136,26 @@ This means snapshot payloads now preserve:
 - mobile skill tables used by `0x3A`
 - mobile modern status data used by `0x11`
 - classic bulletin board message trees used by `0x71`
+
+## Current Journal Entry Shape
+
+`JournalEntry` currently stores:
+
+- `SequenceId`
+- `TimestampUnixMilliseconds`
+- `TypeId`
+- `Operation`
+- `Payload`
+
+`Operation` is a generic enum:
+
+- `Upsert`
+- `Remove`
+
+The payload format is provided by the registered entity descriptor for the matching `TypeId`:
+
+- `Upsert` payloads serialize one entity snapshot
+- `Remove` payloads serialize one entity key
 
 ---
 

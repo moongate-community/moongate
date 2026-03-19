@@ -13,7 +13,9 @@ public sealed class JournalEntry
 
     public long TimestampUnixMilliseconds { get; set; }
 
-    public PersistenceOperationType OperationType { get; set; }
+    public ushort TypeId { get; set; }
+
+    public JournalEntityOperationType Operation { get; set; }
 
     public byte[] Payload { get; set; } = [];
 }

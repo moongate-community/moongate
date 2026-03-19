@@ -6,27 +6,12 @@ namespace Moongate.Persistence.Interfaces.Persistence;
 /// <summary>
 /// Provides persistence operations for item entities.
 /// </summary>
-public interface IItemRepository
+public interface IItemRepository : IBaseRepository<UOItemEntity, Serial>
 {
     /// <summary>
     /// Inserts or updates multiple items in a single batched operation.
     /// </summary>
     ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Returns the current number of persisted items.
-    /// </summary>
-    ValueTask<int> CountAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Returns all persisted items.
-    /// </summary>
-    ValueTask<IReadOnlyCollection<UOItemEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets an item by its serial identifier.
-    /// </summary>
-    ValueTask<UOItemEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Runs a projection query over item entities.
@@ -36,14 +21,4 @@ public interface IItemRepository
         Func<UOItemEntity, TResult> selector,
         CancellationToken cancellationToken = default
     );
-
-    /// <summary>
-    /// Removes an item by its serial identifier.
-    /// </summary>
-    ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Inserts or updates an item.
-    /// </summary>
-    ValueTask UpsertAsync(UOItemEntity item, CancellationToken cancellationToken = default);
 }

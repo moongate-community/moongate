@@ -61,10 +61,11 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
     public async ValueTask AppendAsync(JournalEntry entry, CancellationToken cancellationToken = default)
     {
         _logger.Verbose(
-            "Journal append requested Path={JournalPath} SequenceId={SequenceId} OperationType={OperationType}",
+            "Journal append requested Path={JournalPath} SequenceId={SequenceId} TypeId={TypeId} Operation={Operation}",
             _journalFilePath,
             entry.SequenceId,
-            entry.OperationType
+            entry.TypeId,
+            entry.Operation
         );
         var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
         var checksum = ChecksumUtils.Compute(payload);

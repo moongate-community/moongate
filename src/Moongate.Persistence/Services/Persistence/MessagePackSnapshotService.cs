@@ -130,11 +130,9 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
     public async ValueTask SaveAsync(WorldSnapshot snapshot, CancellationToken cancellationToken = default)
     {
         _logger.Verbose(
-            "Snapshot save requested Path={SnapshotPath} Accounts={AccountCount} Mobiles={MobileCount} Items={ItemCount}",
+            "Snapshot save requested Path={SnapshotPath} BucketCount={BucketCount}",
             _snapshotFilePath,
-            snapshot.Accounts.Length,
-            snapshot.Mobiles.Length,
-            snapshot.Items.Length
+            snapshot.EntityBuckets.Length
         );
         await _ioLock.WaitAsync(cancellationToken);
 

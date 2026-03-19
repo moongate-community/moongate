@@ -6,7 +6,7 @@ namespace Moongate.Persistence.Interfaces.Persistence;
 /// <summary>
 /// Provides persistence operations for account entities.
 /// </summary>
-public interface IAccountRepository
+public interface IAccountRepository : IBaseRepository<UOAccountEntity, Serial>
 {
     /// <summary>
     /// Adds a new account if the identifier and username are not already present.
@@ -14,9 +14,9 @@ public interface IAccountRepository
     ValueTask<bool> AddAsync(UOAccountEntity account, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Returns the current number of persisted accounts.
+    /// Gets an account by username.
     /// </summary>
-    ValueTask<int> CountAsync(CancellationToken cancellationToken = default);
+    ValueTask<UOAccountEntity?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Returns true when at least one account matches the predicate.
@@ -27,21 +27,6 @@ public interface IAccountRepository
     );
 
     /// <summary>
-    /// Returns all persisted accounts.
-    /// </summary>
-    ValueTask<IReadOnlyCollection<UOAccountEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets an account by its serial identifier.
-    /// </summary>
-    ValueTask<UOAccountEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Gets an account by username.
-    /// </summary>
-    ValueTask<UOAccountEntity?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Runs a projection query over account entities.
     /// </summary>
     ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
@@ -49,14 +34,4 @@ public interface IAccountRepository
         Func<UOAccountEntity, TResult> selector,
         CancellationToken cancellationToken = default
     );
-
-    /// <summary>
-    /// Removes an account by its serial identifier.
-    /// </summary>
-    ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Inserts or updates an account.
-    /// </summary>
-    ValueTask UpsertAsync(UOAccountEntity account, CancellationToken cancellationToken = default);
 }

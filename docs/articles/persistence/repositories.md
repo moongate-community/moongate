@@ -49,6 +49,18 @@ Supports:
 - `GetByIdAsync(Serial messageId)`
 - `GetByBoardIdAsync(Serial boardId)`
 - `GetAllAsync()`
+- `CountAsync()`
+
+## `IHelpTicketRepository`
+
+Supports:
+
+- `UpsertAsync(HelpTicketEntity)`
+- `RemoveAsync(Serial ticketId)`
+- `GetByIdAsync(Serial ticketId)`
+- `GetBySenderCharacterIdAsync(Serial senderCharacterId)`
+- `GetAllAsync()`
+- `CountAsync()`
 
 Notes:
 
@@ -61,16 +73,18 @@ Notes:
 
 `IPersistenceUnitOfWork` exposes:
 
-- repositories (`Accounts`, `Mobiles`, `Items`, `BulletinBoardMessages`)
+- repositories (`Accounts`, `Mobiles`, `Items`, `BulletinBoardMessages`, `HelpTickets`)
+- generic repository access (`GetRepository<TEntity, TKey>()`)
 - id allocation (`AllocateNextAccountId`, `AllocateNextMobileId`, `AllocateNextItemId`)
 - lifecycle (`InitializeAsync`, `SaveSnapshotAsync`)
+- registry-driven snapshot capture / replay for every registered entity descriptor
 
 ## Runtime Behavior
 
 - Repositories operate against in-memory `PersistenceStateStore`.
 - Mutations append journal entries through `BinaryJournalService`.
 - `PersistenceUnitOfWork.InitializeAsync` loads snapshot then replays journal.
-- `SaveSnapshotAsync` writes full snapshot and resets journal.
+- `SaveSnapshotAsync` writes a full bucket-based snapshot and trims journal entries included in that capture.
 
 ## Thread Safety
 

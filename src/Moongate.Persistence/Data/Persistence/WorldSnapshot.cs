@@ -14,13 +14,5 @@ public sealed class WorldSnapshot
 
     public long LastSequenceId { get; set; }
 
-    public AccountSnapshot[] Accounts { get; set; } = [];
-
-    public MobileSnapshot[] Mobiles { get; set; } = [];
-
-    public ItemSnapshot[] Items { get; set; } = [];
-
-    public BulletinBoardMessageSnapshot[] BulletinBoardMessages { get; set; } = [];
-
-    public HelpTicketSnapshot[] HelpTickets { get; set; } = [];
+    public EntitySnapshotBucket[] EntityBuckets { get; set; } = [];
 }

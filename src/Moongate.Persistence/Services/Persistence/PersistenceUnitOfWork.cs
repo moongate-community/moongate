@@ -3,6 +3,7 @@ using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Persistence.Types;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
 
 namespace Moongate.Persistence.Services.Persistence;
@@ -12,21 +13,36 @@ namespace Moongate.Persistence.Services.Persistence;
 /// </summary>
 public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 {
+    private readonly IPersistenceEntityRegistry _entityRegistry;
+    private readonly Dictionary<(Type EntityType, Type KeyType), object> _genericRepositories = [];
     private readonly BinaryJournalService _journalService;
     private readonly ILogger _logger = Log.ForContext<PersistenceUnitOfWork>();
     private readonly MessagePackSnapshotService _snapshotService;
     private readonly PersistenceStateStore _stateStore = new();
 
-    public PersistenceUnitOfWork(PersistenceOptions options)
+    public PersistenceUnitOfWork(PersistenceOptions options, IPersistenceEntityRegistry? entityRegistry = null)
     {
+        _entityRegistry = entityRegistry ?? new PersistenceEntityRegistry();
+        PersistenceCoreDescriptors.EnsureRegistered(_entityRegistry);
+        _entityRegistry.Freeze();
+
         _snapshotService = new(options.SnapshotFilePath, options.EnableFileLock);
         _journalService = new(options.JournalFilePath, options.EnableFileLock);
+        var accountDescriptor = _entityRegistry.GetDescriptor<UOAccountEntity, Serial>();
+        var mobileDescriptor = _entityRegistry.GetDescriptor<UOMobileEntity, Serial>();
+        var itemDescriptor = _entityRegistry.GetDescriptor<UOItemEntity, Serial>();
+        var bulletinBoardMessageDescriptor = _entityRegistry.GetDescriptor<BulletinBoardMessageEntity, Serial>();
+        var helpTicketDescriptor = _entityRegistry.GetDescriptor<HelpTicketEntity, Serial>();
 
-        Accounts = new AccountRepository(_stateStore, _journalService);
-        Mobiles = new MobileRepository(_stateStore, _journalService);
-        Items = new ItemRepository(_stateStore, _journalService);
-        BulletinBoardMessages = new BulletinBoardMessageRepository(_stateStore, _journalService);
-        HelpTickets = new HelpTicketRepository(_stateStore, _journalService);
+        Accounts = new AccountRepository(_stateStore, _journalService, accountDescriptor);
+        Mobiles = new MobileRepository(_stateStore, _journalService, mobileDescriptor);
+        Items = new ItemRepository(_stateStore, _journalService, itemDescriptor);
+        BulletinBoardMessages = new BulletinBoardMessageRepository(
+            _stateStore,
+            _journalService,
+            bulletinBoardMessageDescriptor
+        );
+        HelpTickets = new HelpTicketRepository(_stateStore, _journalService, helpTicketDescriptor);
     }
 
     public IAccountRepository Accounts { get; }
@@ -38,6 +54,22 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
     public IHelpTicketRepository HelpTickets { get; }
 
     public IMobileRepository Mobiles { get; }
+
+    public IBaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
+    {
+        object repository = typeof(TEntity) switch
+        {
+            var entityType when entityType == typeof(UOAccountEntity) && typeof(TKey) == typeof(Serial) => Accounts,
+            var entityType when entityType == typeof(UOMobileEntity) && typeof(TKey) == typeof(Serial) => Mobiles,
+            var entityType when entityType == typeof(UOItemEntity) && typeof(TKey) == typeof(Serial) => Items,
+            var entityType when entityType == typeof(BulletinBoardMessageEntity) && typeof(TKey) == typeof(Serial) =>
+                BulletinBoardMessages,
+            var entityType when entityType == typeof(HelpTicketEntity) && typeof(TKey) == typeof(Serial) => HelpTickets,
+            _ => GetOrCreateGenericRepository<TEntity, TKey>()
+        };
+
+        return (IBaseRepository<TEntity, TKey>)repository;
+    }
 
     public Serial AllocateNextAccountId()
     {
@@ -83,12 +115,15 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 Version = 1,
                 CreatedUnixMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
                 LastSequenceId = _stateStore.LastSequenceId,
-                Accounts = [.. _stateStore.AccountsById.Values.Select(SnapshotMapper.ToAccountSnapshot)],
-                Mobiles = [.. _stateStore.MobilesById.Values.Select(SnapshotMapper.ToMobileSnapshot)],
-                Items = [.. _stateStore.ItemsById.Values.Select(SnapshotMapper.ToItemSnapshot)],
-                BulletinBoardMessages =
-                    [.. _stateStore.BulletinBoardMessagesById.Values.Select(SnapshotMapper.ToBulletinBoardMessageSnapshot)],
-                HelpTickets = [.. _stateStore.HelpTicketsById.Values.Select(SnapshotMapper.ToHelpTicketSnapshot)]
+                EntityBuckets =
+                [
+                    .. _entityRegistry.GetRegisteredDescriptors()
+                                     .Select(
+                                         descriptor =>
+                                             ((IInternalPersistenceEntityDescriptor)descriptor).CaptureBucket(_stateStore)
+                                     )
+                                     .OfType<EntitySnapshotBucket>()
+                ],
             };
             capturedLastSequenceId = _stateStore.LastSequenceId;
         }
@@ -115,12 +150,8 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 
         lock (_stateStore.SyncRoot)
         {
-            _stateStore.AccountsById.Clear();
+            _stateStore.ClearBuckets();
             _stateStore.AccountNameIndex.Clear();
-            _stateStore.MobilesById.Clear();
-            _stateStore.ItemsById.Clear();
-            _stateStore.BulletinBoardMessagesById.Clear();
-            _stateStore.HelpTicketsById.Clear();
             _stateStore.LastSequenceId = 0;
             _stateStore.LastAccountId = Serial.MobileStart - 1;
             _stateStore.LastMobileId = Serial.MobileStart - 1;
@@ -128,38 +159,21 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 
             if (snapshot is not null)
             {
-                for (var i = 0; i < snapshot.Accounts.Length; i++)
+                foreach (var bucket in snapshot.EntityBuckets)
                 {
-                    var account = SnapshotMapper.ToAccountEntity(snapshot.Accounts[i]);
-                    _stateStore.AccountsById[account.Id] = account;
-                    _stateStore.AccountNameIndex[account.Username] = account.Id;
-                }
+                    if (!_entityRegistry.IsRegistered(bucket.TypeId))
+                    {
+                        throw new InvalidOperationException(
+                            $"No persistence descriptor registered for snapshot bucket type id {bucket.TypeId}."
+                        );
+                    }
 
-                for (var i = 0; i < snapshot.Mobiles.Length; i++)
-                {
-                    var mobile = SnapshotMapper.ToMobileEntity(snapshot.Mobiles[i]);
-                    _stateStore.MobilesById[mobile.Id] = mobile;
-                }
-
-                for (var i = 0; i < snapshot.Items.Length; i++)
-                {
-                    var item = SnapshotMapper.ToItemEntity(snapshot.Items[i]);
-                    _stateStore.ItemsById[item.Id] = item;
-                }
-
-                for (var i = 0; i < snapshot.BulletinBoardMessages.Length; i++)
-                {
-                    var message = SnapshotMapper.ToBulletinBoardMessageEntity(snapshot.BulletinBoardMessages[i]);
-                    _stateStore.BulletinBoardMessagesById[message.MessageId] = message;
-                }
-
-                for (var i = 0; i < snapshot.HelpTickets.Length; i++)
-                {
-                    var ticket = SnapshotMapper.ToHelpTicketEntity(snapshot.HelpTickets[i]);
-                    _stateStore.HelpTicketsById[ticket.Id] = ticket;
+                    ((IInternalPersistenceEntityDescriptor)_entityRegistry.GetDescriptor(bucket.TypeId))
+                        .LoadBucket(_stateStore, bucket);
                 }
 
                 _stateStore.LastSequenceId = snapshot.LastSequenceId;
+                RebuildAccountNameIndex();
             }
         }
 
@@ -178,6 +192,7 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
             }
 
             RecalculateLastEntityIds();
+            RebuildAccountNameIndex();
         }
 
         _logger.Information(
@@ -216,88 +231,44 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 
     private void ApplyEntry(JournalEntry entry)
     {
-        switch (entry.OperationType)
+        if (!_entityRegistry.IsRegistered(entry.TypeId))
         {
-            case PersistenceOperationType.UpsertAccount:
-                {
-                    var account = JournalPayloadCodec.DecodeAccount(entry.Payload);
-                    _stateStore.AccountsById[account.Id] = account;
-                    _stateStore.AccountNameIndex[account.Username] = account.Id;
-                    _stateStore.LastAccountId = Math.Max(_stateStore.LastAccountId, (uint)account.Id);
+            throw new InvalidOperationException($"No persistence descriptor registered for journal type id {entry.TypeId}.");
+        }
 
-                    break;
-                }
-            case PersistenceOperationType.RemoveAccount:
-                {
-                    var id = JournalPayloadCodec.DecodeSerial(entry.Payload);
+        var descriptor = (IInternalPersistenceEntityDescriptor)_entityRegistry.GetDescriptor(entry.TypeId);
 
-                    if (_stateStore.AccountsById.Remove(id, out var account))
-                    {
-                        _stateStore.AccountNameIndex.Remove(account.Username);
-                    }
+        switch (entry.Operation)
+        {
+            case JournalEntityOperationType.Upsert:
+                descriptor.ApplyUpsert(_stateStore, entry.Payload);
+                break;
+            case JournalEntityOperationType.Remove:
+                descriptor.ApplyRemove(_stateStore, entry.Payload);
+                break;
+            default:
+                throw new InvalidOperationException(
+                    $"Unsupported journal entity operation '{entry.Operation}' for type id {entry.TypeId}."
+                );
+        }
+    }
 
-                    break;
-                }
-            case PersistenceOperationType.UpsertMobile:
-                {
-                    var mobile = JournalPayloadCodec.DecodeMobile(entry.Payload);
-                    _stateStore.MobilesById[mobile.Id] = mobile;
-                    _stateStore.LastMobileId = Math.Max(_stateStore.LastMobileId, (uint)mobile.Id);
+    private IBaseRepository<TEntity, TKey> GetOrCreateGenericRepository<TEntity, TKey>()
+    {
+        var cacheKey = (typeof(TEntity), typeof(TKey));
 
-                    break;
-                }
-            case PersistenceOperationType.RemoveMobile:
-                {
-                    var id = JournalPayloadCodec.DecodeSerial(entry.Payload);
-                    _stateStore.MobilesById.Remove(id);
+        lock (_genericRepositories)
+        {
+            if (_genericRepositories.TryGetValue(cacheKey, out var existing))
+            {
+                return (IBaseRepository<TEntity, TKey>)existing;
+            }
 
-                    break;
-                }
-            case PersistenceOperationType.UpsertItem:
-                {
-                    var item = JournalPayloadCodec.DecodeItem(entry.Payload);
-                    _stateStore.ItemsById[item.Id] = item;
-                    _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)item.Id);
+            var descriptor = _entityRegistry.GetDescriptor<TEntity, TKey>();
+            var repository = new GenericRepository<TEntity, TKey>(_stateStore, _journalService, descriptor);
+            _genericRepositories[cacheKey] = repository;
 
-                    break;
-                }
-            case PersistenceOperationType.RemoveItem:
-                {
-                    var id = JournalPayloadCodec.DecodeSerial(entry.Payload);
-                    _stateStore.ItemsById.Remove(id);
-
-                    break;
-                }
-            case PersistenceOperationType.UpsertBulletinBoardMessage:
-                {
-                    var message = JournalPayloadCodec.DecodeBulletinBoardMessage(entry.Payload);
-                    _stateStore.BulletinBoardMessagesById[message.MessageId] = message;
-                    _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)message.MessageId);
-
-                    break;
-                }
-            case PersistenceOperationType.RemoveBulletinBoardMessage:
-                {
-                    var id = JournalPayloadCodec.DecodeSerial(entry.Payload);
-                    _stateStore.BulletinBoardMessagesById.Remove(id);
-
-                    break;
-                }
-            case PersistenceOperationType.UpsertHelpTicket:
-                {
-                    var ticket = JournalPayloadCodec.DecodeHelpTicket(entry.Payload);
-                    _stateStore.HelpTicketsById[ticket.Id] = ticket;
-                    _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)ticket.Id);
-
-                    break;
-                }
-            case PersistenceOperationType.RemoveHelpTicket:
-                {
-                    var id = JournalPayloadCodec.DecodeSerial(entry.Payload);
-                    _stateStore.HelpTicketsById.Remove(id);
-
-                    break;
-                }
+            return (IBaseRepository<TEntity, TKey>)repository;
         }
     }
 
@@ -329,6 +300,16 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 _stateStore.LastItemId,
                 _stateStore.HelpTicketsById.Keys.Max(static id => (uint)id)
             );
+        }
+    }
+
+    private void RebuildAccountNameIndex()
+    {
+        _stateStore.AccountNameIndex.Clear();
+
+        foreach (var account in _stateStore.AccountsById.Values)
+        {
+            _stateStore.AccountNameIndex[account.Username] = account.Id;
         }
     }
 }
