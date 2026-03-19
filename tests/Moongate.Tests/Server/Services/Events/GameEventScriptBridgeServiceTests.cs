@@ -1,5 +1,7 @@
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Events.Combat;
+using Moongate.Server.Data.Events.Scheduling;
+using Moongate.Server.Data.Scripting;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
@@ -36,6 +38,28 @@ public class GameEventScriptBridgeServiceTests
         await service.HandleAsync(gameEvent);
 
         Assert.That(scriptEngine.LastCallbackName, Is.EqualTo("on_aggressive_action"));
+    }
+
+    [Test]
+    public async Task HandleAsync_ShouldExecuteScheduledEventCallback_WithSnakeCaseEventName()
+    {
+        var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
+        var service = new GameEventScriptBridgeService(scriptEngine);
+        var scheduledAtUtc = new DateTime(2026, 03, 19, 9, 0, 0, DateTimeKind.Utc);
+        var firedAtUtc = scheduledAtUtc.AddSeconds(2);
+        var gameEvent = new ScheduledEventTriggeredEvent(
+            "town_crier_morning",
+            "town_crier_announcement",
+            scheduledAtUtc,
+            firedAtUtc,
+            ScheduledRecurrenceType.Daily
+        );
+
+        await service.HandleAsync(gameEvent);
+
+        Assert.That(scriptEngine.LastCallbackName, Is.EqualTo("on_scheduled_event"));
+        Assert.That(scriptEngine.LastCallbackArgs, Has.Length.EqualTo(1));
+        Assert.That(scriptEngine.LastCallbackArgs![0], Is.EqualTo(gameEvent));
     }
 
     [Test]

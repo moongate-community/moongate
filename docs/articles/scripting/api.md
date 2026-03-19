@@ -41,6 +41,7 @@ Common shipped helper scripts:
 - `moongate_data/scripts/common/tick.lua`
 - `moongate_data/scripts/common/dialogue.lua`
 - `moongate_data/scripts/common/npc_dialogue.lua`
+- `moongate_data/scripts/common/scheduled_events.lua`
 
 ## Real Script Examples
 
@@ -153,6 +154,63 @@ Available context helpers include:
 - `ctx:add_memory_number(key, delta)`
 - `ctx:get_memory_text(key)`
 - `ctx:set_memory_text(key, value)`
+
+### Scheduled Events
+
+The scheduled event DSL ships as a helper script with runtime support from the `scheduled_events` module.
+
+```lua
+local scheduled_events = require("common.scheduled_events")
+
+return scheduled_events.event("town_crier_morning", {
+    trigger_name = "town_crier_announcement",
+    recurrence = "weekly",
+    time = "09:00",
+    time_zone = "Europe/Rome",
+    days_of_week = { "monday", "wednesday" },
+    payload = {
+        message = "Hear ye!"
+    }
+})
+```
+
+Supported recurrence values:
+
+- `once`
+- `daily`
+- `weekly`
+- `monthly`
+
+Key fields:
+
+- `enabled`
+- `trigger_name`
+- `recurrence`
+- `time`
+- `time_zone`
+- `start_at`
+- `days_of_week`
+- `day_of_month`
+- `payload`
+
+When a scheduled event fires, the global script bridge invokes:
+
+```lua
+function on_scheduled_event(event)
+    if event.trigger_name == "town_crier_announcement" then
+        log.info("Scheduled event fired: " .. event.event_id)
+    end
+end
+```
+
+Current payload fields exposed through the event object:
+
+- `event.event_id`
+- `event.trigger_name`
+- `event.scheduled_at_utc`
+- `event.fired_at_utc`
+- `event.recurrence_type`
+- `event.payload`
 
 ### Item Script: Apple
 

@@ -7,6 +7,8 @@ items:
     href: authored-dialogues.md
   - name: Intelligent NPC Dialogue
     href: intelligent-npcs.md
+  - name: Scheduled Events
+    href: scheduled-events.md
   - name: Vendor and Context Menus
     href: vendor-context-menus.md
   - name: Modules
