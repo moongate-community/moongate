@@ -352,6 +352,17 @@ public sealed class CombatService : ICombatService
             return;
         }
 
+        await _gameEventBusService.PublishAsync(
+            new AggressiveActionEvent(
+                attacker.Id,
+                defender.Id,
+                attacker.MapId,
+                attacker.Location,
+                attacker,
+                defender
+            )
+        );
+
         if (!await IsCombatAllowedAsync(attacker, defender, CancellationToken.None))
         {
             await ClearCombatantAsync(attacker.Id);

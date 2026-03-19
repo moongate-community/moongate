@@ -381,6 +381,7 @@ public sealed class CombatServiceTests
             {
                 Assert.That(spatial.BroadcastPackets.Any(packet => packet is FightOccurringPacket), Is.True);
                 Assert.That(defender.Hits, Is.EqualTo(34));
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is AggressiveActionEvent), Is.True);
                 Assert.That(attacker.Aggressed, Has.Count.EqualTo(1));
                 Assert.That(defender.Aggressors, Has.Count.EqualTo(1));
                 Assert.That(attacker.LastCombatAtUtc, Is.Not.Null);
@@ -392,12 +393,15 @@ public sealed class CombatServiceTests
         );
 
         var hitEvent = eventBus.Events.OfType<CombatHitEvent>().Single();
+        var aggressiveActionEvent = eventBus.Events.OfType<AggressiveActionEvent>().Single();
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(hitEvent.Attacker, Is.SameAs(attacker));
                 Assert.That(hitEvent.Defender, Is.SameAs(defender));
+                Assert.That(aggressiveActionEvent.Attacker, Is.SameAs(attacker));
+                Assert.That(aggressiveActionEvent.Defender, Is.SameAs(defender));
             }
         );
     }

@@ -15,6 +15,7 @@ The following modules are available in the default server runtime:
 - `speech`
 - `dialogue`
 - `ai_dialogue`
+- `scheduled_events`
 - `combat`
 - `mobile`
 - `item`
@@ -78,6 +79,36 @@ local dialogue = require("common.dialogue")
 ```
 
 `dialogue` is a standalone authored feature. It does not require `ai_dialogue` or any OpenAI configuration.
+
+`scheduled_events` runtime helpers:
+
+```lua
+scheduled_events.register("town_crier_morning", definition)
+```
+
+The repository also ships DSL helpers in `common.scheduled_events`:
+
+```lua
+local scheduled_events = require("common.scheduled_events")
+```
+
+Example:
+
+```lua
+return scheduled_events.event("town_crier_morning", {
+  trigger_name = "town_crier_announcement",
+  recurrence = "daily",
+  time = "09:00",
+  time_zone = "Europe/Rome"
+})
+```
+
+Runtime notes:
+
+- definitions live under `moongate_data/scripts/events/**`
+- supported recurrence values are `once`, `daily`, `weekly`, `monthly`
+- fired events are exposed to global Lua as `on_scheduled_event(event)`
+- this is a shard-level scheduler, not an NPC brain-local tick helper
 
 `ai_dialogue` runtime helpers:
 
