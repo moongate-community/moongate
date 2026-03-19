@@ -1,14 +1,18 @@
+local npc_dialogue = require("common.npc_dialogue")
+
 lilly = {}
 
 local IDLE_TICK_MS = 1000
+local DIALOGUE_CONFIG = {
+    prompt_file = "lilly.txt",
+}
 
 local function ensure_ai_ready(npc)
     if npc == nil then
         return false
     end
 
-    ai_dialogue.init(npc, "lilly.txt")
-    return true
+    return npc_dialogue.init(npc, DIALOGUE_CONFIG)
 end
 
 function lilly.on_spawn(npc_id, _ctx)
@@ -20,7 +24,7 @@ function lilly.brain_loop(npc_id)
     while true do
         local npc = mobile.get(npc_id)
         if ensure_ai_ready(npc) then
-            ai_dialogue.idle(npc)
+            npc_dialogue.idle(npc, DIALOGUE_CONFIG)
         end
 
         coroutine.yield(IDLE_TICK_MS)
@@ -44,7 +48,7 @@ function lilly.on_speech(npc_id, speaker_id, text, _speech_type, _map_id, _x, _y
         return
     end
 
-    if ai_dialogue.listener(npc, speaker, text) then
+    if npc_dialogue.listener(npc, speaker, text, DIALOGUE_CONFIG) then
         return
     end
 

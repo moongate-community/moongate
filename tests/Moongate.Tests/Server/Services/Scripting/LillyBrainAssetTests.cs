@@ -27,6 +27,7 @@ public sealed class LillyBrainAssetTests
                 Assert.That(script, Does.Contain("local function ensure_ai_ready(npc)"));
                 Assert.That(script, Does.Contain("if not ensure_ai_ready(npc)"));
                 Assert.That(script, Does.Contain("if ensure_ai_ready(npc) then"));
+                Assert.That(script, Does.Contain("local npc_dialogue = require(\"common.npc_dialogue\")"));
             }
         );
     }
@@ -42,9 +43,9 @@ public sealed class LillyBrainAssetTests
             () =>
             {
                 Assert.That(script, Does.Contain("speaker.name"));
-                Assert.That(script, Does.Contain("ai_dialogue.init(npc, \"lilly.txt\")"));
-                Assert.That(script, Does.Contain("ai_dialogue.listener(npc, speaker, text)"));
-                Assert.That(script, Does.Contain("ai_dialogue.idle(npc)"));
+                Assert.That(script, Does.Contain("prompt_file = \"lilly.txt\""));
+                Assert.That(script, Does.Contain("npc_dialogue.listener(npc, speaker, text, DIALOGUE_CONFIG)"));
+                Assert.That(script, Does.Contain("npc_dialogue.idle(npc, DIALOGUE_CONFIG)"));
             }
         );
     }

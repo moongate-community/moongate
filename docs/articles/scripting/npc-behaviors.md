@@ -33,6 +33,7 @@ Each brain table can expose:
 
 - `brain_loop(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
+- `on_speech(npc_id, speaker_id, text, speech_type, map_id, x, y, z)` optional
 - `on_death(by_character, context)` optional
 
 In templates:
@@ -109,3 +110,4 @@ It delegates to `CombatService`, which owns:
 - Store tunables in blackboard keys instead of hardcoding in multiple files.
 - Use `on_event` for reactive AI (speech, in-range, out-range), and `brain_loop` for tactical polling.
 - Return explicit delay values from behaviors to control tick frequency.
+- For conversational NPCs, prefer `common.npc_dialogue` so deterministic dialogue can claim speech before `ai_dialogue` fallback.

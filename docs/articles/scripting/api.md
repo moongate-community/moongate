@@ -39,6 +39,8 @@ Common shipped command scripts:
 Common shipped helper scripts:
 
 - `moongate_data/scripts/common/tick.lua`
+- `moongate_data/scripts/common/dialogue.lua`
+- `moongate_data/scripts/common/npc_dialogue.lua`
 
 ## Real Script Examples
 
@@ -101,6 +103,56 @@ Runtime behavior:
   - `Regular` / `Emote` -> `12`
   - `Yell` -> `18`
 - NPC brain speech listeners still receive `speech_type`, so Lua can react differently to regular speech versus emotes
+
+### Authored Dialogue Helpers
+
+The deterministic dialogue DSL ships as helper scripts, with runtime support provided by the `dialogue` module.
+
+```lua
+local dialogue = require("common.dialogue")
+
+return dialogue.conversation("innkeeper", {
+    start = "start",
+    topics = {
+        room = { "room", "stanza" }
+    },
+    topic_routes = {
+        room = "room_offer"
+    },
+    nodes = {
+        start = dialogue.node {
+            text = "Welcome.",
+            options = {
+                dialogue.option { text = "A room", goto_ = "room_offer" }
+            }
+        },
+        room_offer = dialogue.node {
+            text = "A room costs 15 gold.",
+            options = {}
+        }
+    }
+})
+```
+
+Runtime notes:
+
+- `goto_` is normalized to `goto`
+- option numbers are selected by nearby player speech like `1`, `2`, `3`
+- authored dialogue is meant to run before `ai_dialogue` fallback when both are configured
+
+Persistent dialogue memory is stored per `npc <-> mobile` under:
+
+- `moongate_data/runtime/dialogue_memory/<npc_serial>.json`
+
+Available context helpers include:
+
+- `ctx:get_memory_flag(key)`
+- `ctx:set_memory_flag(key, value)`
+- `ctx:get_memory_number(key)`
+- `ctx:set_memory_number(key, value)`
+- `ctx:add_memory_number(key, delta)`
+- `ctx:get_memory_text(key)`
+- `ctx:set_memory_text(key, value)`
 
 ### Item Script: Apple
 

@@ -1,6 +1,12 @@
 items:
   - name: Overview
     href: overview.md
+  - name: NPC Behaviors
+    href: npc-behaviors.md
+  - name: Authored Dialogues
+    href: authored-dialogues.md
+  - name: Intelligent NPC Dialogue
+    href: intelligent-npcs.md
   - name: Vendor and Context Menus
     href: vendor-context-menus.md
   - name: Modules

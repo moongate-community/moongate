@@ -118,7 +118,9 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
         container.Register<INpcAiPromptService, NpcAiPromptService>(Reuse.Singleton);
         container.Register<INpcAiMemoryService, NpcAiMemoryService>(Reuse.Singleton);
+        container.Register<IDialogueDefinitionService, DialogueDefinitionService>(Reuse.Singleton);
         container.Register<IDialogueMemoryService, DialogueMemoryService>(Reuse.Singleton);
+        container.Register<IDialogueRuntimeService, DialogueRuntimeService>(Reuse.Singleton);
         container.Register<INpcAiRuntimeStateService, NpcAiRuntimeStateService>(Reuse.Singleton);
         container.Register<IOpenAiNpcDialogueClient, OpenAiNpcDialogueClient>(Reuse.Singleton);
         container.Register<INpcDialogueService, NpcDialogueService>(Reuse.Singleton);

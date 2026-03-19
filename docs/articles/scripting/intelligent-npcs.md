@@ -6,7 +6,7 @@ Moongate can optionally use OpenAI to let selected NPC brains:
 - speak on their own when players are nearby
 - keep a compact long-term memory per NPC
 
-This is wired through the Lua module `ai_dialogue`.
+This is wired through the Lua module `ai_dialogue`. For NPCs that need deterministic dialogue first, pair it with `common.npc_dialogue`.
 
 ## Configuration
 
@@ -48,11 +48,11 @@ These files should describe:
 
 Persistent NPC memories live under:
 
-- `moongate_data/templates/npc_memories/<npcSerial>.txt`
+- `moongate_data/runtime/npc_memories/<npcSerial>.txt`
 
 Example:
 
-- `moongate_data/templates/npc_memories/0x012314.txt`
+- `moongate_data/runtime/npc_memories/0x012314.txt`
 
 The runtime keeps these as compact summaries, not raw full chat logs.
 
@@ -100,6 +100,39 @@ function lilly.brain_loop(npc_id)
 
         coroutine.yield(1000)
     end
+end
+```
+
+Recommended hybrid pattern:
+
+```lua
+local npc_dialogue = require("common.npc_dialogue")
+
+local config = {
+    conversation_id = "innkeeper",
+    prompt_file = "innkeeper.txt",
+}
+
+function innkeeper.on_spawn(npc_id, _ctx)
+    local npc = mobile.get(npc_id)
+    if npc ~= nil then
+        npc_dialogue.init(npc, config)
+    end
+end
+
+function innkeeper.on_speech(npc_id, speaker_id, text, _speech_type, _map_id, _x, _y, _z)
+    local npc = mobile.get(npc_id)
+    local speaker = mobile.get(speaker_id)
+
+    if npc == nil or speaker == nil then
+        return
+    end
+
+    if npc_dialogue.listener(npc, speaker, text, config) then
+        return
+    end
+
+    npc:say("Posso aiutarti in altro?")
 end
 ```
 

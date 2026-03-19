@@ -114,6 +114,9 @@ log.info("Active players: " .. count)
 ## Script Examples (NPC / Item / Gump / Command)
 
 For the behavior-based NPC AI architecture, see [NPC Behaviors](npc-behaviors.md).
+For deterministic topic-and-option dialogue trees, see [Authored Dialogues](authored-dialogues.md).
+For OpenAI-backed NPC speech and deterministic-to-generative fallback patterns, see
+[Intelligent NPC Dialogue](intelligent-npcs.md).
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
@@ -176,6 +179,43 @@ Player-side world speech follows the same pipeline. Incoming shorthand is normal
 - `*text*` -> emote
 - `!text` -> yell
 - `;text` -> whisper
+
+### Authored Dialogue Example
+
+```lua
+local npc_dialogue = require("common.npc_dialogue")
+
+local DIALOGUE_CONFIG = {
+    conversation_id = "innkeeper",
+    prompt_file = "innkeeper.txt",
+}
+
+function innkeeper.on_spawn(npc_id, _ctx)
+    local npc = mobile.get(npc_id)
+    if npc then
+        npc_dialogue.init(npc, DIALOGUE_CONFIG)
+    end
+end
+
+function innkeeper.on_speech(npc_id, speaker_id, text, _speech_type, _map_id, _x, _y, _z)
+    local npc = mobile.get(npc_id)
+    local speaker = mobile.get(speaker_id)
+
+    if npc == nil or speaker == nil then
+        return
+    end
+
+    if npc_dialogue.listener(npc, speaker, text, DIALOGUE_CONFIG) then
+        return
+    end
+
+    npc:say("Posso aiutarti in altro?")
+end
+```
+
+Example conversation asset:
+
+- `moongate_data/scripts/dialogs/innkeeper.lua`
 
 ### Item Script Example
 

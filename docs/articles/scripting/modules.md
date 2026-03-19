@@ -13,6 +13,8 @@ The following modules are available in the default server runtime:
 - `log`
 - `command`
 - `speech`
+- `dialogue`
+- `ai_dialogue`
 - `combat`
 - `mobile`
 - `item`
@@ -60,6 +62,34 @@ Speech-related runtime notes:
   - `*text*` -> emote
   - `!text` -> yell
   - `;text` -> whisper
+
+`dialogue` runtime helpers:
+
+```lua
+dialogue.register("innkeeper", definition)
+dialogue.init(npc, "innkeeper")
+dialogue.listener(npc, speaker, text)
+```
+
+The repository also ships DSL helpers in `common.dialogue`:
+
+```lua
+local dialogue = require("common.dialogue")
+```
+
+`ai_dialogue` runtime helpers:
+
+```lua
+ai_dialogue.init(npc, "innkeeper.txt")
+ai_dialogue.listener(npc, speaker, text)
+ai_dialogue.idle(npc)
+```
+
+Recommended bridge helper:
+
+```lua
+local npc_dialogue = require("common.npc_dialogue")
+```
 
 `combat` runtime helpers:
 
