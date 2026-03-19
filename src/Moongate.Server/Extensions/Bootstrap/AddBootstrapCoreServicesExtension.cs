@@ -123,7 +123,6 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IDialogueMemoryService, DialogueMemoryService>(Reuse.Singleton);
         container.Register<IDialogueRuntimeService, DialogueRuntimeService>(Reuse.Singleton);
         container.Register<IScheduledEventDefinitionService, ScheduledEventDefinitionService>(Reuse.Singleton);
-        container.Register<IScheduledEventService, ScheduledEventService>(Reuse.Singleton);
         container.Register<INpcAiRuntimeStateService, NpcAiRuntimeStateService>(Reuse.Singleton);
         container.Register<IOpenAiNpcDialogueClient, OpenAiNpcDialogueClient>(Reuse.Singleton);
         container.Register<INpcDialogueService, NpcDialogueService>(Reuse.Singleton);
