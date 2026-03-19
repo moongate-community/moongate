@@ -6,7 +6,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-.NET%2010-blueviolet" alt=".NET 10">
-  <img src="https://img.shields.io/badge/AOT-enabled-green" alt="AOT Enabled">
   <img src="https://img.shields.io/badge/scripting-Lua-yellow" alt="Lua Scripting">
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="GPL-3.0 License">
 </p>
@@ -17,7 +16,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_small)
 [![Docker Image](https://img.shields.io/docker/v/tgiachi/moongate?sort=semver)](https://hub.docker.com/r/tgiachi/moongate)
 
-Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT support, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
+Moongate v2 is a modern Ultima Online server built with .NET 10, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
 
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_large)
@@ -93,7 +92,7 @@ UI default URL: `http://localhost:8088/`
 - Deterministic single game-loop with separate network inbound/outbound workers
 - Source-generated packet/command/listener registration
 - Sector/chunk spatial system with lazy warmup and broadcast radius
-- Snapshot + journal persistence (MessagePack source-generated, AOT-safe)
+- Snapshot + journal persistence (MessagePack source-generated)
 - Lua scripting runtime for commands, gumps, item/mobile behavior
 - Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
@@ -105,7 +104,7 @@ UI default URL: `http://localhost:8088/`
 - Spatial model is sector-first (chunk-style), not pure repeated range scans.
 - World generation pipeline uses named generators (`IWorldGenerator`) and command-triggered runs (example: doors).
 - Doors support runtime open/close behavior and network updates.
-- AOT stability issue in persistence was resolved by moving to MessagePack-CSharp source-generated contracts.
+- Persistence moved to MessagePack-CSharp source-generated contracts for explicit, predictable snapshot serialization.
 - Mobile domain model was refactored to remove `Level` and `Experience` from `UOMobileEntity` (they are not part of the base UO mobile model).
 
 ## Screenshots

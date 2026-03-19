@@ -19,10 +19,6 @@ WORKDIR /src
 # Update Alpine packages to latest security patches
 RUN apk update && apk upgrade --no-cache
 
-# NativeAOT prerequisites on Alpine
-# binutils provides objcopy required when StripSymbols=true.
-RUN apk add --no-cache clang build-base zlib-dev binutils
-
 # Copy only project metadata first to maximize restore-layer caching
 COPY Directory.Build.props ./
 COPY Moongate.slnx ./
@@ -53,22 +49,14 @@ COPY src/Moongate.Server.Metrics/ src/Moongate.Server.Metrics/
 COPY src/Moongate.UO.Data/ src/Moongate.UO.Data/
 COPY src/Moongate.Server/ src/Moongate.Server/
 
-# Publish native AOT binary for musl (Alpine)
+# Publish framework-dependent server build for Alpine
 RUN set -eux; \
-    ARCH="${TARGETARCH:-amd64}"; \
-    if [ "$ARCH" = "amd64" ]; then ARCH="x64"; fi; \
-    if [ "$ARCH" = "arm64" ]; then ARCH="arm64"; fi; \
     dotnet publish src/Moongate.Server/Moongate.Server.csproj \
       -c "$BUILD_CONFIGURATION" \
       -o /out \
-      -r "linux-musl-$ARCH" \
-      --self-contained true \
-      -p:StripSymbols=true \
-      -p:DebuggerSupport=false \
-      -p:InvariantGlobalization=true
-
-# Use latest runtime-deps with security updates
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS final
+      --no-restore
+# Use latest ASP.NET runtime with security updates
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
 
 # Update Alpine packages to latest security patches
 RUN apk update && apk upgrade --no-cache
@@ -94,4 +82,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- http://127.0.0.1:8088/health | grep -q '^ok$' || exit 1
 
 USER moongate
-ENTRYPOINT ["/opt/moongate/Moongate.Server"]
+ENTRYPOINT ["dotnet", "/opt/moongate/Moongate.Server.dll"]

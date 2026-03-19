@@ -12,7 +12,7 @@ docker compose up -d --build
 ```
 
 This will:
-- Build the Moongate server image from the repository root (NativeAOT)
+- Build the Moongate server image from the repository root
 - Start Moongate, Prometheus, and Grafana
 
 ### 2. Access the services
@@ -194,7 +194,7 @@ All services run on the `moongate-network` Docker network for internal communica
 1. Ensure .NET 10 SDK is available in the Docker build
 2. Check build logs: `docker compose build moongate --progress=plain`
 3. Clean build cache: `docker compose build --no-cache moongate`
-4. Verify Docker has enough memory allocated (minimum 4GB recommended for NativeAOT)
+4. Verify Docker has enough memory allocated for the full build and runtime workload
 
 ### Grafana shows no data
 

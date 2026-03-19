@@ -9,11 +9,6 @@
         <Description>Unified Roslyn source generators for Moongate (packets, handlers, metrics, version metadata).</Description>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-        <IsAotCompatible>false</IsAotCompatible>
-        <EnableAotAnalyzer>false</EnableAotAnalyzer>
-        <IsTrimmable>false</IsTrimmable>
-        <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
-        <PublishAot>false</PublishAot>
     </PropertyGroup>
 
     <ItemGroup>

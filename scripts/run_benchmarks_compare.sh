@@ -12,36 +12,27 @@ ITERATIONS="${ITERATIONS:-200000}"
 mkdir -p "$ARTIFACTS_DIR" "$TMP_DIR"
 
 JIT_JSON="$TMP_DIR/jit.json"
-AOT_JSON="$TMP_DIR/aot.json"
-REPORT_MD="$ARTIFACTS_DIR/aot-vs-jit.md"
+SECOND_JSON="$TMP_DIR/second-run.json"
+REPORT_MD="$ARTIFACTS_DIR/jit-benchmark-repeatability.md"
 
 echo "Running JIT comparison benchmarks..."
 dotnet run -c Release --project "$PROJECT_PATH" -- --json --iterations "$ITERATIONS" --output "$JIT_JSON"
 
-echo "Publishing NativeAOT comparison runner..."
-dotnet publish "$PROJECT_PATH" -c Release -r "$RID" --self-contained true -o "$TMP_DIR/aot"
+echo "Running second JIT comparison pass..."
+dotnet run -c Release --project "$PROJECT_PATH" -- --json --iterations "$ITERATIONS" --output "$SECOND_JSON"
 
-AOT_BIN="$TMP_DIR/aot/Moongate.Benchmarks.Compare"
-if [[ ! -x "$AOT_BIN" ]]; then
-  echo "AOT binary not found: $AOT_BIN" >&2
-  exit 1
-fi
-
-echo "Running NativeAOT comparison benchmarks..."
-"$AOT_BIN" --json --iterations "$ITERATIONS" --output "$AOT_JSON"
-
-python3 - <<'PY' "$JIT_JSON" "$AOT_JSON" "$REPORT_MD"
+python3 - <<'PY' "$JIT_JSON" "$SECOND_JSON" "$REPORT_MD"
 import json
 import sys
 from datetime import datetime, timezone
 
-jit_path, aot_path, report_path = sys.argv[1], sys.argv[2], sys.argv[3]
+jit_path, second_path, report_path = sys.argv[1], sys.argv[2], sys.argv[3]
 with open(jit_path, "r", encoding="utf-8") as f:
     jit = {x["name"]: x for x in json.load(f)}
-with open(aot_path, "r", encoding="utf-8") as f:
-    aot = {x["name"]: x for x in json.load(f)}
+with open(second_path, "r", encoding="utf-8") as f:
+    second = {x["name"]: x for x in json.load(f)}
 
-names = sorted(set(jit.keys()) & set(aot.keys()))
+names = sorted(set(jit.keys()) & set(second.keys()))
 
 def fmt_ns(value: float) -> str:
     if value >= 1000:
@@ -56,18 +47,18 @@ def fmt_bytes(value: float) -> str:
     return f"{value:.2f} B"
 
 lines = []
-lines.append("# AOT vs JIT Benchmark Snapshot")
+lines.append("# JIT Benchmark Repeatability Snapshot")
 lines.append("")
 lines.append(f"- Generated at: {datetime.now(timezone.utc).isoformat()}")
 lines.append("")
-lines.append("| Benchmark | JIT Mean | AOT Mean | Speedup (JIT/AOT) | JIT Alloc/op | AOT Alloc/op |")
+lines.append("| Benchmark | JIT Mean (run 1) | JIT Mean (run 2) | Delta (run2/run1) | Alloc/op run 1 | Alloc/op run 2 |")
 lines.append("|---|---:|---:|---:|---:|---:|")
 for name in names:
     j = jit[name]
-    a = aot[name]
-    speedup = j["meanNanoseconds"] / a["meanNanoseconds"] if a["meanNanoseconds"] > 0 else 0
+    s = second[name]
+    delta = s["meanNanoseconds"] / j["meanNanoseconds"] if j["meanNanoseconds"] > 0 else 0
     lines.append(
-        f"| `{name}` | `{fmt_ns(j['meanNanoseconds'])}` | `{fmt_ns(a['meanNanoseconds'])}` | `{speedup:.2f}x` | `{fmt_bytes(j['allocatedBytesPerOperation'])}` | `{fmt_bytes(a['allocatedBytesPerOperation'])}` |"
+        f"| `{name}` | `{fmt_ns(j['meanNanoseconds'])}` | `{fmt_ns(s['meanNanoseconds'])}` | `{delta:.2f}x` | `{fmt_bytes(j['allocatedBytesPerOperation'])}` | `{fmt_bytes(s['allocatedBytesPerOperation'])}` |"
     )
 
 with open(report_path, "w", encoding="utf-8") as f:

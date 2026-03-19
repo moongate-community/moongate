@@ -51,7 +51,6 @@ This is the main documentation portal for Moongate v2.
 
 - [Stress Test](articles/operations/stress-test.md)
 - [Console Commands](articles/operations/console-commands.md)
-- [NativeAOT Troubleshooting](articles/operations/native-aot-troubleshooting.md)
 
 ## Development
 

@@ -9,7 +9,7 @@
         <WarningsAsErrors/>
         <WarningsNotAsErrors/>
         <LangVersion>latest</LangVersion>
-        <NoWarn>CA1000;CA1036;CA1051;CA1304;CA1305;CA1309;CA1310;CA1512;CA1513;CA1707;CA1711;CA1720;CA1805;CA1806;CA1822;CA1854;CA1859;CA1861;CA1862;CA2201;CA2208;CA2211;IL2026;IL3050;</NoWarn>
+        <NoWarn>CA1000;CA1036;CA1051;CA1304;CA1305;CA1309;CA1310;CA1512;CA1513;CA1707;CA1711;CA1720;CA1805;CA1806;CA1822;CA1854;CA1859;CA1861;CA1862;CA2201;CA2208;CA2211;</NoWarn>
 
     </PropertyGroup>
 
@@ -19,14 +19,6 @@
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <AnalysisLevel>latest-recommended</AnalysisLevel>
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
-    </PropertyGroup>
-
-    <PropertyGroup>
-        <!-- AOT readiness -->
-        <IsAotCompatible>true</IsAotCompatible>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-
     </PropertyGroup>
 
     <!-- Package Metadata -->
@@ -55,13 +47,6 @@
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
-
-    <!-- Security -->
-    <PropertyGroup>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <IsTrimmable>true</IsTrimmable>
-        <TrimMode>link</TrimMode>
     </PropertyGroup>
 
     <!-- Common Package References -->

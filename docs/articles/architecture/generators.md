@@ -1,14 +1,14 @@
 # Source Generators
 
 Moongate uses source generators to move registration and mapping work from runtime to compile-time.
-This improves startup predictability, reduces reflection-heavy paths, and helps NativeAOT compatibility.
+This improves startup predictability and reduces reflection-heavy paths.
 
 ## Why We Use Generators
 
 - Remove manual opcode/registration duplication.
 - Keep runtime bootstrap deterministic.
 - Reduce reflection-based discovery in hot startup paths.
-- Keep AOT behavior stable by emitting explicit code.
+- Keep bootstrap and mapping code explicit and deterministic.
 
 ## Current Generators
 
