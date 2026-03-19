@@ -64,6 +64,34 @@ public sealed class HelpLuaRuntimeTests
         public Task<IReadOnlyList<HelpTicketEntity>> GetAllTicketsAsync(CancellationToken cancellationToken = default)
             => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
 
+        public Task<(IReadOnlyList<HelpTicketEntity> Items, int TotalCount)> GetTicketsForAdminAsync(
+            int page,
+            int pageSize,
+            HelpTicketStatus? status,
+            HelpTicketCategory? category,
+            Serial? assignedToAccountId,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<(IReadOnlyList<HelpTicketEntity>, int)>(([], 0));
+
+        public Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default)
+            => Task.FromResult<HelpTicketEntity?>(null);
+
+        public Task<HelpTicketEntity?> AssignToAccountAsync(
+            Serial ticketId,
+            Serial assignedToAccountId,
+            Serial? assignedToCharacterId,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<HelpTicketEntity?>(null);
+
+        public Task<HelpTicketEntity?> UpdateStatusAsync(
+            Serial ticketId,
+            HelpTicketStatus status,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<HelpTicketEntity?>(null);
+
         public Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
             Serial senderAccountId,
             CancellationToken cancellationToken = default

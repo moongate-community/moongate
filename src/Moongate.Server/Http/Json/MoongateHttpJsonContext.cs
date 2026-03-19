@@ -15,6 +15,8 @@ namespace Moongate.Server.Http.Json;
  JsonSerializable(typeof(MoongateHttpPortalInventory)),
  JsonSerializable(typeof(MoongateHttpPortalInventoryItem)),
  JsonSerializable(typeof(MoongateHttpHelpTicket)),
+ JsonSerializable(typeof(MoongateHttpHelpTicketPage)),
+ JsonSerializable(typeof(MoongateHttpUpdateHelpTicketStatusRequest)),
  JsonSerializable(typeof(MoongateHttpCreateUserRequest)),
  JsonSerializable(typeof(MoongateHttpUpdateUserRequest)),
  JsonSerializable(typeof(MoongateHttpUser)),

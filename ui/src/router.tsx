@@ -35,6 +35,12 @@ const ActivePlayersPage = lazy(async () =>
 const MapsPage = lazy(async () =>
   import('./pages/MapsPage').then((module) => ({ default: module.MapsPage })),
 )
+const HelpTicketsPage = lazy(async () =>
+  import('./pages/HelpTicketsPage').then((module) => ({ default: module.HelpTicketsPage })),
+)
+const HelpTicketDetailsPage = lazy(async () =>
+  import('./pages/HelpTicketDetailsPage').then((module) => ({ default: module.HelpTicketDetailsPage })),
+)
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
   const user = useAuthStore((s) => s.user)
@@ -153,6 +159,22 @@ export function AppRouter() {
           element={
             <Suspense fallback={<RouteFallback />}>
               <MapsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="help-tickets"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <HelpTicketsPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="help-tickets/:ticketId"
+          element={
+            <Suspense fallback={<RouteFallback />}>
+              <HelpTicketDetailsPage />
             </Suspense>
           }
         />

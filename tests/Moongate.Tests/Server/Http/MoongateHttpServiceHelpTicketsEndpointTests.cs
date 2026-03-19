@@ -49,6 +49,87 @@ public sealed class MoongateHttpServiceHelpTicketsEndpointTests
                 ]
             );
 
+        public Task<(IReadOnlyList<HelpTicketEntity> Items, int TotalCount)> GetTicketsForAdminAsync(
+            int page,
+            int pageSize,
+            HelpTicketStatus? status,
+            HelpTicketCategory? category,
+            Serial? assignedToAccountId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var safePage = Math.Max(page, 1);
+            var safePageSize = Math.Clamp(pageSize <= 0 ? 50 : pageSize, 1, 200);
+            IEnumerable<HelpTicketEntity> tickets = Tickets;
+
+            if (status is not null)
+            {
+                tickets = tickets.Where(ticket => ticket.Status == status.Value);
+            }
+
+            if (category is not null)
+            {
+                tickets = tickets.Where(ticket => ticket.Category == category.Value);
+            }
+
+            if (assignedToAccountId is not null)
+            {
+                tickets = tickets.Where(ticket => ticket.AssignedToAccountId == assignedToAccountId.Value);
+            }
+
+            var filtered = tickets.OrderByDescending(ticket => ticket.CreatedAtUtc).ToList();
+            var items = filtered.Skip((safePage - 1) * safePageSize).Take(safePageSize).ToList();
+            return Task.FromResult<(IReadOnlyList<HelpTicketEntity>, int)>((items, filtered.Count));
+        }
+
+        public Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default)
+            => Task.FromResult<HelpTicketEntity?>(Tickets.FirstOrDefault(ticket => ticket.Id == ticketId));
+
+        public Task<HelpTicketEntity?> AssignToAccountAsync(
+            Serial ticketId,
+            Serial assignedToAccountId,
+            Serial? assignedToCharacterId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var ticket = Tickets.FirstOrDefault(existing => existing.Id == ticketId);
+
+            if (ticket is null)
+            {
+                return Task.FromResult<HelpTicketEntity?>(null);
+            }
+
+            ticket.Status = HelpTicketStatus.Assigned;
+            ticket.AssignedToAccountId = assignedToAccountId;
+            ticket.AssignedToCharacterId = assignedToCharacterId ?? Serial.Zero;
+            ticket.AssignedAtUtc = DateTime.UtcNow;
+            ticket.LastUpdatedAtUtc = DateTime.UtcNow;
+
+            return Task.FromResult<HelpTicketEntity?>(ticket);
+        }
+
+        public Task<HelpTicketEntity?> UpdateStatusAsync(
+            Serial ticketId,
+            HelpTicketStatus status,
+            CancellationToken cancellationToken = default
+        )
+        {
+            var ticket = Tickets.FirstOrDefault(existing => existing.Id == ticketId);
+
+            if (ticket is null)
+            {
+                return Task.FromResult<HelpTicketEntity?>(null);
+            }
+
+            ticket.Status = status;
+            if (status == HelpTicketStatus.Closed)
+            {
+                ticket.ClosedAtUtc = DateTime.UtcNow;
+            }
+            ticket.LastUpdatedAtUtc = DateTime.UtcNow;
+            return Task.FromResult<HelpTicketEntity?>(ticket);
+        }
+
         public Task StartAsync()
             => Task.CompletedTask;
 
@@ -57,7 +138,7 @@ public sealed class MoongateHttpServiceHelpTicketsEndpointTests
     }
 
     [Test]
-    public async Task HelpTicketsEndpoint_WhenAuthenticatedAdmin_ShouldReturnAllTickets()
+    public async Task HelpTicketsEndpoint_WhenAuthenticatedAdmin_ShouldReturnPagedResults()
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
@@ -96,18 +177,20 @@ public sealed class MoongateHttpServiceHelpTicketsEndpointTests
         try
         {
             using var http = await LoginAsync(port, "admin", "secret");
-            var response = await http.GetAsync($"http://127.0.0.1:{port}/api/help-tickets");
+            var response = await http.GetAsync($"http://127.0.0.1:{port}/api/help-tickets?page=1&pageSize=2");
             using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-            var tickets = payload.RootElement.EnumerateArray().ToList();
+            var items = payload.RootElement.GetProperty("items").EnumerateArray().ToList();
 
             Assert.Multiple(
                 () =>
                 {
                     Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
-                    Assert.That(tickets.Count, Is.EqualTo(3));
-                    Assert.That(tickets[0].GetProperty("ticketId").GetString(), Is.EqualTo((Serial.ItemOffset + 1).ToString()));
-                    Assert.That(tickets[1].GetProperty("status").GetString(), Is.EqualTo("Assigned"));
-                    Assert.That(tickets[2].GetProperty("category").GetString(), Is.EqualTo("Other"));
+                    Assert.That(payload.RootElement.GetProperty("page").GetInt32(), Is.EqualTo(1));
+                    Assert.That(payload.RootElement.GetProperty("pageSize").GetInt32(), Is.EqualTo(2));
+                    Assert.That(payload.RootElement.GetProperty("totalCount").GetInt32(), Is.EqualTo(3));
+                    Assert.That(items.Count, Is.EqualTo(2));
+                    Assert.That(items[0].GetProperty("ticketId").GetString(), Is.EqualTo((Serial.ItemOffset + 3).ToString()));
+                    Assert.That(items[1].GetProperty("status").GetString(), Is.EqualTo("Assigned"));
                 }
             );
         }
@@ -169,6 +252,238 @@ public sealed class MoongateHttpServiceHelpTicketsEndpointTests
                     Assert.That(tickets.Count, Is.EqualTo(2));
                     Assert.That(tickets.All(ticket => ticket.GetProperty("senderAccountId").GetString() == "8"), Is.True);
                     Assert.That(tickets.Any(ticket => ticket.GetProperty("status").GetString() == "Closed"), Is.False);
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task HelpTicketsEndpoint_WhenFiltersAreApplied_ShouldReturnMatchingPagedResults()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var accountService = CreateAccountService();
+        var helpTickets = new HelpTicketsEndpointServiceStub();
+
+        var mine = CreateTicket((Serial)(Serial.ItemOffset + 1), (Serial)7, HelpTicketStatus.Open, "Question");
+        mine.AssignedToAccountId = (Serial)7;
+        mine.AssignedAtUtc = mine.CreatedAtUtc;
+
+        var otherCategory = CreateTicket((Serial)(Serial.ItemOffset + 2), (Serial)7, HelpTicketStatus.Open, "Bug");
+        var otherStatus = CreateTicket((Serial)(Serial.ItemOffset + 3), (Serial)7, HelpTicketStatus.Closed, "Question");
+
+        helpTickets.Tickets.AddRange([mine, otherCategory, otherStatus]);
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false,
+                Jwt = new()
+                {
+                    IsEnabled = true,
+                    SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
+                    Issuer = "moongate-tests",
+                    Audience = "moongate-tests-client",
+                    ExpirationMinutes = 5
+                }
+            },
+            accountService,
+            helpTicketService: helpTickets
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginAsync(port, "admin", "secret");
+            var response = await http.GetAsync(
+                $"http://127.0.0.1:{port}/api/help-tickets?page=1&pageSize=50&status=Open&category=Question&assignedToMe=true"
+            );
+            using var payload = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+            var items = payload.RootElement.GetProperty("items").EnumerateArray().ToList();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(payload.RootElement.GetProperty("totalCount").GetInt32(), Is.EqualTo(1));
+                    Assert.That(items.Count, Is.EqualTo(1));
+                    Assert.That(items[0].GetProperty("ticketId").GetString(), Is.EqualTo((Serial.ItemOffset + 1).ToString()));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task HelpTicketByIdEndpoint_WhenAuthenticatedAdmin_ShouldReturnTicket()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var accountService = CreateAccountService();
+        var helpTickets = new HelpTicketsEndpointServiceStub();
+        var expected = CreateTicket((Serial)(Serial.ItemOffset + 9), (Serial)7, HelpTicketStatus.Open, "Question");
+        helpTickets.Tickets.Add(expected);
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false,
+                Jwt = new()
+                {
+                    IsEnabled = true,
+                    SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
+                    Issuer = "moongate-tests",
+                    Audience = "moongate-tests-client",
+                    ExpirationMinutes = 5
+                }
+            },
+            accountService,
+            helpTicketService: helpTickets
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginAsync(port, "admin", "secret");
+            var response = await http.GetAsync($"http://127.0.0.1:{port}/api/help-tickets/{expected.Id.Value}");
+            var ticket = await response.Content.ReadFromJsonAsync<MoongateHttpHelpTicket>();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(ticket, Is.Not.Null);
+                    Assert.That(ticket!.TicketId, Is.EqualTo(expected.Id.Value.ToString()));
+                    Assert.That(ticket.Category, Is.EqualTo("Question"));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task HelpTicketAssignToMeEndpoint_WhenAuthenticatedAdmin_ShouldAssignTicket()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var accountService = CreateAccountService();
+        var helpTickets = new HelpTicketsEndpointServiceStub();
+        var ticket = CreateTicket((Serial)(Serial.ItemOffset + 20), (Serial)8, HelpTicketStatus.Open, "Question");
+        helpTickets.Tickets.Add(ticket);
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false,
+                Jwt = new()
+                {
+                    IsEnabled = true,
+                    SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
+                    Issuer = "moongate-tests",
+                    Audience = "moongate-tests-client",
+                    ExpirationMinutes = 5
+                }
+            },
+            accountService,
+            helpTicketService: helpTickets
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginAsync(port, "admin", "secret");
+            var response = await http.PutAsync(
+                $"http://127.0.0.1:{port}/api/help-tickets/{ticket.Id.Value}/assign-to-me",
+                JsonContent.Create(new { })
+            );
+            var updated = await response.Content.ReadFromJsonAsync<MoongateHttpHelpTicket>();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(updated, Is.Not.Null);
+                    Assert.That(updated!.Status, Is.EqualTo("Assigned"));
+                    Assert.That(updated.AssignedToAccountId, Is.EqualTo("7"));
+                }
+            );
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
+    public async Task HelpTicketStatusEndpoint_WhenAuthenticatedAdmin_ShouldUpdateStatus()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var port = GetRandomPort();
+        var accountService = CreateAccountService();
+        var helpTickets = new HelpTicketsEndpointServiceStub();
+        var ticket = CreateTicket((Serial)(Serial.ItemOffset + 21), (Serial)8, HelpTicketStatus.Assigned, "Question");
+        helpTickets.Tickets.Add(ticket);
+
+        var service = new MoongateHttpService(
+            new()
+            {
+                DirectoriesConfig = directories,
+                Port = port,
+                IsOpenApiEnabled = false,
+                Jwt = new()
+                {
+                    IsEnabled = true,
+                    SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
+                    Issuer = "moongate-tests",
+                    Audience = "moongate-tests-client",
+                    ExpirationMinutes = 5
+                }
+            },
+            accountService,
+            helpTicketService: helpTickets
+        );
+
+        await service.StartAsync();
+
+        try
+        {
+            using var http = await LoginAsync(port, "admin", "secret");
+            var response = await http.PutAsJsonAsync(
+                $"http://127.0.0.1:{port}/api/help-tickets/{ticket.Id.Value}/status",
+                new { status = "Closed" }
+            );
+            var updated = await response.Content.ReadFromJsonAsync<MoongateHttpHelpTicket>();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+                    Assert.That(updated, Is.Not.Null);
+                    Assert.That(updated!.Status, Is.EqualTo("Closed"));
+                    Assert.That(updated.ClosedAtUtc, Is.Not.Null);
                 }
             );
         }

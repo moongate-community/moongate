@@ -16,6 +16,30 @@ public interface IHelpTicketService : IMoongateService
 
     Task<IReadOnlyList<HelpTicketEntity>> GetAllTicketsAsync(CancellationToken cancellationToken = default);
 
+    Task<(IReadOnlyList<HelpTicketEntity> Items, int TotalCount)> GetTicketsForAdminAsync(
+        int page,
+        int pageSize,
+        HelpTicketStatus? status,
+        HelpTicketCategory? category,
+        Serial? assignedToAccountId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default);
+
+    Task<HelpTicketEntity?> AssignToAccountAsync(
+        Serial ticketId,
+        Serial assignedToAccountId,
+        Serial? assignedToCharacterId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<HelpTicketEntity?> UpdateStatusAsync(
+        Serial ticketId,
+        HelpTicketStatus status,
+        CancellationToken cancellationToken = default
+    );
+
     Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
         Serial senderAccountId,
         CancellationToken cancellationToken = default
