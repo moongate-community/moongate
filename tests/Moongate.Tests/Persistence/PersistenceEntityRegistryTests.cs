@@ -13,15 +13,15 @@ public sealed class PersistenceEntityRegistryTests
         registry.Register(CreateTestDescriptor(500));
 
         var act = () => registry.Register(
-            new PersistenceEntityDescriptor<string, int, int>(
-                500,
-                "duplicate-type-id",
-                1,
-                static entity => entity.Length,
-                static entity => entity.Length,
-                static snapshot => snapshot.ToString()
-            )
-        );
+                      new PersistenceEntityDescriptor<string, int, int>(
+                          500,
+                          "duplicate-type-id",
+                          1,
+                          static entity => entity.Length,
+                          static entity => entity.Length,
+                          static snapshot => snapshot.ToString()
+                      )
+                  );
 
         Assert.That(act, Throws.InvalidOperationException);
     }
@@ -45,15 +45,15 @@ public sealed class PersistenceEntityRegistryTests
         registry.Freeze();
 
         var act = () => registry.Register(
-            new PersistenceEntityDescriptor<string, int, int>(
-                501,
-                "frozen-registry-type",
-                1,
-                static entity => entity.Length,
-                static entity => entity.Length,
-                static snapshot => snapshot.ToString()
-            )
-        );
+                      new PersistenceEntityDescriptor<string, int, int>(
+                          501,
+                          "frozen-registry-type",
+                          1,
+                          static entity => entity.Length,
+                          static entity => entity.Length,
+                          static snapshot => snapshot.ToString()
+                      )
+                  );
 
         Assert.That(act, Throws.InvalidOperationException);
     }

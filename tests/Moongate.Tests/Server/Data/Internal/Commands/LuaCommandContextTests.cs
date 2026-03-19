@@ -1,5 +1,6 @@
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Ids;
 using Serilog.Events;
 
 namespace Moongate.Tests.Server.Data.Internal.Commands;
@@ -25,6 +26,7 @@ public class LuaCommandContextTests
                 Assert.That(luaContext.Source, Is.EqualTo(CommandSourceType.Console));
                 Assert.That(luaContext.IsInGame, Is.False);
                 Assert.That(luaContext.SessionId, Is.Null);
+                Assert.That(luaContext.CharacterId, Is.Null);
             }
         );
     }
@@ -37,7 +39,8 @@ public class LuaCommandContextTests
             ["hello", "world"],
             CommandSourceType.InGame,
             123,
-            (_, _) => { }
+            (_, _) => { },
+            (Serial)0x00001234u
         );
 
         var luaContext = new LuaCommandContext(context);
@@ -50,6 +53,7 @@ public class LuaCommandContextTests
                 Assert.That(luaContext.Source, Is.EqualTo(CommandSourceType.InGame));
                 Assert.That(luaContext.IsInGame, Is.True);
                 Assert.That(luaContext.SessionId, Is.EqualTo(123));
+                Assert.That(luaContext.CharacterId, Is.EqualTo(0x00001234u));
             }
         );
     }

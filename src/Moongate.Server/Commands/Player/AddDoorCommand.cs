@@ -19,7 +19,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "add_door|.add_door",
+    "add_door|.add_door|add_wood_door|.add_wood_door|add_metal_door|.add_metal_door",
     "Add a targeted door. Usage: .add_door [wood|metal]",
     CommandSourceType.InGame,
     AccountType.GameMaster
@@ -59,7 +59,7 @@ public sealed class AddDoorCommand : ICommandExecutor
 
     public async Task ExecuteCommandAsync(CommandSystemContext context)
     {
-        if (!TryParseDoorType(context.Arguments, out var doorType))
+        if (!TryParseDoorType(context.CommandText, context.Arguments, out var doorType))
         {
             context.Print("Usage: .add_door [wood|metal]");
 
@@ -123,9 +123,9 @@ public sealed class AddDoorCommand : ICommandExecutor
                ? MetalDoorTemplateId
                : WoodDoorTemplateId;
 
-    private static bool TryParseDoorType(string[] arguments, out string doorType)
+    private static bool TryParseDoorType(string commandText, string[] arguments, out string doorType)
     {
-        doorType = WoodDoorType;
+        doorType = ResolveDoorTypeFromCommand(commandText);
 
         if (arguments.Length == 0)
         {
@@ -152,6 +152,17 @@ public sealed class AddDoorCommand : ICommandExecutor
         }
 
         return false;
+    }
+
+    private static string ResolveDoorTypeFromCommand(string commandText)
+    {
+        var commandName = commandText.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                     .FirstOrDefault();
+
+        return commandName is not null &&
+               commandName.Contains(MetalDoorType, StringComparison.OrdinalIgnoreCase)
+                   ? MetalDoorType
+                   : WoodDoorType;
     }
 
     private bool TryResolveMapId(long sessionId, out int mapId)
