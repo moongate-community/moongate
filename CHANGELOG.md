@@ -1,3 +1,38 @@
+## [0.36.0](https://github.com/moongate-community/moongate/compare/v0.35.0...v0.36.0) (2026-03-19)
+
+### Features
+
+* add async intelligent npc dialogue scheduling ([53e56f9](https://github.com/moongate-community/moongate/commit/53e56f92ad0b40e9b541f572a5c00c6dae83ec08))
+* add async lua job module ([cfb05a5](https://github.com/moongate-community/moongate/commit/cfb05a553a2e4108aa3ca53ace6f9a493f353e62))
+* add authored npc dialogue runtime ([55eeb20](https://github.com/moongate-community/moongate/commit/55eeb20df83f81e5a39902986d4daf94c7c6ba90))
+* add classic vendor buy and sell flow ([ba57f20](https://github.com/moongate-community/moongate/commit/ba57f2001b8f5a0651a6776ee1c709293c4234e3))
+* add combat sound and lua combat hooks ([de7ff72](https://github.com/moongate-community/moongate/commit/de7ff7281f52f6ccd82838de97ea9490cf3aeebe))
+* add combat system v1 ([47d2e6a](https://github.com/moongate-community/moongate/commit/47d2e6a3f0ff9fca255865d5b70daea12dd1b2ff))
+* add Lua banker context menu ([256ab13](https://github.com/moongate-community/moongate/commit/256ab1335ccd81041fb718a997f8bad9b076b0a3))
+* add Lua plugin loading support ([210846b](https://github.com/moongate-community/moongate/commit/210846b2390207a39991811c4856442b70d4cc27))
+* add Lua-backed help button gump ([f9def47](https://github.com/moongate-community/moongate/commit/f9def47524bc1074eb366898cda50d8982b1b8f4))
+* add npc corpse death flow ([0b959f6](https://github.com/moongate-community/moongate/commit/0b959f6f92f94c2fa2708f4c536a479e446a207d))
+* add real mount token flow and guard templates ([eb6444a](https://github.com/moongate-community/moongate/commit/eb6444a476cde5eac5f9b0e2d269326f2863c12b))
+* add seller npc templates ([62aa671](https://github.com/moongate-community/moongate/commit/62aa6712c25c9aee29fdc220ccc8944c5912a817))
+* add speech shorthand for yell and whisper ([627687a](https://github.com/moongate-community/moongate/commit/627687a83efd029fdf3edc6f35bafaf582302c30))
+* add world emote speech support ([38e0472](https://github.com/moongate-community/moongate/commit/38e0472c72c54691a5088946425c5a904b69d5f5))
+* extend lua speech helpers and shorthand docs ([01e0bdb](https://github.com/moongate-community/moongate/commit/01e0bdbdfa8fe438c660dbb1cebec158c3d43a76))
+* extend npc death and admin kill tooling ([6977a5b](https://github.com/moongate-community/moongate/commit/6977a5bc5d4570885fea7decea4250eb5af625a3))
+* move npc memories to runtime storage ([7ecb755](https://github.com/moongate-community/moongate/commit/7ecb755daf23d8e4921d7e9066167406d92c7b45))
+* scale melee damage with core combat stats ([47e6543](https://github.com/moongate-community/moongate/commit/47e65430bc975b68cd052385158ec7f2599a5905))
+
+### Bug Fixes
+
+* align player visibility sync with view range ([c8ee49f](https://github.com/moongate-community/moongate/commit/c8ee49fea3c5d01fea13f5ca4414888d04ab00df))
+* anchor live player markers to map content ([6f90f3c](https://github.com/moongate-community/moongate/commit/6f90f3c65d3f7b6098af518cfe156dadd91890b5))
+* correct Discord webhook workflow conditions ([ceedf8f](https://github.com/moongate-community/moongate/commit/ceedf8f332b75e4c70fb4d0a211286e463e38e09))
+* harden docker image build and healthcheck ([0158d56](https://github.com/moongate-community/moongate/commit/0158d5639becd455b4c56fd488dd197f16e5f56f))
+* queue npc dialogue listener requests ([a0cb301](https://github.com/moongate-community/moongate/commit/a0cb301b742d0d615b92b67059cb9293a119ec90))
+* realign npc dialogue benchmark with service constructor ([f17b7a3](https://github.com/moongate-community/moongate/commit/f17b7a3e589c71cdedd406708aaa6d05ab20eba4))
+* reduce login sector sync stalls ([ce13a1f](https://github.com/moongate-community/moongate/commit/ce13a1f25291ab52be159b8268ade3f11bb07693))
+* refresh backpack after vendor transactions ([c42b90d](https://github.com/moongate-community/moongate/commit/c42b90df051caabcb6e9a8e7ab9e9656cfaa365d))
+* resolve mobile notoriety per viewer ([ae0e374](https://github.com/moongate-community/moongate/commit/ae0e37439d96f690b3194a77b696514503278012))
+
 ## [0.35.0](https://github.com/moongate-community/moongate/compare/v0.34.0...v0.35.0) (2026-03-15)
 
 ### Features
