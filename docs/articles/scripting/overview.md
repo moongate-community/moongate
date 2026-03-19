@@ -119,6 +119,8 @@ For OpenAI-backed NPC speech and deterministic-to-generative fallback patterns, 
 [Intelligent NPC Dialogue](intelligent-npcs.md).
 For shard-level timed callbacks and recurring Lua-driven calendar behavior, see
 [Scheduled Events](scheduled-events.md).
+For in-game help tickets opened from the client help button and persisted for staff review, see the
+`help_tickets` module and global `on_ticket_opened(event)` callback in the scripting API reference.
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
@@ -181,6 +183,23 @@ Player-side world speech follows the same pipeline. Incoming shorthand is normal
 - `*text*` -> emote
 - `!text` -> yell
 - `;text` -> whisper
+
+### Help Ticketing Example
+
+The client help button (`0x9B`) still enters Lua through `on_help_request(session_id, character_id)`.
+The default help scripts now open a category picker and then a text-entry gump before submitting
+through `help_tickets`.
+
+```lua
+function on_ticket_opened(event)
+    log.info(
+        "Help ticket opened: id={0}, category={1}, sender={2}",
+        tostring(event.ticket_id),
+        tostring(event.category),
+        tostring(event.sender_character_id)
+    )
+end
+```
 
 ### Authored Dialogue Example
 

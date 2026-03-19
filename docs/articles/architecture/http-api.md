@@ -65,6 +65,13 @@ When `enableJwt` is true, protected endpoints require a Bearer token obtained fr
 |--------|------|-------------|
 | GET | `/api/sessions/active` | List active in-game sessions |
 
+### Help Tickets
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/help-tickets` | List all persisted help tickets for staff |
+| GET | `/api/help-tickets/me` | List the authenticated player's open or assigned tickets |
+
 ### Commands
 
 | Method | Path | Description |
@@ -260,6 +267,56 @@ Response shape:
   }
 ]
 ```
+
+### Help Tickets
+
+Admin/staff listing:
+
+```bash
+curl -s "$BASE_URL/api/help-tickets" -H "$AUTH_HEADER"
+```
+
+Behavior:
+
+- when JWT is enabled, authentication is required
+- the caller must be `GameMaster` or `Administrator`
+- returns all persisted tickets ordered by creation time
+
+Player-facing listing:
+
+```bash
+curl -s "$BASE_URL/api/help-tickets/me" -H "$AUTH_HEADER"
+```
+
+Response shape:
+
+```json
+[
+  {
+    "ticketId": "2001",
+    "senderCharacterId": "2",
+    "senderAccountId": "1",
+    "category": "Question",
+    "message": "I am stuck near Britain bank.",
+    "status": "Open",
+    "mapId": 0,
+    "x": 1496,
+    "y": 1628,
+    "z": 10,
+    "createdAtUtc": "2026-03-19T13:00:00+00:00",
+    "assignedAtUtc": null,
+    "closedAtUtc": null,
+    "lastUpdatedAtUtc": "2026-03-19T13:00:00+00:00",
+    "assignedToCharacterId": null,
+    "assignedToAccountId": null
+  }
+]
+```
+
+Notes:
+
+- `/api/help-tickets/me` returns only tickets belonging to the authenticated account
+- the current v1 implementation returns tickets in `Open` or `Assigned` status
 
 ### Execute Console Command via HTTP
 

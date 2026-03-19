@@ -12,6 +12,7 @@ The following modules are currently wired in runtime:
 - `log`
 - `command`
 - `speech`
+- `help_tickets`
 - `mobile`
 - `item`
 - `bulletin`
@@ -28,7 +29,7 @@ The following modules are currently wired in runtime:
 - `map` (`to_id`)
 - `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-18 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+19 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
@@ -211,6 +212,43 @@ Current payload fields exposed through the event object:
 - `event.fired_at_utc`
 - `event.recurrence_type`
 - `event.payload`
+
+### Help Ticketing
+
+The in-game help flow is still entered through `0x9B` and Lua `on_help_request(...)`, but the default gump now drives a ticket wizard:
+
+1. category selection
+2. free-text entry
+3. ticket persistence
+4. `TicketOpenedEvent` publication
+
+Lua submit helpers are exposed through `help_tickets`:
+
+```lua
+local help_tickets = require("help_tickets")
+
+help_tickets.submit(session_id, "Question", "I am stuck near Britain bank.")
+```
+
+Supported category names:
+
+- `Question`
+- `Stuck`
+- `Bug`
+- `Account`
+- `Suggestion`
+- `Other`
+- `VerbalHarassment`
+- `PhysicalHarassment`
+
+Persisted tickets store:
+
+- sender account and character ids
+- category
+- message
+- map id and location
+- status (`Open`, `Assigned`, `Closed`)
+- timestamps for creation, assignment, closing, and last update
 
 ### Item Script: Apple
 
@@ -757,7 +795,7 @@ Map = {
 
 Moongate currently exposes two different callback styles:
 
-- global script callbacks such as `on_player_connected(...)` and `on_aggressive_action(...)`
+- global script callbacks such as `on_player_connected(...)`, `on_aggressive_action(...)`, and `on_ticket_opened(...)`
 - NPC brain callbacks such as `on_event(...)`, `on_speech(...)`, `on_death(...)`
 
 These are not the same thing:
@@ -828,6 +866,39 @@ Current payload fields for `on_aggressive_action(event)`:
 - `location`
 - `attacker`
 - `defender`
+
+Help tickets also enter the global bridge:
+
+```lua
+function on_ticket_opened(event)
+    log.info(
+        "Ticket opened: id={0} category={1} sender={2}",
+        tostring(event.ticket_id),
+        tostring(event.category),
+        tostring(event.sender_character_id)
+    )
+end
+```
+
+Current behavior:
+
+- event type `TicketOpenedEvent` maps to Lua callback `on_ticket_opened`
+- this callback is global script-side, not an NPC brain hook
+- it is intended for shard-level reactions such as:
+  - staff alerting
+  - Discord/webhook bridges
+  - analytics or audit trails
+
+Current payload fields for `on_ticket_opened(event)`:
+
+- `ticket_id`
+- `sender_character_id`
+- `sender_account_id`
+- `category`
+- `message`
+- `map_id`
+- `location`
+- `created_at_utc`
 
 ## Item Script Dispatcher API
 

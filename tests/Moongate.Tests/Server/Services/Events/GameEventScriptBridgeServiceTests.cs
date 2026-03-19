@@ -1,5 +1,6 @@
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Events.Combat;
+using Moongate.Server.Data.Events.Help;
 using Moongate.Server.Data.Events.Scheduling;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Services.Events;
@@ -7,6 +8,7 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Events;
 
@@ -58,6 +60,28 @@ public class GameEventScriptBridgeServiceTests
         await service.HandleAsync(gameEvent);
 
         Assert.That(scriptEngine.LastCallbackName, Is.EqualTo("on_scheduled_event"));
+        Assert.That(scriptEngine.LastCallbackArgs, Has.Length.EqualTo(1));
+        Assert.That(scriptEngine.LastCallbackArgs![0], Is.EqualTo(gameEvent));
+    }
+
+    [Test]
+    public async Task HandleAsync_ShouldExecuteTicketOpenedCallback_WithSnakeCaseEventName()
+    {
+        var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
+        var service = new GameEventScriptBridgeService(scriptEngine);
+        var gameEvent = new TicketOpenedEvent(
+            (Serial)(Serial.ItemOffset + 75),
+            (Serial)0x00000042u,
+            (Serial)0x00000010u,
+            HelpTicketCategory.Question,
+            "I am stuck behind the innkeeper counter.",
+            0,
+            new Point3D(1443, 1692, 0)
+        );
+
+        await service.HandleAsync(gameEvent);
+
+        Assert.That(scriptEngine.LastCallbackName, Is.EqualTo("on_ticket_opened"));
         Assert.That(scriptEngine.LastCallbackArgs, Has.Length.EqualTo(1));
         Assert.That(scriptEngine.LastCallbackArgs![0], Is.EqualTo(gameEvent));
     }

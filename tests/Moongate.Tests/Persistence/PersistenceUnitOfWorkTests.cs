@@ -1,6 +1,7 @@
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Services.Persistence;
 using Moongate.Tests.TestSupport;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Skills;
@@ -189,6 +190,52 @@ public class PersistenceUnitOfWorkTests
                 Assert.That(restored!.BoardId, Is.EqualTo(message.BoardId));
                 Assert.That(restored.Subject, Is.EqualTo("Hello"));
                 Assert.That(restored.BodyLines, Is.EqualTo(new[] { "alpha", "beta" }));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HelpTickets_ShouldPersistAcrossSnapshotReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await firstUnitOfWork.InitializeAsync();
+
+        var ticket = new HelpTicketEntity
+        {
+            Id = (Serial)(Serial.ItemOffset + 75),
+            SenderCharacterId = (Serial)0x00000042u,
+            SenderAccountId = (Serial)0x00000010u,
+            Category = HelpTicketCategory.Question,
+            Message = "I am stuck behind the innkeeper counter.",
+            MapId = 0,
+            Location = new Point3D(1443, 1692, 0),
+            Status = HelpTicketStatus.Open,
+            CreatedAtUtc = new(2026, 3, 19, 9, 30, 0, DateTimeKind.Utc),
+            LastUpdatedAtUtc = new(2026, 3, 19, 9, 30, 0, DateTimeKind.Utc)
+        };
+
+        await firstUnitOfWork.HelpTickets.UpsertAsync(ticket);
+        await firstUnitOfWork.SaveSnapshotAsync();
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await secondUnitOfWork.InitializeAsync();
+
+        var restored = await secondUnitOfWork.HelpTickets.GetByIdAsync(ticket.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored, Is.Not.Null);
+                Assert.That(restored!.SenderCharacterId, Is.EqualTo(ticket.SenderCharacterId));
+                Assert.That(restored.SenderAccountId, Is.EqualTo(ticket.SenderAccountId));
+                Assert.That(restored.Category, Is.EqualTo(HelpTicketCategory.Question));
+                Assert.That(restored.Message, Is.EqualTo("I am stuck behind the innkeeper counter."));
+                Assert.That(restored.MapId, Is.EqualTo(0));
+                Assert.That(restored.Location, Is.EqualTo(new Point3D(1443, 1692, 0)));
+                Assert.That(restored.Status, Is.EqualTo(HelpTicketStatus.Open));
+                Assert.That(restored.CreatedAtUtc, Is.EqualTo(ticket.CreatedAtUtc));
+                Assert.That(restored.LastUpdatedAtUtc, Is.EqualTo(ticket.LastUpdatedAtUtc));
             }
         );
     }

@@ -242,6 +242,37 @@ internal static class MoongateHttpRouteExtensions
                          .Produces<IReadOnlyList<MoongateHttpActiveSession>>();
         }
 
+        if (context.HelpTicketService is not null)
+        {
+            var helpTicketsGroup = endpoints.MapGroup("/api/help-tickets").WithTags("HelpTickets");
+
+            if (context.JwtOptions.IsEnabled)
+            {
+                helpTicketsGroup.RequireAuthorization();
+            }
+
+            helpTicketsGroup.MapGet(
+                               "/",
+                               (ClaimsPrincipal user, CancellationToken cancellationToken) =>
+                                   HandleGetHelpTickets(context, user, cancellationToken)
+                           )
+                           .WithName("HelpTicketsGetAll")
+                           .WithSummary("Returns all persisted help tickets for staff.")
+                           .Produces<IReadOnlyList<MoongateHttpHelpTicket>>()
+                           .Produces(StatusCodes.Status401Unauthorized)
+                           .Produces(StatusCodes.Status403Forbidden);
+
+            helpTicketsGroup.MapGet(
+                               "/me",
+                               (ClaimsPrincipal user, CancellationToken cancellationToken) =>
+                                   HandleGetMyHelpTickets(context, user, cancellationToken)
+                           )
+                           .WithName("HelpTicketsGetMine")
+                           .WithSummary("Returns the authenticated player's open help tickets.")
+                           .Produces<IReadOnlyList<MoongateHttpHelpTicket>>()
+                           .Produces(StatusCodes.Status401Unauthorized);
+        }
+
         if (context.CommandSystemService is not null)
         {
             var commandsGroup = endpoints.MapGroup("/api/commands").WithTags("Commands");
@@ -549,6 +580,50 @@ internal static class MoongateHttpRouteExtensions
                               .ToList();
 
         return TypedResults.Ok((IReadOnlyList<MoongateHttpActiveSession>)sessions);
+    }
+
+    private static IResult HandleGetHelpTickets(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!IsAdministrativeUser(user))
+        {
+            return user.Identity?.IsAuthenticated == true ? TypedResults.Forbid() : TypedResults.Unauthorized();
+        }
+
+        var tickets = context.HelpTicketService!
+                             .GetAllTicketsAsync(cancellationToken)
+                             .GetAwaiter()
+                             .GetResult()
+                             .Select(MapHelpTicket)
+                             .ToList();
+
+        return Results.Json(tickets, MoongateHttpJsonContext.Default.IReadOnlyListMoongateHttpHelpTicket);
+    }
+
+    private static IResult HandleGetMyHelpTickets(
+        MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
+        CancellationToken cancellationToken
+    )
+    {
+        var accountId = ResolveAuthenticatedAccountId(user);
+
+        if (accountId is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        var tickets = context.HelpTicketService!
+                             .GetOpenTicketsForAccountAsync(accountId.Value, cancellationToken)
+                             .GetAwaiter()
+                             .GetResult()
+                             .Select(MapHelpTicket)
+                             .ToList();
+
+        return Results.Json(tickets, MoongateHttpJsonContext.Default.IReadOnlyListMoongateHttpHelpTicket);
     }
 
     private static IResult HandleGetItemTemplateById(
@@ -1286,6 +1361,31 @@ internal static class MoongateHttpRouteExtensions
 
         return string.IsNullOrWhiteSpace(accountIdClaim) ? null : ParseAccountIdOrNull(accountIdClaim);
     }
+
+    private static bool IsAdministrativeUser(ClaimsPrincipal user)
+        => user.IsInRole(AccountType.Administrator.ToString()) ||
+           user.IsInRole(AccountType.GameMaster.ToString());
+
+    private static MoongateHttpHelpTicket MapHelpTicket(HelpTicketEntity ticket)
+        => new()
+        {
+            TicketId = ticket.Id.Value.ToString(),
+            SenderCharacterId = ticket.SenderCharacterId.Value.ToString(),
+            SenderAccountId = ticket.SenderAccountId.Value.ToString(),
+            Category = ticket.Category.ToString(),
+            Message = ticket.Message,
+            Status = ticket.Status.ToString(),
+            MapId = ticket.MapId,
+            X = ticket.Location.X,
+            Y = ticket.Location.Y,
+            Z = ticket.Location.Z,
+            CreatedAtUtc = ticket.CreatedAtUtc,
+            AssignedAtUtc = ticket.AssignedAtUtc,
+            ClosedAtUtc = ticket.ClosedAtUtc,
+            LastUpdatedAtUtc = ticket.LastUpdatedAtUtc,
+            AssignedToCharacterId = ticket.AssignedToCharacterId.Value.ToString(),
+            AssignedToAccountId = ticket.AssignedToAccountId.Value.ToString()
+        };
 
     private static string ResolveLayerLabel(ItemLayerType layer)
         => layer switch

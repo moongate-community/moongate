@@ -13,6 +13,7 @@ The following modules are available in the default server runtime:
 - `log`
 - `command`
 - `speech`
+- `help_tickets`
 - `dialogue`
 - `ai_dialogue`
 - `scheduled_events`
@@ -109,6 +110,20 @@ Runtime notes:
 - supported recurrence values are `once`, `daily`, `weekly`, `monthly`
 - fired events are exposed to global Lua as `on_scheduled_event(event)`
 - this is a shard-level scheduler, not an NPC brain-local tick helper
+
+`help_tickets` runtime helpers:
+
+```lua
+help_tickets.submit(session_id, "Question", "I am stuck near Britain bank.")
+```
+
+Runtime notes:
+
+- the default `0x9B` help flow opens a two-step Lua gump wizard
+- category selection and text entry are implemented in `moongate_data/scripts/gumps/help.lua`
+- `help_tickets.submit(...)` persists a real help ticket with sender, message, map, and location
+- successful submission publishes `TicketOpenedEvent`
+- global Lua can react with `on_ticket_opened(event)`
 
 `ai_dialogue` runtime helpers:
 
