@@ -65,6 +65,7 @@ docker run --rm -it \
 ```
 
 Server port: `2593`  
+UDP ping port: `12000`  
 HTTP/UI API port: `8088`
 
 Default credentials: `admin` / `password`  
