@@ -13,6 +13,9 @@ This system is intentionally simple:
 - plugins can register runtime contributions during bootstrap
 - plugins can run lightweight initialization after the server is ready
 
+If you want the shortest path from zero to a working plugin project, start with
+[Create Your First Plugin](create-your-first-plugin.md).
+
 ## Plugin Folder Layout
 
 Each plugin lives in its own directory:

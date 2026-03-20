@@ -17,6 +17,7 @@ This is the main documentation portal for Moongate v2.
 - [Events](articles/architecture/events.md)
 - [Sessions](articles/architecture/sessions.md)
 - [Plugin System](articles/architecture/plugins.md)
+- [Create Your First Plugin](articles/architecture/create-your-first-plugin.md)
 - [Generators](articles/architecture/generators.md)
 - [Background Jobs](articles/architecture/background-jobs.md)
 - [Bootstrap System](articles/architecture/bootstrap.md)
