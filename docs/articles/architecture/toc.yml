@@ -11,6 +11,8 @@ items:
     href: sessions.md
   - name: Plugin System
     href: plugins.md
+  - name: Create Your First Plugin
+    href: create-your-first-plugin.md
   - name: Solution Structure
     href: solution.md
   - name: Source Generators
