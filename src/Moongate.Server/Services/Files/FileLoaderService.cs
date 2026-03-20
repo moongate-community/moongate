@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using DryIoc;
 using Moongate.Server.Interfaces.Services.Files;
-using Moongate.UO.Data.Interfaces.FileLoaders;
 using Serilog;
 
 namespace Moongate.Server.Services.Files;
@@ -24,18 +23,7 @@ public class FileLoaderService : IFileLoaderService
 
     public void AddFileLoader<T>() where T : IFileLoader
     {
-        if (_fileLoaders.Any(loader => loader.GetType() == typeof(T)))
-        {
-            return;
-        }
-
-        if (!_container.IsRegistered<T>())
-        {
-            _container.Register<T>();
-        }
-
-        var fileLoader = _container.Resolve<T>();
-        _fileLoaders.Add(fileLoader);
+        AddFileLoader(typeof(T));
     }
 
     public void Dispose()
@@ -71,4 +59,27 @@ public class FileLoaderService : IFileLoaderService
 
     public Task StopAsync()
         => Task.CompletedTask;
+
+    public void AddFileLoader(Type loaderType)
+    {
+        ArgumentNullException.ThrowIfNull(loaderType);
+
+        if (!typeof(IFileLoader).IsAssignableFrom(loaderType))
+        {
+            throw new InvalidOperationException($"Type '{loaderType.FullName}' does not implement IFileLoader.");
+        }
+
+        if (_fileLoaders.Any(loader => loader.GetType() == loaderType))
+        {
+            return;
+        }
+
+        if (!_container.IsRegistered(loaderType))
+        {
+            _container.Register(loaderType, Reuse.Singleton);
+        }
+
+        var fileLoader = (IFileLoader)_container.Resolve(loaderType);
+        _fileLoaders.Add(fileLoader);
+    }
 }

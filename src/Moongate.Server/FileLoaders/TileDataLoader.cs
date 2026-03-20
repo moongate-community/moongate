@@ -2,7 +2,7 @@ using System.Text;
 using Moongate.Core.Extensions.Strings;
 using Moongate.Server.Attributes;
 using Moongate.UO.Data.Files;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Serilog;

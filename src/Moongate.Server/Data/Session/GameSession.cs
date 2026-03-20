@@ -8,7 +8,7 @@ namespace Moongate.Server.Data.Session;
 /// <summary>
 /// Represents gameplay and protocol state for a connected client.
 /// </summary>
-public sealed class GameSession
+public sealed class GameSession : Interfaces.Session.IGameSession
 {
     public GameSession(GameNetworkSession networkSession)
     {

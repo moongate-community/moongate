@@ -5,6 +5,7 @@ using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Core.Data.Directories;
 using Moongate.Server.Bootstrap.Phases;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Internal.Plugins;
 using Moongate.Server.Interfaces.Bootstrap;
 using Moongate.Server.Interfaces.Services.Accounting;
 using Moongate.Server.Interfaces.Services.Console;
@@ -41,6 +42,7 @@ public sealed class MoongateBootstrap : IDisposable
         IBootstrapPhase[] phases =
         [
             new InfrastructurePhase(),
+            new PluginConfigurationPhase(),
             new ServiceRegistrationPhase(),
             new WiringPhase()
         ];
@@ -102,6 +104,7 @@ public sealed class MoongateBootstrap : IDisposable
         }
 
         await CheckDefaultAdminAccount();
+        await InitializePlugins(cancellationToken);
 
         _logger.Information("Server started in {StartupTime} ms", Stopwatch.GetElapsedTime(startTime).TotalMilliseconds);
         _logger.Information("Moongate server is running. Press Ctrl+C to stop.");
@@ -157,6 +160,20 @@ public sealed class MoongateBootstrap : IDisposable
 
             _logger.Information("Stopping {ServiceTypeFullName}", service.GetType().Name);
             await service.StopAsync();
+        }
+    }
+
+    private async Task InitializePlugins(CancellationToken cancellationToken)
+    {
+        foreach (var loadedPlugin in _container.ResolveMany<LoadedPlugin>())
+        {
+            var runtimeContext = new MoongatePluginRuntimeContext(
+                loadedPlugin.DiscoveredPlugin.PluginId,
+                loadedPlugin.DiscoveredPlugin.PluginDirectory,
+                new MoongatePluginServiceResolver(_container)
+            );
+
+            await loadedPlugin.Instance.InitializeAsync(runtimeContext, cancellationToken);
         }
     }
 }

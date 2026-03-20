@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <Description>Plugin-facing server contracts and registration attributes for Moongate.</Description>
+        <PackageTags>moongate;ultima-online;server;plugin;sdk;contracts</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
+        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" Link="README.md"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Serilog" Version="4.3.1"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

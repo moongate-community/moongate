@@ -4,6 +4,8 @@ using Moongate.Abstractions.Extensions;
 using Moongate.Abstractions.Types;
 using Moongate.Core.Extensions.Logger;
 using Moongate.Core.Types;
+using Moongate.Persistence.Interfaces.Persistence;
+using Moongate.Persistence.Services.Persistence;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
 using Moongate.Scripting.Extensions.Scripts;
@@ -22,7 +24,7 @@ namespace Moongate.Server.Bootstrap.Phases;
 /// </summary>
 internal sealed class ServiceRegistrationPhase : IBootstrapPhase
 {
-    public int Order => 2;
+    public int Order => 3;
 
     public string Name => "ServiceRegistration";
 
@@ -90,24 +92,68 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
         {
             context.Container.RegisterInstance(new List<ScriptModuleData>());
         }
+
+        foreach (var scriptModuleType in context.PluginRegistrations.ScriptModuleTypes)
+        {
+            context.Container.RegisterScriptModule(scriptModuleType);
+        }
     }
 
     private static void RegisterScriptUserData(BootstrapContext context)
     {
         BootstrapLuaUserDataRegistration.Register(context.Container);
         context.Container.RegisterLuaUserData<ClientVersion>();
+
+        foreach (var userDataType in context.PluginRegistrations.LuaUserDataTypes)
+        {
+            context.Container.RegisterLuaUserData(userDataType);
+        }
     }
 
     private static void RegisterServices(BootstrapContext context)
     {
+        RegisterPluginPersistenceRegistry(context);
+
         BootstrapServiceRegistration.Register(
             context.Container,
             context.Config,
             context.DirectoriesConfig,
             context.ConsoleUiService
         );
+
+        foreach (var registration in context.PluginRegistrations.ServiceRegistrations)
+        {
+            context.Container.RegisterMoongateService(
+                registration.ServiceType,
+                registration.ImplementationType,
+                registration.Priority
+            );
+        }
+
         BootstrapConsoleCommandRegistration.RegisterServices(context.Container);
+        BootstrapConsoleCommandRegistration.RegisterServices(context.Container, context.PluginRegistrations.ConsoleCommandTypes);
         BootstrapGameEventListenerRegistration.RegisterServices(context.Container);
+        BootstrapGameEventListenerRegistration.RegisterServices(
+            context.Container,
+            context.PluginRegistrations.GameEventListenerTypes
+        );
+    }
+
+    private static void RegisterPluginPersistenceRegistry(BootstrapContext context)
+    {
+        if (context.PluginRegistrations.PersistenceDescriptorRegistrations.Count == 0)
+        {
+            return;
+        }
+
+        var registry = new PersistenceEntityRegistry();
+
+        foreach (var registration in context.PluginRegistrations.PersistenceDescriptorRegistrations)
+        {
+            registration(registry);
+        }
+
+        context.Container.RegisterInstance<IPersistenceEntityRegistry>(registry);
     }
 
     private static string ResolveHttpJwtSigningKey(BootstrapContext context)

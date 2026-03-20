@@ -1,5 +1,5 @@
 using Moongate.Tests.Server.Services.Files;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 
 namespace Moongate.Tests.Server.Support;
 

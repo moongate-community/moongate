@@ -30,6 +30,7 @@ using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.World;
+using Moongate.Persistence.Interfaces.Persistence;
 
 namespace Moongate.Server.Extensions.Bootstrap;
 
@@ -49,7 +50,8 @@ public static class AddBootstrapHostedServicesExtension
                 resolver.Resolve<ITimerService>(),
                 resolver.Resolve<IBackgroundJobService>(),
                 resolver.Resolve<MoongateConfig>(),
-                resolver.Resolve<IGameEventBusService>()
+                resolver.Resolve<IGameEventBusService>(),
+                resolver.Resolve<IPersistenceEntityRegistry>(IfUnresolved.ReturnDefaultIfNotRegistered)
             ),
             Reuse.Singleton
         );

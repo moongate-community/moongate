@@ -38,16 +38,25 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
         DirectoriesConfig directoriesConfig,
         ITimerService timerService,
         MoongateConfig moongateConfig,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        IPersistenceEntityRegistry? entityRegistry = null
     )
-        : this(directoriesConfig, timerService, new BackgroundJobService(), moongateConfig, gameEventBusService) { }
+        : this(
+            directoriesConfig,
+            timerService,
+            new BackgroundJobService(),
+            moongateConfig,
+            gameEventBusService,
+            entityRegistry
+        ) { }
 
     public PersistenceService(
         DirectoriesConfig directoriesConfig,
         ITimerService timerService,
         IBackgroundJobService backgroundJobService,
         MoongateConfig moongateConfig,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        IPersistenceEntityRegistry? entityRegistry = null
     )
     {
         ArgumentNullException.ThrowIfNull(directoriesConfig);
@@ -68,7 +77,7 @@ public sealed class PersistenceService : IPersistenceService, IPersistenceMetric
             Path.Combine(saveDirectory, "world.journal.bin")
         );
 
-        UnitOfWork = new PersistenceUnitOfWork(options);
+        UnitOfWork = new PersistenceUnitOfWork(options, entityRegistry);
     }
 
     public IPersistenceUnitOfWork UnitOfWork { get; }
