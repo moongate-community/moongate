@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using System.Reflection;
+using System.Text;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
 using Moongate.Network.Events;
@@ -529,6 +530,50 @@ public class NetworkServiceTests
         );
     }
 
+    [Test]
+    public async Task StartPingServersAsync_WhenEnabled_ShouldEchoReceivedDatagram()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var pingPort = GetFreeUdpPort();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            new GameNetworkSessionService(),
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false,
+                Game = new()
+                {
+                    PingServerEnabled = true,
+                    PingServerPort = pingPort
+                }
+            }
+        );
+
+        await InvokePrivateTaskAsync(service, "StartPingServersAsync");
+
+        using var client = new UdpClient(AddressFamily.InterNetwork);
+        client.Client.ReceiveTimeout = 2000;
+        var payload = Encoding.ASCII.GetBytes("ping");
+
+        await client.SendAsync(payload, new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, pingPort));
+        var echoed = await client.ReceiveAsync();
+
+        await InvokePrivateTaskAsync(service, "StopPingServersAsync");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(echoed.Buffer, Is.EqualTo(payload));
+                Assert.That(echoed.RemoteEndPoint.Port, Is.EqualTo(pingPort));
+            }
+        );
+    }
+
     private static void InvokeOnClientData(NetworkService service, MoongateTCPClient client, byte[] payload)
     {
         var method = typeof(NetworkService).GetMethod(
@@ -538,5 +583,29 @@ public class NetworkServiceTests
 
         Assert.That(method, Is.Not.Null);
         method!.Invoke(service, [null, new MoongateTCPDataReceivedEventArgs(client, payload)]);
+    }
+
+    private static int GetFreeUdpPort()
+    {
+        using var client = new UdpClient(new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, 0));
+        return ((System.Net.IPEndPoint)client.Client.LocalEndPoint!).Port;
+    }
+
+    private static async Task InvokePrivateTaskAsync(NetworkService service, string methodName)
+    {
+        var method = typeof(NetworkService).GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.NonPublic
+        );
+
+        Assert.That(method, Is.Not.Null);
+
+        if (method!.Invoke(service, null) is Task task)
+        {
+            await task;
+            return;
+        }
+
+        Assert.Fail($"Method '{methodName}' did not return a Task.");
     }
 }

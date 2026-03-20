@@ -2,6 +2,7 @@ using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Text;
 using Moongate.Network.Client;
 using Moongate.Network.Events;
@@ -44,8 +45,12 @@ public class NetworkService : INetworkService, INetworkMetricsSource
     private readonly IPacketDispatchService _packetDispatchService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly bool _logPacketData;
+    private readonly bool _pingServerEnabled;
+    private readonly int _pingServerPort;
 
     private readonly List<MoongateTCPServer> _tcpServers = new();
+    private readonly List<UdpClient> _pingServers = new();
+    private readonly List<Task> _pingServerTasks = new();
 
     private readonly PacketRegistry _packetRegistry = new();
     private readonly ConcurrentQueue<IncomingGamePacket> _parsedPackets = new();
@@ -54,6 +59,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
     private readonly AutoResetEvent _pendingClientDataSignal = new(false);
     private volatile bool _networkIngressLoopStopRequested;
     private Thread? _networkIngressLoopThread;
+    private CancellationTokenSource? _pingServerCancellationTokenSource;
 
     public IReadOnlyCollection<IncomingGamePacket> ParsedPackets => _parsedPackets.ToArray();
 
@@ -70,6 +76,8 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         _packetDispatchService = packetDispatchService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _logPacketData = moongateConfig.LogPacketData;
+        _pingServerEnabled = moongateConfig.Game.PingServerEnabled;
+        _pingServerPort = moongateConfig.Game.PingServerPort;
         PacketTable.Register(_packetRegistry);
 
         ShowRegisteredPackets();
@@ -127,6 +135,7 @@ public class NetworkService : INetworkService, INetworkMetricsSource
     public async Task StartAsync()
     {
         StartNetworkIngressLoop();
+        await StartPingServersAsync();
 
         foreach (var ipEndpoint in GetListeningAddresses(new(IPAddress.Any, 2593)))
         {
@@ -153,12 +162,128 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         }
 
         _tcpServers.Clear();
+        await StopPingServersAsync();
         StopNetworkIngressLoop();
         _gameNetworkSessionService.Clear();
 
         while (_parsedPackets.TryDequeue(out _)) { }
 
         while (_pendingClientDataQueue.TryDequeue(out _)) { }
+    }
+
+    private async Task StartPingServersAsync()
+    {
+        if (!_pingServerEnabled || _pingServerPort <= 0 || _pingServers.Count > 0)
+        {
+            return;
+        }
+
+        _pingServerCancellationTokenSource = new CancellationTokenSource();
+
+        foreach (var ipEndpoint in GetListeningAddresses(new(IPAddress.Any, _pingServerPort)))
+        {
+            var pingServer = CreatePingServer(new(ipEndpoint.Address, _pingServerPort));
+
+            if (pingServer is null)
+            {
+                continue;
+            }
+
+            _pingServers.Add(pingServer);
+            _pingServerTasks.Add(RunPingServerAsync(pingServer, _pingServerCancellationTokenSource.Token));
+            _logger.Information("UDP ping server listening on {LocalEndPoint}", pingServer.Client.LocalEndPoint);
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private async Task StopPingServersAsync()
+    {
+        if (_pingServerCancellationTokenSource is not null)
+        {
+            await _pingServerCancellationTokenSource.CancelAsync();
+            _pingServerCancellationTokenSource.Dispose();
+            _pingServerCancellationTokenSource = null;
+        }
+
+        for (var i = _pingServers.Count - 1; i >= 0; i--)
+        {
+            _pingServers[i].Close();
+            _pingServers[i].Dispose();
+        }
+
+        _pingServers.Clear();
+
+        if (_pingServerTasks.Count > 0)
+        {
+            try
+            {
+                await Task.WhenAll(_pingServerTasks);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (SocketException)
+            {
+            }
+        }
+
+        _pingServerTasks.Clear();
+    }
+
+    private UdpClient? CreatePingServer(IPEndPoint ipEndpoint)
+    {
+        var socket = new Socket(ipEndpoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp)
+        {
+            ExclusiveAddressUse = false
+        };
+
+        try
+        {
+            socket.Bind(ipEndpoint);
+
+            return new UdpClient
+            {
+                Client = socket
+            };
+        }
+        catch (SocketException ex)
+        {
+            _logger.Warning(ex, "Failed to bind UDP ping listener on {Address}:{Port}", ipEndpoint.Address, ipEndpoint.Port);
+            socket.Dispose();
+            return null;
+        }
+    }
+
+    private async Task RunPingServerAsync(UdpClient pingServer, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                var result = await pingServer.ReceiveAsync(cancellationToken);
+                await pingServer.SendAsync(result.Buffer, result.RemoteEndPoint, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (ObjectDisposedException)
+            {
+                break;
+            }
+            catch (SocketException) when (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.Warning(ex, "UDP ping server loop failed");
+            }
+        }
     }
 
     public bool TryDequeueParsedPacket(out IncomingGamePacket gamePacket)
