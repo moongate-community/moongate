@@ -2,6 +2,7 @@ require("ai.init")
 require("commands.gm.init")
 require("interaction.init")
 require("items.init")
+require("startup.init")
 
 function on_player_connected(p)
     log.info("Anvedi che s'e connesso un client")

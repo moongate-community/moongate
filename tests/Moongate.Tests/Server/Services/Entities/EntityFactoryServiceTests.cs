@@ -248,9 +248,8 @@ public class EntityFactoryServiceTests
     {
         var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
         var mobileFactoryService = new MobileFactoryService(mobileTemplateService, nameService, persistenceService);
-        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
 
-        return new(itemFactoryService, mobileFactoryService, starterItemFactoryService);
+        return new(itemFactoryService, mobileFactoryService);
     }
 
     private static async Task<PersistenceService> CreatePersistenceServiceAsync(string rootDirectory)

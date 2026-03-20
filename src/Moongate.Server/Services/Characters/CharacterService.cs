@@ -1,9 +1,13 @@
+using System.Text.Json;
 using Moongate.Server.Data.Entities;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Startup;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Persistence;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -16,22 +20,23 @@ namespace Moongate.Server.Services.Characters;
 /// </summary>
 public class CharacterService : ICharacterService
 {
-    private const int StarterGoldQuantity = 1000;
-
     private readonly ILogger _logger = Log.ForContext<CharacterService>();
     private readonly IPersistenceService _persistenceService;
     private readonly IEntityFactoryService _entityFactoryService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IStartupLoadoutScriptService _startupLoadoutScriptService;
 
     public CharacterService(
         IPersistenceService persistenceService,
         IEntityFactoryService entityFactoryService,
-        IGameEventBusService gameEventBusService
+        IGameEventBusService gameEventBusService,
+        IStartupLoadoutScriptService startupLoadoutScriptService
     )
     {
         _persistenceService = persistenceService;
         _entityFactoryService = entityFactoryService;
         _gameEventBusService = gameEventBusService;
+        _startupLoadoutScriptService = startupLoadoutScriptService;
     }
 
     public async Task<bool> AddCharacterToAccountAsync(Serial accountId, Serial characterId)
@@ -279,42 +284,135 @@ public class CharacterService : ICharacterService
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);
 
-    private async Task EnsureStarterContainerItemAsync(UOMobileEntity character, UOItemEntity item)
+    private static void ApplyItemArgument(UOItemEntity item, string key, JsonElement value)
     {
-        var existing = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                           existingItem => existingItem.ParentContainerId == item.ParentContainerId &&
-                                           existingItem.ItemId == item.ItemId,
-                           static existingItem => existingItem
-                       );
+        var normalizedKey = key.Trim();
 
-        if (existing.Count > 0)
+        if (string.IsNullOrWhiteSpace(normalizedKey))
         {
             return;
         }
 
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-        _logger.Debug("Created starter container item {ItemId:X4} for character {CharacterId}", item.ItemId, character.Id);
+        switch (value.ValueKind)
+        {
+            case JsonValueKind.String:
+                item.SetCustomString(MapItemArgumentKey(normalizedKey), value.GetString());
+
+                break;
+            case JsonValueKind.Number:
+                if (value.TryGetInt64(out var integerValue))
+                {
+                    item.SetCustomInteger(MapItemArgumentKey(normalizedKey), integerValue);
+
+                    break;
+                }
+
+                if (value.TryGetDouble(out var doubleValue))
+                {
+                    item.SetCustomDouble(MapItemArgumentKey(normalizedKey), doubleValue);
+                }
+
+                break;
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+                item.SetCustomBoolean(MapItemArgumentKey(normalizedKey), value.GetBoolean());
+
+                break;
+            case JsonValueKind.Null:
+                item.RemoveCustomProperty(MapItemArgumentKey(normalizedKey));
+
+                break;
+        }
     }
 
-    private async Task EnsureStarterEquippedItemAsync(
-        UOMobileEntity character,
-        ItemLayerType layer,
-        StarterProfileContext starterProfileContext
-    )
+    private static void ApplyItemArguments(UOItemEntity item, JsonElement? args)
     {
-        if (character.HasEquippedItem(layer))
+        if (args is not { ValueKind: JsonValueKind.Object } typedArgs)
         {
             return;
         }
 
-        var item = _entityFactoryService.CreateStarterEquipment(character.Id, layer, starterProfileContext);
+        foreach (var property in typedArgs.EnumerateObject())
+        {
+            ApplyItemArgument(item, property.Name, property.Value);
+        }
+    }
 
-        character.AddEquippedItem(layer, item);
+    private async Task EnsureStarterBackpackAsync(UOMobileEntity character)
+    {
+        if (character.HasEquippedItem(ItemLayerType.Backpack))
+        {
+            character.BackpackId = character.EquippedItemIds[ItemLayerType.Backpack];
+
+            return;
+        }
+
+        var backpack = _entityFactoryService.GetNewBackpack();
+        backpack.EquippedMobileId = character.Id;
+        backpack.EquippedLayer = ItemLayerType.Backpack;
+        backpack.ParentContainerId = Serial.Zero;
+        backpack.ContainerPosition = Point2D.Zero;
+        backpack.Location = Point3D.Zero;
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        character.BackpackId = backpack.Id;
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(backpack);
+    }
+
+    private async Task PersistBackpackItemAsync(
+        UOMobileEntity character,
+        UOItemEntity backpack,
+        StartupLoadoutItem itemDefinition,
+        int index
+    )
+    {
+        var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
+        item.Amount = Math.Max(1, itemDefinition.Amount);
+        ApplyItemArguments(item, itemDefinition.Args);
+
+        var position = new Moongate.UO.Data.Geometry.Point2D(index + 1, index + 1);
+        backpack.AddItem(item, position);
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         _logger.Debug(
-            "Created starter equipped item {ItemId:X4} on layer {Layer} for {CharacterId}",
-            item.ItemId,
-            layer,
+            "Created starter backpack item {TemplateId} for character {CharacterId}",
+            itemDefinition.TemplateId,
+            character.Id
+        );
+    }
+
+    private async Task PersistEquippedItemAsync(UOMobileEntity character, StartupLoadoutItem itemDefinition)
+    {
+        if (itemDefinition.Layer is null)
+        {
+            throw new InvalidOperationException(
+                $"Startup equip item '{itemDefinition.TemplateId}' is missing required layer."
+            );
+        }
+
+        if (character.HasEquippedItem(itemDefinition.Layer.Value))
+        {
+            return;
+        }
+
+        var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
+        item.Amount = Math.Max(1, itemDefinition.Amount);
+        item.ParentContainerId = Serial.Zero;
+        item.ContainerPosition = Point2D.Zero;
+        item.EquippedMobileId = character.Id;
+        item.EquippedLayer = itemDefinition.Layer.Value;
+
+        if (itemDefinition.Layer == ItemLayerType.Bank && item.GumpId is null)
+        {
+            item.GumpId = 0x0042;
+        }
+
+        ApplyItemArguments(item, itemDefinition.Args);
+        character.AddEquippedItem(itemDefinition.Layer.Value, item);
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Debug(
+            "Created starter equipped item {TemplateId} on layer {Layer} for {CharacterId}",
+            itemDefinition.TemplateId,
+            itemDefinition.Layer.Value,
             character.Id
         );
     }
@@ -322,33 +420,38 @@ public class CharacterService : ICharacterService
     private async Task EnsureStarterInventoryAsync(UOMobileEntity character)
     {
         var starterProfileContext = CreateStarterProfileContext(character);
-        UOItemEntity backpack;
-
-        if (!character.HasEquippedItem(ItemLayerType.Backpack))
-        {
-            backpack = _entityFactoryService.CreateStarterBackpack(character.Id, starterProfileContext);
-            character.AddEquippedItem(ItemLayerType.Backpack, backpack);
-            character.BackpackId = backpack.Id;
-        }
-        else
-        {
-            character.BackpackId = character.EquippedItemIds[ItemLayerType.Backpack];
-            backpack = await _persistenceService.UnitOfWork.Items.GetByIdAsync(character.BackpackId) ??
-                       _entityFactoryService.CreateStarterBackpack(character.Id, starterProfileContext);
-            backpack.Id = character.BackpackId;
-        }
-
+        await EnsureStarterBackpackAsync(character);
+        var backpack = await _persistenceService.UnitOfWork.Items.GetByIdAsync(character.BackpackId) ??
+                       throw new InvalidOperationException(
+                           $"Starter backpack '{character.BackpackId}' was not created for character '{character.Id}'."
+                       );
+        var loadout = _startupLoadoutScriptService.BuildLoadout(
+            starterProfileContext,
+            character.Name ?? string.Empty
+        );
         await _persistenceService.UnitOfWork.Items.UpsertAsync(backpack);
 
-        await EnsureStarterContainerItemAsync(
-            character,
-            _entityFactoryService.CreateStarterGold(backpack.Id, new(1, 1), StarterGoldQuantity, starterProfileContext)
-        );
-        await EnsureStarterEquippedItemAsync(character, ItemLayerType.Shirt, starterProfileContext);
-        await EnsureStarterEquippedItemAsync(character, ItemLayerType.Pants, starterProfileContext);
-        await EnsureStarterEquippedItemAsync(character, ItemLayerType.Shoes, starterProfileContext);
-        await EnsureStarterEquippedItemAsync(character, ItemLayerType.Bank, starterProfileContext);
+        for (var i = 0; i < loadout.Backpack.Count; i++)
+        {
+            await PersistBackpackItemAsync(character, backpack, loadout.Backpack[i], i);
+        }
+
+        foreach (var equippedItem in loadout.Equip)
+        {
+            await PersistEquippedItemAsync(character, equippedItem);
+        }
     }
+
+    private static string MapItemArgumentKey(string key)
+        => key.ToLowerInvariant() switch
+        {
+            "title" => ItemCustomParamKeys.Book.Title,
+            "author" => ItemCustomParamKeys.Book.Author,
+            "content" => ItemCustomParamKeys.Book.Content,
+            "pages" => ItemCustomParamKeys.Book.Pages,
+            "writable" => ItemCustomParamKeys.Book.Writable,
+            _ => key
+        };
 
     private async Task HydrateCharacterEquipmentRuntimeAsync(UOMobileEntity character)
     {

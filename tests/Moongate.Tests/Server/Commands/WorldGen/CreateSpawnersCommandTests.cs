@@ -66,24 +66,6 @@ public sealed class CreateSpawnersCommandTests
         public UOMobileEntity CreatePlayerMobile(CharacterCreationPacket packet, Serial accountId)
             => throw new NotSupportedException();
 
-        public UOItemEntity CreateStarterBackpack(Serial mobileId, StarterProfileContext profileContext)
-            => throw new NotSupportedException();
-
-        public UOItemEntity CreateStarterEquipment(
-            Serial mobileId,
-            ItemLayerType layer,
-            StarterProfileContext profileContext
-        )
-            => throw new NotSupportedException();
-
-        public UOItemEntity CreateStarterGold(
-            Serial containerId,
-            Point2D containerPosition,
-            int quantity,
-            StarterProfileContext profileContext
-        )
-            => throw new NotSupportedException();
-
         public UOItemEntity GetNewBackpack()
             => throw new NotSupportedException();
     }
