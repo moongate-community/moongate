@@ -12,13 +12,13 @@ internal static class PersistenceCoreDescriptors
         if (!registry.IsRegistered<UOAccountEntity, Serial>())
         {
             registry.Register(
-                new PersistenceEntityDescriptor<UOAccountEntity, Serial, AccountSnapshot>(
-                    PersistenceCoreEntityTypeIds.Account,
-                    "account",
-                    1,
-                    static entity => entity.Id,
-                    SnapshotMapper.ToAccountSnapshot,
-                    SnapshotMapper.ToAccountEntity,
+                new PersistenceEntityDescriptor<UOAccountEntity, Serial, UOAccountEntitySnapshot>(
+                    UOAccountEntityPersistence.TypeId,
+                    UOAccountEntityPersistence.TypeName,
+                    UOAccountEntityPersistence.SchemaVersion,
+                    UOAccountEntityPersistence.GetKey,
+                    UOAccountEntityPersistence.ToSnapshot,
+                    UOAccountEntityPersistence.FromSnapshot,
                     PersistenceKeyCodecs.SerializeSerial,
                     PersistenceKeyCodecs.DeserializeSerial
                 )
@@ -28,13 +28,13 @@ internal static class PersistenceCoreDescriptors
         if (!registry.IsRegistered<UOMobileEntity, Serial>())
         {
             registry.Register(
-                new PersistenceEntityDescriptor<UOMobileEntity, Serial, MobileSnapshot>(
-                    PersistenceCoreEntityTypeIds.Mobile,
-                    "mobile",
-                    1,
-                    static entity => entity.Id,
-                    SnapshotMapper.ToMobileSnapshot,
-                    SnapshotMapper.ToMobileEntity,
+                new PersistenceEntityDescriptor<UOMobileEntity, Serial, UOMobileEntitySnapshot>(
+                    UOMobileEntityPersistence.TypeId,
+                    UOMobileEntityPersistence.TypeName,
+                    UOMobileEntityPersistence.SchemaVersion,
+                    UOMobileEntityPersistence.GetKey,
+                    UOMobileEntityPersistence.ToSnapshot,
+                    UOMobileEntityPersistence.FromSnapshot,
                     PersistenceKeyCodecs.SerializeSerial,
                     PersistenceKeyCodecs.DeserializeSerial
                 )
@@ -44,13 +44,13 @@ internal static class PersistenceCoreDescriptors
         if (!registry.IsRegistered<UOItemEntity, Serial>())
         {
             registry.Register(
-                new PersistenceEntityDescriptor<UOItemEntity, Serial, ItemSnapshot>(
-                    PersistenceCoreEntityTypeIds.Item,
-                    "item",
-                    1,
-                    static entity => entity.Id,
-                    SnapshotMapper.ToItemSnapshot,
-                    SnapshotMapper.ToItemEntity,
+                new PersistenceEntityDescriptor<UOItemEntity, Serial, UOItemEntitySnapshot>(
+                    UOItemEntityPersistence.TypeId,
+                    UOItemEntityPersistence.TypeName,
+                    UOItemEntityPersistence.SchemaVersion,
+                    UOItemEntityPersistence.GetKey,
+                    UOItemEntityPersistence.ToSnapshot,
+                    UOItemEntityPersistence.FromSnapshot,
                     PersistenceKeyCodecs.SerializeSerial,
                     PersistenceKeyCodecs.DeserializeSerial
                 )
@@ -60,13 +60,13 @@ internal static class PersistenceCoreDescriptors
         if (!registry.IsRegistered<BulletinBoardMessageEntity, Serial>())
         {
             registry.Register(
-                new PersistenceEntityDescriptor<BulletinBoardMessageEntity, Serial, BulletinBoardMessageSnapshot>(
-                    PersistenceCoreEntityTypeIds.BulletinBoardMessage,
-                    "bulletin-board-message",
-                    1,
-                    static entity => entity.MessageId,
-                    SnapshotMapper.ToBulletinBoardMessageSnapshot,
-                    SnapshotMapper.ToBulletinBoardMessageEntity,
+                new PersistenceEntityDescriptor<BulletinBoardMessageEntity, Serial, BulletinBoardMessageEntitySnapshot>(
+                    BulletinBoardMessageEntityPersistence.TypeId,
+                    BulletinBoardMessageEntityPersistence.TypeName,
+                    BulletinBoardMessageEntityPersistence.SchemaVersion,
+                    BulletinBoardMessageEntityPersistence.GetKey,
+                    BulletinBoardMessageEntityPersistence.ToSnapshot,
+                    BulletinBoardMessageEntityPersistence.FromSnapshot,
                     PersistenceKeyCodecs.SerializeSerial,
                     PersistenceKeyCodecs.DeserializeSerial
                 )
@@ -76,13 +76,13 @@ internal static class PersistenceCoreDescriptors
         if (!registry.IsRegistered<HelpTicketEntity, Serial>())
         {
             registry.Register(
-                new PersistenceEntityDescriptor<HelpTicketEntity, Serial, HelpTicketSnapshot>(
-                    PersistenceCoreEntityTypeIds.HelpTicket,
-                    "help-ticket",
-                    1,
-                    static entity => entity.Id,
-                    SnapshotMapper.ToHelpTicketSnapshot,
-                    SnapshotMapper.ToHelpTicketEntity,
+                new PersistenceEntityDescriptor<HelpTicketEntity, Serial, HelpTicketEntitySnapshot>(
+                    HelpTicketEntityPersistence.TypeId,
+                    HelpTicketEntityPersistence.TypeName,
+                    HelpTicketEntityPersistence.SchemaVersion,
+                    HelpTicketEntityPersistence.GetKey,
+                    HelpTicketEntityPersistence.ToSnapshot,
+                    HelpTicketEntityPersistence.FromSnapshot,
                     PersistenceKeyCodecs.SerializeSerial,
                     PersistenceKeyCodecs.DeserializeSerial
                 )

@@ -92,7 +92,7 @@ UI default URL: `http://localhost:8088/`
 - Deterministic single game-loop with separate network inbound/outbound workers
 - Source-generated packet/command/listener registration
 - Sector/chunk spatial system with lazy warmup and broadcast radius
-- Registry-driven snapshot buckets + journal persistence (MessagePack source-generated)
+- Registry-driven snapshot buckets + journal persistence with source-generated snapshot contracts
 - Lua scripting runtime for commands, gumps, item/mobile behavior
 - Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI

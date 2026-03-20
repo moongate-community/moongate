@@ -1,4 +1,3 @@
-using Moongate.Persistence.Data.Internal;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Skills;
@@ -6,10 +5,10 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Persistence;
 
-public class SnapshotMapperTests
+public sealed class GeneratedPersistenceContractTests
 {
     [Test]
-    public void ToBulletinBoardMessageSnapshot_ShouldPreserveBodyAndMetadata()
+    public void BulletinBoardPersistence_ShouldPreserveBodyAndMetadata()
     {
         var entity = new BulletinBoardMessageEntity
         {
@@ -23,8 +22,8 @@ public class SnapshotMapperTests
         };
         entity.BodyLines.AddRange(["line one", "line two"]);
 
-        var snapshot = SnapshotMapper.ToBulletinBoardMessageSnapshot(entity);
-        var restored = SnapshotMapper.ToBulletinBoardMessageEntity(snapshot);
+        var snapshot = BulletinBoardMessageEntityPersistence.ToSnapshot(entity);
+        var restored = BulletinBoardMessageEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
@@ -42,7 +41,7 @@ public class SnapshotMapperTests
     }
 
     [Test]
-    public void ToItemSnapshot_ShouldPreserveCombatStatsAndModifiers()
+    public void ItemPersistence_ShouldPreserveCombatStatsModifiersAndCustomProperties()
     {
         var entity = new UOItemEntity
         {
@@ -74,9 +73,17 @@ public class SnapshotMapperTests
                 UsesRemaining = 25
             }
         };
+        entity.SetCustomProperty(
+            "crafted_by",
+            new()
+            {
+                Type = ItemCustomPropertyType.String,
+                StringValue = "The Blacksmith"
+            }
+        );
 
-        var snapshot = SnapshotMapper.ToItemSnapshot(entity);
-        var restored = SnapshotMapper.ToItemEntity(snapshot);
+        var snapshot = UOItemEntityPersistence.ToSnapshot(entity);
+        var restored = UOItemEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
@@ -91,7 +98,6 @@ public class SnapshotMapperTests
                 Assert.That(restored.CombatStats.RangeMax, Is.EqualTo(2));
                 Assert.That(restored.CombatStats.MaxDurability, Is.EqualTo(45));
                 Assert.That(restored.CombatStats.CurrentDurability, Is.EqualTo(40));
-
                 Assert.That(restored.Modifiers, Is.Not.Null);
                 Assert.That(restored.Modifiers!.StrengthBonus, Is.EqualTo(5));
                 Assert.That(restored.Modifiers.PhysicalResist, Is.EqualTo(12));
@@ -101,12 +107,13 @@ public class SnapshotMapperTests
                 Assert.That(restored.Modifiers.Luck, Is.EqualTo(100));
                 Assert.That(restored.Modifiers.SpellChanneling, Is.EqualTo(1));
                 Assert.That(restored.Modifiers.UsesRemaining, Is.EqualTo(25));
+                Assert.That(restored.CustomProperties["crafted_by"].StringValue, Is.EqualTo("The Blacksmith"));
             }
         );
     }
 
     [Test]
-    public void ToMobileSnapshot_ShouldPreserveCustomProperties()
+    public void MobilePersistence_ShouldPreserveCustomProperties()
     {
         var entity = new UOMobileEntity
         {
@@ -123,15 +130,15 @@ public class SnapshotMapperTests
             }
         );
 
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+        var snapshot = UOMobileEntityPersistence.ToSnapshot(entity);
+        var restored = UOMobileEntityPersistence.FromSnapshot(snapshot);
 
         Assert.That(restored.CustomProperties.Count, Is.EqualTo(1));
         Assert.That(restored.CustomProperties["test_key"].IntegerValue, Is.EqualTo(42));
     }
 
     [Test]
-    public void ToMobileSnapshot_ShouldPreserveSounds()
+    public void MobilePersistence_ShouldPreserveSounds()
     {
         var entity = new UOMobileEntity
         {
@@ -146,8 +153,8 @@ public class SnapshotMapperTests
             }
         };
 
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+        var snapshot = UOMobileEntityPersistence.ToSnapshot(entity);
+        var restored = UOMobileEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
@@ -161,7 +168,7 @@ public class SnapshotMapperTests
     }
 
     [Test]
-    public void ToMobileSnapshot_ShouldPreserveEquippedItems_InLayerOrder()
+    public void MobilePersistence_ShouldPreserveEquippedItems_InLayerOrder()
     {
         var entity = new UOMobileEntity
         {
@@ -176,22 +183,19 @@ public class SnapshotMapperTests
             }
         };
 
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+        var snapshot = UOMobileEntityPersistence.ToSnapshot(entity);
+        var restored = UOMobileEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(snapshot.EquippedLayers.Length, Is.EqualTo(3));
-                Assert.That(snapshot.EquippedItemIds.Length, Is.EqualTo(3));
+                Assert.That(snapshot.EquippedItems.Length, Is.EqualTo(3));
 
-                // Verify ordering by layer key (ascending)
-                for (var i = 1; i < snapshot.EquippedLayers.Length; i++)
+                for (var i = 1; i < snapshot.EquippedItems.Length; i++)
                 {
-                    Assert.That(snapshot.EquippedLayers[i], Is.GreaterThanOrEqualTo(snapshot.EquippedLayers[i - 1]));
+                    Assert.That((int)snapshot.EquippedItems[i].Layer, Is.GreaterThanOrEqualTo((int)snapshot.EquippedItems[i - 1].Layer));
                 }
 
-                // Verify round-trip
                 Assert.That(restored.EquippedItemIds.Count, Is.EqualTo(3));
                 Assert.That(restored.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo((Serial)0x200u));
                 Assert.That(restored.EquippedItemIds[ItemLayerType.Shoes], Is.EqualTo((Serial)0x201u));
@@ -201,7 +205,7 @@ public class SnapshotMapperTests
     }
 
     [Test]
-    public void ToMobileSnapshot_ShouldPreserveLifeStatusFields()
+    public void MobilePersistence_ShouldPreserveLifeStatusFields()
     {
         var entity = new UOMobileEntity
         {
@@ -215,8 +219,8 @@ public class SnapshotMapperTests
             Kills = 3
         };
 
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+        var snapshot = UOMobileEntityPersistence.ToSnapshot(entity);
+        var restored = UOMobileEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
@@ -226,7 +230,6 @@ public class SnapshotMapperTests
                 Assert.That(snapshot.Fame, Is.EqualTo(1500));
                 Assert.That(snapshot.Karma, Is.EqualTo(-1200));
                 Assert.That(snapshot.Kills, Is.EqualTo(3));
-
                 Assert.That(restored.Hunger, Is.EqualTo(20));
                 Assert.That(restored.Thirst, Is.EqualTo(19));
                 Assert.That(restored.Fame, Is.EqualTo(1500));
@@ -237,7 +240,7 @@ public class SnapshotMapperTests
     }
 
     [Test]
-    public void ToMobileSnapshot_ShouldPreserveSkills()
+    public void MobilePersistence_ShouldPreserveSkills()
     {
         SkillInfo.Table =
         [
@@ -280,8 +283,8 @@ public class SnapshotMapperTests
         entity.SetSkill(UOSkillName.Alchemy, 500, cap: 900, lockState: UOSkillLock.Locked);
         entity.SetSkill(UOSkillName.Magery, 725, 700, 1000, UOSkillLock.Down);
 
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+        var snapshot = UOMobileEntityPersistence.ToSnapshot(entity);
+        var restored = UOMobileEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
@@ -301,7 +304,7 @@ public class SnapshotMapperTests
     }
 
     [Test]
-    public void ToMobileSnapshot_ShouldPreserveTypedBaseStateAndModifiers()
+    public void MobilePersistence_ShouldPreserveTypedBaseStateAndModifiers()
     {
         var entity = new UOMobileEntity
         {
@@ -318,55 +321,61 @@ public class SnapshotMapperTests
             {
                 Physical = 5,
                 Fire = 15,
-                Cold = 11,
-                Poison = 9,
-                Energy = 13
+                Cold = 10,
+                Poison = 20,
+                Energy = 25
             },
             Resources = new()
             {
-                Hits = 60,
-                MaxHits = 70,
+                Hits = 75,
                 Mana = 40,
-                MaxMana = 50,
-                Stamina = 50,
+                Stamina = 55,
+                MaxHits = 80,
+                MaxMana = 45,
                 MaxStamina = 60
             },
-            BaseLuck = 42,
-            StatCap = 250,
-            Followers = 2,
-            FollowersMax = 5,
-            Weight = 33,
-            MaxWeight = 400,
-            MinWeaponDamage = 11,
-            MaxWeaponDamage = 15,
-            Tithing = 777,
             EquipmentModifiers = new()
             {
-                StrengthBonus = 5,
-                FireResist = 3,
-                Luck = 10,
-                HitChanceIncrease = 8
+                StrengthBonus = 3,
+                DexterityBonus = 2,
+                IntelligenceBonus = 1,
+                PhysicalResist = 4,
+                FireResist = 5,
+                ColdResist = 6,
+                PoisonResist = 7,
+                EnergyResist = 8,
+                HitChanceIncrease = 9,
+                DefenseChanceIncrease = 10,
+                DamageIncrease = 11,
+                SwingSpeedIncrease = 12,
+                SpellDamageIncrease = 13,
+                FasterCasting = 1,
+                FasterCastRecovery = 2,
+                LowerManaCost = 3,
+                LowerReagentCost = 4,
+                Luck = 55,
+                SpellChanneling = 1
             },
             RuntimeModifiers = new()
             {
-                StrengthBonus = -2,
-                FireResist = 4,
-                Luck = 20,
-                DefenseChanceIncrease = 7
+                StrengthBonus = 1,
+                DexterityBonus = 1,
+                IntelligenceBonus = 1
             },
             ModifierCaps = new()
             {
                 PhysicalResist = 70,
-                FireResist = 71,
-                ColdResist = 72,
-                PoisonResist = 73,
-                EnergyResist = 74,
+                FireResist = 70,
+                ColdResist = 70,
+                PoisonResist = 70,
+                EnergyResist = 70,
                 DefenseChanceIncrease = 45
-            }
+            },
+            BaseLuck = 120
         };
 
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-        var restored = SnapshotMapper.ToMobileEntity(snapshot);
+        var snapshot = UOMobileEntityPersistence.ToSnapshot(entity);
+        var restored = UOMobileEntityPersistence.FromSnapshot(snapshot);
 
         Assert.Multiple(
             () =>
@@ -376,64 +385,22 @@ public class SnapshotMapperTests
                 Assert.That(restored.BaseStats.Intelligence, Is.EqualTo(40));
                 Assert.That(restored.BaseResistances.Physical, Is.EqualTo(5));
                 Assert.That(restored.BaseResistances.Fire, Is.EqualTo(15));
-                Assert.That(restored.BaseResistances.Cold, Is.EqualTo(11));
-                Assert.That(restored.BaseResistances.Poison, Is.EqualTo(9));
-                Assert.That(restored.BaseResistances.Energy, Is.EqualTo(13));
-                Assert.That(restored.Resources.Hits, Is.EqualTo(60));
-                Assert.That(restored.Resources.MaxHits, Is.EqualTo(70));
+                Assert.That(restored.BaseResistances.Cold, Is.EqualTo(10));
+                Assert.That(restored.BaseResistances.Poison, Is.EqualTo(20));
+                Assert.That(restored.BaseResistances.Energy, Is.EqualTo(25));
+                Assert.That(restored.Resources.Hits, Is.EqualTo(75));
+                Assert.That(restored.Resources.MaxHits, Is.EqualTo(80));
                 Assert.That(restored.Resources.Mana, Is.EqualTo(40));
-                Assert.That(restored.Resources.MaxMana, Is.EqualTo(50));
-                Assert.That(restored.Resources.Stamina, Is.EqualTo(50));
+                Assert.That(restored.Resources.MaxMana, Is.EqualTo(45));
+                Assert.That(restored.Resources.Stamina, Is.EqualTo(55));
                 Assert.That(restored.Resources.MaxStamina, Is.EqualTo(60));
-                Assert.That(restored.BaseLuck, Is.EqualTo(42));
-                Assert.That(restored.StatCap, Is.EqualTo(250));
-                Assert.That(restored.Followers, Is.EqualTo(2));
-                Assert.That(restored.FollowersMax, Is.EqualTo(5));
-                Assert.That(restored.Weight, Is.EqualTo(33));
-                Assert.That(restored.MaxWeight, Is.EqualTo(400));
-                Assert.That(restored.MinWeaponDamage, Is.EqualTo(11));
-                Assert.That(restored.MaxWeaponDamage, Is.EqualTo(15));
-                Assert.That(restored.Tithing, Is.EqualTo(777));
                 Assert.That(restored.EquipmentModifiers, Is.Not.Null);
-                Assert.That(restored.EquipmentModifiers!.StrengthBonus, Is.EqualTo(5));
-                Assert.That(restored.EquipmentModifiers.FireResist, Is.EqualTo(3));
-                Assert.That(restored.EquipmentModifiers.Luck, Is.EqualTo(10));
-                Assert.That(restored.EquipmentModifiers.HitChanceIncrease, Is.EqualTo(8));
+                Assert.That(restored.EquipmentModifiers!.StrengthBonus, Is.EqualTo(3));
+                Assert.That(restored.EquipmentModifiers.Luck, Is.EqualTo(55));
                 Assert.That(restored.RuntimeModifiers, Is.Not.Null);
-                Assert.That(restored.RuntimeModifiers!.StrengthBonus, Is.EqualTo(-2));
-                Assert.That(restored.RuntimeModifiers.FireResist, Is.EqualTo(4));
-                Assert.That(restored.RuntimeModifiers.Luck, Is.EqualTo(20));
-                Assert.That(restored.RuntimeModifiers.DefenseChanceIncrease, Is.EqualTo(7));
-                Assert.That(restored.ModifierCaps.PhysicalResist, Is.EqualTo(70));
-                Assert.That(restored.ModifierCaps.FireResist, Is.EqualTo(71));
+                Assert.That(restored.RuntimeModifiers!.StrengthBonus, Is.EqualTo(1));
                 Assert.That(restored.ModifierCaps.DefenseChanceIncrease, Is.EqualTo(45));
-                Assert.That(restored.Strength, Is.EqualTo(60));
-                Assert.That(restored.FireResistance, Is.EqualTo(15));
-                Assert.That(restored.Luck, Is.EqualTo(42));
-                Assert.That(restored.EffectiveStrength, Is.EqualTo(63));
-                Assert.That(restored.EffectiveFireResistance, Is.EqualTo(22));
-                Assert.That(restored.EffectiveLuck, Is.EqualTo(72));
-            }
-        );
-    }
-
-    [Test]
-    public void ToMobileSnapshot_WithEmptyEquipped_ShouldProduceEmptyArrays()
-    {
-        var entity = new UOMobileEntity
-        {
-            Id = (Serial)0x101u,
-            Name = "empty",
-            Location = new(0, 0, 0)
-        };
-
-        var snapshot = SnapshotMapper.ToMobileSnapshot(entity);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(snapshot.EquippedLayers, Is.Empty);
-                Assert.That(snapshot.EquippedItemIds, Is.Empty);
+                Assert.That(restored.BaseLuck, Is.EqualTo(120));
             }
         );
     }

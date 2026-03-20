@@ -1,3 +1,4 @@
+using Moongate.Generators.Annotations.Persistence;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
@@ -9,12 +10,13 @@ namespace Moongate.UO.Data.Persistence.Entities;
 /// <summary>
 /// Minimal item entity implementation used by map and container systems.
 /// </summary>
-public class UOItemEntity : IItemEntity
+public partial class UOItemEntity : IItemEntity
 {
     private readonly List<UOItemEntity> _items = new();
     private readonly Dictionary<Serial, ItemReference> _containedItemReferences = [];
     private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.OrdinalIgnoreCase);
 
+    [MoongatePersistedMember(0)]
     public Serial Id { get; set; }
 
     public Point3D Location { get; set; }
@@ -22,42 +24,56 @@ public class UOItemEntity : IItemEntity
     /// <summary>
     /// Gets or sets world map id for items placed in world or equipped by mobiles.
     /// </summary>
+    [MoongatePersistedMember(2)]
     public int MapId { get; set; }
 
+    [MoongatePersistedMember(3)]
     public string? Name { get; set; }
 
+    [MoongatePersistedMember(4)]
     public int Weight { get; set; }
 
     public int Amount { get; set; } = 1;
 
+    [MoongatePersistedMember(6)]
     public int ItemId { get; set; }
 
+    [MoongatePersistedMember(7)]
     public int Hue { get; set; }
 
+    [MoongatePersistedMember(8)]
     public int? GumpId { get; set; }
 
     /// <summary>
     /// Gets or sets item world-facing direction used by item packets that expose orientation.
     /// </summary>
+    [MoongatePersistedMember(9)]
     public DirectionType Direction { get; set; }
 
+    [MoongatePersistedMember(10)]
     public bool IsStackable { get; set; }
 
     public bool IsDoor => TileData.ItemTable[ItemId][UOTileFlag.Door];
 
+    [MoongatePersistedMember(11)]
     public string ScriptId { get; set; }
 
+    [MoongatePersistedMember(12)]
     public ItemRarity Rarity { get; set; }
 
+    [MoongatePersistedMember(13)]
     public AccountType Visibility { get; set; } = AccountType.Regular;
 
+    [MoongatePersistedMember(14)]
     public ItemCombatStats? CombatStats { get; set; }
 
+    [MoongatePersistedMember(15)]
     public ItemModifiers? Modifiers { get; set; }
 
     /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
+    [MoongatePersistedMember(16)]
     public Serial ParentContainerId { get; set; }
 
     /// <summary>
@@ -68,11 +84,13 @@ public class UOItemEntity : IItemEntity
     /// <summary>
     /// Gets or sets the mobile serial when the item is equipped.
     /// </summary>
+    [MoongatePersistedMember(18)]
     public Serial EquippedMobileId { get; set; }
 
     /// <summary>
     /// Gets or sets the equipped layer when the item is worn.
     /// </summary>
+    [MoongatePersistedMember(19)]
     public ItemLayerType? EquippedLayer { get; set; }
 
     /// <summary>
@@ -83,6 +101,7 @@ public class UOItemEntity : IItemEntity
     /// <summary>
     /// Gets or sets persisted contained item serial identifiers.
     /// </summary>
+    [MoongatePersistedMember(20)]
     public List<Serial> ContainedItemIds { get; set; } = [];
 
     /// <summary>
