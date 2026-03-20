@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-using MessagePack;
+using MemoryPack;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Persistence.Utils;
@@ -67,7 +67,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
             entry.TypeId,
             entry.Operation
         );
-        var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
+        var payload = MemoryPackSerializer.Serialize(entry);
         var checksum = ChecksumUtils.Compute(payload);
 
         var lengthBuffer = new byte[4];
@@ -121,7 +121,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
 
         foreach (var entry in entries)
         {
-            var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
+            var payload = MemoryPackSerializer.Serialize(entry);
             var checksum = ChecksumUtils.Compute(payload);
 
             BinaryPrimitives.WriteInt32LittleEndian(lengthBytes, payload.Length);
@@ -247,7 +247,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
                     break;
                 }
 
-                var entry = MessagePackSerializer.Deserialize<JournalEntry>(payload, cancellationToken: cancellationToken);
+                var entry = MemoryPackSerializer.Deserialize<JournalEntry>(payload);
 
                 if (entry is null)
                 {
@@ -359,7 +359,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
                     break;
                 }
 
-                var entry = MessagePackSerializer.Deserialize<JournalEntry>(payload, cancellationToken: cancellationToken);
+                var entry = MemoryPackSerializer.Deserialize<JournalEntry>(payload);
 
                 if (entry is null)
                 {
@@ -378,7 +378,7 @@ public sealed class BinaryJournalService : IJournalService, IDisposable
 
             foreach (var entry in entries)
             {
-                var payload = MessagePackSerializer.Serialize(entry, cancellationToken: cancellationToken);
+                var payload = MemoryPackSerializer.Serialize(entry);
                 var checksum = ChecksumUtils.Compute(payload);
 
                 BinaryPrimitives.WriteInt32LittleEndian(lengthBytes, payload.Length);

@@ -1258,17 +1258,11 @@ public class PersistenceUnitOfWorkTests
     {
         var registry = new PersistenceEntityRegistry();
         registry.Register(
-            new PersistenceEntityDescriptor<TestRegisteredEntity, int, (int Id, string Name)>(
+            new PersistenceEntityDescriptor<TestRegisteredEntity, int>(
                 500,
                 "test-registered-entity",
                 1,
-                static entity => entity.Id,
-                static entity => (entity.Id, entity.Name),
-                static snapshot => new TestRegisteredEntity
-                {
-                    Id = snapshot.Id,
-                    Name = snapshot.Name
-                }
+                static entity => entity.Id
             )
         );
 

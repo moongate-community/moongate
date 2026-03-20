@@ -1,4 +1,4 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -14,6 +14,7 @@ namespace Moongate.UO.Data.Persistence.Entities;
 /// <summary>
 /// Minimal mobile entity implementation used by race and map systems.
 /// </summary>
+[MemoryPackable(SerializeLayout.Explicit)]
 public partial class UOMobileEntity : IMobileEntity
 {
     private const int GoldItemId = 0x0EED;
@@ -23,52 +24,57 @@ public partial class UOMobileEntity : IMobileEntity
     private const uint MountVirtualSerialMask = 0x3EEEEEEE;
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
     private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
-    private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
+
+    [MemoryPackInclude]
+    [MemoryPackOrder(38)]
+    private Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
 
     /// <summary>
     /// Gets or sets the unique mobile serial.
     /// </summary>
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public Serial Id { get; set; }
 
     /// <summary>
     /// Gets or sets the owning account serial when this mobile belongs to a player account.
     /// </summary>
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public Serial AccountId { get; set; }
 
     /// <summary>
     /// Gets or sets the mobile display name.
     /// </summary>
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the optional title shown with the mobile name.
     /// </summary>
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public string? Title { get; set; }
 
     /// <summary>
     /// Gets or sets the configured brain identifier used by scripted AI.
     /// </summary>
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public string? BrainId { get; set; }
 
     /// <summary>
     /// Gets or sets the mobile world location.
     /// </summary>
+    [MemoryPackOrder(5)]
     public Point3D Location { get; set; }
 
     /// <summary>
     /// Gets or sets the world map identifier.
     /// </summary>
-    [MoongatePersistedMember(6)]
+    [MemoryPackOrder(6)]
     public int MapId { get; set; }
 
     /// <summary>
     /// Gets or sets the resolved world map for this mobile.
     /// </summary>
+    [MemoryPackIgnore]
     public UoMap? Map
     {
         get => UoMap.GetMap(MapId);
@@ -78,36 +84,37 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the world-facing direction.
     /// </summary>
-    [MoongatePersistedMember(7)]
+    [MemoryPackOrder(7)]
     public DirectionType Direction { get; set; }
 
     /// <summary>
     /// Gets or sets whether this mobile is player-controlled.
     /// </summary>
-    [MoongatePersistedMember(8)]
+    [MemoryPackOrder(8)]
     public bool IsPlayer { get; set; }
 
     /// <summary>
     /// Gets or sets whether this mobile is alive.
     /// </summary>
-    [MoongatePersistedMember(9)]
+    [MemoryPackOrder(9)]
     public bool IsAlive { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the mobile gender.
     /// </summary>
-    [MoongatePersistedMember(10)]
+    [MemoryPackOrder(10)]
     public GenderType Gender { get; set; }
 
     /// <summary>
     /// Gets or sets the race table index.
     /// </summary>
-    [MoongatePersistedMember(11)]
+    [MemoryPackOrder(11)]
     public byte RaceIndex { get; set; }
 
     /// <summary>
     /// Gets or sets the resolved race descriptor.
     /// </summary>
+    [MemoryPackIgnore]
     public Race? Race
     {
         get => RaceIndex < Race.Races.Length ? Race.Races[RaceIndex] : null;
@@ -117,12 +124,13 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the profession identifier.
     /// </summary>
-    [MoongatePersistedMember(12)]
+    [MemoryPackOrder(12)]
     public int ProfessionId { get; set; }
 
     /// <summary>
     /// Gets or sets the resolved profession descriptor.
     /// </summary>
+    [MemoryPackIgnore]
     public ProfessionInfo Profession
     {
         get
@@ -141,41 +149,43 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the skin hue.
     /// </summary>
-    [MoongatePersistedMember(13)]
+    [MemoryPackOrder(13)]
     public short SkinHue { get; set; }
 
     /// <summary>
     /// Gets or sets the hair style.
     /// </summary>
-    [MoongatePersistedMember(14)]
+    [MemoryPackOrder(14)]
     public short HairStyle { get; set; }
 
     /// <summary>
     /// Gets or sets the hair hue.
     /// </summary>
-    [MoongatePersistedMember(15)]
+    [MemoryPackOrder(15)]
     public short HairHue { get; set; }
 
     /// <summary>
     /// Gets or sets the facial hair style.
     /// </summary>
-    [MoongatePersistedMember(16)]
+    [MemoryPackOrder(16)]
     public short FacialHairStyle { get; set; }
 
     /// <summary>
     /// Gets or sets the facial hair hue.
     /// </summary>
-    [MoongatePersistedMember(17)]
+    [MemoryPackOrder(17)]
     public short FacialHairHue { get; set; }
 
     /// <summary>
     /// Gets or sets the explicit base body override.
     /// </summary>
+    [MemoryPackOrder(18)]
     public Body? BaseBody { get; set; }
 
     /// <summary>
     /// Gets or sets the resolved body value exposed to packets and gameplay systems.
     /// </summary>
+    [MemoryPackIgnore]
     public Body Body
     {
         get => GetBody();
@@ -185,42 +195,43 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the persisted base stat values.
     /// </summary>
-    [MoongatePersistedMember(19)]
+    [MemoryPackOrder(19)]
     public MobileStats BaseStats { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the persisted base resistance values.
     /// </summary>
-    [MoongatePersistedMember(20)]
+    [MemoryPackOrder(20)]
     public MobileResistances BaseResistances { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the current and maximum resource values.
     /// </summary>
-    [MoongatePersistedMember(21)]
+    [MemoryPackOrder(21)]
     public MobileResources Resources { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the aggregated modifiers coming from equipped items.
     /// </summary>
-    [MoongatePersistedMember(22)]
+    [MemoryPackOrder(22)]
     public MobileModifiers? EquipmentModifiers { get; set; }
 
     /// <summary>
     /// Gets or sets the aggregated runtime modifiers coming from buffs and debuffs.
     /// </summary>
-    [MoongatePersistedMember(23)]
+    [MemoryPackOrder(23)]
     public MobileModifiers? RuntimeModifiers { get; set; }
 
     /// <summary>
     /// Gets or sets the modifier cap values used by modern status packets and effect validation.
     /// </summary>
-    [MoongatePersistedMember(24)]
+    [MemoryPackOrder(24)]
     public MobileModifierCaps ModifierCaps { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the base strength value.
     /// </summary>
+    [MemoryPackIgnore]
     public int Strength
     {
         get => BaseStats.Strength;
@@ -230,6 +241,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base dexterity value.
     /// </summary>
+    [MemoryPackIgnore]
     public int Dexterity
     {
         get => BaseStats.Dexterity;
@@ -239,6 +251,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base intelligence value.
     /// </summary>
+    [MemoryPackIgnore]
     public int Intelligence
     {
         get => BaseStats.Intelligence;
@@ -248,6 +261,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the current hit points.
     /// </summary>
+    [MemoryPackIgnore]
     public int Hits
     {
         get => Resources.Hits;
@@ -257,6 +271,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the current mana value.
     /// </summary>
+    [MemoryPackIgnore]
     public int Mana
     {
         get => Resources.Mana;
@@ -266,6 +281,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the current stamina value.
     /// </summary>
+    [MemoryPackIgnore]
     public int Stamina
     {
         get => Resources.Stamina;
@@ -275,6 +291,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the maximum hit points.
     /// </summary>
+    [MemoryPackIgnore]
     public int MaxHits
     {
         get => Resources.MaxHits;
@@ -284,6 +301,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the maximum mana value.
     /// </summary>
+    [MemoryPackIgnore]
     public int MaxMana
     {
         get => Resources.MaxMana;
@@ -293,6 +311,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the maximum stamina value.
     /// </summary>
+    [MemoryPackIgnore]
     public int MaxStamina
     {
         get => Resources.MaxStamina;
@@ -302,101 +321,109 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the remaining unallocated skill points, when used by creation or progression flows.
     /// </summary>
-    [MoongatePersistedMember(25)]
+    [MemoryPackOrder(25)]
     public int SkillPoints { get; set; }
 
     /// <summary>
     /// Gets or sets the remaining unallocated stat points, when used by creation or progression flows.
     /// </summary>
-    [MoongatePersistedMember(26)]
+    [MemoryPackOrder(26)]
     public int StatPoints { get; set; }
 
     /// <summary>
     /// Gets or sets the total stat cap.
     /// </summary>
-    [MoongatePersistedMember(27)]
+    [MemoryPackOrder(27)]
     public int StatCap { get; set; } = 225;
 
     /// <summary>
     /// Gets or sets the current follower slot usage.
     /// </summary>
-    [MoongatePersistedMember(28)]
+    [MemoryPackOrder(28)]
     public int Followers { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum follower slots.
     /// </summary>
-    [MoongatePersistedMember(29)]
+    [MemoryPackOrder(29)]
     public int FollowersMax { get; set; } = 5;
 
     /// <summary>
     /// Gets or sets the carried weight used by the modern status packet.
     /// </summary>
-    [MoongatePersistedMember(30)]
+    [MemoryPackOrder(30)]
     public int Weight { get; set; }
 
     /// <summary>
     /// Gets or sets the current combat target.
     /// </summary>
+    [MemoryPackIgnore]
     public Serial CombatantId { get; set; }
 
     /// <summary>
     /// Gets or sets the scheduled next combat resolution time in UTC.
     /// </summary>
+    [MemoryPackIgnore]
     public DateTime? NextCombatAtUtc { get; set; }
 
     /// <summary>
     /// Gets or sets the last time this mobile participated in combat in UTC.
     /// </summary>
+    [MemoryPackIgnore]
     public DateTime? LastCombatAtUtc { get; set; }
 
     /// <summary>
     /// Gets or sets recent incoming aggression records for this mobile.
     /// </summary>
+    [MemoryPackIgnore]
     public List<AggressorInfo> Aggressors { get; set; } = [];
 
     /// <summary>
     /// Gets or sets recent outgoing aggression records for this mobile.
     /// </summary>
+    [MemoryPackIgnore]
     public List<AggressorInfo> Aggressed { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the carrying capacity used by the modern status packet.
     /// </summary>
-    [MoongatePersistedMember(31)]
+    [MemoryPackOrder(31)]
     public int MaxWeight { get; set; }
 
     /// <summary>
     /// Gets or sets the minimum weapon damage shown in the status packet.
     /// </summary>
-    [MoongatePersistedMember(32)]
+    [MemoryPackOrder(32)]
     public int MinWeaponDamage { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum weapon damage shown in the status packet.
     /// </summary>
-    [MoongatePersistedMember(33)]
+    [MemoryPackOrder(33)]
     public int MaxWeaponDamage { get; set; }
 
     /// <summary>
     /// Gets or sets the tithing points shown in the status packet.
     /// </summary>
-    [MoongatePersistedMember(34)]
+    [MemoryPackOrder(34)]
     public int Tithing { get; set; }
 
     /// <summary>
     /// Gets or sets the persisted skill table keyed by UO skill id.
     /// </summary>
+    [MemoryPackOrder(53)]
     public Dictionary<UOSkillName, SkillEntry> Skills { get; set; } = [];
 
     /// <summary>
     /// Gets or sets runtime sound slots copied from the mobile template.
     /// </summary>
+    [MemoryPackOrder(54)]
     public Dictionary<MobileSoundType, int> Sounds { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the base fire resistance.
     /// </summary>
+    [MemoryPackIgnore]
     public int FireResistance
     {
         get => BaseResistances.Fire;
@@ -406,6 +433,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base cold resistance.
     /// </summary>
+    [MemoryPackIgnore]
     public int ColdResistance
     {
         get => BaseResistances.Cold;
@@ -415,6 +443,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base poison resistance.
     /// </summary>
+    [MemoryPackIgnore]
     public int PoisonResistance
     {
         get => BaseResistances.Poison;
@@ -424,6 +453,7 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base energy resistance.
     /// </summary>
+    [MemoryPackIgnore]
     public int EnergyResistance
     {
         get => BaseResistances.Energy;
@@ -433,12 +463,13 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base luck value before modifiers are applied.
     /// </summary>
-    [MoongatePersistedMember(35)]
+    [MemoryPackOrder(35)]
     public int BaseLuck { get; set; }
 
     /// <summary>
     /// Gets or sets the legacy luck alias backed by <see cref="BaseLuck" />.
     /// </summary>
+    [MemoryPackIgnore]
     public int Luck
     {
         get => BaseLuck;
@@ -448,130 +479,153 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets the effective strength after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveStrength => Strength + GetModifierValue(static modifier => modifier.StrengthBonus);
 
     /// <summary>
     /// Gets the effective dexterity after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveDexterity => Dexterity + GetModifierValue(static modifier => modifier.DexterityBonus);
 
     /// <summary>
     /// Gets the effective intelligence after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveIntelligence => Intelligence + GetModifierValue(static modifier => modifier.IntelligenceBonus);
 
     /// <summary>
     /// Gets the effective physical resistance after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectivePhysicalResistance
         => BaseResistances.Physical + GetModifierValue(static modifier => modifier.PhysicalResist);
 
     /// <summary>
     /// Gets the effective fire resistance after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveFireResistance => FireResistance + GetModifierValue(static modifier => modifier.FireResist);
 
     /// <summary>
     /// Gets the effective cold resistance after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveColdResistance => ColdResistance + GetModifierValue(static modifier => modifier.ColdResist);
 
     /// <summary>
     /// Gets the effective poison resistance after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectivePoisonResistance => PoisonResistance + GetModifierValue(static modifier => modifier.PoisonResist);
 
     /// <summary>
     /// Gets the effective energy resistance after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveEnergyResistance => EnergyResistance + GetModifierValue(static modifier => modifier.EnergyResist);
 
     /// <summary>
     /// Gets the effective luck after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveLuck => BaseLuck + GetModifierValue(static modifier => modifier.Luck);
 
     /// <summary>
     /// Gets the effective hit chance increase after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveHitChanceIncrease => GetModifierValue(static modifier => modifier.HitChanceIncrease);
 
     /// <summary>
     /// Gets the effective defense chance increase after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveDefenseChanceIncrease => GetModifierValue(static modifier => modifier.DefenseChanceIncrease);
 
     /// <summary>
     /// Gets the effective damage increase after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveDamageIncrease => GetModifierValue(static modifier => modifier.DamageIncrease);
 
     /// <summary>
     /// Gets the effective swing speed increase after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveSwingSpeedIncrease => GetModifierValue(static modifier => modifier.SwingSpeedIncrease);
 
     /// <summary>
     /// Gets the effective spell damage increase after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveSpellDamageIncrease => GetModifierValue(static modifier => modifier.SpellDamageIncrease);
 
     /// <summary>
     /// Gets the effective faster casting value after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveFasterCasting => GetModifierValue(static modifier => modifier.FasterCasting);
 
     /// <summary>
     /// Gets the effective faster cast recovery value after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveFasterCastRecovery => GetModifierValue(static modifier => modifier.FasterCastRecovery);
 
     /// <summary>
     /// Gets the effective lower mana cost after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveLowerManaCost => GetModifierValue(static modifier => modifier.LowerManaCost);
 
     /// <summary>
     /// Gets the effective lower reagent cost after equipment and runtime modifiers.
     /// </summary>
+    [MemoryPackIgnore]
     public int EffectiveLowerReagentCost => GetModifierValue(static modifier => modifier.LowerReagentCost);
 
     /// <summary>
     /// Gets or sets the serial of the backpack item.
     /// </summary>
-    [MoongatePersistedMember(36)]
+    [MemoryPackOrder(36)]
     public Serial BackpackId { get; set; }
 
     /// <summary>
     /// Gets equipped item references by layer.
     /// </summary>
+    [MemoryPackOrder(37)]
     public Dictionary<ItemLayerType, Serial> EquippedItemIds { get; set; } = [];
 
     /// <summary>
     /// Gets runtime equipped-item snapshots keyed by equipment layer.
     /// This cache is not used for persistence.
     /// </summary>
+    [MemoryPackIgnore]
     public IReadOnlyDictionary<ItemLayerType, ItemReference> EquippedItemReferences => _equippedItemReferences;
 
     /// <summary>
     /// Gets runtime total gold in backpack and bank box.
     /// </summary>
+    [MemoryPackIgnore]
     public int Gold => GetGold();
 
     /// <summary>
     /// Gets persisted custom mobile properties.
     /// </summary>
+    [MemoryPackIgnore]
     public IReadOnlyDictionary<string, ItemCustomProperty> CustomProperties => _customProperties;
 
     /// <summary>
     /// Gets or sets whether the mobile is in war mode.
     /// </summary>
-    [MoongatePersistedMember(39)]
+    [MemoryPackOrder(39)]
     public bool IsWarMode { get; set; }
 
     /// <summary>
     /// Gets or sets the legacy warmode alias backed by <see cref="IsWarMode" />.
     /// </summary>
+    [MemoryPackIgnore]
     public bool Warmode
     {
         get => IsWarMode;
@@ -581,36 +635,37 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the hunger level.
     /// </summary>
-    [MoongatePersistedMember(40)]
+    [MemoryPackOrder(40)]
     public int Hunger { get; set; }
 
     /// <summary>
     /// Gets or sets the thirst level.
     /// </summary>
-    [MoongatePersistedMember(41)]
+    [MemoryPackOrder(41)]
     public int Thirst { get; set; }
 
     /// <summary>
     /// Gets or sets the fame value.
     /// </summary>
-    [MoongatePersistedMember(42)]
+    [MemoryPackOrder(42)]
     public int Fame { get; set; }
 
     /// <summary>
     /// Gets or sets the karma value.
     /// </summary>
-    [MoongatePersistedMember(43)]
+    [MemoryPackOrder(43)]
     public int Karma { get; set; }
 
     /// <summary>
     /// Gets or sets the murder count.
     /// </summary>
-    [MoongatePersistedMember(44)]
+    [MemoryPackOrder(44)]
     public int Kills { get; set; }
 
     /// <summary>
     /// Gets or sets the legacy hidden alias backed by <see cref="IsHidden" />.
     /// </summary>
+    [MemoryPackIgnore]
     public bool Hidden
     {
         get => IsHidden;
@@ -620,42 +675,43 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets whether the mobile is hidden.
     /// </summary>
-    [MoongatePersistedMember(45)]
+    [MemoryPackOrder(45)]
     public bool IsHidden { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is frozen.
     /// </summary>
-    [MoongatePersistedMember(46)]
+    [MemoryPackOrder(46)]
     public bool IsFrozen { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is paralyzed.
     /// </summary>
-    [MoongatePersistedMember(47)]
+    [MemoryPackOrder(47)]
     public bool IsParalyzed { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is flying.
     /// </summary>
-    [MoongatePersistedMember(48)]
+    [MemoryPackOrder(48)]
     public bool IsFlying { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile ignores collision with other mobiles.
     /// </summary>
-    [MoongatePersistedMember(49)]
+    [MemoryPackOrder(49)]
     public bool IgnoreMobiles { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is poisoned.
     /// </summary>
-    [MoongatePersistedMember(50)]
+    [MemoryPackOrder(50)]
     public bool IsPoisoned { get; set; }
 
     /// <summary>
     /// Gets or sets the legacy blessed alias backed by <see cref="IsBlessed" />.
     /// </summary>
+    [MemoryPackIgnore]
     public bool Blessed
     {
         get => IsBlessed;
@@ -665,41 +721,43 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets whether the mobile is blessed.
     /// </summary>
-    [MoongatePersistedMember(51)]
+    [MemoryPackOrder(51)]
     public bool IsBlessed { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is invulnerable.
     /// </summary>
-    [MoongatePersistedMember(52)]
+    [MemoryPackOrder(52)]
     public bool IsInvulnerable { get; set; }
 
     /// <summary>
     /// Gets or sets the mounted companion mobile identifier for this rider.
     /// </summary>
-    [MoongatePersistedMember(55)]
+    [MemoryPackOrder(55)]
     public Serial MountedMobileId { get; set; }
 
     /// <summary>
     /// Gets or sets the rider mobile identifier for this mount.
     /// </summary>
-    [MoongatePersistedMember(56)]
+    [MemoryPackOrder(56)]
     public Serial RiderMobileId { get; set; }
 
     /// <summary>
     /// Gets or sets the visual item identifier projected on the mount layer while this mobile is mounted.
     /// </summary>
-    [MoongatePersistedMember(57)]
+    [MemoryPackOrder(57)]
     public int MountedDisplayItemId { get; set; }
 
     /// <summary>
     /// Gets or sets whether this mobile can be mounted according to loaded mount tile data.
     /// </summary>
+    [MemoryPackIgnore]
     public bool IsMountable { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is mounted.
     /// </summary>
+    [MemoryPackIgnore]
     public bool IsMounted
     {
         get => MountedMobileId != Serial.Zero;
@@ -720,20 +778,33 @@ public partial class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the notoriety level.
     /// </summary>
-    [MoongatePersistedMember(58)]
+    [MemoryPackOrder(58)]
     public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
 
     /// <summary>
     /// Gets or sets the creation timestamp in UTC.
     /// </summary>
-    [MoongatePersistedMember(59)]
+    [MemoryPackOrder(59)]
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets or sets the last login timestamp in UTC.
     /// </summary>
-    [MoongatePersistedMember(60)]
+    [MemoryPackOrder(60)]
     public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
+
+    [MemoryPackOnDeserialized]
+    private void OnMemoryPackDeserialized()
+    {
+        _customProperties = _customProperties.Count == 0
+            ? new(StringComparer.Ordinal)
+            : new(_customProperties, StringComparer.Ordinal);
+
+        foreach (var skill in Skills)
+        {
+            skill.Value.Skill = ResolveSkillInfo(skill.Key);
+        }
+    }
 
     /// <summary>
     /// Associates an equipped item with this mobile and updates item ownership metadata.

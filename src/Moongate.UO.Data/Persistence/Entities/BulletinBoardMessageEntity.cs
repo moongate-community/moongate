@@ -1,30 +1,26 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 using Moongate.UO.Data.Ids;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
+[MemoryPackable(SerializeLayout.Explicit)]
 public sealed partial class BulletinBoardMessageEntity
 {
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public Serial MessageId { get; set; }
-
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public Serial BoardId { get; set; }
-
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public Serial ParentId { get; set; }
-
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public Serial OwnerCharacterId { get; set; }
-
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public string Author { get; set; }
-
-    [MoongatePersistedMember(5)]
+    [MemoryPackOrder(5)]
     public string Subject { get; set; }
-
-    [MoongatePersistedMember(6)]
+    [MemoryPackOrder(6)]
     public DateTime PostedAtUtc { get; set; }
 
-    public List<string> BodyLines { get; } = [];
+    [MemoryPackOrder(7)]
+    public List<string> BodyLines { get; set; } = [];
 }

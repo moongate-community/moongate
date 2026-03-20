@@ -4,7 +4,7 @@ This page documents the **actual** binary persistence format currently implement
 
 ## Serialization Technology
 
-- Serializer: `MessagePack-CSharp` over source-generated snapshot contracts
+- Serializer: `MemoryPack` over runtime entity contracts
 - Snapshot container: `WorldSnapshot`
 - Journal payload item: `JournalEntry`
 - Snapshot shape: `EntitySnapshotBucket[]`
@@ -25,7 +25,7 @@ Write behavior:
 Read behavior:
 
 - If snapshot stream is empty: returns `null`
-- Otherwise: deserializes `WorldSnapshot` with MessagePack
+- Otherwise: deserializes `WorldSnapshot` with MemoryPack
 
 There is no trailing checksum block in the snapshot file.
 
@@ -45,7 +45,7 @@ Each record layout in the file:
 
 Where:
 
-- `payload` is `MessagePackSerializer.Serialize(entry)`
+- `payload` is `MemoryPackSerializer.Serialize(entry)`
 - `checksum` is computed from `payload`
 
 ## Journal Validation Rules
@@ -86,7 +86,7 @@ No extra sidecar/checksum/history paths are currently configured.
 - `SchemaVersion`
 - `Payload`
 
-`Payload` is a MessagePack array of generated snapshot contracts for one registered entity kind. Core descriptors currently cover:
+`Payload` is a MemoryPack array of runtime entities for one registered entity kind. Core descriptors currently cover:
 
 - accounts
 - mobiles
@@ -94,7 +94,7 @@ No extra sidecar/checksum/history paths are currently configured.
 - bulletin board messages
 - help tickets
 
-Concrete entity snapshot contracts and their mappers are generated in `Moongate.UO.Data.Persistence.Entities`, next to the runtime entity types they represent.
+Concrete entity contracts live directly in `Moongate.UO.Data.Persistence.Entities` and are serialized without a separate snapshot DTO layer.
 
 Within those buckets, `UOMobileEntity` currently persists:
 
@@ -156,7 +156,7 @@ This means snapshot payloads now preserve:
 
 The payload format is provided by the registered entity descriptor for the matching `TypeId`:
 
-- `Upsert` payloads serialize one entity snapshot
+- `Upsert` payloads serialize one entity
 - `Remove` payloads serialize one entity key
 
 ---

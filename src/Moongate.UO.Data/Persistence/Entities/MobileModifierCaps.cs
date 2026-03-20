@@ -1,25 +1,20 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-[MoongatePersistedEntity]
-public sealed class MobileModifierCaps
+[MemoryPackable(SerializeLayout.Explicit)]
+public sealed partial class MobileModifierCaps
 {
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public int PhysicalResist { get; set; }
-
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public int FireResist { get; set; }
-
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public int ColdResist { get; set; }
-
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public int PoisonResist { get; set; }
-
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public int EnergyResist { get; set; }
-
-    [MoongatePersistedMember(5)]
+    [MemoryPackOrder(5)]
     public int DefenseChanceIncrease { get; set; }
 }

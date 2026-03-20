@@ -1,22 +1,18 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-[MoongatePersistedEntity]
-public sealed class MobileResistances
+[MemoryPackable(SerializeLayout.Explicit)]
+public sealed partial class MobileResistances
 {
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public int Physical { get; set; }
-
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public int Fire { get; set; }
-
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public int Cold { get; set; }
-
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public int Poison { get; set; }
-
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public int Energy { get; set; }
 }

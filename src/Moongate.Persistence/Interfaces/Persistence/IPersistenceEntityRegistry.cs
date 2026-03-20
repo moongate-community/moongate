@@ -15,7 +15,7 @@ public interface IPersistenceEntityRegistry
     /// <summary>
     /// Registers a persisted entity descriptor.
     /// </summary>
-    void Register<TEntity, TKey, TSnapshot>(PersistenceEntityDescriptor<TEntity, TKey, TSnapshot> descriptor)
+    void Register<TEntity, TKey>(PersistenceEntityDescriptor<TEntity, TKey> descriptor)
         where TKey : notnull;
 
     /// <summary>

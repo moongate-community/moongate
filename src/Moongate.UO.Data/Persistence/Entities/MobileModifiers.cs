@@ -1,64 +1,46 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-[MoongatePersistedEntity]
-public sealed class MobileModifiers
+[MemoryPackable(SerializeLayout.Explicit)]
+public sealed partial class MobileModifiers
 {
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public int StrengthBonus { get; set; }
-
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public int DexterityBonus { get; set; }
-
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public int IntelligenceBonus { get; set; }
-
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public int PhysicalResist { get; set; }
-
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public int FireResist { get; set; }
-
-    [MoongatePersistedMember(5)]
+    [MemoryPackOrder(5)]
     public int ColdResist { get; set; }
-
-    [MoongatePersistedMember(6)]
+    [MemoryPackOrder(6)]
     public int PoisonResist { get; set; }
-
-    [MoongatePersistedMember(7)]
+    [MemoryPackOrder(7)]
     public int EnergyResist { get; set; }
-
-    [MoongatePersistedMember(8)]
+    [MemoryPackOrder(8)]
     public int HitChanceIncrease { get; set; }
-
-    [MoongatePersistedMember(9)]
+    [MemoryPackOrder(9)]
     public int DefenseChanceIncrease { get; set; }
-
-    [MoongatePersistedMember(10)]
+    [MemoryPackOrder(10)]
     public int DamageIncrease { get; set; }
-
-    [MoongatePersistedMember(11)]
+    [MemoryPackOrder(11)]
     public int SwingSpeedIncrease { get; set; }
-
-    [MoongatePersistedMember(12)]
+    [MemoryPackOrder(12)]
     public int SpellDamageIncrease { get; set; }
-
-    [MoongatePersistedMember(13)]
+    [MemoryPackOrder(13)]
     public int FasterCasting { get; set; }
-
-    [MoongatePersistedMember(14)]
+    [MemoryPackOrder(14)]
     public int FasterCastRecovery { get; set; }
-
-    [MoongatePersistedMember(15)]
+    [MemoryPackOrder(15)]
     public int LowerManaCost { get; set; }
-
-    [MoongatePersistedMember(16)]
+    [MemoryPackOrder(16)]
     public int LowerReagentCost { get; set; }
-
-    [MoongatePersistedMember(17)]
+    [MemoryPackOrder(17)]
     public int Luck { get; set; }
-
-    [MoongatePersistedMember(18)]
+    [MemoryPackOrder(18)]
     public int SpellChanneling { get; set; }
 }

@@ -13,7 +13,7 @@ public sealed class PersistenceEntityRegistry : IPersistenceEntityRegistry
 
     public bool IsFrozen { get; private set; }
 
-    public void Register<TEntity, TKey, TSnapshot>(PersistenceEntityDescriptor<TEntity, TKey, TSnapshot> descriptor)
+    public void Register<TEntity, TKey>(PersistenceEntityDescriptor<TEntity, TKey> descriptor)
         where TKey : notnull
     {
         ArgumentNullException.ThrowIfNull(descriptor);

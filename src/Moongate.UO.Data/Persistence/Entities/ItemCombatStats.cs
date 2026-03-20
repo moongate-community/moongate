@@ -1,40 +1,30 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-[MoongatePersistedEntity]
+[MemoryPackable(SerializeLayout.Explicit)]
 public partial class ItemCombatStats
 {
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public int MinStrength { get; set; }
-
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public int MinDexterity { get; set; }
-
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public int MinIntelligence { get; set; }
-
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public int DamageMin { get; set; }
-
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public int DamageMax { get; set; }
-
-    [MoongatePersistedMember(5)]
+    [MemoryPackOrder(5)]
     public int Defense { get; set; }
-
-    [MoongatePersistedMember(6)]
+    [MemoryPackOrder(6)]
     public int AttackSpeed { get; set; }
-
-    [MoongatePersistedMember(7)]
+    [MemoryPackOrder(7)]
     public int RangeMin { get; set; }
-
-    [MoongatePersistedMember(8)]
+    [MemoryPackOrder(8)]
     public int RangeMax { get; set; }
-
-    [MoongatePersistedMember(9)]
+    [MemoryPackOrder(9)]
     public int MaxDurability { get; set; }
-
-    [MoongatePersistedMember(10)]
+    [MemoryPackOrder(10)]
     public int CurrentDurability { get; set; }
 }

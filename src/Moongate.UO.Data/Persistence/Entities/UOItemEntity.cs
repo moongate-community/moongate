@@ -1,4 +1,4 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Entities;
@@ -10,111 +10,120 @@ namespace Moongate.UO.Data.Persistence.Entities;
 /// <summary>
 /// Minimal item entity implementation used by map and container systems.
 /// </summary>
+[MemoryPackable(SerializeLayout.Explicit)]
 public partial class UOItemEntity : IItemEntity
 {
     private readonly List<UOItemEntity> _items = new();
     private readonly Dictionary<Serial, ItemReference> _containedItemReferences = [];
-    private readonly Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.OrdinalIgnoreCase);
 
-    [MoongatePersistedMember(0)]
+    [MemoryPackInclude]
+    [MemoryPackOrder(21)]
+    private Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.OrdinalIgnoreCase);
+    [MemoryPackOrder(0)]
     public Serial Id { get; set; }
 
+    [MemoryPackOrder(1)]
     public Point3D Location { get; set; }
 
     /// <summary>
     /// Gets or sets world map id for items placed in world or equipped by mobiles.
     /// </summary>
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public int MapId { get; set; }
-
-    [MoongatePersistedMember(3)]
+    [MemoryPackOrder(3)]
     public string? Name { get; set; }
-
-    [MoongatePersistedMember(4)]
+    [MemoryPackOrder(4)]
     public int Weight { get; set; }
 
+    [MemoryPackOrder(5)]
     public int Amount { get; set; } = 1;
-
-    [MoongatePersistedMember(6)]
+    [MemoryPackOrder(6)]
     public int ItemId { get; set; }
-
-    [MoongatePersistedMember(7)]
+    [MemoryPackOrder(7)]
     public int Hue { get; set; }
-
-    [MoongatePersistedMember(8)]
+    [MemoryPackOrder(8)]
     public int? GumpId { get; set; }
 
     /// <summary>
     /// Gets or sets item world-facing direction used by item packets that expose orientation.
     /// </summary>
-    [MoongatePersistedMember(9)]
+    [MemoryPackOrder(9)]
     public DirectionType Direction { get; set; }
-
-    [MoongatePersistedMember(10)]
+    [MemoryPackOrder(10)]
     public bool IsStackable { get; set; }
 
+    [MemoryPackIgnore]
     public bool IsDoor => TileData.ItemTable[ItemId][UOTileFlag.Door];
-
-    [MoongatePersistedMember(11)]
+    [MemoryPackOrder(11)]
     public string ScriptId { get; set; }
-
-    [MoongatePersistedMember(12)]
+    [MemoryPackOrder(12)]
     public ItemRarity Rarity { get; set; }
-
-    [MoongatePersistedMember(13)]
+    [MemoryPackOrder(13)]
     public AccountType Visibility { get; set; } = AccountType.Regular;
-
-    [MoongatePersistedMember(14)]
+    [MemoryPackOrder(14)]
     public ItemCombatStats? CombatStats { get; set; }
-
-    [MoongatePersistedMember(15)]
+    [MemoryPackOrder(15)]
     public ItemModifiers? Modifiers { get; set; }
 
     /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
-    [MoongatePersistedMember(16)]
+    [MemoryPackOrder(16)]
     public Serial ParentContainerId { get; set; }
 
     /// <summary>
     /// Gets or sets item position inside the parent container.
     /// </summary>
+    [MemoryPackOrder(17)]
     public Point2D ContainerPosition { get; set; }
 
     /// <summary>
     /// Gets or sets the mobile serial when the item is equipped.
     /// </summary>
-    [MoongatePersistedMember(18)]
+    [MemoryPackOrder(18)]
     public Serial EquippedMobileId { get; set; }
 
     /// <summary>
     /// Gets or sets the equipped layer when the item is worn.
     /// </summary>
-    [MoongatePersistedMember(19)]
+    [MemoryPackOrder(19)]
     public ItemLayerType? EquippedLayer { get; set; }
 
     /// <summary>
     /// Gets container child items when this item acts as a container.
     /// </summary>
+    [MemoryPackIgnore]
     public IReadOnlyList<UOItemEntity> Items => _items;
 
     /// <summary>
     /// Gets or sets persisted contained item serial identifiers.
     /// </summary>
-    [MoongatePersistedMember(20)]
+    [MemoryPackOrder(20)]
     public List<Serial> ContainedItemIds { get; set; } = [];
 
     /// <summary>
     /// Gets runtime contained-item snapshots keyed by child serial.
     /// This cache is not used for persistence.
     /// </summary>
+    [MemoryPackIgnore]
     public IReadOnlyDictionary<Serial, ItemReference> ContainedItemReferences => _containedItemReferences;
 
     /// <summary>
     /// Gets typed custom properties stored for this item.
     /// </summary>
+    [MemoryPackIgnore]
     public IReadOnlyDictionary<string, ItemCustomProperty> CustomProperties => _customProperties;
 
+    [MemoryPackOnDeserialized]
+    private void OnMemoryPackDeserialized()
+    {
+        Amount = Amount <= 0 ? 1 : Amount;
+        _customProperties = _customProperties.Count == 0
+            ? new(StringComparer.OrdinalIgnoreCase)
+            : new(_customProperties, StringComparer.OrdinalIgnoreCase);
+    }
+
+    [MemoryPackIgnore]
     public bool IsContainer => TileData.ItemTable[ItemId][UOTileFlag.Container];
 
     public void AddItem(IItemEntity item, Point2D position)

@@ -1,5 +1,5 @@
 using System.Collections.Concurrent;
-using MessagePack;
+using MemoryPack;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
 using Serilog;
@@ -7,18 +7,18 @@ using Serilog;
 namespace Moongate.Persistence.Services.Persistence;
 
 /// <summary>
-/// Persists full world snapshots using MessagePack binary serialization.
+/// Persists full world snapshots using MemoryPack binary serialization.
 /// </summary>
-public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
+public sealed class MemoryPackSnapshotService : ISnapshotService, IDisposable
 {
     private static readonly ConcurrentDictionary<string, byte> LockedPaths = new(StringComparer.OrdinalIgnoreCase);
     private readonly SemaphoreSlim _ioLock = new(1, 1);
-    private readonly ILogger _logger = Log.ForContext<MessagePackSnapshotService>();
+    private readonly ILogger _logger = Log.ForContext<MemoryPackSnapshotService>();
     private readonly string _snapshotFilePath;
     private readonly FileStream _snapshotStream;
     private readonly bool _fileLockEnabled;
 
-    public MessagePackSnapshotService(string snapshotFilePath, bool enableFileLock = true)
+    public MemoryPackSnapshotService(string snapshotFilePath, bool enableFileLock = true)
     {
         _snapshotFilePath = Path.GetFullPath(snapshotFilePath);
         _fileLockEnabled = enableFileLock;
@@ -51,17 +51,6 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
             }
 
             throw;
-        }
-    }
-
-    public void Dispose()
-    {
-        _snapshotStream.Dispose();
-        _ioLock.Dispose();
-
-        if (_fileLockEnabled)
-        {
-            LockedPaths.TryRemove(_snapshotFilePath, out _);
         }
     }
 
@@ -112,7 +101,7 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
                 return null;
             }
 
-            var snapshot = MessagePackSerializer.Deserialize<WorldSnapshot>(payload, cancellationToken: cancellationToken);
+            var snapshot = MemoryPackSerializer.Deserialize<WorldSnapshot>(payload);
             _logger.Verbose(
                 "Snapshot load completed Path={SnapshotPath} Found={Found}",
                 _snapshotFilePath,
@@ -138,7 +127,7 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
 
         try
         {
-            var payload = MessagePackSerializer.Serialize(snapshot, cancellationToken: cancellationToken);
+            var payload = MemoryPackSerializer.Serialize(snapshot);
             _snapshotStream.SetLength(0);
             _snapshotStream.Position = 0;
 
@@ -151,5 +140,16 @@ public sealed class MessagePackSnapshotService : ISnapshotService, IDisposable
         }
 
         _logger.Verbose("Snapshot save completed Path={SnapshotPath}", _snapshotFilePath);
+    }
+
+    public void Dispose()
+    {
+        _snapshotStream.Dispose();
+        _ioLock.Dispose();
+
+        if (_fileLockEnabled)
+        {
+            LockedPaths.TryRemove(_snapshotFilePath, out _);
+        }
     }
 }

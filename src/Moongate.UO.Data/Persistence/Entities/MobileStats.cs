@@ -1,16 +1,14 @@
-using Moongate.Generators.Annotations.Persistence;
+using MemoryPack;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
-[MoongatePersistedEntity]
-public sealed class MobileStats
+[MemoryPackable(SerializeLayout.Explicit)]
+public sealed partial class MobileStats
 {
-    [MoongatePersistedMember(0)]
+    [MemoryPackOrder(0)]
     public int Strength { get; set; }
-
-    [MoongatePersistedMember(1)]
+    [MemoryPackOrder(1)]
     public int Dexterity { get; set; }
-
-    [MoongatePersistedMember(2)]
+    [MemoryPackOrder(2)]
     public int Intelligence { get; set; }
 }

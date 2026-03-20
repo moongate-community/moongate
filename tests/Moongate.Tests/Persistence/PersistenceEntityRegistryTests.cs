@@ -13,13 +13,11 @@ public sealed class PersistenceEntityRegistryTests
         registry.Register(CreateTestDescriptor(500));
 
         var act = () => registry.Register(
-                      new PersistenceEntityDescriptor<string, int, int>(
+                      new PersistenceEntityDescriptor<string, int>(
                           500,
                           "duplicate-type-id",
                           1,
-                          static entity => entity.Length,
-                          static entity => entity.Length,
-                          static snapshot => snapshot.ToString()
+                          static entity => entity.Length
                       )
                   );
 
@@ -45,13 +43,11 @@ public sealed class PersistenceEntityRegistryTests
         registry.Freeze();
 
         var act = () => registry.Register(
-                      new PersistenceEntityDescriptor<string, int, int>(
+                      new PersistenceEntityDescriptor<string, int>(
                           501,
                           "frozen-registry-type",
                           1,
-                          static entity => entity.Length,
-                          static entity => entity.Length,
-                          static snapshot => snapshot.ToString()
+                          static entity => entity.Length
                       )
                   );
 
@@ -63,13 +59,11 @@ public sealed class PersistenceEntityRegistryTests
     {
         var registry = new PersistenceEntityRegistry();
         registry.Register(
-            new PersistenceEntityDescriptor<string, int, int>(
+            new PersistenceEntityDescriptor<string, int>(
                 600,
                 "late",
                 1,
-                static entity => entity.Length,
-                static entity => entity.Length,
-                static snapshot => snapshot.ToString()
+                static entity => entity.Length
             )
         );
         registry.Register(CreateTestDescriptor(500));
@@ -79,19 +73,11 @@ public sealed class PersistenceEntityRegistryTests
         Assert.That(descriptors.Select(static descriptor => descriptor.TypeId), Is.EqualTo(new ushort[] { 500, 600 }));
     }
 
-    private static PersistenceEntityDescriptor<TestRegisteredEntity, int, (int Id, string Name)> CreateTestDescriptor(
-        ushort typeId
-    )
+    private static PersistenceEntityDescriptor<TestRegisteredEntity, int> CreateTestDescriptor(ushort typeId)
         => new(
             typeId,
             "test-registered-entity",
             1,
-            static entity => entity.Id,
-            static entity => (entity.Id, entity.Name),
-            static snapshot => new TestRegisteredEntity
-            {
-                Id = snapshot.Id,
-                Name = snapshot.Name
-            }
+            static entity => entity.Id
         );
 }
