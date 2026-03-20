@@ -36,6 +36,7 @@ I am actively looking for contributors and reviewers.
 - Release notes are sourced from `CHANGELOG.md` and posted to Discord after the GitHub release is created.
 - NuGet packages are published by the `NuGet Publish` workflow.
 - Configure the repository secret `NUGET_KEY` to enable publishing to `nuget.org`.
+- The NuGet publish flow also ships `Moongate.Templates`, which provides `dotnet new moongate-plugin`.
 
 ## Quick Start
 
