@@ -82,9 +82,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IMobileModifierAggregationService, MobileModifierAggregationService>(Reuse.Singleton);
         container.RegisterInstance(new MountTileData());
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
-        container.Register<IStarterItemFactoryService, StarterItemFactoryService>(Reuse.Singleton);
-        container.Register<IPlaceholderResolverService, PlaceholderResolverService>(Reuse.Singleton);
-        container.Register<IStartupCompositionService, StartupCompositionService>(Reuse.Singleton);
+        container.Register<IStartupLoadoutScriptService, StartupLoadoutScriptService>(Reuse.Singleton);
         container.Register<IEntityFactoryService, EntityFactoryService>(Reuse.Singleton);
         container.Register<IOutgoingPacketQueue, OutgoingPacketQueue>(Reuse.Singleton);
         container.Register<IOutboundPacketSender, OutboundPacketSender>(Reuse.Singleton);
@@ -147,7 +145,6 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ILootTemplateService, LootTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<ISellProfileTemplateService, SellProfileTemplateService>(Reuse.Singleton);
-        container.Register<IStartupTemplateService, StartupTemplateService>(Reuse.Singleton);
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IDoorGenerationMapSpecProvider, DefaultDoorGenerationMapSpecProvider>(Reuse.Singleton);
         container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);

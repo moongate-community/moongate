@@ -98,7 +98,8 @@ moongate_data/
 │   ├── mobiles/
 │   │   ├── npcs_humans.json
 │   │   └── test_mob.json
-│   └── startup/            (character creation rules)
+├── scripts/
+│   └── startup/            (Lua character creation loadout rules)
 ```
 
 ### Teleporter Entry

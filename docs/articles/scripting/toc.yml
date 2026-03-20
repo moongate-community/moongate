@@ -11,6 +11,8 @@ items:
     href: scheduled-events.md
   - name: Vendor and Context Menus
     href: vendor-context-menus.md
+  - name: Starting Loadout
+    href: starting-loadout.md
   - name: Modules
     href: modules.md
   - name: API Reference
