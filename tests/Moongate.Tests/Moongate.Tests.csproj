@@ -8,8 +8,6 @@
         <Version>0.36.0</Version>
         <Description>Automated test suite for Moongate core, networking, packets, and scripting components.</Description>
         <IsPackable>false</IsPackable>
-        <IsAotCompatible>false</IsAotCompatible>
-        <EnableTrimAnalyzer>false</EnableTrimAnalyzer>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +15,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="MemoryPack" Version="1.21.4"/>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0"/>
         <PackageReference Include="NUnit" Version="4.5.1"/>
         <PackageReference Include="NUnit.Analyzers" Version="4.12.0">
@@ -39,7 +38,9 @@
         <ProjectReference Include="..\..\src\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Persistence\Moongate.Persistence.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Plugin.Abstractions\Moongate.Plugin.Abstractions.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Scripting\Moongate.Scripting.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
     </ItemGroup>

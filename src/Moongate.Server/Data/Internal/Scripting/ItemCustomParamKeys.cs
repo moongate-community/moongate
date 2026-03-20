@@ -5,6 +5,13 @@ public static class ItemCustomParamKeys
     public static class Item
     {
         public const string Dyeable = "dyeable";
+        public const string TemplateId = "item_template_id";
+    }
+
+    public static class Loot
+    {
+        public const string Generated = "loot_generated";
+        public const string RefillReadyAtUtc = "loot_refill_ready_at_utc";
     }
 
     public static class Book

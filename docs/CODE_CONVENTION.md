@@ -1,6 +1,6 @@
 # Code Convention
 
-This document defines coding conventions for Moongate. It is intentionally strict to keep the codebase consistent, readable, and AOT-friendly.
+This document defines coding conventions for Moongate. It is intentionally strict to keep the codebase consistent and readable.
 
 ## 1. General Principles
 
@@ -86,8 +86,7 @@ Inside a type, use this order:
 - Persisted entities must be explicit and version-safe.
 - When adding persistent fields, update:
   - entity model
-  - snapshot model
-  - mapper(s)
+  - MemoryPack annotations or ignore rules
   - tests
 - Never rely on runtime-only fields for persistence correctness.
 
@@ -128,11 +127,11 @@ Inside a type, use this order:
 - Shared fakes/builders/helpers go in `Support` or `TestSupport`.
 - Do not mix reusable test infrastructure into domain test files.
 
-## 10. AOT and Source Generator Safety
+## 10. Source Generator and Runtime Safety
 
 - Prefer static, explicit registrations over runtime reflection when possible.
 - Keep public API and generated code deterministic.
-- New reflection-heavy code must be justified and tested under AOT build paths.
+- New reflection-heavy code must be justified and tested against the affected runtime paths.
 
 ## 11. Commits
 
@@ -173,7 +172,7 @@ Inside a type, use this order:
 - Prefer value-oriented and span-based APIs when appropriate.
 
 7. Persistence mapping completeness
-- Any persisted field change must include mapper + snapshot + test updates.
+- Any persisted field change must include MemoryPack contract updates and test coverage.
 
 8. Test naming style
 - Prefer `Method_Scenario_ExpectedResult`.

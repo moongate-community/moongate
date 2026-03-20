@@ -16,6 +16,7 @@ This is the main documentation portal for Moongate v2.
 - [Game Loop](articles/architecture/game-loop.md)
 - [Events](articles/architecture/events.md)
 - [Sessions](articles/architecture/sessions.md)
+- [Plugin System](articles/architecture/plugins.md)
 - [Generators](articles/architecture/generators.md)
 - [Background Jobs](articles/architecture/background-jobs.md)
 - [Bootstrap System](articles/architecture/bootstrap.md)
@@ -27,6 +28,7 @@ This is the main documentation portal for Moongate v2.
 
 - [Scripting Overview](articles/scripting/overview.md)
 - [Vendor and Context Menus](articles/scripting/vendor-context-menus.md)
+- [Lua Starting Loadout](articles/scripting/starting-loadout.md)
 - [NPC Behaviors](articles/scripting/npc-behaviors.md)
 - [Intelligent NPC Dialogue](articles/scripting/intelligent-npcs.md)
 - [Gump Tutorial](articles/scripting/gump-tutorial.md)
@@ -38,6 +40,7 @@ This is the main documentation portal for Moongate v2.
 - [Overview](articles/persistence/overview.md)
 - [Data Format](articles/persistence/format.md)
 - [Repositories](articles/persistence/repositories.md)
+- [Custom Persisted Entities](articles/persistence/custom-persisted-entities.md)
 
 ## Networking
 
@@ -51,7 +54,6 @@ This is the main documentation portal for Moongate v2.
 
 - [Stress Test](articles/operations/stress-test.md)
 - [Console Commands](articles/operations/console-commands.md)
-- [NativeAOT Troubleshooting](articles/operations/native-aot-troubleshooting.md)
 
 ## Development
 

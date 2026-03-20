@@ -10,16 +10,7 @@
         <MoongateVersion>$(Version)</MoongateVersion>
         <MoongateCodename>$(Codename)</MoongateCodename>
         <Description>Moongate dedicated game server host process and runtime composition root.</Description>
-        <PublishAot>true</PublishAot>
         <Codename>Lilly</Codename>
-        <InvariantGlobalization>true</InvariantGlobalization>
-
-        <!-- NativeAOT warning suppression for known incompatible packages -->
-        <IlcOptimizationPreference>Size</IlcOptimizationPreference>
-        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-
-        <!-- Suppress AOT warnings for external dependencies -->
-        <NoWarn>$(NoWarn);IL3053;IL3050;IL2026;IL2057;IL2072;IL2075;IL2092;IL2112</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -30,7 +21,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5"/>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
         <PackageReference Include="OpenAI" Version="2.9.1"/>
-        <PackageReference Include="Scalar.AspNetCore" Version="2.13.11" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.13.12" />
         <PackageReference Include="Serilog" Version="4.3.1"/>
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0"/>
         <PackageReference Include="Serilog.Enrichers.Demystifier" Version="1.0.3"/>
@@ -48,10 +39,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <TrimmerRootDescriptor Include="ILLink.Descriptors.xml"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <None Remove="Resources\**\*.*"/>
         <EmbeddedResource Include="Resources\**\*.*"/>
         <None Remove="Assets\**\*.*"/>
@@ -65,6 +52,8 @@
         <ProjectReference Include="..\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\Moongate.Abstractions\Moongate.Abstractions.csproj"/>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Plugin.Abstractions\Moongate.Plugin.Abstractions.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
         <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
         <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
@@ -89,7 +78,7 @@
     </ItemGroup>
 
     <!-- macOS: sign the apphost with get-task-allow so the debugger can attach -->
-    <Target Name="CodesignMacOS" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(Configuration)' == 'Debug'">
+    <Target Name="CodesignMacOS" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(Configuration)' == 'Debug' And '$(RuntimeIdentifier)' != '' And Exists('$(OutputPath)$(AssemblyName)')">
         <Exec Command="codesign -s - --force --entitlements &quot;$(MSBuildProjectDirectory)/Moongate.Server.entitlements&quot; &quot;$(OutputPath)$(AssemblyName)&quot;"/>
     </Target>
 

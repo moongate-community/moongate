@@ -2,7 +2,7 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
 using Moongate.UO.Data.Bodies;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Types;
 using Serilog;
 

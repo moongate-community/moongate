@@ -6,7 +6,6 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/platform-.NET%2010-blueviolet" alt=".NET 10">
-  <img src="https://img.shields.io/badge/AOT-enabled-green" alt="AOT Enabled">
   <img src="https://img.shields.io/badge/scripting-Lua-yellow" alt="Lua Scripting">
   <img src="https://img.shields.io/badge/license-GPL--3.0-blue" alt="GPL-3.0 License">
 </p>
@@ -17,7 +16,7 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_small)
 [![Docker Image](https://img.shields.io/docker/v/tgiachi/moongate?sort=semver)](https://hub.docker.com/r/tgiachi/moongate)
 
-Moongate v2 is a modern Ultima Online server built with .NET 10, NativeAOT support, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
+Moongate v2 is a modern Ultima Online server built with .NET 10, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
 
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_large)
@@ -35,6 +34,8 @@ I am actively looking for contributors and reviewers.
 - GitHub releases are mirrored to Discord via the `GitHub Release Assets` workflow.
 - Configure the repository secret `DISCORD_CHANGELOG_WEBHOOK_URL` to enable changelog posting.
 - Release notes are sourced from `CHANGELOG.md` and posted to Discord after the GitHub release is created.
+- NuGet packages are published by the `NuGet Publish` workflow.
+- Configure the repository secret `NUGET_KEY` to enable publishing to `nuget.org`.
 
 ## Quick Start
 
@@ -66,6 +67,7 @@ docker run --rm -it \
 ```
 
 Server port: `2593`  
+UDP ping port: `12000`  
 HTTP/UI API port: `8088`
 
 Default credentials: `admin` / `password`  
@@ -93,8 +95,9 @@ UI default URL: `http://localhost:8088/`
 - Deterministic single game-loop with separate network inbound/outbound workers
 - Source-generated packet/command/listener registration
 - Sector/chunk spatial system with lazy warmup and broadcast radius
-- Snapshot + journal persistence (MessagePack source-generated, AOT-safe)
+- Registry-driven snapshot buckets + journal persistence over MemoryPackable runtime entities
 - Lua scripting runtime for commands, gumps, item/mobile behavior
+- Startup-loaded C# plugins from the runtime `plugins/<plugin-id>/` directory
 - Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows
@@ -105,7 +108,7 @@ UI default URL: `http://localhost:8088/`
 - Spatial model is sector-first (chunk-style), not pure repeated range scans.
 - World generation pipeline uses named generators (`IWorldGenerator`) and command-triggered runs (example: doors).
 - Doors support runtime open/close behavior and network updates.
-- AOT stability issue in persistence was resolved by moving to MessagePack-CSharp source-generated contracts.
+- Persistence uses MemoryPack with registry-driven snapshot buckets and generic journal entries.
 - Mobile domain model was refactored to remove `Level` and `Experience` from `UOMobileEntity` (they are not part of the base UO mobile model).
 
 ## Screenshots

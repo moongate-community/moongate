@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { Button, Spinner } from '@heroui/react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { rawApiFetch, api } from '../api/client'
+import { getContainedSize, getMapTransformStyles } from './mapViewport'
 
 interface ActiveSession {
   sessionId: number
@@ -29,6 +30,7 @@ export function MapsPage() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null)
   const [players, setPlayers] = useState<ActiveSession[]>([])
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 })
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return
@@ -89,6 +91,33 @@ export function MapsPage() {
   }, [])
 
   useEffect(() => {
+    const element = containerRef.current
+
+    if (!element) {
+      return
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+
+      if (!entry) {
+        return
+      }
+
+      setViewportSize({
+        width: Math.max(0, Math.floor(entry.contentRect.width)),
+        height: Math.max(0, Math.floor(entry.contentRect.height)),
+      })
+    })
+
+    observer.observe(element)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
     let mounted = true
 
     async function pollPlayers() {
@@ -109,6 +138,14 @@ export function MapsPage() {
   }, [])
 
   const selectedMap = MAPS.find((m) => m.id === selectedMapId)!
+  const containedSize = getContainedSize({
+    viewportWidth: viewportSize.width,
+    viewportHeight: viewportSize.height,
+    contentWidth: selectedMap.width,
+    contentHeight: selectedMap.height,
+  })
+  const transformStyles = getMapTransformStyles(containedSize.width, containedSize.height)
+  const transformKey = `${selectedMapId}:${viewportSize.width}x${viewportSize.height}`
 
   return (
     <div className="flex flex-col gap-6 animate-fade-in w-full h-full">
@@ -199,6 +236,7 @@ export function MapsPage() {
 
         {imageUrl && (
           <TransformWrapper
+            key={transformKey}
             initialScale={1}
             minScale={0.05}
             maxScale={8}
@@ -207,8 +245,24 @@ export function MapsPage() {
           >
             {({ resetTransform, instance }) => {
               const { scale, positionX, positionY } = instance.transformState
-              const mapX = mousePos ? Math.max(0, Math.min(selectedMap.width - 1, Math.round((mousePos.x - positionX) / scale))) : 0
-              const mapY = mousePos ? Math.max(0, Math.min(selectedMap.height - 1, Math.round((mousePos.y - positionY) / scale))) : 0
+              const mapX = mousePos
+                ? Math.max(
+                    0,
+                    Math.min(
+                      selectedMap.width - 1,
+                      Math.round(((mousePos.x - positionX) / (scale * containedSize.width)) * selectedMap.width),
+                    ),
+                  )
+                : 0
+              const mapY = mousePos
+                ? Math.max(
+                    0,
+                    Math.min(
+                      selectedMap.height - 1,
+                      Math.round(((mousePos.y - positionY) / (scale * containedSize.height)) * selectedMap.height),
+                    ),
+                  )
+                : 0
 
               const visiblePlayers = players.filter((p) => p.mapId === selectedMapId)
 
@@ -267,14 +321,14 @@ export function MapsPage() {
                 </div>
 
                 <TransformComponent
-                  wrapperStyle={{ width: '100%', height: '100%', cursor: 'grab' }}
-                  contentStyle={{ width: '100%', height: '100%' }}
+                  wrapperStyle={transformStyles.wrapperStyle}
+                  contentStyle={transformStyles.contentStyle}
                 >
                   <div
                     style={{
                       position: 'relative',
-                      width: selectedMap.width,
-                      height: selectedMap.height,
+                      width: containedSize.width,
+                      height: containedSize.height,
                     }}
                   >
                     <img
@@ -289,8 +343,8 @@ export function MapsPage() {
                         key={p.sessionId}
                         style={{
                           position: 'absolute',
-                          left: p.x,
-                          top: p.y,
+                          left: (p.x / selectedMap.width) * containedSize.width,
+                          top: (p.y / selectedMap.height) * containedSize.height,
                           transform: 'translate(-50%, -50%)',
                           pointerEvents: 'none',
                           zIndex: 25,

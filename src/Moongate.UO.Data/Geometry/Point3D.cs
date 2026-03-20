@@ -15,6 +15,7 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using MemoryPack;
 using Moongate.Core.Extensions.Strings;
 using Moongate.UO.Data.Interfaces.Geometry;
 using Moongate.UO.Data.Types;
@@ -24,12 +25,18 @@ namespace Moongate.UO.Data.Geometry;
 /// <summary>
 /// Represents Point3D.
 /// </summary>
-public struct Point3D
+[MemoryPackable(SerializeLayout.Explicit)]
+public partial struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
       IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
 {
+    [MemoryPackOrder(0)]
     public int X { get; set; }
+
+    [MemoryPackOrder(1)]
     public int Y { get; set; }
+
+    [MemoryPackOrder(2)]
     public int Z { get; set; }
 
     public static readonly Point3D Zero = new(0, 0, 0);

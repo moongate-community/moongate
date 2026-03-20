@@ -2,7 +2,7 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Templates.Items;
@@ -138,6 +138,11 @@ public sealed class ItemTemplateLoader : IFileLoader
         if (child.Container.Count == 0 && parent.Container.Count > 0)
         {
             child.Container = [..parent.Container];
+        }
+
+        if (child.LootTables.Count == 0 && parent.LootTables.Count > 0)
+        {
+            child.LootTables = [..parent.LootTables];
         }
 
         if (child.FlippableItemIds.Count == 0 && parent.FlippableItemIds.Count > 0)

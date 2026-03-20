@@ -11,6 +11,60 @@ namespace Moongate.Tests.Server.FileLoaders;
 public class ItemTemplateLoaderTests
 {
     [Test]
+    public async Task LoadAsync_WhenItemDefinesLootTables_ShouldLoadThem()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "containers");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "loot_chest.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "containers",
+                "id": "loot_chest",
+                "name": "Loot Chest",
+                "description": "random chest",
+                "container": [],
+                "lootTables": ["minor_treasure", "bandit_supplies"],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x0E40",
+                "lootType": "Regular",
+                "scriptId": "items.loot_chest",
+                "tags": ["container"],
+                "weight": 1.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("loot_chest", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.LootTables, Is.EqualTo(new[] { "minor_treasure", "bandit_supplies" }));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemHasBookId_ShouldInheritFromParent()
     {
         using var tempDirectory = new TempDirectory();

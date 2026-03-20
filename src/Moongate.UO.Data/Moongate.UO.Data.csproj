@@ -6,12 +6,18 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>0.36.0</Version>
+        <IsPackable>true</IsPackable>
         <Description>Ultima Online domain data types, entities, and protocol-facing value objects used by Moongate.</Description>
+        <PackageTags>moongate;ultima-online;domain;entities;memorypack</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
         <Folder Include="Interfaces\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" Link="README.md"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -20,6 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="MemoryPack" Version="1.21.4"/>
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
             <PrivateAssets>all</PrivateAssets>

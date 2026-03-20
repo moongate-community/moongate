@@ -150,7 +150,7 @@ Speech and flow:
 
 ## Persistent Memory
 
-Dialogue memory is AOT-safe and typed. Each NPC stores entries keyed by the other mobile serial.
+Dialogue memory is typed and explicit. Each NPC stores entries keyed by the other mobile serial.
 
 Stored data is limited to:
 

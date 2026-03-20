@@ -1,8 +1,8 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Spans;
 using Moongate.Server.Data.Packets;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Listener;
+using Moongate.Server.Interfaces.Session;
 using Moongate.Server.Services.Packets;
 
 namespace Moongate.Tests.Server.Services.Packets;
@@ -16,8 +16,10 @@ public class PacketDispatchServiceTests
     {
         public int CallCount { get; private set; }
 
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        public Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
         {
+            _ = session;
+            _ = packet;
             CallCount++;
 
             return Task.FromResult(true);
@@ -26,7 +28,7 @@ public class PacketDispatchServiceTests
 
     private sealed class ThrowingPacketListener : IPacketListener
     {
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        public Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
             => throw new InvalidOperationException("Test exception");
     }
 

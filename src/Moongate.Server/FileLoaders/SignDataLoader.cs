@@ -5,7 +5,7 @@ using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Serilog;
 
 namespace Moongate.Server.FileLoaders;

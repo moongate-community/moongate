@@ -15,6 +15,7 @@
 
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using MemoryPack;
 using Moongate.Core.Extensions.Strings;
 using Moongate.UO.Data.Interfaces.Geometry;
 
@@ -23,11 +24,15 @@ namespace Moongate.UO.Data.Geometry;
 /// <summary>
 /// Represents Point2D.
 /// </summary>
-public struct Point2D
+[MemoryPackable(SerializeLayout.Explicit)]
+public partial struct Point2D
     : IPoint2D, IComparable<Point2D>, IComparable<IPoint2D>, IEquatable<object>, IEquatable<Point2D>,
       IEquatable<IPoint2D>, ISpanFormattable, ISpanParsable<Point2D>
 {
+    [MemoryPackOrder(0)]
     public int X { get; set; }
+
+    [MemoryPackOrder(1)]
     public int Y { get; set; }
 
     public static readonly Point2D Zero = new(0, 0);

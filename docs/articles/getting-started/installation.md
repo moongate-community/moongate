@@ -33,18 +33,15 @@ export MOONGATE_UO_DIRECTORY=/path/to/uo
 dotnet run --project src/Moongate.Server
 ```
 
-## NativeAOT Publish (Optional)
+## Publish (Optional)
 
-Example for Linux x64:
+Example for a release publish:
 
 ```bash
 dotnet publish src/Moongate.Server/Moongate.Server.csproj \
   -c Release \
-  -r linux-x64 \
-  --self-contained true
+  -o ./artifacts/publish
 ```
-
-Use project scripts for reproducible AOT builds where available (`scripts/run_aot.sh`).
 
 ## Docker
 

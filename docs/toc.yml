@@ -68,6 +68,8 @@
     href: articles/persistence/format.md
   - name: Repositories
     href: articles/persistence/repositories.md
+  - name: Custom Persisted Entities
+    href: articles/persistence/custom-persisted-entities.md
 
 - name: Networking
   href: articles/networking/
@@ -88,8 +90,6 @@
     href: articles/operations/stress-test.md
   - name: Console Commands
     href: articles/operations/console-commands.md
-  - name: NativeAOT Troubleshooting
-    href: articles/operations/native-aot-troubleshooting.md
 
 - name: Development
   items:

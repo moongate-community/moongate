@@ -1,3 +1,4 @@
+using MemoryPack;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Bodies;
@@ -5,15 +6,17 @@ namespace Moongate.UO.Data.Bodies;
 /// <summary>
 /// Represents Body.
 /// </summary>
-public struct Body
+[MemoryPackable(SerializeLayout.Explicit)]
+public partial struct Body
 {
-    public static UOBodyType[] Types;
+    public static UOBodyType[] Types = [];
 
     public Body(int bodyID)
     {
         BodyID = bodyID;
     }
 
+    [MemoryPackIgnore]
     public UOBodyType Type
     {
         get
@@ -27,6 +30,7 @@ public struct Body
         }
     }
 
+    [MemoryPackIgnore]
     public bool IsHuman
     {
         get
@@ -53,6 +57,7 @@ public struct Body
         }
     }
 
+    [MemoryPackIgnore]
     public bool IsMale
     {
         get
@@ -77,6 +82,7 @@ public struct Body
         }
     }
 
+    [MemoryPackIgnore]
     public bool IsFemale
     {
         get
@@ -108,6 +114,7 @@ public struct Body
         }
     }
 
+    [MemoryPackIgnore]
     public bool IsGhost
     {
         get
@@ -130,30 +137,35 @@ public struct Body
         }
     }
 
+    [MemoryPackIgnore]
     public bool IsMonster
         => Types is not null &&
            BodyID >= 0 &&
            BodyID < Types.Length &&
            Types[BodyID] == UOBodyType.Monster;
 
+    [MemoryPackIgnore]
     public bool IsAnimal
         => Types is not null &&
            BodyID >= 0 &&
            BodyID < Types.Length &&
            Types[BodyID] == UOBodyType.Animal;
 
+    [MemoryPackIgnore]
     public bool IsEmpty
         => Types is not null &&
            BodyID >= 0 &&
            BodyID < Types.Length &&
            Types[BodyID] == UOBodyType.Empty;
 
+    [MemoryPackIgnore]
     public bool IsSea
         => Types is not null &&
            BodyID >= 0 &&
            BodyID < Types.Length &&
            Types[BodyID] == UOBodyType.Sea;
 
+    [MemoryPackIgnore]
     public bool IsEquipment
         => Types is not null &&
            BodyID >= 0 &&
@@ -162,10 +174,12 @@ public struct Body
 
 #region Stygian Abyss
 
+    [MemoryPackIgnore]
     public bool IsGargoyle => BodyID == 666 || BodyID == 667 || BodyID == 694 || BodyID == 695;
 
 #endregion
 
+    [MemoryPackOrder(0)]
     public int BodyID { get; }
 
     public override bool Equals(object? obj)

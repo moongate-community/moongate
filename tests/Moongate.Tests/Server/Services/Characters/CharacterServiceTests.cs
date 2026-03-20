@@ -1,5 +1,9 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Server.Data.Entities;
+using Moongate.Server.Data.Startup;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Services.Characters;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
@@ -155,13 +159,64 @@ public class CharacterServiceTests
     }
 
     [Test]
-    public async Task CreateCharacterAsync_ShouldCreateStarterBackpackAndHardcodedItems()
+    public async Task CreateCharacterAsync_ShouldApplyLuaLoadoutToBackpackAndEquipment()
     {
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var service = CreateCharacterService(
             persistence,
-            new()
+            new(),
+            new StaticStartupLoadoutScriptService(
+                new()
+                {
+                    Backpack =
+                    {
+                        new()
+                        {
+                            TemplateId = "gold",
+                            Amount = 1000
+                        },
+                        new()
+                        {
+                            TemplateId = "spellbook",
+                            Amount = 1,
+                            Args = JsonDocument.Parse(
+                                """
+                                {
+                                  "title": "Arcane Notes",
+                                  "author": "starter-mobile",
+                                  "pages": 32,
+                                  "writable": true
+                                }
+                                """
+                            ).RootElement.Clone()
+                        }
+                    },
+                    Equip =
+                    {
+                        new()
+                        {
+                            TemplateId = "shirt",
+                            Layer = ItemLayerType.Shirt
+                        },
+                        new()
+                        {
+                            TemplateId = "pants",
+                            Layer = ItemLayerType.Pants
+                        },
+                        new()
+                        {
+                            TemplateId = "shoes",
+                            Layer = ItemLayerType.Shoes
+                        },
+                        new()
+                        {
+                            TemplateId = "bank_box",
+                            Layer = ItemLayerType.Bank
+                        }
+                    }
+                }
+            )
         );
 
         var createdId = await service.CreateCharacterAsync(
@@ -176,6 +231,11 @@ public class CharacterServiceTests
         var savedCharacter = await persistence.UnitOfWork.Mobiles.GetByIdAsync(createdId);
         var allItems = await persistence.UnitOfWork.Items.GetAllAsync();
         var equippedLayers = savedCharacter!.EquippedItemIds.Keys.ToHashSet();
+        var spellbook = allItems.SingleOrDefault(
+            item => item.ParentContainerId == savedCharacter.BackpackId &&
+                    item.TryGetCustomString("book_author", out var author) &&
+                    author == "starter-mobile"
+        );
 
         Assert.Multiple(
             () =>
@@ -191,6 +251,13 @@ public class CharacterServiceTests
                     allItems.Any(item => item.ItemId == 0x0EED && item.ParentContainerId == savedCharacter.BackpackId),
                     Is.True
                 );
+                Assert.That(spellbook, Is.Not.Null);
+                Assert.That(spellbook!.TryGetCustomString("book_title", out var title), Is.True);
+                Assert.That(title, Is.EqualTo("Arcane Notes"));
+                Assert.That(spellbook.TryGetCustomInteger("book_pages", out var pages), Is.True);
+                Assert.That(pages, Is.EqualTo(32));
+                Assert.That(spellbook.TryGetCustomBoolean("book_writable", out var writable), Is.True);
+                Assert.That(writable, Is.True);
                 Assert.That(
                     allItems.Any(
                         item => item.ItemId == 0x09A8 &&
@@ -207,6 +274,71 @@ public class CharacterServiceTests
                     ),
                     Is.True
                 );
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateCharacterAsync_WhenLuaEquipHueIsSpecified_ShouldApplyHueToNonClientLayers()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new(),
+            new StaticStartupLoadoutScriptService(
+                new()
+                {
+                    Equip =
+                    {
+                        new()
+                        {
+                            TemplateId = "shirt",
+                            Layer = ItemLayerType.Shirt,
+                            Hue = 0x0123
+                        },
+                        new()
+                        {
+                            TemplateId = "pants",
+                            Layer = ItemLayerType.Pants,
+                            Hue = 0x0234
+                        },
+                        new()
+                        {
+                            TemplateId = "shoes",
+                            Layer = ItemLayerType.Shoes,
+                            Hue = 0x0345
+                        }
+                    }
+                }
+            )
+        );
+
+        var createdId = await service.CreateCharacterAsync(
+            new()
+            {
+                Name = "hue-mobile",
+                AccountId = (Serial)0x00000151,
+                IsPlayer = true
+            }
+        );
+
+        await service.ApplyStarterEquipmentHuesAsync(createdId, 0x0888, 0x0999);
+
+        var character = await persistence.UnitOfWork.Mobiles.GetByIdAsync(createdId);
+        var shirt = await persistence.UnitOfWork.Items.GetByIdAsync(character!.EquippedItemIds[ItemLayerType.Shirt]);
+        var pants = await persistence.UnitOfWork.Items.GetByIdAsync(character.EquippedItemIds[ItemLayerType.Pants]);
+        var shoes = await persistence.UnitOfWork.Items.GetByIdAsync(character.EquippedItemIds[ItemLayerType.Shoes]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(shirt, Is.Not.Null);
+                Assert.That(pants, Is.Not.Null);
+                Assert.That(shoes, Is.Not.Null);
+                Assert.That(shirt!.Hue, Is.EqualTo(0x0888));
+                Assert.That(pants!.Hue, Is.EqualTo(0x0999));
+                Assert.That(shoes!.Hue, Is.EqualTo(0x0345));
             }
         );
     }
@@ -514,7 +646,8 @@ public class CharacterServiceTests
 
     private static CharacterService CreateCharacterService(
         PersistenceService persistenceService,
-        GameEventScriptBridgeTestGameEventBusService gameEventBusService
+        GameEventScriptBridgeTestGameEventBusService gameEventBusService,
+        IStartupLoadoutScriptService? startupLoadoutScriptService = null
     )
     {
         var itemTemplateService = new ItemTemplateService();
@@ -546,6 +679,76 @@ public class CharacterServiceTests
                 ScriptId = "none"
             }
         );
+        itemTemplateService.Upsert(
+            new()
+            {
+                Id = "shirt",
+                Name = "Shirt",
+                Category = "clothing",
+                Description = "Starter shirt",
+                ItemId = "0x1517",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none"
+            }
+        );
+        itemTemplateService.Upsert(
+            new()
+            {
+                Id = "pants",
+                Name = "Pants",
+                Category = "clothing",
+                Description = "Starter pants",
+                ItemId = "0x152E",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none"
+            }
+        );
+        itemTemplateService.Upsert(
+            new()
+            {
+                Id = "shoes",
+                Name = "Shoes",
+                Category = "clothing",
+                Description = "Starter shoes",
+                ItemId = "0x170F",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none"
+            }
+        );
+        itemTemplateService.Upsert(
+            new()
+            {
+                Id = "bank_box",
+                Name = "Bank Box",
+                Category = "containers",
+                Description = "Starter bank box",
+                ItemId = "0x09A8",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none"
+            }
+        );
+        itemTemplateService.Upsert(
+            new()
+            {
+                Id = "spellbook",
+                Name = "Spellbook",
+                Category = "books",
+                Description = "Spellbook",
+                ItemId = "0x0EFA",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none"
+            }
+        );
 
         var itemFactoryService = new ItemFactoryService(itemTemplateService, persistenceService);
         var mobileFactoryService = new MobileFactoryService(
@@ -553,14 +756,17 @@ public class CharacterServiceTests
             new NameService(),
             persistenceService
         );
-        var starterItemFactoryService = new StarterItemFactoryService(itemFactoryService, persistenceService);
         var entityFactoryService = new EntityFactoryService(
             itemFactoryService,
-            mobileFactoryService,
-            starterItemFactoryService
+            mobileFactoryService
         );
 
-        return new(persistenceService, entityFactoryService, gameEventBusService);
+        return new(
+            persistenceService,
+            entityFactoryService,
+            gameEventBusService,
+            startupLoadoutScriptService ?? new StaticStartupLoadoutScriptService(new())
+        );
     }
 
     private static async Task<PersistenceService> CreatePersistenceServiceAsync(string rootDirectory)
@@ -581,5 +787,23 @@ public class CharacterServiceTests
         await persistence.StartAsync();
 
         return persistence;
+    }
+
+    private sealed class StaticStartupLoadoutScriptService : IStartupLoadoutScriptService
+    {
+        private readonly StartupLoadout _loadout;
+
+        public StaticStartupLoadoutScriptService(StartupLoadout loadout)
+        {
+            _loadout = loadout;
+        }
+
+        public StartupLoadout BuildLoadout(StarterProfileContext profileContext, string playerName)
+        {
+            _ = profileContext;
+            _ = playerName;
+
+            return _loadout;
+        }
     }
 }

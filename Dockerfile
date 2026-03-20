@@ -10,21 +10,27 @@ RUN npm ci
 COPY ui/ ./
 RUN npm run build
 
-# Use latest .NET 10 SDK with security updates.
-FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS publish
+# Use .NET 10 SDK and pin the newer SDK used by the repo so Roslyn matches local builds.
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS publish
 ARG BUILD_CONFIGURATION=Release
+ARG DOTNET_SDK_VERSION=10.0.201
 ARG TARGETARCH
 WORKDIR /src
 
-# Update Alpine packages to latest security patches
-RUN apk update && apk upgrade --no-cache
+# Update OS packages and install curl for dotnet-install
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-# NativeAOT prerequisites on Alpine
-# binutils provides objcopy required when StripSymbols=true.
-RUN apk add --no-cache clang build-base zlib-dev binutils
+# Install the SDK version used by the repository so source generators run with the expected compiler.
+RUN curl -fsSL https://dot.net/v1/dotnet-install.sh -o /tmp/dotnet-install.sh \
+    && bash /tmp/dotnet-install.sh --version "$DOTNET_SDK_VERSION" --install-dir /usr/share/dotnet --no-path \
+    && rm /tmp/dotnet-install.sh
 
 # Copy only project metadata first to maximize restore-layer caching
 COPY Directory.Build.props ./
+COPY Directory.Build.targets ./
 COPY Moongate.slnx ./
 COPY src/Moongate.Network/Moongate.Network.csproj src/Moongate.Network/
 COPY src/Moongate.Abstractions/Moongate.Abstractions.csproj src/Moongate.Abstractions/
@@ -32,9 +38,11 @@ COPY src/Moongate.Core/Moongate.Core.csproj src/Moongate.Core/
 COPY src/Moongate.Network.Packets/Moongate.Network.Packets.csproj src/Moongate.Network.Packets/
 COPY src/Moongate.Generators/Moongate.Generators.csproj src/Moongate.Generators/
 COPY src/Moongate.Persistence/Moongate.Persistence.csproj src/Moongate.Persistence/
+COPY src/Moongate.Plugin.Abstractions/Moongate.Plugin.Abstractions.csproj src/Moongate.Plugin.Abstractions/
 COPY src/Moongate.Scripting/Moongate.Scripting.csproj src/Moongate.Scripting/
 COPY src/Moongate.Email/Moongate.Email.csproj src/Moongate.Email/
 COPY src/Moongate.Server.Metrics/Moongate.Server.Metrics.csproj src/Moongate.Server.Metrics/
+COPY src/Moongate.Server.Abstractions/Moongate.Server.Abstractions.csproj src/Moongate.Server.Abstractions/
 COPY src/Moongate.UO.Data/Moongate.UO.Data.csproj src/Moongate.UO.Data/
 COPY src/Moongate.Server/Moongate.Server.csproj src/Moongate.Server/
 
@@ -47,51 +55,49 @@ COPY src/Moongate.Core/ src/Moongate.Core/
 COPY src/Moongate.Network.Packets/ src/Moongate.Network.Packets/
 COPY src/Moongate.Generators/ src/Moongate.Generators/
 COPY src/Moongate.Persistence/ src/Moongate.Persistence/
+COPY src/Moongate.Plugin.Abstractions/ src/Moongate.Plugin.Abstractions/
 COPY src/Moongate.Scripting/ src/Moongate.Scripting/
 COPY src/Moongate.Email/ src/Moongate.Email/
 COPY src/Moongate.Server.Metrics/ src/Moongate.Server.Metrics/
+COPY src/Moongate.Server.Abstractions/ src/Moongate.Server.Abstractions/
 COPY src/Moongate.UO.Data/ src/Moongate.UO.Data/
 COPY src/Moongate.Server/ src/Moongate.Server/
 
-# Publish native AOT binary for musl (Alpine)
+# Publish framework-dependent server build for Alpine
 RUN set -eux; \
-    ARCH="${TARGETARCH:-amd64}"; \
-    if [ "$ARCH" = "amd64" ]; then ARCH="x64"; fi; \
-    if [ "$ARCH" = "arm64" ]; then ARCH="arm64"; fi; \
     dotnet publish src/Moongate.Server/Moongate.Server.csproj \
       -c "$BUILD_CONFIGURATION" \
       -o /out \
-      -r "linux-musl-$ARCH" \
-      --self-contained true \
-      -p:StripSymbols=true \
-      -p:DebuggerSupport=false \
-      -p:InvariantGlobalization=true
+      --no-restore
+# Use latest ASP.NET runtime with security updates
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 
-# Use latest runtime-deps with security updates
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-alpine AS final
-
-# Update Alpine packages to latest security patches
-RUN apk update && apk upgrade --no-cache
-RUN apk add --no-cache wget
+# Update OS packages and install wget for the healthcheck
+RUN apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends wget ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /opt/moongate
 
-RUN addgroup -S moongate && adduser -S -G moongate -h /app moongate
+RUN groupadd --system moongate \
+    && useradd --system --gid moongate --home-dir /app --create-home moongate
 
 COPY --from=publish /out/ ./
 COPY --from=ui-build /ui/dist ./ui/dist
 
-RUN mkdir -p /app /app/data /app/logs /app/scripts /uo && chown -R moongate:moongate /opt/moongate /app /uo
+RUN mkdir -p /app /app/data /app/logs /app/plugins /app/scripts /uo && chown -R moongate:moongate /opt/moongate /app /uo
 
 ENV MOONGATE_ROOT_DIRECTORY=/app
 ENV MOONGATE_UO_DIRECTORY=/uo
 ENV MOONGATE_IS_DOCKER=true
 ENV MOONGATE_UI_DIST=/opt/moongate/ui/dist
 EXPOSE 2593/tcp
+EXPOSE 12000/udp
 EXPOSE 8088/tcp
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
   CMD wget -qO- http://127.0.0.1:8088/health | grep -q '^ok$' || exit 1
 
 USER moongate
-ENTRYPOINT ["/opt/moongate/Moongate.Server"]
+ENTRYPOINT ["dotnet", "/opt/moongate/Moongate.Server.dll"]

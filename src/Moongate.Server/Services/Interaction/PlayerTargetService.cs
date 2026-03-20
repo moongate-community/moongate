@@ -13,6 +13,7 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Session;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.UO.Data.Ids;
 using Serilog;
@@ -57,11 +58,21 @@ public class PlayerTargetService
                false
            );
 
-    public async Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+    public async Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
     {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(packet);
+
+        if (session is not GameSession gameSession)
+        {
+            throw new InvalidOperationException(
+                $"Packet listener '{nameof(PlayerTargetService)}' requires a concrete {nameof(GameSession)}."
+            );
+        }
+
         if (packet is TargetCursorCommandsPacket targetCursorCommandsPacket)
         {
-            await DispatchCursorResponseAsync(session, targetCursorCommandsPacket);
+            await DispatchCursorResponseAsync(gameSession, targetCursorCommandsPacket);
         }
 
         return true;

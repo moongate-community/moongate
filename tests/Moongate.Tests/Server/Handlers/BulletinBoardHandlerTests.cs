@@ -112,7 +112,7 @@ public sealed class BulletinBoardHandlerTests
         var handler = new BulletinBoardHandler(new BasePacketListenerTestOutgoingPacketQueue(), service);
         var packet = new BulletinBoardMessagesPacketBuilder().BuildPost(0x40000055u, 0u, "Subject", ["Body"]);
 
-        var result = await handler.HandlePacketAsync(new(default), packet);
+        var result = await handler.HandlePacketAsync(new GameSession(default!), packet);
 
         Assert.Multiple(
             () =>
@@ -134,7 +134,7 @@ public sealed class BulletinBoardHandlerTests
             0x40000099u
         );
 
-        var result = await handler.HandlePacketAsync(new(default), packet);
+        var result = await handler.HandlePacketAsync(new GameSession(default!), packet);
 
         Assert.Multiple(
             () =>

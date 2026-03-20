@@ -32,10 +32,9 @@
 - Do not restructure unrelated areas while solving a local task.
 - Keep runtime behavior, tests, and docs aligned.
 
-## AOT, Architecture, and Performance
-- This is an AOT-oriented project. Code must remain NativeAOT-friendly.
-- Prefer explicit registrations, static wiring, and predictable runtime behavior over reflection-heavy or dynamic magic.
-- Any reflection-heavy, runtime code generation, or serializer-dependent change must be clearly justified and verified against AOT constraints.
+## Architecture and Performance
+- Prefer explicit registrations, static wiring, and predictable runtime behavior over dynamic magic when it keeps the code easier to reason about.
+- Reflection-heavy, runtime code generation, or serializer-dependent changes must be justified against architecture, debuggability, and performance costs.
 - Keep hot paths allocation-aware, especially in networking, packet handling, game-loop, persistence, and scripting boundaries.
 - Choose designs that keep the architecture easy to reason about under load and easy to debug when performance regresses.
 
@@ -66,7 +65,7 @@
 - Do not use C# primary constructors.
 - Do not use expression-bodied constructors.
 - Constructors must always use block bodies (`{ }`).
-- Keep files small, explicit, and easy to reason about under AOT constraints.
+- Keep files small, explicit, and easy to reason about.
 
 ## Test Conventions Summary
 - Organize tests by domain/component, mirroring production structure.
@@ -81,6 +80,8 @@
 
 ## Workflow Rules
 - Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, and similar).
+- Every new feature or functional development must start from a dedicated `feature/*` branch.
+- Every new feature or functional development must have a GitHub issue created first so the work can reference a tracked issue throughout implementation, review, and merge.
 - Never add `Co-Authored-By: Claude` to commit messages.
 - Never commit planning or scratch workflow documents from `docs/plans/`, `docs/superpowers/`, or similar agent-only planning folders unless the user explicitly asks.
 - This includes plan documents and workflow artifacts under `docs/plans/`, `docs/superpowers/`, and nested agent-generated files below those trees.

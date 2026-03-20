@@ -5,7 +5,7 @@ using Moongate.Server.Attributes;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.UO.Data.Geometry;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Json.Context;
 using Moongate.UO.Data.Json.Locations;
 using Serilog;

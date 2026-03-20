@@ -20,7 +20,7 @@ public class GeneratorToolchainCompatibilityTests
             .ToArray();
 
         Assert.That(packageVersions, Has.Length.EqualTo(2));
-        Assert.That(packageVersions, Is.All.EqualTo("5.0.0"));
+        Assert.That(packageVersions, Is.All.EqualTo("5.3.0"));
     }
 
     private static string ResolveRepositoryRoot()

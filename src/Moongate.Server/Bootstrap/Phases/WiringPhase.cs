@@ -11,7 +11,7 @@ namespace Moongate.Server.Bootstrap.Phases;
 /// </summary>
 internal sealed class WiringPhase : IBootstrapPhase
 {
-    public int Order => 3;
+    public int Order => 4;
 
     public string Name => "Wiring";
 
@@ -27,17 +27,26 @@ internal sealed class WiringPhase : IBootstrapPhase
     {
         var commandSystemService = context.Container.Resolve<ICommandSystemService>();
         BootstrapConsoleCommandRegistration.RegisterCommands(context.Container, commandSystemService);
+        BootstrapConsoleCommandRegistration.RegisterCommands(
+            context.Container,
+            commandSystemService,
+            context.PluginRegistrations.ConsoleCommandTypes
+        );
     }
 
     private static void RegisterFileLoaders(BootstrapContext context)
     {
         var fileLoaderService = context.Container.Resolve<IFileLoaderService>();
         BootstrapFileLoaderRegistration.Register(fileLoaderService);
+        BootstrapFileLoaderRegistration.Register(fileLoaderService, context.PluginRegistrations.FileLoaderTypes);
     }
 
     private static void RegisterGameEventListeners(BootstrapContext context)
-        => BootstrapGameEventListenerRegistration.Subscribe(context.Container);
+    {
+        BootstrapGameEventListenerRegistration.Subscribe(context.Container);
+        BootstrapGameEventListenerRegistration.Subscribe(context.Container, context.PluginRegistrations.GameEventListenerTypes);
+    }
 
     private static void RegisterPacketHandlers(BootstrapContext context)
-        => BootstrapPacketHandlerRegistration.Register(context.Container);
+        => BootstrapPacketHandlerRegistration.Register(context.Container, context.PluginRegistrations.PacketHandlerTypes);
 }

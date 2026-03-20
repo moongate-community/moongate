@@ -5,8 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <Version>0.36.0</Version>
+        <IsPackable>true</IsPackable>
         <Description>Shared infrastructure, dependency injection, utilities, and common runtime services for Moongate.</Description>
+        <PackageTags>moongate;ultima-online;core;infrastructure</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,6 +28,10 @@
 
     <ItemGroup>
         <Folder Include="Data\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" Visible="false" Link="README.md"/>
     </ItemGroup>
 
 </Project>

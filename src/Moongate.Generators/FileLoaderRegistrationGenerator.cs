@@ -14,7 +14,7 @@ public sealed class FileLoaderRegistrationGenerator : IIncrementalGenerator
         "Moongate.Server.Attributes.RegisterFileLoaderAttribute";
 
     private const string FileLoaderInterfaceName =
-        "Moongate.UO.Data.Interfaces.FileLoaders.IFileLoader";
+        "Moongate.Server.Interfaces.Services.Files.IFileLoader";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {

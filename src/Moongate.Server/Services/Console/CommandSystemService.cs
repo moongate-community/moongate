@@ -10,6 +10,7 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Lifecycle;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Serilog;
@@ -319,7 +320,8 @@ public sealed class CommandSystemService : ICommandSystemService, IGameEventList
             [.. tokens.Skip(1)],
             source,
             session?.SessionId ?? -1,
-            (message, level) => writeOutput(source, level, message, [])
+            (message, level) => writeOutput(source, level, message, []),
+            session?.CharacterId ?? Serial.Zero
         );
 
         _logger.Verbose("Executing command handler for '{Command}'", command);

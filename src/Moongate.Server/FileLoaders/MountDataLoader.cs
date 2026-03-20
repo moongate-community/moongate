@@ -1,6 +1,6 @@
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.World;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Serilog;
 using System.Globalization;
 

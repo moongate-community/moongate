@@ -19,6 +19,8 @@ public sealed class LuaCommandContext
 
     public long? SessionId => _context.SessionIdOrNull;
 
+    public uint? CharacterId => _context.CharacterIdOrNull;
+
     public LuaCommandContext(CommandSystemContext context)
     {
         _context = context;

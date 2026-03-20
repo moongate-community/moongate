@@ -1,5 +1,7 @@
 using Moongate.Persistence.Data.Persistence;
+using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Persistence.Services.Persistence;
+using Moongate.Tests.Persistence.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -264,9 +266,8 @@ public class PersistenceUnitOfWorkTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(captured.Snapshot.Accounts, Has.Length.EqualTo(1));
-                Assert.That(captured.Snapshot.Mobiles, Has.Length.EqualTo(1));
-                Assert.That(captured.Snapshot.Items, Has.Length.EqualTo(1));
+                Assert.That(captured.Snapshot.EntityBuckets, Has.Length.EqualTo(3));
+                Assert.That(captured.Snapshot.EntityBuckets.Select(static bucket => bucket.TypeName), Is.EquivalentTo(new[] { "account", "mobile", "item" }));
                 Assert.That(captured.CapturedLastSequenceId, Is.GreaterThan(0));
             }
         );
@@ -1173,7 +1174,76 @@ public class PersistenceUnitOfWorkTests
         );
     }
 
+    [Test]
+    public async Task RegisteredEntityBuckets_ShouldPersistAcrossSnapshotReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await firstUnitOfWork.InitializeAsync();
+        var repository = firstUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+
+        await repository.UpsertAsync(
+            new TestRegisteredEntity
+            {
+                Id = 42,
+                Name = "snapshot-entity"
+            }
+        );
+
+        await firstUnitOfWork.SaveSnapshotAsync();
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await secondUnitOfWork.InitializeAsync();
+        var reloadedRepository = secondUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+        var reloaded = await reloadedRepository.GetByIdAsync(42);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(reloaded, Is.Not.Null);
+                Assert.That(reloaded!.Name, Is.EqualTo("snapshot-entity"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task RegisteredEntityBuckets_ShouldReplayJournalEntriesUsingGenericTypeMetadata()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await firstUnitOfWork.InitializeAsync();
+        var repository = firstUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+
+        await repository.UpsertAsync(
+            new TestRegisteredEntity
+            {
+                Id = 7,
+                Name = "journal-entity"
+            }
+        );
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await secondUnitOfWork.InitializeAsync();
+        var reloadedRepository = secondUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+        var reloaded = await reloadedRepository.GetByIdAsync(7);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(reloaded, Is.Not.Null);
+                Assert.That(reloaded!.Name, Is.EqualTo("journal-entity"));
+            }
+        );
+    }
+
     private static PersistenceUnitOfWork CreateUnitOfWork(string directory, bool enableFileLock = false)
+        => CreateUnitOfWork(directory, null, enableFileLock);
+
+    private static PersistenceUnitOfWork CreateUnitOfWork(
+        string directory,
+        IPersistenceEntityRegistry? entityRegistry,
+        bool enableFileLock = false
+    )
     {
         var options = new PersistenceOptions(
             Path.Combine(directory, "world.snapshot.bin"),
@@ -1181,7 +1251,22 @@ public class PersistenceUnitOfWorkTests
             enableFileLock
         );
 
-        return new(options);
+        return new(options, entityRegistry);
+    }
+
+    private static IPersistenceEntityRegistry CreateRegistryWithTestEntity()
+    {
+        var registry = new PersistenceEntityRegistry();
+        registry.Register(
+            new PersistenceEntityDescriptor<TestRegisteredEntity, int>(
+                500,
+                "test-registered-entity",
+                1,
+                static entity => entity.Id
+            )
+        );
+
+        return registry;
     }
 
     private static async Task WriteAccountsWithRetryAsync(

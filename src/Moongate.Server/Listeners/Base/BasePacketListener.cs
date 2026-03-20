@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Listener;
+using Moongate.Server.Interfaces.Session;
 using Moongate.Server.Interfaces.Services.Packets;
 
 namespace Moongate.Server.Listeners.Base;
@@ -18,8 +19,17 @@ public abstract class BasePacketListener : IPacketListener
     }
 
     /// <inheritdoc />
-    public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
-        => HandleCoreAsync(session, packet);
+    public Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
+    {
+        if (session is not GameSession concreteSession)
+        {
+            throw new InvalidOperationException(
+                $"Packet listener '{GetType().FullName}' requires a concrete {nameof(GameSession)} instance."
+            );
+        }
+
+        return HandleCoreAsync(concreteSession, packet);
+    }
 
     /// <summary>
     /// Enqueues an outbound packet for the given session.

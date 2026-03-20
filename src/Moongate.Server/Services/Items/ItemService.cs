@@ -1,4 +1,5 @@
 using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -7,9 +8,11 @@ using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Serilog;
+using System.Globalization;
 
 namespace Moongate.Server.Services.Items;
 
@@ -402,6 +405,7 @@ public sealed class ItemService : IItemService
             if (parentContainer is not null)
             {
                 parentContainer.RemoveItem(item.Id);
+                MarkLootRefillReadyIfNeeded(parentContainer);
                 await _persistenceService.UnitOfWork.Items.UpsertAsync(parentContainer);
             }
 
@@ -436,6 +440,32 @@ public sealed class ItemService : IItemService
         item.EquippedLayer = null;
         RecalculateEquipmentModifiers(mobile);
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
+    }
+
+    private void MarkLootRefillReadyIfNeeded(UOItemEntity parentContainer)
+    {
+        ArgumentNullException.ThrowIfNull(parentContainer);
+
+        if (parentContainer.ContainedItemIds.Count > 0 ||
+            !TryResolveItemTemplate(parentContainer, out var template) ||
+            template is null ||
+            template.LootTables.Count == 0)
+        {
+            return;
+        }
+
+        var refillDelay = LootContainerTemplateHelper.GetRefillDelay(template);
+
+        if (refillDelay is null)
+        {
+            return;
+        }
+
+        var refillReadyAtUtc = DateTime.UtcNow.Add(refillDelay.Value);
+        parentContainer.SetCustomString(
+            ItemCustomParamKeys.Loot.RefillReadyAtUtc,
+            refillReadyAtUtc.ToString("O", CultureInfo.InvariantCulture)
+        );
     }
 
     private async Task<UOItemEntity?> GetItemHydratedAsync(Serial itemId)
@@ -515,6 +545,20 @@ public sealed class ItemService : IItemService
 
     private void RecalculateEquipmentModifiers(UOMobileEntity mobile)
         => _mobileModifierAggregationService?.RecalculateEquipmentModifiers(mobile);
+
+    private bool TryResolveItemTemplate(UOItemEntity item, out ItemTemplateDefinition? template)
+    {
+        template = null;
+
+        if (_itemFactoryService is null ||
+            !item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) ||
+            string.IsNullOrWhiteSpace(templateId))
+        {
+            return false;
+        }
+
+        return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
+    }
 
     private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
     {

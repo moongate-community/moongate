@@ -9,7 +9,7 @@
         <WarningsAsErrors/>
         <WarningsNotAsErrors/>
         <LangVersion>latest</LangVersion>
-        <NoWarn>CA1000;CA1036;CA1051;CA1304;CA1305;CA1309;CA1310;CA1512;CA1513;CA1707;CA1711;CA1720;CA1805;CA1806;CA1822;CA1854;CA1859;CA1861;CA1862;CA2201;CA2208;CA2211;IL2026;IL3050;</NoWarn>
+        <NoWarn>CA1000;CA1036;CA1051;CA1304;CA1305;CA1309;CA1310;CA1512;CA1513;CA1707;CA1711;CA1720;CA1805;CA1806;CA1822;CA1854;CA1859;CA1861;CA1862;CA2201;CA2208;CA2211;</NoWarn>
 
     </PropertyGroup>
 
@@ -21,28 +21,25 @@
         <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     </PropertyGroup>
 
-    <PropertyGroup>
-        <!-- AOT readiness -->
-        <IsAotCompatible>true</IsAotCompatible>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <SuppressTrimAnalysisWarnings>false</SuppressTrimAnalysisWarnings>
-
-    </PropertyGroup>
-
     <!-- Package Metadata -->
     <PropertyGroup>
         <Version>0.36.0</Version>
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <FileVersion>0.1.0.0</FileVersion>
         <InformationalVersion>0.1.0</InformationalVersion>
-        <Authors>tom@orivega.io</Authors>
-        <Product>$(MSBuildProjectName)</Product>
-        <Company>Orivega</Company>
+        <Authors>Moongate Community</Authors>
+        <Product>Moongate</Product>
+        <Company>Moongate Community</Company>
         <Copyright>© $(Company) $([System.DateTime]::Now.Year)</Copyright>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
-        <PackageProjectUrl>https://github.com/tgiachi/$(MSBuildProjectName)</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/moongate-community/moongate</PackageProjectUrl>
         <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageIcon>moongate_logo.png</PackageIcon>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <!-- Build Configuration -->
@@ -55,13 +52,6 @@
         <DebugType>pdbonly</DebugType>
         <Optimize>true</Optimize>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
-
-    <!-- Security -->
-    <PropertyGroup>
-        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <IsTrimmable>true</IsTrimmable>
-        <TrimMode>link</TrimMode>
     </PropertyGroup>
 
     <!-- Common Package References -->

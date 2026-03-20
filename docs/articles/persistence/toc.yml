@@ -5,3 +5,5 @@ items:
     href: format.md
   - name: Repositories
     href: repositories.md
+  - name: Custom Persisted Entities
+    href: custom-persisted-entities.md

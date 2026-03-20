@@ -1,12 +1,14 @@
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using MemoryPack;
 
 namespace Moongate.UO.Data.Ids;
 
 /// <summary>
 /// Represents a UO entity serial identifier.
 /// </summary>
-public readonly struct Serial
+[MemoryPackable(SerializeLayout.Explicit)]
+public readonly partial struct Serial
     : IComparable<Serial>, IComparable<uint>, IEquatable<Serial>, ISpanFormattable, ISpanParsable<Serial>
 {
     public const uint ItemOffset = 0x40000000;
@@ -23,20 +25,24 @@ public readonly struct Serial
         Value = serial;
     }
 
+    [MemoryPackOrder(0)]
     public uint Value { get; }
 
+    [MemoryPackIgnore]
     public bool IsMobile
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => Value is > 0 and < ItemOffset;
     }
 
+    [MemoryPackIgnore]
     public bool IsItem
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => Value is >= ItemOffset and <= MaxItemSerial;
     }
 
+    [MemoryPackIgnore]
     public bool IsValid
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

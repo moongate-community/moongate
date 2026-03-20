@@ -2,7 +2,7 @@
 
 ## What is Moongate v2?
 
-**Moongate v2** is a modern, high-performance Ultima Online server built from the ground up with **.NET 10** and **NativeAOT** (Ahead-of-Time) compilation. It represents a complete rewrite of the original Moongate project, focusing on clean architecture, explicit boundaries, and practical performance.
+**Moongate v2** is a modern, high-performance Ultima Online server built from the ground up with **.NET 10**. It represents a complete rewrite of the original Moongate project, focusing on clean architecture, explicit boundaries, and practical performance.
 
 ## Project Vision
 
@@ -10,7 +10,7 @@ Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other server. Whil
 
 ### Core Principles
 
-1. **Performance First** - Leveraging .NET 10 AOT for maximum speed and predictable performance
+1. **Performance First** - Leveraging .NET 10 and explicit architecture for predictable performance
 2. **Explicit Architecture** - Clear boundaries between networking, game logic, and persistence
 3. **Thread Safety** - Deterministic game-loop processing with safe cross-thread communication
 4. **Modern Tooling** - Source generators, typed packet definitions, OpenAPI documentation
@@ -21,11 +21,10 @@ Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other server. Whil
 | Technology | Purpose |
 |------------|---------|
 | **.NET 10** | Latest .NET runtime with performance improvements |
-| **NativeAOT** | Ahead-of-Time compilation for faster startup, lower memory |
 | **MoonSharp** | Lua scripting engine for gameplay customization |
 | **Serilog** | Structured logging with console and file sinks |
 | **Spectre.Console** | Rich terminal UI with colored output |
-| **MessagePack-CSharp** | Source-generated binary serialization for persistence (AOT-safe) |
+| **MemoryPack** | Binary serialization for runtime entity persistence |
 | **ZLinq** | LINQ-like queries for data repositories |
 
 ## Architecture Highlights
@@ -55,7 +54,7 @@ Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other server. Whil
 
 - Snapshot file (`world.snapshot.bin`) for full state checkpoints
 - Append-only journal (`world.journal.bin`) for incremental changes
-- MessagePack-CSharp source-generated binary serialization
+- MemoryPack binary serialization for runtime entity persistence
 - Thread-safe repositories with ZLinq queries
 
 ### Scripting
@@ -67,12 +66,12 @@ Moongate v2 is not a clone of ModernUO, RunUO, ServUO, or any other server. Whil
 
 ## Performance Characteristics
 
-NativeAOT compilation provides:
+Moongate focuses on predictable runtime behavior through:
 
-- **Faster Startup** - No JIT compilation at runtime
-- **Lower Memory** - Reduced footprint without JIT compiler
-- **Predictable Performance** - No runtime compilation pauses
-- **Single Binary** - Easy deployment, especially in containers
+- **Deterministic Scheduling** - Single game-loop processing and explicit cross-thread queues
+- **Static Registration** - Source generators remove bootstrap discovery overhead
+- **Explicit Persistence** - Snapshot and journal formats are typed and versioned
+- **Operational Simplicity** - Standard .NET publish and container workflows
 
 ## Current Status
 
@@ -89,7 +88,7 @@ Moongate v2 is **actively in development**. The following features are implement
 - [x] Session split (transport vs gameplay context)
 - [x] Lua scripting runtime with 16 script modules
 - [x] Embedded HTTP server with OpenAPI/Scalar and JWT authentication
-- [x] Snapshot + Journal persistence with MessagePack serialization
+- [x] Snapshot + Journal persistence with MemoryPack serialization
 - [x] Interactive console UI with 19 console commands
 - [x] Timer wheel with metrics
 - [x] Unit tests for core systems

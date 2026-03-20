@@ -170,7 +170,10 @@ public sealed class HelpLuaRuntimeTests
                 Assert.That(queue.TryDequeue(out var outbound), Is.True);
                 Assert.That(outbound.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-                Assert.That(((CompressedGumpPacket)outbound.Packet).GumpId, Is.EqualTo(0xB900u));
+                var gump = (CompressedGumpPacket)outbound.Packet;
+                Assert.That(gump.GumpId, Is.EqualTo(0xB900u));
+                Assert.That(gump.Layout, Does.Contain("{ resizepic 0 0 9200 420 360 }"));
+                Assert.That(gump.Layout, Does.Not.Contain("{ checkertrans"));
             }
         );
     }
@@ -246,6 +249,10 @@ public sealed class HelpLuaRuntimeTests
         Assert.That(gumpDispatcher.TryDispatch(session, selectQuestionPacket), Is.True);
         Assert.That(queue.TryDequeue(out var textOutbound), Is.True);
         Assert.That(textOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+        var textGump = (CompressedGumpPacket)textOutbound.Packet;
+        Assert.That(textGump.Layout, Does.Contain("{ resizepic 0 0 9200 420 300 }"));
+        Assert.That(textGump.Layout, Does.Contain("{ textentrylimited 24 112 360 80 0 1"));
+        Assert.That(textGump.Layout, Does.Not.Contain("{ checkertrans"));
 
         var submitPacket = new GumpMenuSelectionPacket();
         Assert.That(
