@@ -1,3 +1,35 @@
+## [1.0.0](https://github.com/moongate-community/moongate/compare/v0.36.0...v1.0.0) (2026-03-20)
+
+### ⚠ BREAKING CHANGES
+
+* the server is no longer published or deployed as a NativeAOT binary. Docker now runs the framework-dependent Moongate.Server.dll on the ASP.NET runtime image, and any AOT-specific publish or operational workflow has been removed.
+
+### Features
+
+* add admin help ticket dashboard ([c3cf530](https://github.com/moongate-community/moongate/commit/c3cf530c217690a48cb14707b9b8883693e35802))
+* add first-open chest loot generation ([115325e](https://github.com/moongate-community/moongate/commit/115325e15750704aebdd00900ec6550ae705e75e))
+* add help ticketing flow and endpoints ([08fa508](https://github.com/moongate-community/moongate/commit/08fa508ec8e7e7bb2cb14580f79382ff83a15aa4))
+* add lua-first scheduled events runtime ([241c7c2](https://github.com/moongate-community/moongate/commit/241c7c28b03db3052ac3e454901c66a79010b834))
+* add plugin sdk abstractions and nuget publish flow ([ce460da](https://github.com/moongate-community/moongate/commit/ce460da2dc066f3f66e7d5aaaabcaa726be0b627)), closes [#95](https://github.com/moongate-community/moongate/issues/95) [#96](https://github.com/moongate-community/moongate/issues/96)
+* add refillable chest loot containers ([8678912](https://github.com/moongate-community/moongate/commit/8678912e9eca004374651ccd862e0a59eb58bf1b))
+* add startup csharp plugin host ([c746ca0](https://github.com/moongate-community/moongate/commit/c746ca0dea7b39756de93c078b8c1617f1493af5))
+* add udp ping server ([c098f15](https://github.com/moongate-community/moongate/commit/c098f155843319eea5ca617df252fb35339b53e2))
+* extend in-game item admin commands ([952800e](https://github.com/moongate-community/moongate/commit/952800ef81485c7477962ce10dd817a20bae6a20))
+* move starter loadout generation to lua ([fdaddc1](https://github.com/moongate-community/moongate/commit/fdaddc1aaafde24339cec1b2807cd067d5143c45))
+* publish aggressive action combat events ([ef874d0](https://github.com/moongate-community/moongate/commit/ef874d0c603506f7133c9c715eb0aed6e6d8af50))
+* support hue in lua starting loadout ([f77b620](https://github.com/moongate-community/moongate/commit/f77b62049419d1e7dada30458e236e9a5c680ae4))
+
+### Bug Fixes
+
+* align generator toolchain compatibility test ([c32b35c](https://github.com/moongate-community/moongate/commit/c32b35c2c36c65534c5df46fba1e7053dc844cbe))
+* improve help gump and map viewer ([49964c2](https://github.com/moongate-community/moongate/commit/49964c2499cafe35188bcad9ea5ebd691f6ea50b))
+* remove duplicate scheduled event registration ([89ab560](https://github.com/moongate-community/moongate/commit/89ab560d6b784ebba66b2fb25ed9c1f624615fc6))
+* update docker image build toolchain ([1796b28](https://github.com/moongate-community/moongate/commit/1796b281eb6b725bd412f2faa08d24749d3e83ad))
+
+### Build System
+
+* remove nativeaot build and publish flow ([e055722](https://github.com/moongate-community/moongate/commit/e05572207f07e889cc1816c41e690e860170c519))
+
 ## [0.36.0](https://github.com/moongate-community/moongate/compare/v0.35.0...v0.36.0) (2026-03-19)
 
 ### Features
