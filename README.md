@@ -31,6 +31,8 @@ I am actively looking for contributors and reviewers.
 
 ## Release Automation
 
+- Pull requests run the `CI` workflow only, to keep feedback fast.
+- Coverage, security audit, and third-party notices run on `main`, with scheduled/manual execution for the heavier audits.
 - GitHub releases are mirrored to Discord via the `GitHub Release Assets` workflow.
 - Configure the repository secret `DISCORD_CHANGELOG_WEBHOOK_URL` to enable changelog posting.
 - Release notes are sourced from `CHANGELOG.md` and posted to Discord after the GitHub release is created.
