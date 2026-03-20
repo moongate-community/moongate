@@ -1,7 +1,6 @@
 using Moongate.Persistence.Data.Internal;
 using Moongate.Persistence.Data.Persistence;
 using Moongate.Persistence.Interfaces.Persistence;
-using Moongate.Persistence.Types;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Serilog;
@@ -12,23 +11,23 @@ namespace Moongate.Persistence.Services.Persistence;
 /// <summary>
 /// Thread-safe account repository backed by the shared persistence state store.
 /// </summary>
-public sealed class AccountRepository : IAccountRepository
+internal sealed class AccountRepository : BaseRepository<UOAccountEntity, Serial>, IAccountRepository
 {
-    private readonly IJournalService _journalService;
-    private readonly PersistenceStateStore _stateStore;
     private readonly ILogger _logger = Log.ForContext<AccountRepository>();
 
-    internal AccountRepository(PersistenceStateStore stateStore, IJournalService journalService)
+    internal AccountRepository(
+        PersistenceStateStore stateStore,
+        IJournalService journalService,
+        IPersistenceEntityDescriptor<UOAccountEntity, Serial> descriptor
+    )
+        : base(stateStore, journalService, descriptor)
     {
-        _stateStore = stateStore;
-        _journalService = journalService;
     }
 
     public async ValueTask<bool> AddAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
     {
         _logger.Verbose("Account add requested for Id={AccountId} Username={Username}", account.Id, account.Username);
         var normalizedUsername = account.Username.Trim();
-
         bool inserted;
         JournalEntry? entry = null;
 
@@ -41,20 +40,17 @@ public sealed class AccountRepository : IAccountRepository
             }
             else
             {
-                var clone = Clone(account);
-                clone.Username = normalizedUsername;
+                var clone = PrepareEntityForStore(account);
                 _stateStore.AccountsById[clone.Id] = clone;
-                _stateStore.AccountNameIndex[clone.Username] = clone.Id;
-                _stateStore.LastAccountId = Math.Max(_stateStore.LastAccountId, (uint)clone.Id);
-
+                BeforeUpsertLocked(clone, null);
                 inserted = true;
-                entry = CreateEntry(PersistenceOperationType.UpsertAccount, JournalPayloadCodec.EncodeAccount(clone));
+                entry = CreateUpsertEntry(clone);
             }
         }
 
         if (inserted && entry is not null)
         {
-            await _journalService.AppendAsync(entry, cancellationToken);
+            await AppendAsync(entry, cancellationToken);
         }
 
         _logger.Verbose(
@@ -65,20 +61,6 @@ public sealed class AccountRepository : IAccountRepository
         );
 
         return inserted;
-    }
-
-    public ValueTask<int> CountAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.Verbose("Account count requested");
-        cancellationToken.ThrowIfCancellationRequested();
-
-        lock (_stateStore.SyncRoot)
-        {
-            var count = _stateStore.AccountsById.Count;
-            _logger.Verbose("Account count completed Count={Count}", count);
-
-            return ValueTask.FromResult(count);
-        }
     }
 
     public ValueTask<bool> ExistsAsync(
@@ -99,32 +81,6 @@ public sealed class AccountRepository : IAccountRepository
         }
     }
 
-    public ValueTask<IReadOnlyCollection<UOAccountEntity>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        _logger.Verbose("Account get-all requested");
-        _ = cancellationToken;
-
-        lock (_stateStore.SyncRoot)
-        {
-            return ValueTask.FromResult<IReadOnlyCollection<UOAccountEntity>>(
-                [
-                    .. _stateStore.AccountsById.Values.Select(Clone)
-                ]
-            );
-        }
-    }
-
-    public ValueTask<UOAccountEntity?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
-    {
-        _logger.Verbose("Account get-by-id requested for Id={AccountId}", id);
-        _ = cancellationToken;
-
-        lock (_stateStore.SyncRoot)
-        {
-            return ValueTask.FromResult(_stateStore.AccountsById.TryGetValue(id, out var account) ? Clone(account) : null);
-        }
-    }
-
     public ValueTask<UOAccountEntity?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
         _logger.Verbose("Account get-by-username requested for Username={Username}", username);
@@ -138,7 +94,7 @@ public sealed class AccountRepository : IAccountRepository
             }
 
             return ValueTask.FromResult(
-                _stateStore.AccountsById.TryGetValue(serial, out var account) ? Clone(account) : null
+                _stateStore.AccountsById.TryGetValue(serial, out var account) ? CloneEntity(account) : null
             );
         }
     }
@@ -158,7 +114,7 @@ public sealed class AccountRepository : IAccountRepository
 
         lock (_stateStore.SyncRoot)
         {
-            snapshot = [.. _stateStore.AccountsById.Values.Select(Clone)];
+            snapshot = [.. _stateStore.AccountsById.Values.Select(CloneEntity)];
         }
 
         var results = snapshot.AsValueEnumerable().Where(predicate).Select(selector).ToArray();
@@ -167,69 +123,27 @@ public sealed class AccountRepository : IAccountRepository
         return ValueTask.FromResult<IReadOnlyList<TResult>>(results);
     }
 
-    public async ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
+    protected override void AfterRemoveLocked(Serial key, UOAccountEntity entity)
     {
-        _logger.Verbose("Account remove requested for Id={AccountId}", id);
-        var removed = false;
-        JournalEntry? entry = null;
-
-        lock (_stateStore.SyncRoot)
-        {
-            if (_stateStore.AccountsById.Remove(id, out var existing))
-            {
-                _stateStore.AccountNameIndex.Remove(existing.Username);
-                removed = true;
-                entry = CreateEntry(PersistenceOperationType.RemoveAccount, JournalPayloadCodec.EncodeSerial(id));
-            }
-        }
-
-        if (removed && entry is not null)
-        {
-            await _journalService.AppendAsync(entry, cancellationToken);
-        }
-
-        _logger.Verbose("Account remove completed for Id={AccountId} Removed={Removed}", id, removed);
-
-        return removed;
+        _stateStore.AccountNameIndex.Remove(entity.Username);
     }
 
-    public async ValueTask UpsertAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
+    protected override void BeforeUpsertLocked(UOAccountEntity entity, UOAccountEntity? existing)
     {
-        _logger.Verbose("Account upsert requested for Id={AccountId} Username={Username}", account.Id, account.Username);
-        var normalizedUsername = account.Username.Trim();
-        JournalEntry entry;
-
-        lock (_stateStore.SyncRoot)
+        if (existing is not null && !existing.Username.Equals(entity.Username, StringComparison.OrdinalIgnoreCase))
         {
-            var clone = Clone(account);
-            clone.Username = normalizedUsername;
-
-            if (_stateStore.AccountsById.TryGetValue(clone.Id, out var existing) &&
-                !existing.Username.Equals(clone.Username, StringComparison.OrdinalIgnoreCase))
-            {
-                _stateStore.AccountNameIndex.Remove(existing.Username);
-            }
-
-            _stateStore.AccountsById[clone.Id] = clone;
-            _stateStore.AccountNameIndex[clone.Username] = clone.Id;
-            _stateStore.LastAccountId = Math.Max(_stateStore.LastAccountId, (uint)clone.Id);
-
-            entry = CreateEntry(PersistenceOperationType.UpsertAccount, JournalPayloadCodec.EncodeAccount(clone));
+            _stateStore.AccountNameIndex.Remove(existing.Username);
         }
 
-        await _journalService.AppendAsync(entry, cancellationToken);
-        _logger.Verbose("Account upsert completed for Id={AccountId} Username={Username}", account.Id, normalizedUsername);
+        _stateStore.AccountNameIndex[entity.Username] = entity.Id;
+        _stateStore.LastAccountId = Math.Max(_stateStore.LastAccountId, (uint)entity.Id);
     }
 
-    private static UOAccountEntity Clone(UOAccountEntity account)
-        => SnapshotMapper.ToAccountEntity(SnapshotMapper.ToAccountSnapshot(account));
+    protected override UOAccountEntity PrepareEntityForStore(UOAccountEntity entity)
+    {
+        var clone = base.PrepareEntityForStore(entity);
+        clone.Username = clone.Username.Trim();
 
-    private JournalEntry CreateEntry(PersistenceOperationType operationType, byte[] payload)
-        => new()
-        {
-            SequenceId = ++_stateStore.LastSequenceId,
-            TimestampUnixMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-            OperationType = operationType,
-            Payload = payload
-        };
+        return clone;
+    }
 }

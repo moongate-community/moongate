@@ -7,6 +7,8 @@ namespace Moongate.Tests.Persistence;
 
 public sealed class BinaryJournalServiceTests
 {
+    private const ushort ItemTypeId = 3;
+
     [Test]
     public async Task TrimThroughSequenceAsync_ShouldRetainEntriesAfterInclusiveCutoff()
     {
@@ -30,7 +32,8 @@ public sealed class BinaryJournalServiceTests
         {
             SequenceId = sequenceId,
             TimestampUnixMilliseconds = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-            OperationType = PersistenceOperationType.UpsertItem,
+            TypeId = ItemTypeId,
+            Operation = JournalEntityOperationType.Upsert,
             Payload = [1, 2, 3]
         };
 }

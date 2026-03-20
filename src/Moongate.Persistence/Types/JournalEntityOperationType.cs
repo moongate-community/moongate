@@ -1,0 +1,10 @@
+namespace Moongate.Persistence.Types;
+
+/// <summary>
+/// Identifies a generic journal mutation for a registered entity type.
+/// </summary>
+public enum JournalEntityOperationType : byte
+{
+    Upsert = 1,
+    Remove = 2
+}

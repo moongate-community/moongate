@@ -1,4 +1,5 @@
 using Moongate.Server.Types.Commands;
+using Moongate.UO.Data.Ids;
 using Serilog.Events;
 
 namespace Moongate.Server.Data.Internal.Commands;
@@ -16,9 +17,13 @@ public sealed class CommandSystemContext
 
     public long SessionId { get; }
 
+    public Serial CharacterId { get; }
+
     public bool IsInGame => Source == CommandSourceType.InGame;
 
     public long? SessionIdOrNull => IsInGame ? SessionId : null;
+
+    public uint? CharacterIdOrNull => IsInGame && CharacterId.IsValid ? (uint)CharacterId : null;
 
     public string[] Arguments { get; }
 
@@ -27,7 +32,8 @@ public sealed class CommandSystemContext
         string[] arguments,
         CommandSourceType source,
         long sessionId,
-        Action<string, LogEventLevel> printAction
+        Action<string, LogEventLevel> printAction,
+        Serial characterId = default
     )
     {
         CommandText = commandText;
@@ -35,6 +41,7 @@ public sealed class CommandSystemContext
         Source = source;
         _printAction = printAction;
         SessionId = sessionId;
+        CharacterId = characterId;
     }
 
     public void Print(string message, params object[] args)

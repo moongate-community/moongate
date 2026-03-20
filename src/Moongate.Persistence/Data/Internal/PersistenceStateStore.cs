@@ -8,18 +8,22 @@ namespace Moongate.Persistence.Data.Internal;
 /// </summary>
 internal sealed class PersistenceStateStore
 {
-    public Dictionary<Serial, UOAccountEntity> AccountsById { get; } = [];
+    private readonly Dictionary<ushort, object> _entityBuckets = [];
+
+    public Dictionary<Serial, UOAccountEntity> AccountsById => GetBucket<UOAccountEntity, Serial>(PersistenceCoreEntityTypeIds.Account);
 
     public Dictionary<string, Serial> AccountNameIndex { get; } =
         new(StringComparer.OrdinalIgnoreCase);
 
-    public Dictionary<Serial, UOMobileEntity> MobilesById { get; } = [];
+    public Dictionary<Serial, UOMobileEntity> MobilesById => GetBucket<UOMobileEntity, Serial>(PersistenceCoreEntityTypeIds.Mobile);
 
-    public Dictionary<Serial, UOItemEntity> ItemsById { get; } = [];
+    public Dictionary<Serial, UOItemEntity> ItemsById => GetBucket<UOItemEntity, Serial>(PersistenceCoreEntityTypeIds.Item);
 
-    public Dictionary<Serial, BulletinBoardMessageEntity> BulletinBoardMessagesById { get; } = [];
+    public Dictionary<Serial, BulletinBoardMessageEntity> BulletinBoardMessagesById =>
+        GetBucket<BulletinBoardMessageEntity, Serial>(PersistenceCoreEntityTypeIds.BulletinBoardMessage);
 
-    public Dictionary<Serial, HelpTicketEntity> HelpTicketsById { get; } = [];
+    public Dictionary<Serial, HelpTicketEntity> HelpTicketsById =>
+        GetBucket<HelpTicketEntity, Serial>(PersistenceCoreEntityTypeIds.HelpTicket);
 
     public object SyncRoot { get; } = new();
 
@@ -30,4 +34,20 @@ internal sealed class PersistenceStateStore
     public uint LastMobileId { get; set; } = Serial.MobileStart - 1;
 
     public uint LastItemId { get; set; } = Serial.ItemOffset - 1;
+
+    public void ClearBuckets() => _entityBuckets.Clear();
+
+    public Dictionary<TKey, TEntity> GetBucket<TEntity, TKey>(ushort typeId)
+        where TKey : notnull
+    {
+        if (_entityBuckets.TryGetValue(typeId, out var existing))
+        {
+            return (Dictionary<TKey, TEntity>)existing;
+        }
+
+        var created = new Dictionary<TKey, TEntity>();
+        _entityBuckets[typeId] = created;
+
+        return created;
+    }
 }

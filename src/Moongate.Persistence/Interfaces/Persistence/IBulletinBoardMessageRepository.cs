@@ -3,18 +3,16 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Persistence.Interfaces.Persistence;
 
-public interface IBulletinBoardMessageRepository
+/// <summary>
+/// Provides persistence operations for bulletin board message entities.
+/// </summary>
+public interface IBulletinBoardMessageRepository : IBaseRepository<BulletinBoardMessageEntity, Serial>
 {
-    ValueTask<IReadOnlyCollection<BulletinBoardMessageEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-
+    /// <summary>
+    /// Returns all messages for a board ordered by posting time.
+    /// </summary>
     ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
         Serial boardId,
         CancellationToken cancellationToken = default
     );
-
-    ValueTask<BulletinBoardMessageEntity?> GetByIdAsync(Serial messageId, CancellationToken cancellationToken = default);
-
-    ValueTask<bool> RemoveAsync(Serial messageId, CancellationToken cancellationToken = default);
-
-    ValueTask UpsertAsync(BulletinBoardMessageEntity message, CancellationToken cancellationToken = default);
 }

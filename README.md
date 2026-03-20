@@ -92,7 +92,7 @@ UI default URL: `http://localhost:8088/`
 - Deterministic single game-loop with separate network inbound/outbound workers
 - Source-generated packet/command/listener registration
 - Sector/chunk spatial system with lazy warmup and broadcast radius
-- Snapshot + journal persistence (MessagePack source-generated)
+- Registry-driven snapshot buckets + journal persistence over MemoryPackable runtime entities
 - Lua scripting runtime for commands, gumps, item/mobile behavior
 - Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
@@ -104,7 +104,7 @@ UI default URL: `http://localhost:8088/`
 - Spatial model is sector-first (chunk-style), not pure repeated range scans.
 - World generation pipeline uses named generators (`IWorldGenerator`) and command-triggered runs (example: doors).
 - Doors support runtime open/close behavior and network updates.
-- Persistence moved to MessagePack-CSharp source-generated contracts for explicit, predictable snapshot serialization.
+- Persistence uses MemoryPack with registry-driven snapshot buckets and generic journal entries.
 - Mobile domain model was refactored to remove `Level` and `Experience` from `UOMobileEntity` (they are not part of the base UO mobile model).
 
 ## Screenshots

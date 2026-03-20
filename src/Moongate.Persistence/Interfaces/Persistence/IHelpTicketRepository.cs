@@ -3,18 +3,16 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Persistence.Interfaces.Persistence;
 
-public interface IHelpTicketRepository
+/// <summary>
+/// Provides persistence operations for help ticket entities.
+/// </summary>
+public interface IHelpTicketRepository : IBaseRepository<HelpTicketEntity, Serial>
 {
-    ValueTask<IReadOnlyCollection<HelpTicketEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-
-    ValueTask<HelpTicketEntity?> GetByIdAsync(Serial ticketId, CancellationToken cancellationToken = default);
-
+    /// <summary>
+    /// Returns tickets for a sender character ordered by creation time.
+    /// </summary>
     ValueTask<IReadOnlyList<HelpTicketEntity>> GetBySenderCharacterIdAsync(
         Serial senderCharacterId,
         CancellationToken cancellationToken = default
     );
-
-    ValueTask<bool> RemoveAsync(Serial ticketId, CancellationToken cancellationToken = default);
-
-    ValueTask UpsertAsync(HelpTicketEntity ticket, CancellationToken cancellationToken = default);
 }

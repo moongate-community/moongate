@@ -86,8 +86,7 @@ Inside a type, use this order:
 - Persisted entities must be explicit and version-safe.
 - When adding persistent fields, update:
   - entity model
-  - snapshot model
-  - mapper(s)
+  - MemoryPack annotations or ignore rules
   - tests
 - Never rely on runtime-only fields for persistence correctness.
 
@@ -173,7 +172,7 @@ Inside a type, use this order:
 - Prefer value-oriented and span-based APIs when appropriate.
 
 7. Persistence mapping completeness
-- Any persisted field change must include mapper + snapshot + test updates.
+- Any persisted field change must include MemoryPack contract updates and test coverage.
 
 8. Test naming style
 - Prefer `Method_Scenario_ExpectedResult`.

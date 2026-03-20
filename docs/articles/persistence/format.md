@@ -4,9 +4,11 @@ This page documents the **actual** binary persistence format currently implement
 
 ## Serialization Technology
 
-- Serializer: `MessagePack-CSharp` (source-generated contracts)
+- Serializer: `MemoryPack` over runtime entity contracts
 - Snapshot container: `WorldSnapshot`
 - Journal payload item: `JournalEntry`
+- Snapshot shape: `EntitySnapshotBucket[]`
+- Journal routing: `TypeId + Operation + Payload`
 
 ## Snapshot File
 
@@ -23,7 +25,7 @@ Write behavior:
 Read behavior:
 
 - If snapshot stream is empty: returns `null`
-- Otherwise: deserializes `WorldSnapshot` with MessagePack
+- Otherwise: deserializes `WorldSnapshot` with MemoryPack
 
 There is no trailing checksum block in the snapshot file.
 
@@ -43,7 +45,7 @@ Each record layout in the file:
 
 Where:
 
-- `payload` is `MessagePackSerializer.Serialize(entry)`
+- `payload` is `MemoryPackSerializer.Serialize(entry)`
 - `checksum` is computed from `payload`
 
 ## Journal Validation Rules
@@ -63,7 +65,7 @@ Replay stops at first invalid/truncated record.
 - Repositories append operations to journal
 - Unit of work builds fresh `WorldSnapshot` from state store
 - Snapshot save completes
-- Journal is reset (`FileMode.Create`)
+- Journal entries included in the captured snapshot are trimmed through the captured sequence id
 
 ## Persistence Options
 
@@ -77,9 +79,24 @@ No extra sidecar/checksum/history paths are currently configured.
 
 ## Current Entity Snapshot Shape
 
-The world snapshot stores typed mobile and item substructures rather than only flat scalar entities.
+`WorldSnapshot` stores an array of `EntitySnapshotBucket` values. Each bucket contains:
 
-`UOMobileEntity` currently persists:
+- `TypeId`
+- `TypeName`
+- `SchemaVersion`
+- `Payload`
+
+`Payload` is a MemoryPack array of runtime entities for one registered entity kind. Core descriptors currently cover:
+
+- accounts
+- mobiles
+- items
+- bulletin board messages
+- help tickets
+
+Concrete entity contracts live directly in `Moongate.UO.Data.Persistence.Entities` and are serialized without a separate snapshot DTO layer.
+
+Within those buckets, `UOMobileEntity` currently persists:
 
 - `BaseStats`
 - `BaseResistances`
@@ -103,10 +120,6 @@ The world snapshot stores typed mobile and item substructures rather than only f
 - `CombatStats`
 - `Modifiers`
 
-`WorldSnapshot` also currently persists:
-
-- `BulletinBoardMessages`
-
 Each bulletin-board message snapshot stores:
 
 - `MessageId`
@@ -125,6 +138,26 @@ This means snapshot payloads now preserve:
 - mobile skill tables used by `0x3A`
 - mobile modern status data used by `0x11`
 - classic bulletin board message trees used by `0x71`
+
+## Current Journal Entry Shape
+
+`JournalEntry` currently stores:
+
+- `SequenceId`
+- `TimestampUnixMilliseconds`
+- `TypeId`
+- `Operation`
+- `Payload`
+
+`Operation` is a generic enum:
+
+- `Upsert`
+- `Remove`
+
+The payload format is provided by the registered entity descriptor for the matching `TypeId`:
+
+- `Upsert` payloads serialize one entity
+- `Remove` payloads serialize one entity key
 
 ---
 

@@ -8,11 +8,12 @@ The persistence layer provides:
 
 - Full world checkpoint in one snapshot file
 - Incremental operations in one journal file
-- MessagePack-CSharp source-generated serialization for compact binary payloads
+- MemoryPack serialization over runtime entity contracts
 - Per-entry journal checksum validation
 - Thread-safe repositories over shared in-memory state
-- Typed snapshot storage for item combat/modifier state and mobile status/skill state
-- Dedicated persisted bulletin-board message storage keyed by board serial + message serial
+- Registry-driven entity descriptors with stable manual `TypeId` values
+- Bucket-based snapshots so new persisted entity kinds do not require `WorldSnapshot` changes
+- Generic journal records using `TypeId + Operation + Payload`
 
 ## Storage Structure
 
@@ -44,16 +45,17 @@ The persisted snapshot model is `WorldSnapshot` in `Moongate.Persistence.Data.Pe
 
 Implemented behavior:
 
-- Written by `MessagePackSnapshotService`
-- Uses `MessagePackSerializer.Serialize(...)`
+- Written by `MemoryPackSnapshotService`
+- Uses `MemoryPackSerializer.Serialize(...)`
 - Saved by rewriting the snapshot file on a lock-held stream.
+- Concrete runtime entities are serialized directly from `Moongate.UO.Data.Persistence.Entities`.
 
 ## Journal
 
 The journal is handled by `BinaryJournalService` and stores records as:
 
 - `int32 payloadLength` (little-endian)
-- `payload` (MessagePack serialized `JournalEntry`)
+- `payload` (MemoryPack serialized `JournalEntry`)
 - `uint32 checksum` (little-endian, computed over payload)
 
 On replay:
@@ -85,8 +87,9 @@ Current repositories:
 - `IMobileRepository`
 - `IItemRepository`
 - `IBulletinBoardMessageRepository`
+- `IHelpTicketRepository`
 
-They append journal entries on mutation and query from in-memory state.
+They append generic journal entries on mutation and query from in-memory state. Shared CRUD behavior is implemented once in a generic repository core, while domain repositories keep only domain-specific queries.
 
 ## Domain Snapshot Notes
 
