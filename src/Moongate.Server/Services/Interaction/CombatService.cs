@@ -196,6 +196,7 @@ public sealed class CombatService : ICombatService
 
         if (map is not null &&
             map.Rules.HasFlag(MapRules.HarmfulRestrictions) &&
+            defender.IsPlayer &&
             defender.Notoriety == Notoriety.Innocent)
         {
             return "map_harmful_restrictions";
@@ -571,8 +572,24 @@ public sealed class CombatService : ICombatService
             _ = await _itemService.DeleteItemAsync(deletedStack.Id);
         }
 
+        RefreshConsumedAmmoForSession(attacker.Id, backpack, deletedStack);
         _ = cancellationToken;
         return true;
+    }
+
+    private void RefreshConsumedAmmoForSession(Serial attackerId, UOItemEntity backpack, UOItemEntity? deletedStack)
+    {
+        if (!_gameNetworkSessionService.TryGetByCharacterId(attackerId, out var session))
+        {
+            return;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, new AddMultipleItemsToContainerPacket(backpack));
+
+        if (deletedStack is not null)
+        {
+            _outgoingPacketQueue.Enqueue(session.SessionId, new DeleteObjectPacket(deletedStack.Id));
+        }
     }
 
     private static Serial ResolveBackpackId(UOMobileEntity attacker)

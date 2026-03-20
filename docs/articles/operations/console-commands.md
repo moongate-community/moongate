@@ -112,10 +112,10 @@ Context: InGame only. Access: Regular.
 
 #### `add_item_backpack`
 
-Spawns an item from a template and places it in the player backpack. Supports autocomplete for template IDs.
+Spawns an item from a template and places it in the player backpack. Supports autocomplete for template IDs and an optional stack amount for stackable items.
 
 ```
-.add_item_backpack <templateId>
+.add_item_backpack <templateId> [amount]
 ```
 
 Resolves the backpack either from `BackpackId` or from the equipped `Backpack` layer item. Context: InGame only. Access: GameMaster.

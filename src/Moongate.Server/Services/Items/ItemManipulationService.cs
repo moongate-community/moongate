@@ -248,7 +248,11 @@ public class ItemManipulationService : IItemManipulationService
 
         if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var sourceSession))
         {
+            sourceSession.Character = mobile;
+            sourceSession.CharacterId = mobile.Id;
+            sourceSession.IsMounted = mobile.IsMounted;
             sessionIdsToNotify.Add(sourceSession.SessionId);
+            Enqueue(sourceSession, new PlayerStatusPacket(mobile, 1));
         }
 
         if (sector is null)

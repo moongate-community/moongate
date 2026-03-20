@@ -16,7 +16,7 @@ namespace Moongate.Server.Commands.Player;
 /// </summary>
 [RegisterConsoleCommand(
     "add_item_backpack|.add_item_backpack",
-    "Add an item template to your backpack. Usage: .add_item_backpack <templateId>",
+    "Add an item template to your backpack. Usage: .add_item_backpack <templateId> [amount]",
     CommandSourceType.InGame,
     AccountType.GameMaster
 )]
@@ -39,9 +39,24 @@ public sealed class AddItemBackpackCommand : ICommandExecutor
 
     public async Task ExecuteCommandAsync(CommandSystemContext context)
     {
-        if (context.Arguments.Length != 1 || string.IsNullOrWhiteSpace(context.Arguments[0]))
+        if (
+            (context.Arguments.Length != 1 && context.Arguments.Length != 2)
+            || string.IsNullOrWhiteSpace(context.Arguments[0])
+        )
         {
-            context.Print("Usage: .add_item_backpack <templateId>");
+            context.Print("Usage: .add_item_backpack <templateId> [amount]");
+
+            return;
+        }
+
+        var amount = 1;
+
+        if (
+            context.Arguments.Length == 2
+            && (!int.TryParse(context.Arguments[1], out amount) || amount <= 0)
+        )
+        {
+            context.Print("Usage: .add_item_backpack <templateId> [amount]");
 
             return;
         }
@@ -76,11 +91,32 @@ public sealed class AddItemBackpackCommand : ICommandExecutor
         try
         {
             var item = await _itemService.SpawnFromTemplateAsync(templateId);
+
+            if (amount > 1)
+            {
+                if (!item.IsStackable)
+                {
+                    context.Print("Failed to add item: template '{0}' is not stackable.", templateId);
+
+                    return;
+                }
+
+                item.Amount = amount;
+                await _itemService.UpsertItemAsync(item);
+            }
+
             var moved = await _itemService.MoveItemToContainerAsync(item.Id, backpackId, new(1, 1), context.SessionId);
 
             if (!moved)
             {
                 context.Print("Failed to add item: could not move item to backpack.");
+
+                return;
+            }
+
+            if (amount > 1)
+            {
+                context.Print("Added '{0}' x{1} to backpack.", templateId, amount);
 
                 return;
             }
