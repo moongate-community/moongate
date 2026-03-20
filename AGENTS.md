@@ -80,6 +80,8 @@
 
 ## Workflow Rules
 - Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, and similar).
+- Every new feature or functional development must start from a dedicated `feature/*` branch.
+- Every new feature or functional development must have a GitHub issue created first so the work can reference a tracked issue throughout implementation, review, and merge.
 - Never add `Co-Authored-By: Claude` to commit messages.
 - Never commit planning or scratch workflow documents from `docs/plans/`, `docs/superpowers/`, or similar agent-only planning folders unless the user explicitly asks.
 - This includes plan documents and workflow artifacts under `docs/plans/`, `docs/superpowers/`, and nested agent-generated files below those trees.
