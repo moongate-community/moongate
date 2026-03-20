@@ -76,7 +76,7 @@
     </ItemGroup>
 
     <!-- macOS: sign the apphost with get-task-allow so the debugger can attach -->
-    <Target Name="CodesignMacOS" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(Configuration)' == 'Debug'">
+    <Target Name="CodesignMacOS" AfterTargets="Build" Condition="$([MSBuild]::IsOSPlatform('OSX')) And '$(Configuration)' == 'Debug' And '$(RuntimeIdentifier)' != '' And Exists('$(OutputPath)$(AssemblyName)')">
         <Exec Command="codesign -s - --force --entitlements &quot;$(MSBuildProjectDirectory)/Moongate.Server.entitlements&quot; &quot;$(OutputPath)$(AssemblyName)&quot;"/>
     </Target>
 

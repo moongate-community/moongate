@@ -4,7 +4,7 @@ This page documents the **actual** binary persistence format currently implement
 
 ## Serialization Technology
 
-- Serializer: `MessagePack-CSharp` (source-generated contracts)
+- Serializer: `MessagePack-CSharp` over source-generated snapshot contracts
 - Snapshot container: `WorldSnapshot`
 - Journal payload item: `JournalEntry`
 - Snapshot shape: `EntitySnapshotBucket[]`
@@ -65,7 +65,7 @@ Replay stops at first invalid/truncated record.
 - Repositories append operations to journal
 - Unit of work builds fresh `WorldSnapshot` from state store
 - Snapshot save completes
-- Journal is reset (`FileMode.Create`)
+- Journal entries included in the captured snapshot are trimmed through the captured sequence id
 
 ## Persistence Options
 
@@ -86,13 +86,15 @@ No extra sidecar/checksum/history paths are currently configured.
 - `SchemaVersion`
 - `Payload`
 
-`Payload` is a MessagePack array of snapshot DTOs for one registered entity kind. Core descriptors currently cover:
+`Payload` is a MessagePack array of generated snapshot contracts for one registered entity kind. Core descriptors currently cover:
 
 - accounts
 - mobiles
 - items
 - bulletin board messages
 - help tickets
+
+Concrete entity snapshot contracts and their mappers are generated in `Moongate.UO.Data.Persistence.Entities`, next to the runtime entity types they represent.
 
 Within those buckets, `UOMobileEntity` currently persists:
 

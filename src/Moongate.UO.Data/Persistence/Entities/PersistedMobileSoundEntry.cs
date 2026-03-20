@@ -1,16 +1,14 @@
 using Moongate.Generators.Annotations.Persistence;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.UO.Data.Persistence.Entities;
 
 [MoongatePersistedEntity]
-public sealed class MobileStats
+public sealed class PersistedMobileSoundEntry
 {
     [MoongatePersistedMember(0)]
-    public int Strength { get; set; }
+    public MobileSoundType SoundType { get; set; }
 
     [MoongatePersistedMember(1)]
-    public int Dexterity { get; set; }
-
-    [MoongatePersistedMember(2)]
-    public int Intelligence { get; set; }
+    public int SoundId { get; set; }
 }

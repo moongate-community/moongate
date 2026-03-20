@@ -3,14 +3,11 @@ using Moongate.Generators.Annotations.Persistence;
 namespace Moongate.UO.Data.Persistence.Entities;
 
 [MoongatePersistedEntity]
-public sealed class MobileStats
+public sealed class PersistedItemCustomPropertyEntry
 {
     [MoongatePersistedMember(0)]
-    public int Strength { get; set; }
+    public string Key { get; set; } = string.Empty;
 
     [MoongatePersistedMember(1)]
-    public int Dexterity { get; set; }
-
-    [MoongatePersistedMember(2)]
-    public int Intelligence { get; set; }
+    public ItemCustomProperty Property { get; set; } = new();
 }

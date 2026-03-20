@@ -8,7 +8,7 @@ The persistence layer provides:
 
 - Full world checkpoint in one snapshot file
 - Incremental operations in one journal file
-- MessagePack-CSharp source-generated serialization for compact binary payloads
+- MessagePack-CSharp serialization over source-generated snapshot contracts
 - Per-entry journal checksum validation
 - Thread-safe repositories over shared in-memory state
 - Registry-driven entity descriptors with stable manual `TypeId` values
@@ -48,6 +48,7 @@ Implemented behavior:
 - Written by `MessagePackSnapshotService`
 - Uses `MessagePackSerializer.Serialize(...)`
 - Saved by rewriting the snapshot file on a lock-held stream.
+- Concrete entity snapshot contracts and mappers are generated next to persisted entity types in `Moongate.UO.Data.Persistence.Entities`.
 
 ## Journal
 

@@ -17,9 +17,15 @@
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Generators.Annotations\Moongate.Generators.Annotations.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Moongate.Generators\Moongate.Generators.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MessagePack" Version="3.1.4"/>
         <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
             <PrivateAssets>all</PrivateAssets>

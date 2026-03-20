@@ -1,3 +1,4 @@
+using Moongate.Generators.Annotations.Persistence;
 using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -13,7 +14,7 @@ namespace Moongate.UO.Data.Persistence.Entities;
 /// <summary>
 /// Minimal mobile entity implementation used by race and map systems.
 /// </summary>
-public class UOMobileEntity : IMobileEntity
+public partial class UOMobileEntity : IMobileEntity
 {
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
@@ -27,26 +28,31 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the unique mobile serial.
     /// </summary>
+    [MoongatePersistedMember(0)]
     public Serial Id { get; set; }
 
     /// <summary>
     /// Gets or sets the owning account serial when this mobile belongs to a player account.
     /// </summary>
+    [MoongatePersistedMember(1)]
     public Serial AccountId { get; set; }
 
     /// <summary>
     /// Gets or sets the mobile display name.
     /// </summary>
+    [MoongatePersistedMember(2)]
     public string? Name { get; set; }
 
     /// <summary>
     /// Gets or sets the optional title shown with the mobile name.
     /// </summary>
+    [MoongatePersistedMember(3)]
     public string? Title { get; set; }
 
     /// <summary>
     /// Gets or sets the configured brain identifier used by scripted AI.
     /// </summary>
+    [MoongatePersistedMember(4)]
     public string? BrainId { get; set; }
 
     /// <summary>
@@ -57,6 +63,7 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the world map identifier.
     /// </summary>
+    [MoongatePersistedMember(6)]
     public int MapId { get; set; }
 
     /// <summary>
@@ -71,26 +78,31 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the world-facing direction.
     /// </summary>
+    [MoongatePersistedMember(7)]
     public DirectionType Direction { get; set; }
 
     /// <summary>
     /// Gets or sets whether this mobile is player-controlled.
     /// </summary>
+    [MoongatePersistedMember(8)]
     public bool IsPlayer { get; set; }
 
     /// <summary>
     /// Gets or sets whether this mobile is alive.
     /// </summary>
+    [MoongatePersistedMember(9)]
     public bool IsAlive { get; set; } = true;
 
     /// <summary>
     /// Gets or sets the mobile gender.
     /// </summary>
+    [MoongatePersistedMember(10)]
     public GenderType Gender { get; set; }
 
     /// <summary>
     /// Gets or sets the race table index.
     /// </summary>
+    [MoongatePersistedMember(11)]
     public byte RaceIndex { get; set; }
 
     /// <summary>
@@ -105,6 +117,7 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the profession identifier.
     /// </summary>
+    [MoongatePersistedMember(12)]
     public int ProfessionId { get; set; }
 
     /// <summary>
@@ -128,26 +141,31 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the skin hue.
     /// </summary>
+    [MoongatePersistedMember(13)]
     public short SkinHue { get; set; }
 
     /// <summary>
     /// Gets or sets the hair style.
     /// </summary>
+    [MoongatePersistedMember(14)]
     public short HairStyle { get; set; }
 
     /// <summary>
     /// Gets or sets the hair hue.
     /// </summary>
+    [MoongatePersistedMember(15)]
     public short HairHue { get; set; }
 
     /// <summary>
     /// Gets or sets the facial hair style.
     /// </summary>
+    [MoongatePersistedMember(16)]
     public short FacialHairStyle { get; set; }
 
     /// <summary>
     /// Gets or sets the facial hair hue.
     /// </summary>
+    [MoongatePersistedMember(17)]
     public short FacialHairHue { get; set; }
 
     /// <summary>
@@ -167,31 +185,37 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the persisted base stat values.
     /// </summary>
+    [MoongatePersistedMember(19)]
     public MobileStats BaseStats { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the persisted base resistance values.
     /// </summary>
+    [MoongatePersistedMember(20)]
     public MobileResistances BaseResistances { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the current and maximum resource values.
     /// </summary>
+    [MoongatePersistedMember(21)]
     public MobileResources Resources { get; set; } = new();
 
     /// <summary>
     /// Gets or sets the aggregated modifiers coming from equipped items.
     /// </summary>
+    [MoongatePersistedMember(22)]
     public MobileModifiers? EquipmentModifiers { get; set; }
 
     /// <summary>
     /// Gets or sets the aggregated runtime modifiers coming from buffs and debuffs.
     /// </summary>
+    [MoongatePersistedMember(23)]
     public MobileModifiers? RuntimeModifiers { get; set; }
 
     /// <summary>
     /// Gets or sets the modifier cap values used by modern status packets and effect validation.
     /// </summary>
+    [MoongatePersistedMember(24)]
     public MobileModifierCaps ModifierCaps { get; set; } = new();
 
     /// <summary>
@@ -278,31 +302,37 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the remaining unallocated skill points, when used by creation or progression flows.
     /// </summary>
+    [MoongatePersistedMember(25)]
     public int SkillPoints { get; set; }
 
     /// <summary>
     /// Gets or sets the remaining unallocated stat points, when used by creation or progression flows.
     /// </summary>
+    [MoongatePersistedMember(26)]
     public int StatPoints { get; set; }
 
     /// <summary>
     /// Gets or sets the total stat cap.
     /// </summary>
+    [MoongatePersistedMember(27)]
     public int StatCap { get; set; } = 225;
 
     /// <summary>
     /// Gets or sets the current follower slot usage.
     /// </summary>
+    [MoongatePersistedMember(28)]
     public int Followers { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum follower slots.
     /// </summary>
+    [MoongatePersistedMember(29)]
     public int FollowersMax { get; set; } = 5;
 
     /// <summary>
     /// Gets or sets the carried weight used by the modern status packet.
     /// </summary>
+    [MoongatePersistedMember(30)]
     public int Weight { get; set; }
 
     /// <summary>
@@ -333,21 +363,25 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the carrying capacity used by the modern status packet.
     /// </summary>
+    [MoongatePersistedMember(31)]
     public int MaxWeight { get; set; }
 
     /// <summary>
     /// Gets or sets the minimum weapon damage shown in the status packet.
     /// </summary>
+    [MoongatePersistedMember(32)]
     public int MinWeaponDamage { get; set; }
 
     /// <summary>
     /// Gets or sets the maximum weapon damage shown in the status packet.
     /// </summary>
+    [MoongatePersistedMember(33)]
     public int MaxWeaponDamage { get; set; }
 
     /// <summary>
     /// Gets or sets the tithing points shown in the status packet.
     /// </summary>
+    [MoongatePersistedMember(34)]
     public int Tithing { get; set; }
 
     /// <summary>
@@ -399,6 +433,7 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the base luck value before modifiers are applied.
     /// </summary>
+    [MoongatePersistedMember(35)]
     public int BaseLuck { get; set; }
 
     /// <summary>
@@ -504,6 +539,7 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the serial of the backpack item.
     /// </summary>
+    [MoongatePersistedMember(36)]
     public Serial BackpackId { get; set; }
 
     /// <summary>
@@ -530,6 +566,7 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets whether the mobile is in war mode.
     /// </summary>
+    [MoongatePersistedMember(39)]
     public bool IsWarMode { get; set; }
 
     /// <summary>
@@ -544,26 +581,31 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the hunger level.
     /// </summary>
+    [MoongatePersistedMember(40)]
     public int Hunger { get; set; }
 
     /// <summary>
     /// Gets or sets the thirst level.
     /// </summary>
+    [MoongatePersistedMember(41)]
     public int Thirst { get; set; }
 
     /// <summary>
     /// Gets or sets the fame value.
     /// </summary>
+    [MoongatePersistedMember(42)]
     public int Fame { get; set; }
 
     /// <summary>
     /// Gets or sets the karma value.
     /// </summary>
+    [MoongatePersistedMember(43)]
     public int Karma { get; set; }
 
     /// <summary>
     /// Gets or sets the murder count.
     /// </summary>
+    [MoongatePersistedMember(44)]
     public int Kills { get; set; }
 
     /// <summary>
@@ -578,31 +620,37 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets whether the mobile is hidden.
     /// </summary>
+    [MoongatePersistedMember(45)]
     public bool IsHidden { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is frozen.
     /// </summary>
+    [MoongatePersistedMember(46)]
     public bool IsFrozen { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is paralyzed.
     /// </summary>
+    [MoongatePersistedMember(47)]
     public bool IsParalyzed { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is flying.
     /// </summary>
+    [MoongatePersistedMember(48)]
     public bool IsFlying { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile ignores collision with other mobiles.
     /// </summary>
+    [MoongatePersistedMember(49)]
     public bool IgnoreMobiles { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is poisoned.
     /// </summary>
+    [MoongatePersistedMember(50)]
     public bool IsPoisoned { get; set; }
 
     /// <summary>
@@ -617,26 +665,31 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets whether the mobile is blessed.
     /// </summary>
+    [MoongatePersistedMember(51)]
     public bool IsBlessed { get; set; }
 
     /// <summary>
     /// Gets or sets whether the mobile is invulnerable.
     /// </summary>
+    [MoongatePersistedMember(52)]
     public bool IsInvulnerable { get; set; }
 
     /// <summary>
     /// Gets or sets the mounted companion mobile identifier for this rider.
     /// </summary>
+    [MoongatePersistedMember(55)]
     public Serial MountedMobileId { get; set; }
 
     /// <summary>
     /// Gets or sets the rider mobile identifier for this mount.
     /// </summary>
+    [MoongatePersistedMember(56)]
     public Serial RiderMobileId { get; set; }
 
     /// <summary>
     /// Gets or sets the visual item identifier projected on the mount layer while this mobile is mounted.
     /// </summary>
+    [MoongatePersistedMember(57)]
     public int MountedDisplayItemId { get; set; }
 
     /// <summary>
@@ -667,16 +720,19 @@ public class UOMobileEntity : IMobileEntity
     /// <summary>
     /// Gets or sets the notoriety level.
     /// </summary>
+    [MoongatePersistedMember(58)]
     public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
 
     /// <summary>
     /// Gets or sets the creation timestamp in UTC.
     /// </summary>
+    [MoongatePersistedMember(59)]
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     /// Gets or sets the last login timestamp in UTC.
     /// </summary>
+    [MoongatePersistedMember(60)]
     public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
 
     /// <summary>
