@@ -60,6 +60,11 @@ return {
       layer = "Shirt"
     },
     {
+      template_id = "Shoes",
+      layer = "Shoes",
+      hue = 0x0455
+    },
+    {
       template_id = "BankBox",
       layer = "Bank"
     }
@@ -73,6 +78,7 @@ return {
 - `amount`: optional stack amount, defaults to `1`
 - `args`: optional object copied into item custom properties
 - `layer`: required for `equip` entries; must match `ItemLayerType`
+- `hue`: optional item hue applied when the item is created
 
 ## Item Args
 
@@ -95,6 +101,20 @@ The current C# bridge maps these common book aliases automatically:
 - `writable` -> `book_writable`
 
 Other scalar values are written as item custom properties with the same key.
+
+## Hue Behavior
+
+Use the top-level `hue` field when a starter item should spawn with a fixed color:
+
+```lua
+{
+  template_id = "Shoes",
+  layer = "Shoes",
+  hue = 0x0455
+}
+```
+
+For `Shirt` and `Pants`, the client-selected character creation hues still win after the loadout is applied. Use `hue` for fixed-color items on other layers.
 
 ## Notes
 

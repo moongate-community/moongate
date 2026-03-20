@@ -26,6 +26,7 @@ public sealed class StartupLoadoutScriptParserTests
                 {
                     ["template_id"] = "Spellbook",
                     ["layer"] = "OneHanded",
+                    ["hue"] = 0x0455,
                     ["args"] = new Table(script)
                     {
                         ["title"] = "Arcane Notes",
@@ -48,6 +49,7 @@ public sealed class StartupLoadoutScriptParserTests
                 Assert.That(loadout.Equip, Has.Count.EqualTo(1));
                 Assert.That(loadout.Equip[0].TemplateId, Is.EqualTo("Spellbook"));
                 Assert.That(loadout.Equip[0].Layer, Is.EqualTo(Moongate.UO.Data.Types.ItemLayerType.OneHanded));
+                Assert.That(loadout.Equip[0].Hue, Is.EqualTo(0x0455));
                 Assert.That(loadout.Equip[0].Args.HasValue, Is.True);
                 Assert.That(loadout.Equip[0].Args!.Value.GetProperty("author").GetString(), Is.EqualTo("Tester"));
                 Assert.That(loadout.Equip[0].Args!.Value.GetProperty("pages").GetInt32(), Is.EqualTo(32));
@@ -156,6 +158,29 @@ public sealed class StartupLoadoutScriptParserTests
         Assert.That(
             () => StartupLoadoutScriptResultParser.Parse(result),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("layer")
+        );
+    }
+
+    [Test]
+    public void Parse_WhenHueIsInvalid_ShouldThrow()
+    {
+        var script = new Script();
+        var result = new Table(script)
+        {
+            ["equip"] = new Table(script)
+            {
+                [1] = new Table(script)
+                {
+                    ["template_id"] = "Shoes",
+                    ["layer"] = "Shoes",
+                    ["hue"] = "bad"
+                }
+            }
+        };
+
+        Assert.That(
+            () => StartupLoadoutScriptResultParser.Parse(result),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("hue")
         );
     }
 }

@@ -279,6 +279,71 @@ public class CharacterServiceTests
     }
 
     [Test]
+    public async Task CreateCharacterAsync_WhenLuaEquipHueIsSpecified_ShouldApplyHueToNonClientLayers()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new(),
+            new StaticStartupLoadoutScriptService(
+                new()
+                {
+                    Equip =
+                    {
+                        new()
+                        {
+                            TemplateId = "shirt",
+                            Layer = ItemLayerType.Shirt,
+                            Hue = 0x0123
+                        },
+                        new()
+                        {
+                            TemplateId = "pants",
+                            Layer = ItemLayerType.Pants,
+                            Hue = 0x0234
+                        },
+                        new()
+                        {
+                            TemplateId = "shoes",
+                            Layer = ItemLayerType.Shoes,
+                            Hue = 0x0345
+                        }
+                    }
+                }
+            )
+        );
+
+        var createdId = await service.CreateCharacterAsync(
+            new()
+            {
+                Name = "hue-mobile",
+                AccountId = (Serial)0x00000151,
+                IsPlayer = true
+            }
+        );
+
+        await service.ApplyStarterEquipmentHuesAsync(createdId, 0x0888, 0x0999);
+
+        var character = await persistence.UnitOfWork.Mobiles.GetByIdAsync(createdId);
+        var shirt = await persistence.UnitOfWork.Items.GetByIdAsync(character!.EquippedItemIds[ItemLayerType.Shirt]);
+        var pants = await persistence.UnitOfWork.Items.GetByIdAsync(character.EquippedItemIds[ItemLayerType.Pants]);
+        var shoes = await persistence.UnitOfWork.Items.GetByIdAsync(character.EquippedItemIds[ItemLayerType.Shoes]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(shirt, Is.Not.Null);
+                Assert.That(pants, Is.Not.Null);
+                Assert.That(shoes, Is.Not.Null);
+                Assert.That(shirt!.Hue, Is.EqualTo(0x0888));
+                Assert.That(pants!.Hue, Is.EqualTo(0x0999));
+                Assert.That(shoes!.Hue, Is.EqualTo(0x0345));
+            }
+        );
+    }
+
+    [Test]
     public async Task GetBackpackWithItemsAsync_ShouldReturnBackpackWithContainedItems()
     {
         using var temp = new TempDirectory();

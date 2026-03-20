@@ -338,6 +338,17 @@ public class CharacterService : ICharacterService
         }
     }
 
+    private static void ApplyItemDefinition(UOItemEntity item, StartupLoadoutItem itemDefinition)
+    {
+        item.Amount = Math.Max(1, itemDefinition.Amount);
+        ApplyItemArguments(item, itemDefinition.Args);
+
+        if (itemDefinition.Hue.HasValue)
+        {
+            item.Hue = (short)itemDefinition.Hue.Value;
+        }
+    }
+
     private async Task EnsureStarterBackpackAsync(UOMobileEntity character)
     {
         if (character.HasEquippedItem(ItemLayerType.Backpack))
@@ -366,8 +377,7 @@ public class CharacterService : ICharacterService
     )
     {
         var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
-        item.Amount = Math.Max(1, itemDefinition.Amount);
-        ApplyItemArguments(item, itemDefinition.Args);
+        ApplyItemDefinition(item, itemDefinition);
 
         var position = new Moongate.UO.Data.Geometry.Point2D(index + 1, index + 1);
         backpack.AddItem(item, position);
@@ -394,7 +404,6 @@ public class CharacterService : ICharacterService
         }
 
         var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
-        item.Amount = Math.Max(1, itemDefinition.Amount);
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
         item.EquippedMobileId = character.Id;
@@ -405,7 +414,7 @@ public class CharacterService : ICharacterService
             item.GumpId = 0x0042;
         }
 
-        ApplyItemArguments(item, itemDefinition.Args);
+        ApplyItemDefinition(item, itemDefinition);
         character.AddEquippedItem(itemDefinition.Layer.Value, item);
 
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);

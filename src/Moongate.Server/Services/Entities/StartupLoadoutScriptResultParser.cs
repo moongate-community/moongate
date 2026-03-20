@@ -121,12 +121,28 @@ public static class StartupLoadoutScriptResultParser
             layer = parsedLayer;
         }
 
+        int? hue = null;
+        var hueValue = itemTable.Get("hue");
+
+        if (hueValue.Type != DataType.Nil && hueValue.Type != DataType.Void)
+        {
+            if (hueValue.Type != DataType.Number)
+            {
+                throw new InvalidOperationException(
+                    $"Lua starting loadout entry '{templateId.String}' has invalid 'hue'."
+                );
+            }
+
+            hue = Convert.ToInt32(hueValue.Number);
+        }
+
         return new()
         {
             TemplateId = templateId.String!,
             Amount = amount,
             Args = args,
-            Layer = layer
+            Layer = layer,
+            Hue = hue
         };
     }
 

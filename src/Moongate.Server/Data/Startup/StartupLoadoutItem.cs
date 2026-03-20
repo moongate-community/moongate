@@ -27,4 +27,9 @@ public sealed class StartupLoadoutItem
     /// Gets or sets the target equipment layer when the item should be equipped.
     /// </summary>
     public ItemLayerType? Layer { get; init; }
+
+    /// <summary>
+    /// Gets or sets the optional hue to apply when the item is created.
+    /// </summary>
+    public int? Hue { get; init; }
 }
