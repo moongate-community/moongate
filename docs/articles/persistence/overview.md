@@ -91,6 +91,8 @@ Current repositories:
 
 They append generic journal entries on mutation and query from in-memory state. Shared CRUD behavior is implemented once in a generic repository core, while domain repositories keep only domain-specific queries.
 
+If you want to register and use your own persisted entity type, see [How to Add and Use a Custom Persisted Entity](custom-persisted-entities.md).
+
 ## Domain Snapshot Notes
 
 Current persistence is no longer just flat account/mobile/item records.
@@ -114,4 +116,4 @@ Important runtime-facing data now persisted in snapshots includes:
 
 ---
 
-**Previous**: [Persistence Repositories](repositories.md) | **Next**: [Data Format](format.md)
+**Previous**: [Custom Persisted Entities](custom-persisted-entities.md) | **Next**: [Data Format](format.md)

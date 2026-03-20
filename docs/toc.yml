@@ -68,6 +68,8 @@
     href: articles/persistence/format.md
   - name: Repositories
     href: articles/persistence/repositories.md
+  - name: Custom Persisted Entities
+    href: articles/persistence/custom-persisted-entities.md
 
 - name: Networking
   href: articles/networking/

@@ -38,6 +38,7 @@ This is the main documentation portal for Moongate v2.
 - [Overview](articles/persistence/overview.md)
 - [Data Format](articles/persistence/format.md)
 - [Repositories](articles/persistence/repositories.md)
+- [Custom Persisted Entities](articles/persistence/custom-persisted-entities.md)
 
 ## Networking
 

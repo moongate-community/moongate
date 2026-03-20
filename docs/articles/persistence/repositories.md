@@ -79,6 +79,8 @@ Notes:
 - lifecycle (`InitializeAsync`, `SaveSnapshotAsync`)
 - registry-driven snapshot capture / replay for every registered entity descriptor
 
+For registering a new entity kind and using the generic repository path, see [How to Add and Use a Custom Persisted Entity](custom-persisted-entities.md).
+
 ## Runtime Behavior
 
 - Repositories operate against in-memory `PersistenceStateStore`.
@@ -96,4 +98,4 @@ Repository operations synchronize through state-store locking to ensure consiste
 
 ---
 
-**Previous**: [Data Format](format.md) | **Next**: [Persistence Overview](overview.md)
+**Previous**: [Data Format](format.md) | **Next**: [Custom Persisted Entities](custom-persisted-entities.md)
