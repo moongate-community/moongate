@@ -65,6 +65,9 @@ public sealed class ItemFactoryService : IItemFactoryService
             Hue = template.Hue.Resolve(),
             GumpId = ResolveGumpId(template),
             ScriptId = template.ScriptId,
+            WeaponSkill = template.WeaponSkill,
+            AmmoItemId = ToNullableItemId(template.Ammo),
+            AmmoEffectId = ToNullableItemId(template.AmmoFx),
             Location = Point3D.Zero,
             ParentContainerId = Serial.Zero,
             ContainerPosition = Point2D.Zero,
@@ -433,6 +436,9 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
     }
+
+    private static int? ToNullableItemId(int itemId)
+        => itemId > 0 ? itemId : null;
 
     private static int? ResolveGumpId(ItemTemplateDefinition template)
     {

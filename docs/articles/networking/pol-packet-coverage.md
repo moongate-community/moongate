@@ -93,7 +93,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x00` | Legacy create character | C -> S | `?Packet=0x00` | `CreateCharacterPacket` | `parse-only` | Legacy character creation path is not wired |
 | `0x01` | Disconnect notification | C -> S | `?Packet=0x01` | `DisconnectNotificationPacket` | `parse-only` | Session shutdown is not modeled via gameplay listener |
 | `0x03` | Talk request | C -> S | `?Packet=0x03` | `TalkRequestPacket` | `parse-only` | Legacy speech path not wired; Unicode path is used |
-| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, enters warmode, schedules melee swing |
+| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, enters warmode, and schedules the weapon-driven auto-attack loop (melee or ranged) |
 | `0x12` | Skill or action use request | C -> S | `?Packet=0x12` | `RequestSkillUsePacket` | `parse-only` | Skill-use flow still missing |
 | `0x2C` | Resurrection menu | both | `?Packet=0x2C` | `ResurrectionMenuPacket` | `parse-only` | No resurrect handler yet |
 | `0x3B` | Buy items | C -> S | `?Packet=0x3B` | `BuyItemsPacket` | `parse-only` | Vendor buy flow missing |

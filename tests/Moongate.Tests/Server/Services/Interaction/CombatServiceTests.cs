@@ -6,7 +6,9 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Combat;
+using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
@@ -142,6 +144,87 @@ public sealed class CombatServiceTests
             CancellationToken cancellationToken = default
         )
             => Task.FromResult((false, (UOMobileEntity?)null));
+    }
+
+    private sealed class InMemoryItemService : IItemService
+    {
+        private readonly Dictionary<Serial, UOItemEntity> _items = new();
+
+        public void Add(UOItemEntity item)
+            => _items[item.Id] = item;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+        {
+            foreach (var item in items)
+            {
+                _items[item.Id] = item;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+            => Task.FromException<UOItemEntity?>(new NotSupportedException());
+
+        public Task<Serial> CreateItemAsync(UOItemEntity item)
+            => Task.FromException<Serial>(new NotSupportedException());
+
+        public Task<bool> DeleteItemAsync(Serial itemId)
+            => Task.FromResult(_items.Remove(itemId));
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
+            => Task.FromException<DropItemToGroundResult?>(new NotSupportedException());
+
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
+            => Task.FromException<bool>(new NotSupportedException());
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+            => Task.FromResult(new List<UOItemEntity>());
+
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+        {
+            _items.TryGetValue(itemId, out var item);
+
+            return Task.FromResult(item);
+        }
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+            => Task.FromResult(_items.Values.Where(item => item.ParentContainerId == containerId).ToList());
+
+        public Task<bool> MoveItemToContainerAsync(
+            Serial itemId,
+            Serial containerId,
+            Point2D position,
+            long sessionId = 0
+        )
+            => Task.FromException<bool>(new NotSupportedException());
+
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => Task.FromException<bool>(new NotSupportedException());
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => Task.FromException<UOItemEntity>(new NotSupportedException());
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((_items.TryGetValue(itemId, out var item), item));
+
+        public Task UpsertItemAsync(UOItemEntity item)
+        {
+            _items[item.Id] = item;
+
+            return Task.CompletedTask;
+        }
+
+        public Task UpsertItemsAsync(params UOItemEntity[] items)
+            => BulkUpsertItemsAsync(items);
     }
 
     private sealed class DeathServiceSpy : IDeathService
@@ -297,6 +380,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             new DeathServiceSpy()
         );
 
@@ -368,6 +452,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             new DeathServiceSpy()
         );
 
@@ -402,6 +487,323 @@ public sealed class CombatServiceTests
                 Assert.That(hitEvent.Defender, Is.SameAs(defender));
                 Assert.That(aggressiveActionEvent.Attacker, Is.SameAs(attacker));
                 Assert.That(aggressiveActionEvent.Defender, Is.SameAs(defender));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenRangedWeaponHasAmmoAndTargetIsWithinWeaponRange_ShouldConsumeAmmoAndBroadcastProjectile()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000030u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        attacker.SetSkill(UOSkillName.Archery, 1000);
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000030u,
+            ItemId = 0x13B2,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new()
+            {
+                DamageMin = 6,
+                DamageMax = 6,
+                RangeMin = 1,
+                RangeMax = 10
+            }
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000031u,
+            ItemId = 0x0E75,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Backpack
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000032u,
+            ItemId = 0x0F3F,
+            Amount = 3,
+            IsStackable = true
+        };
+        backpack.AddItem(arrows, Point2D.Zero);
+        attacker.BackpackId = backpack.Id;
+        attacker.HydrateEquipmentRuntime([bow, backpack]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000031u,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        itemService.Add(backpack);
+        itemService.Add(arrows);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        var projectile = spatial.BroadcastPackets.OfType<GraphicalEffectPacket>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(defender.Hits, Is.EqualTo(34));
+                Assert.That(arrows.Amount, Is.EqualTo(2));
+                Assert.That(projectile.ItemId, Is.EqualTo(0x1BFE));
+                Assert.That(projectile.SourceId, Is.EqualTo(attacker.Id));
+                Assert.That(projectile.TargetId, Is.EqualTo(defender.Id));
+                Assert.That(projectile.SourceLocation, Is.EqualTo(attacker.Location));
+                Assert.That(projectile.TargetLocation, Is.EqualTo(defender.Location));
+                Assert.That(spatial.BroadcastPackets.Any(packet => packet is FightOccurringPacket), Is.True);
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenRangedWeaponHasNoAmmo_ShouldClearCombatantWithoutApplyingDamage()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000032u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000033u,
+            ItemId = 0x13B2,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new()
+            {
+                DamageMin = 6,
+                DamageMax = 6,
+                RangeMin = 1,
+                RangeMax = 10
+            }
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000034u,
+            ItemId = 0x0E75,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Backpack
+        };
+        attacker.BackpackId = backpack.Id;
+        attacker.HydrateEquipmentRuntime([bow, backpack]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000033u,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        itemService.Add(backpack);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(attacker.CombatantId, Is.EqualTo(Serial.Zero));
+                Assert.That(defender.Hits, Is.EqualTo(40));
+                Assert.That(spatial.BroadcastPackets.OfType<GraphicalEffectPacket>(), Is.Empty);
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent or CombatMissEvent), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenRangedArcheryIsOutmatched_ShouldPublishMissAndStillConsumeAmmo()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000034u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        attacker.SetSkill(UOSkillName.Archery, 0);
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000035u,
+            ItemId = 0x13B2,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new()
+            {
+                DamageMin = 6,
+                DamageMax = 6,
+                RangeMin = 1,
+                RangeMax = 10
+            }
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000036u,
+            ItemId = 0x0E75,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Backpack
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000037u,
+            ItemId = 0x0F3F,
+            Amount = 2,
+            IsStackable = true
+        };
+        backpack.AddItem(arrows, Point2D.Zero);
+        attacker.BackpackId = backpack.Id;
+        attacker.HydrateEquipmentRuntime([bow, backpack]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000035u,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+        defender.SetSkill(UOSkillName.Wrestling, 1000);
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        itemService.Add(backpack);
+        itemService.Add(arrows);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(defender.Hits, Is.EqualTo(40));
+                Assert.That(arrows.Amount, Is.EqualTo(1));
+                Assert.That(spatial.BroadcastPackets.OfType<GraphicalEffectPacket>().Count(), Is.EqualTo(1));
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatMissEvent), Is.True);
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent), Is.False);
             }
         );
     }
@@ -467,6 +869,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             new DeathServiceSpy()
         );
 
@@ -540,6 +943,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             new DeathServiceSpy()
         );
 
@@ -607,6 +1011,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             new DeathServiceSpy()
         );
 
@@ -696,6 +1101,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             new DeathServiceSpy()
         );
 
@@ -766,6 +1172,7 @@ public sealed class CombatServiceTests
             timerService,
             spatial,
             eventBus,
+            new InMemoryItemService(),
             deathService
         );
 

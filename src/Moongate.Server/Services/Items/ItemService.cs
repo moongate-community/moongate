@@ -79,6 +79,25 @@ public sealed class ItemService : IItemService
             ContainerPosition = item.ContainerPosition,
             EquippedMobileId = item.EquippedMobileId,
             EquippedLayer = item.EquippedLayer,
+            WeaponSkill = item.WeaponSkill,
+            AmmoItemId = item.AmmoItemId,
+            AmmoEffectId = item.AmmoEffectId,
+            CombatStats = item.CombatStats is null
+                ? null
+                : new()
+                {
+                    MinStrength = item.CombatStats.MinStrength,
+                    MinDexterity = item.CombatStats.MinDexterity,
+                    MinIntelligence = item.CombatStats.MinIntelligence,
+                    DamageMin = item.CombatStats.DamageMin,
+                    DamageMax = item.CombatStats.DamageMax,
+                    Defense = item.CombatStats.Defense,
+                    AttackSpeed = item.CombatStats.AttackSpeed,
+                    RangeMin = item.CombatStats.RangeMin,
+                    RangeMax = item.CombatStats.RangeMax,
+                    MaxDurability = item.CombatStats.MaxDurability,
+                    CurrentDurability = item.CombatStats.CurrentDurability
+                },
             ContainedItemIds = [.. item.ContainedItemIds]
         };
 
@@ -489,6 +508,8 @@ public sealed class ItemService : IItemService
             return null;
         }
 
+        BackfillTemplateCombatMetadata(item);
+
         List<Serial> childIds;
 
         if (item.ContainedItemIds.Count > 0)
@@ -559,6 +580,48 @@ public sealed class ItemService : IItemService
 
         return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
     }
+
+    private void BackfillTemplateCombatMetadata(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!TryResolveItemTemplate(item, out var template) || template is null)
+        {
+            return;
+        }
+
+        item.WeaponSkill ??= template.WeaponSkill;
+
+        if (item.AmmoItemId is null)
+        {
+            item.AmmoItemId = ToNullableItemId(template.Ammo);
+        }
+
+        if (item.AmmoEffectId is null)
+        {
+            item.AmmoEffectId = ToNullableItemId(template.AmmoFx);
+        }
+
+        if (template.BaseRange <= 0 && template.MaxRange <= 0)
+        {
+            return;
+        }
+
+        item.CombatStats ??= new ItemCombatStats();
+
+        if (item.CombatStats.RangeMin <= 0)
+        {
+            item.CombatStats.RangeMin = template.BaseRange;
+        }
+
+        if (item.CombatStats.RangeMax <= 0)
+        {
+            item.CombatStats.RangeMax = template.MaxRange;
+        }
+    }
+
+    private static int? ToNullableItemId(int itemId)
+        => itemId > 0 ? itemId : null;
 
     private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)
     {

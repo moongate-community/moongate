@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Combat;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
@@ -38,6 +39,7 @@ public sealed class CombatService : ICombatService
     private readonly ITimerService _timerService;
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IItemService _itemService;
     private readonly IDeathService _deathService;
     private readonly Lock _syncRoot = new();
     private readonly Dictionary<Serial, int> _combatSequences = [];
@@ -49,6 +51,7 @@ public sealed class CombatService : ICombatService
         ITimerService timerService,
         ISpatialWorldService spatialWorldService,
         IGameEventBusService gameEventBusService,
+        IItemService itemService,
         IDeathService deathService
     )
     {
@@ -58,6 +61,7 @@ public sealed class CombatService : ICombatService
         _timerService = timerService;
         _spatialWorldService = spatialWorldService;
         _gameEventBusService = gameEventBusService;
+        _itemService = itemService;
         _deathService = deathService;
     }
 
@@ -175,7 +179,16 @@ public sealed class CombatService : ICombatService
     }
 
     private static bool ResolveHit(UOMobileEntity attacker, UOMobileEntity defender)
-        => 50 + attacker.EffectiveHitChanceIncrease >= 50 + defender.EffectiveDefenseChanceIncrease;
+        => ResolveHitScore(attacker, defender) >= 0.5;
+
+    private static double ResolveHitScore(UOMobileEntity attacker, UOMobileEntity defender)
+    {
+        var attackSkillValue = GetSkillValue(attacker, ResolveAttackSkill(attacker));
+        var defenseSkillValue = GetSkillValue(defender, ResolveDefenseSkill(defender));
+        var modifierDelta = (attacker.EffectiveHitChanceIncrease - defender.EffectiveDefenseChanceIncrease) / 100.0;
+
+        return Math.Clamp(0.5 + ((attackSkillValue - defenseSkillValue) / 200.0) + modifierDelta, 0.0, 1.0);
+    }
 
     private static string? ResolveBlockedReason(UOMobileEntity attacker, UOMobileEntity defender)
     {
@@ -243,6 +256,12 @@ public sealed class CombatService : ICombatService
     private static double GetSkillValue(UOMobileEntity mobile, UOSkillName skillName)
         => (mobile.GetSkill(skillName)?.Value ?? 0.0) / 10.0;
 
+    private static UOSkillName ResolveAttackSkill(UOMobileEntity attacker)
+        => ResolveWeapon(attacker)?.WeaponSkill ?? UOSkillName.Wrestling;
+
+    private static UOSkillName ResolveDefenseSkill(UOMobileEntity defender)
+        => ResolveWeapon(defender)?.WeaponSkill ?? UOSkillName.Wrestling;
+
     private async Task<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
     {
         if (_gameNetworkSessionService.TryGetByCharacterId(mobileId, out var session) && session.Character is not null)
@@ -260,6 +279,19 @@ public sealed class CombatService : ICombatService
                                ItemLayerType.TwoHanded or
                                ItemLayerType.FirstValid
                    );
+
+    private static AttackProfile ResolveAttackProfile(UOMobileEntity attacker)
+    {
+        var weapon = ResolveWeapon(attacker);
+        var maxRange = weapon?.CombatStats?.RangeMax ?? 0;
+
+        if (maxRange <= 0)
+        {
+            maxRange = MeleeRange;
+        }
+
+        return new(weapon, maxRange, weapon?.AmmoItemId, weapon?.AmmoEffectId);
+    }
 
     private static TimeSpan ResolveSwingDelay(UOMobileEntity attacker)
     {
@@ -343,8 +375,9 @@ public sealed class CombatService : ICombatService
         }
 
         var delay = ResolveSwingDelay(attacker);
+        var attackProfile = ResolveAttackProfile(attacker);
 
-        if (!attacker.Location.InRange(defender.Location, MeleeRange))
+        if (!attacker.Location.InRange(defender.Location, attackProfile.MaxRange))
         {
             attacker.NextCombatAtUtc = DateTime.UtcNow.Add(delay);
             await PersistMobileAsync(attacker, CancellationToken.None);
@@ -369,11 +402,33 @@ public sealed class CombatService : ICombatService
             return;
         }
 
+        if (attackProfile.IsRanged &&
+            !await TryConsumeAmmoAsync(attacker, attackProfile.AmmoItemId!.Value, CancellationToken.None))
+        {
+            await ClearCombatantAsync(attacker.Id, CancellationToken.None);
+            return;
+        }
+
         await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
             new FightOccurringPacket(attacker.Id, defender.Id),
             attacker.MapId,
             attacker.Location
         );
+
+        if (attackProfile.IsRanged && attackProfile.ProjectileEffectId is not null)
+        {
+            await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+                EffectsFactory.CreateMoving(
+                    (ushort)attackProfile.ProjectileEffectId.Value,
+                    attacker.Id,
+                    defender.Id,
+                    attacker.Location,
+                    defender.Location
+                ),
+                attacker.MapId,
+                attacker.Location
+            );
+        }
 
         if (AnimationUtils.TryResolveAnimation(
                 AnimationIntent.SwingPrimary,
@@ -479,5 +534,109 @@ public sealed class CombatService : ICombatService
         }
 
         entries.Add(updatedEntry);
+    }
+
+    private async Task<bool> TryConsumeAmmoAsync(
+        UOMobileEntity attacker,
+        int ammoItemId,
+        CancellationToken cancellationToken
+    )
+    {
+        var backpackId = ResolveBackpackId(attacker);
+
+        if (backpackId == Serial.Zero)
+        {
+            return false;
+        }
+
+        var backpack = await _itemService.GetItemAsync(backpackId);
+
+        if (backpack is null)
+        {
+            return false;
+        }
+
+        if (!TryConsumeAmmoRecursive(backpack, ammoItemId, out var changedStack, out var deletedStack))
+        {
+            return false;
+        }
+
+        if (changedStack is not null)
+        {
+            await _itemService.UpsertItemAsync(changedStack);
+        }
+
+        if (deletedStack is not null)
+        {
+            _ = await _itemService.DeleteItemAsync(deletedStack.Id);
+        }
+
+        _ = cancellationToken;
+        return true;
+    }
+
+    private static Serial ResolveBackpackId(UOMobileEntity attacker)
+    {
+        if (attacker.BackpackId != Serial.Zero)
+        {
+            return attacker.BackpackId;
+        }
+
+        return attacker.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var backpackId)
+                   ? backpackId
+                   : Serial.Zero;
+    }
+
+    private static bool TryConsumeAmmoRecursive(
+        UOItemEntity container,
+        int ammoItemId,
+        out UOItemEntity? changedStack,
+        out UOItemEntity? deletedStack
+    )
+    {
+        changedStack = null;
+        deletedStack = null;
+
+        for (var index = container.Items.Count - 1; index >= 0; index--)
+        {
+            var child = container.Items[index];
+
+            if (child.ItemId == ammoItemId)
+            {
+                child.Amount--;
+
+                if (child.Amount <= 0)
+                {
+                    container.RemoveItem(child.Id);
+                    deletedStack = child;
+                }
+                else
+                {
+                    changedStack = child;
+                }
+
+                return true;
+            }
+
+            if (TryConsumeAmmoRecursive(child, ammoItemId, out changedStack, out deletedStack))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private readonly record struct AttackProfile(
+        UOItemEntity? Weapon,
+        int MaxRange,
+        int? AmmoItemId,
+        int? ProjectileEffectId
+    )
+    {
+        public bool IsRanged => Weapon is not null &&
+                                AmmoItemId is not null &&
+                                ProjectileEffectId is not null &&
+                                MaxRange > MeleeRange;
     }
 }

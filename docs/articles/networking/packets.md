@@ -99,7 +99,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
 | `0xB1` | Gump Menu Selection | C -> S | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump button replies |
 | `0x9B` | Request Help | C -> S | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService` | Opens the Lua help-ticket wizard and submits persisted tickets through `help_tickets` |
-| `0x05` | Request Attack | C -> S | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, forces warmode, schedules melee swing |
+| `0x05` | Request Attack | C -> S | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, forces warmode, and schedules the current weapon auto-attack flow (melee or ranged) |
 | `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use / open flows |
 | `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels / tooltip-side behavior |
 | `0x07` | Pick Up Item | C -> S | `PickUpItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Drag start |

@@ -66,6 +66,24 @@ public partial class UOItemEntity : IItemEntity
     public ItemModifiers? Modifiers { get; set; }
 
     /// <summary>
+    /// Gets or sets the weapon skill used by this item when it is a weapon.
+    /// </summary>
+    [MemoryPackOrder(22)]
+    public UOSkillName? WeaponSkill { get; set; }
+
+    /// <summary>
+    /// Gets or sets the ammo item id used by ranged weapons.
+    /// </summary>
+    [MemoryPackOrder(23)]
+    public int? AmmoItemId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the projectile effect item id used by ranged weapons.
+    /// </summary>
+    [MemoryPackOrder(24)]
+    public int? AmmoEffectId { get; set; }
+
+    /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
     [MemoryPackOrder(16)]
@@ -213,6 +231,9 @@ public partial class UOItemEntity : IItemEntity
         hash.Add(Modifiers?.Luck ?? 0);
         hash.Add(Modifiers?.SpellChanneling ?? 0);
         hash.Add(Modifiers?.UsesRemaining ?? 0);
+        hash.Add(WeaponSkill);
+        hash.Add(AmmoItemId);
+        hash.Add(AmmoEffectId);
         hash.Add(ParentContainerId);
         hash.Add(ContainerPosition);
         hash.Add(EquippedMobileId);

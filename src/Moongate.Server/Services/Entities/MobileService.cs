@@ -1,11 +1,13 @@
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
@@ -449,7 +451,13 @@ public sealed class MobileService : IMobileService
 
                 item.EquippedMobileId = mobile.Id;
                 item.EquippedLayer = layer;
+                BackfillTemplateCombatMetadata(item);
                 inferredItems.Add(item);
+            }
+
+            foreach (var item in hydratedItemsById.Values)
+            {
+                BackfillTemplateCombatMetadata(item);
             }
 
             if (inferredItems.Count > 0)
@@ -556,4 +564,59 @@ public sealed class MobileService : IMobileService
             );
         }
     }
+
+    private void BackfillTemplateCombatMetadata(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!TryResolveItemTemplate(item, out var template) || template is null)
+        {
+            return;
+        }
+
+        item.WeaponSkill ??= template.WeaponSkill;
+
+        if (item.AmmoItemId is null)
+        {
+            item.AmmoItemId = ToNullableItemId(template.Ammo);
+        }
+
+        if (item.AmmoEffectId is null)
+        {
+            item.AmmoEffectId = ToNullableItemId(template.AmmoFx);
+        }
+
+        if (template.BaseRange <= 0 && template.MaxRange <= 0)
+        {
+            return;
+        }
+
+        item.CombatStats ??= new ItemCombatStats();
+
+        if (item.CombatStats.RangeMin <= 0)
+        {
+            item.CombatStats.RangeMin = template.BaseRange;
+        }
+
+        if (item.CombatStats.RangeMax <= 0)
+        {
+            item.CombatStats.RangeMax = template.MaxRange;
+        }
+    }
+
+    private bool TryResolveItemTemplate(UOItemEntity item, out ItemTemplateDefinition? template)
+    {
+        template = null;
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) ||
+            string.IsNullOrWhiteSpace(templateId))
+        {
+            return false;
+        }
+
+        return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
+    }
+
+    private static int? ToNullableItemId(int itemId)
+        => itemId > 0 ? itemId : null;
 }
