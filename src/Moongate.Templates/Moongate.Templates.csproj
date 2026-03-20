@@ -1,0 +1,88 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <UsingTask
+        TaskName="RenderTemplateContent"
+        TaskFactory="RoslynCodeTaskFactory"
+        AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <SourceDirectory ParameterType="System.String" Required="true" />
+            <OutputDirectory ParameterType="System.String" Required="true" />
+            <PackageVersion ParameterType="System.String" Required="true" />
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System" />
+            <Using Namespace="System.IO" />
+            <Code Type="Fragment" Language="cs"><![CDATA[
+                if (Directory.Exists(OutputDirectory))
+                {
+                    Directory.Delete(OutputDirectory, true);
+                }
+
+                Directory.CreateDirectory(OutputDirectory);
+
+                var normalizedSourceDirectory = Path.GetFullPath(SourceDirectory)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+                foreach (var filePath in Directory.EnumerateFiles(SourceDirectory, "*", SearchOption.AllDirectories))
+                {
+                    var normalizedFilePath = Path.GetFullPath(filePath);
+                    var relativePath = normalizedFilePath.Substring(normalizedSourceDirectory.Length)
+                        .TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    var destinationPath = Path.Combine(OutputDirectory, relativePath);
+                    var destinationDirectory = Path.GetDirectoryName(destinationPath);
+
+                    if (!string.IsNullOrWhiteSpace(destinationDirectory))
+                    {
+                        Directory.CreateDirectory(destinationDirectory);
+                    }
+
+                    var contents = File.ReadAllText(filePath);
+                    contents = contents.Replace("__MOONGATE_PACKAGE_VERSION__", PackageVersion);
+                    File.WriteAllText(destinationPath, contents);
+                }
+
+            ]]></Code>
+        </Task>
+    </UsingTask>
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>true</IsPackable>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
+        <NoDefaultExcludes>true</NoDefaultExcludes>
+        <PackageType>Template</PackageType>
+        <Description>dotnet new templates for building Moongate C# plugins.</Description>
+        <PackageTags>moongate;ultima-online;plugin;template;dotnet-new</PackageTags>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <TemplateContentDirectory>$(BaseIntermediateOutputPath)template-content</TemplateContentDirectory>
+        <IncludeSymbols>false</IncludeSymbols>
+        <NoWarn>$(NoWarn);NU5110;NU5111;NU5128</NoWarn>
+        <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackTemplateContent</TargetsForTfmSpecificContentInPackage>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="content/**" />
+        <EmbeddedResource Remove="content/**" />
+        <None Remove="content/**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" Visible="false" />
+    </ItemGroup>
+
+    <Target Name="PackTemplateContent">
+        <RenderTemplateContent
+            SourceDirectory="$(MSBuildProjectDirectory)/content"
+            OutputDirectory="$(TemplateContentDirectory)"
+            PackageVersion="$(Version)" />
+
+        <ItemGroup>
+            <TfmSpecificPackageFile Include="$(TemplateContentDirectory)/**;$(TemplateContentDirectory)/**/.*">
+                <PackagePath>content/%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+            </TfmSpecificPackageFile>
+        </ItemGroup>
+    </Target>
+
+</Project>

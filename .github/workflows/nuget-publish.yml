@@ -56,6 +56,7 @@ jobs:
             "src/Moongate.Persistence/Moongate.Persistence.csproj"
             "src/Moongate.Plugin.Abstractions/Moongate.Plugin.Abstractions.csproj"
             "src/Moongate.Server.Abstractions/Moongate.Server.Abstractions.csproj"
+            "src/Moongate.Templates/Moongate.Templates.csproj"
           )
 
           for project in "${packages[@]}"; do

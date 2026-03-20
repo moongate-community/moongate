@@ -1,0 +1,12 @@
+{
+  "id": "__PLUGIN_ID__",
+  "name": "PluginTemplate",
+  "version": "1.0.0",
+  "authors": [
+    "__PLUGIN_AUTHORS__"
+  ],
+  "description": "__PLUGIN_DESCRIPTION__",
+  "entryAssembly": "bin/PluginTemplate.dll",
+  "entryType": "PluginTemplate.Plugin",
+  "dependencies": []
+}

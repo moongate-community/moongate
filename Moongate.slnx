@@ -16,6 +16,7 @@
         <Project Path="src/Moongate.Server.Abstractions/Moongate.Server.Abstractions.csproj" />
         <Project Path="src/Moongate.Server.Metrics/Moongate.Server.Metrics.csproj" />
         <Project Path="src/Moongate.Server/Moongate.Server.csproj" />
+        <Project Path="src/Moongate.Templates/Moongate.Templates.csproj" />
         <Project Path="src/Moongate.UO.Data/Moongate.UO.Data.csproj" />
     </Folder>
     <Folder Name="/tests/">
