@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Internal.Plugins;
 using Moongate.Server.Interfaces.Services.Console;
 using Serilog;
 
@@ -20,4 +21,8 @@ public sealed class BootstrapContext
     public DirectoriesConfig DirectoriesConfig { get; set; } = null!;
 
     public ILogger Logger { get; set; } = null!;
+
+    internal PluginBootstrapRegistrations PluginRegistrations { get; set; } = new();
+
+    internal IReadOnlyList<LoadedPlugin> LoadedPlugins { get; set; } = [];
 }

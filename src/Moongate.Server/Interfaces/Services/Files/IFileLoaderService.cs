@@ -15,6 +15,12 @@ public interface IFileLoaderService : IMoongateService
     void AddFileLoader<T>() where T : IFileLoader;
 
     /// <summary>
+    /// Registers a file loader type if not already present in the execution pipeline.
+    /// </summary>
+    /// <param name="loaderType">The file loader type.</param>
+    void AddFileLoader(Type loaderType);
+
+    /// <summary>
     /// Executes all registered file loaders in their registration order.
     /// </summary>
     Task ExecuteLoadersAsync();

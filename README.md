@@ -95,6 +95,7 @@ UI default URL: `http://localhost:8088/`
 - Sector/chunk spatial system with lazy warmup and broadcast radius
 - Registry-driven snapshot buckets + journal persistence over MemoryPackable runtime entities
 - Lua scripting runtime for commands, gumps, item/mobile behavior
+- Startup-loaded C# plugins from the runtime `plugins/<plugin-id>/` directory
 - Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows

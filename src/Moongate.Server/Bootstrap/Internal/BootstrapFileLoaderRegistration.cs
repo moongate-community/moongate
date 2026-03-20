@@ -11,5 +11,16 @@ internal static partial class BootstrapFileLoaderRegistration
     public static void Register(IFileLoaderService fileLoaderService)
         => RegisterGenerated(fileLoaderService);
 
+    public static void Register(IFileLoaderService fileLoaderService, IEnumerable<Type> pluginLoaderTypes)
+    {
+        ArgumentNullException.ThrowIfNull(fileLoaderService);
+        ArgumentNullException.ThrowIfNull(pluginLoaderTypes);
+
+        foreach (var loaderType in pluginLoaderTypes)
+        {
+            fileLoaderService.AddFileLoader(loaderType);
+        }
+    }
+
     static partial void RegisterGenerated(IFileLoaderService fileLoaderService);
 }

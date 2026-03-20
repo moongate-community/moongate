@@ -19,6 +19,9 @@ public sealed class ReloadTemplateCommandTests
 
         public void AddFileLoader<T>() where T : IFileLoader { }
 
+        public void AddFileLoader(Type loaderType)
+            => _ = loaderType;
+
         public Task ExecuteLoadersAsync()
         {
             ExecuteCalls++;
