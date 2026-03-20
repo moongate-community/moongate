@@ -1,7 +1,7 @@
 using Moongate.Server.Attributes;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
-using Moongate.UO.Data.Interfaces.FileLoaders;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;

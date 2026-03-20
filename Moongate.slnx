@@ -1,26 +1,27 @@
 <Solution>
     <Folder Name="/benchmarks/">
-        <Project Path="benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj"/>
-        <Project Path="benchmarks/Moongate.Benchmarks.Compare/Moongate.Benchmarks.Compare.csproj"/>
+        <Project Path="benchmarks/Moongate.Benchmarks/Moongate.Benchmarks.csproj" />
+        <Project Path="benchmarks/Moongate.Benchmarks.Compare/Moongate.Benchmarks.Compare.csproj" />
     </Folder>
     <Folder Name="/src/">
-        <Project Path="src/Moongate.Abstractions/Moongate.Abstractions.csproj"/>
-        <Project Path="src/Moongate.Core/Moongate.Core.csproj"/>
-        <Project Path="src/Moongate.Email/Moongate.Email.csproj"/>
-        <Project Path="src/Moongate.Generators/Moongate.Generators.csproj"/>
-        <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj"/>
-        <Project Path="src/Moongate.Network/Moongate.Network.csproj"/>
-        <Project Path="src/Moongate.Persistence/Moongate.Persistence.csproj"/>
-        <Project Path="src/Moongate.Plugin.Abstractions/Moongate.Plugin.Abstractions.csproj"/>
-        <Project Path="src/Moongate.Scripting/Moongate.Scripting.csproj"/>
-        <Project Path="src/Moongate.Server.Metrics/Moongate.Server.Metrics.csproj"/>
-        <Project Path="src/Moongate.Server/Moongate.Server.csproj"/>
-        <Project Path="src/Moongate.UO.Data/Moongate.UO.Data.csproj"/>
+        <Project Path="src/Moongate.Abstractions/Moongate.Abstractions.csproj" />
+        <Project Path="src/Moongate.Core/Moongate.Core.csproj" />
+        <Project Path="src/Moongate.Email/Moongate.Email.csproj" />
+        <Project Path="src/Moongate.Generators/Moongate.Generators.csproj" />
+        <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj" />
+        <Project Path="src/Moongate.Network/Moongate.Network.csproj" />
+        <Project Path="src/Moongate.Persistence/Moongate.Persistence.csproj" />
+        <Project Path="src/Moongate.Plugin.Abstractions/Moongate.Plugin.Abstractions.csproj" />
+        <Project Path="src/Moongate.Scripting/Moongate.Scripting.csproj" />
+        <Project Path="src/Moongate.Server.Abstractions/Moongate.Server.Abstractions.csproj" />
+        <Project Path="src/Moongate.Server.Metrics/Moongate.Server.Metrics.csproj" />
+        <Project Path="src/Moongate.Server/Moongate.Server.csproj" />
+        <Project Path="src/Moongate.UO.Data/Moongate.UO.Data.csproj" />
     </Folder>
     <Folder Name="/tests/">
-        <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj"/>
+        <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj" />
     </Folder>
     <Folder Name="/tools/">
-        <Project Path="tools/Moongate.Stress/Moongate.Stress.csproj"/>
+        <Project Path="tools/Moongate.Stress/Moongate.Stress.csproj" />
     </Folder>
 </Solution>

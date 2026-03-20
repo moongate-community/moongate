@@ -2,7 +2,6 @@ using Moongate.Server.Commands;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Types.Commands;
-using Moongate.UO.Data.Interfaces.FileLoaders;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;

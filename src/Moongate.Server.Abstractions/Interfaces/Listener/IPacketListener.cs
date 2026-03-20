@@ -1,5 +1,5 @@
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Server.Data.Session;
+using Moongate.Server.Interfaces.Session;
 
 namespace Moongate.Server.Interfaces.Listener;
 
@@ -16,5 +16,5 @@ public interface IPacketListener
     /// <returns>
     /// <c>true</c> when the packet was handled successfully; otherwise <c>false</c>.
     /// </returns>
-    Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet);
+    Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet);
 }

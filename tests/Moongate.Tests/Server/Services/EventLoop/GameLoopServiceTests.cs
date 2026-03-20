@@ -8,6 +8,7 @@ using Moongate.Server.Services.EventLoop;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Interfaces.Session;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Utils;
 using Moongate.Tests.Server.Support;
@@ -42,7 +43,7 @@ public class GameLoopServiceTests
             _state = state;
         }
 
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        public Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
         {
             _ = session;
             _ = packet;
@@ -61,7 +62,7 @@ public class GameLoopServiceTests
             _state = state;
         }
 
-        public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+        public Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
         {
             _ = session;
             _ = packet;

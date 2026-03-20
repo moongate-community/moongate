@@ -1,12 +1,12 @@
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Listener;
+using Moongate.Server.Interfaces.Session;
 
 namespace Moongate.Benchmarks;
 
 public sealed class NoOpPacketListener : IPacketListener
 {
-    public Task<bool> HandlePacketAsync(GameSession session, IGameNetworkPacket packet)
+    public Task<bool> HandlePacketAsync(IGameSession session, IGameNetworkPacket packet)
     {
         _ = session;
         _ = packet;

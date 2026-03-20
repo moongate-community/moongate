@@ -1,4 +1,4 @@
-namespace Moongate.UO.Data.Interfaces.FileLoaders;
+namespace Moongate.Server.Interfaces.Services.Files;
 
 /// <summary>
 /// Defines an asynchronous loader for startup data files.

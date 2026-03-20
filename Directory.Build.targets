@@ -1,0 +1,11 @@
+<Project>
+
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+        <None Include="$(MSBuildThisFileDirectory)images/moongate_logo.png"
+              Pack="true"
+              PackagePath="/"
+              Visible="false"
+              Link="moongate_logo.png"/>
+    </ItemGroup>
+
+</Project>

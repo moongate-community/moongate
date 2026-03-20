@@ -7,8 +7,15 @@ namespace Moongate.Server.Attributes;
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class RegisterGameEventListenerAttribute : Attribute
 {
+    /// <summary>
+    /// Gets the startup priority for listener services that are also host services.
+    /// </summary>
     public int Priority { get; }
 
+    /// <summary>
+    /// Initializes a new attribute instance.
+    /// </summary>
+    /// <param name="priority">Startup priority for host-managed listeners.</param>
     public RegisterGameEventListenerAttribute(int priority = 200)
     {
         Priority = priority;

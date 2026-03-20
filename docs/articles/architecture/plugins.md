@@ -31,10 +31,19 @@ Only `manifest.json` and the configured entry assembly are required.
 
 ## Authoring a Plugin Project
 
-The minimum plugin project usually references `Moongate.Plugin.Abstractions`.
+The minimum plugin project usually references:
 
-If the plugin registers commands, packet handlers, listeners, or file loaders, it will typically also
-reference the Moongate assemblies that define those contracts.
+- `Moongate.Plugin.Abstractions`
+- `Moongate.Server.Abstractions`
+
+If the plugin registers custom persisted entities or works directly with runtime entities, it will
+typically also reference:
+
+- `Moongate.Persistence`
+- `Moongate.UO.Data`
+
+When consuming Moongate from NuGet, use package references instead of a project reference to
+`Moongate.Server`.
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -45,11 +54,51 @@ reference the Moongate assemblies that define those contracts.
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Moongate.Plugin.Abstractions\Moongate.Plugin.Abstractions.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj" />
+    <PackageReference Include="Moongate.Plugin.Abstractions" Version="0.34.0" />
+    <PackageReference Include="Moongate.Server.Abstractions" Version="0.34.0" />
   </ItemGroup>
 </Project>
 ```
+
+If you are developing the plugin inside the Moongate repository, local project references are still
+fine for day-to-day iteration:
+
+```xml
+<ItemGroup>
+  <ProjectReference Include="..\..\src\Moongate.Plugin.Abstractions\Moongate.Plugin.Abstractions.csproj" />
+  <ProjectReference Include="..\..\src\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj" />
+</ItemGroup>
+```
+
+## NuGet Packages
+
+The plugin SDK is intentionally split into a small set of publishable packages:
+
+- `Moongate.Plugin.Abstractions`
+- `Moongate.Server.Abstractions`
+- `Moongate.Persistence`
+- `Moongate.UO.Data`
+
+These packages depend on the shared Moongate runtime libraries that are published alongside them with
+the same version:
+
+- `Moongate.Core`
+- `Moongate.Abstractions`
+- `Moongate.Network`
+- `Moongate.Network.Packets`
+
+Use the same package version across the whole Moongate dependency chain.
+
+Recommended publish order:
+
+1. `Moongate.Core`
+2. `Moongate.Abstractions`
+3. `Moongate.Network`
+4. `Moongate.UO.Data`
+5. `Moongate.Network.Packets`
+6. `Moongate.Persistence`
+7. `Moongate.Plugin.Abstractions`
+8. `Moongate.Server.Abstractions`
 
 After build, copy the plugin output to the runtime plugin folder so the final layout matches the manifest:
 
