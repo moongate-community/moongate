@@ -137,6 +137,80 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseItemHasWeaponSkill_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "base");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "weapon_skill.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "test",
+                "id": "base_bow",
+                "name": "Base Bow",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x13B2",
+                "lootType": "Regular",
+                "scriptId": "items.base_bow",
+                "tags": ["weapon"],
+                "weaponSkill": "Archery",
+                "ammo": "0x0F3F",
+                "ammoFx": "0x1BFE",
+                "weight": 6.0
+              },
+              {
+                "type": "item",
+                "category": "test",
+                "id": "derived_bow",
+                "base_item": "base_bow",
+                "name": "Derived Bow",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x13B3",
+                "lootType": "Regular",
+                "scriptId": "items.derived_bow",
+                "tags": ["weapon"],
+                "weight": 6.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("derived_bow", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemHasFlippableItemIds_ShouldInheritFromParent()
     {
         using var tempDirectory = new TempDirectory();

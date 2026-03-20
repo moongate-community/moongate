@@ -118,6 +118,9 @@ public sealed class EntityMemoryPackRoundTripTests
             MapId = 0,
             ItemId = 0x13B9,
             Amount = 3,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
             CombatStats = new()
             {
                 MinStrength = 40,
@@ -151,6 +154,9 @@ public sealed class EntityMemoryPackRoundTripTests
                 Assert.That(restored!.Id, Is.EqualTo(entity.Id));
                 Assert.That(restored.Location, Is.EqualTo(entity.Location));
                 Assert.That(restored.Amount, Is.EqualTo(entity.Amount));
+                Assert.That(restored.WeaponSkill, Is.EqualTo(entity.WeaponSkill));
+                Assert.That(restored.AmmoItemId, Is.EqualTo(entity.AmmoItemId));
+                Assert.That(restored.AmmoEffectId, Is.EqualTo(entity.AmmoEffectId));
                 Assert.That(restored.CustomProperties["crafted_by"].StringValue, Is.EqualTo("The Blacksmith"));
             }
         );

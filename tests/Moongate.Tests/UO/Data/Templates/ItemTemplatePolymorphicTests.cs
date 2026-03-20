@@ -73,6 +73,7 @@ public class ItemTemplatePolymorphicTests
                        "usesRemaining": 30,
                        "ammo": "0x0f3f",
                        "ammoFx": "0x1bfe",
+                       "weaponSkill": "Archery",
                        "maxRange": 8,
                        "baseRange": 2,
                        "dyeable": true,
@@ -132,6 +133,7 @@ public class ItemTemplatePolymorphicTests
                 Assert.That(item.UsesRemaining, Is.EqualTo(30));
                 Assert.That(item.Ammo, Is.EqualTo(0x0F3F));
                 Assert.That(item.AmmoFx, Is.EqualTo(0x1BFE));
+                Assert.That(item.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
                 Assert.That(item.MaxRange, Is.EqualTo(8));
                 Assert.That(item.BaseRange, Is.EqualTo(2));
                 Assert.That(item.Visibility, Is.EqualTo(AccountType.Regular));

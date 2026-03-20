@@ -40,6 +40,8 @@ public class MobileServiceTests
                 ItemId = 1
             };
 
+        public Func<string, ItemTemplateDefinition?> TryGetItemTemplateImpl { get; set; } = _ => null;
+
         public UOItemEntity CreateItemFromTemplate(string itemTemplateId)
             => CreateItemFromTemplateImpl(itemTemplateId);
 
@@ -48,9 +50,9 @@ public class MobileServiceTests
 
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
         {
-            template = null;
+            template = TryGetItemTemplateImpl(itemTemplateId);
 
-            return false;
+            return template is not null;
         }
     }
 
@@ -954,6 +956,89 @@ public class MobileServiceTests
                 Assert.That(loaded, Has.Count.EqualTo(1));
                 Assert.That(mobile.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
                 Assert.That(mobile.EquippedItemReferences.ContainsKey(ItemLayerType.Shirt), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetPersistentMobilesInSectorAsync_WhenEquippedRangedMetadataIsMissing_ShouldBackfillItFromTemplate()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var factory = new TestMobileFactoryService();
+        var itemFactory = new TestItemFactoryService();
+        itemFactory.TryGetItemTemplateImpl = itemTemplateId =>
+        {
+            if (!string.Equals(itemTemplateId, "bow", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
+
+            return new ItemTemplateDefinition
+            {
+                Id = "bow",
+                ItemId = "0x13B2",
+                GoldValue = GoldValueSpec.FromValue(0),
+                WeaponSkill = UOSkillName.Archery,
+                BaseRange = 1,
+                MaxRange = 10,
+                Ammo = 0x0F3F,
+                AmmoFx = 0x1BFE
+            };
+        };
+        var templateService = new TestMobileTemplateService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var equippedItemId = persistence.UnitOfWork.AllocateNextItemId();
+        var equippedItem = new UOItemEntity
+        {
+            Id = equippedItemId,
+            ItemId = 0x13B2,
+            EquippedMobileId = mobileId,
+            EquippedLayer = ItemLayerType.TwoHanded
+        };
+        equippedItem.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "bow");
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mobileId,
+                IsPlayer = false,
+                MapId = 1,
+                Location = new(130, 130, 0),
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.TwoHanded] = equippedItemId
+                }
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(equippedItem);
+
+        var sectorX = 130 >> MapSectorConsts.SectorShift;
+        var sectorY = 130 >> MapSectorConsts.SectorShift;
+
+        var loaded = await service.GetPersistentMobilesInSectorAsync(1, sectorX, sectorY);
+        var mobile = loaded.Single();
+        var bow = mobile.GetEquippedItemsRuntime().Single(item => item.EquippedLayer == ItemLayerType.TwoHanded);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(bow.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+                Assert.That(bow.AmmoItemId, Is.EqualTo(0x0F3F));
+                Assert.That(bow.AmmoEffectId, Is.EqualTo(0x1BFE));
+                Assert.That(bow.CombatStats, Is.Not.Null);
+                Assert.That(bow.CombatStats!.RangeMin, Is.EqualTo(1));
+                Assert.That(bow.CombatStats.RangeMax, Is.EqualTo(10));
             }
         );
     }

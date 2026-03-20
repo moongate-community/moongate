@@ -85,6 +85,34 @@ public class ItemServiceTests
     }
 
     [Test]
+    public async Task Clone_ShouldPreserveRangedCombatMetadata()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var item = new UOItemEntity
+        {
+            Id = persistence.UnitOfWork.AllocateNextItemId(),
+            ItemId = 0x13B2,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE
+        };
+
+        var clone = service.Clone(item);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(clone.Id, Is.Not.EqualTo(item.Id));
+                Assert.That(clone.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+                Assert.That(clone.AmmoItemId, Is.EqualTo(0x0F3F));
+                Assert.That(clone.AmmoEffectId, Is.EqualTo(0x1BFE));
+            }
+        );
+    }
+
+    [Test]
     public async Task Clone_ShouldKeepSerial_WhenGenerateNewSerialIsFalse()
     {
         using var temp = new TempDirectory();
@@ -480,6 +508,53 @@ public class ItemServiceTests
                 Assert.That(container.ContainedItemIds, Has.Count.EqualTo(1));
                 Assert.That(container.ContainedItemIds[0], Is.EqualTo(childId));
                 Assert.That(container.ContainedItemReferences.ContainsKey(childId), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetItemAsync_WhenPersistedRangedMetadataIsMissing_ShouldBackfillItFromTemplate()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["bow"] = new()
+        {
+            Id = "bow",
+            ItemId = "0x13B2",
+            GoldValue = GoldValueSpec.FromValue(0),
+            WeaponSkill = UOSkillName.Archery,
+            BaseRange = 1,
+            MaxRange = 10,
+            Ammo = 0x0F3F,
+            AmmoFx = 0x1BFE
+        };
+        IItemService service = new ItemService(
+            persistence,
+            new NetworkServiceTestGameEventBusService(),
+            itemFactory
+        );
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+        var item = new UOItemEntity
+        {
+            Id = itemId,
+            ItemId = 0x13B2
+        };
+        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "bow");
+        await persistence.UnitOfWork.Items.UpsertAsync(item);
+
+        var loaded = await service.GetItemAsync(itemId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loaded, Is.Not.Null);
+                Assert.That(loaded!.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+                Assert.That(loaded.AmmoItemId, Is.EqualTo(0x0F3F));
+                Assert.That(loaded.AmmoEffectId, Is.EqualTo(0x1BFE));
+                Assert.That(loaded.CombatStats, Is.Not.Null);
+                Assert.That(loaded.CombatStats!.RangeMin, Is.EqualTo(1));
+                Assert.That(loaded.CombatStats.RangeMax, Is.EqualTo(10));
             }
         );
     }

@@ -115,6 +115,8 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.ScriptId = parent.ScriptId;
         }
 
+        child.WeaponSkill ??= parent.WeaponSkill;
+
         if (string.IsNullOrWhiteSpace(child.GumpId))
         {
             child.GumpId = parent.GumpId;

@@ -96,6 +96,8 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public int UsesRemaining { get; set; }
 
+    public UOSkillName? WeaponSkill { get; set; }
+
     [JsonConverter(typeof(Int32FlexibleJsonConverter))]
     public int Ammo { get; set; }
 

@@ -228,6 +228,49 @@ public class ItemFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateItemFromTemplate_ShouldMapWeaponSkillAndAmmoMetadata()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        var template = new ItemTemplateDefinition
+        {
+            Id = "ranged_item",
+            Name = "Ranged Item",
+            Category = "test",
+            Description = "test",
+            ItemId = "0x13B2",
+            Hue = HueSpec.FromValue(0),
+            GoldValue = GoldValueSpec.FromValue(0),
+            LootType = LootType.Regular,
+            ScriptId = "items.ranged_item",
+            Weight = 6,
+            BaseRange = 1,
+            MaxRange = 10,
+            Ammo = 0x0F3F,
+            AmmoFx = 0x1BFE
+        };
+        template.WeaponSkill = UOSkillName.Archery;
+        templateService.Upsert(template);
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var item = service.CreateItemFromTemplate("ranged_item");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+                Assert.That(item.AmmoItemId, Is.EqualTo(0x0F3F));
+                Assert.That(item.AmmoEffectId, Is.EqualTo(0x1BFE));
+                Assert.That(item.CombatStats, Is.Not.Null);
+                Assert.That(item.CombatStats!.RangeMin, Is.EqualTo(1));
+                Assert.That(item.CombatStats.RangeMax, Is.EqualTo(10));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateItemFromTemplate_ShouldMapTypedCombatStatsAndModifiers()
     {
         using var temp = new TempDirectory();
@@ -1026,7 +1069,6 @@ public class ItemFactoryServiceTests
             }
         );
     }
-
     private static async Task<PersistenceService> CreatePersistenceServiceAsync(string rootDirectory)
     {
         var directories = new DirectoriesConfig(rootDirectory, Enum.GetNames<DirectoryType>());
