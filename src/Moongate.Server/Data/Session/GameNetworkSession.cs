@@ -1,6 +1,9 @@
 using System.Net;
 using Moongate.Network.Client;
+using Moongate.Network.Interfaces;
 using Moongate.UO.Data.Middlewares;
+using Moongate.UO.Data.Version;
+using Moongate.Server.Data.Internal.Network;
 
 namespace Moongate.Server.Data.Session;
 
@@ -69,6 +72,11 @@ public sealed class GameNetworkSession
     public bool EncryptionEnabled { get; private set; }
 
     /// <summary>
+    /// Gets the active transport encryption for this session, when enabled.
+    /// </summary>
+    public IClientEncryption? Encryption { get; private set; }
+
+    /// <summary>
     /// Gets the authenticated account id, when available.
     /// </summary>
     public long? AccountId { get; private set; }
@@ -82,6 +90,11 @@ public sealed class GameNetworkSession
     /// Gets the authenticated account name, when available.
     /// </summary>
     public string? AccountName { get; private set; }
+
+    /// <summary>
+    /// Gets the negotiated client version, when available.
+    /// </summary>
+    public ClientVersion? ClientVersion { get; private set; }
 
     /// <summary>
     /// Gets the selected in-game character serial, when available.
@@ -118,6 +131,9 @@ public sealed class GameNetworkSession
         lock (_stateSync)
         {
             EncryptionEnabled = false;
+            Encryption = null;
+            var client = Client;
+            client?.RemoveMiddleware<EncryptionMiddleware>();
         }
     }
 
@@ -149,11 +165,29 @@ public sealed class GameNetworkSession
     /// <summary>
     /// Enables encryption for this session.
     /// </summary>
-    public void EnableEncryption()
+    public void EnableEncryption(IClientEncryption encryption)
     {
+        ArgumentNullException.ThrowIfNull(encryption);
+
         lock (_stateSync)
         {
+            var client = Client;
+
+            if (client is null)
+            {
+                EncryptionEnabled = false;
+                Encryption = null;
+
+                return;
+            }
+
             EncryptionEnabled = true;
+            Encryption = encryption;
+
+            if (!client.ContainsMiddleware<EncryptionMiddleware>())
+            {
+                client.AddMiddleware(new EncryptionMiddleware(this));
+            }
         }
     }
 
@@ -207,6 +241,20 @@ public sealed class GameNetworkSession
         lock (_stateSync)
         {
             Seed = seed;
+        }
+    }
+
+    /// <summary>
+    /// Stores the client version received during handshake negotiation.
+    /// </summary>
+    /// <param name="clientVersion">Client version metadata.</param>
+    public void SetClientVersion(ClientVersion clientVersion)
+    {
+        ArgumentNullException.ThrowIfNull(clientVersion);
+
+        lock (_stateSync)
+        {
+            ClientVersion = clientVersion;
         }
     }
 

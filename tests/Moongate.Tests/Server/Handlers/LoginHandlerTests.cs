@@ -203,6 +203,33 @@ public class LoginHandlerTests
                 Assert.That(session.ClientVersion.Minor, Is.EqualTo(0));
                 Assert.That(session.ClientVersion.Revision, Is.EqualTo(61));
                 Assert.That(session.ClientVersion.Patch, Is.EqualTo(0));
+                Assert.That(session.NetworkSession.ClientVersion, Is.Not.Null);
+                Assert.That(session.NetworkSession.ClientVersion!.SourceString, Is.EqualTo("7.0.61.0"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenLoginSeedPacketIsReceived_ShouldStoreSeedAndClientVersionInNetworkSession()
+    {
+        var handler = CreateHandler();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = new LoginSeedPacket
+        {
+            Seed = 0x12345678,
+            ClientVersion = new("7.0.114.0")
+        };
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(session.NetworkSession.Seed, Is.EqualTo(0x12345678U));
+                Assert.That(session.NetworkSession.ClientVersion, Is.Not.Null);
+                Assert.That(session.NetworkSession.ClientVersion!.SourceString, Is.EqualTo("7.0.114.0"));
             }
         );
     }

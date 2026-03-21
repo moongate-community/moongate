@@ -5,11 +5,14 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Text;
 using Moongate.Network.Client;
+using Moongate.Network.Encryption;
 using Moongate.Network.Events;
 using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Server;
+using Moongate.Network.Types.Encryption;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Connections;
@@ -45,6 +48,8 @@ public class NetworkService : INetworkService, INetworkMetricsSource
     private readonly IPacketDispatchService _packetDispatchService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly bool _logPacketData;
+    private readonly bool _encryptionDebug;
+    private readonly EncryptionMode _encryptionMode;
     private readonly bool _pingServerEnabled;
     private readonly int _pingServerPort;
 
@@ -76,6 +81,8 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         _packetDispatchService = packetDispatchService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _logPacketData = moongateConfig.LogPacketData;
+        _encryptionMode = moongateConfig.Game.EncryptionMode;
+        _encryptionDebug = moongateConfig.Game.EncryptionDebug;
         _pingServerEnabled = moongateConfig.Game.PingServerEnabled;
         _pingServerPort = moongateConfig.Game.PingServerPort;
         PacketTable.Register(_packetRegistry);
@@ -525,6 +532,16 @@ public class NetworkService : INetworkService, INetworkMetricsSource
                 break;
             }
 
+            if (!TryDetectHandshakeEncryption(pendingBytes, session, metrics))
+            {
+                break;
+            }
+
+            if (pendingBytes.Count == 0)
+            {
+                break;
+            }
+
             var opCode = pendingBytes[0];
 
             if (!_packetRegistry.TryGetDescriptor(opCode, out var descriptor))
@@ -657,6 +674,22 @@ public class NetworkService : INetworkService, INetworkMetricsSource
                 continue;
             }
 
+            if (packet is LoginSeedPacket loginSeedPacket)
+            {
+                session.NetworkSession.SetSeed(unchecked((uint)loginSeedPacket.Seed));
+                session.NetworkSession.SetClientVersion(loginSeedPacket.ClientVersion);
+            }
+            else if (packet is ClientVersionPacket clientVersionPacket)
+            {
+                var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
+
+                if (!string.IsNullOrWhiteSpace(rawVersion))
+                {
+                    session.SetClientVersion(new(rawVersion));
+                    session.NetworkSession.SetClientVersion(session.ClientVersion);
+                }
+            }
+
             var gamePacket = new IncomingGamePacket(
                 session,
                 opCode,
@@ -779,6 +812,166 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         lengthBuffer[1] = pendingBytes[2];
 
         return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
+    }
+
+    private bool TryDetectHandshakeEncryption(
+        List<byte> pendingBytes,
+        GameSession session,
+        NetworkParserSessionMetrics metrics
+    )
+    {
+        var networkSession = session.NetworkSession;
+
+        if (networkSession.Encryption is not null || networkSession.State != NetworkSessionState.Login || pendingBytes.Count == 0)
+        {
+            return true;
+        }
+
+        var packetId = pendingBytes[0];
+
+        if (packetId == PacketDefinition.LoginSeedPacket)
+        {
+            return true;
+        }
+
+        if (packetId is PacketDefinition.AccountLoginPacket or PacketDefinition.GameLoginPacket)
+        {
+            if (!_encryptionMode.HasFlag(EncryptionMode.Unencrypted))
+            {
+                DisconnectSession(session, "Unencrypted client rejected by encryption policy.", metrics, pendingBytes);
+                return false;
+            }
+
+            return true;
+        }
+
+        if (_packetRegistry.TryGetDescriptor(packetId, out _))
+        {
+            return true;
+        }
+
+        var looksLikeLoginHandshake = pendingBytes.Count == 62 ||
+                                      (networkSession.ClientVersion is not null && pendingBytes.Count >= 62);
+        var looksLikeGameHandshake = pendingBytes.Count >= 65;
+
+        if (!looksLikeLoginHandshake && !looksLikeGameHandshake)
+        {
+            return true;
+        }
+
+        if (!_encryptionMode.HasFlag(EncryptionMode.Encrypted))
+        {
+            DisconnectSession(session, "Encrypted client rejected by encryption policy.", metrics, pendingBytes);
+            return false;
+        }
+
+        if (looksLikeLoginHandshake)
+        {
+            if (pendingBytes.Count < 62)
+            {
+                return false;
+            }
+
+            if (!TryActivateLoginEncryption(pendingBytes, session))
+            {
+                DisconnectSession(session, "Encrypted login detection failed.", metrics, pendingBytes);
+                return false;
+            }
+
+            return true;
+        }
+
+        if (pendingBytes.Count < 65)
+        {
+            return false;
+        }
+
+        if (!TryActivateGameEncryption(pendingBytes, session))
+        {
+            DisconnectSession(session, "Encrypted game login detection failed.", metrics, pendingBytes);
+            return false;
+        }
+
+        return true;
+    }
+
+    private bool TryActivateGameEncryption(List<byte> pendingBytes, GameSession session)
+    {
+        var seed = session.NetworkSession.Seed;
+
+        if (!seed.HasValue)
+        {
+            return false;
+        }
+
+        var encryptedPacket = pendingBytes.Take(65).ToArray();
+
+        if (!GameEncryption.TryDecrypt(seed.Value, encryptedPacket, out var encryption) || encryption is null)
+        {
+            if (_encryptionDebug)
+            {
+                _logger.Debug("Session {SessionId}: failed encrypted game login detection.", session.SessionId);
+            }
+
+            return false;
+        }
+
+        encryption.ClientDecrypt(encryptedPacket);
+        OverwritePendingBytes(pendingBytes, encryptedPacket);
+        session.NetworkSession.EnableEncryption(encryption);
+
+        if (_encryptionDebug)
+        {
+            _logger.Debug("Session {SessionId}: activated game encryption.", session.SessionId);
+        }
+
+        return true;
+    }
+
+    private bool TryActivateLoginEncryption(List<byte> pendingBytes, GameSession session)
+    {
+        int? major = null;
+        int? minor = null;
+        int? revision = null;
+
+        if (session.NetworkSession.ClientVersion is { } clientVersion)
+        {
+            major = clientVersion.Major;
+            minor = clientVersion.Minor;
+            revision = clientVersion.Revision;
+        }
+
+        var seed = session.NetworkSession.Seed ?? 0u;
+        var encryptedPacket = pendingBytes.Take(62).ToArray();
+
+        if (!LoginEncryption.TryDecrypt(major, minor, revision, seed, encryptedPacket, out var encryption) || encryption is null)
+        {
+            if (_encryptionDebug)
+            {
+                _logger.Debug("Session {SessionId}: failed encrypted login detection.", session.SessionId);
+            }
+
+            return false;
+        }
+
+        encryption.ClientDecrypt(encryptedPacket);
+        OverwritePendingBytes(pendingBytes, encryptedPacket);
+        session.NetworkSession.EnableEncryption(encryption);
+
+        if (_encryptionDebug)
+        {
+            _logger.Debug("Session {SessionId}: activated login encryption.", session.SessionId);
+        }
+
+        return true;
+    }
+
+    private static void OverwritePendingBytes(List<byte> pendingBytes, byte[] decryptedPacket)
+    {
+        for (var i = 0; i < decryptedPacket.Length; i++)
+        {
+            pendingBytes[i] = decryptedPacket[i];
+        }
     }
 
     private void RunNetworkIngressLoop()

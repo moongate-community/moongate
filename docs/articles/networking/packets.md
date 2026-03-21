@@ -44,6 +44,12 @@ Key types:
 
 `PacketDispatchService` then routes by opcode to registered `IPacketListener` instances.
 
+Before packet dispatch, `NetworkService` also handles the login bootstrap boundary:
+
+- `0xEF` login seed remains plain and sets the session seed/client version
+- plain `0x80` and `0x91` bootstraps continue to work
+- when `game.encryptionMode` allows it, Moongate can autodetect encrypted `0x80` and `0x91` bootstrap packets and attach transport encryption middleware for the rest of the session
+
 Current gameplay examples:
 
 - `PlayerStatusHandler` listens to `PacketDefinition.GetPlayerStatusPacket`

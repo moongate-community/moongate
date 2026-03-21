@@ -186,6 +186,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         var clientVersion = new ClientVersion(rawVersion);
         session.SetClientVersion(clientVersion);
+        session.NetworkSession.SetClientVersion(clientVersion);
 
         _logger.Debug(
             "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
@@ -260,6 +261,9 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private Task<bool> HandleLoginSeedPacketAsync(GameSession session, LoginSeedPacket packet)
     {
+        session.NetworkSession.SetSeed(unchecked((uint)packet.Seed));
+        session.NetworkSession.SetClientVersion(packet.ClientVersion);
+
         _logger.Debug(
             "Received LoginSeedPacket from session {SessionId} with seed {Seed} and client version {ClientVersion}",
             session.SessionId,

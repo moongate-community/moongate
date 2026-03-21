@@ -1,4 +1,6 @@
 items:
+  - name: Client Encryption
+    href: client-encryption.md
   - name: Packet System
     href: packets.md
   - name: POL Packet Coverage
