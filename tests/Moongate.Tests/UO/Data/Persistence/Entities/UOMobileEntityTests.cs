@@ -869,4 +869,65 @@ public class UOMobileEntityTests
             }
         );
     }
+
+    [Test]
+    public void EffectiveCarriedWeight_And_EffectiveMaxWeight_ShouldUseRuntimeInventoryAndModernFormula()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001010,
+            IsPlayer = true,
+            RaceIndex = 0,
+            BaseStats = new()
+            {
+                Strength = 60
+            },
+            EquipmentModifiers = new()
+            {
+                StrengthBonus = 5
+            }
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40002010,
+            ItemId = 0x0E75,
+            Weight = 2
+        };
+        var gold = new UOItemEntity
+        {
+            Id = (Serial)0x40002011,
+            ItemId = 0x0EED,
+            Weight = 0,
+            Amount = 1000
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40002012,
+            ItemId = 0x2FB7,
+            Weight = 2,
+            IsQuiver = true,
+            QuiverWeightReduction = 30
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = (Serial)0x40002013,
+            ItemId = 0x0F3F,
+            Weight = 1,
+            Amount = 10
+        };
+
+        backpack.AddItem(gold, new(1, 1));
+        quiver.AddItem(arrows, new(2, 2));
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.BackpackId = backpack.Id;
+        mobile.AddEquippedItem(ItemLayerType.Cloak, quiver);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.EffectiveCarriedWeight, Is.EqualTo(22));
+                Assert.That(mobile.EffectiveMaxWeight, Is.EqualTo(327));
+            }
+        );
+    }
 }
