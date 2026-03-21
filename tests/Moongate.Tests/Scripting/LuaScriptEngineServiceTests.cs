@@ -1911,6 +1911,90 @@ public class LuaScriptEngineServiceTests
         Assert.That(result.Data, Is.EqualTo(false));
     }
 
+    [Test]
+    public async Task StartAsync_WhenReputationTitlesLuaOverrideExists_ShouldConfigureRuntimeTitles()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "config"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "init.lua"),
+            """require("config.init")"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "config", "init.lua"),
+            """
+            reputation_titles_config = require("config.reputation_titles_default")
+            local ok, override = pcall(require, "config.reputation_titles")
+            if ok and type(override) == "table" then
+                reputation_titles_config = override
+            end
+            """
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "config", "reputation_titles_default.lua"),
+            """
+            return {
+              honorifics = {
+                male = "Lord",
+                female = "Lady"
+              },
+              fame_buckets = {
+                {
+                  max_fame = 10000,
+                  karma_buckets = {
+                    { max_karma = 10000, title = "The Default" }
+                  }
+                }
+              }
+            }
+            """
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "config", "reputation_titles.lua"),
+            """
+            return {
+              honorifics = {
+                male = "Baron",
+                female = "Baroness"
+              },
+              fame_buckets = {
+                {
+                  max_fame = 10000,
+                  karma_buckets = {
+                    { max_karma = 10000, title = "The Custom" }
+                  }
+                }
+              }
+            }
+            """
+        );
+
+        ReputationTitleRuntime.Reset();
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDir, "0.1.0", false),
+            []
+        );
+
+        await service.StartAsync();
+
+        var mobile = new UOMobileEntity
+        {
+            Name = "Marcus",
+            Gender = GenderType.Male,
+            Fame = 10000,
+            Karma = 10000
+        };
+
+        Assert.That(ReputationTitleFormatter.FormatDisplayName(mobile), Is.EqualTo("The Custom Baron Marcus"));
+    }
+
     private static byte[] BuildGumpResponsePacket(uint serial, uint gumpId, uint buttonId)
     {
         using var ms = new MemoryStream();

@@ -126,7 +126,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x2E` | Worn Item | S -> C | `WornItemPacket` | `outgoing` | equipment sync | Equipped visuals |
 | `0x24` | Draw Container | S -> C | `DrawContainerPacket` | `outgoing` | container flow | Open container |
 | `0x3C` | Add Multiple Items To Container | S -> C | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched contents |
-| `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open |
+| `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open with a computed fame/karma reputation title prefix loaded at startup from Lua config |
 | `0x11` | Status Bar Info | S -> C | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status payload |
 | `0x2F` | Fight Occuring | S -> C | `FightOccurringPacket` | `outgoing` | `CombatService` | Broadcast when a scheduled melee swing is attempted |
 | `0xAA` | Allow/Refuse Attack | S -> C | `ChangeCombatantPacket` | `outgoing` | `CombatService` | Current combatant serial or `Serial.Zero` |
@@ -160,6 +160,12 @@ Current notable outgoing packet classes:
 - `PlayerStatusPacket`
   - modern `7.x` status layout
   - reads effective mobile state from `UOMobileEntity`
+- `PaperdollPacket`
+  - outgoing `0x88`
+  - serializes the paperdoll display name using the fame/karma reputation title table
+  - the title table is loaded at startup from `moongate_data/scripts/config/reputation_titles_default.lua`
+  - an optional `moongate_data/scripts/config/reputation_titles.lua` override can replace the default table
+  - preserves the existing custom mobile `Title` as a suffix after the name
 - `SkillListPacket`
   - outgoing `0x3A`
   - serializes the persisted mobile skill table in skill-id order

@@ -16,12 +16,14 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Context;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
+using Moongate.Scripting.Data.Internal.Reputation;
 using Moongate.Scripting.Data.Luarc;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Loaders;
 using Moongate.Scripting.Utils;
+using Moongate.UO.Data.Utils;
 using MoonSharp.Interpreter;
 using Serilog;
 using SyntaxErrorException = System.Data.SyntaxErrorException;
@@ -46,6 +48,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     private const string OnReadyFunctionName = "on_ready";
 
     private const string OnEngineRunFunctionName = "on_initialize";
+    private const string ReputationTitlesGlobalName = "reputation_titles_config";
 
     // Thread-safe collections
     private readonly ConcurrentDictionary<string, Action<object[]>> _callbacks = new();
@@ -669,6 +672,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             RegisterGlobalFunctions();
 
             ExecuteBootstrap();
+            InitializeReputationTitles();
 
             ExecuteBootFunction();
             _isInitialized = true;
@@ -1160,6 +1164,38 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                 _logger.Error(ex, "Failed to load Lua plugin manifest from {ManifestPath}", manifestPath);
             }
         }
+    }
+
+    private void InitializeReputationTitles()
+    {
+        var reputationTitles = LuaScript.Globals.Get(ReputationTitlesGlobalName);
+
+        if (reputationTitles.Type is DataType.Nil or DataType.Void)
+        {
+            ReputationTitleRuntime.Reset();
+            _logger.Debug("Lua reputation titles config not defined; using default runtime table.");
+
+            return;
+        }
+
+        if (reputationTitles.Type != DataType.Table || reputationTitles.Table is null)
+        {
+            ReputationTitleRuntime.Reset();
+            _logger.Warning("Lua reputation titles config is not a table; using default runtime table.");
+
+            return;
+        }
+
+        if (!ReputationTitleLuaParser.TryParse(reputationTitles.Table, out var configuration))
+        {
+            ReputationTitleRuntime.Reset();
+            _logger.Warning("Lua reputation titles config is invalid; using default runtime table.");
+
+            return;
+        }
+
+        ReputationTitleRuntime.Configure(configuration);
+        _logger.Information("Lua reputation titles config loaded successfully.");
     }
 
     private LuaPluginManifest? LoadPluginManifest(string manifestPath)

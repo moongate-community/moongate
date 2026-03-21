@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Text;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
@@ -397,6 +398,22 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(data[65], Is.EqualTo(0x03));
             }
         );
+    }
+
+    [Test]
+    public void PaperdollPacket_Write_ShouldSerializeReputationTitleDisplayName()
+    {
+        var mobile = CreateMobile();
+        mobile.Name = "Marcus";
+        mobile.Fame = 3000;
+        mobile.Karma = 10000;
+
+        var packet = new PaperdollPacket(mobile);
+
+        var data = Write(packet);
+        var displayName = Encoding.ASCII.GetString(data, 5, 60).TrimEnd('\0');
+
+        Assert.That(displayName, Is.EqualTo("The Great Marcus"));
     }
 
     [Test]
