@@ -206,6 +206,9 @@ public sealed class CombatService : ICombatService
     }
 
     private static int ResolveDamage(UOMobileEntity attacker)
+        => ResolveDamage(attacker, default);
+
+    private static int ResolveDamage(UOMobileEntity attacker, AttackProfile attackProfile)
     {
         var weapon = ResolveWeapon(attacker);
         var minDamage = weapon?.CombatStats?.DamageMin ?? attacker.MinWeaponDamage;
@@ -228,15 +231,16 @@ public sealed class CombatService : ICombatService
 
         var rolledDamage = Random.Shared.Next(minDamage, maxDamage + 1);
 
-        return Math.Max(1, ScaleDamageAosLike(attacker, rolledDamage));
+        return Math.Max(1, ScaleDamageAosLike(attacker, rolledDamage, attackProfile.RangedDamageIncrease));
     }
 
-    private static int ScaleDamageAosLike(UOMobileEntity attacker, int rolledDamage)
+    private static int ScaleDamageAosLike(UOMobileEntity attacker, int rolledDamage, int rangedDamageIncreaseBonus = 0)
     {
         var strengthBonus = GetBonus(attacker.EffectiveStrength, 0.300, 100.0, 5.00);
         var anatomyBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Anatomy), 0.500, 100.0, 5.00);
         var tacticsBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Tactics), 0.625, 100.0, 6.25);
-        var damageIncreaseBonus = Math.Clamp(Math.Max(0, attacker.EffectiveDamageIncrease), 0, 100) / 100.0;
+        var totalDamageIncrease = Math.Clamp(Math.Max(0, attacker.EffectiveDamageIncrease + rangedDamageIncreaseBonus), 0, 100);
+        var damageIncreaseBonus = totalDamageIncrease / 100.0;
         var totalBonus = strengthBonus + anatomyBonus + tacticsBonus + damageIncreaseBonus;
 
         return (int)(rolledDamage + rolledDamage * totalBonus);
@@ -281,9 +285,14 @@ public sealed class CombatService : ICombatService
                                ItemLayerType.FirstValid
                    );
 
+    private static UOItemEntity? ResolveQuiver(UOMobileEntity attacker)
+        => attacker.GetEquippedItemsRuntime()
+                   .FirstOrDefault(item => item.EquippedLayer == ItemLayerType.Cloak && item.IsQuiver);
+
     private static AttackProfile ResolveAttackProfile(UOMobileEntity attacker)
     {
         var weapon = ResolveWeapon(attacker);
+        var quiver = ResolveQuiver(attacker);
         var maxRange = weapon?.CombatStats?.RangeMax ?? 0;
 
         if (maxRange <= 0)
@@ -291,7 +300,15 @@ public sealed class CombatService : ICombatService
             maxRange = MeleeRange;
         }
 
-        return new(weapon, maxRange, weapon?.AmmoItemId, weapon?.AmmoEffectId);
+        return new(
+            weapon,
+            quiver,
+            maxRange,
+            weapon?.AmmoItemId,
+            weapon?.AmmoEffectId,
+            quiver?.QuiverLowerAmmoCost ?? 0,
+            quiver?.QuiverDamageIncrease ?? 0
+        );
     }
 
     private static TimeSpan ResolveSwingDelay(UOMobileEntity attacker)
@@ -404,7 +421,7 @@ public sealed class CombatService : ICombatService
         }
 
         if (attackProfile.IsRanged &&
-            !await TryConsumeAmmoAsync(attacker, attackProfile.AmmoItemId!.Value, CancellationToken.None))
+            !await TryConsumeAmmoAsync(attacker, attackProfile, CancellationToken.None))
         {
             await ClearCombatantAsync(attacker.Id, CancellationToken.None);
             return;
@@ -463,7 +480,7 @@ public sealed class CombatService : ICombatService
 
         if (ResolveHit(attacker, defender))
         {
-            var damage = ResolveDamage(attacker);
+            var damage = ResolveDamage(attacker, attackProfile);
             defender.Hits = Math.Max(0, defender.Hits - damage);
             defender.IsAlive = defender.Hits > 0;
 
@@ -539,25 +556,50 @@ public sealed class CombatService : ICombatService
 
     private async Task<bool> TryConsumeAmmoAsync(
         UOMobileEntity attacker,
-        int ammoItemId,
+        AttackProfile attackProfile,
         CancellationToken cancellationToken
     )
     {
+        var ammoItemId = attackProfile.AmmoItemId!.Value;
+        var quiver = attackProfile.Quiver;
         var backpackId = ResolveBackpackId(attacker);
 
-        if (backpackId == Serial.Zero)
+        var backpack = backpackId == Serial.Zero
+            ? null
+            : await _itemService.GetItemAsync(backpackId);
+
+        if (!ContainsAmmo(quiver, ammoItemId) && !ContainsAmmo(backpack, ammoItemId))
         {
             return false;
         }
 
-        var backpack = await _itemService.GetItemAsync(backpackId);
-
-        if (backpack is null)
+        if (attackProfile.LowerAmmoCost > 0 &&
+            Random.Shared.Next(100) < attackProfile.LowerAmmoCost)
         {
-            return false;
+            _ = cancellationToken;
+            return true;
         }
 
-        if (!TryConsumeAmmoRecursive(backpack, ammoItemId, out var changedStack, out var deletedStack))
+        if (quiver is not null &&
+            TryConsumeAmmoRecursive(quiver, ammoItemId, out var changedQuiverStack, out var deletedQuiverStack))
+        {
+            if (changedQuiverStack is not null)
+            {
+                await _itemService.UpsertItemAsync(changedQuiverStack);
+            }
+
+            if (deletedQuiverStack is not null)
+            {
+                _ = await _itemService.DeleteItemAsync(deletedQuiverStack.Id);
+            }
+
+            RefreshConsumedAmmoForSession(attacker.Id, quiver, deletedQuiverStack);
+            _ = cancellationToken;
+            return true;
+        }
+
+        if (backpack is null ||
+            !TryConsumeAmmoRecursive(backpack, ammoItemId, out var changedStack, out var deletedStack))
         {
             return false;
         }
@@ -604,6 +646,31 @@ public sealed class CombatService : ICombatService
                    : Serial.Zero;
     }
 
+    private static bool ContainsAmmo(UOItemEntity? container, int ammoItemId)
+    {
+        if (container is null)
+        {
+            return false;
+        }
+
+        for (var index = container.Items.Count - 1; index >= 0; index--)
+        {
+            var child = container.Items[index];
+
+            if (child.ItemId == ammoItemId)
+            {
+                return true;
+            }
+
+            if (ContainsAmmo(child, ammoItemId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static bool TryConsumeAmmoRecursive(
         UOItemEntity container,
         int ammoItemId,
@@ -646,9 +713,12 @@ public sealed class CombatService : ICombatService
 
     private readonly record struct AttackProfile(
         UOItemEntity? Weapon,
+        UOItemEntity? Quiver,
         int MaxRange,
         int? AmmoItemId,
-        int? ProjectileEffectId
+        int? ProjectileEffectId,
+        int LowerAmmoCost,
+        int RangedDamageIncrease
     )
     {
         public bool IsRanged => Weapon is not null &&

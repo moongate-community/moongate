@@ -84,6 +84,30 @@ public partial class UOItemEntity : IItemEntity
     public int? AmmoEffectId { get; set; }
 
     /// <summary>
+    /// Gets or sets whether this item behaves as a quiver container.
+    /// </summary>
+    [MemoryPackOrder(25)]
+    public bool IsQuiver { get; set; }
+
+    /// <summary>
+    /// Gets or sets the lower-ammo-cost chance applied by an equipped quiver.
+    /// </summary>
+    [MemoryPackOrder(26)]
+    public int QuiverLowerAmmoCost { get; set; }
+
+    /// <summary>
+    /// Gets or sets the ranged-only damage increase applied by an equipped quiver.
+    /// </summary>
+    [MemoryPackOrder(27)]
+    public int QuiverDamageIncrease { get; set; }
+
+    /// <summary>
+    /// Gets or sets the percentage weight reduction applied to items contained in a quiver.
+    /// </summary>
+    [MemoryPackOrder(28)]
+    public int QuiverWeightReduction { get; set; }
+
+    /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
     [MemoryPackOrder(16)]
@@ -127,6 +151,32 @@ public partial class UOItemEntity : IItemEntity
     public IReadOnlyDictionary<Serial, ItemReference> ContainedItemReferences => _containedItemReferences;
 
     /// <summary>
+    /// Gets the effective total weight of this item including stack amount and contained items.
+    /// </summary>
+    [MemoryPackIgnore]
+    public int TotalWeight
+    {
+        get
+        {
+            var baseWeight = Math.Max(0, Weight) * Math.Max(1, Amount);
+
+            if (_items.Count == 0)
+            {
+                return baseWeight;
+            }
+
+            var containedWeight = _items.Sum(static item => item.TotalWeight);
+
+            if (IsQuiver && QuiverWeightReduction > 0)
+            {
+                containedWeight -= containedWeight * Math.Clamp(QuiverWeightReduction, 0, 100) / 100;
+            }
+
+            return baseWeight + containedWeight;
+        }
+    }
+
+    /// <summary>
     /// Gets typed custom properties stored for this item.
     /// </summary>
     [MemoryPackIgnore]
@@ -142,7 +192,7 @@ public partial class UOItemEntity : IItemEntity
     }
 
     [MemoryPackIgnore]
-    public bool IsContainer => TileData.ItemTable[ItemId][UOTileFlag.Container];
+    public bool IsContainer => IsQuiver || TileData.ItemTable[ItemId][UOTileFlag.Container];
 
     public void AddItem(IItemEntity item, Point2D position)
     {
@@ -234,6 +284,10 @@ public partial class UOItemEntity : IItemEntity
         hash.Add(WeaponSkill);
         hash.Add(AmmoItemId);
         hash.Add(AmmoEffectId);
+        hash.Add(IsQuiver);
+        hash.Add(QuiverLowerAmmoCost);
+        hash.Add(QuiverDamageIncrease);
+        hash.Add(QuiverWeightReduction);
         hash.Add(ParentContainerId);
         hash.Add(ContainerPosition);
         hash.Add(EquippedMobileId);

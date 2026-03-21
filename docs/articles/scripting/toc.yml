@@ -15,6 +15,8 @@ items:
     href: starting-loadout.md
   - name: Reputation Titles
     href: reputation-titles.md
+  - name: Quivers
+    href: quivers.md
   - name: Modules
     href: modules.md
   - name: API Reference

@@ -211,6 +211,92 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseItemHasQuiverStats_ShouldInheritFromParent()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var itemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items", "base");
+        Directory.CreateDirectory(itemsDirectory);
+
+        var filePath = Path.Combine(itemsDirectory, "quiver.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "item",
+                "category": "test",
+                "id": "base_quiver",
+                "name": "Base Quiver",
+                "description": "base",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x2FB7",
+                "gumpId": "0x0108",
+                "lootType": "Regular",
+                "scriptId": "items.base_quiver",
+                "tags": ["quiver"],
+                "isQuiver": true,
+                "lowerAmmoCost": 20,
+                "quiverDamageIncrease": 10,
+                "weightReduction": 30,
+                "weight": 2.0
+              },
+              {
+                "type": "item",
+                "category": "test",
+                "id": "derived_quiver",
+                "base_item": "base_quiver",
+                "name": "Derived Quiver",
+                "description": "derived",
+                "container": [],
+                "dyeable": false,
+                "goldValue": "0",
+                "hue": "0",
+                "isMovable": true,
+                "itemId": "0x2B02",
+                "lootType": "Regular",
+                "scriptId": "items.derived_quiver",
+                "tags": ["quiver"],
+                "weight": 8.0
+              }
+            ]
+            """
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("derived_quiver", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.IsQuiver, Is.True);
+                Assert.That(template.LowerAmmoCost, Is.EqualTo(20));
+                Assert.That(template.QuiverDamageIncrease, Is.EqualTo(10));
+                Assert.That(template.WeightReduction, Is.EqualTo(30));
+                Assert.That(template.GumpId, Is.EqualTo("0x0108"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemHasFlippableItemIds_ShouldInheritFromParent()
     {
         using var tempDirectory = new TempDirectory();

@@ -121,6 +121,10 @@ public sealed class EntityMemoryPackRoundTripTests
             WeaponSkill = UOSkillName.Archery,
             AmmoItemId = 0x0F3F,
             AmmoEffectId = 0x1BFE,
+            IsQuiver = true,
+            QuiverLowerAmmoCost = 20,
+            QuiverDamageIncrease = 10,
+            QuiverWeightReduction = 30,
             CombatStats = new()
             {
                 MinStrength = 40,
@@ -157,6 +161,10 @@ public sealed class EntityMemoryPackRoundTripTests
                 Assert.That(restored.WeaponSkill, Is.EqualTo(entity.WeaponSkill));
                 Assert.That(restored.AmmoItemId, Is.EqualTo(entity.AmmoItemId));
                 Assert.That(restored.AmmoEffectId, Is.EqualTo(entity.AmmoEffectId));
+                Assert.That(restored.IsQuiver, Is.EqualTo(entity.IsQuiver));
+                Assert.That(restored.QuiverLowerAmmoCost, Is.EqualTo(entity.QuiverLowerAmmoCost));
+                Assert.That(restored.QuiverDamageIncrease, Is.EqualTo(entity.QuiverDamageIncrease));
+                Assert.That(restored.QuiverWeightReduction, Is.EqualTo(entity.QuiverWeightReduction));
                 Assert.That(restored.CustomProperties["crafted_by"].StringValue, Is.EqualTo("The Blacksmith"));
             }
         );

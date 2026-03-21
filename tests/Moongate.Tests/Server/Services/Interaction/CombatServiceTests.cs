@@ -920,6 +920,322 @@ public sealed class CombatServiceTests
     }
 
     [Test]
+    public async Task ScheduledSwing_WhenEquippedQuiverHasMatchingAmmo_ShouldConsumeQuiverBeforeBackpack()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000040u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        attacker.SetSkill(UOSkillName.Archery, 1000);
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000040u,
+            ItemId = 0x13B2,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new() { DamageMin = 6, DamageMax = 6, RangeMin = 1, RangeMax = 10 }
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40000041u,
+            ItemId = 0x2B02,
+            IsQuiver = true,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Cloak,
+            GumpId = 0x0108
+        };
+        var quiverArrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000042u,
+            ItemId = 0x0F3F,
+            Amount = 2,
+            IsStackable = true
+        };
+        quiver.AddItem(quiverArrows, Point2D.Zero);
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000043u,
+            ItemId = 0x0E75,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Backpack
+        };
+        var backpackArrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000044u,
+            ItemId = 0x0F3F,
+            Amount = 5,
+            IsStackable = true
+        };
+        backpack.AddItem(backpackArrows, Point2D.Zero);
+        attacker.BackpackId = backpack.Id;
+        attacker.HydrateEquipmentRuntime([bow, quiver, backpack]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000041u,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        itemService.Add(quiver);
+        itemService.Add(quiverArrows);
+        itemService.Add(backpack);
+        itemService.Add(backpackArrows);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+        _ = outgoingQueue.TryDequeue(out _);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        var queuedPackets = DequeuePackets(outgoingQueue);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(quiverArrows.Amount, Is.EqualTo(1));
+                Assert.That(backpackArrows.Amount, Is.EqualTo(5));
+                Assert.That(queuedPackets.OfType<AddMultipleItemsToContainerPacket>().Any(packet => packet.Container?.Id == quiver.Id), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenQuiverLowerAmmoCostIsGuaranteed_ShouldNotConsumeAmmo()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000042u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        attacker.SetSkill(UOSkillName.Archery, 1000);
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000045u,
+            ItemId = 0x13B2,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new() { DamageMin = 6, DamageMax = 6, RangeMin = 1, RangeMax = 10 }
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40000046u,
+            ItemId = 0x2B02,
+            IsQuiver = true,
+            QuiverLowerAmmoCost = 100,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Cloak
+        };
+        var quiverArrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000047u,
+            ItemId = 0x0F3F,
+            Amount = 2,
+            IsStackable = true
+        };
+        quiver.AddItem(quiverArrows, Point2D.Zero);
+        attacker.HydrateEquipmentRuntime([bow, quiver]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000043u,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        itemService.Add(quiver);
+        itemService.Add(quiverArrows);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+        _ = outgoingQueue.TryDequeue(out _);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(quiverArrows.Amount, Is.EqualTo(2));
+                Assert.That(spatial.BroadcastPackets.OfType<GraphicalEffectPacket>().Count(), Is.EqualTo(1));
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent or CombatMissEvent), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenQuiverDamageIncreaseIsPresent_ShouldIncreaseRangedDamage()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000044u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        attacker.SetSkill(UOSkillName.Archery, 1000);
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000048u,
+            ItemId = 0x13B2,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new() { DamageMin = 10, DamageMax = 10, RangeMin = 1, RangeMax = 10 }
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40000049u,
+            ItemId = 0x2B02,
+            IsQuiver = true,
+            QuiverDamageIncrease = 20,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.Cloak
+        };
+        var quiverArrows = new UOItemEntity
+        {
+            Id = (Serial)0x4000004Au,
+            ItemId = 0x0F3F,
+            Amount = 2,
+            IsStackable = true
+        };
+        quiver.AddItem(quiverArrows, Point2D.Zero);
+        attacker.HydrateEquipmentRuntime([bow, quiver]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000045u,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        itemService.Add(quiver);
+        itemService.Add(quiverArrows);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+        _ = outgoingQueue.TryDequeue(out _);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        Assert.That(defender.Hits, Is.EqualTo(28));
+    }
+
+    [Test]
     public async Task ScheduledSwing_WhenAttackerHasStrengthAnatomyAndTactics_ShouldIncreaseDamageUsingAosLikeScaling()
     {
         EnsureMapsRegistered();
