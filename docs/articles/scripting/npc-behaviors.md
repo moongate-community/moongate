@@ -21,7 +21,8 @@ moongate_data/scripts/ai/
 │   ├── init.lua
 │   ├── evade.lua
 │   ├── follow.lua
-│   └── idle.lua
+│   ├── idle.lua
+│   └── ranged_keep_distance.lua
 └── brains/
     ├── guard.lua
     └── utility_npc.lua
@@ -65,7 +66,8 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 `guard.lua` uses three isolated behaviors:
 
 - `evade`
-- `follow`
+- `follow` for melee guards
+- `ranged_keep_distance` for archer guards
 - `idle`
 
 At each tick:
@@ -77,6 +79,7 @@ At each tick:
 
 On speech events, the guard can set `follow_target_serial` in blackboard state.
 On in-range events, the guard can greet a player once per entry and start combat when a hostile target enters range.
+On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior.
 
 Current `in_range` payload fields include:
 

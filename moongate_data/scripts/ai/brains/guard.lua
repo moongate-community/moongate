@@ -2,6 +2,7 @@
 -- Utility/priority brain with isolated behaviors:
 -- - "evade": run away when a threat is near or HP is low
 -- - "follow": follow a target set in the blackboard
+-- - "ranged_keep_distance": maintain a 4-6 tile firing band for ranged guards
 -- - "idle": fallback (wander)
 
 local utility_runner = require("ai.runners.utility_runner")
@@ -17,22 +18,46 @@ local function get_engaged_key(source_serial)
 end
 
 -- Logical behavior order. The winner is selected by score.
-local BEHAVIORS = {
+local MELEE_BEHAVIORS = {
     "evade",
     "follow",
     "idle",
 }
 
+local RANGED_BEHAVIORS = {
+    "evade",
+    "ranged_keep_distance",
+    "idle",
+}
+
+local function is_ranged_guard(npc_serial)
+    return npc_state.get_var(npc_serial, "guard_role") == "ranged"
+end
+
+local function get_behaviors(npc_serial)
+    if is_ranged_guard(npc_serial) then
+        return RANGED_BEHAVIORS
+    end
+
+    return MELEE_BEHAVIORS
+end
+
 -- Initialize minimal blackboard values for behaviors.
 local function initialize_defaults(npc_serial)
-    -- Minimum distance while following a target
-    npc_state.set_var(npc_serial, "follow_stop_range", 1)
-
     -- Desired distance while evading
     npc_state.set_var(npc_serial, "evade_desired_range", 7)
 
     -- Below this HP threshold, evade gets a score bonus
     npc_state.set_var(npc_serial, "evade_hp_threshold", 0.40)
+
+    if is_ranged_guard(npc_serial) then
+        npc_state.set_var(npc_serial, "preferred_min_range", 4)
+        npc_state.set_var(npc_serial, "preferred_max_range", 6)
+        return
+    end
+
+    -- Minimum distance while following a target
+    npc_state.set_var(npc_serial, "follow_stop_range", 1)
 end
 
 function guard.brain_loop(npc_serial)
@@ -48,7 +73,7 @@ function guard.brain_loop(npc_serial)
         }
 
         -- Select best-score behavior and execute run()
-        local delay_ms = utility_runner.tick(npc_serial, ctx, BEHAVIORS)
+        local delay_ms = utility_runner.tick(npc_serial, ctx, get_behaviors(npc_serial))
 
         -- The brain decides the next tick interval
         coroutine.yield(delay_ms)

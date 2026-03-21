@@ -112,6 +112,12 @@
     "intelligence": 25,
     "hits": 100,
     "brain": "guard",
+    "params": {
+      "guard_role": {
+        "type": "string",
+        "value": "ranged"
+      }
+    },
     "fixedEquipment": [
       {
         "itemTemplateId": "studded_chest",
@@ -175,6 +181,12 @@
     "intelligence": 25,
     "hits": 100,
     "brain": "guard",
+    "params": {
+      "guard_role": {
+        "type": "string",
+        "value": "ranged"
+      }
+    },
     "fixedEquipment": [
       {
         "itemTemplateId": "studded_chest",
