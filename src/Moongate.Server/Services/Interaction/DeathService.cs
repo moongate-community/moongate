@@ -39,6 +39,7 @@ public sealed class DeathService : IDeathService
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly ITimerService _timerService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IFameKarmaService _fameKarmaService;
     private readonly MoongateConfig _config;
     private readonly ILuaBrainRunner? _luaBrainRunner;
 
@@ -48,6 +49,7 @@ public sealed class DeathService : IDeathService
         ISpatialWorldService spatialWorldService,
         ITimerService timerService,
         IGameEventBusService gameEventBusService,
+        IFameKarmaService fameKarmaService,
         MoongateConfig config,
         ILuaBrainRunner? luaBrainRunner = null
     )
@@ -57,6 +59,7 @@ public sealed class DeathService : IDeathService
         _spatialWorldService = spatialWorldService;
         _timerService = timerService;
         _gameEventBusService = gameEventBusService;
+        _fameKarmaService = fameKarmaService;
         _config = config;
         _luaBrainRunner = luaBrainRunner;
     }
@@ -121,6 +124,11 @@ public sealed class DeathService : IDeathService
             _spatialWorldService.RemoveEntity(victim.Id);
             await _mobileService.DeleteAsync(victim.Id, cancellationToken);
             ScheduleCorpseDecay(corpse);
+        }
+
+        if (killer is not null && !victim.IsPlayer && killer.IsPlayer)
+        {
+            await _fameKarmaService.AwardNpcKillAsync(victim, killer, cancellationToken);
         }
 
         deathPayload = BuildDeathPayload(victim, killer, regionName, corpse);

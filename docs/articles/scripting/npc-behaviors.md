@@ -101,6 +101,7 @@ It delegates to `CombatService`, which owns:
 - swing scheduling through `TimerWheelService`
 - melee hit/damage resolution
 - region/map harmful-action gate on actual attack attempt
+- lethal handoff into `DeathService`, including PvE fame/karma awards for player kills against NPCs
 - `npc_state` (typed state variables)
 - `time`, `random`, `mobile` (general runtime helpers)
 

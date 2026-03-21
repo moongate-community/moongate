@@ -364,6 +364,23 @@ public sealed class DeathServiceTests
         public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent { }
     }
 
+    private sealed class FameKarmaServiceSpy : IFameKarmaService
+    {
+        public List<(UOMobileEntity Victim, UOMobileEntity Killer)> Awards { get; } = [];
+
+        public Task AwardNpcKillAsync(
+            UOMobileEntity victim,
+            UOMobileEntity killer,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            Awards.Add((victim, killer));
+
+            return Task.CompletedTask;
+        }
+    }
+
     [Test]
     public async Task ForceDeathAsync_WhenNpcIsAlive_ShouldMarkDeadAndCreateCorpse()
     {
@@ -372,6 +389,7 @@ public sealed class DeathServiceTests
         var timerService = new TimerServiceSpy();
         var spatial = new SpatialWorldServiceSpy();
         var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
             Game = new MoongateGameConfig
@@ -398,6 +416,7 @@ public sealed class DeathServiceTests
             spatial,
             timerService,
             eventBus,
+            fameKarmaService,
             config
         );
 
@@ -422,6 +441,7 @@ public sealed class DeathServiceTests
         var timerService = new TimerServiceSpy();
         var spatial = new SpatialWorldServiceSpy();
         var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
             Game = new MoongateGameConfig
@@ -448,6 +468,7 @@ public sealed class DeathServiceTests
             spatial,
             timerService,
             eventBus,
+            fameKarmaService,
             config
         );
 
@@ -480,6 +501,7 @@ public sealed class DeathServiceTests
             }
         };
         var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
             Game = new MoongateGameConfig
@@ -543,6 +565,7 @@ public sealed class DeathServiceTests
             spatial,
             timerService,
             eventBus,
+            fameKarmaService,
             config
         );
 
@@ -588,6 +611,7 @@ public sealed class DeathServiceTests
         var timerService = new TimerServiceSpy();
         var spatial = new SpatialWorldServiceSpy();
         var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
             Game = new MoongateGameConfig
@@ -614,6 +638,7 @@ public sealed class DeathServiceTests
             spatial,
             timerService,
             eventBus,
+            fameKarmaService,
             config
         );
 
@@ -633,6 +658,125 @@ public sealed class DeathServiceTests
                     spatial.BroadcastPackets.OfType<DeleteObjectPacket>().Any(packet => packet.Serial == corpse.Id),
                     Is.True
                 );
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDeathAsync_WhenNpcDiesWithPlayerKiller_ShouldAwardFameAndKarma()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var config = new MoongateConfig
+        {
+            Game = new MoongateGameConfig
+            {
+                CorpseDecaySeconds = 300
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000060u,
+            Name = "Ogre",
+            MapId = 1,
+            Location = new(120, 220, 0),
+            Hits = 0,
+            MaxHits = 50,
+            IsAlive = false,
+            Fame = 3000,
+            Karma = -3000
+        };
+        var killer = new UOMobileEntity
+        {
+            Id = (Serial)0x00000061u,
+            Name = "Tommy",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(121, 220, 0)
+        };
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            config
+        );
+
+        var handled = await service.HandleDeathAsync(victim, killer);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(fameKarmaService.Awards, Has.Count.EqualTo(1));
+                Assert.That(fameKarmaService.Awards[0].Victim, Is.SameAs(victim));
+                Assert.That(fameKarmaService.Awards[0].Killer, Is.SameAs(killer));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDeathAsync_WhenPlayerDies_ShouldNotAwardFameAndKarma()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var config = new MoongateConfig
+        {
+            Game = new MoongateGameConfig
+            {
+                CorpseDecaySeconds = 300
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000062u,
+            Name = "Victim",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(130, 230, 0),
+            Hits = 0,
+            MaxHits = 50,
+            IsAlive = false,
+            Fame = 3000,
+            Karma = -3000
+        };
+        var killer = new UOMobileEntity
+        {
+            Id = (Serial)0x00000063u,
+            Name = "Tommy",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(131, 230, 0)
+        };
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            config
+        );
+
+        var handled = await service.HandleDeathAsync(victim, killer);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(fameKarmaService.Awards, Is.Empty);
             }
         );
     }
