@@ -33,6 +33,8 @@ Each brain table can expose:
 
 - `brain_loop(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
+- `on_in_range(npc_serial, source_serial, event_obj)` optional
+- `on_out_range(npc_serial, source_serial, event_obj)` optional
 - `on_speech(npc_id, speaker_id, text, speech_type, map_id, x, y, z)` optional
 - `on_death(by_character, context)` optional
 
@@ -74,6 +76,21 @@ At each tick:
 4. `coroutine.yield(delay_ms)`
 
 On speech events, the guard can set `follow_target_serial` in blackboard state.
+On in-range events, the guard can greet a player once per entry and start combat when a hostile target enters range.
+
+Current `in_range` payload fields include:
+
+- `listener_npc_id`
+- `source_mobile_id`
+- `source_name`
+- `source_is_player`
+- `source_fame`
+- `source_karma`
+- `source_notoriety`
+- `source_is_enemy`
+- `map_id`
+- `range`
+- `location`
 
 ## State (Blackboard)
 
