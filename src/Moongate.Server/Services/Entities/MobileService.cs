@@ -462,13 +462,52 @@ public sealed class MobileService : IMobileService
 
             if (inferredItems.Count > 0)
             {
+                await HydrateEquippedContainerContentsAsync(hydratedItemsById.Values, cancellationToken);
+                await HydrateEquippedContainerContentsAsync(inferredItems, cancellationToken);
                 mobile.HydrateEquipmentRuntime([.. hydratedItemsById.Values, .. inferredItems]);
 
                 continue;
             }
 
+            await HydrateEquippedContainerContentsAsync(hydratedItemsById.Values, cancellationToken);
             mobile.HydrateEquipmentRuntime(hydratedItemsById.Values);
         }
+    }
+
+    private async Task HydrateEquippedContainerContentsAsync(
+        IEnumerable<UOItemEntity> equippedItems,
+        CancellationToken cancellationToken = default
+    )
+    {
+        foreach (var equippedItem in equippedItems)
+        {
+            await HydrateContainedItemsRecursiveAsync(equippedItem, cancellationToken);
+        }
+    }
+
+    private async Task HydrateContainedItemsRecursiveAsync(
+        UOItemEntity container,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                 item => item.ParentContainerId == container.Id,
+                                 static item => item,
+                                 cancellationToken
+                             );
+        var hydratedChildren = new List<UOItemEntity>(containedItems.Count);
+
+        foreach (var item in containedItems)
+        {
+            if (item.IsContainer)
+            {
+                await HydrateContainedItemsRecursiveAsync(item, cancellationToken);
+            }
+
+            hydratedChildren.Add(item);
+        }
+
+        container.HydrateContainedItemsRuntime(hydratedChildren);
     }
 
     private void RegisterBrainIfConfigured(string templateId, UOMobileEntity mobile)

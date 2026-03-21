@@ -517,6 +517,68 @@ public class CharacterServiceTests
     }
 
     [Test]
+    public async Task GetCharacterAsync_ShouldHydrateBackpackContents_ForGoldAndWeightCalculations()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new()
+        );
+        var characterId = (Serial)0x00000212;
+        var backpackId = (Serial)0x40000012;
+        var goldId = (Serial)0x40000013;
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = characterId,
+                Name = "wealthy-mobile",
+                IsPlayer = true,
+                BackpackId = backpackId,
+                EquippedItemIds =
+                {
+                    [ItemLayerType.Backpack] = backpackId
+                }
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = backpackId,
+                ItemId = 0x0E75,
+                Weight = 2,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Backpack
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = goldId,
+                ItemId = 0x0EED,
+                Amount = 1000,
+                Weight = 0,
+                ParentContainerId = backpackId,
+                ContainerPosition = new(11, 22)
+            }
+        );
+
+        var character = await service.GetCharacterAsync(characterId);
+
+        Assert.That(character, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(character!.Gold, Is.EqualTo(1000));
+                Assert.That(character.EffectiveCarriedWeight, Is.EqualTo(13));
+            }
+        );
+    }
+
+    [Test]
     public async Task GetCharactersForAccountAsync_ShouldHydrateEquippedItemReferences_ForReturnedCharacters()
     {
         using var temp = new TempDirectory();
