@@ -212,7 +212,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
 
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
-                new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+                new MobileIncomingPacket(mobileEntity, otherMobile, true, session.NetworkSession.IsEnhancedClient)
                 {
                     ResolvedNotoriety = _notorietyService.Compute(mobileEntity, otherMobile)
                 }
@@ -310,7 +310,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
 
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
-                new MobileIncomingPacket(mobileEntity, otherMobile, true, false)
+                new MobileIncomingPacket(mobileEntity, otherMobile, true, session.NetworkSession.IsEnhancedClient)
                 {
                     ResolvedNotoriety = _notorietyService.Compute(mobileEntity, otherMobile)
                 }

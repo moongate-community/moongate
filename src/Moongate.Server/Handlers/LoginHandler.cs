@@ -29,6 +29,7 @@ namespace Moongate.Server.Handlers;
  RegisterPacketHandler(PacketDefinition.ServerSelectPacket),
  RegisterPacketHandler(PacketDefinition.GameLoginPacket),
  RegisterPacketHandler(PacketDefinition.LoginCharacterPacket),
+ RegisterPacketHandler(PacketDefinition.ClientTypePacket),
  RegisterPacketHandler(PacketDefinition.ClientVersionPacket)]
 
 /// <summary>
@@ -122,6 +123,11 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             return await HandleLoginCharacterPacketAsync(session, loginCharacterPacket);
         }
 
+        if (packet is ClientTypePacket clientTypePacket)
+        {
+            return HandleClientTypePacketAsync(session, clientTypePacket);
+        }
+
         if (packet is ClientVersionPacket clientVersionPacket)
         {
             return HandleClientVersionPacketAsync(session, clientVersionPacket);
@@ -198,6 +204,20 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return true;
     }
 
+    private bool HandleClientTypePacketAsync(GameSession session, ClientTypePacket clientTypePacket)
+    {
+        session.NetworkSession.SetClientType(clientTypePacket.ResolvedClientType);
+
+        _logger.Debug(
+            "Received ClientTypePacket from session {SessionId}: advertised=0x{AdvertisedClientType:X8} resolved={ClientType}",
+            session.SessionId,
+            clientTypePacket.AdvertisedClientType,
+            clientTypePacket.ResolvedClientType
+        );
+
+        return true;
+    }
+
     private async Task<bool> HandleGameLoginPacketAsync(GameSession session, GameLoginPacket gameLoginPacket)
     {
         _logger.Debug(
@@ -220,7 +240,10 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         session.NetworkSession.EnableCompression();
 
-        var characterListPacket = new CharactersStartingLocationsPacket();
+        var characterListPacket = new CharactersStartingLocationsPacket
+        {
+            IsEnhancedClient = session.NetworkSession.IsEnhancedClient
+        };
         characterListPacket.Cities.AddRange(StartingCities.AvailableStartingCities);
 
         var characters = await _characterService.GetCharactersForAccountAsync(session.AccountId);

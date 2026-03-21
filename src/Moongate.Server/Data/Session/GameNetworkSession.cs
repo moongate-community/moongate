@@ -97,6 +97,16 @@ public sealed class GameNetworkSession
     public ClientVersion? ClientVersion { get; private set; }
 
     /// <summary>
+    /// Gets the resolved client type for this session.
+    /// </summary>
+    public ClientType ClientType { get; private set; } = ClientType.Classic;
+
+    /// <summary>
+    /// Gets whether the session represents an enhanced-style client.
+    /// </summary>
+    public bool IsEnhancedClient { get; private set; }
+
+    /// <summary>
     /// Gets the selected in-game character serial, when available.
     /// </summary>
     public uint? CharacterSerial { get; private set; }
@@ -255,6 +265,26 @@ public sealed class GameNetworkSession
         lock (_stateSync)
         {
             ClientVersion = clientVersion;
+
+            if (ClientType == ClientType.Classic && clientVersion.Type != ClientType.Classic)
+            {
+                ClientType = clientVersion.Type;
+            }
+
+            IsEnhancedClient = ClientType is ClientType.KR or ClientType.SA or ClientType.UOTD;
+        }
+    }
+
+    /// <summary>
+    /// Stores the client type reported by the client.
+    /// </summary>
+    /// <param name="clientType">Reported client type.</param>
+    public void SetClientType(ClientType clientType)
+    {
+        lock (_stateSync)
+        {
+            ClientType = clientType;
+            IsEnhancedClient = clientType is ClientType.KR or ClientType.SA or ClientType.UOTD;
         }
     }
 

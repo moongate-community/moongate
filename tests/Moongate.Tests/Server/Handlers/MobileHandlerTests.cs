@@ -421,6 +421,7 @@ public sealed class MobileHandlerTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessions = new FakeGameNetworkSessionService();
         var movingSession = CreateSession(movingPlayerId);
+        movingSession.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
         sessions.Add(movingSession);
 
         // Move from sector (7,8) to adjacent sector (8,8) with radius 1
@@ -527,6 +528,7 @@ public sealed class MobileHandlerTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessions = new FakeGameNetworkSessionService();
         var movingSession = CreateSession(movingPlayerId);
+        movingSession.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
         sessions.Add(movingSession);
 
         var oldLocation = new Point3D(7 << MapSectorConsts.SectorShift, 7 << MapSectorConsts.SectorShift, 0);
@@ -635,6 +637,7 @@ public sealed class MobileHandlerTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessions = new FakeGameNetworkSessionService();
         var movingSession = CreateSession(movingPlayerId);
+        movingSession.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
         sessions.Add(movingSession);
 
         var oldLocation = new Point3D(100, 100, 0);
@@ -717,6 +720,7 @@ public sealed class MobileHandlerTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessions = new FakeGameNetworkSessionService();
         var movingSession = CreateSession(movingPlayerId);
+        movingSession.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
         sessions.Add(movingSession);
 
         var oldLocation = new Point3D(100, 100, 0);
@@ -778,6 +782,7 @@ public sealed class MobileHandlerTests
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var sessions = new FakeGameNetworkSessionService();
         var movingSession = CreateSession(movingPlayerId);
+        movingSession.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
         sessions.Add(movingSession);
 
         var oldLocation = new Point3D(100, 100, 0);
@@ -1788,5 +1793,59 @@ public sealed class MobileHandlerTests
         }
 
         return packets;
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobilePositionChanged_WhenRecipientIsClassicClient_ShouldUseLegacyMobileIncomingFormat()
+    {
+        var movingPlayerId = (Serial)0x00003000u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var movingSession = CreateSession(movingPlayerId);
+        movingSession.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.Classic);
+        sessions.Add(movingSession);
+
+        var oldLocation = new Point3D(100, 100, 0);
+        var newLocation = new Point3D(132, 132, 0);
+        var newSector = new MapSector(1, 8, 8);
+        newSector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = (Serial)0x00009999u,
+                IsPlayer = false,
+                Name = "guard",
+                Location = newLocation,
+                MapId = 1,
+                BaseBody = 0x0190
+            }
+        );
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SectorByLocationResolver = (_, location) => location == oldLocation ? new(1, 6, 6) : newSector
+        };
+        var characterService = new MobileHandlerTestCharacterService(CreatePlayer(movingPlayerId));
+        var speechService = new MobileHandlerTestSpeechService();
+        var handler = new MobileHandler(
+            spatial,
+            characterService,
+            speechService,
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(
+            new MobilePositionChangedEvent(movingSession.SessionId, movingPlayerId, 1, 1, oldLocation, newLocation)
+        );
+
+        var mobileIncomingPackets = DequeueAll(queue)
+            .Select(packet => packet.Packet)
+            .OfType<MobileIncomingPacket>()
+            .ToList();
+
+        Assert.That(mobileIncomingPackets, Is.Not.Empty);
+        Assert.That(mobileIncomingPackets.All(packet => packet.NewMobileIncoming), Is.False);
     }
 }
