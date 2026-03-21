@@ -198,6 +198,30 @@ public class UOItemEntityTests
     }
 
     [Test]
+    public void TotalWeight_ShouldReduceContainedWeight_WhenContainerIsQuiver()
+    {
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40000140,
+            ItemId = 0x2FB7,
+            Weight = 2,
+            IsQuiver = true,
+            QuiverWeightReduction = 30
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000240,
+            ItemId = 0x0F3F,
+            Weight = 1,
+            Amount = 10
+        };
+
+        quiver.AddItem(arrows, new(1, 1));
+
+        Assert.That(quiver.TotalWeight, Is.EqualTo(9));
+    }
+
+    [Test]
     public void UpdateItemLocation_ShouldReturnFalse_WhenItemIsNotContained()
     {
         var container = new UOItemEntity

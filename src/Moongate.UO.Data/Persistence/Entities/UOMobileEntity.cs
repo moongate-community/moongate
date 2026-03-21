@@ -17,6 +17,9 @@ namespace Moongate.UO.Data.Persistence.Entities;
 [MemoryPackable(SerializeLayout.Explicit)]
 public partial class UOMobileEntity : IMobileEntity
 {
+    private const int DefaultBodyWeight = 11;
+    private const int HumanMaxWeightBase = 100;
+    private const int NonHumanMaxWeightBase = 40;
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
     private const int DefaultUnarmedMinWeaponDamage = 1;
@@ -609,6 +612,31 @@ public partial class UOMobileEntity : IMobileEntity
     /// </summary>
     [MemoryPackIgnore]
     public int Gold => GetGold();
+
+    /// <summary>
+    /// Gets the effective carried weight used by player status packets.
+    /// </summary>
+    [MemoryPackIgnore]
+    public int EffectiveCarriedWeight => DefaultBodyWeight + GetCarriedItemWeight();
+
+    /// <summary>
+    /// Gets the effective carrying capacity used by player status packets.
+    /// </summary>
+    [MemoryPackIgnore]
+    public int EffectiveMaxWeight
+    {
+        get
+        {
+            if (!IsPlayer)
+            {
+                return MaxWeight;
+            }
+
+            var baseWeight = RaceIndex == 0 ? HumanMaxWeightBase : NonHumanMaxWeightBase;
+
+            return baseWeight + (int)(3.5 * EffectiveStrength);
+        }
+    }
 
     /// <summary>
     /// Gets persisted custom mobile properties.
@@ -1469,6 +1497,19 @@ public partial class UOMobileEntity : IMobileEntity
         return total >= int.MaxValue ? int.MaxValue : (int)total;
     }
 
+    private int GetCarriedItemWeight()
+    {
+        var visited = new HashSet<Serial>();
+        long total = 0;
+
+        foreach (var equippedItem in _equippedItemsRuntime.Values)
+        {
+            total += SumItemWeightRecursive(equippedItem, visited);
+        }
+
+        return total >= int.MaxValue ? int.MaxValue : (int)total;
+    }
+
     private int GetModifierValue(Func<MobileModifiers, int> selector)
     {
         var total = 0;
@@ -1582,6 +1623,16 @@ public partial class UOMobileEntity : IMobileEntity
         }
 
         return total;
+    }
+
+    private static long SumItemWeightRecursive(UOItemEntity item, HashSet<Serial> visited)
+    {
+        if (!visited.Add(item.Id))
+        {
+            return 0;
+        }
+
+        return item.TotalWeight;
     }
 
     private bool TryGetBackpackRuntime(out UOItemEntity backpack)

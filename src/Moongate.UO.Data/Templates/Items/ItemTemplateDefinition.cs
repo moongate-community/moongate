@@ -96,6 +96,14 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public int UsesRemaining { get; set; }
 
+    public bool IsQuiver { get; set; }
+
+    public int LowerAmmoCost { get; set; }
+
+    public int QuiverDamageIncrease { get; set; }
+
+    public int WeightReduction { get; set; }
+
     public UOSkillName? WeaponSkill { get; set; }
 
     [JsonConverter(typeof(Int32FlexibleJsonConverter))]

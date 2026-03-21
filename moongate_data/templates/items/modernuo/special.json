@@ -2601,16 +2601,43 @@
   },
   {
     "type": "item",
+    "id": "quiver",
+    "name": "Quiver",
+    "category": "Special",
+    "description": "Imported from ModernUO (BaseQuiver).",
+    "itemId": "0x2FB7",
+    "gumpId": "0x0108",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.quiver",
+    "isMovable": true,
+    "isQuiver": true,
+    "weightReduction": 30,
+    "quiverDamageIncrease": 10,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
     "id": "quiver_of_infinity",
     "name": "Quiver Of Infinity",
     "category": "Special",
     "description": "Imported from ModernUO (QuiverOfInfinity).",
     "itemId": "0x2B02",
+    "gumpId": "0x0108",
     "hue": "0",
     "goldValue": "0",
     "weight": 8,
     "scriptId": "items.quiver_of_infinity",
     "isMovable": true,
+    "isQuiver": true,
+    "lowerAmmoCost": 20,
+    "weightReduction": 30,
+    "quiverDamageIncrease": 10,
+    "defenseChanceIncrease": 5,
     "tags": [
       "modernuo",
       "special"

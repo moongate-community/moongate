@@ -498,6 +498,7 @@ public class CharacterService : ICharacterService
 
         if (missingIds.Count == 0)
         {
+            await HydrateEquippedContainerContentsAsync(equippedItems);
             character.HydrateEquipmentRuntime(equippedItems);
 
             return;
@@ -530,12 +531,23 @@ public class CharacterService : ICharacterService
 
         if (inferredItems.Count > 0)
         {
+            await HydrateEquippedContainerContentsAsync(equippedItems);
+            await HydrateEquippedContainerContentsAsync(inferredItems);
             character.HydrateEquipmentRuntime([.. equippedItems, .. inferredItems]);
 
             return;
         }
 
+        await HydrateEquippedContainerContentsAsync(equippedItems);
         character.HydrateEquipmentRuntime(equippedItems);
+    }
+
+    private async Task HydrateEquippedContainerContentsAsync(IEnumerable<UOItemEntity> equippedItems)
+    {
+        foreach (var equippedItem in equippedItems)
+        {
+            await HydrateContainedItemsRecursiveAsync(equippedItem);
+        }
     }
 
     private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)

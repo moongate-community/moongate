@@ -71,12 +71,12 @@ public class PlayerStatusPacket : BaseGameNetworkPacket
             writer.Write((ushort)Mobile.MaxMana);
             writer.Write((uint)Math.Max(0, Mobile.Gold));
             writer.Write((ushort)Math.Clamp(Mobile.EffectivePhysicalResistance, 0, ushort.MaxValue));
-            writer.Write((ushort)Math.Clamp(Mobile.Weight, 0, ushort.MaxValue));
+            writer.Write((ushort)Math.Clamp(Mobile.EffectiveCarriedWeight, 0, ushort.MaxValue));
         }
 
         if (Version >= 5)
         {
-            writer.Write((ushort)Math.Clamp(Mobile.MaxWeight, 0, ushort.MaxValue));
+            writer.Write((ushort)Math.Clamp(Mobile.EffectiveMaxWeight, 0, ushort.MaxValue));
             writer.Write((byte)(Mobile.RaceIndex + 1));
         }
 

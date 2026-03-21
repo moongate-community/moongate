@@ -271,6 +271,53 @@ public class ItemFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateItemFromTemplate_ShouldMapQuiverMetadata()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "quiver",
+                Name = "Quiver",
+                Category = "test",
+                Description = "test",
+                ItemId = "0x2B02",
+                GumpId = "0x0108",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.quiver",
+                Weight = 8,
+                IsQuiver = true,
+                LowerAmmoCost = 20,
+                QuiverDamageIncrease = 10,
+                WeightReduction = 30,
+                DefenseChanceIncrease = 5
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var item = service.CreateItemFromTemplate("quiver");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.IsQuiver, Is.True);
+                Assert.That(item.IsContainer, Is.True);
+                Assert.That(item.QuiverLowerAmmoCost, Is.EqualTo(20));
+                Assert.That(item.QuiverDamageIncrease, Is.EqualTo(10));
+                Assert.That(item.QuiverWeightReduction, Is.EqualTo(30));
+                Assert.That(item.Modifiers, Is.Not.Null);
+                Assert.That(item.Modifiers!.DefenseChanceIncrease, Is.EqualTo(5));
+                Assert.That(item.GumpId, Is.EqualTo(0x0108));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateItemFromTemplate_ShouldMapTypedCombatStatsAndModifiers()
     {
         using var temp = new TempDirectory();
