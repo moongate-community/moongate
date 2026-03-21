@@ -1,3 +1,5 @@
+using Moongate.Network.Types.Encryption;
+
 namespace Moongate.Server.Data.Config;
 
 /// <summary>
@@ -10,6 +12,10 @@ public class MoongateGameConfig
     public bool PingServerEnabled { get; set; } = true;
 
     public int PingServerPort { get; set; } = 12000;
+
+    public EncryptionMode EncryptionMode { get; set; } = EncryptionMode.Both;
+
+    public bool EncryptionDebug { get; set; }
 
     public int TimerTickMilliseconds { get; set; } = 250;
 

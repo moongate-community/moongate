@@ -85,6 +85,7 @@
 - Never add `Co-Authored-By: Claude` to commit messages.
 - Never commit planning or scratch workflow documents from `docs/plans/`, `docs/superpowers/`, or similar agent-only planning folders unless the user explicitly asks.
 - This includes plan documents and workflow artifacts under `docs/plans/`, `docs/superpowers/`, and nested agent-generated files below those trees.
+- Every completed feature must update the relevant documentation, integrating any missing documentation needed to describe the shipped behavior.
 - When behavior changes, update the relevant docs if the repo already documents that area.
 
 ## Special User Commands

@@ -21,7 +21,8 @@ moongate_data/scripts/ai/
 │   ├── init.lua
 │   ├── evade.lua
 │   ├── follow.lua
-│   └── idle.lua
+│   ├── idle.lua
+│   └── ranged_keep_distance.lua
 └── brains/
     ├── guard.lua
     └── utility_npc.lua
@@ -33,6 +34,8 @@ Each brain table can expose:
 
 - `brain_loop(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
+- `on_in_range(npc_serial, source_serial, event_obj)` optional
+- `on_out_range(npc_serial, source_serial, event_obj)` optional
 - `on_speech(npc_id, speaker_id, text, speech_type, map_id, x, y, z)` optional
 - `on_death(by_character, context)` optional
 
@@ -63,7 +66,8 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 `guard.lua` uses three isolated behaviors:
 
 - `evade`
-- `follow`
+- `follow` for melee guards
+- `ranged_keep_distance` for archer guards
 - `idle`
 
 At each tick:
@@ -74,6 +78,22 @@ At each tick:
 4. `coroutine.yield(delay_ms)`
 
 On speech events, the guard can set `follow_target_serial` in blackboard state.
+On in-range events, the guard can greet a player once per entry and start combat when a hostile target enters range.
+On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior.
+
+Current `in_range` payload fields include:
+
+- `listener_npc_id`
+- `source_mobile_id`
+- `source_name`
+- `source_is_player`
+- `source_fame`
+- `source_karma`
+- `source_notoriety`
+- `source_is_enemy`
+- `map_id`
+- `range`
+- `location`
 
 ## State (Blackboard)
 

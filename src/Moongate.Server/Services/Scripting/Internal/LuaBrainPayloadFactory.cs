@@ -2,6 +2,7 @@ using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.Scripting.Internal;
 
@@ -19,7 +20,12 @@ internal static class LuaBrainPayloadFactory
         {
             ["listener_npc_id"] = (uint)listenerNpcId,
             ["source_mobile_id"] = (uint)sourceMobile.Id,
+            ["source_name"] = sourceMobile.Name ?? string.Empty,
             ["source_is_player"] = sourceMobile.IsPlayer,
+            ["source_fame"] = sourceMobile.Fame,
+            ["source_karma"] = sourceMobile.Karma,
+            ["source_notoriety"] = sourceMobile.Notoriety.ToString(),
+            ["source_is_enemy"] = IsEnemy(sourceMobile.Notoriety),
             ["map_id"] = sourceMobile.MapId,
             ["range"] = range,
             ["location"] = new Dictionary<string, int>
@@ -29,6 +35,9 @@ internal static class LuaBrainPayloadFactory
                 ["z"] = sourceMobile.Location.Z
             }
         };
+
+    private static bool IsEnemy(Notoriety notoriety)
+        => notoriety is Notoriety.CanBeAttacked or Notoriety.Enemy or Notoriety.Criminal or Notoriety.Murdered;
 
     public static Dictionary<string, object> BuildSpawnEventPayload(MobileSpawnedFromSpawnerEvent spawn)
         => new()

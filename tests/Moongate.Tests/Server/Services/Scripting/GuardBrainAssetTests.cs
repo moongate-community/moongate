@@ -1,0 +1,93 @@
+using System.Text.Json;
+
+namespace Moongate.Tests.Server.Services.Scripting;
+
+public sealed class GuardBrainAssetTests
+{
+    [Test]
+    public void GuardBrainScript_ShouldGreetPlayersOnceAndAttackEnemiesOnInRange()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script, Does.Contain("function guard.on_in_range"));
+                Assert.That(script, Does.Contain("Hello, \" .. source_name .. \", How do you feel today?"));
+                Assert.That(script, Does.Contain("source_is_enemy"));
+                Assert.That(script, Does.Contain("npc:set_target(source)"));
+                Assert.That(script, Does.Contain("npc:set_war_mode(true)"));
+                Assert.That(script, Does.Contain("combat.set_target(npc_serial, source_serial)"));
+            }
+        );
+    }
+
+    [Test]
+    public void GuardBrainScript_ShouldUseRangedKeepDistanceForRangedGuards()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+        var behaviorInitPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "init.lua");
+        var behaviorInit = File.ReadAllText(behaviorInitPath);
+        var behaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "ranged_keep_distance.lua");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(File.Exists(behaviorPath), Is.True);
+                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.ranged_keep_distance\")"));
+                Assert.That(script, Does.Contain("\"ranged_keep_distance\""));
+                Assert.That(script, Does.Contain("guard_role"));
+                Assert.That(script, Does.Contain("preferred_min_range"));
+                Assert.That(script, Does.Contain("preferred_max_range"));
+            }
+        );
+    }
+
+    [Test]
+    public void GuardsTemplate_ShouldAssignGuardBrainToGuardNpcs()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "guards.json");
+
+        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        foreach (var guard in document.RootElement.EnumerateArray())
+        {
+            Assert.That(guard.GetProperty("brain").GetString(), Is.EqualTo("guard"));
+        }
+    }
+
+    [Test]
+    public void GuardsTemplate_ShouldMarkArcherGuardsAsRanged()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "guards.json");
+
+        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        var archerIds = new[] { "archer_guard_male_npc", "archer_guard_female_npc" };
+
+        foreach (var archerId in archerIds)
+        {
+            var archer = document.RootElement
+                                 .EnumerateArray()
+                                 .First(
+                                     element => string.Equals(
+                                         element.GetProperty("id").GetString(),
+                                         archerId,
+                                         StringComparison.Ordinal
+                                     )
+                                 );
+
+            Assert.That(
+                archer.GetProperty("params").GetProperty("guard_role").GetProperty("value").GetString(),
+                Is.EqualTo("ranged")
+            );
+        }
+    }
+
+    private static string GetRepositoryRoot()
+        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
+}
