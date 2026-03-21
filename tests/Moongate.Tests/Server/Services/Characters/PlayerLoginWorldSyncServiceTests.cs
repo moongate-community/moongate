@@ -413,6 +413,55 @@ public sealed class PlayerLoginWorldSyncServiceTests
     }
 
     [Test]
+    public async Task SyncAsync_WhenSessionIsEnhanced_ShouldUseNewMobileIncomingFormat()
+    {
+        var playerId = (Serial)0x00004040u;
+        var npcId = (Serial)0x00004041u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        session.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = npcId,
+                Name = "enhanced-guard",
+                Location = spawnLocation,
+                MapId = 1,
+                BaseBody = 0x0190
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var mobileIncomingPacket = DequeueAll(queue)
+                                   .Select(packet => packet.Packet)
+                                   .OfType<MobileIncomingPacket>()
+                                   .Single();
+
+        Assert.That(mobileIncomingPacket.NewMobileIncoming, Is.True);
+    }
+
+    [Test]
     public async Task SyncAsync_WhenCorpseIsVisible_ShouldSendCorpseContentsAndClothing()
     {
         var playerId = (Serial)0x00004031u;

@@ -265,7 +265,12 @@ public sealed class DispatchEventsService
             {
                 _outgoingPacketQueue.Enqueue(
                     playerSession.SessionId,
-                    new MobileIncomingPacket(playerSession.Character, mobile, stygianAbyss)
+                    new MobileIncomingPacket(
+                        playerSession.Character,
+                        mobile,
+                        stygianAbyss,
+                        playerSession.NetworkSession.IsEnhancedClient
+                    )
                     {
                         ResolvedNotoriety = _notorietyService.Compute(playerSession.Character, mobile)
                     }

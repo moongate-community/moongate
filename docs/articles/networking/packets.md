@@ -91,6 +91,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x91` | Game Login | C -> S | `GameLoginPacket` | `handler` | `LoginHandler` | Game-server auth |
 | `0x5D` | Login Character | C -> S | `LoginCharacterPacket` | `handler` | `LoginHandler` | Character enter world |
 | `0xBD` | Client Version | C -> S | `ClientVersionPacket` | `handler` | `LoginHandler` | Stores negotiated client version |
+| `0xE1` | Client Type | C -> S | `ClientTypePacket` | `handler` | `LoginHandler`, `GeneralInformationHandler` | Stores session client capabilities for KR/SA/EC-aware flows |
 | `0xF8` | Character Creation | C -> S | `CharacterCreationPacket` | `handler` | `CharacterHandler` | Modern creation flow |
 | `0x72` | Request War Mode / War Mode | both | `RequestWarModePacket`, `WarModePacket` | `handler` + `outgoing` | `CharacterHandler` | Inbound toggle request and outbound war-mode state reply share opcode `0x72`; outgoing packet is intentionally not registry-decorated to avoid direction-agnostic opcode collision |
 | `0x02` | Move Request | C -> S | `MoveRequestPacket` | `handler` | `MovementHandler` | Core movement |
@@ -166,6 +167,12 @@ Current notable outgoing packet classes:
 - `PlayerStatusPacket`
   - modern `7.x` status layout
   - reads effective mobile state from `UOMobileEntity`
+- `CharactersStartingLocationsPacket`
+  - outgoing `0xA9`
+  - sets the KR/UO3D-compatible flags when `session.IsEnhancedClient` is true
+- `MobileIncomingPacket`
+  - outgoing `0x78`
+  - chooses the new mobile format from the recipient session capability instead of assuming one global client shape
 - `PaperdollPacket`
   - outgoing `0x88`
   - serializes the paperdoll display name using the fame/karma reputation title table

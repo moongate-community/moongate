@@ -57,4 +57,55 @@ public sealed class GameNetworkSessionTests
 
         Assert.That(session.ClientVersion, Is.SameAs(version));
     }
+
+    [Test]
+    public void SetClientVersion_WhenVersionIsEnhanced_ShouldMarkSessionAsEnhanced()
+    {
+        using var client = new MoongateTCPClient(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameNetworkSession(client);
+
+        session.SetClientVersion(new ClientVersion("67.0.114.0"));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(session.ClientType, Is.EqualTo(ClientType.SA));
+                Assert.That(session.IsEnhancedClient, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public void SetClientType_WhenClientTypeIsKr_ShouldMarkSessionAsEnhanced()
+    {
+        using var client = new MoongateTCPClient(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameNetworkSession(client);
+
+        session.SetClientType(ClientType.KR);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(session.ClientType, Is.EqualTo(ClientType.KR));
+                Assert.That(session.IsEnhancedClient, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public void SetClientType_WhenClientTypeIsClassic_ShouldNotMarkSessionAsEnhanced()
+    {
+        using var client = new MoongateTCPClient(new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameNetworkSession(client);
+
+        session.SetClientType(ClientType.Classic);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(session.ClientType, Is.EqualTo(ClientType.Classic));
+                Assert.That(session.IsEnhancedClient, Is.False);
+            }
+        );
+    }
 }

@@ -50,6 +50,21 @@ Moongate supports:
 
 The game-server path intentionally uses the legacy UO MD5-derived XOR state because that is part of the historical client protocol and is required for compatibility.
 
+## Enhanced Client Session Shape
+
+Enhanced-client support stays separate from transport encryption:
+
+- `0xE1` `ClientType` updates the session client capability
+- `0xBD` `ClientVersion` can also promote the session into an enhanced-capable mode
+- `GameNetworkSession` exposes `ClientType` and `IsEnhancedClient`
+
+Moongate currently uses that session capability to:
+
+- set the KR/UO3D-compatible flags on the `0xA9` character list
+- prefer the new mobile-incoming format for enhanced sessions during world sync and movement visibility updates
+
+Encryption and enhanced-client support are intentionally orthogonal. An enhanced-capable client can still connect plain when `encryptionMode` allows it.
+
 ## Configuration Example
 
 ```json

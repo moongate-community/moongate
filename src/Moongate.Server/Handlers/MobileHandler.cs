@@ -387,7 +387,12 @@ public class MobileHandler
 
             _outgoingPacketQueue.Enqueue(
                 session.SessionId,
-                new MobileIncomingPacket(mobileEntity, otherMobile, true, true)
+                new MobileIncomingPacket(
+                    mobileEntity,
+                    otherMobile,
+                    true,
+                    session.NetworkSession.IsEnhancedClient
+                )
                 {
                     ResolvedNotoriety = _notorietyService.Compute(mobileEntity, otherMobile)
                 }
