@@ -22,7 +22,8 @@ moongate_data/scripts/ai/
 │   ├── evade.lua
 │   ├── follow.lua
 │   ├── idle.lua
-│   └── ranged_keep_distance.lua
+│   ├── ranged_keep_distance.lua
+│   └── self_bandage.lua
 └── brains/
     ├── guard.lua
     └── utility_npc.lua
@@ -63,8 +64,9 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 
 ## Guard Brain Example
 
-`guard.lua` uses three isolated behaviors:
+`guard.lua` uses these isolated behaviors:
 
+- `self_bandage`
 - `evade`
 - `follow` for melee guards
 - `ranged_keep_distance` for archer guards
@@ -113,6 +115,11 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
   - If the target is too far, it uses `steering.follow(...)`
   - Inside the preferred band, it stops movement and keeps the combat target active
   - Clears `follow_target_serial` if the combat target can no longer be armed
+- `self_bandage`
+  - Reads `self_bandage_hp_threshold` and `self_bandage_score_bonus`
+  - Requires a real `bandage` stack in the NPC backpack
+  - Starts a delayed self-heal through the `healing` module
+  - Keeps a high score while the bandage timer is in flight so the brain does not thrash
 - `idle`
   - Fallback behavior when nothing else scores higher
   - Keeps the brain alive without chasing or retreating
@@ -127,6 +134,8 @@ Behavior state is stored per NPC using `npc_state` module keys, for example:
 - `evade_hp_threshold`
 - `preferred_min_range`
 - `preferred_max_range`
+- `self_bandage_hp_threshold`
+- `self_bandage_score_bonus`
 - `guard_seen_<serial>`
 - `guard_engaged_<serial>`
 
@@ -170,6 +179,7 @@ Current core modules for behavior scripts:
 - `perception` (distance, nearby friend/enemy lookup, range checks)
 - `steering` (follow/evade/wander/stop movement primitives)
 - `combat` (target selection into the server combat loop; `set_target` / `clear_target`)
+- `healing` (self-bandage start/status helpers)
 
 `combat.set_target(...)` does not calculate hit or damage in Lua.
 It delegates to `CombatService`, which owns:
@@ -179,8 +189,20 @@ It delegates to `CombatService`, which owns:
 - melee hit/damage resolution
 - region/map harmful-action gate on actual attack attempt
 - lethal handoff into `DeathService`, including PvE fame/karma awards for player kills against NPCs
+- delayed self-bandage completion through `BandageService`
 - `npc_state` (typed state variables)
 - `time`, `random`, `mobile` (general runtime helpers)
+
+## Self Bandage Notes
+
+`self_bandage` is intentionally narrow in v1:
+
+- only self-heal, never target another mobile
+- consumes `1` `bandage` immediately when the timer starts
+- heals after a short fixed delay in C#
+- does not cure poison, resurrect, or create dirty bandages
+
+The behavior does nothing unless the NPC already has a backpack and at least one `bandage` item inside it.
 
 ## Best Practices
 

@@ -22,6 +22,9 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("combat.set_target(npc_serial, source_serial)"));
                 Assert.That(script, Does.Contain("local function set_default(key, value)"));
                 Assert.That(script, Does.Contain("set_default(\"evade_desired_range\", 0)"));
+                Assert.That(script, Does.Contain("\"self_bandage\""));
+                Assert.That(script, Does.Contain("set_default(\"self_bandage_hp_threshold\", 0.45)"));
+                Assert.That(script, Does.Contain("set_default(\"self_bandage_score_bonus\", 70)"));
             }
         );
     }
@@ -36,14 +39,17 @@ public sealed class GuardBrainAssetTests
         var behaviorInit = File.ReadAllText(behaviorInitPath);
         var behaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "ranged_keep_distance.lua");
         var followBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "follow.lua");
+        var selfBandageBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "self_bandage.lua");
         var rangedKeepDistance = File.ReadAllText(behaviorPath);
         var followBehavior = File.ReadAllText(followBehaviorPath);
+        var selfBandageBehavior = File.ReadAllText(selfBandageBehaviorPath);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(File.Exists(behaviorPath), Is.True);
                 Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.ranged_keep_distance\")"));
+                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.self_bandage\")"));
                 Assert.That(script, Does.Contain("\"ranged_keep_distance\""));
                 Assert.That(script, Does.Contain("guard_role"));
                 Assert.That(script, Does.Contain("preferred_min_range"));
@@ -58,6 +64,10 @@ public sealed class GuardBrainAssetTests
                 Assert.That(followBehavior, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
                 Assert.That(rangedKeepDistance, Does.Not.Contain("require(\"combat\")"));
                 Assert.That(followBehavior, Does.Not.Contain("require(\"combat\")"));
+                Assert.That(selfBandageBehavior, Does.Contain("healing.begin_self_bandage(npc_serial)"));
+                Assert.That(selfBandageBehavior, Does.Contain("healing.has_bandage(npc_serial)"));
+                Assert.That(selfBandageBehavior, Does.Contain("healing.is_bandaging(npc_serial)"));
+                Assert.That(selfBandageBehavior, Does.Contain("behavior.register(\"self_bandage\", M)"));
             }
         );
     }
