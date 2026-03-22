@@ -54,6 +54,7 @@ public class PacketHandlerRegistrationAttributeTests
             PacketDefinition.ServerSelectPacket,
             PacketDefinition.GameLoginPacket,
             PacketDefinition.LoginCharacterPacket,
+            PacketDefinition.ClientTypePacket,
             PacketDefinition.ClientVersionPacket
         );
         AssertMappings(
