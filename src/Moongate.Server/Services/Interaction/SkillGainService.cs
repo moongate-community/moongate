@@ -10,19 +10,40 @@ public sealed class SkillGainService : ISkillGainService
 {
     private const int GainAmount = 1;
     private readonly Func<double> _nextDouble;
+    private readonly ISkillAntiMacroService _skillAntiMacroService;
+    private readonly IStatGainService _statGainService;
 
-    public SkillGainService()
-        : this(static () => Random.Shared.NextDouble())
+    public SkillGainService(ISkillAntiMacroService skillAntiMacroService, IStatGainService statGainService)
+        : this(static () => Random.Shared.NextDouble(), skillAntiMacroService, statGainService)
     {
     }
 
     internal SkillGainService(Func<double> nextDouble)
+        : this(nextDouble, new SkillAntiMacroService(static () => DateTime.UtcNow), new StatGainService(static () => 1.0, static () => 0.0))
     {
-        ArgumentNullException.ThrowIfNull(nextDouble);
-        _nextDouble = nextDouble;
     }
 
-    public SkillGainResult TryGain(UOMobileEntity mobile, UOSkillName skillName, double successChance, bool wasSuccessful)
+    internal SkillGainService(
+        Func<double> nextDouble,
+        ISkillAntiMacroService skillAntiMacroService,
+        IStatGainService statGainService
+    )
+    {
+        ArgumentNullException.ThrowIfNull(nextDouble);
+        ArgumentNullException.ThrowIfNull(skillAntiMacroService);
+        ArgumentNullException.ThrowIfNull(statGainService);
+        _nextDouble = nextDouble;
+        _skillAntiMacroService = skillAntiMacroService;
+        _statGainService = statGainService;
+    }
+
+    public SkillGainResult TryGain(
+        UOMobileEntity mobile,
+        UOSkillName skillName,
+        double successChance,
+        bool wasSuccessful,
+        SkillGainContext? context = null
+    )
     {
         ArgumentNullException.ThrowIfNull(mobile);
 
@@ -37,6 +58,11 @@ public sealed class SkillGainService : ISkillGainService
         var skillCap = Math.Max(1, skill.Cap);
 
         if (currentBase >= skillCap)
+        {
+            return new(skillName, false, null);
+        }
+
+        if (!_skillAntiMacroService.AllowGain(mobile, skillName, context))
         {
             return new(skillName, false, null);
         }
@@ -67,6 +93,7 @@ public sealed class SkillGainService : ISkillGainService
 
         skill.Base = Math.Min(currentBase + GainAmount, skillCap);
         skill.Value = skill.Base;
+        _ = _statGainService.TryApply(mobile, skillName);
 
         return new(skillName, true, loweredSkillName);
     }

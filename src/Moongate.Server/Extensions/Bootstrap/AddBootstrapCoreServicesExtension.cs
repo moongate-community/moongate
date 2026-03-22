@@ -108,6 +108,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
         container.Register<IHelpTicketService, HelpTicketService>(Reuse.Singleton);
         container.Register<INotorietyService, NotorietyService>(Reuse.Singleton);
+        container.Register<ISkillAntiMacroService, SkillAntiMacroService>(Reuse.Singleton);
+        container.Register<IStatGainService, StatGainService>(Reuse.Singleton);
         container.Register<ISkillGainService, SkillGainService>(Reuse.Singleton);
         container.Register<ICombatService, CombatService>(Reuse.Singleton);
         container.Register<IBandageService, BandageService>(Reuse.Singleton);

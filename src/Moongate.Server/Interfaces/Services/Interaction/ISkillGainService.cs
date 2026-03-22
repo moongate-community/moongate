@@ -16,6 +16,13 @@ public interface ISkillGainService
     /// <param name="skillName">The skill being trained.</param>
     /// <param name="successChance">The normalized success chance for the action.</param>
     /// <param name="wasSuccessful"><c>true</c> when the action succeeded; otherwise <c>false</c>.</param>
+    /// <param name="context">Optional action context used by gain policies.</param>
     /// <returns>The applied gain result.</returns>
-    SkillGainResult TryGain(UOMobileEntity mobile, UOSkillName skillName, double successChance, bool wasSuccessful);
+    SkillGainResult TryGain(
+        UOMobileEntity mobile,
+        UOSkillName skillName,
+        double successChance,
+        bool wasSuccessful,
+        SkillGainContext? context = null
+    );
 }
