@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Outgoing.Combat;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Combat;
 using Moongate.Server.Data.Session;
@@ -64,7 +65,7 @@ public sealed class CombatService : ICombatService
             gameEventBusService,
             itemService,
             deathService,
-            new SkillGainService()
+            new SkillGainService(new SkillAntiMacroService(), new StatGainService())
         )
     {
     }
@@ -644,11 +645,12 @@ public sealed class CombatService : ICombatService
     private bool TryApplyCombatSkillGain(UOMobileEntity attacker, UOMobileEntity defender, bool wasSuccessful)
     {
         var successChance = ResolveHitScore(attacker, defender);
+        var context = new SkillGainContext(attacker.Location, defender.Id);
         var changed = false;
 
-        changed |= _skillGainService.TryGain(attacker, ResolveAttackSkill(attacker), successChance, wasSuccessful).SkillIncreased;
-        changed |= _skillGainService.TryGain(attacker, UOSkillName.Tactics, successChance, wasSuccessful).SkillIncreased;
-        changed |= _skillGainService.TryGain(attacker, UOSkillName.Anatomy, successChance, wasSuccessful).SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, ResolveAttackSkill(attacker), successChance, wasSuccessful, context).SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, UOSkillName.Tactics, successChance, wasSuccessful, context).SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, UOSkillName.Anatomy, successChance, wasSuccessful, context).SkillIncreased;
 
         return changed;
     }

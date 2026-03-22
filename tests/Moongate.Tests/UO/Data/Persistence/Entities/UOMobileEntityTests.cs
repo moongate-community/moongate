@@ -841,6 +841,27 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void StatLocks_ShouldDefaultToUp_AndTotalBaseStatsShouldSumCoreStats()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Strength = 50,
+            Dexterity = 40,
+            Intelligence = 30
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.StrengthLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.DexterityLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.IntelligenceLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.GetTotalBaseStats(), Is.EqualTo(120));
+            }
+        );
+    }
+
+    [Test]
     public void TypedMobileState_ShouldBeInitializedByDefault()
     {
         var mobile = new UOMobileEntity();

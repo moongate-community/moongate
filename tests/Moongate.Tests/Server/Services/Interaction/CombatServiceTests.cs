@@ -258,7 +258,7 @@ public sealed class CombatServiceTests
 
     private sealed class SkillGainServiceSpy : ISkillGainService
     {
-        public List<(Serial MobileId, UOSkillName SkillName, double SuccessChance, bool WasSuccessful)> Calls { get; } = [];
+        public List<(Serial MobileId, UOSkillName SkillName, double SuccessChance, bool WasSuccessful, SkillGainContext? Context)> Calls { get; } = [];
 
         public bool MutateSkillOnCall { get; set; }
 
@@ -266,10 +266,11 @@ public sealed class CombatServiceTests
             UOMobileEntity mobile,
             UOSkillName skillName,
             double successChance,
-            bool wasSuccessful
+            bool wasSuccessful,
+            SkillGainContext? context = null
         )
         {
-            Calls.Add((mobile.Id, skillName, successChance, wasSuccessful));
+            Calls.Add((mobile.Id, skillName, successChance, wasSuccessful, context));
 
             if (MutateSkillOnCall)
             {

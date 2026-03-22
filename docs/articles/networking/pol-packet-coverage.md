@@ -39,7 +39,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x24` | Draw container | S -> C | `?Packet=0x24` | `DrawContainerPacket` | `outgoing` | container flow | Container open packet |
 | `0x2E` | Worn item | S -> C | `?Packet=0x2E` | `WornItemPacket` | `outgoing` | equipment sync | Equipped visuals |
 | `0x34` | Get player status | C -> S | `?Packet=0x34` | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
-| `0x3A` | Send skills | both | `?Packet=0x3A` | `SkillListPacket` | `outgoing` | `PlayerStatusHandler`, `CombatService` | Moongate sends the full skill list on explicit requests and after combat-driven skill gains; no inbound listener |
+| `0x3A` | Send skills | both | `?Packet=0x3A` | `SkillListPacket` | `outgoing` | `PlayerStatusHandler`, `CombatService` | Moongate sends the full skill list on explicit requests and after combat-driven skill gains/stat progression; no inbound listener |
 | `0x3C` | Add multiple items to container | S -> C | `?Packet=0x3C` | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched container contents |
 | `0x4E` | Personal light level | S -> C | `?Packet=0x4E` | `PersonalLightLevelPacket` | `outgoing` | world presentation | Client light state |
 | `0x4F` | Overall light level | S -> C | `?Packet=0x4F` | `OverallLightLevelPacket` | `outgoing` | world presentation | Global light state |
@@ -74,7 +74,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xB9` | Enable locked client features | S -> C | `?Packet=0xB9` | `SupportFeaturesPacket` | `outgoing` | login flow | Client feature flags |
 | `0xBC` | Season | S -> C | `?Packet=0xBC` | `SeasonPacket` | `outgoing` | world presentation | Season state |
 | `0xBD` | Client version | C -> S | `?Packet=0xBD` | `ClientVersionPacket` | `handler` | `LoginHandler` | Stores client version |
-| `0xBF` | General information | C -> S | `?Packet=0xBF` | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Context menus, stat locks, targeted actions |
+| `0xBF` | General information | C -> S | `?Packet=0xBF` | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Context menus, persisted stat-lock updates, targeted actions |
 | `0xC0` | Hued effect | S -> C | `?Packet=0xC0` | `HuedEffectPacket` | `outgoing` | world presentation | Colored effect |
 | `0xC7` | Particle effect | S -> C | `?Packet=0xC7` | `ParticleEffectPacket` | `outgoing` | world presentation | Particle effect |
 | `0xC8` | Client view range | C -> S | `?Packet=0xC8` | `ClientViewRangePacket` | `handler` | `ClientViewRangeHandler` | View range update |
