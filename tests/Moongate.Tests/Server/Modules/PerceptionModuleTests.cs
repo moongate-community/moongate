@@ -176,4 +176,34 @@ public sealed class PerceptionModuleTests
 
         Assert.That(nearestEnemy, Is.EqualTo((uint)hostileNpc.Id));
     }
+
+    [Test]
+    public void FindNearestPlayerEnemy_ShouldIgnoreHostileNpcs_AndReturnNearestPlayer()
+    {
+        var spatial = new PerceptionTestSpatialWorldService();
+        var npc = new UOMobileEntity { Id = (Serial)0x40u, MapId = 1, Location = new(100, 100, 0) };
+        var hostileNpc = new UOMobileEntity
+        {
+            Id = (Serial)0x41u,
+            IsPlayer = false,
+            Notoriety = Notoriety.CanBeAttacked,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        var playerNear = new UOMobileEntity
+        {
+            Id = (Serial)0x42u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(102, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(hostileNpc);
+        spatial.AddMobile(playerNear);
+        var module = new PerceptionModule(spatial);
+
+        var nearestEnemy = module.FindNearestPlayerEnemy((uint)npc.Id, 20);
+
+        Assert.That(nearestEnemy, Is.EqualTo((uint)playerNear.Id));
+    }
 }

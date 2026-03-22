@@ -359,6 +359,7 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(payload["source_is_player"], Is.EqualTo(false));
                 Assert.That(payload["source_is_enemy"], Is.EqualTo(true));
                 Assert.That(payload["source_notoriety"], Is.EqualTo(nameof(Notoriety.CanBeAttacked)));
+                Assert.That(payload["source_relation"], Is.EqualTo(nameof(AiRelation.Hostile)));
             }
         );
     }
@@ -410,6 +411,7 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(payload["source_is_player"], Is.EqualTo(false));
                 Assert.That(payload["source_is_enemy"], Is.EqualTo(true));
                 Assert.That(payload["source_notoriety"], Is.EqualTo(nameof(Notoriety.CanBeAttacked)));
+                Assert.That(payload["source_relation"], Is.EqualTo(nameof(AiRelation.Hostile)));
             }
         );
     }

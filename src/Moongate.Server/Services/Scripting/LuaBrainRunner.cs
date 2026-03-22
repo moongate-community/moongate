@@ -9,6 +9,7 @@ using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
@@ -45,7 +46,7 @@ public sealed class LuaBrainRunner
     private readonly ILogger _logger = Log.ForContext<LuaBrainRunner>();
     private readonly Script? _luaScript;
     private readonly int _maxBrainsPerTick;
-    private readonly LuaBrainStateStore _stateStore = new();
+    private readonly LuaBrainStateStore _stateStore;
     private readonly LuaBrainMetricsTracker _metricsTracker = new();
 
     private string? _timerId;
@@ -55,7 +56,9 @@ public sealed class LuaBrainRunner
         IScriptEngineService scriptEngineService,
         ILuaBrainRegistry luaBrainRegistry,
         DirectoriesConfig directoriesConfig,
-        MoongateConfig? config = null
+        MoongateConfig? config = null,
+        INotorietyService? notorietyService = null,
+        IAiRelationService? aiRelationService = null
     )
     {
         _timerService = timerService;
@@ -63,6 +66,10 @@ public sealed class LuaBrainRunner
         _luaBrainRegistry = luaBrainRegistry;
         _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
+        _stateStore = new LuaBrainStateStore(
+            notorietyService ?? new Services.Interaction.NotorietyService(),
+            aiRelationService ?? new Services.Interaction.AiRelationService()
+        );
 
         var configuredMaxBrains = config?.Scripting?.LuaBrainMaxBrainsPerTick ?? 0;
         _maxBrainsPerTick = configuredMaxBrains <= 0 ? int.MaxValue : configuredMaxBrains;
