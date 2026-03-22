@@ -1,6 +1,7 @@
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -12,9 +13,17 @@ namespace Moongate.Server.Services.Scripting.Internal;
 /// </summary>
 internal sealed class LuaBrainStateStore
 {
+    private readonly IAiRelationService _aiRelationService;
+    private readonly INotorietyService _notorietyService;
     private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
     private readonly Dictionary<Serial, UOMobileEntity> _observedMobiles = [];
     private readonly Lock _sync = new();
+
+    public LuaBrainStateStore(INotorietyService notorietyService, IAiRelationService aiRelationService)
+    {
+        _notorietyService = notorietyService;
+        _aiRelationService = aiRelationService;
+    }
 
     public void Clear()
     {
@@ -59,7 +68,13 @@ internal sealed class LuaBrainStateStore
             state.PendingInRange.Enqueue(
                 new(
                     sourceMobile.Id,
-                    LuaBrainPayloadFactory.BuildInRangeEventPayload(state.MobileId, sourceMobile, range)
+                    LuaBrainPayloadFactory.BuildInRangeEventPayload(
+                        state.Mobile,
+                        sourceMobile,
+                        range,
+                        _notorietyService,
+                        _aiRelationService
+                    )
                 )
             );
         }
@@ -77,7 +92,13 @@ internal sealed class LuaBrainStateStore
             state.PendingOutRange.Enqueue(
                 new(
                     sourceMobile.Id,
-                    LuaBrainPayloadFactory.BuildInRangeEventPayload(state.MobileId, sourceMobile, range)
+                    LuaBrainPayloadFactory.BuildInRangeEventPayload(
+                        state.Mobile,
+                        sourceMobile,
+                        range,
+                        _notorietyService,
+                        _aiRelationService
+                    )
                 )
             );
         }

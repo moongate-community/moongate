@@ -1,4 +1,5 @@
 using Moongate.Server.Services.Interaction;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -57,11 +58,45 @@ public sealed class NotorietyServiceTests
         Assert.That(result, Is.EqualTo(Notoriety.Enemy));
     }
 
+    [Test]
+    public void Compute_WhenViewerHasRecentAggressorAgainstTarget_ShouldReturnCanBeAttacked()
+    {
+        var service = new NotorietyService();
+        var viewer = CreatePlayer((Serial)0x0100u, Notoriety.Innocent);
+        var target = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+
+        viewer.RefreshAggressor(target.Id, viewer.Id, DateTime.UtcNow);
+
+        var result = service.Compute(viewer, target);
+
+        Assert.That(result, Is.EqualTo(Notoriety.CanBeAttacked));
+    }
+
+    [Test]
+    public void Compute_WhenViewerTargetsSelf_ShouldReturnInnocent()
+    {
+        var service = new NotorietyService();
+        var viewer = CreatePlayer((Serial)0x0100u, Notoriety.Criminal);
+
+        var result = service.Compute(viewer, viewer);
+
+        Assert.That(result, Is.EqualTo(Notoriety.Innocent));
+    }
+
     private static UOMobileEntity CreatePlayer()
         => new()
         {
             IsPlayer = true,
             Notoriety = Notoriety.Innocent,
+            BaseBody = 0x0190
+        };
+
+    private static UOMobileEntity CreatePlayer(Serial id, Notoriety notoriety)
+        => new()
+        {
+            Id = id,
+            IsPlayer = true,
+            Notoriety = notoriety,
             BaseBody = 0x0190
         };
 
