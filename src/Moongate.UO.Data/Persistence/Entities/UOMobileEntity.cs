@@ -22,6 +22,7 @@ public partial class UOMobileEntity : IMobileEntity
     private const int NonHumanMaxWeightBase = 40;
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
+    private const int DefaultTotalSkillCap = 7000;
     private const int DefaultUnarmedMinWeaponDamage = 1;
     private const int DefaultUnarmedMaxWeaponDamage = 4;
     private const uint MountVirtualSerialMask = 0x3EEEEEEE;
@@ -340,6 +341,24 @@ public partial class UOMobileEntity : IMobileEntity
     public int StatCap { get; set; } = 225;
 
     /// <summary>
+    /// Gets or sets the strength stat lock state.
+    /// </summary>
+    [MemoryPackOrder(61)]
+    public UOSkillLock StrengthLock { get; set; } = UOSkillLock.Up;
+
+    /// <summary>
+    /// Gets or sets the dexterity stat lock state.
+    /// </summary>
+    [MemoryPackOrder(62)]
+    public UOSkillLock DexterityLock { get; set; } = UOSkillLock.Up;
+
+    /// <summary>
+    /// Gets or sets the intelligence stat lock state.
+    /// </summary>
+    [MemoryPackOrder(63)]
+    public UOSkillLock IntelligenceLock { get; set; } = UOSkillLock.Up;
+
+    /// <summary>
     /// Gets or sets the current follower slot usage.
     /// </summary>
     [MemoryPackOrder(28)]
@@ -637,6 +656,12 @@ public partial class UOMobileEntity : IMobileEntity
             return baseWeight + (int)(3.5 * EffectiveStrength);
         }
     }
+
+    /// <summary>
+    /// Gets the default total skill cap in fixed-point units.
+    /// </summary>
+    [MemoryPackIgnore]
+    public int TotalSkillCapFixedPoint => DefaultTotalSkillCap;
 
     /// <summary>
     /// Gets persisted custom mobile properties.
@@ -1303,6 +1328,60 @@ public partial class UOMobileEntity : IMobileEntity
         Skills[skillName] = entry;
 
         return entry;
+    }
+
+    /// <summary>
+    /// Gets the total of all persisted skill base values in fixed-point units.
+    /// </summary>
+    public int GetTotalSkillBaseFixedPoint()
+    {
+        var total = 0;
+
+        foreach (var skill in Skills.Values)
+        {
+            total += (int)Math.Round(skill.Base);
+        }
+
+        return total;
+    }
+
+    /// <summary>
+    /// Gets the sum of the base strength, dexterity, and intelligence stats.
+    /// </summary>
+    public int GetTotalBaseStats()
+        => Strength + Dexterity + Intelligence;
+
+    /// <summary>
+    /// Gets the lock state for the requested core stat.
+    /// </summary>
+    public UOSkillLock GetStatLock(Stat stat)
+        => stat switch
+        {
+            Stat.Strength => StrengthLock,
+            Stat.Dexterity => DexterityLock,
+            Stat.Intelligence => IntelligenceLock,
+            _ => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
+        };
+
+    /// <summary>
+    /// Sets the lock state for the requested core stat.
+    /// </summary>
+    public void SetStatLock(Stat stat, UOSkillLock lockState)
+    {
+        switch (stat)
+        {
+            case Stat.Strength:
+                StrengthLock = lockState;
+                break;
+            case Stat.Dexterity:
+                DexterityLock = lockState;
+                break;
+            case Stat.Intelligence:
+                IntelligenceLock = lockState;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(stat), stat, null);
+        }
     }
 
     /// <summary>

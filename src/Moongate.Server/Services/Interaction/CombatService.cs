@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Outgoing.Combat;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Combat;
 using Moongate.Server.Data.Session;
@@ -41,6 +42,7 @@ public sealed class CombatService : ICombatService
     private readonly IGameEventBusService _gameEventBusService;
     private readonly IItemService _itemService;
     private readonly IDeathService _deathService;
+    private readonly ISkillGainService _skillGainService;
     private readonly Lock _syncRoot = new();
     private readonly Dictionary<Serial, int> _combatSequences = [];
 
@@ -54,6 +56,31 @@ public sealed class CombatService : ICombatService
         IItemService itemService,
         IDeathService deathService
     )
+        : this(
+            mobileService,
+            gameNetworkSessionService,
+            outgoingPacketQueue,
+            timerService,
+            spatialWorldService,
+            gameEventBusService,
+            itemService,
+            deathService,
+            new SkillGainService(new SkillAntiMacroService(), new StatGainService())
+        )
+    {
+    }
+
+    public CombatService(
+        IMobileService mobileService,
+        IGameNetworkSessionService gameNetworkSessionService,
+        IOutgoingPacketQueue outgoingPacketQueue,
+        ITimerService timerService,
+        ISpatialWorldService spatialWorldService,
+        IGameEventBusService gameEventBusService,
+        IItemService itemService,
+        IDeathService deathService,
+        ISkillGainService skillGainService
+    )
     {
         _mobileService = mobileService;
         _gameNetworkSessionService = gameNetworkSessionService;
@@ -63,6 +90,7 @@ public sealed class CombatService : ICombatService
         _gameEventBusService = gameEventBusService;
         _itemService = itemService;
         _deathService = deathService;
+        _skillGainService = skillGainService;
     }
 
     public async Task<bool> TrySetCombatantAsync(
@@ -553,7 +581,9 @@ public sealed class CombatService : ICombatService
         attacker.LastCombatAtUtc = nowUtc;
         defender.LastCombatAtUtc = nowUtc;
 
-        if (ResolveHit(attacker, defender))
+        var wasSuccessful = ResolveHit(attacker, defender);
+
+        if (wasSuccessful)
         {
             var damage = ResolveDamage(attacker, attackProfile);
             defender.Hits = Math.Max(0, defender.Hits - damage);
@@ -585,10 +615,17 @@ public sealed class CombatService : ICombatService
             );
         }
 
+        var skillsChanged = TryApplyCombatSkillGain(attacker, defender, wasSuccessful);
         attacker.NextCombatAtUtc = nowUtc.Add(delay);
 
         await PersistMobileAsync(attacker, CancellationToken.None);
         await PersistMobileAsync(defender, CancellationToken.None);
+
+        if (skillsChanged &&
+            _gameNetworkSessionService.TryGetByCharacterId(attacker.Id, out var attackerSession))
+        {
+            _outgoingPacketQueue.Enqueue(attackerSession.SessionId, new SkillListPacket(attacker));
+        }
 
         if (_gameNetworkSessionService.TryGetByCharacterId(defender.Id, out var defenderSession))
         {
@@ -603,6 +640,19 @@ public sealed class CombatService : ICombatService
         }
 
         ScheduleSwing(attacker.Id, delay);
+    }
+
+    private bool TryApplyCombatSkillGain(UOMobileEntity attacker, UOMobileEntity defender, bool wasSuccessful)
+    {
+        var successChance = ResolveHitScore(attacker, defender);
+        var context = new SkillGainContext(attacker.Location, defender.Id);
+        var changed = false;
+
+        changed |= _skillGainService.TryGain(attacker, ResolveAttackSkill(attacker), successChance, wasSuccessful, context).SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, UOSkillName.Tactics, successChance, wasSuccessful, context).SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, UOSkillName.Anatomy, successChance, wasSuccessful, context).SkillIncreased;
+
+        return changed;
     }
 
     private static void RefreshAggression(

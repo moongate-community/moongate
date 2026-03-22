@@ -825,6 +825,43 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void GetTotalSkillBaseFixedPoint_ShouldSumSkillBases()
+    {
+        SkillInfo.Table =
+        [
+            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
+            new(1, "Anatomy", 100, 0, 0, "Biologist", 0, 0, 0, 1, "Anatomy", Stat.Strength, Stat.Intelligence)
+        ];
+        var mobile = new UOMobileEntity();
+        mobile.InitializeSkills();
+        mobile.SetSkill(UOSkillName.Alchemy, 500);
+        mobile.SetSkill(UOSkillName.Anatomy, 725, 700);
+
+        Assert.That(mobile.GetTotalSkillBaseFixedPoint(), Is.EqualTo(1200));
+    }
+
+    [Test]
+    public void StatLocks_ShouldDefaultToUp_AndTotalBaseStatsShouldSumCoreStats()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Strength = 50,
+            Dexterity = 40,
+            Intelligence = 30
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.StrengthLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.DexterityLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.IntelligenceLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.GetTotalBaseStats(), Is.EqualTo(120));
+            }
+        );
+    }
+
+    [Test]
     public void TypedMobileState_ShouldBeInitializedByDefault()
     {
         var mobile = new UOMobileEntity();
