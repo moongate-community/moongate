@@ -7,7 +7,7 @@ This page explains the behavior-oriented Lua AI model used by Moongate v2 NPC br
 Keep NPC AI maintainable by separating:
 
 - **brain orchestration** (`brain_loop`, event routing, priorities)
-- **behaviors** (small focused units like follow, evade, idle)
+- **behaviors** (small focused units like follow, evade, hold_position)
 - **runtime state** (blackboard values stored per NPC)
 
 ## Directory Layout
@@ -21,8 +21,11 @@ moongate_data/scripts/ai/
 │   ├── init.lua
 │   ├── evade.lua
 │   ├── follow.lua
+│   ├── hold_position.lua
 │   ├── idle.lua
-│   └── ranged_keep_distance.lua
+│   ├── leash.lua
+│   ├── ranged_keep_distance.lua
+│   └── return_home.lua
 └── brains/
     ├── guard.lua
     └── utility_npc.lua
@@ -63,12 +66,14 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 
 ## Guard Brain Example
 
-`guard.lua` uses three isolated behaviors:
+`guard.lua` uses these isolated behaviors:
 
+- `leash`
 - `evade`
 - `follow` for melee guards
 - `ranged_keep_distance` for archer guards
-- `idle`
+- `return_home`
+- `hold_position`
 
 At each tick:
 
@@ -107,21 +112,34 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
   - Chases the target until it reaches the configured stop distance
   - Reasserts `combat.set_target(...)` while following so the C# combat loop stays armed
   - Clears `follow_target_serial` if the combat target can no longer be armed
+- `leash`
+  - Reads `follow_target_serial`, `home_x`, `home_y`, and `leash_radius`
+  - Drops the current target when the guard has been pulled too far from home
+  - Clears the active combat target before the brain transitions into return-home logic
 - `ranged_keep_distance`
   - Reads `follow_target_serial`, `preferred_min_range`, and `preferred_max_range`
   - If the target is too close, it uses `steering.evade(...)`
   - If the target is too far, it uses `steering.follow(...)`
   - Inside the preferred band, it stops movement and keeps the combat target active
   - Clears `follow_target_serial` if the combat target can no longer be armed
-- `idle`
-  - Fallback behavior when nothing else scores higher
-  - Keeps the brain alive without chasing or retreating
+- `return_home`
+  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
+  - Walks the guard back to its captured home point when no target is active
+- `hold_position`
+  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
+  - Replaces random wandering for guards that are already back near home
 
 ## State (Blackboard)
 
 Behavior state is stored per NPC using `npc_state` module keys, for example:
 
 - `follow_target_serial`
+- `home_x`
+- `home_y`
+- `home_z`
+- `home_map_id`
+- `hold_radius`
+- `leash_radius`
 - `follow_stop_range`
 - `evade_desired_range`
 - `evade_hp_threshold`
@@ -163,12 +181,17 @@ For guards this means:
 
 When a hostile leaves range, the guard brain now clears both `follow_target_serial` and the active combat target. That avoids stale target state lingering after `out_range`.
 
+Guards also capture a home point once, then use two simple rules:
+
+- if they have no target and drift outside `hold_radius`, `return_home` pulls them back
+- if they are dragged beyond `leash_radius` while chasing, `leash` drops the target so they can reset
+
 ## Runtime Modules Used by Behaviors
 
 Current core modules for behavior scripts:
 
 - `perception` (distance, nearby friend/enemy lookup, range checks)
-- `steering` (follow/evade/wander/stop movement primitives)
+- `steering` (follow/evade/move_to/wander/stop movement primitives)
 - `combat` (target selection into the server combat loop; `set_target` / `clear_target`)
 
 `combat.set_target(...)` does not calculate hit or damage in Lua.

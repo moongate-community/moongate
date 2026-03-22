@@ -22,6 +22,9 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("combat.set_target(npc_serial, source_serial)"));
                 Assert.That(script, Does.Contain("local function set_default(key, value)"));
                 Assert.That(script, Does.Contain("set_default(\"evade_desired_range\", 0)"));
+                Assert.That(script, Does.Contain("set_default(HOME_X_KEY, npc.location_x)"));
+                Assert.That(script, Does.Contain("set_default(\"hold_radius\", 1)"));
+                Assert.That(script, Does.Contain("set_default(\"leash_radius\", 8)"));
             }
         );
     }
@@ -36,14 +39,26 @@ public sealed class GuardBrainAssetTests
         var behaviorInit = File.ReadAllText(behaviorInitPath);
         var behaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "ranged_keep_distance.lua");
         var followBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "follow.lua");
+        var holdPositionPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "hold_position.lua");
+        var returnHomePath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "return_home.lua");
+        var leashPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "leash.lua");
         var rangedKeepDistance = File.ReadAllText(behaviorPath);
         var followBehavior = File.ReadAllText(followBehaviorPath);
+        var holdPosition = File.ReadAllText(holdPositionPath);
+        var returnHome = File.ReadAllText(returnHomePath);
+        var leash = File.ReadAllText(leashPath);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(File.Exists(behaviorPath), Is.True);
+                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.hold_position\")"));
+                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.return_home\")"));
+                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.leash\")"));
                 Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.ranged_keep_distance\")"));
+                Assert.That(script, Does.Contain("\"leash\""));
+                Assert.That(script, Does.Contain("\"return_home\""));
+                Assert.That(script, Does.Contain("\"hold_position\""));
                 Assert.That(script, Does.Contain("\"ranged_keep_distance\""));
                 Assert.That(script, Does.Contain("guard_role"));
                 Assert.That(script, Does.Contain("preferred_min_range"));
@@ -58,6 +73,11 @@ public sealed class GuardBrainAssetTests
                 Assert.That(followBehavior, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
                 Assert.That(rangedKeepDistance, Does.Not.Contain("require(\"combat\")"));
                 Assert.That(followBehavior, Does.Not.Contain("require(\"combat\")"));
+                Assert.That(holdPosition, Does.Contain("behavior.register(\"hold_position\", M)"));
+                Assert.That(returnHome, Does.Contain("steering.move_to(npc_serial"));
+                Assert.That(returnHome, Does.Contain("behavior.register(\"return_home\", M)"));
+                Assert.That(leash, Does.Contain("combat.clear_target(npc_serial)"));
+                Assert.That(leash, Does.Contain("behavior.register(\"leash\", M)"));
             }
         );
     }

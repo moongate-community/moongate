@@ -117,6 +117,31 @@ public sealed class SteeringModule
         return TryMove(npc, npc.Location.GetDirectionTo(target.Location));
     }
 
+    [ScriptFunction("move_to", "Moves npc toward a world point until stop_range is reached.")]
+    public bool MoveTo(uint npcSerial, int x, int y, int z, int stopRange, int repathMs = 250)
+    {
+        _ = repathMs;
+
+        if (stopRange < 0 || !MobileScriptResolver.TryResolveMobile(_spatialWorldService, npcSerial, out var npc))
+        {
+            return false;
+        }
+
+        var targetLocation = new Point3D(x, y, z);
+
+        if (npc!.Location.InRange(targetLocation, stopRange))
+        {
+            return false;
+        }
+
+        if (_pathfindingService.TryFindPath(npc, targetLocation, out var path) && path.Count > 0)
+        {
+            return TryMove(npc, path[0]);
+        }
+
+        return TryMove(npc, npc.Location.GetDirectionTo(targetLocation));
+    }
+
     [ScriptFunction("stop", "No-op steering stop primitive placeholder.")]
     public bool Stop(uint npcSerial)
     {
