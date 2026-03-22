@@ -34,7 +34,8 @@ public sealed class LuaBrainRunner
       IGameEventListener<MobilePositionChangedEvent>,
       IGameEventListener<MobileSpawnedFromSpawnerEvent>
 {
-    private const int InRangeEnterDistance = 3;
+    private const int DefaultInRangeEnterDistance = 3;
+    private const int RangedGuardInRangeEnterDistance = 10;
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
 
@@ -76,7 +77,7 @@ public sealed class LuaBrainRunner
         => _stateStore.EnqueueDeath(mobileId, deathContext);
 
     /// <inheritdoc />
-    public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = InRangeEnterDistance)
+    public void EnqueueInRange(Serial listenerNpcId, UOMobileEntity sourceMobile, int range = DefaultInRangeEnterDistance)
         => _stateStore.EnqueueInRange(listenerNpcId, sourceMobile, range);
 
     /// <inheritdoc />
@@ -117,6 +118,7 @@ public sealed class LuaBrainRunner
     public Task HandleAsync(MobileAddedInWorldEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
+        _stateStore.UpsertObservedMobile(gameEvent.Mobile);
         NotifyInRangeForAddedMobile(gameEvent.Mobile);
 
         if (gameEvent.Mobile.IsPlayer)
@@ -326,43 +328,29 @@ public sealed class LuaBrainRunner
 
     private void NotifyInRangeForAddedMobile(UOMobileEntity sourceMobile)
     {
-        if (!_stateStore.TryResolveSourceMobile(
-                sourceMobile.Id,
-                sourceMobile.MapId,
-                sourceMobile.Location,
-                out var resolved
-            ) ||
-            resolved is null)
-        {
-            return;
-        }
-
         var snapshot = _stateStore.GetAllStates();
 
         foreach (var state in snapshot)
         {
-            if (state.MobileId == resolved.Id || state.Mobile.MapId != resolved.MapId)
+            if (state.MobileId == sourceMobile.Id || state.Mobile.MapId != sourceMobile.MapId)
             {
                 continue;
             }
 
-            if (!state.Mobile.Location.InRange(resolved.Location, InRangeEnterDistance))
+            var acquisitionRange = ResolveAcquisitionRange(state.Mobile);
+
+            if (!state.Mobile.Location.InRange(sourceMobile.Location, acquisitionRange))
             {
                 continue;
             }
 
-            _stateStore.EnqueueInRange(state.MobileId, resolved, InRangeEnterDistance);
+            _stateStore.EnqueueInRange(state.MobileId, sourceMobile, acquisitionRange);
         }
     }
 
     private void NotifyInRangeForMovedMobile(MobilePositionChangedEvent gameEvent)
     {
-        if (!_stateStore.TryResolveSourceMobile(
-                gameEvent.MobileId,
-                gameEvent.MapId,
-                gameEvent.NewLocation,
-                out var sourceMobile
-            ) ||
+        if (!_stateStore.TryResolveTrackedMobile(gameEvent.MobileId, out var sourceMobile) ||
             sourceMobile is null)
         {
             return;
@@ -377,21 +365,33 @@ public sealed class LuaBrainRunner
                 continue;
             }
 
+            var acquisitionRange = ResolveAcquisitionRange(state.Mobile);
             var isInRangeNow = state.Mobile.MapId == gameEvent.MapId &&
-                               state.Mobile.Location.InRange(gameEvent.NewLocation, InRangeEnterDistance);
+                               state.Mobile.Location.InRange(gameEvent.NewLocation, acquisitionRange);
             var wasInRangeBefore = state.Mobile.MapId == gameEvent.OldMapId &&
-                                   state.Mobile.Location.InRange(gameEvent.OldLocation, InRangeEnterDistance);
+                                   state.Mobile.Location.InRange(gameEvent.OldLocation, acquisitionRange);
 
             if (!wasInRangeBefore && isInRangeNow)
             {
-                _stateStore.EnqueueInRange(state.MobileId, sourceMobile, InRangeEnterDistance);
+                _stateStore.EnqueueInRange(state.MobileId, sourceMobile, acquisitionRange);
             }
 
             if (wasInRangeBefore && !isInRangeNow)
             {
-                _stateStore.EnqueueOutRange(state.MobileId, sourceMobile, InRangeEnterDistance);
+                _stateStore.EnqueueOutRange(state.MobileId, sourceMobile, acquisitionRange);
             }
         }
+    }
+
+    private static int ResolveAcquisitionRange(UOMobileEntity mobile)
+    {
+        if (mobile.TryGetCustomString("guard_role", out var guardRole) &&
+            string.Equals(guardRole, "ranged", StringComparison.OrdinalIgnoreCase))
+        {
+            return RangedGuardInRangeEnterDistance;
+        }
+
+        return DefaultInRangeEnterDistance;
     }
 
     private string ResolveBrainTableName(string brainId)

@@ -79,7 +79,7 @@ At each tick:
 
 On speech events, the guard can set `follow_target_serial` in blackboard state.
 On in-range events, the guard can greet a player once per entry and start combat when a hostile target enters range.
-On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior.
+On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior and a longer hostile-acquisition radius.
 
 Current `in_range` payload fields include:
 
@@ -95,6 +95,28 @@ Current `in_range` payload fields include:
 - `range`
 - `location`
 
+## Built-In Behaviors
+
+Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` are:
+
+- `evade`
+  - Reads `evade_from_serial`, `evade_desired_range`, and `evade_hp_threshold`
+  - Moves away from the current threat when the threat is too close or HP is low
+- `follow`
+  - Reads `follow_target_serial` and `follow_stop_range`
+  - Chases the target until it reaches the configured stop distance
+  - Reasserts `combat.set_target(...)` while following so the C# combat loop stays armed
+  - Clears `follow_target_serial` if the combat target can no longer be armed
+- `ranged_keep_distance`
+  - Reads `follow_target_serial`, `preferred_min_range`, and `preferred_max_range`
+  - If the target is too close, it uses `steering.evade(...)`
+  - If the target is too far, it uses `steering.follow(...)`
+  - Inside the preferred band, it stops movement and keeps the combat target active
+  - Clears `follow_target_serial` if the combat target can no longer be armed
+- `idle`
+  - Fallback behavior when nothing else scores higher
+  - Keeps the brain alive without chasing or retreating
+
 ## State (Blackboard)
 
 Behavior state is stored per NPC using `npc_state` module keys, for example:
@@ -103,8 +125,43 @@ Behavior state is stored per NPC using `npc_state` module keys, for example:
 - `follow_stop_range`
 - `evade_desired_range`
 - `evade_hp_threshold`
+- `preferred_min_range`
+- `preferred_max_range`
+- `guard_seen_<serial>`
+- `guard_engaged_<serial>`
 
 This keeps behavior logic stateless and reusable.
+
+The guard brain initializes defaults only when a key is missing. That keeps the scripts KISS while still allowing runtime tuning to override blackboard values without being overwritten every tick.
+
+## Guard Ranges
+
+There are three different ranges involved in guard combat:
+
+1. Acquisition range
+   - This is the distance at which the Lua brain receives `in_range` for a hostile target.
+   - Melee guards use `3` tiles.
+   - Guards with `params.guard_role = "ranged"` use `10` tiles.
+2. Preferred movement band
+   - Archer guards try to stay between `4` and `6` tiles from the target.
+   - Melee guards use `follow_stop_range = 1`.
+3. Actual weapon attack range
+   - This is resolved by `CombatService` from the equipped weapon profile.
+   - The current bow template uses `maxRange = 10`.
+   - Melee weapons without explicit range metadata fall back to `1`.
+
+These ranges are intentionally separate:
+
+- acquisition determines when the brain reacts
+- preferred band determines where the behavior wants to stand
+- weapon range determines whether the attack can actually fire
+
+For guards this means:
+
+- warrior guards notice hostiles at `3`, chase, and attack in melee
+- archer guards can notice hostiles earlier, position at `4-6`, and still fire out to the bow maximum range
+
+When a hostile leaves range, the guard brain now clears both `follow_target_serial` and the active combat target. That avoids stale target state lingering after `out_range`.
 
 ## Runtime Modules Used by Behaviors
 

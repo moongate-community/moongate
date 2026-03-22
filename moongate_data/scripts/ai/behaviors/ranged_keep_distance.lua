@@ -50,6 +50,11 @@ function M.run(npc_serial, _ctx)
         return 250
     end
 
+    if combat.set_target(npc_serial, target_serial) ~= true then
+        npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)
+        return 250
+    end
+
     local distance = perception.distance(npc_serial, target_serial)
     if distance < 0 then
         return 250

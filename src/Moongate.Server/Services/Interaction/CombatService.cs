@@ -84,6 +84,11 @@ public sealed class CombatService : ICombatService
             return false;
         }
 
+        if (attacker.CombatantId == defender.Id && attacker.Warmode && HasScheduledSwing(attacker.Id))
+        {
+            return true;
+        }
+
         var nowUtc = DateTime.UtcNow;
         attacker.ExpireAggressors(nowUtc, AggressorTimeout);
         defender.ExpireAggressors(nowUtc, AggressorTimeout);
@@ -134,6 +139,14 @@ public sealed class CombatService : ICombatService
         lock (_syncRoot)
         {
             _combatSequences.Remove(attackerId);
+        }
+    }
+
+    private bool HasScheduledSwing(Serial attackerId)
+    {
+        lock (_syncRoot)
+        {
+            return _combatSequences.ContainsKey(attackerId);
         }
     }
 
@@ -274,7 +287,47 @@ public sealed class CombatService : ICombatService
             return session.Character;
         }
 
-        return await _mobileService.GetAsync(mobileId, cancellationToken);
+        var persistedMobile = await _mobileService.GetAsync(mobileId, cancellationToken);
+        var liveMobile = TryResolveLiveMobile(mobileId, persistedMobile);
+
+        return liveMobile ?? persistedMobile;
+    }
+
+    private UOMobileEntity? TryResolveLiveMobile(Serial mobileId, UOMobileEntity? persistedMobile)
+    {
+        if (persistedMobile is not null)
+        {
+            var sector = _spatialWorldService.GetSectorByLocation(persistedMobile.MapId, persistedMobile.Location);
+            var sectorMobile = sector?.GetEntity<UOMobileEntity>(mobileId);
+
+            if (sectorMobile is not null)
+            {
+                return sectorMobile;
+            }
+
+            var nearbyMobile = _spatialWorldService.GetNearbyMobiles(
+                persistedMobile.Location,
+                MapSectorConsts.MaxViewRange,
+                persistedMobile.MapId
+            ).FirstOrDefault(mobile => mobile.Id == mobileId);
+
+            if (nearbyMobile is not null)
+            {
+                return nearbyMobile;
+            }
+        }
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            var sectorMobile = sector.GetEntity<UOMobileEntity>(mobileId);
+
+            if (sectorMobile is not null)
+            {
+                return sectorMobile;
+            }
+        }
+
+        return null;
     }
 
     private static UOItemEntity? ResolveWeapon(UOMobileEntity attacker)
@@ -366,6 +419,26 @@ public sealed class CombatService : ICombatService
         }
     }
 
+    private async ValueTask FaceTowardDefenderAsync(UOMobileEntity attacker, UOMobileEntity defender)
+    {
+        var desiredDirection = Point3D.GetBaseDirection(attacker.Location.GetDirectionTo(defender.Location));
+        var currentDirection = Point3D.GetBaseDirection(attacker.Direction);
+
+        if (desiredDirection == currentDirection)
+        {
+            return;
+        }
+
+        attacker.Direction = desiredDirection;
+        SyncRuntimeMobile(attacker);
+
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            new MobileMovingPacket(attacker),
+            attacker.MapId,
+            attacker.Location
+        );
+    }
+
     private async ValueTask ExecuteSwingAsync(Serial attackerId, int expectedSequence)
     {
         lock (_syncRoot)
@@ -391,6 +464,8 @@ public sealed class CombatService : ICombatService
             await ClearCombatantAsync(attackerId);
             return;
         }
+
+        await FaceTowardDefenderAsync(attacker, defender);
 
         var delay = ResolveSwingDelay(attacker);
         var attackProfile = ResolveAttackProfile(attacker);
@@ -570,7 +645,7 @@ public sealed class CombatService : ICombatService
 
         if (!ContainsAmmo(quiver, ammoItemId) && !ContainsAmmo(backpack, ammoItemId))
         {
-            return false;
+            return !attacker.IsPlayer;
         }
 
         if (attackProfile.LowerAmmoCost > 0 &&

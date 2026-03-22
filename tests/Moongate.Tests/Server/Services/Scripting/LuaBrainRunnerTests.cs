@@ -279,11 +279,13 @@ public sealed class LuaBrainRunnerTests
         {
             Id = (Serial)0x600,
             Name = "traveler",
-            IsPlayer = true,
+            IsPlayer = false,
+            BrainId = "traveler_brain",
             MapId = 1,
             Location = new(120, 100, 0)
         };
         runner.Register(npc, npc.BrainId);
+        runner.Register(source, source.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         source.Location = new(102, 100, 0);
@@ -317,6 +319,165 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
+    public async Task HandleAsync_WhenEnemyMobileWithoutBrainIsAdded_ShouldPreserveEnemyPayload()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x700,
+            Name = "guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var zombie = new UOMobileEntity
+        {
+            Id = (Serial)0x701,
+            Name = "zombie",
+            IsPlayer = false,
+            MapId = 1,
+            Location = new(101, 100, 0),
+            Notoriety = Notoriety.CanBeAttacked
+        };
+
+        runner.Register(guard, guard.BrainId);
+        await runner.HandleAsync(new MobileAddedInWorldEvent(zombie, zombie.BrainId));
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var eventCall = scriptEngine.Calls.First(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "in_range")
+        );
+        var payload = (Dictionary<string, object>)eventCall.Args[2]!;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(payload["source_is_player"], Is.EqualTo(false));
+                Assert.That(payload["source_is_enemy"], Is.EqualTo(true));
+                Assert.That(payload["source_notoriety"], Is.EqualTo(nameof(Notoriety.CanBeAttacked)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenEnemyMobileWithoutBrainMovesIntoRange_ShouldPreserveEnemyPayload()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x710,
+            Name = "guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var zombie = new UOMobileEntity
+        {
+            Id = (Serial)0x711,
+            Name = "zombie",
+            IsPlayer = false,
+            MapId = 1,
+            Location = new(120, 100, 0),
+            Notoriety = Notoriety.CanBeAttacked
+        };
+
+        runner.Register(guard, guard.BrainId);
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        await runner.HandleAsync(new MobileAddedInWorldEvent(zombie, zombie.BrainId));
+        await runner.TickAllAsync(now);
+        scriptEngine.Calls.Clear();
+
+        zombie.Location = new(102, 100, 0);
+        await runner.HandleAsync(new MobilePositionChangedEvent(1, zombie.Id, 1, 1, new(120, 100, 0), zombie.Location));
+        await runner.TickAllAsync(now + 1000);
+
+        var eventCall = scriptEngine.Calls.First(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "in_range")
+        );
+        var payload = (Dictionary<string, object>)eventCall.Args[2]!;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(payload["source_is_player"], Is.EqualTo(false));
+                Assert.That(payload["source_is_enemy"], Is.EqualTo(true));
+                Assert.That(payload["source_notoriety"], Is.EqualTo(nameof(Notoriety.CanBeAttacked)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenEnemyMobileIsWithinRangedGuardAcquisitionRange_ShouldNotifyRangedGuardButNotMeleeGuard()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var archerGuard = new UOMobileEntity
+        {
+            Id = (Serial)0x720,
+            Name = "archer_guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var warriorGuard = new UOMobileEntity
+        {
+            Id = (Serial)0x721,
+            Name = "warrior_guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var zombie = new UOMobileEntity
+        {
+            Id = (Serial)0x722,
+            Name = "zombie",
+            IsPlayer = false,
+            MapId = 1,
+            Location = new(106, 100, 0),
+            Notoriety = Notoriety.CanBeAttacked
+        };
+
+        archerGuard.SetCustomString("guard_role", "ranged");
+
+        runner.Register(archerGuard, archerGuard.BrainId);
+        runner.Register(warriorGuard, warriorGuard.BrainId);
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(zombie, zombie.BrainId));
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var inRangeEvents = scriptEngine.Calls
+                                        .Where(
+                                            call => call.FunctionName == "on_event" &&
+                                                    call.Args.Length > 0 &&
+                                                    Equals(call.Args[0], "in_range")
+                                        )
+                                        .ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(inRangeEvents.Count, Is.EqualTo(1));
+
+                if (inRangeEvents.Count == 1)
+                {
+                    Assert.That(inRangeEvents[0].Args[1], Is.EqualTo((uint)zombie.Id));
+                }
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_WhenMobileMovesOutNpcRange_ShouldInvokeOnEventOutRange()
     {
         using var temp = new TempDirectory();
@@ -336,11 +497,13 @@ public sealed class LuaBrainRunnerTests
         {
             Id = (Serial)0x620,
             Name = "traveler",
-            IsPlayer = true,
+            IsPlayer = false,
+            BrainId = "traveler_brain",
             MapId = 1,
             Location = new(102, 100, 0)
         };
         runner.Register(npc, npc.BrainId);
+        runner.Register(source, source.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         // Prime in-range state.
@@ -387,11 +550,13 @@ public sealed class LuaBrainRunnerTests
         {
             Id = (Serial)0x610,
             Name = "traveler",
-            IsPlayer = true,
+            IsPlayer = false,
+            BrainId = "traveler_brain",
             MapId = 1,
             Location = new(120, 100, 0)
         };
         runner.Register(npc, npc.BrainId);
+        runner.Register(source, source.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         source.Location = new(102, 100, 0);

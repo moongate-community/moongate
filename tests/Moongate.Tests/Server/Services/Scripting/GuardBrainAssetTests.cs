@@ -20,6 +20,8 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("npc:set_target(source)"));
                 Assert.That(script, Does.Contain("npc:set_war_mode(true)"));
                 Assert.That(script, Does.Contain("combat.set_target(npc_serial, source_serial)"));
+                Assert.That(script, Does.Contain("local function set_default(key, value)"));
+                Assert.That(script, Does.Contain("set_default(\"evade_desired_range\", 0)"));
             }
         );
     }
@@ -33,6 +35,9 @@ public sealed class GuardBrainAssetTests
         var behaviorInitPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "init.lua");
         var behaviorInit = File.ReadAllText(behaviorInitPath);
         var behaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "ranged_keep_distance.lua");
+        var followBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "follow.lua");
+        var rangedKeepDistance = File.ReadAllText(behaviorPath);
+        var followBehavior = File.ReadAllText(followBehaviorPath);
 
         Assert.Multiple(
             () =>
@@ -43,6 +48,16 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("guard_role"));
                 Assert.That(script, Does.Contain("preferred_min_range"));
                 Assert.That(script, Does.Contain("preferred_max_range"));
+                Assert.That(script, Does.Contain("local function set_default(key, value)"));
+                Assert.That(script, Does.Contain("combat.clear_target(npc_serial)"));
+                Assert.That(rangedKeepDistance, Does.Contain("combat.set_target(npc_serial, target_serial)"));
+                Assert.That(rangedKeepDistance, Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then"));
+                Assert.That(rangedKeepDistance, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
+                Assert.That(followBehavior, Does.Contain("combat.set_target(npc_serial, target_serial)"));
+                Assert.That(followBehavior, Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then"));
+                Assert.That(followBehavior, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
+                Assert.That(rangedKeepDistance, Does.Not.Contain("require(\"combat\")"));
+                Assert.That(followBehavior, Does.Not.Contain("require(\"combat\")"));
             }
         );
     }
