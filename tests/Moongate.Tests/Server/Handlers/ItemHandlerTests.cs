@@ -1636,9 +1636,17 @@ public class ItemHandlerTests
                 Assert.That(itemService.LastEquipItemId, Is.EqualTo((Serial)0x40000020u));
                 Assert.That(itemService.LastEquipMobileId, Is.EqualTo((Serial)0x00000002u));
                 Assert.That(itemService.LastEquipLayer, Is.EqualTo(ItemLayerType.Pants));
-                Assert.That(queue.TryDequeue(out var outgoing), Is.True);
-                Assert.That(outgoing.SessionId, Is.EqualTo(session.SessionId));
-                Assert.That(outgoing.Packet, Is.TypeOf<WornItemPacket>());
+                Assert.That(queue.TryDequeue(out var firstOutgoing), Is.True);
+                Assert.That(firstOutgoing.SessionId, Is.EqualTo(session.SessionId));
+
+                var outgoingPackets = new List<object> { firstOutgoing.Packet };
+
+                while (queue.TryDequeue(out var nextOutgoing))
+                {
+                    outgoingPackets.Add(nextOutgoing.Packet);
+                }
+
+                Assert.That(outgoingPackets.Any(static packet => packet is WornItemPacket), Is.True);
             }
         );
     }

@@ -490,6 +490,11 @@ public sealed class MobileService : IMobileService
         CancellationToken cancellationToken = default
     )
     {
+        if (!container.IsContainer)
+        {
+            return;
+        }
+
         var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
                                  item => item.ParentContainerId == container.Id,
                                  static item => item,

@@ -25,7 +25,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "./scripts/semantic-release-prepare.sh ${nextRelease.version}"
+        "prepareCmd": "./scripts/semantic-release-prepare.sh ${nextRelease.version} && python3 ./scripts/release_annotate_changelog.py ${nextRelease.version}"
       }
     ],
     [

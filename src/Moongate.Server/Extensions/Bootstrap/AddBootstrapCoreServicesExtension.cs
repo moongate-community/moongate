@@ -111,7 +111,20 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ISkillAntiMacroService, SkillAntiMacroService>(Reuse.Singleton);
         container.Register<IStatGainService, StatGainService>(Reuse.Singleton);
         container.Register<ISkillGainService, SkillGainService>(Reuse.Singleton);
-        container.Register<ICombatService, CombatService>(Reuse.Singleton);
+        container.RegisterDelegate<ICombatService>(
+            resolver => new CombatService(
+                resolver.Resolve<IMobileService>(),
+                resolver.Resolve<IGameNetworkSessionService>(),
+                resolver.Resolve<IOutgoingPacketQueue>(),
+                resolver.Resolve<ITimerService>(),
+                resolver.Resolve<ISpatialWorldService>(),
+                resolver.Resolve<IGameEventBusService>(),
+                resolver.Resolve<IItemService>(),
+                resolver.Resolve<IDeathService>(),
+                resolver.Resolve<ISkillGainService>()
+            ),
+            Reuse.Singleton
+        );
         container.Register<IBandageService, BandageService>(Reuse.Singleton);
         container.Register<IDeathService, DeathService>(Reuse.Singleton);
         container.Register<IFameKarmaService, FameKarmaService>(Reuse.Singleton);
