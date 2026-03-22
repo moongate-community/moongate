@@ -497,22 +497,50 @@ Example loot table:
   "id": "loot_test_chest_basic",
   "name": "Loot Test Chest Basic",
   "category": "Test",
+  "rolls": 2,
   "noDropWeight": 0,
   "entries": [
     { "itemTemplateId": "gold", "weight": 5, "amount": 125 },
-    { "itemTemplateId": "bandage", "weight": 3, "amount": 10 }
+    { "itemTag": "resources", "weight": 3, "amount": 25 },
+    { "itemTemplateId": "lockpick", "weight": 2, "amount": 5 }
   ]
 }
 ```
 
+Entry rules:
+
+- each entry may define exactly one of:
+  - `itemTemplateId`
+  - `itemId`
+  - `itemTag`
+- `rolls` defaults to `1`
+- `itemTag` resolves a random item template that already carries that tag
+
 Runtime behavior:
 
 - `lootTables` are rolled the first time the container is opened
+- each loot table can perform multiple weighted rolls via `rolls`
 - generated contents are then persisted like any normal container contents
 - if `loot_refillable = true`, the container can refill later
 - refill is lazy, not timer-driven:
   the container is marked ready only after it becomes empty, and loot is regenerated on a later open once `loot_refill_seconds` has elapsed
 - if the container still has items inside, no refill happens
+
+NPC mobile templates can also declare `lootTables`. When an NPC dies:
+
+- equipped items are moved to the corpse
+- backpack contents are moved to the corpse
+- configured `lootTables` are generated immediately on the corpse in additive mode
+
+Example mobile snippet:
+
+```json
+{
+  "type": "mobile",
+  "id": "zombie_npc",
+  "lootTables": ["undead.low"]
+}
+```
 
 Runtime custom metadata used internally:
 

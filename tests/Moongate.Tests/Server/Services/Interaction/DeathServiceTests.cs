@@ -9,9 +9,11 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Interaction;
+using Moongate.Server.Types.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -381,6 +383,39 @@ public sealed class DeathServiceTests
         }
     }
 
+    private sealed class LootGenerationServiceSpy : ILootGenerationService
+    {
+        public List<(Serial ContainerId, IReadOnlyList<string> LootTableIds, LootGenerationMode Mode)> Calls { get; } = [];
+
+        public Task<UOItemEntity> EnsureLootGeneratedAsync(
+            UOItemEntity container,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(container);
+
+        public Task<UOItemEntity> GenerateForContainerAsync(
+            UOItemEntity container,
+            IReadOnlyList<string> lootTableIds,
+            LootGenerationMode mode,
+            CancellationToken cancellationToken = default
+        )
+        {
+            Calls.Add((container.Id, lootTableIds, mode));
+
+            var generatedItem = new UOItemEntity
+            {
+                Id = (Serial)0x40000099u,
+                ItemId = 0x0EED,
+                Name = "generated_gold",
+                Amount = 200,
+                MapId = container.MapId
+            };
+            container.AddItem(generatedItem, new(40, 40));
+
+            return Task.FromResult(container);
+        }
+    }
+
     [Test]
     public async Task ForceDeathAsync_WhenNpcIsAlive_ShouldMarkDeadAndCreateCorpse()
     {
@@ -599,6 +634,95 @@ public sealed class DeathServiceTests
                            .Any(packet => packet.KilledMobileId == victim.Id && packet.CorpseId == corpse.Id),
                     Is.True
                 );
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDeathAsync_WhenNpcHasLootTables_ShouldGenerateAdditiveCorpseLootAfterTransfer()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var lootGenerationService = new LootGenerationServiceSpy();
+        var config = new MoongateConfig
+        {
+            Game = new MoongateGameConfig
+            {
+                CorpseDecaySeconds = 300
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000045u,
+            Name = "Skeleton",
+            Body = 0x0032,
+            MapId = 1,
+            Location = new(150, 250, 0),
+            Hits = 0,
+            MaxHits = 40,
+            IsAlive = false
+        };
+        victim.SetCustomString("mobile_loot_tables", "undead.low,gold.small");
+
+        var weapon = new UOItemEntity
+        {
+            Id = (Serial)0x40000021u,
+            ItemId = 0x13B2,
+            MapId = 1
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000022u,
+            ItemId = 0x0E75,
+            MapId = 1
+        };
+        var bandage = new UOItemEntity
+        {
+            Id = (Serial)0x40000023u,
+            ItemId = 0x0E21,
+            Amount = 10,
+            MapId = 1,
+            ParentContainerId = backpack.Id
+        };
+        backpack.AddItem(bandage, new(10, 10));
+        victim.AddEquippedItem(ItemLayerType.OneHanded, weapon);
+        victim.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        victim.BackpackId = backpack.Id;
+        mobileService.Mobiles[victim.Id] = victim;
+        itemService.Items[weapon.Id] = weapon;
+        itemService.Items[backpack.Id] = backpack;
+        itemService.Items[bandage.Id] = bandage;
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            config,
+            lootGenerationService: lootGenerationService
+        );
+
+        var handled = await service.HandleDeathAsync(victim, null);
+
+        var corpse = itemService.Items.Values.Single(item => item.ItemId == 0x2006);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(corpse.Items.Select(static item => item.Id), Contains.Item(weapon.Id));
+                Assert.That(corpse.Items.Select(static item => item.Id), Contains.Item(bandage.Id));
+                Assert.That(corpse.Items.Any(static item => item.Name == "generated_gold"), Is.True);
+                Assert.That(lootGenerationService.Calls, Has.Count.EqualTo(1));
+                Assert.That(lootGenerationService.Calls[0].ContainerId, Is.EqualTo(corpse.Id));
+                Assert.That(lootGenerationService.Calls[0].LootTableIds, Is.EqualTo(new[] { "undead.low", "gold.small" }));
+                Assert.That(lootGenerationService.Calls[0].Mode, Is.EqualTo(LootGenerationMode.OnDeath));
             }
         );
     }

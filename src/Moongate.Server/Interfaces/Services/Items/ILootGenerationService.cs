@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.Server.Types.Items;
 
 namespace Moongate.Server.Interfaces.Services.Items;
 
@@ -15,6 +16,21 @@ public interface ILootGenerationService
     /// <returns>The latest hydrated container state after generation completes.</returns>
     Task<UOItemEntity> EnsureLootGeneratedAsync(
         UOItemEntity container,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    /// Generates loot directly into the provided container using explicit loot table identifiers.
+    /// </summary>
+    /// <param name="container">Target container.</param>
+    /// <param name="lootTableIds">Loot tables to roll.</param>
+    /// <param name="mode">Generation mode controlling gating semantics.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The latest hydrated container state after generation completes.</returns>
+    Task<UOItemEntity> GenerateForContainerAsync(
+        UOItemEntity container,
+        IReadOnlyList<string> lootTableIds,
+        LootGenerationMode mode,
         CancellationToken cancellationToken = default
     );
 }

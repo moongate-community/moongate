@@ -3,6 +3,7 @@ using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Items;
+using Moongate.Server.Types.Items;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Templates;
@@ -24,16 +25,19 @@ public sealed class LootGenerationService : ILootGenerationService
     private readonly IItemFactoryService _itemFactoryService;
     private readonly IItemService _itemService;
     private readonly ILootTemplateService _lootTemplateService;
+    private readonly IItemTemplateService _itemTemplateService;
 
     public LootGenerationService(
         IItemFactoryService itemFactoryService,
         IItemService itemService,
-        ILootTemplateService lootTemplateService
+        ILootTemplateService lootTemplateService,
+        IItemTemplateService itemTemplateService
     )
     {
         _itemFactoryService = itemFactoryService;
         _itemService = itemService;
         _lootTemplateService = lootTemplateService;
+        _itemTemplateService = itemTemplateService;
     }
 
     public async Task<UOItemEntity> EnsureLootGeneratedAsync(
@@ -66,10 +70,55 @@ public sealed class LootGenerationService : ILootGenerationService
             return container;
         }
 
+        return await GenerateLootAsync(
+            container,
+            containerTemplate.LootTables,
+            LootGenerationMode.FirstOpen,
+            containerTemplate.Id,
+            refillDelay,
+            cancellationToken
+        );
+    }
+
+    public async Task<UOItemEntity> GenerateForContainerAsync(
+        UOItemEntity container,
+        IReadOnlyList<string> lootTableIds,
+        LootGenerationMode mode,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(container);
+        ArgumentNullException.ThrowIfNull(lootTableIds);
+        _ = cancellationToken;
+
+        if (!container.IsContainer || lootTableIds.Count == 0)
+        {
+            return container;
+        }
+
+        return await GenerateLootAsync(
+            container,
+            lootTableIds,
+            mode,
+            null,
+            null,
+            cancellationToken
+        );
+    }
+
+    private async Task<UOItemEntity> GenerateLootAsync(
+        UOItemEntity container,
+        IReadOnlyList<string> lootTableIds,
+        LootGenerationMode mode,
+        string? sourceTemplateId,
+        TimeSpan? refillDelay,
+        CancellationToken cancellationToken
+    )
+    {
         var layout = CreateLayout(container);
         var createdAnyLoot = false;
 
-        foreach (var lootTableId in containerTemplate.LootTables)
+        foreach (var lootTableId in lootTableIds)
         {
             if (string.IsNullOrWhiteSpace(lootTableId) ||
                 !_lootTemplateService.TryGet(lootTableId.Trim(), out var lootTable) ||
@@ -78,14 +127,7 @@ public sealed class LootGenerationService : ILootGenerationService
                 continue;
             }
 
-            var rolledEntry = RollEntry(lootTable);
-
-            if (rolledEntry is null)
-            {
-                continue;
-            }
-
-            var generatedItems = CreateItemsFromLootEntry(rolledEntry);
+            var generatedItems = CreateItemsFromLootTable(lootTable);
 
             foreach (var generatedItem in generatedItems)
             {
@@ -98,19 +140,23 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         var refreshedContainer = await _itemService.GetItemAsync(container.Id) ?? container;
-        refreshedContainer.SetCustomBoolean(ItemCustomParamKeys.Loot.Generated, true);
 
-        if (createdAnyLoot || refillDelay is null)
+        if (mode == LootGenerationMode.FirstOpen)
         {
-            refreshedContainer.RemoveCustomProperty(ItemCustomParamKeys.Loot.RefillReadyAtUtc);
-        }
-        else if (refreshedContainer.Items.Count == 0)
-        {
-            var nextRefillReadyAtUtc = DateTime.UtcNow.Add(refillDelay.Value);
-            refreshedContainer.SetCustomString(
-                ItemCustomParamKeys.Loot.RefillReadyAtUtc,
-                nextRefillReadyAtUtc.ToString("O", CultureInfo.InvariantCulture)
-            );
+            refreshedContainer.SetCustomBoolean(ItemCustomParamKeys.Loot.Generated, true);
+
+            if (createdAnyLoot || refillDelay is null)
+            {
+                refreshedContainer.RemoveCustomProperty(ItemCustomParamKeys.Loot.RefillReadyAtUtc);
+            }
+            else if (refreshedContainer.Items.Count == 0)
+            {
+                var nextRefillReadyAtUtc = DateTime.UtcNow.Add(refillDelay.Value);
+                refreshedContainer.SetCustomString(
+                    ItemCustomParamKeys.Loot.RefillReadyAtUtc,
+                    nextRefillReadyAtUtc.ToString("O", CultureInfo.InvariantCulture)
+                );
+            }
         }
 
         await _itemService.UpsertItemAsync(refreshedContainer);
@@ -120,7 +166,7 @@ public sealed class LootGenerationService : ILootGenerationService
             _logger.Debug(
                 "Generated container loot for container {ContainerId} using template {TemplateId}",
                 container.Id,
-                containerTemplate.Id
+                sourceTemplateId ?? "explicit"
             );
         }
 
@@ -183,11 +229,41 @@ public sealed class LootGenerationService : ILootGenerationService
         return items;
     }
 
+    private List<UOItemEntity> CreateItemsFromLootTable(LootTemplateDefinition lootTable)
+    {
+        var items = new List<UOItemEntity>();
+        var rolls = Math.Max(1, lootTable.Rolls);
+
+        for (var rollIndex = 0; rollIndex < rolls; rollIndex++)
+        {
+            var rolledEntry = RollEntry(lootTable);
+
+            if (rolledEntry is null)
+            {
+                continue;
+            }
+
+            items.AddRange(CreateItemsFromLootEntry(rolledEntry));
+        }
+
+        return items;
+    }
+
     private UOItemEntity? CreateLootItem(LootTemplateEntry entry)
     {
         if (!string.IsNullOrWhiteSpace(entry.ItemTemplateId))
         {
             return _itemFactoryService.CreateItemFromTemplate(entry.ItemTemplateId.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(entry.ItemTag))
+        {
+            var taggedTemplate = ResolveTemplateByTag(entry.ItemTag.Trim());
+
+            if (taggedTemplate is not null)
+            {
+                return _itemFactoryService.CreateItemFromTemplate(taggedTemplate.Id);
+            }
         }
 
         if (string.IsNullOrWhiteSpace(entry.ItemId))
@@ -205,6 +281,21 @@ public sealed class LootGenerationService : ILootGenerationService
         rawItem.IsStackable = tile[UOTileFlag.Generic];
 
         return rawItem;
+    }
+
+    private ItemTemplateDefinition? ResolveTemplateByTag(string itemTag)
+    {
+        var taggedTemplates = _itemTemplateService.GetAll()
+            .Where(template => template.Tags.Any(tag => string.Equals(tag, itemTag, StringComparison.OrdinalIgnoreCase)))
+            .OrderBy(template => template.Id, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        if (taggedTemplates.Count == 0)
+        {
+            return null;
+        }
+
+        return taggedTemplates[Random.Shared.Next(taggedTemplates.Count)];
     }
 
     private static int ParseItemId(string itemId)
@@ -225,6 +316,7 @@ public sealed class LootGenerationService : ILootGenerationService
                                         .Where(static entry =>
                                             entry.Weight > 0 &&
                                             (!string.IsNullOrWhiteSpace(entry.ItemTemplateId) ||
+                                             !string.IsNullOrWhiteSpace(entry.ItemTag) ||
                                              !string.IsNullOrWhiteSpace(entry.ItemId)))
                                         .ToList();
         var totalWeight = definition.NoDropWeight + eligibleEntries.Sum(static entry => entry.Weight);

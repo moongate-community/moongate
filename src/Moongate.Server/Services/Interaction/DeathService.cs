@@ -6,6 +6,7 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
@@ -42,6 +43,7 @@ public sealed class DeathService : IDeathService
     private readonly IFameKarmaService _fameKarmaService;
     private readonly MoongateConfig _config;
     private readonly ILuaBrainRunner? _luaBrainRunner;
+    private readonly ILootGenerationService? _lootGenerationService;
 
     public DeathService(
         IMobileService mobileService,
@@ -51,7 +53,8 @@ public sealed class DeathService : IDeathService
         IGameEventBusService gameEventBusService,
         IFameKarmaService fameKarmaService,
         MoongateConfig config,
-        ILuaBrainRunner? luaBrainRunner = null
+        ILuaBrainRunner? luaBrainRunner = null,
+        ILootGenerationService? lootGenerationService = null
     )
     {
         _mobileService = mobileService;
@@ -62,6 +65,7 @@ public sealed class DeathService : IDeathService
         _fameKarmaService = fameKarmaService;
         _config = config;
         _luaBrainRunner = luaBrainRunner;
+        _lootGenerationService = lootGenerationService;
     }
 
     public async Task<bool> ForceDeathAsync(
@@ -115,6 +119,7 @@ public sealed class DeathService : IDeathService
         {
             corpse = await CreateCorpseAsync(victim, cancellationToken);
             await MoveLootToCorpseAsync(victim, corpse, cancellationToken);
+            await GenerateCorpseLootAsync(victim, corpse, cancellationToken);
             _spatialWorldService.AddOrUpdateItem(corpse, corpse.MapId);
             await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
                 new MobileDeathAnimationPacket(victim.Id, corpse.Id),
@@ -253,6 +258,34 @@ public sealed class DeathService : IDeathService
 
             await MoveItemIntoCorpseAsync(item, corpse, cancellationToken);
         }
+    }
+
+    private async Task GenerateCorpseLootAsync(
+        UOMobileEntity victim,
+        UOItemEntity corpse,
+        CancellationToken cancellationToken
+    )
+    {
+        if (_lootGenerationService is null ||
+            !victim.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var lootTablesRaw) ||
+            string.IsNullOrWhiteSpace(lootTablesRaw))
+        {
+            return;
+        }
+
+        var lootTableIds = lootTablesRaw.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        if (lootTableIds.Length == 0)
+        {
+            return;
+        }
+
+        await _lootGenerationService.GenerateForContainerAsync(
+            corpse,
+            lootTableIds,
+            Types.Items.LootGenerationMode.OnDeath,
+            cancellationToken
+        );
     }
 
     private static bool IsLootable(UOItemEntity item)

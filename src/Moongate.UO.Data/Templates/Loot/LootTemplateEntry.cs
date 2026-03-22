@@ -21,6 +21,11 @@ public class LootTemplateEntry
     public string? ItemId { get; set; }
 
     /// <summary>
+    /// Optional item template tag used to resolve a random matching item template.
+    /// </summary>
+    public string? ItemTag { get; set; }
+
+    /// <summary>
     /// Fixed quantity produced by this entry.
     /// </summary>
     public int Amount { get; set; } = 1;
