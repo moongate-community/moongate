@@ -161,12 +161,6 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
 - `idle`
   - Fallback behavior when nothing else scores higher
   - Keeps the brain alive without chasing or retreating
-- `return_home`
-  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
-  - Walks the guard back to its captured home point when no target is active
-- `hold_position`
-  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
-  - Replaces random wandering for guards that are already back near home
 
 ## State (Blackboard)
 

@@ -42,9 +42,9 @@ public sealed class AiRelationService : IAiRelationService
             return AiRelation.Hostile;
         }
 
-        if (IsHostileNpcViewer(viewer) && target.IsPlayer)
+        if (AreSameFaction(viewer, target))
         {
-            return AiRelation.Hostile;
+            return AiRelation.Friendly;
         }
 
         if (AreEnemyFactions(viewer, target))
@@ -52,9 +52,9 @@ public sealed class AiRelationService : IAiRelationService
             return AiRelation.Hostile;
         }
 
-        if (AreSameFaction(viewer, target))
+        if (IsHostileNpcViewer(viewer) && target.IsPlayer)
         {
-            return AiRelation.Friendly;
+            return AiRelation.Hostile;
         }
 
         if (!target.IsPlayer &&

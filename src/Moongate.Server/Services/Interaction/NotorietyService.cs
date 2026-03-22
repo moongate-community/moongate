@@ -48,14 +48,14 @@ public sealed class NotorietyService : INotorietyService
             return Notoriety.CanBeAttacked;
         }
 
-        if (AreEnemyFactions(source, target))
-        {
-            return Notoriety.Enemy;
-        }
-
         if (AreSameFaction(source, target))
         {
             return Notoriety.Innocent;
+        }
+
+        if (AreEnemyFactions(source, target))
+        {
+            return Notoriety.Enemy;
         }
 
         if (!target.IsPlayer &&
