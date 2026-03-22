@@ -1,13 +1,20 @@
 -- guard.lua
 -- Utility/priority brain with isolated behaviors:
+-- - "leash": drop chase when pulled too far from home
 -- - "evade": run away when a threat is near or HP is low
 -- - "follow": follow a target set in the blackboard
 -- - "ranged_keep_distance": maintain a 4-6 tile firing band for ranged guards
--- - "idle": fallback (wander)
+-- - "return_home": walk back to the guard home point
+-- - "hold_position": hold near the home point
 
 local utility_runner = require("ai.runners.utility_runner")
 
 guard = {}
+
+local HOME_X_KEY = "home_x"
+local HOME_Y_KEY = "home_y"
+local HOME_Z_KEY = "home_z"
+local HOME_MAP_ID_KEY = "home_map_id"
 
 local function get_seen_key(source_serial)
     return "guard_seen_" .. tostring(source_serial)
@@ -19,17 +26,21 @@ end
 
 -- Logical behavior order. The winner is selected by score.
 local MELEE_BEHAVIORS = {
+    "leash",
     "self_bandage",
     "evade",
     "follow",
-    "idle",
+    "return_home",
+    "hold_position",
 }
 
 local RANGED_BEHAVIORS = {
+    "leash",
     "self_bandage",
     "evade",
     "ranged_keep_distance",
-    "idle",
+    "return_home",
+    "hold_position",
 }
 
 local function is_ranged_guard(npc_serial)
@@ -46,11 +57,23 @@ end
 
 -- Initialize minimal blackboard values for behaviors.
 local function initialize_defaults(npc_serial)
+    local npc = mobile.get(npc_serial)
+
     local function set_default(key, value)
         if npc_state.get_var(npc_serial, key) == nil then
             npc_state.set_var(npc_serial, key, value)
         end
     end
+
+    if npc ~= nil then
+        set_default(HOME_X_KEY, npc.location_x)
+        set_default(HOME_Y_KEY, npc.location_y)
+        set_default(HOME_Z_KEY, npc.location_z)
+        set_default(HOME_MAP_ID_KEY, npc.map_id)
+    end
+
+    set_default("hold_radius", 1)
+    set_default("leash_radius", 8)
 
     -- Guards should not kite by default. Ranged positioning is handled by
     -- ranged_keep_distance, and low-hp retreat is handled by evade_hp_threshold.

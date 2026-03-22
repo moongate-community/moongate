@@ -18,6 +18,9 @@ The following modules are available in the default server runtime:
 - `ai_dialogue`
 - `scheduled_events`
 - `combat`
+- `steering`
+- `perception`
+- `npc_state`
 - `mobile`
 - `item`
 - `door`
@@ -149,6 +152,34 @@ Use `common.npc_dialogue` only when you explicitly want both systems together.
 combat.set_target(npcSerial, targetSerial) -- hands control to the server combat loop
 combat.clear_target(npcSerial)             -- clears combatant and pending swing
 combat.swing(npcSerial, targetSerial)      -- animation helper only, not authoritative combat
+```
+
+`steering` runtime helpers:
+
+```lua
+steering.follow(npcSerial, targetSerial, stopRange)
+steering.evade(npcSerial, threatSerial, desiredRange)
+steering.move_to(npcSerial, x, y, z, stopRange)
+steering.stop(npcSerial)
+steering.wander(npcSerial, radius)
+```
+
+`perception` runtime helpers:
+
+```lua
+perception.distance(sourceSerial, targetSerial)
+perception.in_range(sourceSerial, targetSerial, range)
+perception.find_nearest_enemy(npcSerial, range)
+perception.find_nearest_friend(npcSerial, range)
+```
+
+`npc_state` runtime helpers:
+
+```lua
+npc_state.get_hp_percent(npcSerial)
+npc_state.is_alive(npcSerial)
+npc_state.get_var(npcSerial, key)
+npc_state.set_var(npcSerial, key, value)
 ```
 
 `gump` supports two modes:
