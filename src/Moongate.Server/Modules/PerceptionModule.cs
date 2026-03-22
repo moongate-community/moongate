@@ -43,7 +43,7 @@ public sealed class PerceptionModule
         var nearest = FindNearestByPredicate(
             npc!,
             range,
-            candidate => candidate.Id != npc!.Id && candidate.IsPlayer
+            candidate => candidate.Id != npc!.Id && IsEnemyCandidate(candidate)
         );
 
         return nearest is null ? null : (uint)nearest.Id;
@@ -111,4 +111,11 @@ public sealed class PerceptionModule
 
         return nearest;
     }
+
+    private static bool IsEnemyCandidate(UOMobileEntity candidate)
+        => candidate.IsPlayer ||
+           candidate.Notoriety is UO.Data.Types.Notoriety.CanBeAttacked or
+               UO.Data.Types.Notoriety.Enemy or
+               UO.Data.Types.Notoriety.Criminal or
+               UO.Data.Types.Notoriety.Murdered;
 }

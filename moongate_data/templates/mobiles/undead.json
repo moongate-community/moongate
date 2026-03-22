@@ -26,7 +26,7 @@
     "fame": 600,
     "karma": -600,
     "notoriety": "CanBeAttacked",
-    "brain": "None",
+    "brain": "undead_melee",
     "lootTables": ["undead.low"],
     "fixedEquipment": [],
     "randomEquipment": [],

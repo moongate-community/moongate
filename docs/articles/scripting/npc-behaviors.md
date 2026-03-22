@@ -29,6 +29,7 @@ moongate_data/scripts/ai/
 │   └── return_home.lua
 └── brains/
     ├── guard.lua
+    ├── undead_melee.lua
     └── utility_npc.lua
 ```
 
@@ -88,6 +89,13 @@ At each tick:
 On speech events, the guard can set `follow_target_serial` in blackboard state.
 On in-range events, the guard can greet a player once per entry and start combat when a hostile target enters range.
 On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior and a longer hostile-acquisition radius.
+
+`undead_melee.lua` is a simpler fixed-loop brain:
+
+- ticks every `2000ms`
+- calls `perception.find_nearest_enemy(npc_serial, 10)`
+- arms combat immediately against the nearest hostile
+- clears the active combat target when no hostile is found
 
 Current `in_range` payload fields include:
 
@@ -213,6 +221,11 @@ Current core modules for behavior scripts:
 - `steering` (follow/evade/move_to/wander/stop movement primitives)
 - `combat` (target selection into the server combat loop; `set_target` / `clear_target`)
 - `healing` (self-bandage start/status helpers)
+
+`perception.find_nearest_enemy(...)` considers:
+
+- players
+- NPCs with hostile notoriety (`CanBeAttacked`, `Enemy`, `Criminal`, `Murdered`)
 
 `combat.set_target(...)` does not calculate hit or damage in Lua.
 It delegates to `CombatService`, which owns:

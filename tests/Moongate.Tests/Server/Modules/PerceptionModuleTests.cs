@@ -7,6 +7,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Modules;
@@ -144,5 +145,35 @@ public sealed class PerceptionModuleTests
                 Assert.That(nearestFriend, Is.EqualTo((uint)friendNear.Id));
             }
         );
+    }
+
+    [Test]
+    public void FindNearestEnemy_ShouldTreatHostileNpcAsEnemyCandidate()
+    {
+        var spatial = new PerceptionTestSpatialWorldService();
+        var npc = new UOMobileEntity { Id = (Serial)0x30u, MapId = 1, Location = new(100, 100, 0) };
+        var hostileNpc = new UOMobileEntity
+        {
+            Id = (Serial)0x31u,
+            IsPlayer = false,
+            Notoriety = Notoriety.CanBeAttacked,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        var playerFar = new UOMobileEntity
+        {
+            Id = (Serial)0x32u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(110, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(hostileNpc);
+        spatial.AddMobile(playerFar);
+        var module = new PerceptionModule(spatial);
+
+        var nearestEnemy = module.FindNearestEnemy((uint)npc.Id, 20);
+
+        Assert.That(nearestEnemy, Is.EqualTo((uint)hostileNpc.Id));
     }
 }
