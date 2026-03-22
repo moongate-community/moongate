@@ -25,6 +25,7 @@ moongate_data/scripts/ai/
 │   ├── idle.lua
 │   ├── leash.lua
 │   ├── ranged_keep_distance.lua
+│   ├── self_bandage.lua
 │   └── return_home.lua
 └── brains/
     ├── guard.lua
@@ -68,6 +69,8 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 
 `guard.lua` uses these isolated behaviors:
 
+- `leash`
+- `self_bandage`
 - `leash`
 - `evade`
 - `follow` for melee guards
@@ -128,6 +131,20 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
 - `hold_position`
   - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
   - Replaces random wandering for guards that are already back near home
+- `self_bandage`
+  - Reads `self_bandage_hp_threshold` and `self_bandage_score_bonus`
+  - Requires a real `bandage` stack in the NPC backpack
+  - Starts a delayed self-heal through the `healing` module
+  - Keeps a high score while the bandage timer is in flight so the brain does not thrash
+- `idle`
+  - Fallback behavior when nothing else scores higher
+  - Keeps the brain alive without chasing or retreating
+- `return_home`
+  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
+  - Walks the guard back to its captured home point when no target is active
+- `hold_position`
+  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
+  - Replaces random wandering for guards that are already back near home
 
 ## State (Blackboard)
 
@@ -145,6 +162,8 @@ Behavior state is stored per NPC using `npc_state` module keys, for example:
 - `evade_hp_threshold`
 - `preferred_min_range`
 - `preferred_max_range`
+- `self_bandage_hp_threshold`
+- `self_bandage_score_bonus`
 - `guard_seen_<serial>`
 - `guard_engaged_<serial>`
 
@@ -193,6 +212,7 @@ Current core modules for behavior scripts:
 - `perception` (distance, nearby friend/enemy lookup, range checks)
 - `steering` (follow/evade/move_to/wander/stop movement primitives)
 - `combat` (target selection into the server combat loop; `set_target` / `clear_target`)
+- `healing` (self-bandage start/status helpers)
 
 `combat.set_target(...)` does not calculate hit or damage in Lua.
 It delegates to `CombatService`, which owns:
@@ -202,8 +222,20 @@ It delegates to `CombatService`, which owns:
 - melee hit/damage resolution
 - region/map harmful-action gate on actual attack attempt
 - lethal handoff into `DeathService`, including PvE fame/karma awards for player kills against NPCs
+- delayed self-bandage completion through `BandageService`
 - `npc_state` (typed state variables)
 - `time`, `random`, `mobile` (general runtime helpers)
+
+## Self Bandage Notes
+
+`self_bandage` is intentionally narrow in v1:
+
+- only self-heal, never target another mobile
+- consumes `1` `bandage` immediately when the timer starts
+- heals after a short fixed delay in C#
+- does not cure poison, resurrect, or create dirty bandages
+
+The behavior does nothing unless the NPC already has a backpack and at least one `bandage` item inside it.
 
 ## Best Practices
 

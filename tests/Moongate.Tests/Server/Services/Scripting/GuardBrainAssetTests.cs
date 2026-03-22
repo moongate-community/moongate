@@ -25,6 +25,9 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("set_default(HOME_X_KEY, npc.location_x)"));
                 Assert.That(script, Does.Contain("set_default(\"hold_radius\", 1)"));
                 Assert.That(script, Does.Contain("set_default(\"leash_radius\", 8)"));
+                Assert.That(script, Does.Contain("\"self_bandage\""));
+                Assert.That(script, Does.Contain("set_default(\"self_bandage_hp_threshold\", 0.45)"));
+                Assert.That(script, Does.Contain("set_default(\"self_bandage_score_bonus\", 70)"));
             }
         );
     }
@@ -42,11 +45,13 @@ public sealed class GuardBrainAssetTests
         var holdPositionPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "hold_position.lua");
         var returnHomePath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "return_home.lua");
         var leashPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "leash.lua");
+        var selfBandageBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "self_bandage.lua");
         var rangedKeepDistance = File.ReadAllText(behaviorPath);
         var followBehavior = File.ReadAllText(followBehaviorPath);
         var holdPosition = File.ReadAllText(holdPositionPath);
         var returnHome = File.ReadAllText(returnHomePath);
         var leash = File.ReadAllText(leashPath);
+        var selfBandageBehavior = File.ReadAllText(selfBandageBehaviorPath);
 
         Assert.Multiple(
             () =>
@@ -59,7 +64,11 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("\"leash\""));
                 Assert.That(script, Does.Contain("\"return_home\""));
                 Assert.That(script, Does.Contain("\"hold_position\""));
+                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.self_bandage\")"));
                 Assert.That(script, Does.Contain("\"ranged_keep_distance\""));
+                Assert.That(script, Does.Contain("\"leash\""));
+                Assert.That(script, Does.Contain("\"return_home\""));
+                Assert.That(script, Does.Contain("\"hold_position\""));
                 Assert.That(script, Does.Contain("guard_role"));
                 Assert.That(script, Does.Contain("preferred_min_range"));
                 Assert.That(script, Does.Contain("preferred_max_range"));
@@ -78,6 +87,10 @@ public sealed class GuardBrainAssetTests
                 Assert.That(returnHome, Does.Contain("behavior.register(\"return_home\", M)"));
                 Assert.That(leash, Does.Contain("combat.clear_target(npc_serial)"));
                 Assert.That(leash, Does.Contain("behavior.register(\"leash\", M)"));
+                Assert.That(selfBandageBehavior, Does.Contain("healing.begin_self_bandage(npc_serial)"));
+                Assert.That(selfBandageBehavior, Does.Contain("healing.has_bandage(npc_serial)"));
+                Assert.That(selfBandageBehavior, Does.Contain("healing.is_bandaging(npc_serial)"));
+                Assert.That(selfBandageBehavior, Does.Contain("behavior.register(\"self_bandage\", M)"));
             }
         );
     }

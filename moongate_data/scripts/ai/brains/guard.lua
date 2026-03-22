@@ -27,6 +27,7 @@ end
 -- Logical behavior order. The winner is selected by score.
 local MELEE_BEHAVIORS = {
     "leash",
+    "self_bandage",
     "evade",
     "follow",
     "return_home",
@@ -35,6 +36,7 @@ local MELEE_BEHAVIORS = {
 
 local RANGED_BEHAVIORS = {
     "leash",
+    "self_bandage",
     "evade",
     "ranged_keep_distance",
     "return_home",
@@ -79,6 +81,8 @@ local function initialize_defaults(npc_serial)
 
     -- Below this HP threshold, evade gets a score bonus
     set_default("evade_hp_threshold", 0.40)
+    set_default("self_bandage_hp_threshold", 0.45)
+    set_default("self_bandage_score_bonus", 70)
 
     if is_ranged_guard(npc_serial) then
         set_default("preferred_min_range", 4)

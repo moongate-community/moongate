@@ -216,6 +216,7 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 0.1,
+    "stackable": true,
     "scriptId": "items.bandage",
     "isMovable": true,
     "tags": [

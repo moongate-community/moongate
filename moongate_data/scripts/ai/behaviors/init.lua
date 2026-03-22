@@ -5,5 +5,6 @@ require("ai.behaviors.hold_position")
 require("ai.behaviors.return_home")
 require("ai.behaviors.leash")
 require("ai.behaviors.ranged_keep_distance")
+require("ai.behaviors.self_bandage")
 
 return true
