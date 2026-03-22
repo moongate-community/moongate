@@ -27,6 +27,7 @@
     "karma": -600,
     "notoriety": "CanBeAttacked",
     "brain": "None",
+    "lootTables": ["undead.low"],
     "fixedEquipment": [],
     "randomEquipment": [],
     "title": "a zombie"
@@ -60,6 +61,7 @@
     "karma": -3000,
     "notoriety": "CanBeAttacked",
     "brain": "None",
+    "lootTables": ["undead.knight"],
     "fixedEquipment": [
       {
         "itemTemplateId": "scimitar",

@@ -2,6 +2,7 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Spans;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -86,6 +87,34 @@ public class MobileFactoryServiceTests
                 Assert.That(markerHue, Is.EqualTo(0x044D));
             }
         );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesLootTables_ShouldProjectThemToRuntimeCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "loot_mobile",
+                Name = "Loot Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                LootTables = ["undead.low", "gold.small"]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("loot_mobile");
+
+        Assert.That(mobile.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var rawLootTables), Is.True);
+        Assert.That(rawLootTables, Is.EqualTo("undead.low,gold.small"));
     }
 
     [Test]

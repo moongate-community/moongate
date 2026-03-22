@@ -5,6 +5,7 @@
     "name": "Loot Test Chest Basic",
     "category": "Test",
     "description": "Basic weighted loot table for first-open chest testing.",
+    "rolls": 2,
     "noDropWeight": 0,
     "entries": [
       {
@@ -13,12 +14,7 @@
         "amount": 125
       },
       {
-        "itemTemplateId": "bandage",
-        "weight": 3,
-        "amount": 10
-      },
-      {
-        "itemTemplateId": "arrow",
+        "itemTag": "resources",
         "weight": 3,
         "amount": 25
       },
@@ -29,6 +25,53 @@
       },
       {
         "itemTemplateId": "torch",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "undead.low",
+    "name": "Undead Low",
+    "category": "Undead",
+    "description": "Low-value additive corpse loot for test undead.",
+    "rolls": 1,
+    "noDropWeight": 3,
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "weight": 5,
+        "amount": 45
+      },
+      {
+        "itemTemplateId": "bandage",
+        "weight": 2,
+        "amount": 4
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "undead.knight",
+    "name": "Undead Knight",
+    "category": "Undead",
+    "description": "Slightly richer additive corpse loot for skeletal knights.",
+    "rolls": 2,
+    "noDropWeight": 1,
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "weight": 5,
+        "amount": 90
+      },
+      {
+        "itemTemplateId": "bandage",
+        "weight": 2,
+        "amount": 6
+      },
+      {
+        "itemTag": "weapons",
         "weight": 1,
         "amount": 1
       }

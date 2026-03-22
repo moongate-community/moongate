@@ -35,6 +35,7 @@ public class LootTemplatePolymorphicTests
                        "name": "Bone Armor Loot",
                        "category": "loot",
                        "description": "UOX3 converted loot table",
+                       "rolls": 3,
                        "noDropWeight": 442,
                        "entries": [
                          {
@@ -44,7 +45,7 @@ public class LootTemplatePolymorphicTests
                          },
                          {
                            "weight": 31,
-                           "itemTemplateId": "item.armor.bone_arms",
+                           "itemTag": "armor.bone",
                            "amount": 1
                          }
                        ]
@@ -66,10 +67,11 @@ public class LootTemplatePolymorphicTests
                 Assert.That(result[0], Is.TypeOf<LootTemplateDefinition>());
                 var loot = (LootTemplateDefinition)result[0];
                 Assert.That(loot.Id, Is.EqualTo("bonearmor"));
+                Assert.That(loot.Rolls, Is.EqualTo(3));
                 Assert.That(loot.NoDropWeight, Is.EqualTo(442));
                 Assert.That(loot.Entries.Count, Is.EqualTo(2));
                 Assert.That(loot.Entries[0].ItemId, Is.EqualTo("0x144e"));
-                Assert.That(loot.Entries[1].ItemTemplateId, Is.EqualTo("item.armor.bone_arms"));
+                Assert.That(loot.Entries[1].ItemTag, Is.EqualTo("armor.bone"));
             }
         );
     }
