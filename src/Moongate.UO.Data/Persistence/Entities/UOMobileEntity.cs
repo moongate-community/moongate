@@ -22,6 +22,7 @@ public partial class UOMobileEntity : IMobileEntity
     private const int NonHumanMaxWeightBase = 40;
     private const int GoldItemId = 0x0EED;
     private const int DefaultSkillCap = 1000;
+    private const int DefaultTotalSkillCap = 7000;
     private const int DefaultUnarmedMinWeaponDamage = 1;
     private const int DefaultUnarmedMaxWeaponDamage = 4;
     private const uint MountVirtualSerialMask = 0x3EEEEEEE;
@@ -637,6 +638,12 @@ public partial class UOMobileEntity : IMobileEntity
             return baseWeight + (int)(3.5 * EffectiveStrength);
         }
     }
+
+    /// <summary>
+    /// Gets the default total skill cap in fixed-point units.
+    /// </summary>
+    [MemoryPackIgnore]
+    public int TotalSkillCapFixedPoint => DefaultTotalSkillCap;
 
     /// <summary>
     /// Gets persisted custom mobile properties.
@@ -1303,6 +1310,21 @@ public partial class UOMobileEntity : IMobileEntity
         Skills[skillName] = entry;
 
         return entry;
+    }
+
+    /// <summary>
+    /// Gets the total of all persisted skill base values in fixed-point units.
+    /// </summary>
+    public int GetTotalSkillBaseFixedPoint()
+    {
+        var total = 0;
+
+        foreach (var skill in Skills.Values)
+        {
+            total += (int)Math.Round(skill.Base);
+        }
+
+        return total;
     }
 
     /// <summary>

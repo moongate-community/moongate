@@ -138,7 +138,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x2F` | Fight Occuring | S -> C | `FightOccurringPacket` | `outgoing` | `CombatService` | Broadcast when a scheduled melee swing is attempted |
 | `0xAA` | Allow/Refuse Attack | S -> C | `ChangeCombatantPacket` | `outgoing` | `CombatService` | Current combatant serial or `Serial.Zero` |
 | `0xB2` | Chat Command | S -> C | `ChatCommandPacket` | `outgoing` | `ChatSystemService` | Classic conference chat responses and UI updates |
-| `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Full skill list with lock state |
+| `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler`, `CombatService` | Full skill list with lock state, also reused after combat-driven skill gains |
 | `0x23` | Dragging Of Item | S -> C | `DraggingOfItemPacket` | `outgoing` | item drag flow | Drag visual |
 | `0xAE` | Unicode Speech Message | S -> C | `UnicodeSpeechMessagePacket` | `outgoing` | speech/system messages | Server speech |
 | `0xB0` | Generic Gump | S -> C | `GenericGumpPacket` | `outgoing` | gump flow | Standard gump |

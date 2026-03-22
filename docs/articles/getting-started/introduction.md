@@ -114,7 +114,7 @@ Moongate v2 is **actively in development**. The following features are implement
 
 ### Planned
 
-- [x] Combat v1 baseline (melee + ranged auto-attack, combatant state, warmode, timer-wheel scheduling, archery ammo/projectiles, cloak-layer quivers, PvE fame/karma awards)
+- [x] Combat v1 baseline (melee + ranged auto-attack, combatant state, warmode, timer-wheel scheduling, archery ammo/projectiles, cloak-layer quivers, PvE fame/karma awards, combat-driven skill gain for weapon skill, Tactics, and Anatomy)
 - [ ] Skill system
 - [ ] Item system completion (vendor/trade/economy semantics)
 - [ ] House/shelter system

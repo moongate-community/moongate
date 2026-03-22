@@ -39,7 +39,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x24` | Draw container | S -> C | `?Packet=0x24` | `DrawContainerPacket` | `outgoing` | container flow | Container open packet |
 | `0x2E` | Worn item | S -> C | `?Packet=0x2E` | `WornItemPacket` | `outgoing` | equipment sync | Equipped visuals |
 | `0x34` | Get player status | C -> S | `?Packet=0x34` | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
-| `0x3A` | Send skills | both | `?Packet=0x3A` | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Moongate sends the skill list; no inbound listener |
+| `0x3A` | Send skills | both | `?Packet=0x3A` | `SkillListPacket` | `outgoing` | `PlayerStatusHandler`, `CombatService` | Moongate sends the full skill list on explicit requests and after combat-driven skill gains; no inbound listener |
 | `0x3C` | Add multiple items to container | S -> C | `?Packet=0x3C` | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched container contents |
 | `0x4E` | Personal light level | S -> C | `?Packet=0x4E` | `PersonalLightLevelPacket` | `outgoing` | world presentation | Client light state |
 | `0x4F` | Overall light level | S -> C | `?Packet=0x4F` | `OverallLightLevelPacket` | `outgoing` | world presentation | Global light state |

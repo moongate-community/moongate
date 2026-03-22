@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Combat;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Combat;
@@ -252,6 +253,36 @@ public sealed class CombatServiceTests
             Calls.Add((victim, killer));
 
             return Task.FromResult(true);
+        }
+    }
+
+    private sealed class SkillGainServiceSpy : ISkillGainService
+    {
+        public List<(Serial MobileId, UOSkillName SkillName, double SuccessChance, bool WasSuccessful)> Calls { get; } = [];
+
+        public bool MutateSkillOnCall { get; set; }
+
+        public SkillGainResult TryGain(
+            UOMobileEntity mobile,
+            UOSkillName skillName,
+            double successChance,
+            bool wasSuccessful
+        )
+        {
+            Calls.Add((mobile.Id, skillName, successChance, wasSuccessful));
+
+            if (MutateSkillOnCall)
+            {
+                var entry = mobile.GetSkill(skillName);
+
+                if (entry is not null)
+                {
+                    entry.Base += 1;
+                    entry.Value += 1;
+                }
+            }
+
+            return new SkillGainResult(skillName, MutateSkillOnCall, null);
         }
     }
 
@@ -542,6 +573,92 @@ public sealed class CombatServiceTests
                 Assert.That(hitEvent.Defender, Is.SameAs(defender));
                 Assert.That(aggressiveActionEvent.Attacker, Is.SameAs(attacker));
                 Assert.That(aggressiveActionEvent.Defender, Is.SameAs(defender));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ScheduledSwing_WhenPlayerAttackResolves_ShouldAttemptCombatSkillGainAndRefreshSkillList()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var skillGainService = new SkillGainServiceSpy
+        {
+            MutateSkillOnCall = true
+        };
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000031u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50,
+            MinWeaponDamage = 6,
+            MaxWeaponDamage = 6
+        };
+        attacker.InitializeSkills();
+        attacker.SetSkill(UOSkillName.Wrestling, 500);
+        attacker.SetSkill(UOSkillName.Tactics, 500);
+        attacker.SetSkill(UOSkillName.Anatomy, 500);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000032u,
+            MapId = 0,
+            Location = new(101, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            new InMemoryItemService(),
+            new DeathServiceSpy(),
+            skillGainService
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+        var outboundPackets = new List<IGameNetworkPacket>();
+
+        while (outgoingQueue.TryDequeue(out var outbound))
+        {
+            outboundPackets.Add(outbound.Packet);
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(skillGainService.Calls, Has.Count.EqualTo(3));
+                Assert.That(skillGainService.Calls.Select(static call => call.SkillName), Is.EquivalentTo(
+                    new[] { UOSkillName.Wrestling, UOSkillName.Tactics, UOSkillName.Anatomy }
+                ));
+                Assert.That(session.Character!.GetSkill(UOSkillName.Wrestling)!.Base, Is.EqualTo(501));
+                Assert.That(outboundPackets.Any(static packet => packet is SkillListPacket), Is.True);
             }
         );
     }
