@@ -344,14 +344,17 @@ internal static class MoongateHttpRouteExtensions
                              "/execute",
                              (
                                  MoongateHttpExecuteCommandRequest request,
+                                 ClaimsPrincipal user,
                                  CancellationToken cancellationToken
-                             ) => HandleExecuteCommand(context, request, cancellationToken)
+                             ) => HandleExecuteCommand(context, request, user, cancellationToken)
                          )
                          .WithName("CommandsExecute")
                          .WithSummary("Executes a console command and returns final output lines.")
                          .Accepts<MoongateHttpExecuteCommandRequest>("application/json")
                          .Produces<MoongateHttpExecuteCommandResponse>()
-                         .Produces(StatusCodes.Status400BadRequest);
+                         .Produces(StatusCodes.Status400BadRequest)
+                         .Produces(StatusCodes.Status401Unauthorized)
+                         .Produces(StatusCodes.Status403Forbidden);
         }
 
         if (context.ItemTemplateService is not null || context.ArtService is not null)
@@ -576,9 +579,15 @@ internal static class MoongateHttpRouteExtensions
     private static IResult HandleExecuteCommand(
         MoongateHttpRouteContext context,
         MoongateHttpExecuteCommandRequest request,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken
     )
     {
+        if (!IsAdministrativeUser(user))
+        {
+            return user.Identity?.IsAuthenticated == true ? TypedResults.Forbid() : TypedResults.Unauthorized();
+        }
+
         if (string.IsNullOrWhiteSpace(request.Command))
         {
             return TypedResults.BadRequest("command is required");
