@@ -3,6 +3,7 @@ using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Interfaces.Templates;
+using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Templates.SellProfiles;
@@ -19,6 +20,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<TemplateValidationLoader>();
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly IFactionTemplateService _factionTemplateService;
     private readonly ISellProfileTemplateService _sellProfileTemplateService;
     private readonly IBookTemplateService _bookTemplateService;
     private readonly ILootTemplateService _lootTemplateService;
@@ -26,6 +28,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     public TemplateValidationLoader(
         IItemTemplateService itemTemplateService,
         IMobileTemplateService mobileTemplateService,
+        IFactionTemplateService factionTemplateService,
         ISellProfileTemplateService sellProfileTemplateService,
         IBookTemplateService bookTemplateService,
         ILootTemplateService lootTemplateService
@@ -33,6 +36,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     {
         _itemTemplateService = itemTemplateService;
         _mobileTemplateService = mobileTemplateService;
+        _factionTemplateService = factionTemplateService;
         _sellProfileTemplateService = sellProfileTemplateService;
         _bookTemplateService = bookTemplateService;
         _lootTemplateService = lootTemplateService;
@@ -43,6 +47,7 @@ public sealed class TemplateValidationLoader : IFileLoader
         var errors = new List<string>();
 
         ValidateItems(errors);
+        ValidateFactions(errors);
         ValidateSellProfiles(errors);
         ValidateMobiles(errors);
 
@@ -193,8 +198,35 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Mobile template '{mobile.Id}' references missing sell profile '{mobile.SellProfileId}'.");
             }
 
+            if (!string.IsNullOrWhiteSpace(mobile.DefaultFactionId) &&
+                !_factionTemplateService.TryGet(mobile.DefaultFactionId, out _))
+            {
+                errors.Add($"Mobile template '{mobile.Id}' references missing default faction '{mobile.DefaultFactionId}'.");
+            }
+
             ValidateFixedEquipment(mobile, errors);
             ValidateRandomEquipment(mobile, errors);
+        }
+    }
+
+    private void ValidateFactions(List<string> errors)
+    {
+        foreach (var faction in _factionTemplateService.GetAll())
+        {
+            foreach (var enemyFactionId in faction.EnemyFactionIds)
+            {
+                if (string.IsNullOrWhiteSpace(enemyFactionId))
+                {
+                    errors.Add($"Faction template '{faction.Id}' has an empty enemy faction id.");
+
+                    continue;
+                }
+
+                if (!_factionTemplateService.TryGet(enemyFactionId.Trim(), out _))
+                {
+                    errors.Add($"Faction template '{faction.Id}' references missing enemy faction '{enemyFactionId}'.");
+                }
+            }
         }
     }
 

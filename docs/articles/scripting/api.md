@@ -126,11 +126,20 @@ steering.stop(npc_serial)
 perception.distance(npc_serial, target_serial)
 perception.in_range(npc_serial, target_serial, 10)
 perception.find_nearest_enemy(npc_serial, 10)
+perception.find_nearest_player_enemy(npc_serial, 10)
 
 npc_state.get_hp_percent(npc_serial)
 npc_state.get_var(npc_serial, "follow_target_serial")
 npc_state.set_var(npc_serial, "follow_target_serial", target_serial)
 ```
+
+Enemy lookup is viewer-relative. The helper uses the same coarse AI relation model as Lua brain payloads:
+
+- `Friendly`
+- `Neutral`
+- `Hostile`
+
+Faction hostility and same-faction friendliness therefore affect target acquisition automatically.
 
 These helpers are the core building blocks behind current guard behaviors such as:
 

@@ -1,0 +1,38 @@
+[
+  {
+    "type": "faction",
+    "id": "minax",
+    "name": "Minax",
+    "category": "factions",
+    "description": "ModernUO-aligned Minax faction.",
+    "tags": ["modernuo", "faction"],
+    "enemyFactionIds": ["council_of_mages", "true_britannians", "shadowlords"]
+  },
+  {
+    "type": "faction",
+    "id": "council_of_mages",
+    "name": "Council of Mages",
+    "category": "factions",
+    "description": "ModernUO-aligned Council of Mages faction.",
+    "tags": ["modernuo", "faction"],
+    "enemyFactionIds": ["minax", "true_britannians", "shadowlords"]
+  },
+  {
+    "type": "faction",
+    "id": "true_britannians",
+    "name": "True Britannians",
+    "category": "factions",
+    "description": "ModernUO-aligned True Britannians faction.",
+    "tags": ["modernuo", "faction"],
+    "enemyFactionIds": ["minax", "council_of_mages", "shadowlords"]
+  },
+  {
+    "type": "faction",
+    "id": "shadowlords",
+    "name": "Shadowlords",
+    "category": "factions",
+    "description": "ModernUO-aligned Shadowlords faction.",
+    "tags": ["modernuo", "faction"],
+    "enemyFactionIds": ["minax", "council_of_mages", "true_britannians"]
+  }
+]

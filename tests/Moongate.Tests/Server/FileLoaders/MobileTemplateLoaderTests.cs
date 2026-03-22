@@ -129,6 +129,55 @@ public class MobileTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenBaseMobileHasDefaultFactionId_ShouldInheritDefaultFactionId()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "factions.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_faction_guard",
+                "name": "Base Guard",
+                "body": "0x0190",
+                "defaultFactionId": "true_britannians"
+              },
+              {
+                "type": "mobile",
+                "id": "faction_guard",
+                "base_mobile": "base_faction_guard",
+                "name": "Faction Guard"
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("faction_guard", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.DefaultFactionId, Is.EqualTo("true_britannians"));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseMobileIsDefined_ShouldInheritParentValues()
     {
         using var tempDirectory = new TempDirectory();

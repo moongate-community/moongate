@@ -118,6 +118,33 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesDefaultFactionId_ShouldProjectFactionIdToRuntime()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "faction_guard",
+                Name = "Faction Guard",
+                Category = "guards",
+                Description = "guard",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                DefaultFactionId = "true_britannians"
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("faction_guard");
+
+        Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldClampHits_WhenMaxHitsIsLower()
     {
         using var temp = new TempDirectory();

@@ -1,4 +1,5 @@
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -9,6 +10,13 @@ namespace Moongate.Server.Services.Interaction;
 /// </summary>
 public sealed class AiRelationService : IAiRelationService
 {
+    private readonly IFactionTemplateService? _factionTemplateService;
+
+    public AiRelationService(IFactionTemplateService? factionTemplateService = null)
+    {
+        _factionTemplateService = factionTemplateService;
+    }
+
     public AiRelation Compute(UOMobileEntity viewer, UOMobileEntity target)
     {
         ArgumentNullException.ThrowIfNull(viewer);
@@ -34,6 +42,21 @@ public sealed class AiRelationService : IAiRelationService
             return AiRelation.Hostile;
         }
 
+        if (AreSameFaction(viewer, target))
+        {
+            return AiRelation.Friendly;
+        }
+
+        if (AreEnemyFactions(viewer, target))
+        {
+            return AiRelation.Hostile;
+        }
+
+        if (IsHostileNpcViewer(viewer) && target.IsPlayer)
+        {
+            return AiRelation.Hostile;
+        }
+
         if (!target.IsPlayer &&
             (target.Body.IsMonster ||
              target.Body.IsAnimal ||
@@ -48,4 +71,46 @@ public sealed class AiRelationService : IAiRelationService
     private static bool HasRecentAggression(UOMobileEntity viewer, UOMobileEntity target)
         => viewer.Aggressors.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id) ||
            viewer.Aggressed.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id);
+
+    private static bool IsHostileNpcViewer(UOMobileEntity viewer)
+        => !viewer.IsPlayer &&
+           (viewer.Body.IsMonster ||
+            viewer.Body.IsAnimal ||
+            viewer.Notoriety is Notoriety.CanBeAttacked or
+                Notoriety.Enemy or
+                Notoriety.Criminal or
+                Notoriety.Murdered);
+
+    private bool AreEnemyFactions(UOMobileEntity viewer, UOMobileEntity target)
+    {
+        if (_factionTemplateService is null ||
+            string.IsNullOrWhiteSpace(viewer.FactionId) ||
+            string.IsNullOrWhiteSpace(target.FactionId) ||
+            AreSameFaction(viewer, target))
+        {
+            return false;
+        }
+
+        return FactionDeclaresEnemy(viewer.FactionId!, target.FactionId!) ||
+               FactionDeclaresEnemy(target.FactionId!, viewer.FactionId!);
+    }
+
+    private static bool AreSameFaction(UOMobileEntity viewer, UOMobileEntity target)
+        => !string.IsNullOrWhiteSpace(viewer.FactionId) &&
+           !string.IsNullOrWhiteSpace(target.FactionId) &&
+           string.Equals(viewer.FactionId, target.FactionId, StringComparison.OrdinalIgnoreCase);
+
+    private bool FactionDeclaresEnemy(string factionId, string enemyFactionId)
+    {
+        if (_factionTemplateService is null ||
+            !_factionTemplateService.TryGet(factionId, out var faction) ||
+            faction is null)
+        {
+            return false;
+        }
+
+        return faction.EnemyFactionIds.Any(
+            declaredEnemy => string.Equals(declaredEnemy, enemyFactionId, StringComparison.OrdinalIgnoreCase)
+        );
+    }
 }

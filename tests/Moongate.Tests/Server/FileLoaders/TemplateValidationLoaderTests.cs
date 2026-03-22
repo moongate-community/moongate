@@ -7,6 +7,7 @@ using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Items;
+using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.FileLoaders;
@@ -18,6 +19,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
         var sellProfileService = new SellProfileTemplateService();
         var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
@@ -44,6 +46,7 @@ public class TemplateValidationLoaderTests
         var loader = new TemplateValidationLoader(
             itemService,
             mobileService,
+            factionTemplateService,
             sellProfileService,
             bookTemplateService,
             lootTemplateService
@@ -57,6 +60,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
         var sellProfileService = new SellProfileTemplateService();
         var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
@@ -82,6 +86,7 @@ public class TemplateValidationLoaderTests
         var loader = new TemplateValidationLoader(
             itemService,
             mobileService,
+            factionTemplateService,
             sellProfileService,
             bookTemplateService,
             lootTemplateService
@@ -95,6 +100,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
         var sellProfileService = new SellProfileTemplateService();
         var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
@@ -124,6 +130,7 @@ public class TemplateValidationLoaderTests
         var loader = new TemplateValidationLoader(
             itemService,
             mobileService,
+            factionTemplateService,
             sellProfileService,
             bookTemplateService,
             lootTemplateService
@@ -137,6 +144,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
         var sellProfileService = new SellProfileTemplateService();
         var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
@@ -159,6 +167,7 @@ public class TemplateValidationLoaderTests
         var loader = new TemplateValidationLoader(
             itemService,
             mobileService,
+            factionTemplateService,
             sellProfileService,
             bookTemplateService,
             lootTemplateService
@@ -172,6 +181,7 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
         var sellProfileService = new SellProfileTemplateService();
         var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
@@ -200,6 +210,44 @@ public class TemplateValidationLoaderTests
         var loader = new TemplateValidationLoader(
             itemService,
             mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileReferencesMissingDefaultFaction_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "faction_guard",
+                Name = "Faction Guard",
+                Category = "guards",
+                Description = "guard",
+                Body = 0x11,
+                SkinHue = HueSpec.FromValue(779),
+                HairHue = HueSpec.FromValue(0),
+                DefaultFactionId = "missing_faction"
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
             sellProfileService,
             bookTemplateService,
             lootTemplateService
@@ -213,11 +261,19 @@ public class TemplateValidationLoaderTests
     {
         var itemService = new ItemTemplateService();
         var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
         var sellProfileService = new SellProfileTemplateService();
         var lootTemplateService = new LootTemplateService();
         using var tempDirectory = new TempDirectory();
         var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
         ContainerLayoutSystem.ContainerSizesById["backpack"] = new("backpack", 7, 4, "Backpack");
+        factionTemplateService.Upsert(
+            new FactionDefinition
+            {
+                Id = "true_britannians",
+                Name = "True Britannians"
+            }
+        );
         lootTemplateService.Upsert(
             new LootTemplateDefinition
             {
@@ -266,6 +322,7 @@ public class TemplateValidationLoaderTests
                 Body = 0x11,
                 SkinHue = HueSpec.FromValue(779),
                 HairHue = HueSpec.FromValue(0),
+                DefaultFactionId = "true_britannians",
                 FixedEquipment =
                 [
                     new()
@@ -312,6 +369,7 @@ public class TemplateValidationLoaderTests
         var loader = new TemplateValidationLoader(
             itemService,
             mobileService,
+            factionTemplateService,
             sellProfileService,
             bookTemplateService,
             lootTemplateService

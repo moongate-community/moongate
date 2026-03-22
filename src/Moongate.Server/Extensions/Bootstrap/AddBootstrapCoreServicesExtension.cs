@@ -163,6 +163,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<ILootTemplateService, LootTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
+        container.Register<IFactionTemplateService, FactionTemplateService>(Reuse.Singleton);
         container.Register<ISellProfileTemplateService, SellProfileTemplateService>(Reuse.Singleton);
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IDoorGenerationMapSpecProvider, DefaultDoorGenerationMapSpecProvider>(Reuse.Singleton);

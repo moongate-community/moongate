@@ -25,6 +25,7 @@ This is the main documentation portal for Moongate v2.
 - [World Generation](articles/architecture/world-generation.md)
 - [Spatial System](articles/architecture/spatial-system.md)
 - [HTTP API](articles/architecture/http-api.md)
+- [Factions](articles/architecture/factions.md)
 
 ## Scripting
 

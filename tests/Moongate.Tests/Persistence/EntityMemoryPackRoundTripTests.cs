@@ -184,6 +184,7 @@ public sealed class EntityMemoryPackRoundTripTests
             Id = (Serial)0x100u,
             AccountId = (Serial)0x33u,
             Name = "test-mobile",
+            FactionId = "true_britannians",
             Location = new(100, 200, 0),
             MapId = 0,
             Gender = GenderType.Male,
@@ -214,6 +215,7 @@ public sealed class EntityMemoryPackRoundTripTests
             () =>
             {
                 Assert.That(restored!.Id, Is.EqualTo(entity.Id));
+                Assert.That(restored.FactionId, Is.EqualTo("true_britannians"));
                 Assert.That(restored.Location, Is.EqualTo(entity.Location));
                 Assert.That(restored.BaseStats.Strength, Is.EqualTo(50));
                 Assert.That(restored.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo((Serial)0x40000020u));

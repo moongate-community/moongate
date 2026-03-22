@@ -170,8 +170,11 @@ steering.wander(npcSerial, radius)
 perception.distance(sourceSerial, targetSerial)
 perception.in_range(sourceSerial, targetSerial, range)
 perception.find_nearest_enemy(npcSerial, range)
+perception.find_nearest_player_enemy(npcSerial, range)
 perception.find_nearest_friend(npcSerial, range)
 ```
+
+`find_nearest_enemy(...)` and `find_nearest_player_enemy(...)` use viewer-relative AI relation resolution. This means same-faction mobiles are skipped as enemies, guards ignore innocent players, and hostile monsters can still acquire players.
 
 `npc_state` runtime helpers:
 

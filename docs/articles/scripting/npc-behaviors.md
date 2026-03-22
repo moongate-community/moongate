@@ -119,6 +119,12 @@ Current `in_range` payload fields include:
 - `Neutral`
 - `Hostile`
 
+`source_relation` also includes faction hostility:
+
+- same-faction mobiles resolve as `Friendly`
+- declared enemy factions resolve as `Hostile`
+- innocent non-faction players remain `Neutral` for guard-style NPCs
+
 ## Built-In Behaviors
 
 Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` are:
@@ -155,12 +161,6 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
 - `idle`
   - Fallback behavior when nothing else scores higher
   - Keeps the brain alive without chasing or retreating
-- `return_home`
-  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
-  - Walks the guard back to its captured home point when no target is active
-- `hold_position`
-  - Reads `home_x`, `home_y`, `home_z`, and `hold_radius`
-  - Replaces random wandering for guards that are already back near home
 
 ## State (Blackboard)
 
@@ -232,8 +232,10 @@ Current core modules for behavior scripts:
 
 `perception.find_nearest_enemy(...)` considers:
 
-- players
-- NPCs with hostile notoriety (`CanBeAttacked`, `Enemy`, `Criminal`, `Murdered`)
+- viewer-relative hostility, not just raw target notoriety
+- recent aggression
+- faction hostility
+- players and NPCs that resolve as `Hostile` to the querying NPC
 
 `combat.set_target(...)` does not calculate hit or damage in Lua.
 It delegates to `CombatService`, which owns:

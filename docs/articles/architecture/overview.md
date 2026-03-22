@@ -64,6 +64,7 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
 - Region subsystem is intentionally based on the ModernUO approach (selected as the strongest reference implementation): polymorphic JSON (`$type`) plus map/sector indexing.
 - Region selection for a location uses deterministic ordering: `Priority` descending, then parent-child depth (`ChildLevel`) for ties.
 - Large gameplay subsystems should be modeled as `Features`, not generic `Engines`. See [Features vs Services](features-vs-services.md).
+- Factions are now loaded from JSON and provide runtime hostility and friendliness for notoriety and AI relation resolution. See [Factions](factions.md).
 
 ---
 
