@@ -20,12 +20,14 @@ using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Interaction;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
+using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.Interaction;
 
@@ -89,6 +91,7 @@ public sealed class CombatServiceTests
     private sealed class InMemoryMobileService : IMobileService
     {
         private readonly Dictionary<Serial, UOMobileEntity> _mobiles = new();
+        public Func<Serial, UOMobileEntity?, UOMobileEntity?>? OnGetAsync { get; set; }
 
         public void Add(UOMobileEntity mobile)
             => _mobiles[mobile.Id] = mobile;
@@ -111,7 +114,7 @@ public sealed class CombatServiceTests
         {
             _ = cancellationToken;
             _mobiles.TryGetValue(id, out var mobile);
-            return Task.FromResult(mobile);
+            return Task.FromResult(OnGetAsync?.Invoke(id, mobile) ?? mobile);
         }
 
         public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
@@ -254,11 +257,29 @@ public sealed class CombatServiceTests
 
     private sealed class CombatTestSpatialWorldService : ISpatialWorldService
     {
+        private readonly Dictionary<(int MapId, int SectorX, int SectorY), MapSector> _sectors = [];
+
         public JsonRegion? ResolvedRegion { get; set; }
         public List<IGameNetworkPacket> BroadcastPackets { get; } = [];
 
         public void AddOrUpdateItem(UOItemEntity item, int mapId) { }
-        public void AddOrUpdateMobile(UOMobileEntity mobile) { }
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile)
+        {
+            RemoveEntity(mobile.Id);
+            var sectorX = mobile.Location.X >> MapSectorConsts.SectorShift;
+            var sectorY = mobile.Location.Y >> MapSectorConsts.SectorShift;
+            var key = (mobile.MapId, sectorX, sectorY);
+
+            if (!_sectors.TryGetValue(key, out var sector))
+            {
+                sector = new MapSector(mobile.MapId, sectorX, sectorY);
+                _sectors[key] = sector;
+            }
+
+            sector.AddEntity(mobile);
+        }
+
         public void AddRegion(JsonRegion region) { }
 
         public Task<int> BroadcastToPlayersAsync(
@@ -278,10 +299,29 @@ public sealed class CombatServiceTests
         }
 
         public List<MapSector> GetActiveSectors()
-            => [];
+            => _sectors.Values.ToList();
 
         public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
-            => [];
+        {
+            var mobiles = new List<UOMobileEntity>();
+
+            foreach (var sector in _sectors.Values)
+            {
+                if (sector.MapIndex != mapId)
+                {
+                    continue;
+                }
+
+                if (Math.Abs(sector.SectorX - centerSectorX) > radius || Math.Abs(sector.SectorY - centerSectorY) > radius)
+                {
+                    continue;
+                }
+
+                mobiles.AddRange(sector.GetMobiles());
+            }
+
+            return mobiles;
+        }
 
         public int GetMusic(int mapId, Point3D location)
             => 0;
@@ -290,7 +330,10 @@ public sealed class CombatServiceTests
             => [];
 
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
-            => [];
+            => _sectors.Values
+                       .Where(sector => sector.MapIndex == mapId)
+                       .SelectMany(sector => sector.GetEntitiesInRange<UOMobileEntity>(location, range))
+                       .ToList();
 
         public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
             => [];
@@ -309,7 +352,18 @@ public sealed class CombatServiceTests
 
         public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
         public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
-        public void RemoveEntity(Serial serial) { }
+        public void RemoveEntity(Serial serial)
+        {
+            foreach (var sector in _sectors.Values)
+            {
+                var mobile = sector.GetEntity<UOMobileEntity>(serial);
+
+                if (mobile is not null)
+                {
+                    sector.RemoveEntity(mobile);
+                }
+            }
+        }
 
         public JsonRegion? ResolveRegion(int mapId, Point3D location)
         {
@@ -609,6 +663,95 @@ public sealed class CombatServiceTests
     }
 
     [Test]
+    public async Task ScheduledSwing_WhenNpcArcherWeaponExistsOnlyInSpatialRuntime_ShouldStillUseRangedCombatProfile()
+    {
+        EnsureMapsRegistered();
+        Body.Types = new UOBodyType[0x200];
+        Body.Types[0x0190] = UOBodyType.Human;
+        var mobileService = new InMemoryMobileService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var liveAttacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000050u,
+            IsPlayer = false,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Direction = DirectionType.West,
+            BaseBody = 0x0190,
+            Hits = 50,
+            MaxHits = 50
+        };
+        liveAttacker.SetSkill(UOSkillName.Archery, 1000);
+        var bow = new UOItemEntity
+        {
+            Id = (Serial)0x40000050u,
+            ItemId = 0x13B2,
+            EquippedMobileId = liveAttacker.Id,
+            EquippedLayer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery,
+            AmmoItemId = 0x0F3F,
+            AmmoEffectId = 0x1BFE,
+            CombatStats = new()
+            {
+                DamageMin = 6,
+                DamageMax = 6,
+                RangeMin = 1,
+                RangeMax = 10
+            }
+        };
+        liveAttacker.HydrateEquipmentRuntime([bow]);
+
+        var liveDefender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000051u,
+            IsPlayer = false,
+            MapId = 0,
+            Location = new(105, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        spatial.AddOrUpdateMobile(liveAttacker);
+        spatial.AddOrUpdateMobile(liveDefender);
+        mobileService.Add(CreatePersistenceClone(liveAttacker));
+        mobileService.Add(CreatePersistenceClone(liveDefender));
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            new InMemoryItemService(),
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(liveAttacker.Id, liveDefender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(liveDefender.Hits, Is.EqualTo(34));
+                Assert.That(liveAttacker.Direction, Is.EqualTo(DirectionType.East));
+                Assert.That(spatial.BroadcastPackets.OfType<GraphicalEffectPacket>().Any(), Is.True);
+                Assert.That(spatial.BroadcastPackets.OfType<FightOccurringPacket>().Any(), Is.True);
+                Assert.That(spatial.BroadcastPackets.OfType<MobileMovingPacket>().Any(packet => packet.Mobile?.Id == liveAttacker.Id), Is.True);
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is MobilePlayAnimationEvent), Is.True);
+                Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task ScheduledSwing_WhenRangedWeaponHasNoAmmo_ShouldClearCombatantWithoutApplyingDamage()
     {
         EnsureMapsRegistered();
@@ -700,6 +843,159 @@ public sealed class CombatServiceTests
                 Assert.That(defender.Hits, Is.EqualTo(40));
                 Assert.That(spatial.BroadcastPackets.OfType<GraphicalEffectPacket>(), Is.Empty);
                 Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent or CombatMissEvent), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySetCombatantAsync_WhenAlreadyTargetingSameDefender_ShouldNotRescheduleSwing()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000038u,
+            IsPlayer = false,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50
+        };
+        var sword = new UOItemEntity
+        {
+            Id = (Serial)0x40000038u,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.OneHanded,
+            CombatStats = new()
+            {
+                DamageMin = 6,
+                DamageMax = 6,
+                RangeMin = 1,
+                RangeMax = 1,
+                AttackSpeed = 30
+            }
+        };
+        attacker.HydrateEquipmentRuntime([sword]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000039u,
+            MapId = 0,
+            Location = new(101, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var firstSetTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        var firstNextCombatAtUtc = attacker.NextCombatAtUtc;
+        var firstRegisteredTimerCount = timerService.RegisteredTimers.Count;
+
+        var secondSetTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(firstSetTarget, Is.True);
+                Assert.That(secondSetTarget, Is.True);
+                Assert.That(timerService.RegisteredTimers, Has.Count.EqualTo(firstRegisteredTimerCount));
+                Assert.That(attacker.NextCombatAtUtc, Is.EqualTo(firstNextCombatAtUtc));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySetCombatantAsync_WhenWarmodeAndCombatantArePresetWithoutScheduledSwing_ShouldStillScheduleFirstAttack()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x0000003Au,
+            IsPlayer = false,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Hits = 50,
+            MaxHits = 50,
+            CombatantId = (Serial)0x0000003Bu,
+            Warmode = true
+        };
+        var sword = new UOItemEntity
+        {
+            Id = (Serial)0x4000003Bu,
+            EquippedMobileId = attacker.Id,
+            EquippedLayer = ItemLayerType.OneHanded,
+            CombatStats = new()
+            {
+                DamageMin = 6,
+                DamageMax = 6,
+                RangeMin = 1,
+                RangeMax = 1,
+                AttackSpeed = 30
+            }
+        };
+        attacker.HydrateEquipmentRuntime([sword]);
+
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x0000003Bu,
+            MapId = 0,
+            Location = new(101, 100, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        spatial.AddOrUpdateMobile(attacker);
+        spatial.AddOrUpdateMobile(defender);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            itemService,
+            new DeathServiceSpy()
+        );
+
+        var result = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(timerService.RegisteredTimers, Has.Count.EqualTo(1));
+                Assert.That(timerService.RegisteredTimers[0].Name, Is.EqualTo($"combat:{(uint)attacker.Id}"));
             }
         );
     }
@@ -1698,6 +1994,79 @@ public sealed class CombatServiceTests
         );
     }
 
+    [Test]
+    public async Task ScheduledSwing_WhenAttackerIsNotFacingDefender_ShouldTurnTowardTargetAndBroadcastFacingUpdate()
+    {
+        EnsureMapsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new CombatTestSpatialWorldService();
+        var eventBus = new RecordingGameEventBusService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x00000052u,
+            IsPlayer = true,
+            MapId = 0,
+            Location = new(100, 100, 0),
+            Direction = DirectionType.South,
+            Hits = 50,
+            MaxHits = 50,
+            MinWeaponDamage = 6,
+            MaxWeaponDamage = 6
+        };
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x00000053u,
+            IsPlayer = false,
+            MapId = 0,
+            Location = new(100, 99, 0),
+            Hits = 40,
+            MaxHits = 40
+        };
+
+        mobileService.Add(attacker);
+        mobileService.Add(defender);
+        spatial.AddOrUpdateMobile(attacker);
+        spatial.AddOrUpdateMobile(defender);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = attacker.Id,
+            Character = attacker
+        };
+        sessionService.Add(session);
+
+        ICombatService service = new CombatService(
+            mobileService,
+            sessionService,
+            outgoingQueue,
+            timerService,
+            spatial,
+            eventBus,
+            new InMemoryItemService(),
+            new DeathServiceSpy()
+        );
+
+        var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+        Assert.That(setTarget, Is.True);
+
+        timerService.RegisteredTimers[^1].Callback.Invoke();
+
+        var facingUpdate = spatial.BroadcastPackets.OfType<MobileMovingPacket>().Single(packet => packet.Mobile?.Id == attacker.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(attacker.Direction, Is.EqualTo(DirectionType.North));
+                Assert.That(facingUpdate.Mobile!.Direction, Is.EqualTo(DirectionType.North));
+            }
+        );
+    }
+
     private static void EnsureMapsRegistered()
     {
         if (Map.GetMap(0) is null)
@@ -1722,4 +2091,56 @@ public sealed class CombatServiceTests
 
         return packets;
     }
+
+    private static UOMobileEntity CreatePersistenceClone(UOMobileEntity mobile)
+        => new()
+        {
+            Id = mobile.Id,
+            AccountId = mobile.AccountId,
+            Name = mobile.Name,
+            Title = mobile.Title,
+            BrainId = mobile.BrainId,
+            Location = mobile.Location,
+            MapId = mobile.MapId,
+            Direction = mobile.Direction,
+            IsPlayer = mobile.IsPlayer,
+            IsAlive = mobile.IsAlive,
+            Gender = mobile.Gender,
+            RaceIndex = mobile.RaceIndex,
+            ProfessionId = mobile.ProfessionId,
+            SkinHue = mobile.SkinHue,
+            HairStyle = mobile.HairStyle,
+            HairHue = mobile.HairHue,
+            FacialHairStyle = mobile.FacialHairStyle,
+            FacialHairHue = mobile.FacialHairHue,
+            BaseBody = mobile.BaseBody,
+            BaseStats = mobile.BaseStats,
+            BaseResistances = mobile.BaseResistances,
+            Resources = mobile.Resources,
+            EquipmentModifiers = mobile.EquipmentModifiers,
+            RuntimeModifiers = mobile.RuntimeModifiers,
+            ModifierCaps = mobile.ModifierCaps,
+            BackpackId = mobile.BackpackId,
+            EquippedItemIds = new(mobile.EquippedItemIds),
+            IsWarMode = mobile.IsWarMode,
+            Hunger = mobile.Hunger,
+            Thirst = mobile.Thirst,
+            Fame = mobile.Fame,
+            Karma = mobile.Karma,
+            Kills = mobile.Kills,
+            IsHidden = mobile.IsHidden,
+            IsFrozen = mobile.IsFrozen,
+            IsParalyzed = mobile.IsParalyzed,
+            IsFlying = mobile.IsFlying,
+            IgnoreMobiles = mobile.IgnoreMobiles,
+            IsPoisoned = mobile.IsPoisoned,
+            IsBlessed = mobile.IsBlessed,
+            IsInvulnerable = mobile.IsInvulnerable,
+            Notoriety = mobile.Notoriety,
+            CombatantId = mobile.CombatantId,
+            NextCombatAtUtc = mobile.NextCombatAtUtc,
+            LastCombatAtUtc = mobile.LastCombatAtUtc,
+            MinWeaponDamage = mobile.MinWeaponDamage,
+            MaxWeaponDamage = mobile.MaxWeaponDamage
+        };
 }

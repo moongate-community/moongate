@@ -19,12 +19,14 @@ end
 
 -- Logical behavior order. The winner is selected by score.
 local MELEE_BEHAVIORS = {
+    "self_bandage",
     "evade",
     "follow",
     "idle",
 }
 
 local RANGED_BEHAVIORS = {
+    "self_bandage",
     "evade",
     "ranged_keep_distance",
     "idle",
@@ -44,20 +46,29 @@ end
 
 -- Initialize minimal blackboard values for behaviors.
 local function initialize_defaults(npc_serial)
-    -- Desired distance while evading
-    npc_state.set_var(npc_serial, "evade_desired_range", 7)
+    local function set_default(key, value)
+        if npc_state.get_var(npc_serial, key) == nil then
+            npc_state.set_var(npc_serial, key, value)
+        end
+    end
+
+    -- Guards should not kite by default. Ranged positioning is handled by
+    -- ranged_keep_distance, and low-hp retreat is handled by evade_hp_threshold.
+    set_default("evade_desired_range", 0)
 
     -- Below this HP threshold, evade gets a score bonus
-    npc_state.set_var(npc_serial, "evade_hp_threshold", 0.40)
+    set_default("evade_hp_threshold", 0.40)
+    set_default("self_bandage_hp_threshold", 0.45)
+    set_default("self_bandage_score_bonus", 70)
 
     if is_ranged_guard(npc_serial) then
-        npc_state.set_var(npc_serial, "preferred_min_range", 4)
-        npc_state.set_var(npc_serial, "preferred_max_range", 6)
+        set_default("preferred_min_range", 4)
+        set_default("preferred_max_range", 6)
         return
     end
 
     -- Minimum distance while following a target
-    npc_state.set_var(npc_serial, "follow_stop_range", 1)
+    set_default("follow_stop_range", 1)
 end
 
 function guard.brain_loop(npc_serial)
@@ -126,9 +137,10 @@ function guard.on_in_range(npc_serial, source_serial, event_obj)
     if source_is_enemy and npc_state.get_var(npc_serial, engaged_key) ~= true then
         npc:set_target(source)
         npc:set_war_mode(true)
-        combat.set_target(npc_serial, source_serial)
-        npc_state.set_var(npc_serial, "follow_target_serial", source_serial)
-        npc_state.set_var(npc_serial, engaged_key, true)
+        if combat.set_target(npc_serial, source_serial) == true then
+            npc_state.set_var(npc_serial, "follow_target_serial", source_serial)
+            npc_state.set_var(npc_serial, engaged_key, true)
+        end
     end
 
     utility_runner.on_event(npc_serial, {}, "in_range", source_serial, event_obj)
@@ -137,6 +149,8 @@ end
 function guard.on_out_range(npc_serial, source_serial, event_obj)
     npc_state.set_var(npc_serial, get_seen_key(source_serial), nil)
     npc_state.set_var(npc_serial, get_engaged_key(source_serial), nil)
+    npc_state.set_var(npc_serial, "follow_target_serial", nil)
+    combat.clear_target(npc_serial)
     utility_runner.on_event(npc_serial, {}, "out_range", source_serial, event_obj)
 end
 

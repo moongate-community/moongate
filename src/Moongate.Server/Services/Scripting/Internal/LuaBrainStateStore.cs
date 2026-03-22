@@ -13,6 +13,7 @@ namespace Moongate.Server.Services.Scripting.Internal;
 internal sealed class LuaBrainStateStore
 {
     private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
+    private readonly Dictionary<Serial, UOMobileEntity> _observedMobiles = [];
     private readonly Lock _sync = new();
 
     public void Clear()
@@ -20,6 +21,7 @@ internal sealed class LuaBrainStateStore
         lock (_sync)
         {
             _states.Clear();
+            _observedMobiles.Clear();
         }
     }
 
@@ -140,7 +142,7 @@ internal sealed class LuaBrainStateStore
         }
     }
 
-    public bool TryResolveSourceMobile(Serial mobileId, int mapId, Point3D location, out UOMobileEntity? sourceMobile)
+    public bool TryResolveTrackedMobile(Serial mobileId, out UOMobileEntity? sourceMobile)
     {
         lock (_sync)
         {
@@ -150,17 +152,26 @@ internal sealed class LuaBrainStateStore
 
                 return true;
             }
+
+            if (_observedMobiles.TryGetValue(mobileId, out var observedMobile))
+            {
+                sourceMobile = observedMobile;
+
+                return true;
+            }
         }
 
-        sourceMobile = new()
-        {
-            Id = mobileId,
-            MapId = mapId,
-            Location = location,
-            IsPlayer = true
-        };
+        sourceMobile = null;
 
-        return true;
+        return false;
+    }
+
+    public void UpsertObservedMobile(UOMobileEntity mobile)
+    {
+        lock (_sync)
+        {
+            _observedMobiles[mobile.Id] = mobile;
+        }
     }
 
     public void UpdateTrackedMobilePosition(Serial mobileId, int mapId, Point3D location)
@@ -171,6 +182,12 @@ internal sealed class LuaBrainStateStore
             {
                 tracked.Mobile.MapId = mapId;
                 tracked.Mobile.Location = location;
+            }
+
+            if (_observedMobiles.TryGetValue(mobileId, out var observed))
+            {
+                observed.MapId = mapId;
+                observed.Location = location;
             }
         }
     }
