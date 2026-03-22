@@ -1,3 +1,4 @@
+using Moongate.UO.Data.Ids;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -14,6 +15,11 @@ public sealed class NotorietyService : INotorietyService
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
 
+        if (source.Id != Serial.Zero && source.Id == target.Id)
+        {
+            return Notoriety.Innocent;
+        }
+
         if (target.IsBlessed || target.IsInvulnerable)
         {
             return Notoriety.Invulnerable;
@@ -29,6 +35,11 @@ public sealed class NotorietyService : INotorietyService
             return Notoriety.Criminal;
         }
 
+        if (HasRecentAggression(source, target) || HasRecentAggression(target, source))
+        {
+            return Notoriety.CanBeAttacked;
+        }
+
         if (!target.IsPlayer &&
             (target.Body.IsMonster || target.Body.IsAnimal || target.Notoriety == Notoriety.Enemy))
         {
@@ -37,4 +48,8 @@ public sealed class NotorietyService : INotorietyService
 
         return target.Notoriety;
     }
+
+    private static bool HasRecentAggression(UOMobileEntity source, UOMobileEntity target)
+        => source.Aggressors.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id) ||
+           source.Aggressed.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id);
 }

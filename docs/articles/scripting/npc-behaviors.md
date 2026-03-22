@@ -93,8 +93,9 @@ On ranged guard templates, `params.guard_role = "ranged"` switches the brain to 
 `undead_melee.lua` is a simpler fixed-loop brain:
 
 - ticks every `2000ms`
-- calls `perception.find_nearest_enemy(npc_serial, 10)`
-- arms combat immediately against the nearest hostile
+- calls `perception.find_nearest_player_enemy(npc_serial, 10)`
+- arms combat immediately against the nearest hostile player
+- uses `steering.follow(..., 1)` so the zombie closes into melee instead of standing still
 - clears the active combat target when no hostile is found
 
 Current `in_range` payload fields include:
@@ -106,10 +107,17 @@ Current `in_range` payload fields include:
 - `source_fame`
 - `source_karma`
 - `source_notoriety`
+- `source_relation`
 - `source_is_enemy`
 - `map_id`
 - `range`
 - `location`
+
+`source_notoriety` is viewer-relative: it is resolved from the listener NPC toward the source mobile, not copied raw from the source entity. `source_relation` is the coarse AI-friendly classification used by brains:
+
+- `Friendly`
+- `Neutral`
+- `Hostile`
 
 ## Built-In Behaviors
 

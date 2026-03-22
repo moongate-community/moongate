@@ -49,6 +49,24 @@ public sealed class PerceptionModule
         return nearest is null ? null : (uint)nearest.Id;
     }
 
+    [ScriptFunction("find_nearest_player_enemy", "Returns nearest player-controlled enemy mobile serial in range, or nil.")]
+    public uint? FindNearestPlayerEnemy(uint npcSerial, int range)
+    {
+        if (range <= 0 ||
+            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, npcSerial, out var npc))
+        {
+            return null;
+        }
+
+        var nearest = FindNearestByPredicate(
+            npc!,
+            range,
+            candidate => candidate.Id != npc!.Id && candidate.IsPlayer
+        );
+
+        return nearest is null ? null : (uint)nearest.Id;
+    }
+
     [ScriptFunction("find_nearest_friend", "Returns nearest non-player friend mobile serial in range, or nil.")]
     public uint? FindNearestFriend(uint npcSerial, int range)
     {
