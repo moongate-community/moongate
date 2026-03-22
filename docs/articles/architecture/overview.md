@@ -63,7 +63,8 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
 - `UOMobileEntity` intentionally does not include RPG-style `Level`/`Experience`; the base mobile model follows UO/ModernUO semantics.
 - Region subsystem is intentionally based on the ModernUO approach (selected as the strongest reference implementation): polymorphic JSON (`$type`) plus map/sector indexing.
 - Region selection for a location uses deterministic ordering: `Priority` descending, then parent-child depth (`ChildLevel`) for ties.
+- Large gameplay subsystems should be modeled as `Features`, not generic `Engines`. See [Features vs Services](features-vs-services.md).
 
 ---
 
-**Previous**: [Solution Structure](solution.md) | **Next**: [Network System](network.md)
+**Previous**: [Solution Structure](solution.md) | **Next**: [Features vs Services](features-vs-services.md)

@@ -12,6 +12,7 @@ This is the main documentation portal for Moongate v2.
 ## Architecture
 
 - [Overview](articles/architecture/overview.md)
+- [Features vs Services](articles/architecture/features-vs-services.md)
 - [Network](articles/architecture/network.md)
 - [Game Loop](articles/architecture/game-loop.md)
 - [Events](articles/architecture/events.md)

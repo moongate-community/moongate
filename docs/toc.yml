@@ -18,6 +18,8 @@
   items:
   - name: Overview
     href: articles/architecture/overview.md
+  - name: Features vs Services
+    href: articles/architecture/features-vs-services.md
   - name: Network System
     href: articles/architecture/network.md
   - name: Game Loop
