@@ -119,6 +119,12 @@ Current `in_range` payload fields include:
 - `Neutral`
 - `Hostile`
 
+`source_relation` also includes faction hostility:
+
+- same-faction mobiles resolve as `Friendly`
+- declared enemy factions resolve as `Hostile`
+- innocent non-faction players remain `Neutral` for guard-style NPCs
+
 ## Built-In Behaviors
 
 Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` are:
@@ -232,8 +238,10 @@ Current core modules for behavior scripts:
 
 `perception.find_nearest_enemy(...)` considers:
 
-- players
-- NPCs with hostile notoriety (`CanBeAttacked`, `Enemy`, `Criminal`, `Murdered`)
+- viewer-relative hostility, not just raw target notoriety
+- recent aggression
+- faction hostility
+- players and NPCs that resolve as `Hostile` to the querying NPC
 
 `combat.set_target(...)` does not calculate hit or damage in Lua.
 It delegates to `CombatService`, which owns:

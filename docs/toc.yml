@@ -46,6 +46,8 @@
     href: articles/architecture/spatial-system.md
   - name: HTTP API
     href: articles/architecture/http-api.md
+  - name: Factions
+    href: articles/architecture/factions.md
 
 - name: Scripting
   href: articles/scripting/

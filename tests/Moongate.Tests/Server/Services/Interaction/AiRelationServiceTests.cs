@@ -1,6 +1,8 @@
 using Moongate.Server.Services.Interaction;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Interaction;
@@ -69,6 +71,34 @@ public sealed class AiRelationServiceTests
         Assert.That(result, Is.EqualTo(AiRelation.Hostile));
     }
 
+    [Test]
+    public void Compute_WhenViewerAndTargetShareFaction_ShouldReturnFriendly()
+    {
+        var service = new AiRelationService(CreateFactionTemplateService());
+        var viewer = CreateGuard((Serial)0x0100u);
+        var target = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+        viewer.FactionId = "true_britannians";
+        target.FactionId = "true_britannians";
+
+        var result = service.Compute(viewer, target);
+
+        Assert.That(result, Is.EqualTo(AiRelation.Friendly));
+    }
+
+    [Test]
+    public void Compute_WhenViewerAndTargetBelongToEnemyFactions_ShouldReturnHostile()
+    {
+        var service = new AiRelationService(CreateFactionTemplateService());
+        var viewer = CreateGuard((Serial)0x0100u);
+        var target = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+        viewer.FactionId = "true_britannians";
+        target.FactionId = "shadowlords";
+
+        var result = service.Compute(viewer, target);
+
+        Assert.That(result, Is.EqualTo(AiRelation.Hostile));
+    }
+
     private static UOMobileEntity CreateGuard(Serial id)
         => new()
         {
@@ -95,4 +125,27 @@ public sealed class AiRelationServiceTests
             Notoriety = Notoriety.CanBeAttacked,
             BaseBody = 0x0003
         };
+
+    private static FactionTemplateService CreateFactionTemplateService()
+    {
+        var service = new FactionTemplateService();
+        service.Upsert(
+            new FactionDefinition
+            {
+                Id = "true_britannians",
+                Name = "True Britannians",
+                EnemyFactionIds = ["shadowlords"]
+            }
+        );
+        service.Upsert(
+            new FactionDefinition
+            {
+                Id = "shadowlords",
+                Name = "Shadowlords",
+                EnemyFactionIds = ["true_britannians"]
+            }
+        );
+
+        return service;
+    }
 }

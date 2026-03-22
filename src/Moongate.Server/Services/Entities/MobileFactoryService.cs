@@ -79,6 +79,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             SkinHue = (short)template.SkinHue.Resolve(),
             HairStyle = (short)template.HairStyle,
             HairHue = (short)template.HairHue.Resolve(),
+            FactionId = string.IsNullOrWhiteSpace(template.DefaultFactionId) ? null : template.DefaultFactionId.Trim(),
             BaseStats = new()
             {
                 Strength = template.Strength,

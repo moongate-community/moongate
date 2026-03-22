@@ -846,6 +846,12 @@ public partial class UOMobileEntity : IMobileEntity
     [MemoryPackOrder(60)]
     public DateTime LastLoginUtc { get; set; } = DateTime.UtcNow;
 
+    /// <summary>
+    /// Gets or sets the persisted faction membership identifier for this mobile.
+    /// </summary>
+    [MemoryPackOrder(64)]
+    public string? FactionId { get; set; }
+
     [MemoryPackOnDeserialized]
     private void OnMemoryPackDeserialized()
     {
