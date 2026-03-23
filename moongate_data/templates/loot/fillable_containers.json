@@ -1,0 +1,1937 @@
+[
+  {
+    "type": "loot",
+    "id": "fillable.alchemist",
+    "name": "Alchemist",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "night_sight_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "mortar_pestle",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.armorer",
+    "name": "Armorer",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "chain_coif",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plate_gorget",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bronze_shield",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "buckler",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "metal_kite_shield",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "heater_shield",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "wooden_shield",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "metal_shield",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.artisan_guild",
+    "name": "ArtisanGuild",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "paints_and_brush",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sledge_hammer",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "smith_hammer",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tongs",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lockpick",
+        "weight": 4,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tinker_tools",
+        "weight": 4,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "mallet_and_chisel",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "statue_east2",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "statue_south",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "statue_south_east",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "statue_west",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "statue_north",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "statue_east",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bust_east",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bust_south",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bear_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "deer_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "orc_helm",
+        "weight": 4,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tribal_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "horned_tribal_mask",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.baker",
+    "name": "Baker",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "rolling_pin",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sack_flour",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bread_loaf",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "french_bread",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.bard",
+    "name": "Bard",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "lap_harp",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lute",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "drums",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tambourine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tambourine_tassel",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.blacksmith",
+    "name": "Blacksmith",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "smith_hammer",
+        "weight": 8,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tongs",
+        "weight": 8,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sledge_hammer",
+        "weight": 8,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "iron_wire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "silver_wire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gold_wire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "copper_wire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "horse_shoes",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "forged_metal",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.bowyer",
+    "name": "Bowyer",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "bow",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "crossbow",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arrow",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.butcher",
+    "name": "Butcher",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "cleaver",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "slab_of_bacon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bacon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_fish_steak",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "fish_steak",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cooked_bird",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_bird",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ham",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ribs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_ribs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sausage",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_chicken_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "chicken_leg",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.carpenter",
+    "name": "Carpenter",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "chisels_north",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "chisels_west",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dovetail_saw",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "hammer",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "moulding_plane",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "nails",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "jointing_plane",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "smoothing_plane",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "saw",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "draw_knife",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "log",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "froe",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "inshave",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "scorp",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.clothier",
+    "name": "Clothier",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "cotton",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "wool",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dark_yarn",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "light_yarn",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "light_yarn_unraveled",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "spool_of_thread",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dyes",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.cobbler",
+    "name": "Cobbler",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "boots",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "shoes",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sandals",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "thigh_boots",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.docks",
+    "name": "Docks",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "fishing_pole",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "fish",
+        "weight": 4,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.farm",
+    "name": "Farm",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "shirt",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "short_pants",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "skirt",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plain_dress",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cap",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sandals",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gnarled_staff",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pitchfork",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bag",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "kindling",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lettuce",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "onion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "turnip",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ham",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bacon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sheaf_of_hay",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pitcher_milk",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.fighter_guild",
+    "name": "FighterGuild",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 3,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "arrow",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.guard",
+    "name": "Guard",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 3,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "arrow",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.healer",
+    "name": "Healer",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "bandage",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "mortar_pestle",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.herbalist",
+    "name": "Herbalist",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "garlic",
+        "weight": 10,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 10,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 10,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dead_wood",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "white_dried_flowers",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "green_dried_flowers",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dried_onions",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dried_herbs",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.inn",
+    "name": "Inn",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "candle",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "torch",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lantern",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.jeweler",
+    "name": "Jeweler",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "gold_ring",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gold_bracelet",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gold_earrings",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gold_necklace",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gold_bead_necklace",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "necklace",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "beads",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.library",
+    "name": "Library",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "red_book",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "blue_book",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.mage",
+    "name": "Mage",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "blank_scroll",
+        "weight": 16,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.merchant",
+    "name": "Merchant",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "cheese_wheel",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cheese_wedge",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cheese_slice",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "eggs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "fish",
+        "weight": 4,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_fish_steak",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "fish_steak",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "apple",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "banana",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bananas",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "open_coconut",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "split_coconut",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "coconut",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dates",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "grapes",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lemon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lemons",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lime",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "limes",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "peach",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pear",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "slab_of_bacon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bacon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cooked_bird",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_bird",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ham",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ribs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_ribs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sausage",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_chicken_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "chicken_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "watermelon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "small_watermelon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "turnip",
+        "weight": 3,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "yellow_gourd",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "green_gourd",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pumpkin",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "small_pumpkin",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "onion",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lettuce",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "squash",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "honeydew_melon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "carrot",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cantaloupe",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cabbage",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ear_of_corn",
+        "weight": 4,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.mill",
+    "name": "Mill",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "sack_flour",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.mine",
+    "name": "Mine",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "pickaxe",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "shovel",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "forged_metal",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.observatory",
+    "name": "Observatory",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "sextant",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "spyglass",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.painter",
+    "name": "Painter",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "paints_and_brush",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pen_and_ink",
+        "weight": 2,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.provisioner",
+    "name": "Provisioner",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "cheese_wheel",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cheese_wedge",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cheese_slice",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "eggs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "fish",
+        "weight": 4,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_frypan",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_pan",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_kettle",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_small_round_pot",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_round_pot",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_small_pot",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dirty_pot",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "apple",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "banana",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bananas",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "open_coconut",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "split_coconut",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "coconut",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "dates",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "grapes",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lemon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lemons",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lime",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "limes",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "peach",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pear",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "slab_of_bacon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bacon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_fish_steak",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "fish_steak",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cooked_bird",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_bird",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ham",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lamb_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ribs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_ribs",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sausage",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "raw_chicken_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "chicken_leg",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "watermelon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "small_watermelon",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "turnip",
+        "weight": 3,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "yellow_gourd",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "green_gourd",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pumpkin",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "small_pumpkin",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "onion",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lettuce",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "squash",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "honeydew_melon",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "carrot",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cantaloupe",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cabbage",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ear_of_corn",
+        "weight": 4,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.ranger",
+    "name": "Ranger",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "studded_chest",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "studded_legs",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "studded_arms",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "studded_gloves",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "studded_gorget",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_chest",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_legs",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_arms",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_gloves",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_gorget",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "feathered_hat",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "close_helm",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tall_straw_hat",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bandana",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "cloak",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "boots",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "thigh_boots",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gnarled_staff",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "whip",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bow",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "crossbow",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "heavy_crossbow",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arrow",
+        "weight": 4,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.stables",
+    "name": "Stables",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "carrot",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.tanner",
+    "name": "Tanner",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "feathered_hat",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_arms",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_legs",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_chest",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_gloves",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_gorget",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.tavern",
+    "name": "Tavern",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "bottle_ale",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bottle_wine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bottle_liquor",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "pitcher_cider",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.thief_guild",
+    "name": "ThiefGuild",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "lockpick",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bear_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "deer_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tribal_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "horned_tribal_mask",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "orc_helm",
+        "weight": 4,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.tinker",
+    "name": "Tinker",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "lockpick",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "clock_parts",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "axle_gears",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "gears",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "hinge",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sextant",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sextant_parts",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "axle",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "springs",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tinker_tools",
+        "weight": 5,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "key",
+        "weight": 4,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lockpick",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.veterinarian",
+    "name": "Veterinarian",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "bandage",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "mortar_pestle",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "carrot",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "fillable.weaponsmith",
+    "name": "Weaponsmith",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 2,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "arrow",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  }
+]

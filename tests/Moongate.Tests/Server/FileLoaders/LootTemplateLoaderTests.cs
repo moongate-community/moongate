@@ -136,4 +136,51 @@ public sealed class LootTemplateLoaderTests
             }
         );
     }
+
+    [Test]
+    public async Task LoadAsync_WhenRepositoryContainsGeneratedLootFiles_ShouldLoadGeneratedModes()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var lootTemplateService = new LootTemplateService();
+        var loader = new LootTemplateLoader(directoriesConfig, lootTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lootTemplateService.TryGet("creature.agapite_elemental", out var creatureLoot), Is.True);
+                Assert.That(creatureLoot, Is.Not.Null);
+                Assert.That(creatureLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+
+                Assert.That(lootTemplateService.TryGet("fillable.alchemist", out var fillableLoot), Is.True);
+                Assert.That(fillableLoot, Is.Not.Null);
+                Assert.That(fillableLoot!.Mode, Is.EqualTo(LootTemplateMode.Weighted));
+                Assert.That(fillableLoot.Rolls, Is.GreaterThan(0));
+
+                Assert.That(lootTemplateService.TryGet("treasure_map.level_1.gold", out var treasureLoot), Is.True);
+                Assert.That(treasureLoot, Is.Not.Null);
+                Assert.That(treasureLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+            }
+        );
+    }
+
+    private static string ResolveRepositoryRoot()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "Moongate.slnx")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Unable to locate repository root from test base directory.");
+    }
 }

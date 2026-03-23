@@ -1,0 +1,869 @@
+[
+  {
+    "type": "loot",
+    "id": "treasure_map.level_0",
+    "name": "Treasure Map Level 0",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 50,
+        "amountMax": 100
+      },
+      {
+        "itemTemplateId": "treasure_map",
+        "chance": 0.75,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_1.gems",
+    "name": "Treasure Map Level 1 Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 3,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amethyst",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "citrine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "diamond",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "emerald",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ruby",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "star_sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tourmaline",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_1.gold",
+    "name": "Treasure Map Level 1 Gold",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 1000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_1.reagents",
+    "name": "Treasure Map Level 1 Reagents",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 3,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "bloodmoss",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "garlic",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "spiders_silk",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "weight": 1,
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_1.scrolls",
+    "name": "Treasure Map Level 1 Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 5,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTag": "skill items",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_2.gems",
+    "name": "Treasure Map Level 2 Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 6,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amethyst",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "citrine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "diamond",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "emerald",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ruby",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "star_sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tourmaline",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_2.gold",
+    "name": "Treasure Map Level 2 Gold",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 2000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_2.reagents",
+    "name": "Treasure Map Level 2 Reagents",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 6,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "bloodmoss",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "garlic",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "spiders_silk",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "weight": 1,
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_2.scrolls",
+    "name": "Treasure Map Level 2 Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 10,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTag": "skill items",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_3.gems",
+    "name": "Treasure Map Level 3 Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 9,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amethyst",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "citrine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "diamond",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "emerald",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ruby",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "star_sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tourmaline",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_3.gold",
+    "name": "Treasure Map Level 3 Gold",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 3000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_3.reagents",
+    "name": "Treasure Map Level 3 Reagents",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 9,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "bloodmoss",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "garlic",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "spiders_silk",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "weight": 1,
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_3.scrolls",
+    "name": "Treasure Map Level 3 Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 15,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTag": "skill items",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_4.gems",
+    "name": "Treasure Map Level 4 Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 12,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amethyst",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "citrine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "diamond",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "emerald",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ruby",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "star_sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tourmaline",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_4.gold",
+    "name": "Treasure Map Level 4 Gold",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 4000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_4.reagents",
+    "name": "Treasure Map Level 4 Reagents",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 12,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "bloodmoss",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "garlic",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "spiders_silk",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "weight": 1,
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_4.scrolls",
+    "name": "Treasure Map Level 4 Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 20,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTag": "skill items",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_5.gems",
+    "name": "Treasure Map Level 5 Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 15,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amethyst",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "citrine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "diamond",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "emerald",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ruby",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "star_sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tourmaline",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_5.gold",
+    "name": "Treasure Map Level 5 Gold",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 5000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_5.reagents",
+    "name": "Treasure Map Level 5 Reagents",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 15,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "bloodmoss",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "garlic",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "spiders_silk",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "weight": 1,
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_5.scrolls",
+    "name": "Treasure Map Level 5 Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 25,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTag": "skill items",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_6.gems",
+    "name": "Treasure Map Level 6 Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 18,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amethyst",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "citrine",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "diamond",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "emerald",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "ruby",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "star_sapphire",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tourmaline",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_6.gold",
+    "name": "Treasure Map Level 6 Gold",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 6000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_6.reagents",
+    "name": "Treasure Map Level 6 Reagents",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 18,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "bloodmoss",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "garlic",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "ginseng",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "spiders_silk",
+        "weight": 1,
+        "amount": 50
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "weight": 1,
+        "amount": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "treasure_map.level_6.scrolls",
+    "name": "Treasure Map Level 6 Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 30,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTag": "skill items",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  }
+]
