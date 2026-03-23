@@ -63,6 +63,9 @@ public static class AddBootstrapHostedServicesExtension
             )
         );
         container.RegisterMoongateService<IFileLoaderService, FileLoaderService>(ServicePriority.FileLoader);
+        container.RegisterMoongateService<ICorpseStartupCleanupService, CorpseStartupCleanupService>(
+            ServicePriority.CorpseStartupCleanup
+        );
         container.RegisterMoongateService<IGameLoopService, GameLoopService>(ServicePriority.GameLoop);
         container.RegisterMoongateService<IWeatherService, WeatherService>(ServicePriority.GameLoop);
         container.RegisterMoongateService<ILightService, LightService>(ServicePriority.GameLoop);
