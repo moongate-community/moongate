@@ -74,6 +74,12 @@ Server port: `2593`
 UDP ping port: `12000`
 HTTP/UI API port: `8088`
 
+Transport encryption:
+
+- Moongate supports both plain and encrypted UO clients.
+- Recommended default: `game.encryptionMode = "Both"` in `moongate.json`.
+- Operational details and handshake behavior: `docs/articles/networking/client-encryption.md`
+
 Default credentials: `admin` / `password`
 Change them immediately from the server console with `.password`.
 
@@ -149,6 +155,7 @@ UI default URL: `http://localhost:8088/`
 - Scripting: `docs/articles/scripting/`
 - Persistence: `docs/articles/persistence/`
 - Networking/protocol: `docs/articles/networking/`
+- Client encryption: `docs/articles/networking/client-encryption.md`
 - Operations/stress test: `docs/articles/operations/stress-test.md`
 
 Published docs: <https://moongate-community.github.io/moongate/>
