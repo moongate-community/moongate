@@ -33,11 +33,12 @@ Notes:
 
 1. On startup, the server loads `world.snapshot.bin` if present.
 2. Then it replays valid entries from `world.journal.bin` in sequence order.
-3. During runtime, repository mutations append operations to the journal.
-4. On autosave/shutdown, a fresh snapshot is captured from in-memory state.
-5. The snapshot file write can run off the game loop on the background job service.
-6. After a successful snapshot write, journal entries included in that snapshot are trimmed by sequence id instead of blindly resetting the whole file.
-7. With file lock mode enabled, snapshot/journal handles remain open for process lifetime.
+3. A startup-only hosted service then removes persisted corpse roots (`0x2006` with `is_corpse=true`) and all recursively contained items before normal runtime services continue.
+4. During runtime, repository mutations append operations to the journal.
+5. On autosave/shutdown, a fresh snapshot is captured from in-memory state.
+6. The snapshot file write can run off the game loop on the background job service.
+7. After a successful snapshot write, journal entries included in that snapshot are trimmed by sequence id instead of blindly resetting the whole file.
+8. With file lock mode enabled, snapshot/journal handles remain open for process lifetime.
 
 ## Snapshot
 
