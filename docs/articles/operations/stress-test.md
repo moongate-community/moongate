@@ -27,6 +27,7 @@ Each client executes the full UO login handshake:
 3. Sends account login packet (`0x80`) with username/password
 4. Receives server list (`0xA8`), sends server select (`0xA0`, index 0)
 5. Receives redirect packet (`0x8C`) with game server IP, port, and session key
+6. Login-server socket closes and the client reconnects to the game server
 
 ### Phase 4: Game Entry
 

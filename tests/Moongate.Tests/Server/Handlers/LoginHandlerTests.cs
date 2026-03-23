@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Spans;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
@@ -299,6 +300,7 @@ public class LoginHandlerTests
     public async Task HandlePacketAsync_WhenSelectingCharacterAfterGameLogin_ShouldReuseCachedCharacterList()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sender = new GameLoopTestOutboundPacketSender();
         var accountService = new LoginHandlerTestAccountService();
         var characterService = new LoginHandlerTestCharacterService
         {
@@ -319,7 +321,8 @@ public class LoginHandlerTests
             characterService,
             new NetworkServiceTestGameEventBusService(),
             new(),
-            new FakeGameNetworkSessionService()
+            new FakeGameNetworkSessionService(),
+            sender
         );
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
@@ -352,6 +355,44 @@ public class LoginHandlerTests
         Assert.That(characterService.GetCharactersForAccountCalls, Is.EqualTo(1));
     }
 
+    [Test]
+    public async Task HandlePacketAsync_WhenServerSelectPacketIsReceived_ShouldSendRedirectAndCloseClient()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sender = new GameLoopTestOutboundPacketSender();
+        var handler = new LoginHandler(
+            queue,
+            new LoginHandlerTestAccountService(),
+            new LoginHandlerTestCharacterService(),
+            new NetworkServiceTestGameEventBusService(),
+            new(),
+            new FakeGameNetworkSessionService(),
+            sender
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = new ServerSelectPacket
+        {
+            SelectedServerIndex = 0
+        };
+        var disconnected = false;
+        client.OnDisconnected += (_, _) => disconnected = true;
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(disconnected, Is.True);
+                Assert.That(sender.SentPackets, Has.Count.EqualTo(1));
+                Assert.That(sender.SentPackets[0].Packet, Is.TypeOf<ServerRedirectPacket>());
+                Assert.That(queue.CurrentQueueDepth, Is.EqualTo(0));
+            }
+        );
+    }
+
     private static byte[] BuildClientVersionPayload(string version, bool includeNullTerminator)
     {
         var writer = new SpanWriter(64, true);
@@ -378,6 +419,7 @@ public class LoginHandlerTests
             new LoginHandlerTestCharacterService(),
             new NetworkServiceTestGameEventBusService(),
             new(),
-            new FakeGameNetworkSessionService()
+            new FakeGameNetworkSessionService(),
+            new GameLoopTestOutboundPacketSender()
         );
 }
