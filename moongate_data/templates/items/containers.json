@@ -4,17 +4,24 @@
     "id": "armoire",
     "name": "Armoire",
     "category": "Containers",
-    "description": "Imported from ModernUO (Armoire).",
+    "description": "",
     "itemId": "0x0A4F",
     "hue": "0",
     "goldValue": "0",
-    "weight": 1,
+    "weight": 1.0,
     "scriptId": "none",
     "isMovable": true,
     "tags": [
       "modernuo",
       "containers",
       "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004F",
+    "flippableItemIds": [
+      "0x0A4F",
+      "0x0A53"
     ]
   },
   {
@@ -22,880 +29,49 @@
     "id": "backpack",
     "name": "Backpack",
     "category": "Containers",
-    "description": "Imported from ModernUO (Backpack).",
+    "description": "",
     "itemId": "0x0E75",
     "hue": "0",
     "goldValue": "0",
-    "weight": 3,
+    "weight": 3.0,
     "scriptId": "none",
     "isMovable": true,
     "tags": [
       "modernuo",
       "containers"
-    ]
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "containerLayoutId": "backpack",
+    "gumpId": "0x003C"
   },
   {
     "type": "item",
     "id": "bag",
     "name": "Bag",
     "category": "Containers",
-    "description": "Imported from ModernUO (Bag).",
+    "description": "",
     "itemId": "0x0E76",
     "hue": "0",
     "goldValue": "0",
-    "weight": 2,
+    "weight": 2.0,
     "scriptId": "none",
     "isMovable": true,
     "tags": [
       "modernuo",
       "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "basket",
-    "name": "Basket",
-    "category": "Containers",
-    "description": "Imported from ModernUO (Basket).",
-    "itemId": "0x0990",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "cherry_armoire",
-    "name": "Cherry Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (CherryArmoire).",
-    "itemId": "0x285D",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "decorative_box",
-    "name": "Decorative Box",
-    "category": "Containers",
-    "description": "Imported from ModernUO (DecorativeBox).",
-    "itemId": "0x2DF4",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "drawer",
-    "name": "Drawer",
-    "category": "Containers",
-    "description": "Imported from ModernUO (Drawer).",
-    "itemId": "0x0A2C",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "elegant_armoire",
-    "name": "Elegant Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (ElegantArmoire).",
-    "itemId": "0x2859",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "empty_bookcase",
-    "name": "Empty Bookcase",
-    "category": "Containers",
-    "description": "Imported from ModernUO (EmptyBookcase).",
-    "itemId": "0x0A9D",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fancy_armoire",
-    "name": "Fancy Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FancyArmoire).",
-    "itemId": "0x0A4D",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fancy_drawer",
-    "name": "Fancy Drawer",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FancyDrawer).",
-    "itemId": "0x0A30",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fancy_elven_armoire",
-    "name": "Fancy Elven Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FancyElvenArmoire).",
-    "itemId": "0x2D07",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_barrel",
-    "name": "Fillable Barrel",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableBarrel).",
-    "itemId": "0x0E77",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_large_crate",
-    "name": "Fillable Large Crate",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableLargeCrate).",
-    "itemId": "0x0E3D",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_metal_box",
-    "name": "Fillable Metal Box",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableMetalBox).",
-    "itemId": "0x09A8",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_metal_chest",
-    "name": "Fillable Metal Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableMetalChest).",
-    "itemId": "0x09AB",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_metal_golden_chest",
-    "name": "Fillable Metal Golden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableMetalGoldenChest).",
-    "itemId": "0x0E41",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_small_crate",
-    "name": "Fillable Small Crate",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableSmallCrate).",
-    "itemId": "0x09A9",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_wooden_box",
-    "name": "Fillable Wooden Box",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableWoodenBox).",
-    "itemId": "0x09AA",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "fillable_wooden_chest",
-    "name": "Fillable Wooden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FillableWoodenChest).",
-    "itemId": "0x0E43",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "finished_wooden_chest",
-    "name": "Finished Wooden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FinishedWoodenChest).",
-    "itemId": "0x2813",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "full_bookcase",
-    "name": "Full Bookcase",
-    "category": "Containers",
-    "description": "Imported from ModernUO (FullBookcase).",
-    "itemId": "0x0A97",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "gilded_wooden_chest",
-    "name": "Gilded Wooden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (GildedWoodenChest).",
-    "itemId": "0x280F",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "keg",
-    "name": "Keg",
-    "category": "Containers",
-    "description": "Imported from ModernUO (Keg).",
-    "itemId": "0x0E7F",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 15,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "large_bag_ball",
-    "name": "Large Bag Ball",
-    "category": "Containers",
-    "description": "Imported from ModernUO (LargeBagBall).",
-    "itemId": "0x2257",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "large_crate",
-    "name": "Large Crate",
-    "category": "Containers",
-    "description": "Imported from ModernUO (LargeCrate).",
-    "itemId": "0x0E3D",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "library_bookcase",
-    "name": "Library Bookcase",
-    "category": "Containers",
-    "description": "Imported from ModernUO (LibraryBookcase).",
-    "itemId": "0x0A97",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "maple_armoire",
-    "name": "Maple Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MapleArmoire).",
-    "itemId": "0x285B",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "medium_crate",
-    "name": "Medium Crate",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MediumCrate).",
-    "itemId": "0x0E3F",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 2,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "metal_box",
-    "name": "Metal Box",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MetalBox).",
-    "itemId": "0x09A8",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "metal_chest",
-    "name": "Metal Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MetalChest).",
-    "itemId": "0x09AB",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "metal_golden_chest",
-    "name": "Metal Golden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MetalGoldenChest).",
-    "itemId": "0x0E41",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "metal_golden_treasure_chest",
-    "name": "Metal Golden Treasure Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MetalGoldenTreasureChest).",
-    "itemId": "0x0E41",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "metal_treasure_chest",
-    "name": "Metal Treasure Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (MetalTreasureChest).",
-    "itemId": "0x09AB",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "ornate_wooden_chest",
-    "name": "Ornate Wooden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (OrnateWoodenChest).",
-    "itemId": "0x280D",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "picnic_basket",
-    "name": "Picnic Basket",
-    "category": "Containers",
-    "description": "Imported from ModernUO (PicnicBasket).",
-    "itemId": "0x0E7A",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 2,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "plain_wooden_chest",
-    "name": "Plain Wooden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (PlainWoodenChest).",
-    "itemId": "0x280B",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "pouch",
-    "name": "Pouch",
-    "category": "Containers",
-    "description": "Imported from ModernUO (Pouch).",
-    "itemId": "0x0E79",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "rarewood_chest",
-    "name": "Rarewood Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (RarewoodChest).",
-    "itemId": "0x2DF1",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "red_armoire",
-    "name": "Red Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (RedArmoire).",
-    "itemId": "0x2857",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "short_cabinet",
-    "name": "Short Cabinet",
-    "category": "Containers",
-    "description": "Imported from ModernUO (ShortCabinet).",
-    "itemId": "0x2817",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "simple_elven_armoire",
-    "name": "Simple Elven Armoire",
-    "category": "Containers",
-    "description": "Imported from ModernUO (SimpleElvenArmoire).",
-    "itemId": "0x2D05",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "small_bag_ball",
-    "name": "Small Bag Ball",
-    "category": "Containers",
-    "description": "Imported from ModernUO (SmallBagBall).",
-    "itemId": "0x2256",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "small_crate",
-    "name": "Small Crate",
-    "category": "Containers",
-    "description": "Imported from ModernUO (SmallCrate).",
-    "itemId": "0x09A9",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 2,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "tall_cabinet",
-    "name": "Tall Cabinet",
-    "category": "Containers",
-    "description": "Imported from ModernUO (TallCabinet).",
-    "itemId": "0x2815",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 1,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "treasure_map_chest",
-    "name": "Treasure Map Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (TreasureMapChest).",
-    "itemId": "0x0E40",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "wooden_box",
-    "name": "Wooden Box",
-    "category": "Containers",
-    "description": "Imported from ModernUO (WoodenBox).",
-    "itemId": "0x09AA",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 4,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "wooden_chest",
-    "name": "Wooden Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (WoodenChest).",
-    "itemId": "0x0E43",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 2,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "wooden_foot_locker",
-    "name": "Wooden Foot Locker",
-    "category": "Containers",
-    "description": "Imported from ModernUO (WoodenFootLocker).",
-    "itemId": "0x2811",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
-  },
-  {
-    "type": "item",
-    "id": "wooden_treasure_chest",
-    "name": "Wooden Treasure Chest",
-    "category": "Containers",
-    "description": "Imported from ModernUO (WoodenTreasureChest).",
-    "itemId": "0x0E43",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
-    "tags": [
-      "modernuo",
-      "containers",
-      "flippable"
-    ]
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003D",
+    "containerLayoutId": "bag"
   },
   {
     "type": "item",
     "id": "barrel",
     "name": "Barrel",
     "category": "Containers",
-    "description": "Imported from ModernUO (Barrel).",
+    "description": "",
     "itemId": "0x0E77",
     "hue": "0",
     "goldValue": "0",
@@ -905,6 +81,436 @@
     "tags": [
       "modernuo",
       "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003E"
+  },
+  {
+    "type": "item",
+    "id": "basket",
+    "name": "Basket",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0990",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0041"
+  },
+  {
+    "type": "item",
+    "id": "cherry_armoire",
+    "name": "Cherry Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x285D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0107",
+    "flippableItemIds": [
+      "0x285D",
+      "0x285E"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "drawer",
+    "name": "Drawer",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A2C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0051",
+    "flippableItemIds": [
+      "0x0A2C",
+      "0x0A34"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "elegant_armoire",
+    "name": "Elegant Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2859",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0107",
+    "flippableItemIds": [
+      "0x2859",
+      "0x285A"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_bookcase",
+    "name": "Empty Bookcase",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004D",
+    "flippableItemIds": [
+      "0x0A9D",
+      "0x0A9E"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_armoire",
+    "name": "Fancy Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A4D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004E",
+    "flippableItemIds": [
+      "0x0A4D",
+      "0x0A51"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_drawer",
+    "name": "Fancy Drawer",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A30",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0048",
+    "flippableItemIds": [
+      "0x0A30",
+      "0x0A38"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_elven_armoire",
+    "name": "Fancy Elven Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2D07",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "flippableItemIds": [
+      "0x2D07",
+      "0x2D08"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "full_bookcase",
+    "name": "Full Bookcase",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A97",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004D",
+    "flippableItemIds": [
+      "0x0A97",
+      "0x0A99",
+      "0x0A98",
+      "0x0A9A",
+      "0x0A9B",
+      "0x0A9C"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "keg",
+    "name": "Keg",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E7F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003E"
+  },
+  {
+    "type": "item",
+    "id": "large_bag_ball",
+    "name": "Large Bag Ball",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2257",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003D"
+  },
+  {
+    "type": "item",
+    "id": "maple_armoire",
+    "name": "Maple Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x285B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0106",
+    "flippableItemIds": [
+      "0x285B",
+      "0x285C"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "picnic_basket",
+    "name": "Picnic Basket",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E7A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003F"
+  },
+  {
+    "type": "item",
+    "id": "red_armoire",
+    "name": "Red Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2857",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0105",
+    "flippableItemIds": [
+      "0x2857",
+      "0x2858"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "short_cabinet",
+    "name": "Short Cabinet",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2817",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x010C",
+    "flippableItemIds": [
+      "0x2817",
+      "0x2818"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "simple_elven_armoire",
+    "name": "Simple Elven Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2D05",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "flippableItemIds": [
+      "0x2D05",
+      "0x2D06"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_bag_ball",
+    "name": "Small Bag Ball",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2256",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003D"
+  },
+  {
+    "type": "item",
+    "id": "tall_cabinet",
+    "name": "Tall Cabinet",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2815",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x010C",
+    "flippableItemIds": [
+      "0x2815",
+      "0x2816"
     ]
   }
 ]

@@ -50,6 +50,7 @@ class MapAuditItemToTemplateTests(unittest.TestCase):
         self.assertEqual("bamboo_chair", template["id"])
         self.assertEqual("Bamboo Chair", template["name"])
         self.assertEqual("Construction", template["category"])
+        self.assertEqual("", template["description"])
         self.assertEqual("0x0B5B", template["itemId"])
         self.assertEqual("none", template["scriptId"])
         self.assertIn("modernuo", template["tags"])

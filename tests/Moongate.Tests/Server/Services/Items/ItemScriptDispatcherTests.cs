@@ -385,4 +385,157 @@ public class ItemScriptDispatcherTests
 
         Assert.That(hasHook, Is.True);
     }
+
+    [Test]
+    public async Task HasHook_WhenSharedLightScriptIsLoaded_ShouldReturnTrue()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            await File.ReadAllTextAsync(
+                Path.GetFullPath(
+                    Path.Combine(
+                        TestContext.CurrentContext.TestDirectory,
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "moongate_data",
+                        "scripts",
+                        "items",
+                        "light_source.lua"
+                    )
+                )
+            )
+        );
+
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+
+        var hasHook = dispatcher.HasHook(
+            new()
+            {
+                ScriptId = "items.light_source",
+                Name = "Candle"
+            },
+            "double_click"
+        );
+
+        Assert.That(hasHook, Is.True);
+    }
+
+    [Test]
+    public async Task HasHook_WhenSharedFoodScriptIsLoaded_ShouldReturnTrue()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            await File.ReadAllTextAsync(
+                Path.GetFullPath(
+                    Path.Combine(
+                        TestContext.CurrentContext.TestDirectory,
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "moongate_data",
+                        "scripts",
+                        "items",
+                        "food.lua"
+                    )
+                )
+            )
+        );
+
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+
+        var hasHook = dispatcher.HasHook(
+            new()
+            {
+                ScriptId = "items.food",
+                Name = "Apple"
+            },
+            "double_click"
+        );
+
+        Assert.That(hasHook, Is.True);
+    }
+
+    [Test]
+    public async Task HasHook_WhenSharedBeverageScriptIsLoaded_ShouldReturnTrue()
+    {
+        using var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDirectory, "0.1.0")
+        );
+        await scriptEngine.StartAsync();
+        scriptEngine.ExecuteScript(
+            await File.ReadAllTextAsync(
+                Path.GetFullPath(
+                    Path.Combine(
+                        TestContext.CurrentContext.TestDirectory,
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "moongate_data",
+                        "scripts",
+                        "items",
+                        "beverage.lua"
+                    )
+                )
+            )
+        );
+
+        var dispatcher = new ItemScriptDispatcher(
+            scriptEngine,
+            new ItemScriptDispatcherTestItemService(),
+            new FakeGameNetworkSessionService()
+        );
+
+        var hasHook = dispatcher.HasHook(
+            new()
+            {
+                ScriptId = "items.beverage",
+                Name = "Bottle Of Ale"
+            },
+            "double_click"
+        );
+
+        Assert.That(hasHook, Is.True);
+    }
 }

@@ -4,7 +4,7 @@
     "id": "bandana",
     "name": "Bandana",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Bandana).",
+    "description": "",
     "itemId": "0x1540",
     "hue": "0",
     "goldValue": "0",
@@ -15,14 +15,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "bear_mask",
     "name": "Bear Mask",
     "category": "Clothing",
-    "description": "Imported from ModernUO (BearMask).",
+    "description": "",
     "itemId": "0x1545",
     "hue": "0",
     "goldValue": "0",
@@ -33,14 +37,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "body_sash",
     "name": "Body Sash",
     "category": "Clothing",
-    "description": "Imported from ModernUO (BodySash).",
+    "description": "",
     "itemId": "0x1541",
     "hue": "0",
     "goldValue": "0",
@@ -51,14 +59,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "bonnet",
     "name": "Bonnet",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Bonnet).",
+    "description": "",
     "itemId": "0x1719",
     "hue": "0",
     "goldValue": "0",
@@ -69,14 +82,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "boots",
     "name": "Boots",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Boots).",
+    "description": "",
     "itemId": "0x170B",
     "hue": "0",
     "goldValue": "0",
@@ -87,14 +104,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "cap",
     "name": "Cap",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Cap).",
+    "description": "",
     "itemId": "0x1715",
     "hue": "0",
     "goldValue": "0",
@@ -105,14 +127,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "cloak",
     "name": "Cloak",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Cloak).",
+    "description": "",
     "itemId": "0x1515",
     "hue": "0",
     "goldValue": "0",
@@ -122,14 +148,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "Cloak",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "cloth_ninja_hood",
     "name": "Cloth Ninja Hood",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ClothNinjaHood).",
+    "description": "",
     "itemId": "0x278F",
     "hue": "0",
     "goldValue": "0",
@@ -141,14 +172,18 @@
       "clothing",
       "flippable"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "cloth_ninja_jacket",
     "name": "Cloth Ninja Jacket",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ClothNinjaJacket).",
+    "description": "",
     "itemId": "0x2794",
     "hue": "0",
     "goldValue": "0",
@@ -159,14 +194,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "InnerTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "deer_mask",
     "name": "Deer Mask",
     "category": "Clothing",
-    "description": "Imported from ModernUO (DeerMask).",
+    "description": "",
     "itemId": "0x1547",
     "hue": "0",
     "goldValue": "0",
@@ -177,14 +217,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "doublet",
     "name": "Doublet",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Doublet).",
+    "description": "",
     "itemId": "0x1F7B",
     "hue": "0",
     "goldValue": "0",
@@ -195,14 +239,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "elven_boots",
     "name": "Elven Boots",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ElvenBoots).",
+    "description": "",
     "itemId": "0x2FC4",
     "hue": "0",
     "goldValue": "0",
@@ -213,14 +262,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "elven_dark_shirt",
     "name": "Elven Dark Shirt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ElvenDarkShirt).",
+    "description": "",
     "itemId": "0x3176",
     "hue": "0",
     "goldValue": "0",
@@ -230,14 +284,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "Shirt",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "elven_pants",
     "name": "Elven Pants",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ElvenPants).",
+    "description": "",
     "itemId": "0x2FC3",
     "hue": "0",
     "goldValue": "0",
@@ -248,14 +307,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Pants",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "elven_shirt",
     "name": "Elven Shirt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ElvenShirt).",
+    "description": "",
     "itemId": "0x3175",
     "hue": "0",
     "goldValue": "0",
@@ -266,14 +330,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shirt",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "fancy_dress",
     "name": "Fancy Dress",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FancyDress).",
+    "description": "",
     "itemId": "0x1F00",
     "hue": "0",
     "goldValue": "0",
@@ -284,14 +353,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "fancy_shirt",
     "name": "Fancy Shirt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FancyShirt).",
+    "description": "",
     "itemId": "0x1EFD",
     "hue": "0",
     "goldValue": "0",
@@ -302,14 +376,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shirt",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "feathered_hat",
     "name": "Feathered Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FeatheredHat).",
+    "description": "",
     "itemId": "0x171A",
     "hue": "0",
     "goldValue": "0",
@@ -320,14 +399,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "female_elven_robe",
     "name": "Female Elven Robe",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FemaleElvenRobe).",
+    "description": "",
     "itemId": "0x2FBA",
     "hue": "0",
     "goldValue": "0",
@@ -338,14 +421,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "female_kimono",
     "name": "Female Kimono",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FemaleKimono).",
+    "description": "",
     "itemId": "0x2783",
     "hue": "0",
     "goldValue": "0",
@@ -356,14 +444,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "floppy_hat",
     "name": "Floppy Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FloppyHat).",
+    "description": "",
     "itemId": "0x1713",
     "hue": "0",
     "goldValue": "0",
@@ -374,14 +467,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "flower_garland",
     "name": "Flower Garland",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FlowerGarland).",
+    "description": "",
     "itemId": "0x2306",
     "hue": "0",
     "goldValue": "0",
@@ -393,14 +490,18 @@
       "clothing",
       "flippable"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "formal_shirt",
     "name": "Formal Shirt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FormalShirt).",
+    "description": "",
     "itemId": "0x2310",
     "hue": "0",
     "goldValue": "0",
@@ -411,14 +512,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "full_apron",
     "name": "Full Apron",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FullApron).",
+    "description": "",
     "itemId": "0x153D",
     "hue": "0",
     "goldValue": "0",
@@ -429,14 +535,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "fur_boots",
     "name": "Fur Boots",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FurBoots).",
+    "description": "",
     "itemId": "0x2307",
     "hue": "0",
     "goldValue": "0",
@@ -447,14 +558,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "fur_cape",
     "name": "Fur Cape",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FurCape).",
+    "description": "",
     "itemId": "0x230A",
     "hue": "0",
     "goldValue": "0",
@@ -465,14 +581,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Cloak",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "fur_sarong",
     "name": "Fur Sarong",
     "category": "Clothing",
-    "description": "Imported from ModernUO (FurSarong).",
+    "description": "",
     "itemId": "0x230C",
     "hue": "0",
     "goldValue": "0",
@@ -483,14 +604,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterLegs",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "gilded_dress",
     "name": "Gilded Dress",
     "category": "Clothing",
-    "description": "Imported from ModernUO (GildedDress).",
+    "description": "",
     "itemId": "0x230E",
     "hue": "0",
     "goldValue": "0",
@@ -501,14 +627,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "hakama",
     "name": "Hakama",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Hakama).",
+    "description": "",
     "itemId": "0x279A",
     "hue": "0",
     "goldValue": "0",
@@ -519,14 +650,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterLegs",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "hakama_shita",
     "name": "Hakama Shita",
     "category": "Clothing",
-    "description": "Imported from ModernUO (HakamaShita).",
+    "description": "",
     "itemId": "0x279C",
     "hue": "0",
     "goldValue": "0",
@@ -537,14 +673,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "half_apron",
     "name": "Half Apron",
     "category": "Clothing",
-    "description": "Imported from ModernUO (HalfApron).",
+    "description": "",
     "itemId": "0x153B",
     "hue": "0",
     "goldValue": "0",
@@ -555,14 +696,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Waist",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "horned_tribal_mask",
     "name": "Horned Tribal Mask",
     "category": "Clothing",
-    "description": "Imported from ModernUO (HornedTribalMask).",
+    "description": "",
     "itemId": "0x1549",
     "hue": "0",
     "goldValue": "0",
@@ -573,14 +719,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "jester_hat",
     "name": "Jester Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (JesterHat).",
+    "description": "",
     "itemId": "0x171C",
     "hue": "0",
     "goldValue": "0",
@@ -591,14 +741,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "jester_suit",
     "name": "Jester Suit",
     "category": "Clothing",
-    "description": "Imported from ModernUO (JesterSuit).",
+    "description": "",
     "itemId": "0x1F9F",
     "hue": "0",
     "goldValue": "0",
@@ -609,14 +763,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "jin_baori",
     "name": "Jin Baori",
     "category": "Clothing",
-    "description": "Imported from ModernUO (JinBaori).",
+    "description": "",
     "itemId": "0x27A1",
     "hue": "0",
     "goldValue": "0",
@@ -627,14 +786,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "kamishimo",
     "name": "Kamishimo",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Kamishimo).",
+    "description": "",
     "itemId": "0x2799",
     "hue": "0",
     "goldValue": "0",
@@ -645,14 +809,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "kasa",
     "name": "Kasa",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Kasa).",
+    "description": "",
     "itemId": "0x2798",
     "hue": "0",
     "goldValue": "0",
@@ -664,14 +833,18 @@
       "clothing",
       "flippable"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "kilt",
     "name": "Kilt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Kilt).",
+    "description": "",
     "itemId": "0x1537",
     "hue": "0",
     "goldValue": "0",
@@ -682,14 +855,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterLegs",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "long_pants",
     "name": "Long Pants",
     "category": "Clothing",
-    "description": "Imported from ModernUO (LongPants).",
+    "description": "",
     "itemId": "0x1539",
     "hue": "0",
     "goldValue": "0",
@@ -700,14 +878,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Pants",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "magic_wizards_hat",
     "name": "Magic Wizards Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (MagicWizardsHat).",
+    "description": "",
     "itemId": "0x1718",
     "hue": "0",
     "goldValue": "0",
@@ -718,14 +901,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "male_elven_robe",
     "name": "Male Elven Robe",
     "category": "Clothing",
-    "description": "Imported from ModernUO (MaleElvenRobe).",
+    "description": "",
     "itemId": "0x2FB9",
     "hue": "0",
     "goldValue": "0",
@@ -736,14 +923,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "male_kimono",
     "name": "Male Kimono",
     "category": "Clothing",
-    "description": "Imported from ModernUO (MaleKimono).",
+    "description": "",
     "itemId": "0x2782",
     "hue": "0",
     "goldValue": "0",
@@ -754,14 +946,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "monk_robe",
     "name": "Monk Robe",
     "category": "Clothing",
-    "description": "Imported from ModernUO (MonkRobe).",
+    "description": "",
     "itemId": "0x2687",
     "hue": "0",
     "goldValue": "0",
@@ -771,14 +968,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "ninja_tabi",
     "name": "Ninja Tabi",
     "category": "Clothing",
-    "description": "Imported from ModernUO (NinjaTabi).",
+    "description": "",
     "itemId": "0x2797",
     "hue": "0",
     "goldValue": "0",
@@ -789,14 +991,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "obi",
     "name": "Obi",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Obi).",
+    "description": "",
     "itemId": "0x27A0",
     "hue": "0",
     "goldValue": "0",
@@ -807,14 +1014,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Waist",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "orcish_kin_mask",
     "name": "Orcish Kin Mask",
     "category": "Clothing",
-    "description": "Imported from ModernUO (OrcishKinMask).",
+    "description": "",
     "itemId": "0x141B",
     "hue": "0",
     "goldValue": "0",
@@ -825,14 +1037,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "plain_dress",
     "name": "Plain Dress",
     "category": "Clothing",
-    "description": "Imported from ModernUO (PlainDress).",
+    "description": "",
     "itemId": "0x1F01",
     "hue": "0",
     "goldValue": "0",
@@ -843,14 +1059,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "reward_cloak",
     "name": "Reward Cloak",
     "category": "Clothing",
-    "description": "Imported from ModernUO (RewardCloak).",
+    "description": "",
     "itemId": "0x1515",
     "hue": "0",
     "goldValue": "0",
@@ -860,14 +1081,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "Cloak",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "reward_dress",
     "name": "Reward Dress",
     "category": "Clothing",
-    "description": "Imported from ModernUO (RewardDress).",
+    "description": "",
     "itemId": "0x1F01",
     "hue": "0",
     "goldValue": "0",
@@ -877,14 +1103,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "reward_robe",
     "name": "Reward Robe",
     "category": "Clothing",
-    "description": "Imported from ModernUO (RewardRobe).",
+    "description": "",
     "itemId": "0x1F03",
     "hue": "0",
     "goldValue": "0",
@@ -894,14 +1125,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "robe",
     "name": "Robe",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Robe).",
+    "description": "",
     "itemId": "0x1F03",
     "hue": "0",
     "goldValue": "0",
@@ -911,14 +1147,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "OuterTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "samurai_tabi",
     "name": "Samurai Tabi",
     "category": "Clothing",
-    "description": "Imported from ModernUO (SamuraiTabi).",
+    "description": "",
     "itemId": "0x2796",
     "hue": "0",
     "goldValue": "0",
@@ -929,14 +1170,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "sandals",
     "name": "Sandals",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Sandals).",
+    "description": "",
     "itemId": "0x170D",
     "hue": "0",
     "goldValue": "0",
@@ -947,14 +1193,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "savage_mask",
     "name": "Savage Mask",
     "category": "Clothing",
-    "description": "Imported from ModernUO (SavageMask).",
+    "description": "",
     "itemId": "0x154B",
     "hue": "0",
     "goldValue": "0",
@@ -965,14 +1216,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "shirt",
     "name": "Shirt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Shirt).",
+    "description": "",
     "itemId": "0x1517",
     "hue": "0",
     "goldValue": "0",
@@ -983,14 +1238,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shirt",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "shoes",
     "name": "Shoes",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Shoes).",
+    "description": "",
     "itemId": "0x170F",
     "hue": "0",
     "goldValue": "0",
@@ -1001,14 +1261,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "short_pants",
     "name": "Short Pants",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ShortPants).",
+    "description": "",
     "itemId": "0x152E",
     "hue": "0",
     "goldValue": "0",
@@ -1019,14 +1284,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Pants",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "skirt",
     "name": "Skirt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Skirt).",
+    "description": "",
     "itemId": "0x1516",
     "hue": "0",
     "goldValue": "0",
@@ -1037,14 +1307,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "OuterLegs",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "skull_cap",
     "name": "Skull Cap",
     "category": "Clothing",
-    "description": "Imported from ModernUO (SkullCap).",
+    "description": "",
     "itemId": "0x1544",
     "hue": "0",
     "goldValue": "0",
@@ -1054,14 +1329,19 @@
     "tags": [
       "modernuo",
       "clothing"
-    ]
+    ],
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "straw_hat",
     "name": "Straw Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (StrawHat).",
+    "description": "",
     "itemId": "0x1717",
     "hue": "0",
     "goldValue": "0",
@@ -1072,14 +1352,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "surcoat",
     "name": "Surcoat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Surcoat).",
+    "description": "",
     "itemId": "0x1FFD",
     "hue": "0",
     "goldValue": "0",
@@ -1090,14 +1374,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "tall_straw_hat",
     "name": "Tall Straw Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (TallStrawHat).",
+    "description": "",
     "itemId": "0x1716",
     "hue": "0",
     "goldValue": "0",
@@ -1108,14 +1397,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "tattsuke_hakama",
     "name": "Tattsuke Hakama",
     "category": "Clothing",
-    "description": "Imported from ModernUO (TattsukeHakama).",
+    "description": "",
     "itemId": "0x279B",
     "hue": "0",
     "goldValue": "0",
@@ -1126,14 +1419,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Pants",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "thigh_boots",
     "name": "Thigh Boots",
     "category": "Clothing",
-    "description": "Imported from ModernUO (ThighBoots).",
+    "description": "",
     "itemId": "0x1711",
     "hue": "0",
     "goldValue": "0",
@@ -1144,14 +1442,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "tribal_mask",
     "name": "Tribal Mask",
     "category": "Clothing",
-    "description": "Imported from ModernUO (TribalMask).",
+    "description": "",
     "itemId": "0x154B",
     "hue": "0",
     "goldValue": "0",
@@ -1162,14 +1465,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "tricorne_hat",
     "name": "Tricorne Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (TricorneHat).",
+    "description": "",
     "itemId": "0x171B",
     "hue": "0",
     "goldValue": "0",
@@ -1180,14 +1487,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "tunic",
     "name": "Tunic",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Tunic).",
+    "description": "",
     "itemId": "0x1FA1",
     "hue": "0",
     "goldValue": "0",
@@ -1198,14 +1509,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "MiddleTorso",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "waraji",
     "name": "Waraji",
     "category": "Clothing",
-    "description": "Imported from ModernUO (Waraji).",
+    "description": "",
     "itemId": "0x2796",
     "hue": "0",
     "goldValue": "0",
@@ -1216,14 +1532,19 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Shoes",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "wide_brim_hat",
     "name": "Wide Brim Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (WideBrimHat).",
+    "description": "",
     "itemId": "0x1714",
     "hue": "0",
     "goldValue": "0",
@@ -1234,14 +1555,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "wizards_hat",
     "name": "Wizards Hat",
     "category": "Clothing",
-    "description": "Imported from ModernUO (WizardsHat).",
+    "description": "",
     "itemId": "0x1718",
     "hue": "0",
     "goldValue": "0",
@@ -1252,14 +1577,18 @@
       "modernuo",
       "clothing"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "Helm",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0
   },
   {
     "type": "item",
     "id": "woodland_belt",
     "name": "Woodland Belt",
     "category": "Clothing",
-    "description": "Imported from ModernUO (WoodlandBelt).",
+    "description": "",
     "itemId": "0x2B68",
     "hue": "0",
     "goldValue": "0",
@@ -1270,6 +1599,11 @@
       "modernuo",
       "clothing",
       "flippable"
-    ]
+    ],
+    "layer": "Waist",
+    "strength": 0,
+    "dexterity": 0,
+    "intelligence": 0,
+    "hitPoints": 0
   }
 ]

@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import json
+import re
 from pathlib import Path
 from typing import Dict, Iterable, List
 
 ROOT_ITEMS_DIRECTORY = Path("moongate_data/templates/items")
 MODERNUO_ITEMS_ROOT = ROOT_ITEMS_DIRECTORY / "modernuo"
+IMPORTED_DESCRIPTION_PATTERN = re.compile(r"^Imported from ModernUO(?: alias)? \(.+\)\.$")
 
 PRESERVED_SCRIPT_IDS = frozenset(
     {
@@ -17,6 +19,9 @@ PRESERVED_SCRIPT_IDS = frozenset(
         "items.dye_box",
         "items.dye_tub",
         "items.ethereal_horse",
+        "items.food",
+        "items.beverage",
+        "items.light_source",
         "items.spawn",
         "items.teleport",
     }
@@ -43,11 +48,35 @@ def normalize_script_id(script_id: str) -> str:
     return "none"
 
 
+def normalize_template_description(description: object) -> str:
+    if not isinstance(description, str):
+        return ""
+
+    normalized = description.strip()
+    if not normalized:
+        return ""
+
+    if IMPORTED_DESCRIPTION_PATTERN.fullmatch(normalized) is not None:
+        return ""
+
+    return normalized
+
+
 def normalize_template_script_ids(items: Iterable[Dict[str, object]]) -> List[Dict[str, object]]:
     normalized: List[Dict[str, object]] = []
     for item in items:
         normalized_item = dict(item)
         normalized_item["scriptId"] = normalize_script_id(str(item.get("scriptId", "")))
+        normalized.append(normalized_item)
+
+    return normalized
+
+
+def normalize_template_descriptions(items: Iterable[Dict[str, object]]) -> List[Dict[str, object]]:
+    normalized: List[Dict[str, object]] = []
+    for item in items:
+        normalized_item = dict(item)
+        normalized_item["description"] = normalize_template_description(item.get("description"))
         normalized.append(normalized_item)
 
     return normalized
@@ -66,7 +95,7 @@ def migrate_modernuo_item_templates(source_root: Path, target_root: Path) -> Lis
         if target_file.exists():
             raise FileExistsError(f"Target file already exists: {target_file.name}")
 
-        normalized_items = normalize_template_script_ids(load_json_array(source_file))
+        normalized_items = normalize_template_descriptions(normalize_template_script_ids(load_json_array(source_file)))
         write_json_array(target_file, normalized_items)
         source_file.unlink()
         migrated_files.append(target_file)

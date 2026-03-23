@@ -56,7 +56,7 @@ def map_audit_item_to_template(source_path: str, category_id: str, item: Dict[st
         "id": template_id,
         "name": item["defaultName"],
         "category": source_path,
-        "description": f"Imported from ModernUO ({item['className']}).",
+        "description": "",
         "itemId": item["itemIds"][0],
         "hue": "0",
         "goldValue": "0",

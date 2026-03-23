@@ -7,10 +7,11 @@ from pathlib import Path
 
 from scripts.modernuo_item_template_tooling import (
     MODERNUO_ITEMS_ROOT,
-    ROOT_ITEMS_DIRECTORY,
     PRESERVED_SCRIPT_IDS,
+    ROOT_ITEMS_DIRECTORY,
     migrate_modernuo_item_templates,
     normalize_script_id,
+    normalize_template_description,
 )
 
 
@@ -24,6 +25,14 @@ class NormalizeScriptIdTests(unittest.TestCase):
 
     def test_defaults_to_none_for_empty_script_id(self) -> None:
         self.assertEqual("none", normalize_script_id(""))
+
+
+class NormalizeTemplateDescriptionTests(unittest.TestCase):
+    def test_clears_import_placeholder(self) -> None:
+        self.assertEqual("", normalize_template_description("Imported from ModernUO (BambooChair)."))
+
+    def test_preserves_real_description(self) -> None:
+        self.assertEqual("A real description", normalize_template_description("A real description"))
 
 
 class MigrateModernuoItemTemplatesTests(unittest.TestCase):
@@ -40,10 +49,12 @@ class MigrateModernuoItemTemplatesTests(unittest.TestCase):
                     [
                         {
                             "id": "bamboo_chair",
+                            "description": "Imported from ModernUO (BambooChair).",
                             "scriptId": "items.bamboo_chair",
                         },
                         {
                             "id": "door",
+                            "description": "A real description",
                             "scriptId": "items.door",
                         },
                     ],
@@ -60,7 +71,9 @@ class MigrateModernuoItemTemplatesTests(unittest.TestCase):
 
             migrated_data = json.loads((target_root / "construction.json").read_text(encoding="utf-8"))
             self.assertEqual("none", migrated_data[0]["scriptId"])
+            self.assertEqual("", migrated_data[0]["description"])
             self.assertEqual("items.door", migrated_data[1]["scriptId"])
+            self.assertEqual("A real description", migrated_data[1]["description"])
 
     def test_rejects_existing_target_file(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

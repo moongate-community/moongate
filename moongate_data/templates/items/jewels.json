@@ -4,7 +4,7 @@
     "id": "beads",
     "name": "Beads",
     "category": "Jewels",
-    "description": "Imported from ModernUO (Beads).",
+    "description": "",
     "itemId": "0x108B",
     "hue": "0",
     "goldValue": "0",
@@ -21,7 +21,7 @@
     "id": "gold_bead_necklace",
     "name": "Gold Bead Necklace",
     "category": "Jewels",
-    "description": "Imported from ModernUO (GoldBeadNecklace).",
+    "description": "",
     "itemId": "0x1089",
     "hue": "0",
     "goldValue": "0",
@@ -31,14 +31,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Neck",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "gold_bracelet",
     "name": "Gold Bracelet",
     "category": "Jewels",
-    "description": "Imported from ModernUO (GoldBracelet).",
+    "description": "",
     "itemId": "0x1086",
     "hue": "0",
     "goldValue": "0",
@@ -48,14 +50,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Bracelet",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "gold_earrings",
     "name": "Gold Earrings",
     "category": "Jewels",
-    "description": "Imported from ModernUO (GoldEarrings).",
+    "description": "",
     "itemId": "0x1087",
     "hue": "0",
     "goldValue": "0",
@@ -65,14 +69,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Earrings",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "gold_necklace",
     "name": "Gold Necklace",
     "category": "Jewels",
-    "description": "Imported from ModernUO (GoldNecklace).",
+    "description": "",
     "itemId": "0x1088",
     "hue": "0",
     "goldValue": "0",
@@ -82,14 +88,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Neck",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "gold_ring",
     "name": "Gold Ring",
     "category": "Jewels",
-    "description": "Imported from ModernUO (GoldRing).",
+    "description": "",
     "itemId": "0x108A",
     "hue": "0",
     "goldValue": "0",
@@ -99,14 +107,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Ring",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "necklace",
     "name": "Necklace",
     "category": "Jewels",
-    "description": "Imported from ModernUO (Necklace).",
+    "description": "",
     "itemId": "0x1085",
     "hue": "0",
     "goldValue": "0",
@@ -116,14 +126,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Neck",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "silver_bead_necklace",
     "name": "Silver Bead Necklace",
     "category": "Jewels",
-    "description": "Imported from ModernUO (SilverBeadNecklace).",
+    "description": "",
     "itemId": "0x1F05",
     "hue": "0",
     "goldValue": "0",
@@ -133,14 +145,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Neck",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "silver_bracelet",
     "name": "Silver Bracelet",
     "category": "Jewels",
-    "description": "Imported from ModernUO (SilverBracelet).",
+    "description": "",
     "itemId": "0x1F06",
     "hue": "0",
     "goldValue": "0",
@@ -150,14 +164,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Bracelet",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "silver_earrings",
     "name": "Silver Earrings",
     "category": "Jewels",
-    "description": "Imported from ModernUO (SilverEarrings).",
+    "description": "",
     "itemId": "0x1F07",
     "hue": "0",
     "goldValue": "0",
@@ -167,14 +183,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Earrings",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "silver_necklace",
     "name": "Silver Necklace",
     "category": "Jewels",
-    "description": "Imported from ModernUO (SilverNecklace).",
+    "description": "",
     "itemId": "0x1F08",
     "hue": "0",
     "goldValue": "0",
@@ -184,14 +202,16 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Neck",
+    "hitPoints": 0
   },
   {
     "type": "item",
     "id": "silver_ring",
     "name": "Silver Ring",
     "category": "Jewels",
-    "description": "Imported from ModernUO (SilverRing).",
+    "description": "",
     "itemId": "0x1F09",
     "hue": "0",
     "goldValue": "0",
@@ -201,6 +221,8 @@
     "tags": [
       "modernuo",
       "jewels"
-    ]
+    ],
+    "layer": "Ring",
+    "hitPoints": 0
   }
 ]

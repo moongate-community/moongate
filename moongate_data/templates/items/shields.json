@@ -4,7 +4,7 @@
     "id": "bronze_shield",
     "name": "Bronze Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (BronzeShield).",
+    "description": "",
     "itemId": "0x1B72",
     "hue": "0",
     "goldValue": "0",
@@ -15,14 +15,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 30
+    "hitPoints": 30,
+    "layer": "TwoHanded",
+    "strength": 35
   },
   {
     "type": "item",
     "id": "buckler",
     "name": "Buckler",
     "category": "Shields",
-    "description": "Imported from ModernUO (Buckler).",
+    "description": "",
     "itemId": "0x1B73",
     "hue": "0",
     "goldValue": "0",
@@ -33,14 +35,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 50
+    "hitPoints": 50,
+    "layer": "TwoHanded",
+    "strength": 20
   },
   {
     "type": "item",
     "id": "chaos_shield",
     "name": "Chaos Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (ChaosShield).",
+    "description": "",
     "itemId": "0x1BC3",
     "hue": "0",
     "goldValue": "0",
@@ -51,14 +55,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 125
+    "hitPoints": 125,
+    "layer": "TwoHanded",
+    "strength": 95
   },
   {
     "type": "item",
     "id": "gargish_wooden_shield",
     "name": "Gargish Wooden Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (GargishWoodenShield).",
+    "description": "",
     "itemId": "0x4200",
     "hue": "0",
     "goldValue": "0",
@@ -70,14 +76,16 @@
       "shields",
       "flippable"
     ],
-    "hitPoints": 25
+    "hitPoints": 25,
+    "layer": "TwoHanded",
+    "strength": 20
   },
   {
     "type": "item",
     "id": "heater_shield",
     "name": "Heater Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (HeaterShield).",
+    "description": "",
     "itemId": "0x1B76",
     "hue": "0",
     "goldValue": "0",
@@ -88,14 +96,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 65
+    "hitPoints": 65,
+    "layer": "TwoHanded",
+    "strength": 90
   },
   {
     "type": "item",
     "id": "metal_kite_shield",
     "name": "Metal Kite Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (MetalKiteShield).",
+    "description": "",
     "itemId": "0x1B74",
     "hue": "0",
     "goldValue": "0",
@@ -106,14 +116,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 60
+    "hitPoints": 60,
+    "layer": "TwoHanded",
+    "strength": 45
   },
   {
     "type": "item",
     "id": "metal_shield",
     "name": "Metal Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (MetalShield).",
+    "description": "",
     "itemId": "0x1B7B",
     "hue": "0",
     "goldValue": "0",
@@ -124,14 +136,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 65
+    "hitPoints": 65,
+    "layer": "TwoHanded",
+    "strength": 45
   },
   {
     "type": "item",
     "id": "order_shield",
     "name": "Order Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (OrderShield).",
+    "description": "",
     "itemId": "0x1BC4",
     "hue": "0",
     "goldValue": "0",
@@ -142,14 +156,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 125
+    "hitPoints": 125,
+    "layer": "TwoHanded",
+    "strength": 95
   },
   {
     "type": "item",
     "id": "wooden_kite_shield",
     "name": "Wooden Kite Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (WoodenKiteShield).",
+    "description": "",
     "itemId": "0x1B79",
     "hue": "0",
     "goldValue": "0",
@@ -160,14 +176,16 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 65
+    "hitPoints": 65,
+    "layer": "TwoHanded",
+    "strength": 20
   },
   {
     "type": "item",
     "id": "wooden_shield",
     "name": "Wooden Shield",
     "category": "Shields",
-    "description": "Imported from ModernUO (WoodenShield).",
+    "description": "",
     "itemId": "0x1B7A",
     "hue": "0",
     "goldValue": "0",
@@ -178,6 +196,8 @@
       "modernuo",
       "shields"
     ],
-    "hitPoints": 25
+    "hitPoints": 25,
+    "layer": "TwoHanded",
+    "strength": 20
   }
 ]
