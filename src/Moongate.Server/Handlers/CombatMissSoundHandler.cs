@@ -26,7 +26,7 @@ public sealed class CombatMissSoundHandler : IGameEventListener<CombatMissEvent>
 
     public async Task HandleAsync(CombatMissEvent gameEvent, CancellationToken cancellationToken = default)
     {
-        await PublishIfResolvedAsync(gameEvent.Attacker, MobileSoundType.Attack, cancellationToken);
+        await PublishAttackerSoundAsync(gameEvent.Attacker, cancellationToken);
         await PublishIfResolvedAsync(gameEvent.Defender, MobileSoundType.Defend, cancellationToken);
     }
 
@@ -35,6 +35,19 @@ public sealed class CombatMissSoundHandler : IGameEventListener<CombatMissEvent>
 
     public Task StopAsync()
         => Task.CompletedTask;
+
+    private async Task PublishAttackerSoundAsync(UOMobileEntity attacker, CancellationToken cancellationToken)
+    {
+        if (!_resolver.TryResolveMissSound(attacker, out var soundId))
+        {
+            return;
+        }
+
+        await _gameEventBusService.PublishAsync(
+            new MobilePlaySoundEvent(attacker.Id, attacker.MapId, attacker.Location, (ushort)soundId),
+            cancellationToken
+        );
+    }
 
     private async Task PublishIfResolvedAsync(
         UOMobileEntity mobile,

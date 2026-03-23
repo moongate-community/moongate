@@ -424,7 +424,9 @@ public class ItemFactoryServiceTests
             BaseRange = 1,
             MaxRange = 10,
             Ammo = 0x0F3F,
-            AmmoFx = 0x1BFE
+            AmmoFx = 0x1BFE,
+            HitSound = 0x0234,
+            MissSound = 0x0238
         };
         template.WeaponSkill = UOSkillName.Archery;
         templateService.Upsert(template);
@@ -439,6 +441,8 @@ public class ItemFactoryServiceTests
                 Assert.That(item.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
                 Assert.That(item.AmmoItemId, Is.EqualTo(0x0F3F));
                 Assert.That(item.AmmoEffectId, Is.EqualTo(0x1BFE));
+                Assert.That(item.HitSound, Is.EqualTo(0x0234));
+                Assert.That(item.MissSound, Is.EqualTo(0x0238));
                 Assert.That(item.CombatStats, Is.Not.Null);
                 Assert.That(item.CombatStats!.RangeMin, Is.EqualTo(1));
                 Assert.That(item.CombatStats.RangeMax, Is.EqualTo(10));

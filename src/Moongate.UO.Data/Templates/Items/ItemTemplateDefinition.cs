@@ -119,6 +119,10 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public int BaseRange { get; set; }
 
+    public int? HitSound { get; set; }
+
+    public int? MissSound { get; set; }
+
     [JsonConverter(typeof(JsonStringEnumConverter<LootType>))]
     public LootType LootType { get; set; }
 

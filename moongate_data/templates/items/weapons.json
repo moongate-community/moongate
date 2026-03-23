@@ -25,7 +25,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -53,7 +55,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -81,7 +85,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -110,7 +116,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -140,7 +148,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -169,7 +179,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -199,7 +211,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -228,7 +242,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -257,7 +273,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -286,7 +304,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -315,7 +335,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -344,7 +366,9 @@
     "weaponSkill": "Fencing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -373,7 +397,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 1334,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -402,7 +428,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -430,7 +458,9 @@
     "hitPoints": 5,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -458,7 +488,9 @@
     "weaponSkill": "Throwing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 1491,
+    "missSound": 1492
   },
   {
     "type": "item",
@@ -489,7 +521,9 @@
     "hitPoints": 60,
     "layer": "TwoHanded",
     "dexterity": 0,
-    "intelligence": 0
+    "intelligence": 0,
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -518,7 +552,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -547,7 +583,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -575,7 +613,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -603,7 +643,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -632,7 +674,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -661,7 +705,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -692,7 +738,9 @@
     "hitPoints": 70,
     "layer": "TwoHanded",
     "dexterity": 0,
-    "intelligence": 0
+    "intelligence": 0,
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -720,7 +768,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -749,7 +799,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -780,7 +832,9 @@
     "hitPoints": 80,
     "layer": "TwoHanded",
     "dexterity": 0,
-    "intelligence": 0
+    "intelligence": 0,
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -809,7 +863,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -837,7 +893,9 @@
     "weaponSkill": "Throwing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 1491,
+    "missSound": 1492
   },
   {
     "type": "item",
@@ -866,7 +924,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -895,7 +955,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -923,7 +985,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -952,7 +1016,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -981,7 +1047,9 @@
     "weaponSkill": "Macing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1009,7 +1077,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1038,7 +1108,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1067,7 +1139,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1096,7 +1170,9 @@
     "weaponSkill": "Swords",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 567,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1125,7 +1201,9 @@
     "weaponSkill": "Fencing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1154,7 +1232,9 @@
     "weaponSkill": "Swords",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1185,7 +1265,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1214,7 +1296,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1243,7 +1327,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1271,7 +1357,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1300,7 +1388,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1328,7 +1418,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1356,7 +1448,9 @@
     "hitPoints": 110,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1386,7 +1480,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1415,7 +1511,9 @@
     "weaponSkill": "Swords",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 567,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1443,7 +1541,9 @@
     "hitPoints": 70,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1472,7 +1572,9 @@
     "weaponSkill": "Macing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1501,7 +1603,9 @@
     "weaponSkill": "Swords",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1530,7 +1634,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1558,7 +1664,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1587,7 +1695,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1616,7 +1726,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1644,7 +1756,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1673,7 +1787,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1704,7 +1820,9 @@
     "hitPoints": 100,
     "layer": "TwoHanded",
     "dexterity": 0,
-    "intelligence": 0
+    "intelligence": 0,
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1732,7 +1850,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1760,7 +1880,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1788,7 +1910,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1819,7 +1943,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1848,7 +1974,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1877,7 +2005,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -1905,7 +2035,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -1934,7 +2066,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1963,7 +2097,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -1992,7 +2128,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2021,7 +2159,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -2050,7 +2190,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2078,7 +2220,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2108,7 +2252,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2138,7 +2284,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2167,7 +2315,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -2195,7 +2345,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2224,7 +2376,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2252,7 +2406,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2280,7 +2436,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2308,7 +2466,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2336,7 +2496,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2364,7 +2526,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2395,7 +2559,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2424,7 +2590,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2454,7 +2622,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2483,7 +2653,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -2512,7 +2684,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 1333,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2540,7 +2714,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2569,7 +2745,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2598,7 +2776,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -2627,7 +2807,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2656,7 +2838,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2685,7 +2869,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2714,7 +2900,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2744,7 +2932,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2775,7 +2965,9 @@
     "hitPoints": 80,
     "layer": "TwoHanded",
     "dexterity": 0,
-    "intelligence": 0
+    "intelligence": 0,
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -2803,7 +2995,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2832,7 +3026,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2860,7 +3056,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2888,7 +3086,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2917,7 +3117,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 562
   },
   {
     "type": "item",
@@ -2945,7 +3147,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -2974,7 +3178,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3003,7 +3209,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -3032,7 +3240,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3061,7 +3271,9 @@
     "weaponSkill": "Macing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3089,7 +3301,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3118,7 +3332,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3147,7 +3363,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3175,7 +3393,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3203,7 +3423,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3232,7 +3454,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3262,7 +3486,9 @@
     "baseRange": 1,
     "maxRange": 10,
     "ammo": "0x0F3F",
-    "ammoFx": "0x1BFE"
+    "ammoFx": "0x1BFE",
+    "hitSound": 564,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3290,7 +3516,9 @@
     "weaponSkill": "Throwing",
     "baseRange": 1,
     "maxRange": 1,
-    "speed": 0
+    "speed": 0,
+    "hitSound": 1491,
+    "missSound": 1492
   },
   {
     "type": "item",
@@ -3319,7 +3547,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3347,7 +3577,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3376,7 +3608,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 568,
+    "missSound": 562
   },
   {
     "type": "item",
@@ -3405,7 +3639,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3434,7 +3670,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3463,7 +3701,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -3491,7 +3731,9 @@
     "hitPoints": 60,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3520,7 +3762,9 @@
     "maxRange": 1,
     "lowDamage": 0,
     "highDamage": 0,
-    "speed": 0
+    "speed": 0,
+    "hitSound": null,
+    "missSound": null
   },
   {
     "type": "item",
@@ -3548,7 +3792,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3577,7 +3823,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 572,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3605,7 +3853,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3633,7 +3883,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3661,7 +3913,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3689,7 +3943,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3717,7 +3973,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3745,7 +4003,9 @@
     "hitPoints": 60,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3774,7 +4034,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 562,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -3803,7 +4065,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 567,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -3832,7 +4096,9 @@
     "intelligence": 0,
     "weaponSkill": "Swords",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 570
   },
   {
     "type": "item",
@@ -3861,7 +4127,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3890,7 +4158,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3919,7 +4189,9 @@
     "intelligence": 0,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 566,
+    "missSound": 568
   },
   {
     "type": "item",
@@ -3948,7 +4220,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -3977,7 +4251,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -4006,7 +4282,9 @@
     "intelligence": 0,
     "weaponSkill": "Macing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 563,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -4034,7 +4312,9 @@
     "hitPoints": 60,
     "weaponSkill": "Fencing",
     "baseRange": 1,
-    "maxRange": 1
+    "maxRange": 1,
+    "hitSound": 571,
+    "missSound": 569
   },
   {
     "type": "item",
@@ -4065,6 +4345,8 @@
     "hitPoints": 60,
     "layer": "TwoHanded",
     "dexterity": 0,
-    "intelligence": 0
+    "intelligence": 0,
+    "hitSound": 564,
+    "missSound": 568
   }
 ]

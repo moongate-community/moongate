@@ -66,4 +66,53 @@ public sealed class CombatHitSoundHandlerTests
             }
         );
     }
+
+    [Test]
+    public async Task HandleAsync_ShouldPreferEquippedWeaponHitSoundForAttacker()
+    {
+        var eventBus = new RecordingGameEventBusService();
+        var resolver = new MobileCombatSoundResolver();
+        var handler = new CombatHitSoundHandler(resolver, eventBus);
+        var attacker = new UOMobileEntity
+        {
+            Id = (Serial)0x0100,
+            MapId = 1,
+            Location = new(100, 100, 0),
+            Sounds =
+            {
+                [MobileSoundType.Attack] = 0x023B
+            }
+        };
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x0200,
+            MapId = 1,
+            Location = new(101, 100, 0),
+            Sounds =
+            {
+                [MobileSoundType.Defend] = 0x0140
+            }
+        };
+        attacker.AddEquippedItem(
+            ItemLayerType.TwoHanded,
+            new UOItemEntity
+            {
+                Id = (Serial)0x0300,
+                ItemId = 0x13B2,
+                HitSound = 0x0234,
+                WeaponSkill = UOSkillName.Archery
+            }
+        );
+
+        await handler.HandleAsync(new(attacker.Id, defender.Id, attacker.MapId, attacker.Location, 6, attacker, defender));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(eventBus.Events, Has.Count.EqualTo(2));
+                Assert.That(((MobilePlaySoundEvent)eventBus.Events[0]).SoundModel, Is.EqualTo((ushort)0x0234));
+                Assert.That(((MobilePlaySoundEvent)eventBus.Events[1]).SoundModel, Is.EqualTo((ushort)0x0140));
+            }
+        );
+    }
 }

@@ -39,6 +39,11 @@ NUMERIC_OVERRIDE_PATTERNS = {
     "defMaxRange": re.compile(r"public\s+override\s+int\s+DefMaxRange\s*=>\s*(?P<expr>[^;]+);", re.MULTILINE),
     "aosMaxRange": re.compile(r"public\s+override\s+int\s+AosMaxRange\s*=>\s*(?P<expr>[^;]+);", re.MULTILINE),
     "effectId": re.compile(r"public\s+override\s+int\s+EffectID\s*=>\s*(?P<expr>[^;]+);", re.MULTILINE),
+    "hitSound": re.compile(r"public\s+(?:override|virtual)\s+int\s+DefHitSound\s*=>\s*(?P<expr>[^;]+);", re.MULTILINE),
+    "missSound": re.compile(
+        r"public\s+(?:override|virtual)\s+int\s+DefMissSound\s*=>\s*(?P<expr>[^;]+);",
+        re.MULTILINE,
+    ),
 }
 WEAPON_SKILL_PATTERN = re.compile(r"public\s+override\s+SkillName\s+DefSkill\s*=>\s*SkillName\.(?P<value>\w+)\s*;", re.MULTILINE)
 ANIMATION_PATTERN = re.compile(r"public\s+override\s+WeaponAnimation\s+DefAnimation\s*=>\s*WeaponAnimation\.(?P<value>\w+)\s*;", re.MULTILINE)
@@ -311,6 +316,8 @@ def build_weapon_metadata(definitions: Dict[str, ClassDefinition], definition: C
     if max_range is None:
         max_range = resolve_recursive_numeric(definitions, definition.name, "defMaxRange")
     max_range = max_range or 1
+    hit_sound = resolve_recursive_numeric(definitions, definition.name, "hitSound")
+    miss_sound = resolve_recursive_numeric(definitions, definition.name, "missSound")
     ammo, ammo_fx = resolve_ammo(definitions, definition.name)
     layer = resolve_layer(definitions, definition.name)
     tags = ["modernuo", "weapons"]
@@ -346,6 +353,8 @@ def build_weapon_metadata(definitions: Dict[str, ClassDefinition], definition: C
         "lowDamage": low_damage,
         "highDamage": high_damage,
         "speed": speed,
+        "hitSound": hit_sound,
+        "missSound": miss_sound,
         "tags": tags,
     }
 
@@ -454,6 +463,8 @@ def sync_weapon_template_file(template_file: Path, metadata_by_id: Dict[str, Dic
         template["lowDamage"] = metadata["lowDamage"]
         template["highDamage"] = metadata["highDamage"]
         template["speed"] = metadata["speed"]
+        template["hitSound"] = metadata["hitSound"]
+        template["missSound"] = metadata["missSound"]
         template["tags"] = merge_tags(template.get("tags"), list(metadata["tags"]))
 
         if metadata["weight"]:
@@ -492,6 +503,8 @@ def sync_weapon_template_file(template_file: Path, metadata_by_id: Dict[str, Dic
             "lowDamage": metadata["lowDamage"],
             "highDamage": metadata["highDamage"],
             "speed": metadata["speed"],
+            "hitSound": metadata["hitSound"],
+            "missSound": metadata["missSound"],
             "strength": metadata["strength"],
             "dexterity": metadata["dexterity"],
             "intelligence": metadata["intelligence"],
