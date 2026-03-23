@@ -58,6 +58,8 @@ class ScanWeaponMetadataTests(unittest.TestCase):
                         }
 
                         public override SkillName DefSkill => SkillName.Archery;
+                        public override int DefHitSound => 0x0234;
+                        public override int DefMissSound => 0x0238;
                     }
                 }
                 """,
@@ -101,6 +103,8 @@ class ScanWeaponMetadataTests(unittest.TestCase):
             self.assertEqual("Archery", bow["weaponSkill"])
             self.assertEqual("0x0F3F", bow["ammo"])
             self.assertEqual("0x1BFE", bow["ammoFx"])
+            self.assertEqual(0x0234, bow["hitSound"])
+            self.assertEqual(0x0238, bow["missSound"])
             self.assertEqual(1, bow["baseRange"])
             self.assertEqual(10, bow["maxRange"])
             self.assertEqual(30, bow["strength"])
@@ -108,6 +112,55 @@ class ScanWeaponMetadataTests(unittest.TestCase):
             self.assertEqual(41, bow["highDamage"])
             self.assertEqual(25, bow["speed"])
             self.assertEqual(60, bow["hitPoints"])
+
+    def test_extracts_concrete_weapon_sound_overrides(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            root = Path(tmp_dir)
+            (root / "BaseWeapon.cs").write_text(
+                """
+                namespace Server.Items
+                {
+                    public abstract partial class BaseWeapon : Item
+                    {
+                        public virtual int DefHitSound => 0x0222;
+                        public virtual int DefMissSound => 0x0223;
+                    }
+                }
+                """,
+                encoding="utf-8",
+            )
+            (root / "WarAxe.cs").write_text(
+                """
+                namespace Server.Items
+                {
+                    public partial class WarAxe : BaseWeapon
+                    {
+                        [Constructible]
+                        public WarAxe() : base(0x13B0)
+                        {
+                        }
+
+                        public override double DefaultWeight => 8.0;
+                        public override SkillName DefSkill => SkillName.Swords;
+                        public override int AosStrReq => 35;
+                        public override int AosMinDamage => 15;
+                        public override int AosMaxDamage => 17;
+                        public override int AosSpeed => 33;
+                        public override int DefMaxRange => 1;
+                        public override int InitMaxHits => 110;
+                        public override int DefHitSound => 0x0233;
+                        public override int DefMissSound => 0x0239;
+                    }
+                }
+                """,
+                encoding="utf-8",
+            )
+
+            metadata = scan_weapon_metadata(root)
+            war_axe = metadata["war_axe"]
+
+            self.assertEqual(0x0233, war_axe["hitSound"])
+            self.assertEqual(0x0239, war_axe["missSound"])
 
 
 class SyncShieldTemplateFileTests(unittest.TestCase):
@@ -197,6 +250,8 @@ class SyncWeaponTemplateFileTests(unittest.TestCase):
                         "lowDamage": 9,
                         "highDamage": 41,
                         "speed": 25,
+                        "hitSound": 0x0234,
+                        "missSound": 0x0238,
                         "weight": 6,
                         "name": "Bow",
                         "tags": ["modernuo", "weapons", "flippable"],
@@ -216,6 +271,8 @@ class SyncWeaponTemplateFileTests(unittest.TestCase):
                         "lowDamage": 15,
                         "highDamage": 17,
                         "speed": 33,
+                        "hitSound": 0x0233,
+                        "missSound": 0x0239,
                         "weight": 6,
                         "name": "Guardian Axe",
                         "tags": ["modernuo", "weapons", "flippable"],
@@ -233,10 +290,14 @@ class SyncWeaponTemplateFileTests(unittest.TestCase):
             self.assertEqual("Archery", bow["weaponSkill"])
             self.assertEqual("0x0F3F", bow["ammo"])
             self.assertEqual("0x1BFE", bow["ammoFx"])
+            self.assertEqual(0x0234, bow["hitSound"])
+            self.assertEqual(0x0238, bow["missSound"])
             self.assertEqual("guardian_axe", guardian_axe["id"])
             self.assertEqual("Guardian Axe", guardian_axe["name"])
             self.assertEqual("", guardian_axe["description"])
             self.assertEqual("TwoHanded", guardian_axe["layer"])
+            self.assertEqual(0x0233, guardian_axe["hitSound"])
+            self.assertEqual(0x0239, guardian_axe["missSound"])
             self.assertEqual(["modernuo", "weapons", "flippable"], guardian_axe["tags"])
 
 

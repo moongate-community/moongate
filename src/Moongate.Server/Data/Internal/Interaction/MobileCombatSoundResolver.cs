@@ -15,6 +15,30 @@ public sealed class MobileCombatSoundResolver
         [MobileSoundType.Defend] = 0x0140
     };
 
+    public bool TryResolveHitSound(UOMobileEntity attacker, out int soundId)
+    {
+        ArgumentNullException.ThrowIfNull(attacker);
+
+        if (TryResolveWeaponSound(attacker, static item => item.HitSound, out soundId))
+        {
+            return true;
+        }
+
+        return TryResolve(attacker, MobileSoundType.Attack, out soundId);
+    }
+
+    public bool TryResolveMissSound(UOMobileEntity attacker, out int soundId)
+    {
+        ArgumentNullException.ThrowIfNull(attacker);
+
+        if (TryResolveWeaponSound(attacker, static item => item.MissSound, out soundId))
+        {
+            return true;
+        }
+
+        return TryResolve(attacker, MobileSoundType.Attack, out soundId);
+    }
+
     public bool TryResolve(UOMobileEntity mobile, MobileSoundType type, out int soundId)
     {
         ArgumentNullException.ThrowIfNull(mobile);
@@ -25,5 +49,40 @@ public sealed class MobileCombatSoundResolver
         }
 
         return _fallbacks.TryGetValue(type, out soundId);
+    }
+
+    private static bool TryResolveWeaponSound(
+        UOMobileEntity attacker,
+        Func<UOItemEntity, int?> selector,
+        out int soundId
+    )
+    {
+        foreach (var equippedItem in attacker.GetEquippedItemsRuntime())
+        {
+            if (equippedItem.EquippedLayer is not (ItemLayerType.OneHanded or ItemLayerType.TwoHanded))
+            {
+                continue;
+            }
+
+            if (!equippedItem.WeaponSkill.HasValue)
+            {
+                continue;
+            }
+
+            var candidate = selector(equippedItem);
+
+            if (!candidate.HasValue)
+            {
+                continue;
+            }
+
+            soundId = candidate.Value;
+
+            return true;
+        }
+
+        soundId = default;
+
+        return false;
     }
 }

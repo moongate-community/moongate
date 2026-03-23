@@ -62,6 +62,22 @@ Typical pattern:
 3. listener enqueues network packet(s) into `IOutgoingPacketQueue`
 4. game loop flushes queue via `IOutboundPacketSender`
 
+## Combat Event Fan-Out
+
+Combat uses the game event bus to attach audiovisual behavior without coupling it to `CombatService`.
+
+Examples:
+
+- `CombatStartedEvent`
+  - attacker start-attack sound remains mobile-owned
+- `CombatHitEvent`
+  - attacker hit sound resolves from the equipped weapon first, then mobile fallback
+  - defender defend/hurt sound remains mobile-owned
+  - blood uses a transient `MobilePlayEffectEvent`, not a persistent world blood item
+- `CombatMissEvent`
+  - attacker miss sound resolves from the equipped weapon first, then mobile fallback
+  - defender sound remains mobile-owned
+
 ## Practical Rule
 
 - Use message bus for cross-thread transport handoff.

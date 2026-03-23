@@ -72,6 +72,8 @@ public sealed class ItemFactoryService : IItemFactoryService
             QuiverLowerAmmoCost = template.LowerAmmoCost,
             QuiverDamageIncrease = template.QuiverDamageIncrease,
             QuiverWeightReduction = template.WeightReduction,
+            HitSound = template.HitSound,
+            MissSound = template.MissSound,
             Location = Point3D.Zero,
             ParentContainerId = Serial.Zero,
             ContainerPosition = Point2D.Zero,

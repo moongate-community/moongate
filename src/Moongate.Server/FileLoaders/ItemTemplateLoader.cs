@@ -229,6 +229,8 @@ public sealed class ItemTemplateLoader : IFileLoader
         child.AmmoFx = InheritInt(child.AmmoFx, parent.AmmoFx, Defaults.AmmoFx);
         child.MaxRange = InheritInt(child.MaxRange, parent.MaxRange, Defaults.MaxRange);
         child.BaseRange = InheritInt(child.BaseRange, parent.BaseRange, Defaults.BaseRange);
+        child.HitSound ??= parent.HitSound;
+        child.MissSound ??= parent.MissSound;
 
         child.IsQuiver = InheritBool(child.IsQuiver, parent.IsQuiver, Defaults.IsQuiver);
         child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);

@@ -119,6 +119,18 @@ public partial class UOItemEntity : IItemEntity
     public int QuiverWeightReduction { get; set; }
 
     /// <summary>
+    /// Gets or sets the weapon hit sound emitted for successful attacks.
+    /// </summary>
+    [MemoryPackOrder(29)]
+    public int? HitSound { get; set; }
+
+    /// <summary>
+    /// Gets or sets the weapon miss sound emitted for failed attacks.
+    /// </summary>
+    [MemoryPackOrder(30)]
+    public int? MissSound { get; set; }
+
+    /// <summary>
     /// Gets or sets parent container serial when the item is inside a container.
     /// </summary>
     [MemoryPackOrder(16)]
@@ -290,6 +302,8 @@ public partial class UOItemEntity : IItemEntity
         hash.Add(QuiverLowerAmmoCost);
         hash.Add(QuiverDamageIncrease);
         hash.Add(QuiverWeightReduction);
+        hash.Add(HitSound);
+        hash.Add(MissSound);
         hash.Add(ParentContainerId);
         hash.Add(ContainerPosition);
         hash.Add(EquippedMobileId);

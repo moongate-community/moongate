@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Interfaces.Characters;
@@ -44,6 +45,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
     private readonly IGameEventBusService _gameEventBusService;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IOutboundPacketSender _outboundPacketSender;
 
     private readonly MoongateConfig _serverConfig;
 
@@ -53,7 +55,8 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         ICharacterService characterService,
         IGameEventBusService gameEventBusService,
         MoongateConfig serverConfig,
-        IGameNetworkSessionService gameNetworkSessionService
+        IGameNetworkSessionService gameNetworkSessionService,
+        IOutboundPacketSender outboundPacketSender
     ) : base(outgoingPacketQueue)
     {
         _accountService = accountService;
@@ -61,6 +64,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         _gameEventBusService = gameEventBusService;
         _serverConfig = serverConfig;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _outboundPacketSender = outboundPacketSender;
     }
 
     public Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
@@ -305,28 +309,56 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return Task.FromResult(true);
     }
 
-    private Task<bool> HandleServerSelectPacketAsync(GameSession session, ServerSelectPacket _)
+    private async Task<bool> HandleServerSelectPacketAsync(GameSession session, ServerSelectPacket packet)
     {
         try
         {
-            var sessionKey = new Random().Next();
+            var sessionKey = Random.Shared.Next();
+            var shardAddress = ResolveShardAddress(session);
 
             var connectToServer = new ServerRedirectPacket
             {
-                IPAddress = ResolveShardAddress(session),
+                IPAddress = shardAddress,
                 Port = 2593,
                 SessionKey = (uint)sessionKey
             };
 
             session.NetworkSession.SetSeed((uint)sessionKey);
 
-            Enqueue(session, connectToServer);
+            _logger.Debug(
+                "Received ServerSelectPacket from session {SessionId} with shard index {ShardIndex}; redirecting to {IPAddress}:{Port} with session key 0x{SessionKey:X8}",
+                session.SessionId,
+                packet.SelectedServerIndex,
+                shardAddress,
+                connectToServer.Port,
+                connectToServer.SessionKey
+            );
 
-            return Task.FromResult(true);
+            var client = session.NetworkSession.Client;
+
+            if (client is null)
+            {
+                _logger.Warning(
+                    "Session {SessionId} has no attached client during server select redirect.",
+                    session.SessionId
+                );
+
+                return true;
+            }
+
+            _ = await _outboundPacketSender.SendAsync(
+                client,
+                new OutgoingGamePacket(session.SessionId, connectToServer, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                CancellationToken.None
+            );
+
+            await client.CloseAsync();
+
+            return true;
         }
         catch (Exception exception)
         {
-            return Task.FromException<bool>(exception);
+            throw;
         }
     }
 
