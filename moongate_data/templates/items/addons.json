@@ -1,0 +1,155 @@
+[
+  {
+    "type": "item",
+    "id": "arcane_bookshelf_east_addon",
+    "name": "Arcane Bookshelf East Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x3084",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "arcane_bookshelf_south_addon",
+    "name": "Arcane Bookshelf South Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x2DEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ballot_box",
+    "name": "Ballot Box",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x09A8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "elven_dresser_east_addon",
+    "name": "Elven Dresser East Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x30E4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "elven_dresser_south_addon",
+    "name": "Elven Dresser South Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x30E6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "elven_wash_basin_east_addon",
+    "name": "Elven Wash Basin East Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x30E0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "elven_wash_basin_south_addon",
+    "name": "Elven Wash Basin South Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x30E2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ornate_elven_chest_east_addon",
+    "name": "Ornate Elven Chest East Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x309A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ornate_elven_chest_south_addon",
+    "name": "Ornate Elven Chest South Addon",
+    "category": "Addons",
+    "description": "",
+    "itemId": "0x3098",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "addons"
+    ]
+  }
+]

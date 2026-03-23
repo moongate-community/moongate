@@ -137,6 +137,214 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenRootLightsTemplateIsToggleable_ShouldExposeSharedScriptAndLightParams()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "lights.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "lights.json"),
+            true
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("candle", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.ScriptId, Is.EqualTo("items.light_source"));
+                Assert.That(template.Params.ContainsKey("light_lit_item_id"), Is.True);
+                Assert.That(template.Params.ContainsKey("light_unlit_item_id"), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenRootContainersTemplateContainsBackpack_ShouldExposeContainerMetadata()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "containers.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "containers.json"),
+            true
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("backpack", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.MaxItems, Is.GreaterThan(0));
+                Assert.That(template.WeightMax, Is.GreaterThan(0));
+                Assert.That(template.ScriptId, Is.EqualTo("none"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenRootShieldsTemplateContainsBuckler_ShouldExposeLayerAndStrength()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "shields.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "shields.json"),
+            true
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("buckler", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Layer, Is.EqualTo(ItemLayerType.TwoHanded));
+                Assert.That(template.Strength, Is.GreaterThan(0));
+                Assert.That(template.ScriptId, Is.EqualTo("none"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenRootWeaponsTemplateContainsBow_ShouldExposeWeaponLayerAndSkill()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "weapons.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "weapons.json"),
+            true
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("bow", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Layer, Is.EqualTo(ItemLayerType.TwoHanded));
+                Assert.That(template.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+                Assert.That(template.MaxRange, Is.GreaterThan(1));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseItemHasWeaponSkill_ShouldInheritFromParent()
     {
         using var tempDirectory = new TempDirectory();

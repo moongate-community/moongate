@@ -1,0 +1,1079 @@
+[
+  {
+    "type": "item",
+    "id": "arrow",
+    "name": "Arrow",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F3F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bark_fragment",
+    "name": "Bark Fragment",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x318F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bat_wing",
+    "name": "Bat Wing",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F78",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "big_fish",
+    "name": "Big Fish",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x09CC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "black_pearl",
+    "name": "Black Pearl",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F7A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blight",
+    "name": "Blight",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3183",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bloodmoss",
+    "name": "Bloodmoss",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F7B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_diamond",
+    "name": "Blue Diamond",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3198",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bolt",
+    "name": "Bolt",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x1BFB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bolt_of_cloth",
+    "name": "Bolt Of Cloth",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F95",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bone",
+    "name": "Bone",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F7E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "brilliant_amber",
+    "name": "Brilliant Amber",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3199",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "captured_essence",
+    "name": "Captured Essence",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x318E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cloth",
+    "name": "Cloth",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x1766",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "corruption",
+    "name": "Corruption",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3184",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cotton",
+    "name": "Cotton",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0DF9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "daemon_blood",
+    "name": "Daemon Blood",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F7D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "daemon_bone",
+    "name": "Daemon Bone",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F80",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dark_sapphire",
+    "name": "Dark Sapphire",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3192",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dark_yarn",
+    "name": "Dark Yarn",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0E1D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dead_wood",
+    "name": "Dead Wood",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F90",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "diseased_bark",
+    "name": "Diseased Bark",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x318B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dragons_blood",
+    "name": "Dragons Blood",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x4077",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dread_horn_mane",
+    "name": "Dread Horn Mane",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x318A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ecru_citrine",
+    "name": "Ecru Citrine",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3195",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "eye_of_the_travesty",
+    "name": "Eye Of The Travesty",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x318D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "feather",
+    "name": "Feather",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x1BD1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fire_ruby",
+    "name": "Fire Ruby",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3197",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fish",
+    "name": "Fish",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0004",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "flax",
+    "name": "Flax",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x1A9C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "garlic",
+    "name": "Garlic",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F84",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ginseng",
+    "name": "Ginseng",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F85",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grave_dust",
+    "name": "Grave Dust",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F8F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grizzled_bones",
+    "name": "Grizzled Bones",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x318C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lard_of_paroxysmus",
+    "name": "Lard Of Paroxysmus",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3189",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "light_yarn",
+    "name": "Light Yarn",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0E1E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "light_yarn_unraveled",
+    "name": "Light Yarn Unraveled",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0E1F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "luminescent_fungi",
+    "name": "Luminescent Fungi",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3191",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mandrake_root",
+    "name": "Mandrake Root",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F86",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "muculent",
+    "name": "Muculent",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3188",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "nightshade",
+    "name": "Nightshade",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F88",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "nox_crystal",
+    "name": "Nox Crystal",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F8E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "parasitic_plant",
+    "name": "Parasitic Plant",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3190",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "peculiar_fish",
+    "name": "Peculiar Fish",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "perfect_emerald",
+    "name": "Perfect Emerald",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3194",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pig_iron",
+    "name": "Pig Iron",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F8A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pristine_dread_horn",
+    "name": "Pristine Dread Horn",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x315A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "prized_fish",
+    "name": "Prized Fish",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0033",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "putrefication",
+    "name": "Putrefication",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3186",
+    "hue": "883",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "scourge",
+    "name": "Scourge",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3185",
+    "hue": "150",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "shaft",
+    "name": "Shaft",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x1BD4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spiders_silk",
+    "name": "Spiders Silk",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F8D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spool_of_thread",
+    "name": "Spool Of Thread",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0FA0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sulfurous_ash",
+    "name": "Sulfurous Ash",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0F8C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "switch_item",
+    "name": "Switch Item",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x2F5F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "taint",
+    "name": "Taint",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3187",
+    "hue": "731",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tainted_wool",
+    "name": "Tainted Wool",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x101F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "truly_rare_fish",
+    "name": "Truly Rare Fish",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x004C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "turquoise",
+    "name": "Turquoise",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3193",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "uncut_cloth",
+    "name": "Uncut Cloth",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x1767",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "white_pearl",
+    "name": "White Pearl",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x3196",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wondrous_fish",
+    "name": "Wondrous Fish",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0056",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wool",
+    "name": "Wool",
+    "category": "Resources",
+    "description": "",
+    "itemId": "0x0DF8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "resources"
+    ]
+  }
+]

@@ -1,0 +1,894 @@
+[
+  {
+    "type": "item",
+    "id": "brazier",
+    "name": "Brazier",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0E31",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 20,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "brazier_tall",
+    "name": "Brazier Tall",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x19AA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 25,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "candelabra",
+    "name": "Candelabra",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A27",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0B1D"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A27"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "candelabra_stand",
+    "name": "Candelabra Stand",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A29",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 20,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0B26"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A29"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "candle",
+    "name": "Candle",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A28",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0A0F"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A28"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    },
+    "layer": "TwoHanded"
+  },
+  {
+    "type": "item",
+    "id": "candle_large",
+    "name": "Candle Large",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A26",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0B1A"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A26"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "candle_long",
+    "name": "Candle Long",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x1433",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x1430"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x1433"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "candle_short",
+    "name": "Candle Short",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x142F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x142C"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x142F"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "candle_skull",
+    "name": "Candle Skull",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x1853",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x1858"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x1853"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "dark_source",
+    "name": "Dark Source",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x1646",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "layer": "TwoHanded"
+  },
+  {
+    "type": "item",
+    "id": "hanging_lantern",
+    "name": "Hanging Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A1D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 40,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0A1A"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A1D"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "heating_stand",
+    "name": "Heating Stand",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x1849",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x184A"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x1849"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "lamp_post1",
+    "name": "Lamp Post1",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0B21",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 40,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0B20"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0B21"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "lamp_post2",
+    "name": "Lamp Post2",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0B23",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 40,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0B22"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0B23"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "lamp_post3",
+    "name": "Lamp Post3",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0B25",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 40,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0B24"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0B25"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "lantern",
+    "name": "Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A25",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0A22"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A25"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    },
+    "layer": "TwoHanded"
+  },
+  {
+    "type": "item",
+    "id": "light_source",
+    "name": "Light Source",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x1647",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "layer": "TwoHanded"
+  },
+  {
+    "type": "item",
+    "id": "paper_lantern",
+    "name": "Paper Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x24BE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x24BD"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x24BE"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "red_hanging_lantern",
+    "name": "Red Hanging Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x24C2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x24C1"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x24C4"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "round_paper_lantern",
+    "name": "Round Paper Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x24CA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x24C9"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x24CA"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "shoji_lantern",
+    "name": "Shoji Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x24BC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x24BB"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x24BC"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "torch",
+    "name": "Torch",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0F6B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0A12"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0F6B"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0054"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x04BB"
+      }
+    },
+    "layer": "TwoHanded"
+  },
+  {
+    "type": "item",
+    "id": "wall_sconce",
+    "name": "Wall Sconce",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x09FB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x09FD"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A00"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "wall_torch",
+    "name": "Wall Torch",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x0A05",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x0A07"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x0A0A"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "white_hanging_lantern",
+    "name": "White Hanging Lantern",
+    "category": "Lights",
+    "description": "",
+    "itemId": "0x24C6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "items.light_source",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "lights"
+    ],
+    "params": {
+      "light_lit_item_id": {
+        "type": "String",
+        "value": "0x24C5"
+      },
+      "light_unlit_item_id": {
+        "type": "String",
+        "value": "0x24C8"
+      },
+      "light_burning": {
+        "type": "String",
+        "value": "false"
+      },
+      "light_toggle_sound_on": {
+        "type": "String",
+        "value": "0x0047"
+      },
+      "light_toggle_sound_off": {
+        "type": "String",
+        "value": "0x03BE"
+      }
+    }
+  }
+]

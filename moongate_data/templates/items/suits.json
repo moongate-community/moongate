@@ -1,0 +1,138 @@
+[
+  {
+    "type": "item",
+    "id": "admin_robe",
+    "name": "Admin Robe",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "counselor_robe",
+    "name": "Counselor Robe",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0003",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "death_shroud",
+    "name": "Death Shroud",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dupre_suit",
+    "name": "Dupre Suit",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lord_blackthorne_suit",
+    "name": "Lord Blackthorne Suit",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lord_british_suit",
+    "name": "Lord British Suit",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0000",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "seer_robe",
+    "name": "Seer Robe",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x01D3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gmrobe",
+    "name": "GMRobe",
+    "category": "Suits",
+    "description": "",
+    "itemId": "0x0026",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "suits"
+    ]
+  }
+]

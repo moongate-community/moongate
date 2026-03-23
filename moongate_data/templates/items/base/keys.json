@@ -4,11 +4,16 @@
     "id": "key",
     "name": "Key",
     "category": "Utility",
-    "tags": ["key", "lock", "utility"],
+    "tags": [
+      "key",
+      "lock",
+      "utility"
+    ],
     "itemId": "0x100E",
     "hue": "hue(2000:2200)",
     "goldValue": "0",
     "weight": 1,
-    "isMovable": true
+    "isMovable": true,
+    "description": ""
   }
 ]

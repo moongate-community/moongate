@@ -215,8 +215,14 @@ public sealed class ItemService : IItemService
             return false;
         }
 
+        if (!CanEquipOnLayer(mobile, item, layer))
+        {
+            return false;
+        }
+
         await DetachFromCurrentOwnerAsync(item);
         await TryUnequipCurrentLayerItemAsync(mobile, layer);
+        await TryUnequipConflictingHandItemsAsync(mobile, item, layer);
 
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
@@ -581,6 +587,73 @@ public sealed class ItemService : IItemService
         return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
     }
 
+    private bool CanEquipOnLayer(UOMobileEntity mobile, UOItemEntity item, ItemLayerType requestedLayer)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (TryResolveItemTemplate(item, out var template) &&
+            template?.Layer is ItemLayerType expectedLayer &&
+            expectedLayer != requestedLayer)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: requested layer {RequestedLayer} does not match template layer {ExpectedLayer}",
+                item.Id,
+                mobile.Id,
+                requestedLayer,
+                expectedLayer
+            );
+
+            return false;
+        }
+
+        if (item.CombatStats is null)
+        {
+            return true;
+        }
+
+        if (item.CombatStats.MinStrength > 0 && mobile.EffectiveStrength < item.CombatStats.MinStrength)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: strength {Strength} is below required {RequiredStrength}",
+                item.Id,
+                mobile.Id,
+                mobile.EffectiveStrength,
+                item.CombatStats.MinStrength
+            );
+
+            return false;
+        }
+
+        if (item.CombatStats.MinDexterity > 0 && mobile.EffectiveDexterity < item.CombatStats.MinDexterity)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: dexterity {Dexterity} is below required {RequiredDexterity}",
+                item.Id,
+                mobile.Id,
+                mobile.EffectiveDexterity,
+                item.CombatStats.MinDexterity
+            );
+
+            return false;
+        }
+
+        if (item.CombatStats.MinIntelligence > 0 && mobile.EffectiveIntelligence < item.CombatStats.MinIntelligence)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: intelligence {Intelligence} is below required {RequiredIntelligence}",
+                item.Id,
+                mobile.Id,
+                mobile.EffectiveIntelligence,
+                item.CombatStats.MinIntelligence
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
     private void BackfillTemplateCombatMetadata(UOItemEntity item)
     {
         ArgumentNullException.ThrowIfNull(item);
@@ -641,5 +714,42 @@ public sealed class ItemService : IItemService
         {
             mobile.UnequipItem(layer);
         }
+    }
+
+    private async Task TryUnequipConflictingHandItemsAsync(UOMobileEntity mobile, UOItemEntity item, ItemLayerType requestedLayer)
+    {
+        if (requestedLayer == ItemLayerType.TwoHanded && OccupiesBothHands(item))
+        {
+            await TryUnequipCurrentLayerItemAsync(mobile, ItemLayerType.OneHanded);
+            return;
+        }
+
+        if (requestedLayer != ItemLayerType.OneHanded ||
+            !mobile.EquippedItemIds.TryGetValue(ItemLayerType.TwoHanded, out var equippedTwoHandedId) ||
+            equippedTwoHandedId == Serial.Zero)
+        {
+            return;
+        }
+
+        var equippedTwoHandedItem = await _persistenceService.UnitOfWork.Items.GetByIdAsync(equippedTwoHandedId);
+
+        if (equippedTwoHandedItem is not null && OccupiesBothHands(equippedTwoHandedItem))
+        {
+            await TryUnequipCurrentLayerItemAsync(mobile, ItemLayerType.TwoHanded);
+        }
+    }
+
+    private bool OccupiesBothHands(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.WeaponSkill is not null && item.EquippedLayer == ItemLayerType.TwoHanded)
+        {
+            return true;
+        }
+
+        return TryResolveItemTemplate(item, out var template) &&
+               template?.Layer == ItemLayerType.TwoHanded &&
+               template.WeaponSkill is not null;
     }
 }

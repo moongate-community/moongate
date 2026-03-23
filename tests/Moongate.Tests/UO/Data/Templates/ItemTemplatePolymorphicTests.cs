@@ -169,4 +169,41 @@ public class ItemTemplatePolymorphicTests
             );
         }
     }
+
+    [Test]
+    public void Deserialize_WhenLayerIsPresent_ShouldBindItemLayerType()
+    {
+        var json = """
+                   [
+                     {
+                       "type": "item",
+                       "id": "bascinet",
+                       "name": "Bascinet",
+                       "category": "Armor",
+                       "description": "Plate helm",
+                       "itemId": "0x140C",
+                       "hue": "0",
+                       "goldValue": "0",
+                       "scriptId": "none",
+                       "layer": "Helm"
+                     }
+                   ]
+                   """;
+
+        var deserialized = JsonSerializer.Deserialize(
+            json,
+            MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(ItemTemplateDefinitionBase[]))
+        );
+        var result = deserialized as ItemTemplateDefinitionBase[];
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result!.Length, Is.EqualTo(1));
+                Assert.That(result[0], Is.TypeOf<ItemTemplateDefinition>());
+                Assert.That(((ItemTemplateDefinition)result[0]).Layer, Is.EqualTo(ItemLayerType.Helm));
+            }
+        );
+    }
 }

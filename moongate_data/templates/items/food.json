@@ -1,0 +1,2347 @@
+[
+  {
+    "type": "item",
+    "id": "apple",
+    "name": "Apple",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09D0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "apple_pie",
+    "name": "Apple Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1041",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "awase_miso_soup",
+    "name": "Awase Miso Soup",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x2850",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bacon",
+    "name": "Bacon",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0979",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "banana",
+    "name": "Banana",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x171F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bananas",
+    "name": "Bananas",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1721",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bento_box",
+    "name": "Bento Box",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x2836",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bottle_ale",
+    "name": "Bottle Of Ale",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x099F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bottle_liquor",
+    "name": "Bottle Of Liquor",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x099B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bottle_wine",
+    "name": "Bottle Of Wine",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09C7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bowl_flour",
+    "name": "Bowl Flour",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0A1E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bread_loaf",
+    "name": "Bread Loaf",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x103B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "brightly_colored_eggs",
+    "name": "Brightly Colored Eggs",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B5",
+    "hue": "3",
+    "goldValue": "0",
+    "weight": 0.5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cabbage",
+    "name": "Cabbage",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C7B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cake",
+    "name": "Cake",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09E9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cake_mix",
+    "name": "Cake Mix",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x103F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cantaloupe",
+    "name": "Cantaloupe",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C79",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "carrot",
+    "name": "Carrot",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C78",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cheese_pizza",
+    "name": "Cheese Pizza",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1040",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cheese_slice",
+    "name": "Cheese Slice",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x097C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cheese_wedge",
+    "name": "Cheese Wedge",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x097D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cheese_wheel",
+    "name": "Cheese Wheel",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x097E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chicken_leg",
+    "name": "Chicken Leg",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1608",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cocoa_butter",
+    "name": "Cocoa Butter",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1044",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cocoa_liquor",
+    "name": "Cocoa Liquor",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x103F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cocoa_pulp",
+    "name": "Cocoa Pulp",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0F7C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "coconut",
+    "name": "Coconut",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1726",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cooked_bird",
+    "name": "Cooked Bird",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cookie_mix",
+    "name": "Cookie Mix",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x103F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "cookies",
+    "name": "Cookies",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x160B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dark_chocolate",
+    "name": "Dark Chocolate",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0F10",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dates",
+    "name": "Dates",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1727",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dough",
+    "name": "Dough",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x103D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ear_of_corn",
+    "name": "Ear Of Corn",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C81",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "easter_eggs",
+    "name": "Easter Eggs",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B5",
+    "hue": "3",
+    "goldValue": "0",
+    "weight": 0.5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "eggs",
+    "name": "Eggs",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "eggshells",
+    "name": "Eggshells",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_bento_box",
+    "name": "Empty Bento Box",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x2834",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_pewter_bowl",
+    "name": "Empty Pewter Bowl",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15FD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_pewter_tub",
+    "name": "Empty Pewter Tub",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1603",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_wooden_bowl",
+    "name": "Empty Wooden Bowl",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15F8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_wooden_tub",
+    "name": "Empty Wooden Tub",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1605",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fish_steak",
+    "name": "Fish Steak",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x097B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "french_bread",
+    "name": "French Bread",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x098C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fried_eggs",
+    "name": "Fried Eggs",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fruit_basket",
+    "name": "Fruit Basket",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0993",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fruit_pie",
+    "name": "Fruit Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1041",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass",
+    "name": "Glass",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F81",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass_bottle",
+    "name": "Glass Bottle",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0E2B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass_cider",
+    "name": "Glass Of Cider",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F7D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass_liquor",
+    "name": "Glass Of Liquor",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F85",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass_milk",
+    "name": "Glass Of Milk",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F89",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass_water",
+    "name": "Glass Of Water",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F91",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glass_wine",
+    "name": "Glass Of Wine",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F8D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grapes",
+    "name": "Grapes",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09D1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_gourd",
+    "name": "Green Gourd",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C66",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_tea",
+    "name": "Green Tea",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x284C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_tea_basket",
+    "name": "Green Tea Basket",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x284B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ham",
+    "name": "Ham",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09C9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "honeydew_melon",
+    "name": "Honeydew Melon",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C74",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jar_honey",
+    "name": "Jar Honey",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09EC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lamb_leg",
+    "name": "Lamb Leg",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x160A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lemon",
+    "name": "Lemon",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1728",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lemons",
+    "name": "Lemons",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1729",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lettuce",
+    "name": "Lettuce",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C70",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lime",
+    "name": "Lime",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x172A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "limes",
+    "name": "Limes",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x172B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "meat_pie",
+    "name": "Meat Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1041",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "milk_chocolate",
+    "name": "Milk Chocolate",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0F18",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "miso_soup",
+    "name": "Miso Soup",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x284D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "muffins",
+    "name": "Muffins",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09EB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mug_ale",
+    "name": "Mug Of Ale",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09EE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "onion",
+    "name": "Onion",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C6D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "open_coconut",
+    "name": "Open Coconut",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1723",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "peach",
+    "name": "Peach",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09D2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "peach_cobbler",
+    "name": "Peach Cobbler",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1041",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pear",
+    "name": "Pear",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0994",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pewter_bowl_of_carrots",
+    "name": "Pewter Bowl Of Carrots",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15FE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pewter_bowl_of_corn",
+    "name": "Pewter Bowl Of Corn",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15FF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pewter_bowl_of_lettuce",
+    "name": "Pewter Bowl Of Lettuce",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1600",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pewter_bowl_of_peas",
+    "name": "Pewter Bowl Of Peas",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1601",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pewter_bowl_of_potatos",
+    "name": "Pewter Bowl Of Potatos",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1602",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pitcher_ale",
+    "name": "Pitcher Of Ale",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F95",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pitcher_cider",
+    "name": "Pitcher Of Cider",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F97",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pitcher_liquor",
+    "name": "Pitcher Of Liquor",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F99",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pitcher_milk",
+    "name": "Pitcher Of Milk",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pitcher_water",
+    "name": "Pitcher Of Water",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pitcher_wine",
+    "name": "Pitcher Of Wine",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1F9B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "items.beverage",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "beverage"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pumpkin",
+    "name": "Pumpkin",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C6A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pumpkin_pie",
+    "name": "Pumpkin Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1041",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "quiche",
+    "name": "Quiche",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1041",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "raw_bird",
+    "name": "Raw Bird",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09B9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "raw_chicken_leg",
+    "name": "Raw Chicken Leg",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1607",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "raw_fish_steak",
+    "name": "Raw Fish Steak",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x097A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0.1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "raw_lamb_leg",
+    "name": "Raw Lamb Leg",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1609",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "raw_ribs",
+    "name": "Raw Ribs",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09F1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_miso_soup",
+    "name": "Red Miso Soup",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x284F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ribs",
+    "name": "Ribs",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09F2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "roast_pig",
+    "name": "Roast Pig",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09BB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 45.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sack_flour",
+    "name": "Sack Flour",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1039",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sack_of_sugar",
+    "name": "Sack Of Sugar",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1039",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sausage",
+    "name": "Sausage",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x09C0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sausage_pizza",
+    "name": "Sausage Pizza",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1040",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sheaf_of_hay",
+    "name": "Sheaf Of Hay",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0F36",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "slab_of_bacon",
+    "name": "Slab Of Bacon",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0976",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_pumpkin",
+    "name": "Small Pumpkin",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C6C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_watermelon",
+    "name": "Small Watermelon",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C5D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "split_coconut",
+    "name": "Split Coconut",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1725",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "squash",
+    "name": "Squash",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C72",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sushi_platter",
+    "name": "Sushi Platter",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x2840",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sushi_rolls",
+    "name": "Sushi Rolls",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x283E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sweet_dough",
+    "name": "Sweet Dough",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x103D",
+    "hue": "150",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "turnip",
+    "name": "Turnip",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0D3A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unbaked_apple_pie",
+    "name": "Unbaked Apple Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unbaked_fruit_pie",
+    "name": "Unbaked Fruit Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unbaked_meat_pie",
+    "name": "Unbaked Meat Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unbaked_peach_cobbler",
+    "name": "Unbaked Peach Cobbler",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unbaked_pumpkin_pie",
+    "name": "Unbaked Pumpkin Pie",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unbaked_quiche",
+    "name": "Unbaked Quiche",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1042",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "uncooked_cheese_pizza",
+    "name": "Uncooked Cheese Pizza",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1083",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "uncooked_sausage_pizza",
+    "name": "Uncooked Sausage Pizza",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1083",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "vanilla",
+    "name": "Vanilla",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0E2A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wasabi",
+    "name": "Wasabi",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x24E8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wasabi_clumps",
+    "name": "Wasabi Clumps",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x24EB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "watermelon",
+    "name": "Watermelon",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C5C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wheat_sheaf",
+    "name": "Wheat Sheaf",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1EBD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "white_chocolate",
+    "name": "White Chocolate",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0F11",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "white_miso_soup",
+    "name": "White Miso Soup",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x284E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl",
+    "name": "Wooden Bowl",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15F8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl_of_carrots",
+    "name": "Wooden Bowl Of Carrots",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15F9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl_of_corn",
+    "name": "Wooden Bowl Of Corn",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15FA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl_of_lettuce",
+    "name": "Wooden Bowl Of Lettuce",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15FB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl_of_peas",
+    "name": "Wooden Bowl Of Peas",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x15FC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl_of_stew",
+    "name": "Wooden Bowl Of Stew",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1604",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wooden_bowl_of_tomato_soup",
+    "name": "Wooden Bowl Of Tomato Soup",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x1606",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "yellow_gourd",
+    "name": "Yellow Gourd",
+    "category": "Food",
+    "description": "",
+    "itemId": "0x0C64",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "items.food",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "food",
+      "flippable"
+    ]
+  }
+]

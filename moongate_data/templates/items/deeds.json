@@ -1,0 +1,138 @@
+[
+  {
+    "type": "item",
+    "id": "barkeep_contract",
+    "name": "Barkeep Contract",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "clothing_bless_deed",
+    "name": "Clothing Bless Deed",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "commodity_deed",
+    "name": "Commodity Deed",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hair_restyling_deed",
+    "name": "Hair Restyling Deed",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "holiday_tree_deed",
+    "name": "Holiday Tree Deed",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "name_change_deed",
+    "name": "Name Change Deed",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "new_player_ticket",
+    "name": "New Player Ticket",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14EF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "vendor_rental_contract",
+    "name": "Vendor Rental Contract",
+    "category": "Deeds",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "deeds"
+    ]
+  }
+]

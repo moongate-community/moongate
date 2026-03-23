@@ -1,6 +1,8 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.FileLoaders;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Scripting;
@@ -105,6 +107,54 @@ public class ItemFactoryServiceTests
                 Assert.That(linkedId, Is.EqualTo(0x40000010));
                 Assert.That(item.TryGetCustomInteger("tint", out var tint), Is.True);
                 Assert.That(tint, Is.EqualTo(0x044D));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_ShouldProjectLightToggleParamsToCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new ItemTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "candle",
+                Name = "Candle",
+                Category = "lights",
+                Description = "toggleable candle",
+                ItemId = "0x0A28",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.light_source",
+                Weight = 1,
+                Params = new()
+                {
+                    [ItemCustomParamKeys.Light.LitItemId] = new() { Type = ItemTemplateParamType.String, Value = "0x0A0F" },
+                    [ItemCustomParamKeys.Light.UnlitItemId] = new() { Type = ItemTemplateParamType.String, Value = "0x0A28" },
+                    [ItemCustomParamKeys.Light.Burning] = new() { Type = ItemTemplateParamType.String, Value = "false" },
+                    [ItemCustomParamKeys.Light.ToggleSoundOn] = new() { Type = ItemTemplateParamType.String, Value = "0x0047" },
+                    [ItemCustomParamKeys.Light.ToggleSoundOff] = new() { Type = ItemTemplateParamType.String, Value = "0x03BE" }
+                }
+            }
+        );
+
+        var service = new ItemFactoryService(templateService, persistence);
+
+        var item = service.CreateItemFromTemplate("candle");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.TryGetCustomString(ItemCustomParamKeys.Light.LitItemId, out var litItemId), Is.True);
+                Assert.That(litItemId, Is.EqualTo("0x0A0F"));
+                Assert.That(item.TryGetCustomString(ItemCustomParamKeys.Light.UnlitItemId, out var unlitItemId), Is.True);
+                Assert.That(unlitItemId, Is.EqualTo("0x0A28"));
+                Assert.That(item.TryGetCustomString(ItemCustomParamKeys.Light.Burning, out var burning), Is.True);
+                Assert.That(burning, Is.EqualTo("false"));
+                Assert.That(item.ScriptId, Is.EqualTo("items.light_source"));
             }
         );
     }
@@ -731,6 +781,51 @@ public class ItemFactoryServiceTests
         {
             _ = ContainerLayoutSystem.ContainerBagDefsByItemId.Remove(0x0E76);
         }
+    }
+
+    [Test]
+    public async Task CreateItemFromTemplate_WhenRootContainerTemplateIsImported_ShouldKeepContainerShape()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var targetItemsDirectory = Path.Combine(directories[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "containers.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "containers.json"),
+            true
+        );
+
+        var templateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directories, templateService);
+        await loader.LoadAsync();
+
+        var service = new ItemFactoryService(templateService, persistence);
+        var item = service.CreateItemFromTemplate("backpack");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(item.IsContainer, Is.True);
+                Assert.That(item.GumpId, Is.Not.Null);
+                Assert.That(item.ScriptId, Is.EqualTo("none"));
+            }
+        );
     }
 
     [Test]

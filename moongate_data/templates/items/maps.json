@@ -1,0 +1,20 @@
+[
+  {
+    "type": "item",
+    "id": "map_item",
+    "name": "Map Item",
+    "category": "Maps",
+    "description": "",
+    "itemId": "0x14EC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "maps",
+      "flippable"
+    ]
+  }
+]

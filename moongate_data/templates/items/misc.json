@@ -1,0 +1,2759 @@
+[
+  {
+    "type": "item",
+    "id": "abscess_tail",
+    "name": "Abscess Tail",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1A9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "acid",
+    "name": "Acid",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x122A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "acid_proof_rope",
+    "name": "Acid Proof Rope",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x020D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ani_large_violet_flask",
+    "name": "Ani Large Violet Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1841",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ani_red_ribbed_flask",
+    "name": "Ani Red Ribbed Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x183E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ani_small_blue_flask",
+    "name": "Ani Small Blue Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1844",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "arcane_gem",
+    "name": "Arcane Gem",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1EA7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bank_check",
+    "name": "Bank Check",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "beeswax",
+    "name": "Beeswax",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1422",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blocker",
+    "name": "Blocker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x21A4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_beaker",
+    "name": "Blue Beaker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1830",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_curved_flask",
+    "name": "Blue Curved Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1836",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bola",
+    "name": "Bola",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x26AC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "bola_ball",
+    "name": "Bola Ball",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E73",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "broadcast_crystal",
+    "name": "Broadcast Crystal",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1ED0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chisels_north",
+    "name": "Chisels North",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1026",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "chisels_west",
+    "name": "Chisels West",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1027",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "clockwork_assembly",
+    "name": "Clockwork Assembly",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1EA8",
+    "hue": "1102",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "coils_fang",
+    "name": "Coils Fang",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x10E8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "contract_of_employment",
+    "name": "Contract Of Employment",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "copper_wire",
+    "name": "Copper Wire",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1879",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "crystalline_fragments",
+    "name": "Crystalline Fragments",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x223B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "curved_flask",
+    "name": "Curved Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1832",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "deceit_brazier",
+    "name": "Deceit Brazier",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E31",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_frypan",
+    "name": "Dirty Frypan",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09DE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_kettle",
+    "name": "Dirty Kettle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09DC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_pan",
+    "name": "Dirty Pan",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09E8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_pot",
+    "name": "Dirty Pot",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09E6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_round_pot",
+    "name": "Dirty Round Pot",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09DF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_small_pot",
+    "name": "Dirty Small Pot",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09DD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirty_small_round_pot",
+    "name": "Dirty Small Round Pot",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09E7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dragon_flame_sect_badge",
+    "name": "Dragon Flame Sect Badge",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x023E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dried_herbs",
+    "name": "Dried Herbs",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0C42",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dried_onions",
+    "name": "Dried Onions",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0C40",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "effect_controller",
+    "name": "Effect Controller",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1B72",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_curved_flask_e",
+    "name": "Empty Curved Flask E",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1835",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_curved_flask_w",
+    "name": "Empty Curved Flask W",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1832",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_oil_flask",
+    "name": "Empty Oil Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1C18",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_ribbed_flask",
+    "name": "Empty Ribbed Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x183A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_vial",
+    "name": "Empty Vial",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E24",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_vials_w_rack",
+    "name": "Empty Vials W Rack",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x185B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "eternally_corrupt_tree",
+    "name": "Eternally Corrupt Tree",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x20FA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "executioners_cap",
+    "name": "Executioners Cap",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F83",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_wind_chimes",
+    "name": "Fancy Wind Chimes",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2833",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "forged_metal",
+    "name": "Forged Metal",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FB8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "full_vials_w_rack",
+    "name": "Full Vials W Rack",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x185D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "glob_of_monstreous_interred_grizzle",
+    "name": "Glob Of Monstreous Interred Grizzle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x02F3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold",
+    "name": "Gold",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EED",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_wire",
+    "name": "Gold Wire",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1878",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_beaker",
+    "name": "Green Beaker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1831",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_bottle",
+    "name": "Green Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EFB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_curved_flask",
+    "name": "Green Curved Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1837",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "green_dried_flowers",
+    "name": "Green Dried Flowers",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0C3E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grizzled_skull_collection",
+    "name": "Grizzled Skull Collection",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x21FC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grobus_fur",
+    "name": "Grobus Fur",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x11F4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "guillotine",
+    "name": "Guillotine",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1230",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hair_dye",
+    "name": "Hair Dye",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EFF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "horn_of_the_dreadhorn",
+    "name": "Horn Of The Dreadhorn",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x315C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "horse_shoes",
+    "name": "Horse Shoes",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FB6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hourglass",
+    "name": "Hourglass",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1810",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hourglass_ani",
+    "name": "Hourglass Ani",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1811",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hovering_wisp",
+    "name": "Hovering Wisp",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2100",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hydra_scale",
+    "name": "Hydra Scale",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x26B4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "icy_heart",
+    "name": "Icy Heart",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x024B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "interior_decorator",
+    "name": "Interior Decorator",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FC1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "iron_wire",
+    "name": "Iron Wire",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1876",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "key_ring",
+    "name": "Key Ring",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1011",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_empty_flask",
+    "name": "Large Empty Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x183D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_flask",
+    "name": "Large Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x183B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_violet_flask",
+    "name": "Large Violet Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x183C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "large_yellow_flask",
+    "name": "Large Yellow Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x183B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "long_flask",
+    "name": "Long Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1838",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "los_blocker",
+    "name": "LOS Blocker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x21A2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lt_blue_curved_flask",
+    "name": "Lt Blue Curved Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1834",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lucky_dagger",
+    "name": "Lucky Dagger",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F52",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "mangled_head_of_dreadhorn",
+    "name": "Mangled Head Of Dreadhorn",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x3156",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "medium_flask",
+    "name": "Medium Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "melisandes_hair_dye",
+    "name": "Melisandes Hair Dye",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EFF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "minotaur_artifact",
+    "name": "Minotaur Artifact",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0B48",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "monsterous_interred_grizzle_maggots",
+    "name": "Monsterous Interred Grizzle Maggots",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2633",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "moonstone",
+    "name": "Moonstone",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F8B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "oil_cloth",
+    "name": "Oil Cloth",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x175D",
+    "hue": "2001",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "oil_flask",
+    "name": "Oil Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1C18",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "orders_from_minax",
+    "name": "Orders From Minax",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2279",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_butterfly",
+    "name": "Origami Butterfly",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2838",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_fish",
+    "name": "Origami Fish",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x283D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_frog",
+    "name": "Origami Frog",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x283A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_paper",
+    "name": "Origami Paper",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2830",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_shape",
+    "name": "Origami Shape",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x283B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_songbird",
+    "name": "Origami Songbird",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x283C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "origami_swan",
+    "name": "Origami Swan",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2839",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "paints_and_brush",
+    "name": "Paints And Brush",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FC1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "paroxysmus_corroded_stein",
+    "name": "Paroxysmus Corroded Stein",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09D6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "paroxysmus_dinner",
+    "name": "Paroxysmus Dinner",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1E95",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pen_and_ink",
+    "name": "Pen And Ink",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FBF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "player_bb_east",
+    "name": "Player BB East",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2312",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "player_bb_south",
+    "name": "Player BB South",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2311",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "power_crystal",
+    "name": "Power Crystal",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1F1C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "primitive_fetish",
+    "name": "Primitive Fetish",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x023F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "projected_item",
+    "name": "Projected Item",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0001",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "protectors_essence",
+    "name": "Protectors Essence",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x023F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "public_moongate",
+    "name": "Public Moongate",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F6C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "receiver_crystal",
+    "name": "Receiver Crystal",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1ED0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_beaker",
+    "name": "Red Beaker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_bottle",
+    "name": "Red Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EFC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_curved_flask",
+    "name": "Red Curved Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1833",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "red_ribbed_flask",
+    "name": "Red Ribbed Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1838",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "resolves_bridle",
+    "name": "Resolves Bridle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1374",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "rope",
+    "name": "Rope",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x14F8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "salivas_feather",
+    "name": "Salivas Feather",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1020",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "samples_of_corrupted_water",
+    "name": "Samples Of Corrupted Water",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EFE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "scales",
+    "name": "Scales",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1852",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "serpent_fang_sect_badge",
+    "name": "Serpent Fang Sect Badge",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x023C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "serpent_pillar",
+    "name": "Serpent Pillar",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x233F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "silver_wire",
+    "name": "Silver Wire",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1877",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_blue_bottle",
+    "name": "Small Blue Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1847",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_blue_flask",
+    "name": "Small Blue Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_brown_bottle",
+    "name": "Small Brown Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EFD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_empty_flask",
+    "name": "Small Empty Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_flask",
+    "name": "Small Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_green_bottle",
+    "name": "Small Green Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F01",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_green_bottle2",
+    "name": "Small Green Bottle2",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1848",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_red_flask",
+    "name": "Small Red Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_violet_bottle",
+    "name": "Small Violet Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F02",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_yellow_flask",
+    "name": "Small Yellow Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "special_beard_dye",
+    "name": "Special Beard Dye",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E26",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "special_hair_dye",
+    "name": "Special Hair Dye",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E26",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "spinning_hourglass",
+    "name": "Spinning Hourglass",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1810",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "string_of_parts_of_paroxysmus_victims",
+    "name": "String Of Parts Of Paroxysmus Victims",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FD2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "swarm_of_flies",
+    "name": "Swarm Of Flies",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x091B",
+    "hue": "1",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "sweat_of_paroxysmus",
+    "name": "Sweat Of Paroxysmus",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F01",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tainted_mushroom",
+    "name": "Tainted Mushroom",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2231",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tainted_seeds",
+    "name": "Tainted Seeds",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0DFA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "teleporter_modernuo",
+    "name": "Teleporter",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1BC3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "thorvalds_medallion",
+    "name": "Thorvalds Medallion",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2AAA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "thrashers_tail",
+    "name": "Thrashers Tail",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1A9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tiger_claw_sect_badge",
+    "name": "Tiger Claw Sect Badge",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x023D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "timeout_goal",
+    "name": "Timeout Goal",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1822",
+    "hue": "1154",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tiny_red_bottle",
+    "name": "Tiny Red Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F04",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tiny_yellow_bottle",
+    "name": "Tiny Yellow Bottle",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F03",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tombstone_of_the_damned",
+    "name": "Tombstone Of The Damned",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0EDE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "trash_barrel",
+    "name": "Trash Barrel",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E77",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ],
+    "weightMax": 0
+  },
+  {
+    "type": "item",
+    "id": "trash_chest",
+    "name": "Trash Chest",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0E41",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ],
+    "weightMax": 0
+  },
+  {
+    "type": "item",
+    "id": "travestys_collection_of_shells",
+    "name": "Travestys Collection Of Shells",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0FD3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "travestys_fine_teakwood_tray",
+    "name": "Travestys Fine Teakwood Tray",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "travestys_sushi_preparations",
+    "name": "Travestys Sushi Preparations",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0002",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tribal_berry",
+    "name": "Tribal Berry",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09D0",
+    "hue": "6",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tribal_paint",
+    "name": "Tribal Paint",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x09EC",
+    "hue": "2101",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "unholy_bone",
+    "name": "Unholy Bone",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0F7E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "violet_ribbed_flask",
+    "name": "Violet Ribbed Flask",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1839",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "way_point",
+    "name": "Way Point",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1F14",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "whip",
+    "name": "Whip",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x166E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "white_dried_flowers",
+    "name": "White Dried Flowers",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x0C3C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wind_chimes",
+    "name": "Wind Chimes",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2832",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "yellow_beaker",
+    "name": "Yellow Beaker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x182E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_vials_wrack",
+    "name": "Empty Vials WRack",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x185B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "full_vials_wrack",
+    "name": "Full Vials WRack",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x185D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "losblocker",
+    "name": "LOSBlocker",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x21A2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "player_bbeast",
+    "name": "Player BBEast",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2312",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "player_bbsouth",
+    "name": "Player BBSouth",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x2311",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "teleporter",
+    "name": "Teleporter",
+    "category": "Misc",
+    "description": "",
+    "itemId": "0x1BC3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "misc"
+    ]
+  }
+]

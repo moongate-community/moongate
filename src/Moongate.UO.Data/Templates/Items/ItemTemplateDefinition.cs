@@ -106,6 +106,9 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public UOSkillName? WeaponSkill { get; set; }
 
+    [JsonConverter(typeof(JsonStringEnumConverter<ItemLayerType>))]
+    public ItemLayerType? Layer { get; set; }
+
     [JsonConverter(typeof(Int32FlexibleJsonConverter))]
     public int Ammo { get; set; }
 

@@ -1,0 +1,516 @@
+[
+  {
+    "type": "item",
+    "id": "armoire",
+    "name": "Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A4F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004F",
+    "flippableItemIds": [
+      "0x0A4F",
+      "0x0A53"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "backpack",
+    "name": "Backpack",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E75",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "containerLayoutId": "backpack",
+    "gumpId": "0x003C"
+  },
+  {
+    "type": "item",
+    "id": "bag",
+    "name": "Bag",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E76",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003D",
+    "containerLayoutId": "bag"
+  },
+  {
+    "type": "item",
+    "id": "barrel",
+    "name": "Barrel",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E77",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 25.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003E"
+  },
+  {
+    "type": "item",
+    "id": "basket",
+    "name": "Basket",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0990",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0041"
+  },
+  {
+    "type": "item",
+    "id": "cherry_armoire",
+    "name": "Cherry Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x285D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0107",
+    "flippableItemIds": [
+      "0x285D",
+      "0x285E"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "drawer",
+    "name": "Drawer",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A2C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0051",
+    "flippableItemIds": [
+      "0x0A2C",
+      "0x0A34"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "elegant_armoire",
+    "name": "Elegant Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2859",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0107",
+    "flippableItemIds": [
+      "0x2859",
+      "0x285A"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "empty_bookcase",
+    "name": "Empty Bookcase",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A9D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004D",
+    "flippableItemIds": [
+      "0x0A9D",
+      "0x0A9E"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_armoire",
+    "name": "Fancy Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A4D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004E",
+    "flippableItemIds": [
+      "0x0A4D",
+      "0x0A51"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_drawer",
+    "name": "Fancy Drawer",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A30",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0048",
+    "flippableItemIds": [
+      "0x0A30",
+      "0x0A38"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "fancy_elven_armoire",
+    "name": "Fancy Elven Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2D07",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "flippableItemIds": [
+      "0x2D07",
+      "0x2D08"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "full_bookcase",
+    "name": "Full Bookcase",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0A97",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x004D",
+    "flippableItemIds": [
+      "0x0A97",
+      "0x0A99",
+      "0x0A98",
+      "0x0A9A",
+      "0x0A9B",
+      "0x0A9C"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "keg",
+    "name": "Keg",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E7F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003E"
+  },
+  {
+    "type": "item",
+    "id": "large_bag_ball",
+    "name": "Large Bag Ball",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2257",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003D"
+  },
+  {
+    "type": "item",
+    "id": "maple_armoire",
+    "name": "Maple Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x285B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0106",
+    "flippableItemIds": [
+      "0x285B",
+      "0x285C"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "picnic_basket",
+    "name": "Picnic Basket",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x0E7A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003F"
+  },
+  {
+    "type": "item",
+    "id": "red_armoire",
+    "name": "Red Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2857",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x0105",
+    "flippableItemIds": [
+      "0x2857",
+      "0x2858"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "short_cabinet",
+    "name": "Short Cabinet",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2817",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x010C",
+    "flippableItemIds": [
+      "0x2817",
+      "0x2818"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "simple_elven_armoire",
+    "name": "Simple Elven Armoire",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2D05",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "flippableItemIds": [
+      "0x2D05",
+      "0x2D06"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "small_bag_ball",
+    "name": "Small Bag Ball",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2256",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x003D"
+  },
+  {
+    "type": "item",
+    "id": "tall_cabinet",
+    "name": "Tall Cabinet",
+    "category": "Containers",
+    "description": "",
+    "itemId": "0x2815",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "flippable"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "gumpId": "0x010C",
+    "flippableItemIds": [
+      "0x2815",
+      "0x2816"
+    ]
+  }
+]
