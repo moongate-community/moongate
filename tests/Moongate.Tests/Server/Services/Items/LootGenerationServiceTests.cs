@@ -339,6 +339,128 @@ public sealed class LootGenerationServiceTests
         Assert.That(result.Items[0].Name, Is.EqualTo("gold"));
     }
 
+    [Test]
+    public async Task GenerateForContainerAsync_WhenLootModeIsAdditive_ShouldCreateGuaranteedAndRangeBasedDrops()
+    {
+        TileData.ItemTable[0x2006] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        itemFactory.Templates["bandage"] = new()
+        {
+            Id = "bandage",
+            Description = "Bandage",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x0E21",
+            ScriptId = "none"
+        };
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        lootTemplateService.Templates["undead.zombie"] = new()
+        {
+            Id = "undead.zombie",
+            Name = "Zombie Loot",
+            Category = "loot",
+            Description = string.Empty,
+            Mode = LootTemplateMode.Additive,
+            Entries =
+            [
+                new()
+                {
+                    ItemTemplateId = "gold",
+                    Chance = 1.0,
+                    AmountMin = 20,
+                    AmountMax = 20
+                },
+                new()
+                {
+                    ItemTemplateId = "bandage",
+                    Chance = 1.0,
+                    Amount = 2
+                }
+            ]
+        };
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var corpse = new UOItemEntity
+        {
+            Id = (Serial)0x40000060u,
+            ItemId = 0x2006,
+            MapId = 1,
+            Name = "a corpse"
+        };
+        itemService.ItemsById[corpse.Id] = corpse;
+
+        var result = await service.GenerateForContainerAsync(
+            corpse,
+            ["undead.zombie"],
+            LootGenerationMode.OnDeath
+        );
+
+        Assert.That(result.Items, Has.Count.EqualTo(3));
+        Assert.That(result.Items.Single(item => item.Name == "gold").Amount, Is.EqualTo(20));
+        Assert.That(result.Items.Count(item => item.Name == "bandage"), Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task GenerateForContainerAsync_WhenAdditiveEntryChanceIsZero_ShouldSkipThatEntry()
+    {
+        TileData.ItemTable[0x2006] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        itemFactory.Templates["bandage"] = new()
+        {
+            Id = "bandage",
+            Description = "Bandage",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x0E21",
+            ScriptId = "none"
+        };
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        lootTemplateService.Templates["undead.zombie_sparse"] = new()
+        {
+            Id = "undead.zombie_sparse",
+            Name = "Sparse Zombie Loot",
+            Category = "loot",
+            Description = string.Empty,
+            Mode = LootTemplateMode.Additive,
+            Entries =
+            [
+                new()
+                {
+                    ItemTemplateId = "gold",
+                    Chance = 1.0,
+                    AmountMin = 25,
+                    AmountMax = 25
+                },
+                new()
+                {
+                    ItemTemplateId = "bandage",
+                    Chance = 0.0,
+                    Amount = 1
+                }
+            ]
+        };
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var corpse = new UOItemEntity
+        {
+            Id = (Serial)0x40000061u,
+            ItemId = 0x2006,
+            MapId = 1,
+            Name = "a corpse"
+        };
+        itemService.ItemsById[corpse.Id] = corpse;
+
+        var result = await service.GenerateForContainerAsync(
+            corpse,
+            ["undead.zombie_sparse"],
+            LootGenerationMode.OnDeath
+        );
+
+        Assert.That(result.Items, Has.Count.EqualTo(1));
+        Assert.That(result.Items[0].Name, Is.EqualTo("gold"));
+        Assert.That(result.Items[0].Amount, Is.EqualTo(25));
+    }
+
     private static TestItemFactoryService CreateItemFactory()
     {
         var itemFactory = new TestItemFactoryService();

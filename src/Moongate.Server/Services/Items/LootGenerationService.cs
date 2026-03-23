@@ -185,9 +185,9 @@ public sealed class LootGenerationService : ILootGenerationService
         return layout;
     }
 
-    private List<UOItemEntity> CreateItemsFromLootEntry(LootTemplateEntry entry)
+    private List<UOItemEntity> CreateItemsFromLootEntry(LootTemplateEntry entry, int amount)
     {
-        if (entry.Amount <= 0)
+        if (amount <= 0)
         {
             return [];
         }
@@ -199,24 +199,24 @@ public sealed class LootGenerationService : ILootGenerationService
             return [];
         }
 
-        if (entry.Amount == 1)
+        if (amount == 1)
         {
             return [item];
         }
 
         if (item.IsStackable)
         {
-            item.Amount = entry.Amount;
+            item.Amount = amount;
 
             return [item];
         }
 
-        var items = new List<UOItemEntity>(entry.Amount)
+        var items = new List<UOItemEntity>(amount)
         {
             item
         };
 
-        for (var i = 1; i < entry.Amount; i++)
+        for (var i = 1; i < amount; i++)
         {
             var duplicate = CreateLootItem(entry);
 
@@ -229,7 +229,40 @@ public sealed class LootGenerationService : ILootGenerationService
         return items;
     }
 
+    private List<UOItemEntity> CreateItemsFromAdditiveLootTable(LootTemplateDefinition lootTable)
+    {
+        var items = new List<UOItemEntity>();
+
+        foreach (var entry in lootTable.Entries)
+        {
+            if (!ShouldGenerateAdditiveEntry(entry))
+            {
+                continue;
+            }
+
+            var amount = ResolveEntryAmount(entry);
+
+            if (amount <= 0)
+            {
+                continue;
+            }
+
+            items.AddRange(CreateItemsFromLootEntry(entry, amount));
+        }
+
+        return items;
+    }
+
     private List<UOItemEntity> CreateItemsFromLootTable(LootTemplateDefinition lootTable)
+    {
+        return lootTable.Mode switch
+        {
+            LootTemplateMode.Additive => CreateItemsFromAdditiveLootTable(lootTable),
+            _ => CreateItemsFromWeightedLootTable(lootTable)
+        };
+    }
+
+    private List<UOItemEntity> CreateItemsFromWeightedLootTable(LootTemplateDefinition lootTable)
     {
         var items = new List<UOItemEntity>();
         var rolls = Math.Max(1, lootTable.Rolls);
@@ -243,7 +276,7 @@ public sealed class LootGenerationService : ILootGenerationService
                 continue;
             }
 
-            items.AddRange(CreateItemsFromLootEntry(rolledEntry));
+            items.AddRange(CreateItemsFromLootEntry(rolledEntry, rolledEntry.Amount));
         }
 
         return items;
@@ -346,6 +379,43 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         return null;
+    }
+
+    private static int ResolveEntryAmount(LootTemplateEntry entry)
+    {
+        if (entry.AmountMin.HasValue && entry.AmountMax.HasValue)
+        {
+            if (entry.AmountMin.Value == entry.AmountMax.Value)
+            {
+                return entry.AmountMin.Value;
+            }
+
+            return Random.Shared.Next(entry.AmountMin.Value, entry.AmountMax.Value + 1);
+        }
+
+        return entry.Amount;
+    }
+
+    private static bool ShouldGenerateAdditiveEntry(LootTemplateEntry entry)
+    {
+        if (string.IsNullOrWhiteSpace(entry.ItemTemplateId) &&
+            string.IsNullOrWhiteSpace(entry.ItemTag) &&
+            string.IsNullOrWhiteSpace(entry.ItemId))
+        {
+            return false;
+        }
+
+        if (entry.Chance <= 0d)
+        {
+            return false;
+        }
+
+        if (entry.Chance >= 1d)
+        {
+            return true;
+        }
+
+        return Random.Shared.NextDouble() <= entry.Chance;
     }
 
     private bool TryResolveContainerTemplate(UOItemEntity container, out ItemTemplateDefinition? template)

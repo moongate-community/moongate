@@ -1126,4 +1126,122 @@ public class ItemTemplateLoaderTests
             }
         );
     }
+
+    [Test]
+    public async Task LoadAsync_WhenRootSkillItemsTemplateContainsBasePotions_ShouldExposePotionTemplates()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "skill_items.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "skill_items.json"),
+            true
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemTemplateService.TryGet("lesser_heal_potion", out var healPotion), Is.True);
+                Assert.That(healPotion, Is.Not.Null);
+                Assert.That(healPotion!.ItemId, Is.EqualTo("0x0F0C"));
+                Assert.That(healPotion.ScriptId, Is.EqualTo("items.lesser_heal_potion"));
+
+                Assert.That(itemTemplateService.TryGet("refresh_potion", out var refreshPotion), Is.True);
+                Assert.That(refreshPotion, Is.Not.Null);
+                Assert.That(refreshPotion!.ScriptId, Is.EqualTo("items.refresh_potion"));
+
+                Assert.That(itemTemplateService.TryGet("lesser_explosion_potion", out var explosionPotion), Is.True);
+                Assert.That(explosionPotion, Is.Not.Null);
+                Assert.That(explosionPotion!.Tags, Does.Contain("potion"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenRootItemTemplatesContainFillableDependencies_ShouldExposeMissingVendorItems()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+
+        foreach (var fileName in new[] { "skill_items.json", "special.json" })
+        {
+            File.Copy(
+                Path.GetFullPath(
+                    Path.Combine(
+                        TestContext.CurrentContext.TestDirectory,
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "..",
+                        "moongate_data",
+                        "templates",
+                        "items",
+                        fileName
+                    )
+                ),
+                Path.Combine(targetItemsDirectory, fileName),
+                true
+            );
+        }
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemTemplateService.TryGet("iron_ingot", out _), Is.True);
+                Assert.That(itemTemplateService.TryGet("leather", out _), Is.True);
+                Assert.That(itemTemplateService.TryGet("spellbook", out _), Is.True);
+                Assert.That(itemTemplateService.TryGet("clock", out var clock), Is.True);
+                Assert.That(clock, Is.Not.Null);
+                Assert.That(clock!.ScriptId, Is.EqualTo("items.clock"));
+                Assert.That(itemTemplateService.TryGet("tool_kit", out _), Is.True);
+                Assert.That(itemTemplateService.TryGet("deco_arrow_shafts", out _), Is.True);
+            }
+        );
+    }
 }

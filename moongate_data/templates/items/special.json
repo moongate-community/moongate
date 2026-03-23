@@ -465,6 +465,23 @@
   },
   {
     "type": "item",
+    "id": "deco_arrow_shafts",
+    "name": "Deco Arrow Shafts",
+    "category": "Special",
+    "description": "",
+    "itemId": "0x1024",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
     "id": "deco_bottles_of_liquor",
     "name": "Deco Bottles Of Liquor",
     "category": "Special",
@@ -1919,6 +1936,23 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "special"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tool_kit",
+    "name": "Tool Kit",
+    "category": "Special",
+    "description": "",
+    "itemId": "0x1EBA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
     "scriptId": "none",
     "isMovable": true,
     "tags": [

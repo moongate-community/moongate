@@ -220,6 +220,126 @@ public class TemplateValidationLoaderTests
     }
 
     [Test]
+    public void LoadAsync_WhenAdditiveLootUsesWeight_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        itemService.Upsert(
+            new()
+            {
+                Id = "gold",
+                Name = "Gold",
+                Category = "misc",
+                Description = "gold",
+                ItemId = "0x0EED",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 0.01M,
+                Tags = ["currency"]
+            }
+        );
+
+        lootTemplateService.Upsert(
+            new()
+            {
+                Id = "undead.zombie",
+                Name = "Zombie Loot",
+                Category = "loot",
+                Description = string.Empty,
+                Mode = LootTemplateMode.Additive,
+                Entries =
+                [
+                    new()
+                    {
+                        ItemTemplateId = "gold",
+                        Weight = 10
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenWeightedLootUsesAmountRange_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        itemService.Upsert(
+            new()
+            {
+                Id = "gold",
+                Name = "Gold",
+                Category = "misc",
+                Description = "gold",
+                ItemId = "0x0EED",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "none",
+                Weight = 0.01M,
+                Tags = ["currency"]
+            }
+        );
+
+        lootTemplateService.Upsert(
+            new()
+            {
+                Id = "treasure.small",
+                Name = "Treasure Small",
+                Category = "loot",
+                Description = string.Empty,
+                Mode = LootTemplateMode.Weighted,
+                Entries =
+                [
+                    new()
+                    {
+                        ItemTemplateId = "gold",
+                        Weight = 1,
+                        AmountMin = 20,
+                        AmountMax = 40
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
     public void LoadAsync_WhenMobileReferencesMissingDefaultFaction_ShouldThrow()
     {
         var itemService = new ItemTemplateService();
