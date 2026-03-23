@@ -2738,22 +2738,5 @@
       "modernuo",
       "misc"
     ]
-  },
-  {
-    "type": "item",
-    "id": "teleporter",
-    "name": "Teleporter",
-    "category": "Misc",
-    "description": "",
-    "itemId": "0x1BC3",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": false,
-    "tags": [
-      "modernuo",
-      "misc"
-    ]
   }
 ]

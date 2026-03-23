@@ -16,5 +16,13 @@
       "maps",
       "flippable"
     ]
+  },
+  {
+    "type": "item",
+    "id": "treasure_map",
+    "base_item": "map_item",
+    "name": "Treasure Map",
+    "description": "",
+    "isMovable": true
   }
 ]
