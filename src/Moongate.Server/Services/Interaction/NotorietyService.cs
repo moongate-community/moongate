@@ -11,6 +11,7 @@ namespace Moongate.Server.Services.Interaction;
 /// </summary>
 public sealed class NotorietyService : INotorietyService
 {
+    private static readonly TimeSpan AggressionTimeout = TimeSpan.FromMinutes(2);
     private readonly IFactionTemplateService? _factionTemplateService;
 
     public NotorietyService(IFactionTemplateService? factionTemplateService = null)
@@ -22,6 +23,7 @@ public sealed class NotorietyService : INotorietyService
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
+        var nowUtc = DateTime.UtcNow;
 
         if (source.Id != Serial.Zero && source.Id == target.Id)
         {
@@ -43,7 +45,7 @@ public sealed class NotorietyService : INotorietyService
             return Notoriety.Criminal;
         }
 
-        if (HasRecentAggression(source, target) || HasRecentAggression(target, source))
+        if (HasRecentAggression(source, target, nowUtc) || HasRecentAggression(target, source, nowUtc))
         {
             return Notoriety.CanBeAttacked;
         }
@@ -67,9 +69,13 @@ public sealed class NotorietyService : INotorietyService
         return target.Notoriety;
     }
 
-    private static bool HasRecentAggression(UOMobileEntity source, UOMobileEntity target)
-        => source.Aggressors.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id) ||
-           source.Aggressed.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id);
+    private static bool HasRecentAggression(UOMobileEntity source, UOMobileEntity target, DateTime nowUtc)
+        => source.Aggressors.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc)) ||
+           source.Aggressed.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc));
+
+    private static bool MatchesRecentAggression(AggressorInfo entry, Serial targetId, DateTime nowUtc)
+        => (entry.AttackerId == targetId || entry.DefenderId == targetId) &&
+           nowUtc - entry.LastCombatAtUtc <= AggressionTimeout;
 
     private bool AreEnemyFactions(UOMobileEntity source, UOMobileEntity target)
     {

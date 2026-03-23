@@ -634,6 +634,9 @@ public sealed class DeathServiceTests
                            .Any(packet => packet.KilledMobileId == victim.Id && packet.CorpseId == corpse.Id),
                     Is.True
                 );
+                Assert.That(spatial.BroadcastPackets.OfType<ObjectInformationPacket>().Any(packet => packet.Serial == corpse.Id), Is.True);
+                Assert.That(spatial.BroadcastPackets.OfType<AddMultipleItemsToContainerPacket>().Any(packet => packet.Container.Id == corpse.Id), Is.True);
+                Assert.That(spatial.BroadcastPackets.OfType<CorpseClothingPacket>().Any(packet => packet.Corpse?.Id == corpse.Id), Is.True);
             }
         );
     }

@@ -870,6 +870,85 @@ public sealed class CombatServiceTests
     }
 
     [Test]
+    public async Task ScheduledSwing_WhenMonsterAttackerHitsInMelee_ShouldPublishMonsterSwingAnimation()
+    {
+        EnsureMapsRegistered();
+        var originalBodyTypes = Body.Types;
+        Body.Types = new UOBodyType[0x200];
+        Body.Types[0x0003] = UOBodyType.Monster;
+
+        try
+        {
+            var mobileService = new InMemoryMobileService();
+            var timerService = new TimerServiceSpy();
+            var spatial = new CombatTestSpatialWorldService();
+            var eventBus = new RecordingGameEventBusService();
+            var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+            var sessionService = new FakeGameNetworkSessionService();
+
+            var attacker = new UOMobileEntity
+            {
+                Id = (Serial)0x00000054u,
+                IsPlayer = false,
+                BaseBody = 0x0003,
+                MapId = 0,
+                Location = new(100, 100, 0),
+                Hits = 35,
+                MaxHits = 35,
+                MinWeaponDamage = 4,
+                MaxWeaponDamage = 4
+            };
+            var defender = new UOMobileEntity
+            {
+                Id = (Serial)0x00000055u,
+                IsPlayer = true,
+                BaseBody = 0x0190,
+                MapId = 0,
+                Location = new(101, 100, 0),
+                Hits = 40,
+                MaxHits = 40
+            };
+
+            mobileService.Add(attacker);
+            mobileService.Add(defender);
+            spatial.AddOrUpdateMobile(attacker);
+            spatial.AddOrUpdateMobile(defender);
+
+            ICombatService service = new CombatService(
+                mobileService,
+                sessionService,
+                outgoingQueue,
+                timerService,
+                spatial,
+                eventBus,
+                new InMemoryItemService(),
+                new DeathServiceSpy()
+            );
+
+            var setTarget = await service.TrySetCombatantAsync(attacker.Id, defender.Id);
+            Assert.That(setTarget, Is.True);
+
+            timerService.RegisteredTimers[^1].Callback.Invoke();
+
+            var animationEvent = eventBus.Events.OfType<MobilePlayAnimationEvent>().Single();
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(eventBus.Events.Any(gameEvent => gameEvent is CombatHitEvent), Is.True);
+                    Assert.That(animationEvent.MobileId, Is.EqualTo(attacker.Id));
+                    Assert.That(animationEvent.Action, Is.EqualTo((short)4));
+                    Assert.That(animationEvent.FrameCount, Is.EqualTo((short)7));
+                }
+            );
+        }
+        finally
+        {
+            Body.Types = originalBodyTypes;
+        }
+    }
+
+    [Test]
     public async Task ScheduledSwing_WhenRangedWeaponHasNoAmmo_ShouldClearCombatantWithoutApplyingDamage()
     {
         EnsureMapsRegistered();

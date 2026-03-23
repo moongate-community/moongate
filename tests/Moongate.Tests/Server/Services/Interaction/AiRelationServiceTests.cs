@@ -72,6 +72,20 @@ public sealed class AiRelationServiceTests
     }
 
     [Test]
+    public void Compute_WhenAggressionEntryIsExpired_ShouldReturnNeutral()
+    {
+        var service = new AiRelationService();
+        var viewer = CreateGuard((Serial)0x0100u);
+        var player = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+
+        viewer.Aggressors.Add(new(player.Id, viewer.Id, DateTime.UtcNow.AddMinutes(-3), false, false));
+
+        var result = service.Compute(viewer, player);
+
+        Assert.That(result, Is.EqualTo(AiRelation.Neutral));
+    }
+
+    [Test]
     public void Compute_WhenViewerAndTargetShareFaction_ShouldReturnFriendly()
     {
         var service = new AiRelationService(CreateFactionTemplateService());

@@ -28,6 +28,9 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("\"self_bandage\""));
                 Assert.That(script, Does.Contain("set_default(\"self_bandage_hp_threshold\", 0.45)"));
                 Assert.That(script, Does.Contain("set_default(\"self_bandage_score_bonus\", 70)"));
+                Assert.That(script, Does.Not.Contain("npc_state.set_var(npc_serial, get_seen_key(source_serial), nil)"));
+                Assert.That(script, Does.Contain("if source_is_enemy then"));
+                Assert.That(script, Does.Not.Contain("event_type == \"speech_heard\""));
             }
         );
     }

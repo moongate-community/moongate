@@ -27,7 +27,10 @@ public sealed class UndeadBrainAssetTests
                 Assert.That(script, Does.Contain("combat.set_target(npc_serial, target_serial)"));
                 Assert.That(script, Does.Contain("steering.follow(npc_serial, target_serial, FOLLOW_STOP_RANGE)"));
                 Assert.That(script, Does.Contain("combat.clear_target(npc_serial)"));
-                Assert.That(script, Does.Contain("coroutine.yield(2000)"));
+                Assert.That(script, Does.Contain("npc:set_war_mode(false)"));
+                Assert.That(script, Does.Contain("steering.wander(npc_serial, WANDER_RADIUS)"));
+                Assert.That(script, Does.Contain("local WANDER_RADIUS = 4"));
+                Assert.That(script, Does.Contain("coroutine.yield(TICK_DELAY_MS)"));
                 Assert.That(init, Does.Contain("require(\"ai.brains.undead_melee\")"));
             }
         );
@@ -44,7 +47,17 @@ public sealed class UndeadBrainAssetTests
                              .EnumerateArray()
                              .First(element => string.Equals(element.GetProperty("id").GetString(), "zombie_npc", StringComparison.Ordinal));
 
-        Assert.That(zombie.GetProperty("brain").GetString(), Is.EqualTo("undead_melee"));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(zombie.GetProperty("brain").GetString(), Is.EqualTo("undead_melee"));
+                Assert.That(zombie.GetProperty("sounds").GetProperty("StartAttack").GetInt32(), Is.EqualTo(471));
+                Assert.That(zombie.GetProperty("sounds").GetProperty("Idle").GetInt32(), Is.EqualTo(472));
+                Assert.That(zombie.GetProperty("sounds").GetProperty("Attack").GetInt32(), Is.EqualTo(473));
+                Assert.That(zombie.GetProperty("sounds").GetProperty("Defend").GetInt32(), Is.EqualTo(474));
+                Assert.That(zombie.GetProperty("sounds").GetProperty("Die").GetInt32(), Is.EqualTo(475));
+            }
+        );
     }
 
     private static string GetRepositoryRoot()

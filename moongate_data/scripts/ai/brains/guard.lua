@@ -126,15 +126,6 @@ function guard.on_event(event_type, from_serial, event_obj)
         return
     end
 
-    -- Practical example:
-    -- if someone speaks near the guard, set them as follow target.
-    if event_type == "speech_heard" then
-        local target_serial = tonumber(from_serial) or 0
-        if target_serial > 0 then
-            npc_state.set_var(npc_serial, "follow_target_serial", target_serial)
-        end
-    end
-
     -- Forward the event to the active behavior (if it implements on_event)
     utility_runner.on_event(npc_serial, {}, event_type, from_serial, event_obj)
 end
@@ -166,11 +157,12 @@ function guard.on_in_range(npc_serial, source_serial, event_obj)
         end
     end
 
-    utility_runner.on_event(npc_serial, {}, "in_range", source_serial, event_obj)
+    if source_is_enemy then
+        utility_runner.on_event(npc_serial, {}, "in_range", source_serial, event_obj)
+    end
 end
 
 function guard.on_out_range(npc_serial, source_serial, event_obj)
-    npc_state.set_var(npc_serial, get_seen_key(source_serial), nil)
     npc_state.set_var(npc_serial, get_engaged_key(source_serial), nil)
     npc_state.set_var(npc_serial, "follow_target_serial", nil)
     combat.clear_target(npc_serial)

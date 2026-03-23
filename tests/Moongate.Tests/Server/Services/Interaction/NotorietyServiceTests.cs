@@ -75,6 +75,20 @@ public sealed class NotorietyServiceTests
     }
 
     [Test]
+    public void Compute_WhenAggressionEntryIsExpired_ShouldReturnInnocent()
+    {
+        var service = new NotorietyService();
+        var viewer = CreatePlayer((Serial)0x0100u, Notoriety.Innocent);
+        var target = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+
+        viewer.Aggressors.Add(new(target.Id, viewer.Id, DateTime.UtcNow.AddMinutes(-3), false, false));
+
+        var result = service.Compute(viewer, target);
+
+        Assert.That(result, Is.EqualTo(Notoriety.Innocent));
+    }
+
+    [Test]
     public void Compute_WhenViewerTargetsSelf_ShouldReturnInnocent()
     {
         var service = new NotorietyService();

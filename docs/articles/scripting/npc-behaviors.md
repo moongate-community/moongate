@@ -86,8 +86,8 @@ At each tick:
 3. execute behavior
 4. `coroutine.yield(delay_ms)`
 
-On speech events, the guard can set `follow_target_serial` in blackboard state.
-On in-range events, the guard can greet a player once per entry and start combat when a hostile target enters range.
+Speech events are ignored by the guard brain for targeting decisions.
+On in-range events, the guard can greet a player once per source mobile and start combat only when a hostile target enters range.
 On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior and a longer hostile-acquisition radius.
 
 `undead_melee.lua` is a simpler fixed-loop brain:
@@ -96,7 +96,7 @@ On ranged guard templates, `params.guard_role = "ranged"` switches the brain to 
 - calls `perception.find_nearest_player_enemy(npc_serial, 10)`
 - arms combat immediately against the nearest hostile player
 - uses `steering.follow(..., 1)` so the zombie closes into melee instead of standing still
-- clears the active combat target when no hostile is found
+- clears the active combat target and wanders when no hostile is found
 
 Current `in_range` payload fields include:
 

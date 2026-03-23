@@ -1,6 +1,8 @@
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -10,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Constants;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -121,6 +124,7 @@ public sealed class DeathService : IDeathService
             await MoveLootToCorpseAsync(victim, corpse, cancellationToken);
             await GenerateCorpseLootAsync(victim, corpse, cancellationToken);
             _spatialWorldService.AddOrUpdateItem(corpse, corpse.MapId);
+            await BroadcastVisibleCorpsePacketsAsync(corpse);
             await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
                 new MobileDeathAnimationPacket(victim.Id, corpse.Id),
                 victim.MapId,
@@ -150,6 +154,27 @@ public sealed class DeathService : IDeathService
         );
 
         return true;
+    }
+
+    private async Task BroadcastVisibleCorpsePacketsAsync(UOItemEntity corpse)
+    {
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            ItemPacketHelper.CreateObjectInformationPacket(corpse, AccountType.Regular),
+            corpse.MapId,
+            corpse.Location
+        );
+
+        List<IGameNetworkPacket> packets = [];
+        CorpsePacketHelper.EnqueueVisibleCorpsePackets(corpse, packet => packets.Add(packet));
+
+        foreach (var packet in packets)
+        {
+            await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+                packet,
+                corpse.MapId,
+                corpse.Location
+            );
+        }
     }
 
     private static Dictionary<string, object?> BuildDeathPayload(

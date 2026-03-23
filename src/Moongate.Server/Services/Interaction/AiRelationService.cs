@@ -1,4 +1,5 @@
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -10,6 +11,7 @@ namespace Moongate.Server.Services.Interaction;
 /// </summary>
 public sealed class AiRelationService : IAiRelationService
 {
+    private static readonly TimeSpan AggressionTimeout = TimeSpan.FromMinutes(2);
     private readonly IFactionTemplateService? _factionTemplateService;
 
     public AiRelationService(IFactionTemplateService? factionTemplateService = null)
@@ -21,13 +23,14 @@ public sealed class AiRelationService : IAiRelationService
     {
         ArgumentNullException.ThrowIfNull(viewer);
         ArgumentNullException.ThrowIfNull(target);
+        var nowUtc = DateTime.UtcNow;
 
         if (viewer.Id == target.Id)
         {
             return AiRelation.Friendly;
         }
 
-        if (HasRecentAggression(viewer, target) || HasRecentAggression(target, viewer))
+        if (HasRecentAggression(viewer, target, nowUtc) || HasRecentAggression(target, viewer, nowUtc))
         {
             return AiRelation.Hostile;
         }
@@ -68,9 +71,13 @@ public sealed class AiRelationService : IAiRelationService
         return AiRelation.Neutral;
     }
 
-    private static bool HasRecentAggression(UOMobileEntity viewer, UOMobileEntity target)
-        => viewer.Aggressors.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id) ||
-           viewer.Aggressed.Any(entry => entry.AttackerId == target.Id || entry.DefenderId == target.Id);
+    private static bool HasRecentAggression(UOMobileEntity viewer, UOMobileEntity target, DateTime nowUtc)
+        => viewer.Aggressors.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc)) ||
+           viewer.Aggressed.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc));
+
+    private static bool MatchesRecentAggression(AggressorInfo entry, Serial targetId, DateTime nowUtc)
+        => (entry.AttackerId == targetId || entry.DefenderId == targetId) &&
+           nowUtc - entry.LastCombatAtUtc <= AggressionTimeout;
 
     private static bool IsHostileNpcViewer(UOMobileEntity viewer)
         => !viewer.IsPlayer &&

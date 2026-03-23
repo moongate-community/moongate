@@ -26,9 +26,9 @@ public sealed class CorpseStartupCleanupService : ICorpseStartupCleanupService
     {
         var itemRepository = _persistenceService.UnitOfWork.Items;
         var corpseRoots = await itemRepository.QueryAsync(
-            static item => IsPersistedCorpse(item),
-            static item => item
-        );
+                              static item => IsPersistedCorpse(item),
+                              static item => item
+                          );
 
         if (corpseRoots.Count == 0)
         {
@@ -43,9 +43,9 @@ public sealed class CorpseStartupCleanupService : ICorpseStartupCleanupService
         }
 
         var containmentRelations = await itemRepository.QueryAsync(
-            static item => item.ParentContainerId != Serial.Zero,
-            static item => (item.Id, item.ParentContainerId)
-        );
+                                       static item => item.ParentContainerId != Serial.Zero,
+                                       static item => (item.Id, item.ParentContainerId)
+                                   );
         var childrenByParent = BuildChildrenLookup(containmentRelations);
         var removalOrder = BuildRemovalOrder(corpseRoots.Select(static corpse => corpse.Id).ToArray(), childrenByParent);
         var removedCount = 0;

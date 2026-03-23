@@ -3,6 +3,7 @@ undead_melee = {}
 local SEARCH_RANGE = 10
 local TICK_DELAY_MS = 2000
 local FOLLOW_STOP_RANGE = 1
+local WANDER_RADIUS = 4
 
 function undead_melee.brain_loop(npc_serial)
     while true do
@@ -24,9 +25,11 @@ function undead_melee.brain_loop(npc_serial)
                 end
             else
                 combat.clear_target(npc_serial)
+                npc:set_war_mode(false)
+                steering.wander(npc_serial, WANDER_RADIUS)
             end
 
-            coroutine.yield(2000)
+            coroutine.yield(TICK_DELAY_MS)
         end
     end
 end
