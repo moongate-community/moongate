@@ -15,6 +15,41 @@
         "amount": 1
       },
       {
+        "itemTemplateId": "lesser_cure_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "agility_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "strength_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "refresh_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_heal_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_explosion_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
         "itemTemplateId": "mortar_pestle",
         "weight": 1,
         "amount": 1
@@ -276,6 +311,11 @@
       },
       {
         "itemTemplateId": "sledge_hammer",
+        "weight": 8,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "iron_ingot",
         "weight": 8,
         "amount": 1
       },
@@ -551,6 +591,11 @@
         "itemTemplateId": "dyes",
         "weight": 1,
         "amount": 1
+      },
+      {
+        "itemTemplateId": "leather",
+        "weight": 2,
+        "amount": 1
       }
     ]
   },
@@ -763,6 +808,11 @@
         "itemTemplateId": "mortar_pestle",
         "weight": 1,
         "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_heal_potion",
+        "weight": 1,
+        "amount": 1
       }
     ]
   },
@@ -927,6 +977,11 @@
       {
         "itemTemplateId": "blank_scroll",
         "weight": 16,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "spellbook",
+        "weight": 14,
         "amount": 1
       }
     ]
@@ -1221,6 +1276,11 @@
         "amount": 1
       },
       {
+        "itemTemplateId": "iron_ingot",
+        "weight": 2,
+        "amount": 1
+      },
+      {
         "itemTemplateId": "forged_metal",
         "weight": 1,
         "amount": 1
@@ -1239,6 +1299,11 @@
     "entries": [
       {
         "itemTemplateId": "sextant",
+        "weight": 2,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "clock",
         "weight": 2,
         "amount": 1
       },
@@ -1741,6 +1806,11 @@
         "itemTemplateId": "leather_gorget",
         "weight": 1,
         "amount": 1
+      },
+      {
+        "itemTemplateId": "leather",
+        "weight": 2,
+        "amount": 1
       }
     ]
   },
@@ -1834,6 +1904,11 @@
         "amount": 1
       },
       {
+        "itemTemplateId": "clock",
+        "weight": 2,
+        "amount": 1
+      },
+      {
         "itemTemplateId": "clock_parts",
         "weight": 2,
         "amount": 1
@@ -1884,7 +1959,17 @@
         "amount": 1
       },
       {
+        "itemTemplateId": "deco_arrow_shafts",
+        "weight": 1,
+        "amount": 1
+      },
+      {
         "itemTemplateId": "lockpick",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "tool_kit",
         "weight": 1,
         "amount": 1
       }
@@ -1907,6 +1992,11 @@
       },
       {
         "itemTemplateId": "mortar_pestle",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_heal_potion",
         "weight": 1,
         "amount": 1
       },
