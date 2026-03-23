@@ -1,0 +1,70 @@
+[
+  {
+    "type": "item",
+    "id": "treasure_chest_level1",
+    "name": "Treasure Chest Level1",
+    "category": "TreasureChests",
+    "description": "Imported from ModernUO (TreasureChestLevel1).",
+    "itemId": "0x0E41",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "treasure_chests"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "treasure_chest_level2",
+    "name": "Treasure Chest Level2",
+    "category": "TreasureChests",
+    "description": "Imported from ModernUO (TreasureChestLevel2).",
+    "itemId": "0x0E41",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "treasure_chests"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "treasure_chest_level3",
+    "name": "Treasure Chest Level3",
+    "category": "TreasureChests",
+    "description": "Imported from ModernUO (TreasureChestLevel3).",
+    "itemId": "0x0E41",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "treasure_chests"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "treasure_chest_level4",
+    "name": "Treasure Chest Level4",
+    "category": "TreasureChests",
+    "description": "Imported from ModernUO (TreasureChestLevel4).",
+    "itemId": "0x0E41",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "treasure_chests"
+    ]
+  }
+]

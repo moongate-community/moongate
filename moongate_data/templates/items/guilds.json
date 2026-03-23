@@ -1,0 +1,54 @@
+[
+  {
+    "type": "item",
+    "id": "guild_deed",
+    "name": "Guild Deed",
+    "category": "Guilds",
+    "description": "Imported from ModernUO (GuildDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "guilds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "guild_teleporter",
+    "name": "Guild Teleporter",
+    "category": "Guilds",
+    "description": "Imported from ModernUO (GuildTeleporter).",
+    "itemId": "0x1869",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "guilds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "guildstone_deed",
+    "name": "Guildstone Deed",
+    "category": "Guilds",
+    "description": "Imported from ModernUO (GuildstoneDeed).",
+    "itemId": "0x14F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "guilds",
+      "flippable"
+    ]
+  }
+]

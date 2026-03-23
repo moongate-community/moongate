@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from scripts.generate_modernuo_static_templates import (
+    build_argument_parser,
     generate_from_audit_file,
     group_templates_by_category,
     map_audit_item_to_template,
@@ -50,6 +51,7 @@ class MapAuditItemToTemplateTests(unittest.TestCase):
         self.assertEqual("Bamboo Chair", template["name"])
         self.assertEqual("Construction", template["category"])
         self.assertEqual("0x0B5B", template["itemId"])
+        self.assertEqual("none", template["scriptId"])
         self.assertIn("modernuo", template["tags"])
         self.assertIn("construction", template["tags"])
         self.assertIn("flippable", template["tags"])
@@ -194,6 +196,50 @@ class GenerateFromAuditFileTests(unittest.TestCase):
 
             construction = json.loads(construction_file.read_text(encoding="utf-8"))
             self.assertEqual(["bamboo_chair"], [item["id"] for item in construction])
+            self.assertEqual("none", construction[0]["scriptId"])
+
+    def test_default_output_root_is_root_items_directory(self) -> None:
+        parser = build_argument_parser()
+
+        args = parser.parse_args(["/tmp/audit.json"])
+
+        self.assertEqual("moongate_data/templates/items", args.output_root)
+
+    def test_normalizes_family_ids_with_spaces_to_root_category_file_names(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            temp_path = Path(tmp_dir)
+            audit_file = temp_path / "audit.json"
+            output_root = temp_path / "items"
+            audit_file.write_text(
+                json.dumps(
+                    {
+                        "families": [
+                            {
+                                "id": "body parts",
+                                "sourcePath": "Body Parts",
+                                "items": [
+                                    {
+                                        "className": "Head",
+                                        "defaultName": "Head",
+                                        "itemIds": ["0x1DA0"],
+                                        "flipIds": [],
+                                        "weight": 1,
+                                        "movable": True,
+                                        "staticDecorativeCandidate": True,
+                                    }
+                                ],
+                            }
+                        ]
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            generate_from_audit_file(audit_file, output_root)
+
+            self.assertTrue((output_root / "body_parts.json").exists())
+            self.assertFalse((output_root / "body parts.json").exists())
 
 
 if __name__ == "__main__":

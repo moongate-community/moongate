@@ -1,0 +1,2644 @@
+[
+  {
+    "type": "item",
+    "id": "bascinet",
+    "name": "Bascinet",
+    "category": "Armor",
+    "description": "Imported from ModernUO (Bascinet).",
+    "itemId": "0x140C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "bone_arms",
+    "name": "Bone Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (BoneArms).",
+    "itemId": "0x144E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "bone_chest",
+    "name": "Bone Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (BoneChest).",
+    "itemId": "0x144F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "bone_gloves",
+    "name": "Bone Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (BoneGloves).",
+    "itemId": "0x1450",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "bone_helm",
+    "name": "Bone Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (BoneHelm).",
+    "itemId": "0x1451",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "bone_legs",
+    "name": "Bone Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (BoneLegs).",
+    "itemId": "0x1452",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "chain_chest",
+    "name": "Chain Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (ChainChest).",
+    "itemId": "0x13BF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "chain_coif",
+    "name": "Chain Coif",
+    "category": "Armor",
+    "description": "Imported from ModernUO (ChainCoif).",
+    "itemId": "0x13BB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "chain_hatsuburi",
+    "name": "Chain Hatsuburi",
+    "category": "Armor",
+    "description": "Imported from ModernUO (ChainHatsuburi).",
+    "itemId": "0x2774",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "chain_legs",
+    "name": "Chain Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (ChainLegs).",
+    "itemId": "0x13BE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "circlet",
+    "name": "Circlet",
+    "category": "Armor",
+    "description": "Imported from ModernUO (Circlet).",
+    "itemId": "0x2B6E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "close_helm",
+    "name": "Close Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (CloseHelm).",
+    "itemId": "0x1408",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "daemon_arms",
+    "name": "Daemon Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DaemonArms).",
+    "itemId": "0x144E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "daemon_chest",
+    "name": "Daemon Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DaemonChest).",
+    "itemId": "0x144F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "daemon_gloves",
+    "name": "Daemon Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DaemonGloves).",
+    "itemId": "0x1450",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "daemon_helm",
+    "name": "Daemon Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DaemonHelm).",
+    "itemId": "0x1451",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "daemon_legs",
+    "name": "Daemon Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DaemonLegs).",
+    "itemId": "0x1452",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 255
+  },
+  {
+    "type": "item",
+    "id": "decorative_plate_kabuto",
+    "name": "Decorative Plate Kabuto",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DecorativePlateKabuto).",
+    "itemId": "0x2778",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "dragon_arms",
+    "name": "Dragon Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DragonArms).",
+    "itemId": "0x2657",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "dragon_chest",
+    "name": "Dragon Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DragonChest).",
+    "itemId": "0x2641",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "dragon_gloves",
+    "name": "Dragon Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DragonGloves).",
+    "itemId": "0x2643",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "dragon_helm",
+    "name": "Dragon Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DragonHelm).",
+    "itemId": "0x2645",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "dragon_legs",
+    "name": "Dragon Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (DragonLegs).",
+    "itemId": "0x2647",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "elven_glasses",
+    "name": "Elven Glasses",
+    "category": "Armor",
+    "description": "Imported from ModernUO (ElvenGlasses).",
+    "itemId": "0x2FB8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 48
+  },
+  {
+    "type": "item",
+    "id": "female_elven_plate_chest",
+    "name": "Female Elven Plate Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (FemaleElvenPlateChest).",
+    "itemId": "0x2B6D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "female_leaf_chest",
+    "name": "Female Leaf Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (FemaleLeafChest).",
+    "itemId": "0x2FCB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "female_leather_chest",
+    "name": "Female Leather Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (FemaleLeatherChest).",
+    "itemId": "0x1C06",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "female_plate_chest",
+    "name": "Female Plate Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (FemalePlateChest).",
+    "itemId": "0x1C04",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "female_studded_chest",
+    "name": "Female Studded Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (FemaleStuddedChest).",
+    "itemId": "0x1C02",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_arms_type1",
+    "name": "Gargish Cloth Arms Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothArmsType1).",
+    "itemId": "0x0404",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_arms_type2",
+    "name": "Gargish Cloth Arms Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothArmsType2).",
+    "itemId": "0x0403",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_chest_type1",
+    "name": "Gargish Cloth Chest Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothChestType1).",
+    "itemId": "0x0406",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_chest_type2",
+    "name": "Gargish Cloth Chest Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothChestType2).",
+    "itemId": "0x0405",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_kilt_type1",
+    "name": "Gargish Cloth Kilt Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothKiltType1).",
+    "itemId": "0x0408",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_kilt_type2",
+    "name": "Gargish Cloth Kilt Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothKiltType2).",
+    "itemId": "0x0407",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_legs_type1",
+    "name": "Gargish Cloth Legs Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothLegsType1).",
+    "itemId": "0x040A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_cloth_legs_type2",
+    "name": "Gargish Cloth Legs Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishClothLegsType2).",
+    "itemId": "0x0409",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_arms_type1",
+    "name": "Gargish Leather Arms Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherArmsType1).",
+    "itemId": "0x0301",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_arms_type2",
+    "name": "Gargish Leather Arms Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherArmsType2).",
+    "itemId": "0x0302",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_chest_type1",
+    "name": "Gargish Leather Chest Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherChestType1).",
+    "itemId": "0x0304",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_chest_type2",
+    "name": "Gargish Leather Chest Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherChestType2).",
+    "itemId": "0x0303",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_kilt_type1",
+    "name": "Gargish Leather Kilt Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherKiltType1).",
+    "itemId": "0x0311",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_kilt_type2",
+    "name": "Gargish Leather Kilt Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherKiltType2).",
+    "itemId": "0x0310",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_legs_type1",
+    "name": "Gargish Leather Legs Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherLegsType1).",
+    "itemId": "0x0305",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_legs_type2",
+    "name": "Gargish Leather Legs Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherLegsType2).",
+    "itemId": "0x0306",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_leather_wing_armor",
+    "name": "Gargish Leather Wing Armor",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishLeatherWingArmor).",
+    "itemId": "0x457E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_arms_type1",
+    "name": "Gargish Stone Arms Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneArmsType1).",
+    "itemId": "0x0284",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_arms_type2",
+    "name": "Gargish Stone Arms Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneArmsType2).",
+    "itemId": "0x0283",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_chest_type1",
+    "name": "Gargish Stone Chest Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneChestType1).",
+    "itemId": "0x0286",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_chest_type2",
+    "name": "Gargish Stone Chest Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneChestType2).",
+    "itemId": "0x0285",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_kilt_type1",
+    "name": "Gargish Stone Kilt Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneKiltType1).",
+    "itemId": "0x0288",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_kilt_type2",
+    "name": "Gargish Stone Kilt Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneKiltType2).",
+    "itemId": "0x0287",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_legs_type1",
+    "name": "Gargish Stone Legs Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneLegsType1).",
+    "itemId": "0x028A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_stone_legs_type2",
+    "name": "Gargish Stone Legs Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStoneLegsType2).",
+    "itemId": "0x0289",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_arms_type1",
+    "name": "Gargish Studded Arms Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedArmsType1).",
+    "itemId": "0x0284",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_arms_type2",
+    "name": "Gargish Studded Arms Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedArmsType2).",
+    "itemId": "0x0283",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_chest_type1",
+    "name": "Gargish Studded Chest Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedChestType1).",
+    "itemId": "0x0286",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_chest_type2",
+    "name": "Gargish Studded Chest Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedChestType2).",
+    "itemId": "0x0285",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_kilt_type1",
+    "name": "Gargish Studded Kilt Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedKiltType1).",
+    "itemId": "0x0288",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_kilt_type2",
+    "name": "Gargish Studded Kilt Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedKiltType2).",
+    "itemId": "0x0287",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_legs_type1",
+    "name": "Gargish Studded Legs Type1",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedLegsType1).",
+    "itemId": "0x028A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gargish_studded_legs_type2",
+    "name": "Gargish Studded Legs Type2",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GargishStuddedLegsType2).",
+    "itemId": "0x0289",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "gemmed_circlet",
+    "name": "Gemmed Circlet",
+    "category": "Armor",
+    "description": "Imported from ModernUO (GemmedCirclet).",
+    "itemId": "0x2B70",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 35
+  },
+  {
+    "type": "item",
+    "id": "heavy_plate_jingasa",
+    "name": "Heavy Plate Jingasa",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HeavyPlateJingasa).",
+    "itemId": "0x2777",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 70
+  },
+  {
+    "type": "item",
+    "id": "helmet",
+    "name": "Helmet",
+    "category": "Armor",
+    "description": "Imported from ModernUO (Helmet).",
+    "itemId": "0x140A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "hide_chest",
+    "name": "Hide Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HideChest).",
+    "itemId": "0x2B74",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "hide_female_chest",
+    "name": "Hide Female Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HideFemaleChest).",
+    "itemId": "0x2B79",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "hide_gloves",
+    "name": "Hide Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HideGloves).",
+    "itemId": "0x2B75",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "hide_gorget",
+    "name": "Hide Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HideGorget).",
+    "itemId": "0x2B76",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "hide_pants",
+    "name": "Hide Pants",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HidePants).",
+    "itemId": "0x2B78",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "hide_pauldrons",
+    "name": "Hide Pauldrons",
+    "category": "Armor",
+    "description": "Imported from ModernUO (HidePauldrons).",
+    "itemId": "0x2B77",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "leaf_arms",
+    "name": "Leaf Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeafArms).",
+    "itemId": "0x2FC8",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leaf_chest",
+    "name": "Leaf Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeafChest).",
+    "itemId": "0x2FC5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leaf_gloves",
+    "name": "Leaf Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeafGloves).",
+    "itemId": "0x2FC6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leaf_gorget",
+    "name": "Leaf Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeafGorget).",
+    "itemId": "0x2FC7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leaf_legs",
+    "name": "Leaf Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeafLegs).",
+    "itemId": "0x2FC9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leaf_tonlet",
+    "name": "Leaf Tonlet",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeafTonlet).",
+    "itemId": "0x2FCA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_arms",
+    "name": "Leather Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherArms).",
+    "itemId": "0x13CD",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_bustier_arms",
+    "name": "Leather Bustier Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherBustierArms).",
+    "itemId": "0x1C0A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_cap",
+    "name": "Leather Cap",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherCap).",
+    "itemId": "0x1DB9",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_chest",
+    "name": "Leather Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherChest).",
+    "itemId": "0x13CC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_do",
+    "name": "Leather Do",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherDo).",
+    "itemId": "0x27C6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "leather_gloves",
+    "name": "Leather Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherGloves).",
+    "itemId": "0x13C6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_gorget",
+    "name": "Leather Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherGorget).",
+    "itemId": "0x13C7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_haidate",
+    "name": "Leather Haidate",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherHaidate).",
+    "itemId": "0x278A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_hiro_sode",
+    "name": "Leather Hiro Sode",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherHiroSode).",
+    "itemId": "0x277E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "leather_jingasa",
+    "name": "Leather Jingasa",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherJingasa).",
+    "itemId": "0x2776",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "leather_legs",
+    "name": "Leather Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherLegs).",
+    "itemId": "0x13CB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_mempo",
+    "name": "Leather Mempo",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherMempo).",
+    "itemId": "0x277A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_ninja_hood",
+    "name": "Leather Ninja Hood",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherNinjaHood).",
+    "itemId": "0x278E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "leather_ninja_jacket",
+    "name": "Leather Ninja Jacket",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherNinjaJacket).",
+    "itemId": "0x2793",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "leather_ninja_mitts",
+    "name": "Leather Ninja Mitts",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherNinjaMitts).",
+    "itemId": "0x2792",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 25
+  },
+  {
+    "type": "item",
+    "id": "leather_ninja_pants",
+    "name": "Leather Ninja Pants",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherNinjaPants).",
+    "itemId": "0x2791",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "leather_shorts",
+    "name": "Leather Shorts",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherShorts).",
+    "itemId": "0x1C00",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_skirt",
+    "name": "Leather Skirt",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherSkirt).",
+    "itemId": "0x1C08",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "leather_suneate",
+    "name": "Leather Suneate",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LeatherSuneate).",
+    "itemId": "0x2786",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "light_plate_jingasa",
+    "name": "Light Plate Jingasa",
+    "category": "Armor",
+    "description": "Imported from ModernUO (LightPlateJingasa).",
+    "itemId": "0x2781",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "norse_helm",
+    "name": "Norse Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (NorseHelm).",
+    "itemId": "0x140E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "orc_helm",
+    "name": "Orc Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (OrcHelm).",
+    "itemId": "0x1F0B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "plate_arms",
+    "name": "Plate Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateArms).",
+    "itemId": "0x1410",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_battle_kabuto",
+    "name": "Plate Battle Kabuto",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateBattleKabuto).",
+    "itemId": "0x2785",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_chest",
+    "name": "Plate Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateChest).",
+    "itemId": "0x1415",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_do",
+    "name": "Plate Do",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateDo).",
+    "itemId": "0x277D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 10,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 70
+  },
+  {
+    "type": "item",
+    "id": "plate_gloves",
+    "name": "Plate Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateGloves).",
+    "itemId": "0x1414",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_gorget",
+    "name": "Plate Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateGorget).",
+    "itemId": "0x1413",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_haidate",
+    "name": "Plate Haidate",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateHaidate).",
+    "itemId": "0x278D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_hatsuburi",
+    "name": "Plate Hatsuburi",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateHatsuburi).",
+    "itemId": "0x2775",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "plate_helm",
+    "name": "Plate Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateHelm).",
+    "itemId": "0x1412",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_hiro_sode",
+    "name": "Plate Hiro Sode",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateHiroSode).",
+    "itemId": "0x2780",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 75
+  },
+  {
+    "type": "item",
+    "id": "plate_legs",
+    "name": "Plate Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateLegs).",
+    "itemId": "0x1411",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "plate_mempo",
+    "name": "Plate Mempo",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateMempo).",
+    "itemId": "0x2779",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 70
+  },
+  {
+    "type": "item",
+    "id": "plate_suneate",
+    "name": "Plate Suneate",
+    "category": "Armor",
+    "description": "Imported from ModernUO (PlateSuneate).",
+    "itemId": "0x2788",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "ranger_arms",
+    "name": "Ranger Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RangerArms).",
+    "itemId": "0x13DC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "ranger_chest",
+    "name": "Ranger Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RangerChest).",
+    "itemId": "0x13DB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "ranger_gloves",
+    "name": "Ranger Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RangerGloves).",
+    "itemId": "0x13D5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "ranger_gorget",
+    "name": "Ranger Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RangerGorget).",
+    "itemId": "0x13D6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "ranger_legs",
+    "name": "Ranger Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RangerLegs).",
+    "itemId": "0x13DA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "raven_helm",
+    "name": "Raven Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RavenHelm).",
+    "itemId": "0x2B71",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "ringmail_arms",
+    "name": "Ringmail Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RingmailArms).",
+    "itemId": "0x13EE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "ringmail_chest",
+    "name": "Ringmail Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RingmailChest).",
+    "itemId": "0x13EC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "ringmail_gloves",
+    "name": "Ringmail Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RingmailGloves).",
+    "itemId": "0x13EB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "ringmail_legs",
+    "name": "Ringmail Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RingmailLegs).",
+    "itemId": "0x13F0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 15,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "royal_circlet",
+    "name": "Royal Circlet",
+    "category": "Armor",
+    "description": "Imported from ModernUO (RoyalCirclet).",
+    "itemId": "0x2B6F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 35
+  },
+  {
+    "type": "item",
+    "id": "small_plate_jingasa",
+    "name": "Small Plate Jingasa",
+    "category": "Armor",
+    "description": "Imported from ModernUO (SmallPlateJingasa).",
+    "itemId": "0x2784",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "standard_plate_kabuto",
+    "name": "Standard Plate Kabuto",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StandardPlateKabuto).",
+    "itemId": "0x2789",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "studded_arms",
+    "name": "Studded Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedArms).",
+    "itemId": "0x13DC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_bustier_arms",
+    "name": "Studded Bustier Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedBustierArms).",
+    "itemId": "0x1C0C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_chest",
+    "name": "Studded Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedChest).",
+    "itemId": "0x13DB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_do",
+    "name": "Studded Do",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedDo).",
+    "itemId": "0x27C7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "studded_gloves",
+    "name": "Studded Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedGloves).",
+    "itemId": "0x13D5",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_gorget",
+    "name": "Studded Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedGorget).",
+    "itemId": "0x13D6",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_haidate",
+    "name": "Studded Haidate",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedHaidate).",
+    "itemId": "0x278B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_hiro_sode",
+    "name": "Studded Hiro Sode",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedHiroSode).",
+    "itemId": "0x277F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 55
+  },
+  {
+    "type": "item",
+    "id": "studded_legs",
+    "name": "Studded Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedLegs).",
+    "itemId": "0x13DA",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 45
+  },
+  {
+    "type": "item",
+    "id": "studded_mempo",
+    "name": "Studded Mempo",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedMempo).",
+    "itemId": "0x279D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 40
+  },
+  {
+    "type": "item",
+    "id": "studded_suneate",
+    "name": "Studded Suneate",
+    "category": "Armor",
+    "description": "Imported from ModernUO (StuddedSuneate).",
+    "itemId": "0x27D2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "vulture_helm",
+    "name": "Vulture Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (VultureHelm).",
+    "itemId": "0x2B72",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "winged_helm",
+    "name": "Winged Helm",
+    "category": "Armor",
+    "description": "Imported from ModernUO (WingedHelm).",
+    "itemId": "0x2B73",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 55
+  },
+  {
+    "type": "item",
+    "id": "woodland_arms",
+    "name": "Woodland Arms",
+    "category": "Armor",
+    "description": "Imported from ModernUO (WoodlandArms).",
+    "itemId": "0x2B6C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "woodland_chest",
+    "name": "Woodland Chest",
+    "category": "Armor",
+    "description": "Imported from ModernUO (WoodlandChest).",
+    "itemId": "0x2B67",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "woodland_gloves",
+    "name": "Woodland Gloves",
+    "category": "Armor",
+    "description": "Imported from ModernUO (WoodlandGloves).",
+    "itemId": "0x2B6A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "woodland_gorget",
+    "name": "Woodland Gorget",
+    "category": "Armor",
+    "description": "Imported from ModernUO (WoodlandGorget).",
+    "itemId": "0x2B69",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "woodland_legs",
+    "name": "Woodland Legs",
+    "category": "Armor",
+    "description": "Imported from ModernUO (WoodlandLegs).",
+    "itemId": "0x2B6B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "armor",
+      "flippable"
+    ],
+    "hitPoints": 65
+  }
+]

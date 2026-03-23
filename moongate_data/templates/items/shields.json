@@ -1,0 +1,183 @@
+[
+  {
+    "type": "item",
+    "id": "bronze_shield",
+    "name": "Bronze Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (BronzeShield).",
+    "itemId": "0x1B72",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 30
+  },
+  {
+    "type": "item",
+    "id": "buckler",
+    "name": "Buckler",
+    "category": "Shields",
+    "description": "Imported from ModernUO (Buckler).",
+    "itemId": "0x1B73",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 50
+  },
+  {
+    "type": "item",
+    "id": "chaos_shield",
+    "name": "Chaos Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (ChaosShield).",
+    "itemId": "0x1BC3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 4,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 125
+  },
+  {
+    "type": "item",
+    "id": "gargish_wooden_shield",
+    "name": "Gargish Wooden Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (GargishWoodenShield).",
+    "itemId": "0x4200",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields",
+      "flippable"
+    ],
+    "hitPoints": 25
+  },
+  {
+    "type": "item",
+    "id": "heater_shield",
+    "name": "Heater Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (HeaterShield).",
+    "itemId": "0x1B76",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 8,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "metal_kite_shield",
+    "name": "Metal Kite Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (MetalKiteShield).",
+    "itemId": "0x1B74",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 60
+  },
+  {
+    "type": "item",
+    "id": "metal_shield",
+    "name": "Metal Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (MetalShield).",
+    "itemId": "0x1B7B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 6,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "order_shield",
+    "name": "Order Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (OrderShield).",
+    "itemId": "0x1BC4",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 7,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 125
+  },
+  {
+    "type": "item",
+    "id": "wooden_kite_shield",
+    "name": "Wooden Kite Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (WoodenKiteShield).",
+    "itemId": "0x1B79",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 65
+  },
+  {
+    "type": "item",
+    "id": "wooden_shield",
+    "name": "Wooden Shield",
+    "category": "Shields",
+    "description": "Imported from ModernUO (WoodenShield).",
+    "itemId": "0x1B7A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "shields"
+    ],
+    "hitPoints": 25
+  }
+]

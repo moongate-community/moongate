@@ -1,0 +1,226 @@
+[
+  {
+    "type": "item",
+    "id": "artifact_large_vase",
+    "name": "Artifact Large Vase",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (ArtifactLargeVase).",
+    "itemId": "0x0B47",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "artifact_vase",
+    "name": "Artifact Vase",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (ArtifactVase).",
+    "itemId": "0x0B48",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "dirt_patch",
+    "name": "Dirt Patch",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (DirtPatch).",
+    "itemId": "0x0913",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "embroidered_oak_leaf_cloak",
+    "name": "Embroidered Oak Leaf Cloak",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (EmbroideredOakLeafCloak).",
+    "itemId": "0x2684",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ],
+    "hitPoints": 150
+  },
+  {
+    "type": "item",
+    "id": "evil_idol_skull",
+    "name": "Evil Idol Skull",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (EvilIdolSkull).",
+    "itemId": "0x1F18",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "lava_tile",
+    "name": "Lava Tile",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (LavaTile).",
+    "itemId": "0x12EE",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "skull_pole",
+    "name": "Skull Pole",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (SkullPole).",
+    "itemId": "0x2204",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 5,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "swamp_tile",
+    "name": "Swamp Tile",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (SwampTile).",
+    "itemId": "0x320D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "tattered_ancient_mummy_wrapping",
+    "name": "Tattered Ancient Mummy Wrapping",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (TatteredAncientMummyWrapping).",
+    "itemId": "0x0E21",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "the_most_knowledge_person",
+    "name": "The Most Knowledge Person",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (TheMostKnowledgePerson).",
+    "itemId": "0x2684",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ],
+    "hitPoints": 150
+  },
+  {
+    "type": "item",
+    "id": "the_robe_of_britannia_ari",
+    "name": "The Robe Of Britannia Ari",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (TheRobeOfBritanniaAri).",
+    "itemId": "0x2684",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ],
+    "hitPoints": 150
+  },
+  {
+    "type": "item",
+    "id": "water_tile",
+    "name": "Water Tile",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (WaterTile).",
+    "itemId": "0x346E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "wind_spirit",
+    "name": "Wind Spirit",
+    "category": "Champion Artifacts",
+    "description": "Imported from ModernUO (WindSpirit).",
+    "itemId": "0x1F1F",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "champion artifacts"
+    ]
+  }
+]

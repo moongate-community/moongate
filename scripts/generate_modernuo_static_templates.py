@@ -3,8 +3,14 @@
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+if __package__ is None or __package__ == "":
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from scripts.modernuo_item_template_tooling import ROOT_ITEMS_DIRECTORY, normalize_script_id
 
 DENYLIST_CATEGORIES = {
     "addons",
@@ -21,11 +27,15 @@ DENYLIST_CATEGORIES = {
 
 
 def to_snake_case(value: str) -> str:
-    return re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value).replace("-", "_").lower()
+    return re.sub(r"[\s-]+", "_", re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value)).lower()
+
+
+def normalize_category_id(value: str) -> str:
+    return to_snake_case(value)
 
 
 def should_include_item(category: str, item: Dict[str, object]) -> bool:
-    if category in DENYLIST_CATEGORIES:
+    if normalize_category_id(category) in DENYLIST_CATEGORIES:
         return False
 
     if item.get("staticDecorativeCandidate") is not True:
@@ -51,7 +61,7 @@ def map_audit_item_to_template(source_path: str, category_id: str, item: Dict[st
         "hue": "0",
         "goldValue": "0",
         "weight": item.get("weight") if item.get("weight") is not None else 0,
-        "scriptId": f"items.{template_id}",
+        "scriptId": normalize_script_id(f"items.{template_id}"),
         "isMovable": bool(item.get("movable", True)),
         "tags": tags,
     }
@@ -110,14 +120,15 @@ def generate_from_audit_file(audit_file: Path, output_root: Path, category_filte
     if not isinstance(families, list):
         raise ValueError(f"{audit_file} has invalid families payload")
 
+    normalized_category_filter = normalize_category_id(category_filter) if category_filter is not None else None
     category_templates: List[Tuple[str, Dict[str, object]]] = []
     for family in families:
         if not isinstance(family, dict):
             continue
 
-        category_id = str(family.get("id", ""))
+        category_id = normalize_category_id(str(family.get("id", "")))
         source_path = str(family.get("sourcePath", category_id))
-        if category_filter is not None and category_id != category_filter:
+        if normalized_category_filter is not None and category_id != normalized_category_filter:
             continue
 
         items = family.get("items", [])
@@ -153,7 +164,7 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("audit_json")
     parser.add_argument(
         "--output-root",
-        default="moongate_data/templates/items/modernuo",
+        default=str(ROOT_ITEMS_DIRECTORY),
     )
     parser.add_argument("--category")
     return parser
