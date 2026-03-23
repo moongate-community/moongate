@@ -123,11 +123,6 @@ public class CharactersStartingLocationsPacket : BaseGameNetworkPacket
 
         flags |= CharacterListFlags.SixthCharacterSlot | CharacterListFlags.SeventhCharacterSlot;
 
-        if (IsEnhancedClient)
-        {
-            flags |= CharacterListFlags.KR | CharacterListFlags.UO3DClientType;
-        }
-
         writer.Write((int)flags);
         writer.Write((short)-1);
     }
