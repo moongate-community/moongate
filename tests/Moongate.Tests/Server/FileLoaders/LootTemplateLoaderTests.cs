@@ -10,64 +10,31 @@ namespace Moongate.Tests.Server.FileLoaders;
 public sealed class LootTemplateLoaderTests
 {
     [Test]
-    public async Task LoadAsync_WhenTemplateDefinesRollsAndItemTag_ShouldLoadThoseFields()
+    public async Task LoadAsync_WhenRepositoryContainsGeneratedLootFiles_ShouldLoadGeneratedModes()
     {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(
-            tempDirectory.Path,
-            DirectoryType.Data,
-            DirectoryType.Templates,
-            DirectoryType.Scripts,
-            DirectoryType.Save,
-            DirectoryType.Logs,
-            DirectoryType.Cache
-        );
-
-        var lootDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "loot");
-        Directory.CreateDirectory(lootDirectory);
-
-        var filePath = Path.Combine(lootDirectory, "undead.json");
-        await File.WriteAllTextAsync(
-            filePath,
-            """
-            [
-              {
-                "type": "loot",
-                "id": "undead.low",
-                "name": "Undead Low",
-                "category": "loot",
-                "description": "Undead corpse loot",
-                "rolls": 2,
-                "noDropWeight": 5,
-                "entries": [
-                  {
-                    "weight": 10,
-                    "itemTag": "weapon.rusty",
-                    "amount": 1
-                  }
-                ]
-              }
-            ]
-            """
-        );
-
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
         var lootTemplateService = new LootTemplateService();
         var loader = new LootTemplateLoader(directoriesConfig, lootTemplateService);
 
         await loader.LoadAsync();
 
-        Assert.That(lootTemplateService.TryGet("undead.low", out var template), Is.True);
-        Assert.That(template, Is.Not.Null);
-
         Assert.Multiple(
             () =>
             {
-                Assert.That(template!.Rolls, Is.EqualTo(2));
-                Assert.That(template.NoDropWeight, Is.EqualTo(5));
-                Assert.That(template.Entries, Has.Count.EqualTo(1));
-                Assert.That(template.Entries[0].ItemTag, Is.EqualTo("weapon.rusty"));
-                Assert.That(template.Entries[0].ItemTemplateId, Is.Null);
-                Assert.That(template.Entries[0].ItemId, Is.Null);
+                Assert.That(lootTemplateService.TryGet("creature.agapite_elemental", out var creatureLoot), Is.True);
+                Assert.That(creatureLoot, Is.Not.Null);
+                Assert.That(creatureLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+
+                Assert.That(lootTemplateService.TryGet("fillable.alchemist", out var fillableLoot), Is.True);
+                Assert.That(fillableLoot, Is.Not.Null);
+                Assert.That(fillableLoot!.Mode, Is.EqualTo(LootTemplateMode.Weighted));
+                Assert.That(fillableLoot.Rolls, Is.GreaterThan(0));
+
+                Assert.That(lootTemplateService.TryGet("treasure_map.level_1.gold", out var treasureLoot), Is.True);
+                Assert.That(treasureLoot, Is.Not.Null);
+                Assert.That(treasureLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
             }
         );
     }
@@ -138,31 +105,64 @@ public sealed class LootTemplateLoaderTests
     }
 
     [Test]
-    public async Task LoadAsync_WhenRepositoryContainsGeneratedLootFiles_ShouldLoadGeneratedModes()
+    public async Task LoadAsync_WhenTemplateDefinesRollsAndItemTag_ShouldLoadThoseFields()
     {
-        var repositoryRoot = ResolveRepositoryRoot();
-        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
-        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var lootDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "loot");
+        Directory.CreateDirectory(lootDirectory);
+
+        var filePath = Path.Combine(lootDirectory, "undead.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "loot",
+                "id": "undead.low",
+                "name": "Undead Low",
+                "category": "loot",
+                "description": "Undead corpse loot",
+                "rolls": 2,
+                "noDropWeight": 5,
+                "entries": [
+                  {
+                    "weight": 10,
+                    "itemTag": "weapon.rusty",
+                    "amount": 1
+                  }
+                ]
+              }
+            ]
+            """
+        );
+
         var lootTemplateService = new LootTemplateService();
         var loader = new LootTemplateLoader(directoriesConfig, lootTemplateService);
 
         await loader.LoadAsync();
 
+        Assert.That(lootTemplateService.TryGet("undead.low", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
         Assert.Multiple(
             () =>
             {
-                Assert.That(lootTemplateService.TryGet("creature.agapite_elemental", out var creatureLoot), Is.True);
-                Assert.That(creatureLoot, Is.Not.Null);
-                Assert.That(creatureLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
-
-                Assert.That(lootTemplateService.TryGet("fillable.alchemist", out var fillableLoot), Is.True);
-                Assert.That(fillableLoot, Is.Not.Null);
-                Assert.That(fillableLoot!.Mode, Is.EqualTo(LootTemplateMode.Weighted));
-                Assert.That(fillableLoot.Rolls, Is.GreaterThan(0));
-
-                Assert.That(lootTemplateService.TryGet("treasure_map.level_1.gold", out var treasureLoot), Is.True);
-                Assert.That(treasureLoot, Is.Not.Null);
-                Assert.That(treasureLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(template!.Rolls, Is.EqualTo(2));
+                Assert.That(template.NoDropWeight, Is.EqualTo(5));
+                Assert.That(template.Entries, Has.Count.EqualTo(1));
+                Assert.That(template.Entries[0].ItemTag, Is.EqualTo("weapon.rusty"));
+                Assert.That(template.Entries[0].ItemTemplateId, Is.Null);
+                Assert.That(template.Entries[0].ItemId, Is.Null);
             }
         );
     }

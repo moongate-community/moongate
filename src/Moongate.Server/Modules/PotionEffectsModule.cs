@@ -35,6 +35,14 @@ public sealed class PotionEffectsModule
         _backgroundJobService = backgroundJobService;
     }
 
+    [ScriptFunction("apply_temporary_dexterity", "Applies a temporary dexterity bonus and removes it later.")]
+    public bool ApplyTemporaryDexterity(uint mobileSerial, int bonus, int durationMs)
+        => ApplyTemporaryModifier((Serial)mobileSerial, new() { DexterityBonus = bonus }, durationMs);
+
+    [ScriptFunction("apply_temporary_strength", "Applies a temporary strength bonus and removes it later.")]
+    public bool ApplyTemporaryStrength(uint mobileSerial, int bonus, int durationMs)
+        => ApplyTemporaryModifier((Serial)mobileSerial, new() { StrengthBonus = bonus }, durationMs);
+
     [ScriptFunction("restore_hits", "Restores hit points to the target mobile.")]
     public bool RestoreHits(uint mobileSerial, int amount)
     {
@@ -64,14 +72,6 @@ public sealed class PotionEffectsModule
 
         return true;
     }
-
-    [ScriptFunction("apply_temporary_strength", "Applies a temporary strength bonus and removes it later.")]
-    public bool ApplyTemporaryStrength(uint mobileSerial, int bonus, int durationMs)
-        => ApplyTemporaryModifier((Serial)mobileSerial, new() { StrengthBonus = bonus }, durationMs);
-
-    [ScriptFunction("apply_temporary_dexterity", "Applies a temporary dexterity bonus and removes it later.")]
-    public bool ApplyTemporaryDexterity(uint mobileSerial, int bonus, int durationMs)
-        => ApplyTemporaryModifier((Serial)mobileSerial, new() { DexterityBonus = bonus }, durationMs);
 
     private bool ApplyTemporaryModifier(Serial mobileSerial, MobileModifierDelta delta, int durationMs)
     {
@@ -142,7 +142,7 @@ public sealed class PotionEffectsModule
         }
 
         if (_spatialWorldService is not null &&
-            MobileScriptResolver.TryResolveMobile(_spatialWorldService, (uint)mobileId.Value, out mobile))
+            MobileScriptResolver.TryResolveMobile(_spatialWorldService, mobileId.Value, out mobile))
         {
             return true;
         }

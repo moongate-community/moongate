@@ -14,14 +14,14 @@ public sealed class SkillGainService : ISkillGainService
     private readonly IStatGainService _statGainService;
 
     public SkillGainService(ISkillAntiMacroService skillAntiMacroService, IStatGainService statGainService)
-        : this(static () => Random.Shared.NextDouble(), skillAntiMacroService, statGainService)
-    {
-    }
+        : this(static () => Random.Shared.NextDouble(), skillAntiMacroService, statGainService) { }
 
     internal SkillGainService(Func<double> nextDouble)
-        : this(nextDouble, new SkillAntiMacroService(static () => DateTime.UtcNow), new StatGainService(static () => 1.0, static () => 0.0))
-    {
-    }
+        : this(
+            nextDouble,
+            new SkillAntiMacroService(static () => DateTime.UtcNow),
+            new StatGainService(static () => 1.0, static () => 0.0)
+        ) { }
 
     internal SkillGainService(
         Func<double> nextDouble,
@@ -72,7 +72,7 @@ public sealed class SkillGainService : ISkillGainService
         var difficultyFactor = 1.0 - normalizedSuccessChance;
         var successModifier = wasSuccessful ? 0.25 : 0.10;
         var gainFactor = skill.Skill?.GainFactor ?? ResolveGainFactor(skillName);
-        var gainChance = Math.Clamp(((capRoomFactor + difficultyFactor + successModifier) / 3.0) * gainFactor, 0.01, 0.95);
+        var gainChance = Math.Clamp((capRoomFactor + difficultyFactor + successModifier) / 3.0 * gainFactor, 0.01, 0.95);
 
         if (_nextDouble() > gainChance)
         {
@@ -96,6 +96,19 @@ public sealed class SkillGainService : ISkillGainService
         _ = _statGainService.TryApply(mobile, skillName);
 
         return new(skillName, true, loweredSkillName);
+    }
+
+    private static double ResolveGainFactor(UOSkillName skillName)
+    {
+        foreach (var skillInfo in SkillInfo.Table)
+        {
+            if (skillInfo.SkillID == (int)skillName)
+            {
+                return skillInfo.GainFactor;
+            }
+        }
+
+        return 1.0;
     }
 
     private static UOSkillName? TryLowerDownLockedSkill(UOMobileEntity mobile, UOSkillName excludedSkill, int amount)
@@ -122,18 +135,5 @@ public sealed class SkillGainService : ISkillGainService
         }
 
         return null;
-    }
-
-    private static double ResolveGainFactor(UOSkillName skillName)
-    {
-        foreach (var skillInfo in SkillInfo.Table)
-        {
-            if (skillInfo.SkillID == (int)skillName)
-            {
-                return skillInfo.GainFactor;
-            }
-        }
-
-        return 1.0;
     }
 }

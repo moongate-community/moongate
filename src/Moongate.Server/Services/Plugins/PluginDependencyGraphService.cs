@@ -8,6 +8,12 @@ namespace Moongate.Server.Services.Plugins;
 /// </summary>
 public sealed class PluginDependencyGraphService : IPluginDependencyGraphService
 {
+    private enum VisitState
+    {
+        Visiting,
+        Visited
+    }
+
     public IReadOnlyList<DiscoveredPlugin> ResolveDependencyOrder(IReadOnlyList<DiscoveredPlugin> plugins)
     {
         ArgumentNullException.ThrowIfNull(plugins);
@@ -33,57 +39,6 @@ public sealed class PluginDependencyGraphService : IPluginDependencyGraphService
         }
 
         return ordered;
-    }
-
-    private static void Visit(
-        DiscoveredPlugin plugin,
-        IReadOnlyDictionary<string, DiscoveredPlugin> pluginsById,
-        IDictionary<string, VisitState> states,
-        ICollection<DiscoveredPlugin> ordered
-    )
-    {
-        var pluginId = plugin.Manifest.Id!;
-
-        if (states.TryGetValue(pluginId, out var state))
-        {
-            if (state == VisitState.Visiting)
-            {
-                throw new InvalidOperationException($"Plugin dependency cycle detected at '{pluginId}'.");
-            }
-
-            if (state == VisitState.Visited)
-            {
-                return;
-            }
-        }
-
-        states[pluginId] = VisitState.Visiting;
-
-        foreach (var dependency in plugin.Manifest.Dependencies.OrderBy(static dependency => dependency.Id, StringComparer.Ordinal))
-        {
-            if (string.IsNullOrWhiteSpace(dependency.Id))
-            {
-                throw new InvalidOperationException($"Plugin '{pluginId}' declares a dependency without an id.");
-            }
-
-            if (!pluginsById.TryGetValue(dependency.Id, out var dependencyPlugin))
-            {
-                if (dependency.Optional)
-                {
-                    continue;
-                }
-
-                throw new InvalidOperationException(
-                    $"Plugin '{pluginId}' requires missing dependency '{dependency.Id}'."
-                );
-            }
-
-            ValidateVersionRange(pluginId, dependency.Id, dependency.VersionRange, dependencyPlugin.Manifest.Version);
-            Visit(dependencyPlugin, pluginsById, states, ordered);
-        }
-
-        states[pluginId] = VisitState.Visited;
-        ordered.Add(plugin);
     }
 
     private static void ValidateVersionRange(
@@ -135,9 +90,55 @@ public sealed class PluginDependencyGraphService : IPluginDependencyGraphService
         }
     }
 
-    private enum VisitState
+    private static void Visit(
+        DiscoveredPlugin plugin,
+        IReadOnlyDictionary<string, DiscoveredPlugin> pluginsById,
+        IDictionary<string, VisitState> states,
+        ICollection<DiscoveredPlugin> ordered
+    )
     {
-        Visiting,
-        Visited
+        var pluginId = plugin.Manifest.Id!;
+
+        if (states.TryGetValue(pluginId, out var state))
+        {
+            if (state == VisitState.Visiting)
+            {
+                throw new InvalidOperationException($"Plugin dependency cycle detected at '{pluginId}'.");
+            }
+
+            if (state == VisitState.Visited)
+            {
+                return;
+            }
+        }
+
+        states[pluginId] = VisitState.Visiting;
+
+        foreach (var dependency in plugin.Manifest.Dependencies.OrderBy(
+                     static dependency => dependency.Id,
+                     StringComparer.Ordinal
+                 ))
+        {
+            if (string.IsNullOrWhiteSpace(dependency.Id))
+            {
+                throw new InvalidOperationException($"Plugin '{pluginId}' declares a dependency without an id.");
+            }
+
+            if (!pluginsById.TryGetValue(dependency.Id, out var dependencyPlugin))
+            {
+                if (dependency.Optional)
+                {
+                    continue;
+                }
+
+                throw new InvalidOperationException($"Plugin '{pluginId}' requires missing dependency '{dependency.Id}'.");
+            }
+
+            ValidateVersionRange(pluginId, dependency.Id, dependency.VersionRange, dependencyPlugin.Manifest.Version);
+            Visit(dependencyPlugin, pluginsById, states, ordered);
+        }
+
+        states[pluginId] = VisitState.Visited;
+        ordered.Add(plugin);
     }
 }

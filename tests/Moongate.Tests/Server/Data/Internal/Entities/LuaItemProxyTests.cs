@@ -240,6 +240,26 @@ public sealed class LuaItemProxyTests
     }
 
     [Test]
+    public void AddAmount_WhenDeltaMakesAmountSmaller_ShouldPersist()
+    {
+        var item = CreateItem();
+        item.Amount = 2;
+        var itemService = new LuaItemProxyTestItemService();
+        var proxy = new LuaItemProxy(item, itemService);
+
+        var result = proxy.AddAmount(-1);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(item.Amount, Is.EqualTo(1));
+                Assert.That(itemService.UpsertCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public void CoreMutations_ShouldPersist()
     {
         var item = CreateItem();
@@ -265,26 +285,6 @@ public sealed class LuaItemProxyTests
                 Assert.That(item.Hue, Is.EqualTo(1234));
                 Assert.That(item.ScriptId, Is.EqualTo("items.renamed"));
                 Assert.That(itemService.UpsertCalls, Is.EqualTo(5));
-            }
-        );
-    }
-
-    [Test]
-    public void AddAmount_WhenDeltaMakesAmountSmaller_ShouldPersist()
-    {
-        var item = CreateItem();
-        item.Amount = 2;
-        var itemService = new LuaItemProxyTestItemService();
-        var proxy = new LuaItemProxy(item, itemService);
-
-        var result = proxy.AddAmount(-1);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result, Is.True);
-                Assert.That(item.Amount, Is.EqualTo(1));
-                Assert.That(itemService.UpsertCalls, Is.EqualTo(1));
             }
         );
     }

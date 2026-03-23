@@ -36,7 +36,9 @@ public sealed class CombatStartedSoundHandler : IGameEventListener<CombatStarted
         );
     }
 
-    public Task StartAsync() => Task.CompletedTask;
+    public Task StartAsync()
+        => Task.CompletedTask;
 
-    public Task StopAsync() => Task.CompletedTask;
+    public Task StopAsync()
+        => Task.CompletedTask;
 }

@@ -28,6 +28,7 @@ public sealed class HelpTicketServiceTests
         {
             _ = cancellationToken;
             Events.Add(gameEvent!);
+
             return ValueTask.CompletedTask;
         }
 
@@ -67,211 +68,6 @@ public sealed class HelpTicketServiceTests
     }
 
     [Test]
-    public async Task CreateTicketAsync_WhenSessionIsValid_ShouldPersistTicketAndPublishOpenedEvent()
-    {
-        using var tempDirectory = new TempDirectory();
-        using var persistence = new TestPersistenceService(tempDirectory.Path);
-        await persistence.UnitOfWork.InitializeAsync();
-
-        var sessionService = new FakeGameNetworkSessionService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            AccountId = (Serial)0x00000010u,
-            CharacterId = (Serial)0x00000042u,
-            Character = new UOMobileEntity
-            {
-                Id = (Serial)0x00000042u,
-                AccountId = (Serial)0x00000010u,
-                MapId = 0,
-                Location = new Point3D(1443, 1692, 0)
-            }
-        };
-        sessionService.Add(session);
-
-        var eventBus = new RecordingEventBus();
-        var service = new HelpTicketService(sessionService, persistence, eventBus);
-
-        var ticket = await service.CreateTicketAsync(
-            session.SessionId,
-            HelpTicketCategory.Question,
-            "  I am stuck behind the innkeeper counter.  "
-        );
-        var persisted = ticket is null ? null : await persistence.UnitOfWork.HelpTickets.GetByIdAsync(ticket.Id);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(ticket, Is.Not.Null);
-                Assert.That(ticket!.Status, Is.EqualTo(HelpTicketStatus.Open));
-                Assert.That(ticket.Message, Is.EqualTo("I am stuck behind the innkeeper counter."));
-                Assert.That(ticket.SenderAccountId, Is.EqualTo((Serial)0x00000010u));
-                Assert.That(ticket.SenderCharacterId, Is.EqualTo((Serial)0x00000042u));
-                Assert.That(ticket.Location, Is.EqualTo(new Point3D(1443, 1692, 0)));
-                Assert.That(persisted, Is.Not.Null);
-                Assert.That(eventBus.Events.OfType<TicketOpenedEvent>().Any(e => e.TicketId == ticket.Id), Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public async Task GetTicketsForAdminAsync_WhenFiltersAreApplied_ShouldReturnPagedMatchesOrderedByNewestFirst()
-    {
-        using var tempDirectory = new TempDirectory();
-        using var persistence = new TestPersistenceService(tempDirectory.Path);
-        await persistence.UnitOfWork.InitializeAsync();
-
-        var sessionService = new FakeGameNetworkSessionService();
-        var eventBus = new RecordingEventBus();
-        var service = new HelpTicketService(sessionService, persistence, eventBus);
-
-        var oldest = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 1),
-            (Serial)7,
-            HelpTicketCategory.Question,
-            HelpTicketStatus.Open,
-            new DateTime(2026, 3, 19, 10, 0, 0, DateTimeKind.Utc)
-        );
-        var filteredNewest = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 2),
-            (Serial)7,
-            HelpTicketCategory.Question,
-            HelpTicketStatus.Open,
-            new DateTime(2026, 3, 19, 12, 0, 0, DateTimeKind.Utc)
-        );
-        filteredNewest.AssignedToAccountId = (Serial)0x00000011u;
-        filteredNewest.AssignedAtUtc = filteredNewest.CreatedAtUtc;
-        var otherCategory = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 3),
-            (Serial)7,
-            HelpTicketCategory.Bug,
-            HelpTicketStatus.Open,
-            new DateTime(2026, 3, 19, 11, 0, 0, DateTimeKind.Utc)
-        );
-        var otherStatus = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 4),
-            (Serial)7,
-            HelpTicketCategory.Question,
-            HelpTicketStatus.Closed,
-            new DateTime(2026, 3, 19, 13, 0, 0, DateTimeKind.Utc)
-        );
-
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(oldest);
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(filteredNewest);
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(otherCategory);
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(otherStatus);
-
-        var (items, totalCount) = await service.GetTicketsForAdminAsync(
-            page: 1,
-            pageSize: 10,
-            status: HelpTicketStatus.Open,
-            category: HelpTicketCategory.Question,
-            assignedToAccountId: null
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(totalCount, Is.EqualTo(2));
-                Assert.That(items.Select(ticket => ticket.Id).ToArray(), Is.EqualTo(new[] { filteredNewest.Id, oldest.Id }));
-            }
-        );
-    }
-
-    [Test]
-    public async Task GetTicketsForAdminAsync_WhenAssignedToFilterIsApplied_ShouldReturnOnlyMatchingTickets()
-    {
-        using var tempDirectory = new TempDirectory();
-        using var persistence = new TestPersistenceService(tempDirectory.Path);
-        await persistence.UnitOfWork.InitializeAsync();
-
-        var sessionService = new FakeGameNetworkSessionService();
-        var eventBus = new RecordingEventBus();
-        var service = new HelpTicketService(sessionService, persistence, eventBus);
-
-        var mine = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 11),
-            (Serial)7,
-            HelpTicketCategory.Question,
-            HelpTicketStatus.Assigned,
-            new DateTime(2026, 3, 19, 12, 0, 0, DateTimeKind.Utc)
-        );
-        mine.AssignedToAccountId = (Serial)0x00000077u;
-        mine.AssignedAtUtc = mine.CreatedAtUtc;
-
-        var someoneElse = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 12),
-            (Serial)7,
-            HelpTicketCategory.Question,
-            HelpTicketStatus.Assigned,
-            new DateTime(2026, 3, 19, 12, 30, 0, DateTimeKind.Utc)
-        );
-        someoneElse.AssignedToAccountId = (Serial)0x00000078u;
-        someoneElse.AssignedAtUtc = someoneElse.CreatedAtUtc;
-
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(mine);
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(someoneElse);
-
-        var (items, totalCount) = await service.GetTicketsForAdminAsync(
-            page: 1,
-            pageSize: 10,
-            status: null,
-            category: null,
-            assignedToAccountId: (Serial)0x00000077u
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(totalCount, Is.EqualTo(1));
-                Assert.That(items.Select(ticket => ticket.Id).ToArray(), Is.EqualTo(new[] { mine.Id }));
-            }
-        );
-    }
-
-    [Test]
-    public async Task GetTicketByIdAsync_WhenTicketExists_ShouldReturnTicket()
-    {
-        using var tempDirectory = new TempDirectory();
-        using var persistence = new TestPersistenceService(tempDirectory.Path);
-        await persistence.UnitOfWork.InitializeAsync();
-
-        var sessionService = new FakeGameNetworkSessionService();
-        var eventBus = new RecordingEventBus();
-        var service = new HelpTicketService(sessionService, persistence, eventBus);
-
-        var expected = CreateExistingTicket(
-            (Serial)(Serial.ItemOffset + 21),
-            (Serial)7,
-            HelpTicketCategory.Bug,
-            HelpTicketStatus.Open,
-            new DateTime(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
-        );
-
-        await persistence.UnitOfWork.HelpTickets.UpsertAsync(expected);
-
-        var loaded = await service.GetTicketByIdAsync(expected.Id);
-
-        Assert.That(loaded?.Id, Is.EqualTo(expected.Id));
-    }
-
-    [Test]
-    public async Task GetTicketByIdAsync_WhenTicketDoesNotExist_ShouldReturnNull()
-    {
-        using var tempDirectory = new TempDirectory();
-        using var persistence = new TestPersistenceService(tempDirectory.Path);
-        await persistence.UnitOfWork.InitializeAsync();
-
-        var sessionService = new FakeGameNetworkSessionService();
-        var eventBus = new RecordingEventBus();
-        var service = new HelpTicketService(sessionService, persistence, eventBus);
-
-        var loaded = await service.GetTicketByIdAsync((Serial)(Serial.ItemOffset + 404));
-
-        Assert.That(loaded, Is.Null);
-    }
-
-    [Test]
     public async Task AssignToAccountAsync_WhenTicketExists_ShouldSetAssignmentFieldsAndAssignedStatus()
     {
         using var tempDirectory = new TempDirectory();
@@ -287,7 +83,7 @@ public sealed class HelpTicketServiceTests
             (Serial)7,
             HelpTicketCategory.Question,
             HelpTicketStatus.Open,
-            new DateTime(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
+            new(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
         );
 
         await persistence.UnitOfWork.HelpTickets.UpsertAsync(ticket);
@@ -308,6 +104,211 @@ public sealed class HelpTicketServiceTests
     }
 
     [Test]
+    public async Task CreateTicketAsync_WhenSessionIsValid_ShouldPersistTicketAndPublishOpenedEvent()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var persistence = new TestPersistenceService(tempDirectory.Path);
+        await persistence.UnitOfWork.InitializeAsync();
+
+        var sessionService = new FakeGameNetworkSessionService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            AccountId = (Serial)0x00000010u,
+            CharacterId = (Serial)0x00000042u,
+            Character = new()
+            {
+                Id = (Serial)0x00000042u,
+                AccountId = (Serial)0x00000010u,
+                MapId = 0,
+                Location = new(1443, 1692, 0)
+            }
+        };
+        sessionService.Add(session);
+
+        var eventBus = new RecordingEventBus();
+        var service = new HelpTicketService(sessionService, persistence, eventBus);
+
+        var ticket = await service.CreateTicketAsync(
+                         session.SessionId,
+                         HelpTicketCategory.Question,
+                         "  I am stuck behind the innkeeper counter.  "
+                     );
+        var persisted = ticket is null ? null : await persistence.UnitOfWork.HelpTickets.GetByIdAsync(ticket.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ticket, Is.Not.Null);
+                Assert.That(ticket!.Status, Is.EqualTo(HelpTicketStatus.Open));
+                Assert.That(ticket.Message, Is.EqualTo("I am stuck behind the innkeeper counter."));
+                Assert.That(ticket.SenderAccountId, Is.EqualTo((Serial)0x00000010u));
+                Assert.That(ticket.SenderCharacterId, Is.EqualTo((Serial)0x00000042u));
+                Assert.That(ticket.Location, Is.EqualTo(new Point3D(1443, 1692, 0)));
+                Assert.That(persisted, Is.Not.Null);
+                Assert.That(eventBus.Events.OfType<TicketOpenedEvent>().Any(e => e.TicketId == ticket.Id), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetTicketByIdAsync_WhenTicketDoesNotExist_ShouldReturnNull()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var persistence = new TestPersistenceService(tempDirectory.Path);
+        await persistence.UnitOfWork.InitializeAsync();
+
+        var sessionService = new FakeGameNetworkSessionService();
+        var eventBus = new RecordingEventBus();
+        var service = new HelpTicketService(sessionService, persistence, eventBus);
+
+        var loaded = await service.GetTicketByIdAsync((Serial)(Serial.ItemOffset + 404));
+
+        Assert.That(loaded, Is.Null);
+    }
+
+    [Test]
+    public async Task GetTicketByIdAsync_WhenTicketExists_ShouldReturnTicket()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var persistence = new TestPersistenceService(tempDirectory.Path);
+        await persistence.UnitOfWork.InitializeAsync();
+
+        var sessionService = new FakeGameNetworkSessionService();
+        var eventBus = new RecordingEventBus();
+        var service = new HelpTicketService(sessionService, persistence, eventBus);
+
+        var expected = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 21),
+            (Serial)7,
+            HelpTicketCategory.Bug,
+            HelpTicketStatus.Open,
+            new(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
+        );
+
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(expected);
+
+        var loaded = await service.GetTicketByIdAsync(expected.Id);
+
+        Assert.That(loaded?.Id, Is.EqualTo(expected.Id));
+    }
+
+    [Test]
+    public async Task GetTicketsForAdminAsync_WhenAssignedToFilterIsApplied_ShouldReturnOnlyMatchingTickets()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var persistence = new TestPersistenceService(tempDirectory.Path);
+        await persistence.UnitOfWork.InitializeAsync();
+
+        var sessionService = new FakeGameNetworkSessionService();
+        var eventBus = new RecordingEventBus();
+        var service = new HelpTicketService(sessionService, persistence, eventBus);
+
+        var mine = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 11),
+            (Serial)7,
+            HelpTicketCategory.Question,
+            HelpTicketStatus.Assigned,
+            new(2026, 3, 19, 12, 0, 0, DateTimeKind.Utc)
+        );
+        mine.AssignedToAccountId = (Serial)0x00000077u;
+        mine.AssignedAtUtc = mine.CreatedAtUtc;
+
+        var someoneElse = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 12),
+            (Serial)7,
+            HelpTicketCategory.Question,
+            HelpTicketStatus.Assigned,
+            new(2026, 3, 19, 12, 30, 0, DateTimeKind.Utc)
+        );
+        someoneElse.AssignedToAccountId = (Serial)0x00000078u;
+        someoneElse.AssignedAtUtc = someoneElse.CreatedAtUtc;
+
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(mine);
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(someoneElse);
+
+        var (items, totalCount) = await service.GetTicketsForAdminAsync(
+                                      1,
+                                      10,
+                                      null,
+                                      null,
+                                      (Serial)0x00000077u
+                                  );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(totalCount, Is.EqualTo(1));
+                Assert.That(items.Select(ticket => ticket.Id).ToArray(), Is.EqualTo(new[] { mine.Id }));
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetTicketsForAdminAsync_WhenFiltersAreApplied_ShouldReturnPagedMatchesOrderedByNewestFirst()
+    {
+        using var tempDirectory = new TempDirectory();
+        using var persistence = new TestPersistenceService(tempDirectory.Path);
+        await persistence.UnitOfWork.InitializeAsync();
+
+        var sessionService = new FakeGameNetworkSessionService();
+        var eventBus = new RecordingEventBus();
+        var service = new HelpTicketService(sessionService, persistence, eventBus);
+
+        var oldest = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 1),
+            (Serial)7,
+            HelpTicketCategory.Question,
+            HelpTicketStatus.Open,
+            new(2026, 3, 19, 10, 0, 0, DateTimeKind.Utc)
+        );
+        var filteredNewest = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 2),
+            (Serial)7,
+            HelpTicketCategory.Question,
+            HelpTicketStatus.Open,
+            new(2026, 3, 19, 12, 0, 0, DateTimeKind.Utc)
+        );
+        filteredNewest.AssignedToAccountId = (Serial)0x00000011u;
+        filteredNewest.AssignedAtUtc = filteredNewest.CreatedAtUtc;
+        var otherCategory = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 3),
+            (Serial)7,
+            HelpTicketCategory.Bug,
+            HelpTicketStatus.Open,
+            new(2026, 3, 19, 11, 0, 0, DateTimeKind.Utc)
+        );
+        var otherStatus = CreateExistingTicket(
+            (Serial)(Serial.ItemOffset + 4),
+            (Serial)7,
+            HelpTicketCategory.Question,
+            HelpTicketStatus.Closed,
+            new(2026, 3, 19, 13, 0, 0, DateTimeKind.Utc)
+        );
+
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(oldest);
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(filteredNewest);
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(otherCategory);
+        await persistence.UnitOfWork.HelpTickets.UpsertAsync(otherStatus);
+
+        var (items, totalCount) = await service.GetTicketsForAdminAsync(
+                                      1,
+                                      10,
+                                      HelpTicketStatus.Open,
+                                      HelpTicketCategory.Question,
+                                      null
+                                  );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(totalCount, Is.EqualTo(2));
+                Assert.That(items.Select(ticket => ticket.Id).ToArray(), Is.EqualTo(new[] { filteredNewest.Id, oldest.Id }));
+            }
+        );
+    }
+
+    [Test]
     public async Task UpdateStatusAsync_WhenClosed_ShouldSetClosedAtUtc()
     {
         using var tempDirectory = new TempDirectory();
@@ -323,7 +324,7 @@ public sealed class HelpTicketServiceTests
             (Serial)7,
             HelpTicketCategory.Bug,
             HelpTicketStatus.Assigned,
-            new DateTime(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
+            new(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
         );
         ticket.AssignedToAccountId = (Serial)0x00000077u;
         ticket.AssignedToCharacterId = (Serial)0x00000088u;
@@ -360,7 +361,7 @@ public sealed class HelpTicketServiceTests
             (Serial)7,
             HelpTicketCategory.Bug,
             HelpTicketStatus.Closed,
-            new DateTime(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
+            new(2026, 3, 19, 9, 0, 0, DateTimeKind.Utc)
         );
         ticket.AssignedToAccountId = (Serial)0x00000077u;
         ticket.AssignedToCharacterId = (Serial)0x00000088u;
@@ -398,7 +399,7 @@ public sealed class HelpTicketServiceTests
             Category = category,
             Message = $"ticket-{id.Value}",
             MapId = 0,
-            Location = new Point3D(1443, 1692, 0),
+            Location = new(1443, 1692, 0),
             Status = status,
             CreatedAtUtc = createdAtUtc,
             LastUpdatedAtUtc = createdAtUtc

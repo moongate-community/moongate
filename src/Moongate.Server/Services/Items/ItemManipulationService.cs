@@ -364,6 +364,47 @@ public class ItemManipulationService : IItemManipulationService
         Enqueue(session, new DrawContainerAndAddItemCombinedPacket(destinationContainer));
     }
 
+    private async Task DropItemOnGroundAsync(GameSession session, DropItemPacket packet)
+    {
+        var mapId = session.Character?.MapId ?? 0;
+        var dropResult = await _itemService.DropItemToGroundAsync(
+                             packet.ItemSerial,
+                             packet.Location,
+                             mapId,
+                             session.SessionId
+                         );
+
+        if (dropResult is null)
+        {
+            return;
+        }
+
+        await _gameEventBusService.PublishAsync(
+            new DropItemToGroundEvent(
+                session.SessionId,
+                session.CharacterId,
+                dropResult.Value.ItemId,
+                dropResult.Value.SourceContainerId,
+                dropResult.Value.OldLocation,
+                dropResult.Value.NewLocation
+            )
+        );
+
+        if (dropResult.Value.SourceContainerId == Serial.Zero)
+        {
+            return;
+        }
+
+        var sourceContainer = await _itemService.GetItemAsync(dropResult.Value.SourceContainerId);
+        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(sourceContainer));
+    }
+
+    private void Enqueue(GameSession session, IGameNetworkPacket packet)
+        => _outgoingPacketQueue.Enqueue(session.SessionId, packet);
+
+    private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
+        => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => _outgoingPacketQueue.Enqueue(sessionId, packet));
+
     private async Task HandleQuiverDropAsync(
         GameSession session,
         UOItemEntity item,
@@ -414,6 +455,16 @@ public class ItemManipulationService : IItemManipulationService
     private static bool IsAmmoForQuiver(UOItemEntity item)
         => item.ItemId is ArrowItemId or BoltItemId;
 
+    private static bool IsValidWearLayer(ItemLayerType layer)
+    {
+        if (layer < ItemLayerType.FirstValid || layer > ItemLayerType.LastUserValid)
+        {
+            return false;
+        }
+
+        return layer is not ItemLayerType.Backpack and not ItemLayerType.Bank;
+    }
+
     private async Task<UOItemEntity?> TryResolveParentQuiverAsync(UOItemEntity item)
     {
         if (item.ParentContainerId == Serial.Zero)
@@ -424,56 +475,5 @@ public class ItemManipulationService : IItemManipulationService
         var parent = await _itemService.GetItemAsync(item.ParentContainerId);
 
         return parent?.IsQuiver == true ? parent : null;
-    }
-
-    private async Task DropItemOnGroundAsync(GameSession session, DropItemPacket packet)
-    {
-        var mapId = session.Character?.MapId ?? 0;
-        var dropResult = await _itemService.DropItemToGroundAsync(
-                             packet.ItemSerial,
-                             packet.Location,
-                             mapId,
-                             session.SessionId
-                         );
-
-        if (dropResult is null)
-        {
-            return;
-        }
-
-        await _gameEventBusService.PublishAsync(
-            new DropItemToGroundEvent(
-                session.SessionId,
-                session.CharacterId,
-                dropResult.Value.ItemId,
-                dropResult.Value.SourceContainerId,
-                dropResult.Value.OldLocation,
-                dropResult.Value.NewLocation
-            )
-        );
-
-        if (dropResult.Value.SourceContainerId == Serial.Zero)
-        {
-            return;
-        }
-
-        var sourceContainer = await _itemService.GetItemAsync(dropResult.Value.SourceContainerId);
-        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(sourceContainer));
-    }
-
-    private void Enqueue(GameSession session, IGameNetworkPacket packet)
-        => _outgoingPacketQueue.Enqueue(session.SessionId, packet);
-
-    private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
-        => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => _outgoingPacketQueue.Enqueue(sessionId, packet));
-
-    private static bool IsValidWearLayer(ItemLayerType layer)
-    {
-        if (layer < ItemLayerType.FirstValid || layer > ItemLayerType.LastUserValid)
-        {
-            return false;
-        }
-
-        return layer is not ItemLayerType.Backpack and not ItemLayerType.Bank;
     }
 }

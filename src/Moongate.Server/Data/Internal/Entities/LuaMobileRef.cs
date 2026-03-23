@@ -39,18 +39,6 @@ public sealed class LuaMobileRef
         _gameNetworkSessionService = gameNetworkSessionService;
     }
 
-    public bool Say(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
-
-        return recipients > 0;
-    }
-
     public bool Emote(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
@@ -65,16 +53,14 @@ public sealed class LuaMobileRef
         return recipients > 0;
     }
 
-    public bool Yell(string text)
+    public bool Say(string text)
     {
         if (string.IsNullOrWhiteSpace(text))
         {
             return false;
         }
 
-        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Yell)
-                                       .GetAwaiter()
-                                       .GetResult();
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text).GetAwaiter().GetResult();
 
         return recipients > 0;
     }
@@ -87,6 +73,20 @@ public sealed class LuaMobileRef
         }
 
         var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Whisper)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Yell(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(_mobile, text, messageType: ChatMessageType.Yell)
                                        .GetAwaiter()
                                        .GetResult();
 

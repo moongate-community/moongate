@@ -19,6 +19,7 @@ internal sealed class MoongatePluginServiceResolver : IMoongatePluginServiceReso
     public object Resolve(Type serviceType)
     {
         ArgumentNullException.ThrowIfNull(serviceType);
+
         return _resolver.Resolve(serviceType);
     }
 
@@ -29,12 +30,14 @@ internal sealed class MoongatePluginServiceResolver : IMoongatePluginServiceReso
     {
         ArgumentNullException.ThrowIfNull(serviceType);
         service = _resolver.Resolve(serviceType, IfUnresolved.ReturnDefaultIfNotRegistered);
+
         return service is not null;
     }
 
     public bool TryResolve<TService>(out TService? service) where TService : class
     {
         service = _resolver.Resolve<TService>(IfUnresolved.ReturnDefaultIfNotRegistered);
+
         return service is not null;
     }
 }

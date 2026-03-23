@@ -1,4 +1,3 @@
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Internal.Interaction;
@@ -35,15 +34,16 @@ public sealed class BankCommand : ICommandExecutor
     public async Task ExecuteCommandAsync(CommandSystemContext context)
     {
         var error = await BankBoxOpenHelper.OpenAsync(
-            context.SessionId,
-            _gameSessionService,
-            _characterService,
-            _outgoingPacketQueue
-        );
+                        context.SessionId,
+                        _gameSessionService,
+                        _characterService,
+                        _outgoingPacketQueue
+                    );
 
         if (!string.IsNullOrWhiteSpace(error))
         {
             context.Print(error);
+
             return;
         }
         context.Print("Bank box opened.");

@@ -1,11 +1,10 @@
 using Moongate.Server.Attributes;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
-using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Interfaces.Templates;
-using Moongate.UO.Data.Templates.Loot;
-using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Templates.Items;
+using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Templates.SellProfiles;
 using Moongate.UO.Data.Types;
@@ -86,6 +85,27 @@ public sealed class TemplateValidationLoader : IFileLoader
         }
     }
 
+    private void ValidateFactions(List<string> errors)
+    {
+        foreach (var faction in _factionTemplateService.GetAll())
+        {
+            foreach (var enemyFactionId in faction.EnemyFactionIds)
+            {
+                if (string.IsNullOrWhiteSpace(enemyFactionId))
+                {
+                    errors.Add($"Faction template '{faction.Id}' has an empty enemy faction id.");
+
+                    continue;
+                }
+
+                if (!_factionTemplateService.TryGet(enemyFactionId.Trim(), out _))
+                {
+                    errors.Add($"Faction template '{faction.Id}' references missing enemy faction '{enemyFactionId}'.");
+                }
+            }
+        }
+    }
+
     private void ValidateFixedEquipment(MobileTemplateDefinition mobile, List<string> errors)
     {
         foreach (var fixedEquipment in mobile.FixedEquipment)
@@ -133,6 +153,24 @@ public sealed class TemplateValidationLoader : IFileLoader
         }
     }
 
+    private void ValidateItemLootTables(ItemTemplateDefinition item, List<string> errors)
+    {
+        foreach (var lootTableId in item.LootTables)
+        {
+            if (string.IsNullOrWhiteSpace(lootTableId))
+            {
+                errors.Add($"Item template '{item.Id}' has an empty loot table id.");
+
+                continue;
+            }
+
+            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
+            {
+                errors.Add($"Item template '{item.Id}' references missing loot table '{lootTableId}'.");
+            }
+        }
+    }
+
     private void ValidateItems(List<string> errors)
     {
         foreach (var item in _itemTemplateService.GetAll())
@@ -163,24 +201,6 @@ public sealed class TemplateValidationLoader : IFileLoader
         }
     }
 
-    private void ValidateItemLootTables(ItemTemplateDefinition item, List<string> errors)
-    {
-        foreach (var lootTableId in item.LootTables)
-        {
-            if (string.IsNullOrWhiteSpace(lootTableId))
-            {
-                errors.Add($"Item template '{item.Id}' has an empty loot table id.");
-
-                continue;
-            }
-
-            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
-            {
-                errors.Add($"Item template '{item.Id}' references missing loot table '{lootTableId}'.");
-            }
-        }
-    }
-
     private void ValidateLootEntries(LootTemplateDefinition lootTemplate, List<string> errors)
     {
         for (var index = 0; index < lootTemplate.Entries.Count; index++)
@@ -208,11 +228,16 @@ public sealed class TemplateValidationLoader : IFileLoader
             {
                 referenceCount++;
 
-                if (!_itemTemplateService.GetAll().Any(
-                        item => item.Tags.Any(
-                            tag => string.Equals(tag, entry.ItemTag.Trim(), StringComparison.OrdinalIgnoreCase)
-                        )
-                    )
+                if (!_itemTemplateService.GetAll()
+                                         .Any(
+                                             item => item.Tags.Any(
+                                                 tag => string.Equals(
+                                                     tag,
+                                                     entry.ItemTag.Trim(),
+                                                     StringComparison.OrdinalIgnoreCase
+                                                 )
+                                             )
+                                         )
                    )
                 {
                     errors.Add($"{entryLabel} references unknown item tag '{entry.ItemTag}'.");
@@ -255,6 +280,7 @@ public sealed class TemplateValidationLoader : IFileLoader
                 }
 
                 var hasAnyRange = entry.AmountMin.HasValue || entry.AmountMax.HasValue;
+
                 if (entry.AmountMin.HasValue != entry.AmountMax.HasValue)
                 {
                     errors.Add($"{entryLabel} must define both amountMin and amountMax together.");
@@ -347,27 +373,6 @@ public sealed class TemplateValidationLoader : IFileLoader
 
             ValidateFixedEquipment(mobile, errors);
             ValidateRandomEquipment(mobile, errors);
-        }
-    }
-
-    private void ValidateFactions(List<string> errors)
-    {
-        foreach (var faction in _factionTemplateService.GetAll())
-        {
-            foreach (var enemyFactionId in faction.EnemyFactionIds)
-            {
-                if (string.IsNullOrWhiteSpace(enemyFactionId))
-                {
-                    errors.Add($"Faction template '{faction.Id}' has an empty enemy faction id.");
-
-                    continue;
-                }
-
-                if (!_factionTemplateService.TryGet(enemyFactionId.Trim(), out _))
-                {
-                    errors.Add($"Faction template '{faction.Id}' references missing enemy faction '{enemyFactionId}'.");
-                }
-            }
         }
     }
 

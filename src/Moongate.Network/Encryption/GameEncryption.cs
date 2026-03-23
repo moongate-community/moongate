@@ -1,6 +1,6 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Intrinsics;
 using System.Security.Cryptography;
-using System.Diagnostics.CodeAnalysis;
 using Moongate.Network.Interfaces;
 
 namespace Moongate.Network.Encryption;
@@ -30,35 +30,11 @@ public sealed class GameEncryption : IClientEncryption
         key[2] = key[6] = key[10] = key[14] = (byte)((seed >> 8) & 0xFF);
         key[3] = key[7] = key[11] = key[15] = (byte)(seed & 0xFF);
 
-        _twofish = new TwofishEngine(key);
+        _twofish = new(key);
         _cipherTable = GC.AllocateUninitializedArray<byte>(CipherTableSize);
         IdentityTable.CopyTo(_cipherTable, 0);
         RefreshCipherTable();
         _xorKey = CreateXorKey(_cipherTable);
-    }
-
-    public static bool TryDecrypt(uint seed, ReadOnlySpan<byte> encryptedPacket, out GameEncryption? encryption)
-    {
-        encryption = null;
-
-        if (encryptedPacket.Length < GameLoginPacketSize)
-        {
-            return false;
-        }
-
-        Span<byte> decrypted = stackalloc byte[GameLoginPacketSize];
-        encryptedPacket[..GameLoginPacketSize].CopyTo(decrypted);
-
-        var candidate = new GameEncryption(seed);
-        candidate.ClientDecrypt(decrypted);
-
-        if (decrypted[0] != 0x91)
-        {
-            return false;
-        }
-
-        encryption = new GameEncryption(seed);
-        return true;
     }
 
     public void ClientDecrypt(Span<byte> buffer)
@@ -97,6 +73,31 @@ public sealed class GameEncryption : IClientEncryption
         }
     }
 
+    public static bool TryDecrypt(uint seed, ReadOnlySpan<byte> encryptedPacket, out GameEncryption? encryption)
+    {
+        encryption = null;
+
+        if (encryptedPacket.Length < GameLoginPacketSize)
+        {
+            return false;
+        }
+
+        Span<byte> decrypted = stackalloc byte[GameLoginPacketSize];
+        encryptedPacket[..GameLoginPacketSize].CopyTo(decrypted);
+
+        var candidate = new GameEncryption(seed);
+        candidate.ClientDecrypt(decrypted);
+
+        if (decrypted[0] != 0x91)
+        {
+            return false;
+        }
+
+        encryption = new(seed);
+
+        return true;
+    }
+
     private static byte[] CreateIdentityTable()
     {
         var table = new byte[CipherTableSize];
@@ -109,6 +110,14 @@ public sealed class GameEncryption : IClientEncryption
         return table;
     }
 
+    [SuppressMessage(
+        "Security",
+        "CA5351:Do Not Use Broken Cryptographic Algorithms",
+        Justification = "Ultima Online game encryption uses a legacy MD5-derived XOR stream for protocol compatibility."
+    )]
+    private static byte[] CreateXorKey(byte[] cipherTable)
+        => MD5.HashData(cipherTable);
+
     private void RefreshCipherTable()
     {
         for (var i = 0; i < CipherTableSize; i += BlockSize)
@@ -118,12 +127,4 @@ public sealed class GameEncryption : IClientEncryption
 
         _recvPos = 0;
     }
-
-    [SuppressMessage(
-        "Security",
-        "CA5351:Do Not Use Broken Cryptographic Algorithms",
-        Justification = "Ultima Online game encryption uses a legacy MD5-derived XOR stream for protocol compatibility."
-    )]
-    private static byte[] CreateXorKey(byte[] cipherTable)
-        => MD5.HashData(cipherTable);
 }

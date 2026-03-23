@@ -45,6 +45,7 @@ internal static class LuaBrainPendingEventDispatcher
             if (hookFunction is not null)
             {
                 luaScript.Call(hookFunction, actorId, payload);
+
                 continue;
             }
 
@@ -229,41 +230,41 @@ internal static class LuaBrainPendingEventDispatcher
         }
     }
 
-    private static DynValue? ResolveCombatHook(LuaBrainRuntimeState state, LuaBrainCombatHookType hookType)
-        => hookType switch
-        {
-            LuaBrainCombatHookType.Attack => state.OnAttackFunction,
-            LuaBrainCombatHookType.MissedAttack => state.OnMissedAttackFunction,
-            LuaBrainCombatHookType.Attacked => state.OnAttackedFunction,
-            LuaBrainCombatHookType.MissedByAttack => state.OnMissedByAttackFunction,
-            _ => null
-        };
-
     private static DynValue ResolveCombatEventName(LuaBrainCombatHookType hookType)
         => hookType switch
         {
-            LuaBrainCombatHookType.Attack => AttackEventName,
-            LuaBrainCombatHookType.MissedAttack => MissedAttackEventName,
-            LuaBrainCombatHookType.Attacked => AttackedEventName,
+            LuaBrainCombatHookType.Attack         => AttackEventName,
+            LuaBrainCombatHookType.MissedAttack   => MissedAttackEventName,
+            LuaBrainCombatHookType.Attacked       => AttackedEventName,
             LuaBrainCombatHookType.MissedByAttack => MissedByAttackEventName,
-            _ => AttackEventName
+            _                                     => AttackEventName
         };
 
-    private static DynValue? ResolveDeathHook(LuaBrainRuntimeState state, LuaBrainDeathHookType hookType)
+    private static DynValue? ResolveCombatHook(LuaBrainRuntimeState state, LuaBrainCombatHookType hookType)
         => hookType switch
         {
-            LuaBrainDeathHookType.BeforeDeath => state.OnBeforeDeathFunction,
-            LuaBrainDeathHookType.Death => state.OnDeathFunction,
-            LuaBrainDeathHookType.AfterDeath => state.OnAfterDeathFunction,
-            _ => state.OnDeathFunction
+            LuaBrainCombatHookType.Attack         => state.OnAttackFunction,
+            LuaBrainCombatHookType.MissedAttack   => state.OnMissedAttackFunction,
+            LuaBrainCombatHookType.Attacked       => state.OnAttackedFunction,
+            LuaBrainCombatHookType.MissedByAttack => state.OnMissedByAttackFunction,
+            _                                     => null
         };
 
     private static DynValue ResolveDeathEventName(LuaBrainDeathHookType hookType)
         => hookType switch
         {
             LuaBrainDeathHookType.BeforeDeath => BeforeDeathEventName,
-            LuaBrainDeathHookType.Death => DeathEventName,
-            LuaBrainDeathHookType.AfterDeath => AfterDeathEventName,
-            _ => DeathEventName
+            LuaBrainDeathHookType.Death       => DeathEventName,
+            LuaBrainDeathHookType.AfterDeath  => AfterDeathEventName,
+            _                                 => DeathEventName
+        };
+
+    private static DynValue? ResolveDeathHook(LuaBrainRuntimeState state, LuaBrainDeathHookType hookType)
+        => hookType switch
+        {
+            LuaBrainDeathHookType.BeforeDeath => state.OnBeforeDeathFunction,
+            LuaBrainDeathHookType.Death       => state.OnDeathFunction,
+            LuaBrainDeathHookType.AfterDeath  => state.OnAfterDeathFunction,
+            _                                 => state.OnDeathFunction
         };
 }

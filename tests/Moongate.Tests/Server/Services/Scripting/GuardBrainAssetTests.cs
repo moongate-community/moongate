@@ -43,12 +43,33 @@ public sealed class GuardBrainAssetTests
         var script = File.ReadAllText(scriptPath);
         var behaviorInitPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "init.lua");
         var behaviorInit = File.ReadAllText(behaviorInitPath);
-        var behaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "ranged_keep_distance.lua");
+        var behaviorPath = Path.Combine(
+            repositoryRoot,
+            "moongate_data",
+            "scripts",
+            "ai",
+            "behaviors",
+            "ranged_keep_distance.lua"
+        );
         var followBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "follow.lua");
-        var holdPositionPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "hold_position.lua");
+        var holdPositionPath = Path.Combine(
+            repositoryRoot,
+            "moongate_data",
+            "scripts",
+            "ai",
+            "behaviors",
+            "hold_position.lua"
+        );
         var returnHomePath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "return_home.lua");
         var leashPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "leash.lua");
-        var selfBandageBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "self_bandage.lua");
+        var selfBandageBehaviorPath = Path.Combine(
+            repositoryRoot,
+            "moongate_data",
+            "scripts",
+            "ai",
+            "behaviors",
+            "self_bandage.lua"
+        );
         var rangedKeepDistance = File.ReadAllText(behaviorPath);
         var followBehavior = File.ReadAllText(followBehaviorPath);
         var holdPosition = File.ReadAllText(holdPositionPath);
@@ -78,7 +99,10 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("local function set_default(key, value)"));
                 Assert.That(script, Does.Contain("combat.clear_target(npc_serial)"));
                 Assert.That(rangedKeepDistance, Does.Contain("combat.set_target(npc_serial, target_serial)"));
-                Assert.That(rangedKeepDistance, Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then"));
+                Assert.That(
+                    rangedKeepDistance,
+                    Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then")
+                );
                 Assert.That(rangedKeepDistance, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
                 Assert.That(followBehavior, Does.Contain("combat.set_target(npc_serial, target_serial)"));
                 Assert.That(followBehavior, Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then"));
@@ -105,6 +129,7 @@ public sealed class GuardBrainAssetTests
         var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "guards.json");
 
         using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+
         foreach (var guard in document.RootElement.EnumerateArray())
         {
             Assert.That(guard.GetProperty("brain").GetString(), Is.EqualTo("guard"));

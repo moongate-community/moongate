@@ -1,5 +1,4 @@
 using MemoryPack;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Skills;
@@ -10,37 +9,34 @@ namespace Moongate.Tests.Persistence;
 public sealed class EntityMemoryPackRoundTripTests
 {
     [Test]
-    public void HelpTicketEntity_ShouldRoundTripDirectlyThroughMemoryPack()
+    public void AccountEntity_ShouldRoundTripDirectlyThroughMemoryPack()
     {
-        var entity = new HelpTicketEntity
+        var entity = new UOAccountEntity
         {
-            Id = (Serial)0x4000004Bu,
-            SenderCharacterId = (Serial)0x00000042u,
-            SenderAccountId = (Serial)0x00000024u,
-            Category = HelpTicketCategory.Question,
-            Message = "Stuck near the docks.",
-            MapId = 0,
-            Location = new Point3D(1443, 1692, 0),
-            Status = HelpTicketStatus.Open,
-            AssignedToCharacterId = (Serial)0x00000003u,
-            AssignedToAccountId = (Serial)0x00000002u,
-            CreatedAtUtc = new(2026, 3, 20, 9, 30, 0, DateTimeKind.Utc),
-            AssignedAtUtc = new(2026, 3, 20, 9, 45, 0, DateTimeKind.Utc),
-            ClosedAtUtc = null,
-            LastUpdatedAtUtc = new(2026, 3, 20, 9, 45, 0, DateTimeKind.Utc)
+            Id = (Serial)0x00000033u,
+            Username = "admin",
+            PasswordHash = "hash",
+            CreatedUtc = new(2026, 3, 20, 8, 0, 0, DateTimeKind.Utc),
+            LastLoginUtc = new(2026, 3, 20, 8, 5, 0, DateTimeKind.Utc),
+            CharacterIds = [(Serial)0x100u, (Serial)0x101u],
+            AccountType = AccountType.Administrator,
+            Email = "admin@test.local",
+            IsLocked = false,
+            ActivationId = "act",
+            RecoveryCode = "rec"
         };
 
         var payload = MemoryPackSerializer.Serialize(entity);
-        var restored = MemoryPackSerializer.Deserialize<HelpTicketEntity>(payload);
+        var restored = MemoryPackSerializer.Deserialize<UOAccountEntity>(payload);
 
         Assert.That(restored, Is.Not.Null);
         Assert.Multiple(
             () =>
             {
                 Assert.That(restored!.Id, Is.EqualTo(entity.Id));
-                Assert.That(restored.Location, Is.EqualTo(entity.Location));
-                Assert.That(restored.Message, Is.EqualTo(entity.Message));
-                Assert.That(restored.Status, Is.EqualTo(entity.Status));
+                Assert.That(restored.Username, Is.EqualTo(entity.Username));
+                Assert.That(restored.CharacterIds, Is.EqualTo(entity.CharacterIds));
+                Assert.That(restored.AccountType, Is.EqualTo(entity.AccountType));
             }
         );
     }
@@ -75,34 +71,37 @@ public sealed class EntityMemoryPackRoundTripTests
     }
 
     [Test]
-    public void AccountEntity_ShouldRoundTripDirectlyThroughMemoryPack()
+    public void HelpTicketEntity_ShouldRoundTripDirectlyThroughMemoryPack()
     {
-        var entity = new UOAccountEntity
+        var entity = new HelpTicketEntity
         {
-            Id = (Serial)0x00000033u,
-            Username = "admin",
-            PasswordHash = "hash",
-            CreatedUtc = new(2026, 3, 20, 8, 0, 0, DateTimeKind.Utc),
-            LastLoginUtc = new(2026, 3, 20, 8, 5, 0, DateTimeKind.Utc),
-            CharacterIds = [(Serial)0x100u, (Serial)0x101u],
-            AccountType = AccountType.Administrator,
-            Email = "admin@test.local",
-            IsLocked = false,
-            ActivationId = "act",
-            RecoveryCode = "rec"
+            Id = (Serial)0x4000004Bu,
+            SenderCharacterId = (Serial)0x00000042u,
+            SenderAccountId = (Serial)0x00000024u,
+            Category = HelpTicketCategory.Question,
+            Message = "Stuck near the docks.",
+            MapId = 0,
+            Location = new(1443, 1692, 0),
+            Status = HelpTicketStatus.Open,
+            AssignedToCharacterId = (Serial)0x00000003u,
+            AssignedToAccountId = (Serial)0x00000002u,
+            CreatedAtUtc = new(2026, 3, 20, 9, 30, 0, DateTimeKind.Utc),
+            AssignedAtUtc = new(2026, 3, 20, 9, 45, 0, DateTimeKind.Utc),
+            ClosedAtUtc = null,
+            LastUpdatedAtUtc = new(2026, 3, 20, 9, 45, 0, DateTimeKind.Utc)
         };
 
         var payload = MemoryPackSerializer.Serialize(entity);
-        var restored = MemoryPackSerializer.Deserialize<UOAccountEntity>(payload);
+        var restored = MemoryPackSerializer.Deserialize<HelpTicketEntity>(payload);
 
         Assert.That(restored, Is.Not.Null);
         Assert.Multiple(
             () =>
             {
                 Assert.That(restored!.Id, Is.EqualTo(entity.Id));
-                Assert.That(restored.Username, Is.EqualTo(entity.Username));
-                Assert.That(restored.CharacterIds, Is.EqualTo(entity.CharacterIds));
-                Assert.That(restored.AccountType, Is.EqualTo(entity.AccountType));
+                Assert.That(restored.Location, Is.EqualTo(entity.Location));
+                Assert.That(restored.Message, Is.EqualTo(entity.Message));
+                Assert.That(restored.Status, Is.EqualTo(entity.Status));
             }
         );
     }
@@ -175,8 +174,36 @@ public sealed class EntityMemoryPackRoundTripTests
     {
         SkillInfo.Table =
         [
-            new(0, "Alchemy", 0, 0, 100, "Alchemist", 0, 0, 0, 1, "Alchemy", Stat.Intelligence, Stat.Intelligence),
-            new(1, "Anatomy", 0, 0, 100, "Anatomist", 0, 0, 0, 1, "Anatomy", Stat.Strength, Stat.Intelligence)
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                1,
+                "Anatomy",
+                0,
+                0,
+                100,
+                "Anatomist",
+                0,
+                0,
+                0,
+                1,
+                "Anatomy",
+                Stat.Strength,
+                Stat.Intelligence
+            )
         ];
 
         var entity = new UOMobileEntity
@@ -205,7 +232,7 @@ public sealed class EntityMemoryPackRoundTripTests
                 IntegerValue = 42
             }
         );
-        entity.SetSkill(UOSkillName.Alchemy, 500, 500, 1000, UOSkillLock.Up);
+        entity.SetSkill(UOSkillName.Alchemy, 500, 500);
 
         var payload = MemoryPackSerializer.Serialize(entity);
         var restored = MemoryPackSerializer.Deserialize<UOMobileEntity>(payload);

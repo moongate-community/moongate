@@ -3,16 +3,13 @@ using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
+using Moongate.Scripting.Services;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.Scripting.Data.Config;
-using Moongate.Scripting.Data.Internal;
-using Moongate.Scripting.Data.Luarc;
-using Moongate.Scripting.Services;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Items;
 using Moongate.Tests.Server.Services.Spatial;
@@ -109,11 +106,14 @@ public sealed class PotionItemScriptsTests
         private readonly Queue<Action> _gameLoopActions = new();
 
         public void EnqueueBackground(Action job)
-            => _backgroundJobs.Enqueue(() =>
-            {
-                job();
-                return Task.CompletedTask;
-            });
+            => _backgroundJobs.Enqueue(
+                () =>
+                {
+                    job();
+
+                    return Task.CompletedTask;
+                }
+            );
 
         public void EnqueueBackground(Func<Task> job)
             => _backgroundJobs.Enqueue(job);
@@ -155,316 +155,6 @@ public sealed class PotionItemScriptsTests
             => Task.CompletedTask;
     }
 
-    [Test]
-    public async Task DispatchAsync_WhenLesserHealPotionIsUsed_ShouldConsumeOneAndRestoreHits()
-    {
-        using var environment = await CreateEnvironmentAsync(
-            "lesser_heal_potion",
-            mobile: new()
-            {
-                Id = (Serial)0x501u,
-                Name = "Potion Tester",
-                IsAlive = true,
-                Hits = 20,
-                MaxHits = 40
-            },
-            item: new()
-            {
-                Id = (Serial)0x700u,
-                Name = "Lesser Heal Potion",
-                ScriptId = "items.lesser_heal_potion",
-                ItemId = 0x0F0C,
-                Amount = 2,
-                MapId = 0,
-                Location = Point3D.Zero
-            }
-        );
-
-        var dispatched = await environment.Dispatcher.DispatchAsync(
-            new ItemScriptContext(environment.Session, environment.ItemService.Item!, "double_click")
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dispatched, Is.True);
-                Assert.That(environment.ItemService.Item, Is.Not.Null);
-                Assert.That(environment.ItemService.Item!.Amount, Is.EqualTo(1));
-                Assert.That(environment.Mobile.Hits, Is.EqualTo(30));
-            }
-        );
-    }
-
-    [Test]
-    public async Task DispatchAsync_WhenRefreshPotionIsUsed_ShouldDeleteLastPotionAndRestoreStamina()
-    {
-        using var environment = await CreateEnvironmentAsync(
-            "refresh_potion",
-            mobile: new()
-            {
-                Id = (Serial)0x502u,
-                Name = "Potion Tester",
-                IsAlive = true,
-                Stamina = 5,
-                MaxStamina = 15
-            },
-            item: new()
-            {
-                Id = (Serial)0x701u,
-                Name = "Refresh Potion",
-                ScriptId = "items.refresh_potion",
-                ItemId = 0x0F0B,
-                Amount = 1,
-                MapId = 0,
-                Location = Point3D.Zero
-            }
-        );
-
-        var dispatched = await environment.Dispatcher.DispatchAsync(
-            new ItemScriptContext(environment.Session, environment.ItemService.Item!, "double_click")
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dispatched, Is.True);
-                Assert.That(environment.ItemService.Item, Is.Null);
-                Assert.That(environment.ItemService.DeletedItemId, Is.EqualTo((Serial)0x701u));
-                Assert.That(environment.Mobile.Stamina, Is.EqualTo(15));
-            }
-        );
-    }
-
-    [Test]
-    public async Task DispatchAsync_WhenAgilityPotionIsUsed_ShouldApplyTemporaryDexterityBonus()
-    {
-        using var environment = await CreateEnvironmentAsync(
-            "agility_potion",
-            mobile: new()
-            {
-                Id = (Serial)0x503u,
-                Name = "Potion Tester",
-                IsAlive = true,
-                Dexterity = 25,
-                Stamina = 25,
-                MaxStamina = 25
-            },
-            item: new()
-            {
-                Id = (Serial)0x702u,
-                Name = "Agility Potion",
-                ScriptId = "items.agility_potion",
-                ItemId = 0x0F08,
-                Amount = 1,
-                MapId = 0,
-                Location = Point3D.Zero
-            }
-        );
-
-        var dispatched = await environment.Dispatcher.DispatchAsync(
-            new ItemScriptContext(environment.Session, environment.ItemService.Item!, "double_click")
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dispatched, Is.True);
-                Assert.That(environment.Mobile.RuntimeModifiers, Is.Not.Null);
-                Assert.That(environment.Mobile.RuntimeModifiers!.DexterityBonus, Is.EqualTo(10));
-                Assert.That(environment.Mobile.EffectiveDexterity, Is.EqualTo(35));
-            }
-        );
-    }
-
-    [Test]
-    public async Task DispatchAsync_WhenStrengthPotionIsUsed_ShouldApplyTemporaryStrengthBonus()
-    {
-        using var environment = await CreateEnvironmentAsync(
-            "strength_potion",
-            mobile: new()
-            {
-                Id = (Serial)0x504u,
-                Name = "Potion Tester",
-                IsAlive = true,
-                Strength = 30,
-                Hits = 30,
-                MaxHits = 30
-            },
-            item: new()
-            {
-                Id = (Serial)0x703u,
-                Name = "Strength Potion",
-                ScriptId = "items.strength_potion",
-                ItemId = 0x0F09,
-                Amount = 1,
-                MapId = 0,
-                Location = Point3D.Zero
-            }
-        );
-
-        var dispatched = await environment.Dispatcher.DispatchAsync(
-            new ItemScriptContext(environment.Session, environment.ItemService.Item!, "double_click")
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dispatched, Is.True);
-                Assert.That(environment.Mobile.RuntimeModifiers, Is.Not.Null);
-                Assert.That(environment.Mobile.RuntimeModifiers!.StrengthBonus, Is.EqualTo(10));
-                Assert.That(environment.Mobile.EffectiveStrength, Is.EqualTo(40));
-            }
-        );
-    }
-
-    [TestCase("lesser_cure_potion", 0x0F07)]
-    [TestCase("lesser_poison_potion", 0x0F0A)]
-    [TestCase("lesser_explosion_potion", 0x0F0D)]
-    public async Task DispatchAsync_WhenNoOpPotionIsUsed_ShouldConsumeWithoutThrowing(string scriptName, int itemId)
-    {
-        using var environment = await CreateEnvironmentAsync(
-            scriptName,
-            mobile: new()
-            {
-                Id = (Serial)0x505u,
-                Name = "Potion Tester",
-                IsAlive = true,
-                Hits = 30,
-                MaxHits = 30
-            },
-            item: new()
-            {
-                Id = (Serial)0x704u,
-                Name = scriptName,
-                ScriptId = $"items.{scriptName}",
-                ItemId = itemId,
-                Amount = 1,
-                MapId = 0,
-                Location = Point3D.Zero
-            }
-        );
-
-        var dispatched = await environment.Dispatcher.DispatchAsync(
-            new ItemScriptContext(environment.Session, environment.ItemService.Item!, "double_click")
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(dispatched, Is.True);
-                Assert.That(environment.ItemService.Item, Is.Null);
-                Assert.That(environment.Mobile.Hits, Is.EqualTo(30));
-            }
-        );
-    }
-
-    private static async Task<PotionScriptEnvironment> CreateEnvironmentAsync(
-        string primaryScriptName,
-        UOMobileEntity mobile,
-        UOItemEntity item
-    )
-    {
-        var temp = new TempDirectory();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDirectory = directories[DirectoryType.Scripts];
-        Directory.CreateDirectory(scriptsDirectory);
-        Directory.CreateDirectory(Path.Combine(scriptsDirectory, "items"));
-
-        var initContents = string.Join(
-            Environment.NewLine,
-            [
-                "require(\"items.agility_potion\")",
-                "require(\"items.strength_potion\")",
-                "require(\"items.refresh_potion\")",
-                "require(\"items.lesser_cure_potion\")",
-                "require(\"items.lesser_heal_potion\")",
-                "require(\"items.lesser_poison_potion\")",
-                "require(\"items.lesser_explosion_potion\")"
-            ]
-        );
-        await File.WriteAllTextAsync(Path.Combine(scriptsDirectory, "init.lua"), initContents);
-
-        await CopyPotionScriptAsync("potion_common.lua", scriptsDirectory);
-        await CopyPotionScriptAsync($"{primaryScriptName}.lua", scriptsDirectory);
-
-        if (primaryScriptName is not ("agility_potion" or "strength_potion" or "refresh_potion" or "lesser_cure_potion" or "lesser_heal_potion" or "lesser_poison_potion" or "lesser_explosion_potion"))
-        {
-            throw new InvalidOperationException($"Unexpected potion script '{primaryScriptName}'.");
-        }
-
-        foreach (var required in new[]
-                 {
-                     "agility_potion.lua",
-                     "strength_potion.lua",
-                     "refresh_potion.lua",
-                     "lesser_cure_potion.lua",
-                     "lesser_heal_potion.lua",
-                     "lesser_poison_potion.lua",
-                     "lesser_explosion_potion.lua"
-                 })
-        {
-            if (!File.Exists(Path.Combine(scriptsDirectory, "items", required)))
-            {
-                await CopyPotionScriptAsync(required, scriptsDirectory);
-            }
-        }
-
-        var itemService = new PotionItemScriptsTestItemService { Item = item };
-        var sessionService = new FakeGameNetworkSessionService();
-        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var backgroundJobs = new PotionItemScriptsTestBackgroundJobService();
-        var container = new Container();
-        container.RegisterInstance<IItemService>(itemService);
-        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
-        container.RegisterInstance<IOutgoingPacketQueue>(outgoingQueue);
-        container.RegisterInstance<IBackgroundJobService>(backgroundJobs);
-
-        var scriptEngine = new LuaScriptEngineService(
-            directories,
-            [new(typeof(ConvertModule)), new(typeof(ItemModule)), new(typeof(PotionEffectsModule))],
-            container,
-            new LuaEngineConfig(temp.Path, scriptsDirectory, "0.1.0"),
-            []
-        );
-        await scriptEngine.StartAsync();
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = mobile.Id,
-            Character = mobile
-        };
-        sessionService.Add(session);
-
-        var dispatcher = new ItemScriptDispatcher(scriptEngine, itemService, sessionService);
-
-        return new(temp, scriptEngine, dispatcher, session, mobile, itemService);
-    }
-
-    private static Task CopyPotionScriptAsync(string fileName, string scriptsDirectory)
-    {
-        File.Copy(
-            Path.GetFullPath(
-                Path.Combine(
-                    TestContext.CurrentContext.TestDirectory,
-                    "..",
-                    "..",
-                    "..",
-                    "..",
-                    "..",
-                    "moongate_data",
-                    "scripts",
-                    "items",
-                    fileName
-                )
-            ),
-            Path.Combine(scriptsDirectory, "items", fileName),
-            true
-        );
-
-        return Task.CompletedTask;
-    }
-
     private sealed class PotionScriptEnvironment : IDisposable
     {
         public PotionScriptEnvironment(
@@ -501,5 +191,318 @@ public sealed class PotionItemScriptsTests
             ScriptEngine.Dispose();
             TempDirectory.Dispose();
         }
+    }
+
+    [Test]
+    public async Task DispatchAsync_WhenAgilityPotionIsUsed_ShouldApplyTemporaryDexterityBonus()
+    {
+        using var environment = await CreateEnvironmentAsync(
+                                    "agility_potion",
+                                    new()
+                                    {
+                                        Id = (Serial)0x503u,
+                                        Name = "Potion Tester",
+                                        IsAlive = true,
+                                        Dexterity = 25,
+                                        Stamina = 25,
+                                        MaxStamina = 25
+                                    },
+                                    new()
+                                    {
+                                        Id = (Serial)0x702u,
+                                        Name = "Agility Potion",
+                                        ScriptId = "items.agility_potion",
+                                        ItemId = 0x0F08,
+                                        Amount = 1,
+                                        MapId = 0,
+                                        Location = Point3D.Zero
+                                    }
+                                );
+
+        var dispatched = await environment.Dispatcher.DispatchAsync(
+                             new(environment.Session, environment.ItemService.Item!, "double_click")
+                         );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(environment.Mobile.RuntimeModifiers, Is.Not.Null);
+                Assert.That(environment.Mobile.RuntimeModifiers!.DexterityBonus, Is.EqualTo(10));
+                Assert.That(environment.Mobile.EffectiveDexterity, Is.EqualTo(35));
+            }
+        );
+    }
+
+    [Test]
+    public async Task DispatchAsync_WhenLesserHealPotionIsUsed_ShouldConsumeOneAndRestoreHits()
+    {
+        using var environment = await CreateEnvironmentAsync(
+                                    "lesser_heal_potion",
+                                    new()
+                                    {
+                                        Id = (Serial)0x501u,
+                                        Name = "Potion Tester",
+                                        IsAlive = true,
+                                        Hits = 20,
+                                        MaxHits = 40
+                                    },
+                                    new()
+                                    {
+                                        Id = (Serial)0x700u,
+                                        Name = "Lesser Heal Potion",
+                                        ScriptId = "items.lesser_heal_potion",
+                                        ItemId = 0x0F0C,
+                                        Amount = 2,
+                                        MapId = 0,
+                                        Location = Point3D.Zero
+                                    }
+                                );
+
+        var dispatched = await environment.Dispatcher.DispatchAsync(
+                             new(environment.Session, environment.ItemService.Item!, "double_click")
+                         );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(environment.ItemService.Item, Is.Not.Null);
+                Assert.That(environment.ItemService.Item!.Amount, Is.EqualTo(1));
+                Assert.That(environment.Mobile.Hits, Is.EqualTo(30));
+            }
+        );
+    }
+
+    [TestCase("lesser_cure_potion", 0x0F07), TestCase("lesser_poison_potion", 0x0F0A),
+     TestCase("lesser_explosion_potion", 0x0F0D)]
+    public async Task DispatchAsync_WhenNoOpPotionIsUsed_ShouldConsumeWithoutThrowing(string scriptName, int itemId)
+    {
+        using var environment = await CreateEnvironmentAsync(
+                                    scriptName,
+                                    new()
+                                    {
+                                        Id = (Serial)0x505u,
+                                        Name = "Potion Tester",
+                                        IsAlive = true,
+                                        Hits = 30,
+                                        MaxHits = 30
+                                    },
+                                    new()
+                                    {
+                                        Id = (Serial)0x704u,
+                                        Name = scriptName,
+                                        ScriptId = $"items.{scriptName}",
+                                        ItemId = itemId,
+                                        Amount = 1,
+                                        MapId = 0,
+                                        Location = Point3D.Zero
+                                    }
+                                );
+
+        var dispatched = await environment.Dispatcher.DispatchAsync(
+                             new(environment.Session, environment.ItemService.Item!, "double_click")
+                         );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(environment.ItemService.Item, Is.Null);
+                Assert.That(environment.Mobile.Hits, Is.EqualTo(30));
+            }
+        );
+    }
+
+    [Test]
+    public async Task DispatchAsync_WhenRefreshPotionIsUsed_ShouldDeleteLastPotionAndRestoreStamina()
+    {
+        using var environment = await CreateEnvironmentAsync(
+                                    "refresh_potion",
+                                    new()
+                                    {
+                                        Id = (Serial)0x502u,
+                                        Name = "Potion Tester",
+                                        IsAlive = true,
+                                        Stamina = 5,
+                                        MaxStamina = 15
+                                    },
+                                    new()
+                                    {
+                                        Id = (Serial)0x701u,
+                                        Name = "Refresh Potion",
+                                        ScriptId = "items.refresh_potion",
+                                        ItemId = 0x0F0B,
+                                        Amount = 1,
+                                        MapId = 0,
+                                        Location = Point3D.Zero
+                                    }
+                                );
+
+        var dispatched = await environment.Dispatcher.DispatchAsync(
+                             new(environment.Session, environment.ItemService.Item!, "double_click")
+                         );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(environment.ItemService.Item, Is.Null);
+                Assert.That(environment.ItemService.DeletedItemId, Is.EqualTo((Serial)0x701u));
+                Assert.That(environment.Mobile.Stamina, Is.EqualTo(15));
+            }
+        );
+    }
+
+    [Test]
+    public async Task DispatchAsync_WhenStrengthPotionIsUsed_ShouldApplyTemporaryStrengthBonus()
+    {
+        using var environment = await CreateEnvironmentAsync(
+                                    "strength_potion",
+                                    new()
+                                    {
+                                        Id = (Serial)0x504u,
+                                        Name = "Potion Tester",
+                                        IsAlive = true,
+                                        Strength = 30,
+                                        Hits = 30,
+                                        MaxHits = 30
+                                    },
+                                    new()
+                                    {
+                                        Id = (Serial)0x703u,
+                                        Name = "Strength Potion",
+                                        ScriptId = "items.strength_potion",
+                                        ItemId = 0x0F09,
+                                        Amount = 1,
+                                        MapId = 0,
+                                        Location = Point3D.Zero
+                                    }
+                                );
+
+        var dispatched = await environment.Dispatcher.DispatchAsync(
+                             new(environment.Session, environment.ItemService.Item!, "double_click")
+                         );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dispatched, Is.True);
+                Assert.That(environment.Mobile.RuntimeModifiers, Is.Not.Null);
+                Assert.That(environment.Mobile.RuntimeModifiers!.StrengthBonus, Is.EqualTo(10));
+                Assert.That(environment.Mobile.EffectiveStrength, Is.EqualTo(40));
+            }
+        );
+    }
+
+    private static Task CopyPotionScriptAsync(string fileName, string scriptsDirectory)
+    {
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "scripts",
+                    "items",
+                    fileName
+                )
+            ),
+            Path.Combine(scriptsDirectory, "items", fileName),
+            true
+        );
+
+        return Task.CompletedTask;
+    }
+
+    private static async Task<PotionScriptEnvironment> CreateEnvironmentAsync(
+        string primaryScriptName,
+        UOMobileEntity mobile,
+        UOItemEntity item
+    )
+    {
+        var temp = new TempDirectory();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDirectory = directories[DirectoryType.Scripts];
+        Directory.CreateDirectory(scriptsDirectory);
+        Directory.CreateDirectory(Path.Combine(scriptsDirectory, "items"));
+
+        var initContents = string.Join(
+            Environment.NewLine,
+            "require(\"items.agility_potion\")",
+            "require(\"items.strength_potion\")",
+            "require(\"items.refresh_potion\")",
+            "require(\"items.lesser_cure_potion\")",
+            "require(\"items.lesser_heal_potion\")",
+            "require(\"items.lesser_poison_potion\")",
+            "require(\"items.lesser_explosion_potion\")"
+        );
+        await File.WriteAllTextAsync(Path.Combine(scriptsDirectory, "init.lua"), initContents);
+
+        await CopyPotionScriptAsync("potion_common.lua", scriptsDirectory);
+        await CopyPotionScriptAsync($"{primaryScriptName}.lua", scriptsDirectory);
+
+        if (primaryScriptName is not ("agility_potion" or
+                                      "strength_potion" or
+                                      "refresh_potion" or
+                                      "lesser_cure_potion" or
+                                      "lesser_heal_potion" or
+                                      "lesser_poison_potion" or
+                                      "lesser_explosion_potion"))
+        {
+            throw new InvalidOperationException($"Unexpected potion script '{primaryScriptName}'.");
+        }
+
+        foreach (var required in new[]
+                 {
+                     "agility_potion.lua",
+                     "strength_potion.lua",
+                     "refresh_potion.lua",
+                     "lesser_cure_potion.lua",
+                     "lesser_heal_potion.lua",
+                     "lesser_poison_potion.lua",
+                     "lesser_explosion_potion.lua"
+                 })
+        {
+            if (!File.Exists(Path.Combine(scriptsDirectory, "items", required)))
+            {
+                await CopyPotionScriptAsync(required, scriptsDirectory);
+            }
+        }
+
+        var itemService = new PotionItemScriptsTestItemService { Item = item };
+        var sessionService = new FakeGameNetworkSessionService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var backgroundJobs = new PotionItemScriptsTestBackgroundJobService();
+        var container = new Container();
+        container.RegisterInstance<IItemService>(itemService);
+        container.RegisterInstance<IGameNetworkSessionService>(sessionService);
+        container.RegisterInstance<IOutgoingPacketQueue>(outgoingQueue);
+        container.RegisterInstance<IBackgroundJobService>(backgroundJobs);
+
+        var scriptEngine = new LuaScriptEngineService(
+            directories,
+            [new(typeof(ConvertModule)), new(typeof(ItemModule)), new(typeof(PotionEffectsModule))],
+            container,
+            new(temp.Path, scriptsDirectory, "0.1.0"),
+            []
+        );
+        await scriptEngine.StartAsync();
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = mobile.Id,
+            Character = mobile
+        };
+        sessionService.Add(session);
+
+        var dispatcher = new ItemScriptDispatcher(scriptEngine, itemService, sessionService);
+
+        return new(temp, scriptEngine, dispatcher, session, mobile, itemService);
     }
 }

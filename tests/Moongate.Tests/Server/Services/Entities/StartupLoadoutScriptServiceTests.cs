@@ -1,13 +1,13 @@
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
-using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Services;
 using Moongate.Server.Data.Entities;
 using Moongate.Server.Services.Entities;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Professions;
+using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Entities;
@@ -63,7 +63,7 @@ public sealed class StartupLoadoutScriptServiceTests
                 Assert.That(loadout.Backpack[1].Args!.Value.GetProperty("author").GetString(), Is.EqualTo("Lyra"));
                 Assert.That(loadout.Equip, Has.Count.EqualTo(1));
                 Assert.That(loadout.Equip[0].TemplateId, Is.EqualTo("Shoes"));
-                Assert.That(loadout.Equip[0].Layer, Is.EqualTo(Moongate.UO.Data.Types.ItemLayerType.Shoes));
+                Assert.That(loadout.Equip[0].Layer, Is.EqualTo(ItemLayerType.Shoes));
             }
         );
     }
@@ -86,7 +86,7 @@ public sealed class StartupLoadoutScriptServiceTests
         );
     }
 
-    private static StarterProfileContext CreateContext(string professionName, GenderType gender, Moongate.UO.Data.Races.Base.Race? race = null)
+    private static StarterProfileContext CreateContext(string professionName, GenderType gender, Race? race = null)
     {
         var profession = new ProfessionInfo
         {
@@ -107,7 +107,7 @@ public sealed class StartupLoadoutScriptServiceTests
             directories,
             [],
             new Container(),
-            new LuaEngineConfig(rootPath, scriptsDirectory, "test"),
+            new(rootPath, scriptsDirectory, "test"),
             []
         );
     }

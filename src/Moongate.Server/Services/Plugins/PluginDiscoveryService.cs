@@ -39,7 +39,7 @@ public sealed class PluginDiscoveryService : IPluginDiscoveryService
 
         foreach (
             var pluginDirectory in Directory.EnumerateDirectories(pluginsDirectory)
-                                             .OrderBy(static path => path, StringComparer.Ordinal)
+                                            .OrderBy(static path => path, StringComparer.Ordinal)
         )
         {
             var manifestPath = Path.Combine(pluginDirectory, ManifestFileName);
@@ -52,12 +52,16 @@ public sealed class PluginDiscoveryService : IPluginDiscoveryService
             var manifest = LoadManifest(manifestPath);
             ValidateManifest(manifest, manifestPath);
 
-            discoveredPlugins.Add(new DiscoveredPlugin(manifest.Id!, pluginDirectory, manifestPath, manifest));
+            discoveredPlugins.Add(new(manifest.Id!, pluginDirectory, manifestPath, manifest));
 
             _logger.Information("Discovered plugin {PluginId} at {ManifestPath}", manifest.Id, manifestPath);
         }
 
-        _logger.Information("Discovered {PluginCount} plugins in {PluginsDirectory}", discoveredPlugins.Count, pluginsDirectory);
+        _logger.Information(
+            "Discovered {PluginCount} plugins in {PluginsDirectory}",
+            discoveredPlugins.Count,
+            pluginsDirectory
+        );
 
         return discoveredPlugins;
     }

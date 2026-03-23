@@ -1,9 +1,9 @@
 using System.Net;
 using Moongate.Network.Client;
 using Moongate.Network.Interfaces;
+using Moongate.Server.Data.Internal.Network;
 using Moongate.UO.Data.Middlewares;
 using Moongate.UO.Data.Version;
-using Moongate.Server.Data.Internal.Network;
 
 namespace Moongate.Server.Data.Session;
 
@@ -243,14 +243,15 @@ public sealed class GameNetworkSession
     }
 
     /// <summary>
-    /// Stores the protocol seed received during initial handshake.
+    /// Stores the client type reported by the client.
     /// </summary>
-    /// <param name="seed">4-byte seed value.</param>
-    public void SetSeed(uint seed)
+    /// <param name="clientType">Reported client type.</param>
+    public void SetClientType(ClientType clientType)
     {
         lock (_stateSync)
         {
-            Seed = seed;
+            ClientType = clientType;
+            IsEnhancedClient = clientType is ClientType.KR or ClientType.SA or ClientType.UOTD;
         }
     }
 
@@ -276,15 +277,14 @@ public sealed class GameNetworkSession
     }
 
     /// <summary>
-    /// Stores the client type reported by the client.
+    /// Stores the protocol seed received during initial handshake.
     /// </summary>
-    /// <param name="clientType">Reported client type.</param>
-    public void SetClientType(ClientType clientType)
+    /// <param name="seed">4-byte seed value.</param>
+    public void SetSeed(uint seed)
     {
         lock (_stateSync)
         {
-            ClientType = clientType;
-            IsEnhancedClient = clientType is ClientType.KR or ClientType.SA or ClientType.UOTD;
+            Seed = seed;
         }
     }
 

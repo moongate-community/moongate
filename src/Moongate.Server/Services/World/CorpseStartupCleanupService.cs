@@ -82,42 +82,6 @@ public sealed class CorpseStartupCleanupService : ICorpseStartupCleanupService
     public Task StopAsync()
         => Task.CompletedTask;
 
-    private static Dictionary<Serial, List<Serial>> BuildChildrenLookup(
-        IReadOnlyList<(Serial ItemId, Serial ParentContainerId)> containmentRelations
-    )
-    {
-        var childrenByParent = new Dictionary<Serial, List<Serial>>();
-
-        foreach (var (itemId, parentContainerId) in containmentRelations)
-        {
-            if (!childrenByParent.TryGetValue(parentContainerId, out var children))
-            {
-                children = [];
-                childrenByParent[parentContainerId] = children;
-            }
-
-            children.Add(itemId);
-        }
-
-        return childrenByParent;
-    }
-
-    private static List<Serial> BuildRemovalOrder(
-        IReadOnlyList<Serial> corpseRootIds,
-        IReadOnlyDictionary<Serial, List<Serial>> childrenByParent
-    )
-    {
-        var removalOrder = new List<Serial>();
-        var visited = new HashSet<Serial>();
-
-        foreach (var corpseRootId in corpseRootIds)
-        {
-            AppendRemovalOrderIterative(corpseRootId, childrenByParent, visited, removalOrder);
-        }
-
-        return removalOrder;
-    }
-
     private static void AppendRemovalOrderIterative(
         Serial itemId,
         IReadOnlyDictionary<Serial, List<Serial>> childrenByParent,
@@ -156,6 +120,42 @@ public sealed class CorpseStartupCleanupService : ICorpseStartupCleanupService
                 traversalStack.Push((children[i], false));
             }
         }
+    }
+
+    private static Dictionary<Serial, List<Serial>> BuildChildrenLookup(
+        IReadOnlyList<(Serial ItemId, Serial ParentContainerId)> containmentRelations
+    )
+    {
+        var childrenByParent = new Dictionary<Serial, List<Serial>>();
+
+        foreach (var (itemId, parentContainerId) in containmentRelations)
+        {
+            if (!childrenByParent.TryGetValue(parentContainerId, out var children))
+            {
+                children = [];
+                childrenByParent[parentContainerId] = children;
+            }
+
+            children.Add(itemId);
+        }
+
+        return childrenByParent;
+    }
+
+    private static List<Serial> BuildRemovalOrder(
+        IReadOnlyList<Serial> corpseRootIds,
+        IReadOnlyDictionary<Serial, List<Serial>> childrenByParent
+    )
+    {
+        var removalOrder = new List<Serial>();
+        var visited = new HashSet<Serial>();
+
+        foreach (var corpseRootId in corpseRootIds)
+        {
+            AppendRemovalOrderIterative(corpseRootId, childrenByParent, visited, removalOrder);
+        }
+
+        return removalOrder;
     }
 
     private async Task DetachPersistedOwnerReferencesAsync(UOItemEntity corpseRoot)

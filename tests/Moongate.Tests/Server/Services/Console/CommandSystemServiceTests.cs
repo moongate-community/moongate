@@ -326,6 +326,48 @@ public class CommandSystemServiceTests
     }
 
     [Test]
+    public async Task ExecuteCommandAsync_WhenLuaCommandRunsInGame_ShouldExposeCharacterIdToLuaContext()
+    {
+        var gameEventBusService = new GameEventBusService();
+        var consoleUiService = new CommandSystemTestConsoleUiService();
+        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
+        var accountService = new CommandSystemTestAccountService();
+        var service = CreateService(
+            consoleUiService,
+            gameEventBusService,
+            outgoingPacketQueue,
+            serverLifetimeService,
+            accountService
+        );
+        var module = new CommandModule(service);
+        var script = new Script();
+        var closure = script.DoString(
+                                """
+                                return function(ctx)
+                                    captured_character_id = ctx.character_id
+                                end
+                                """
+                            )
+                            .Function;
+
+        module.Register("lua_ctx_character", closure);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00001234u
+        };
+
+        await service.ExecuteCommandAsync("lua_ctx_character", CommandSourceType.InGame, session);
+
+        Assert.That(
+            script.Globals.Get("captured_character_id").CastToNumber(),
+            Is.EqualTo((double)(uint)session.CharacterId)
+        );
+    }
+
+    [Test]
     public async Task ExecuteCommandAsync_WhenSourceIsConsole_ShouldExecuteAdminCommandWithoutSession()
     {
         var gameEventBusService = new GameEventBusService();
@@ -406,48 +448,6 @@ public class CommandSystemServiceTests
                 Assert.That(messages.Any(message => message.Contains("help")), Is.True);
                 Assert.That(consoleUiService.Lines.Count, Is.EqualTo(0));
             }
-        );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenLuaCommandRunsInGame_ShouldExposeCharacterIdToLuaContext()
-    {
-        var gameEventBusService = new GameEventBusService();
-        var consoleUiService = new CommandSystemTestConsoleUiService();
-        var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var serverLifetimeService = new CommandSystemTestServerLifetimeService();
-        var accountService = new CommandSystemTestAccountService();
-        var service = CreateService(
-            consoleUiService,
-            gameEventBusService,
-            outgoingPacketQueue,
-            serverLifetimeService,
-            accountService
-        );
-        var module = new CommandModule(service);
-        var script = new Script();
-        var closure = script.DoString(
-                                """
-                                return function(ctx)
-                                    captured_character_id = ctx.character_id
-                                end
-                                """
-                            )
-                            .Function;
-
-        module.Register("lua_ctx_character", closure);
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00001234u
-        };
-
-        await service.ExecuteCommandAsync("lua_ctx_character", CommandSourceType.InGame, session);
-
-        Assert.That(
-            script.Globals.Get("captured_character_id").CastToNumber(),
-            Is.EqualTo((double)(uint)session.CharacterId)
         );
     }
 

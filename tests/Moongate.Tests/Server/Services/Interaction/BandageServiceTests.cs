@@ -3,7 +3,6 @@ using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
-using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Interaction;
@@ -57,6 +56,7 @@ public sealed class BandageServiceTests
         public int UpdateTicksDelta(long timestampMilliseconds)
         {
             _ = timestampMilliseconds;
+
             return 0;
         }
     }
@@ -82,6 +82,7 @@ public sealed class BandageServiceTests
         public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
         {
             _ = cancellationToken;
+
             return Task.FromResult(_mobiles.Remove(id));
         }
 
@@ -104,6 +105,7 @@ public sealed class BandageServiceTests
             _ = sectorX;
             _ = sectorY;
             _ = cancellationToken;
+
             return Task.FromResult(new List<UOMobileEntity>());
         }
 
@@ -151,6 +153,7 @@ public sealed class BandageServiceTests
         public Task<bool> DeleteItemAsync(Serial itemId)
         {
             DeleteCalls++;
+
             return Task.FromResult(_items.Remove(itemId));
         }
 
@@ -171,6 +174,7 @@ public sealed class BandageServiceTests
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
         {
             _items.TryGetValue(itemId, out var item);
+
             return Task.FromResult(item);
         }
 
@@ -198,6 +202,7 @@ public sealed class BandageServiceTests
         {
             UpsertCalls++;
             _items[item.Id] = item;
+
             return Task.CompletedTask;
         }
 
@@ -220,7 +225,7 @@ public sealed class BandageServiceTests
 
             if (!_sectors.TryGetValue(key, out var sector))
             {
-                sector = new MapSector(mobile.MapId, sectorX, sectorY);
+                sector = new(mobile.MapId, sectorX, sectorY);
                 _sectors[key] = sector;
             }
 
@@ -275,6 +280,7 @@ public sealed class BandageServiceTests
         public MapSector? GetSectorByLocation(int mapId, Point3D location)
         {
             var key = (mapId, location.X >> MapSectorConsts.SectorShift, location.Y >> MapSectorConsts.SectorShift);
+
             return _sectors.GetValueOrDefault(key);
         }
 
@@ -286,6 +292,37 @@ public sealed class BandageServiceTests
         public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
 
         public void RemoveEntity(Serial serial) { }
+    }
+
+    [Test]
+    public async Task BeginSelfBandageAsync_WhenAlreadyBandaging_ShouldReturnFalse()
+    {
+        var timerService = new TimerServiceSpy();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var spatialWorldService = new SpatialWorldServiceSpy();
+        var service = new BandageService(timerService, mobileService, itemService, spatialWorldService);
+        var mobile = CreateMobileWithBackpack();
+        var bandage = CreateBandage((Serial)0x720u, 5);
+        var backpack = mobile.GetEquippedItemsRuntime().Single();
+
+        backpack.AddItem(bandage, new(10, 10));
+        mobileService.Add(mobile);
+        itemService.Add(bandage);
+        spatialWorldService.AddOrUpdateMobile(mobile);
+
+        var firstStart = await service.BeginSelfBandageAsync(mobile.Id);
+        var secondStart = await service.BeginSelfBandageAsync(mobile.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(firstStart, Is.True);
+                Assert.That(secondStart, Is.False);
+                Assert.That(bandage.Amount, Is.EqualTo(4));
+                Assert.That(timerService.RegisteredTimers.Count, Is.EqualTo(1));
+            }
+        );
     }
 
     [Test]
@@ -340,37 +377,6 @@ public sealed class BandageServiceTests
                 Assert.That(started, Is.False);
                 Assert.That(service.IsBandaging(mobile.Id), Is.False);
                 Assert.That(timerService.RegisteredTimers, Is.Empty);
-            }
-        );
-    }
-
-    [Test]
-    public async Task BeginSelfBandageAsync_WhenAlreadyBandaging_ShouldReturnFalse()
-    {
-        var timerService = new TimerServiceSpy();
-        var mobileService = new InMemoryMobileService();
-        var itemService = new InMemoryItemService();
-        var spatialWorldService = new SpatialWorldServiceSpy();
-        var service = new BandageService(timerService, mobileService, itemService, spatialWorldService);
-        var mobile = CreateMobileWithBackpack();
-        var bandage = CreateBandage((Serial)0x720u, 5);
-        var backpack = mobile.GetEquippedItemsRuntime().Single();
-
-        backpack.AddItem(bandage, new(10, 10));
-        mobileService.Add(mobile);
-        itemService.Add(bandage);
-        spatialWorldService.AddOrUpdateMobile(mobile);
-
-        var firstStart = await service.BeginSelfBandageAsync(mobile.Id);
-        var secondStart = await service.BeginSelfBandageAsync(mobile.Id);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(firstStart, Is.True);
-                Assert.That(secondStart, Is.False);
-                Assert.That(bandage.Amount, Is.EqualTo(4));
-                Assert.That(timerService.RegisteredTimers.Count, Is.EqualTo(1));
             }
         );
     }
@@ -440,6 +446,17 @@ public sealed class BandageServiceTests
         );
     }
 
+    private static UOItemEntity CreateBandage(Serial id, int amount)
+        => new()
+        {
+            Id = id,
+            ItemId = 0x0E21,
+            Name = "Bandage",
+            IsStackable = true,
+            Amount = amount,
+            Weight = 1
+        };
+
     private static UOMobileEntity CreateMobileWithBackpack()
     {
         var mobile = new UOMobileEntity
@@ -465,15 +482,4 @@ public sealed class BandageServiceTests
 
         return mobile;
     }
-
-    private static UOItemEntity CreateBandage(Serial id, int amount)
-        => new()
-        {
-            Id = id,
-            ItemId = 0x0E21,
-            Name = "Bandage",
-            IsStackable = true,
-            Amount = amount,
-            Weight = 1
-        };
 }

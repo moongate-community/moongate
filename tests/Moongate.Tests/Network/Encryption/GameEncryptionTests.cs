@@ -5,6 +5,17 @@ namespace Moongate.Tests.Network.Encryption;
 public sealed class GameEncryptionTests
 {
     [Test]
+    public void ServerEncrypt_ShouldTransformOutgoingPayload()
+    {
+        var payload = Enumerable.Range(0, 32).Select(static i => (byte)i).ToArray();
+        var encryption = new GameEncryption(0x12345678u);
+
+        encryption.ServerEncrypt(payload);
+
+        Assert.That(payload, Is.Not.EqualTo(Enumerable.Range(0, 32).Select(static i => (byte)i).ToArray()));
+    }
+
+    [Test]
     public void TryDecrypt_WhenEncryptedGameLoginPacketMatchesSeed_ShouldSucceed()
     {
         var seed = 0x12345678u;
@@ -23,16 +34,5 @@ public sealed class GameEncryptionTests
                 Assert.That(encryption, Is.Not.Null);
             }
         );
-    }
-
-    [Test]
-    public void ServerEncrypt_ShouldTransformOutgoingPayload()
-    {
-        var payload = Enumerable.Range(0, 32).Select(static i => (byte)i).ToArray();
-        var encryption = new GameEncryption(0x12345678u);
-
-        encryption.ServerEncrypt(payload);
-
-        Assert.That(payload, Is.Not.EqualTo(Enumerable.Range(0, 32).Select(static i => (byte)i).ToArray()));
     }
 }

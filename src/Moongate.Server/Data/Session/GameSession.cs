@@ -1,3 +1,4 @@
+using Moongate.Server.Interfaces.Session;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -8,7 +9,7 @@ namespace Moongate.Server.Data.Session;
 /// <summary>
 /// Represents gameplay and protocol state for a connected client.
 /// </summary>
-public sealed class GameSession : Interfaces.Session.IGameSession
+public sealed class GameSession : IGameSession
 {
     public GameSession(GameNetworkSession networkSession)
     {

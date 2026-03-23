@@ -14,6 +14,7 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
+using Moongate.UO.Data.Version;
 
 namespace Moongate.Tests.Server.Services.Characters;
 
@@ -202,6 +203,135 @@ public sealed class PlayerLoginWorldSyncServiceTests
     }
 
     [Test]
+    public async Task SyncAsync_ShouldNotRefillItemsOutsideSessionViewRange()
+    {
+        var playerId = (Serial)0x00004021u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        session.ViewRange = 5;
+
+        var spawnLocation = new Point3D(132, 132, 0);
+        var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
+
+        var outerLocation = new Point3D(spawnLocation.X + MapSectorConsts.SectorSize * 2, spawnLocation.Y, 0);
+        var outerSectorX = outerLocation.X >> MapSectorConsts.SectorShift;
+        var outerSectorY = outerLocation.Y >> MapSectorConsts.SectorShift;
+        var outerItemId = (Serial)0x40000093u;
+        var outerSector = new MapSector(1, outerSectorX, outerSectorY);
+        outerSector.AddEntity(
+            new UOItemEntity
+            {
+                Id = outerItemId,
+                Name = "outer-item",
+                ItemId = 0x0EED,
+                ParentContainerId = Serial.Zero,
+                EquippedMobileId = Serial.Zero,
+                Location = outerLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService
+        {
+            NearbyItems =
+            [
+                new()
+                {
+                    Id = outerItemId,
+                    Name = "outer-item",
+                    ItemId = 0x0EED,
+                    ParentContainerId = Serial.Zero,
+                    EquippedMobileId = Serial.Zero,
+                    Location = outerLocation,
+                    MapId = 1
+                }
+            ]
+        };
+        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
+        spatial.SectorsByCoordinate[(1, outerSectorX, outerSectorY)] = outerSector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue);
+        var objectPackets = packets
+                            .Where(packet => packet.Packet is ObjectInformationPacket)
+                            .Select(packet => (ObjectInformationPacket)packet.Packet)
+                            .ToList();
+
+        Assert.That(objectPackets.Select(packet => packet.Serial), Does.Not.Contain(outerItemId));
+    }
+
+    [Test]
+    public async Task SyncAsync_ShouldNotSendMountedCreaturesAsStandaloneMobiles()
+    {
+        var playerId = (Serial)0x00004030u;
+        var mountedCreatureId = (Serial)0x00005030u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = mountedCreatureId,
+                Name = "mounted-horse",
+                Location = spawnLocation,
+                MapId = 1,
+                RiderMobileId = (Serial)0x00005031u
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.NearbyMobiles.Add(
+            new()
+            {
+                Id = mountedCreatureId,
+                Name = "mounted-horse",
+                Location = spawnLocation,
+                MapId = 1,
+                RiderMobileId = (Serial)0x00005031u
+            }
+        );
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.False);
+    }
+
+    [Test]
     public async Task SyncAsync_ShouldRefillVisibleRangeOutsideLoginSnapshotRadius()
     {
         var playerId = (Serial)0x00004020u;
@@ -287,80 +417,6 @@ public sealed class PlayerLoginWorldSyncServiceTests
     }
 
     [Test]
-    public async Task SyncAsync_ShouldNotRefillItemsOutsideSessionViewRange()
-    {
-        var playerId = (Serial)0x00004021u;
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var session = CreateSession(playerId);
-        session.ViewRange = 5;
-
-        var spawnLocation = new Point3D(132, 132, 0);
-        var centerSectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
-        var centerSectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
-        var centerSector = new MapSector(1, centerSectorX, centerSectorY);
-
-        var outerLocation = new Point3D(spawnLocation.X + MapSectorConsts.SectorSize * 2, spawnLocation.Y, 0);
-        var outerSectorX = outerLocation.X >> MapSectorConsts.SectorShift;
-        var outerSectorY = outerLocation.Y >> MapSectorConsts.SectorShift;
-        var outerItemId = (Serial)0x40000093u;
-        var outerSector = new MapSector(1, outerSectorX, outerSectorY);
-        outerSector.AddEntity(
-            new UOItemEntity
-            {
-                Id = outerItemId,
-                Name = "outer-item",
-                ItemId = 0x0EED,
-                ParentContainerId = Serial.Zero,
-                EquippedMobileId = Serial.Zero,
-                Location = outerLocation,
-                MapId = 1
-            }
-        );
-
-        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService
-        {
-            NearbyItems =
-            [
-                new()
-                {
-                    Id = outerItemId,
-                    Name = "outer-item",
-                    ItemId = 0x0EED,
-                    ParentContainerId = Serial.Zero,
-                    EquippedMobileId = Serial.Zero,
-                    Location = outerLocation,
-                    MapId = 1
-                }
-            ]
-        };
-        spatial.SectorsByCoordinate[(1, centerSectorX, centerSectorY)] = centerSector;
-        spatial.SectorsByCoordinate[(1, outerSectorX, outerSectorY)] = outerSector;
-        spatial.SectorByLocationResolver = (_, location) =>
-                                           {
-                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
-                                                          location.Y >> MapSectorConsts.SectorShift);
-
-                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
-                                                          ? resolved
-                                                          : null;
-                                           };
-
-        var character = CreatePlayer(playerId, spawnLocation);
-        session.Character = character;
-        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
-
-        await service.SyncAsync(session, character);
-
-        var packets = DequeueAll(queue);
-        var objectPackets = packets
-                            .Where(packet => packet.Packet is ObjectInformationPacket)
-                            .Select(packet => (ObjectInformationPacket)packet.Packet)
-                            .ToList();
-
-        Assert.That(objectPackets.Select(packet => packet.Serial), Does.Not.Contain(outerItemId));
-    }
-
-    [Test]
     public async Task SyncAsync_ShouldSendSectorSnapshotToEnteringPlayer()
     {
         var playerId = (Serial)0x00004000u;
@@ -410,55 +466,6 @@ public sealed class PlayerLoginWorldSyncServiceTests
                 Assert.That(packets.Any(packet => packet.Packet is ObjectInformationPacket), Is.True);
             }
         );
-    }
-
-    [Test]
-    public async Task SyncAsync_WhenSessionIsEnhanced_ShouldUseNewMobileIncomingFormat()
-    {
-        var playerId = (Serial)0x00004040u;
-        var npcId = (Serial)0x00004041u;
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var session = CreateSession(playerId);
-        session.NetworkSession.SetClientType(Moongate.UO.Data.Version.ClientType.SA);
-        var spawnLocation = new Point3D(132, 132, 0);
-        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
-        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
-        var sector = new MapSector(1, sectorX, sectorY);
-        sector.AddEntity(
-            new UOMobileEntity
-            {
-                Id = npcId,
-                Name = "enhanced-guard",
-                Location = spawnLocation,
-                MapId = 1,
-                BaseBody = 0x0190
-            }
-        );
-
-        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
-        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
-        spatial.SectorByLocationResolver = (_, location) =>
-                                           {
-                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
-                                                          location.Y >> MapSectorConsts.SectorShift);
-
-                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
-                                                          ? resolved
-                                                          : null;
-                                           };
-
-        var character = CreatePlayer(playerId, spawnLocation);
-        session.Character = character;
-        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
-
-        await service.SyncAsync(session, character);
-
-        var mobileIncomingPacket = DequeueAll(queue)
-                                   .Select(packet => packet.Packet)
-                                   .OfType<MobileIncomingPacket>()
-                                   .Single();
-
-        Assert.That(mobileIncomingPacket.NewMobileIncoming, Is.True);
     }
 
     [Test]
@@ -525,12 +532,13 @@ public sealed class PlayerLoginWorldSyncServiceTests
     }
 
     [Test]
-    public async Task SyncAsync_ShouldNotSendMountedCreaturesAsStandaloneMobiles()
+    public async Task SyncAsync_WhenSessionIsEnhanced_ShouldUseNewMobileIncomingFormat()
     {
-        var playerId = (Serial)0x00004030u;
-        var mountedCreatureId = (Serial)0x00005030u;
+        var playerId = (Serial)0x00004040u;
+        var npcId = (Serial)0x00004041u;
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
         var session = CreateSession(playerId);
+        session.NetworkSession.SetClientType(ClientType.SA);
         var spawnLocation = new Point3D(132, 132, 0);
         var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
         var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
@@ -538,26 +546,16 @@ public sealed class PlayerLoginWorldSyncServiceTests
         sector.AddEntity(
             new UOMobileEntity
             {
-                Id = mountedCreatureId,
-                Name = "mounted-horse",
+                Id = npcId,
+                Name = "enhanced-guard",
                 Location = spawnLocation,
                 MapId = 1,
-                RiderMobileId = (Serial)0x00005031u
+                BaseBody = 0x0190
             }
         );
 
         var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
         spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
-        spatial.NearbyMobiles.Add(
-            new UOMobileEntity
-            {
-                Id = mountedCreatureId,
-                Name = "mounted-horse",
-                Location = spawnLocation,
-                MapId = 1,
-                RiderMobileId = (Serial)0x00005031u
-            }
-        );
         spatial.SectorByLocationResolver = (_, location) =>
                                            {
                                                var key = (1, location.X >> MapSectorConsts.SectorShift,
@@ -574,9 +572,12 @@ public sealed class PlayerLoginWorldSyncServiceTests
 
         await service.SyncAsync(session, character);
 
-        var packets = DequeueAll(queue);
+        var mobileIncomingPacket = DequeueAll(queue)
+                                   .Select(packet => packet.Packet)
+                                   .OfType<MobileIncomingPacket>()
+                                   .Single();
 
-        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.False);
+        Assert.That(mobileIncomingPacket.NewMobileIncoming, Is.True);
     }
 
     private static UOMobileEntity CreatePlayer(Serial id, Point3D location)

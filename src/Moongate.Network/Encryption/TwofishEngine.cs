@@ -110,25 +110,25 @@ public sealed class TwofishEngine
         x[3] ^= _subKeys[OutputWhiten + 3];
     }
 
-    private void GenerateSubkeys(ReadOnlySpan<uint> keyWords)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static uint F32(uint x, uint k0, uint k2)
     {
-        var k0 = keyWords[0];
-        var k1 = keyWords[1];
-        var k2 = keyWords[2];
-        var k3 = keyWords[3];
+        var b0 = (byte)x;
+        var b1 = (byte)(x >> 8);
+        var b2 = (byte)(x >> 16);
+        var b3 = (byte)(x >> 24);
 
-        _sboxKeys[0] = RsMdsEncode(k2, k3);
-        _sboxKeys[1] = RsMdsEncode(k0, k1);
+        b0 = (byte)(P0[b0] ^ (byte)k2);
+        b1 = (byte)(P1[b1] ^ (byte)(k2 >> 8));
+        b2 = (byte)(P0[b2] ^ (byte)(k2 >> 16));
+        b3 = (byte)(P1[b3] ^ (byte)(k2 >> 24));
 
-        for (var i = 0; i < TotalSubkeys / 2; i++)
-        {
-            var a = F32((uint)(i * SkStep), k0, k2);
-            var b = F32((uint)(i * SkStep + SkBump), k1, k3);
-            b = BitOperations.RotateLeft(b, 8);
+        b0 = (byte)(P0[b0] ^ (byte)k0);
+        b1 = (byte)(P0[b1] ^ (byte)(k0 >> 8));
+        b2 = (byte)(P1[b2] ^ (byte)(k0 >> 16));
+        b3 = (byte)(P1[b3] ^ (byte)(k0 >> 24));
 
-            _subKeys[2 * i] = a + b;
-            _subKeys[2 * i + 1] = BitOperations.RotateLeft(a + 2 * b, SkRotl);
-        }
+        return MdsMultiply(P1[b0], P0[b1], P1[b2], P0[b3]);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -155,26 +155,42 @@ public sealed class TwofishEngine
         return MdsMultiply(P1[b0], P0[b1], P1[b2], P0[b3]);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static uint F32(uint x, uint k0, uint k2)
+    private void GenerateSubkeys(ReadOnlySpan<uint> keyWords)
     {
-        var b0 = (byte)x;
-        var b1 = (byte)(x >> 8);
-        var b2 = (byte)(x >> 16);
-        var b3 = (byte)(x >> 24);
+        var k0 = keyWords[0];
+        var k1 = keyWords[1];
+        var k2 = keyWords[2];
+        var k3 = keyWords[3];
 
-        b0 = (byte)(P0[b0] ^ (byte)k2);
-        b1 = (byte)(P1[b1] ^ (byte)(k2 >> 8));
-        b2 = (byte)(P0[b2] ^ (byte)(k2 >> 16));
-        b3 = (byte)(P1[b3] ^ (byte)(k2 >> 24));
+        _sboxKeys[0] = RsMdsEncode(k2, k3);
+        _sboxKeys[1] = RsMdsEncode(k0, k1);
 
-        b0 = (byte)(P0[b0] ^ (byte)k0);
-        b1 = (byte)(P0[b1] ^ (byte)(k0 >> 8));
-        b2 = (byte)(P1[b2] ^ (byte)(k0 >> 16));
-        b3 = (byte)(P1[b3] ^ (byte)(k0 >> 24));
+        for (var i = 0; i < TotalSubkeys / 2; i++)
+        {
+            var a = F32((uint)(i * SkStep), k0, k2);
+            var b = F32((uint)(i * SkStep + SkBump), k1, k3);
+            b = BitOperations.RotateLeft(b, 8);
 
-        return MdsMultiply(P1[b0], P0[b1], P1[b2], P0[b3]);
+            _subKeys[2 * i] = a + b;
+            _subKeys[2 * i + 1] = BitOperations.RotateLeft(a + 2 * b, SkRotl);
+        }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int Lfsr1(int val)
+        => val ^ Lfsr4(val);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int Lfsr2(int val)
+        => val ^ Lfsr3(val) ^ Lfsr4(val);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int Lfsr3(int val)
+        => (val >> 1) ^ ((val & 0x01) == 0x01 ? MdsGfFdbk / 2 : 0);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int Lfsr4(int val)
+        => (val >> 2) ^ ((val & 0x02) == 0x02 ? MdsGfFdbk / 2 : 0) ^ ((val & 0x01) == 0x01 ? MdsGfFdbk / 4 : 0);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static uint MdsMultiply(byte b0, byte b1, byte b2, byte b3)
@@ -186,19 +202,6 @@ public sealed class TwofishEngine
 
         return m0 | (m1 << 8) | (m2 << 16) | (m3 << 24);
     }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int Lfsr1(int val) => val ^ Lfsr4(val);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int Lfsr2(int val) => val ^ Lfsr3(val) ^ Lfsr4(val);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int Lfsr3(int val) => (val >> 1) ^ ((val & 0x01) == 0x01 ? MdsGfFdbk / 2 : 0);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int Lfsr4(int val) =>
-        (val >> 2) ^ ((val & 0x02) == 0x02 ? MdsGfFdbk / 2 : 0) ^ ((val & 0x01) == 0x01 ? MdsGfFdbk / 4 : 0);
 
     private static uint RsMdsEncode(uint k0, uint k1)
     {

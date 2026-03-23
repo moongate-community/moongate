@@ -1,6 +1,5 @@
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Commands.WorldGen;
-using Moongate.Server.Data.Entities;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.World;

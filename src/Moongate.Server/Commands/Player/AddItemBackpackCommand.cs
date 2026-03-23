@@ -40,8 +40,7 @@ public sealed class AddItemBackpackCommand : ICommandExecutor
     public async Task ExecuteCommandAsync(CommandSystemContext context)
     {
         if (
-            (context.Arguments.Length != 1 && context.Arguments.Length != 2)
-            || string.IsNullOrWhiteSpace(context.Arguments[0])
+            context.Arguments.Length != 1 && context.Arguments.Length != 2 || string.IsNullOrWhiteSpace(context.Arguments[0])
         )
         {
             context.Print("Usage: .add_item_backpack <templateId> [amount]");
@@ -52,8 +51,7 @@ public sealed class AddItemBackpackCommand : ICommandExecutor
         var amount = 1;
 
         if (
-            context.Arguments.Length == 2
-            && (!int.TryParse(context.Arguments[1], out amount) || amount <= 0)
+            context.Arguments.Length == 2 && (!int.TryParse(context.Arguments[1], out amount) || amount <= 0)
         )
         {
             context.Print("Usage: .add_item_backpack <templateId> [amount]");

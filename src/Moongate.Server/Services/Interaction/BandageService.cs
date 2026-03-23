@@ -85,14 +85,6 @@ public sealed class BandageService : IBandageService
         return true;
     }
 
-    public bool IsBandaging(Serial mobileId)
-    {
-        lock (_syncRoot)
-        {
-            return _inFlightTimers.ContainsKey(mobileId);
-        }
-    }
-
     public async Task<bool> HasBandageAsync(Serial mobileId, CancellationToken cancellationToken = default)
     {
         if (mobileId == Serial.Zero)
@@ -110,6 +102,22 @@ public sealed class BandageService : IBandageService
         return ContainsBandage(backpack);
     }
 
+    public bool IsBandaging(Serial mobileId)
+    {
+        lock (_syncRoot)
+        {
+            return _inFlightTimers.ContainsKey(mobileId);
+        }
+    }
+
+    private void ClearInFlight(Serial mobileId)
+    {
+        lock (_syncRoot)
+        {
+            _inFlightTimers.Remove(mobileId);
+        }
+    }
+
     private void CompleteSelfBandage(Serial mobileId)
     {
         ClearInFlight(mobileId);
@@ -123,14 +131,6 @@ public sealed class BandageService : IBandageService
 
         mobile.Hits = Math.Min(mobile.MaxHits, mobile.Hits + HealAmount);
         _mobileService.CreateOrUpdateAsync(mobile).GetAwaiter().GetResult();
-    }
-
-    private void ClearInFlight(Serial mobileId)
-    {
-        lock (_syncRoot)
-        {
-            _inFlightTimers.Remove(mobileId);
-        }
     }
 
     private static bool ContainsBandage(UOItemEntity container)
@@ -155,6 +155,33 @@ public sealed class BandageService : IBandageService
 
     private static string GetTimerName(Serial mobileId)
         => $"bandage:{(uint)mobileId}";
+
+    private UOMobileEntity? ResolveMobile(Serial mobileId)
+    {
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            var mobile = sector.GetEntity<UOMobileEntity>(mobileId);
+
+            if (mobile is not null)
+            {
+                return mobile;
+            }
+        }
+
+        return null;
+    }
+
+    private async Task<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
+    {
+        var mobile = ResolveMobile(mobileId);
+
+        if (mobile is not null)
+        {
+            return mobile;
+        }
+
+        return await _mobileService.GetAsync(mobileId, cancellationToken);
+    }
 
     private static bool TryConsumeBandage(
         UOItemEntity container,
@@ -193,33 +220,6 @@ public sealed class BandageService : IBandageService
         }
 
         return false;
-    }
-
-    private async Task<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
-    {
-        var mobile = ResolveMobile(mobileId);
-
-        if (mobile is not null)
-        {
-            return mobile;
-        }
-
-        return await _mobileService.GetAsync(mobileId, cancellationToken);
-    }
-
-    private UOMobileEntity? ResolveMobile(Serial mobileId)
-    {
-        foreach (var sector in _spatialWorldService.GetActiveSectors())
-        {
-            var mobile = sector.GetEntity<UOMobileEntity>(mobileId);
-
-            if (mobile is not null)
-            {
-                return mobile;
-            }
-        }
-
-        return null;
     }
 
     private static bool TryGetBackpack(UOMobileEntity mobile, out UOItemEntity backpack)

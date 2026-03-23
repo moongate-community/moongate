@@ -12,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Types.Items;
 using Moongate.Server.Utils;
 using Moongate.UO.Data.Constants;
 using Moongate.UO.Data.Geometry;
@@ -231,6 +232,93 @@ public sealed class DeathService : IDeathService
         return corpse;
     }
 
+    private async Task DecayCorpseAsync(Serial corpseId, int mapId, Point3D location)
+    {
+        _ = await _itemService.DeleteItemAsync(corpseId);
+        _spatialWorldService.RemoveEntity(corpseId);
+        await _spatialWorldService.BroadcastToPlayersAsync(new DeleteObjectPacket(corpseId), mapId, location);
+    }
+
+    private void EnqueueLuaDeathHook(
+        UOMobileEntity victim,
+        LuaBrainDeathHookType hookType,
+        Serial? killerId,
+        Dictionary<string, object?> payload
+    )
+    {
+        if (victim.IsPlayer || _luaBrainRunner is null)
+        {
+            return;
+        }
+
+        _luaBrainRunner.EnqueueDeath(victim.Id, new(hookType, killerId, payload));
+    }
+
+    private async Task GenerateCorpseLootAsync(
+        UOMobileEntity victim,
+        UOItemEntity corpse,
+        CancellationToken cancellationToken
+    )
+    {
+        if (_lootGenerationService is null ||
+            !victim.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var lootTablesRaw) ||
+            string.IsNullOrWhiteSpace(lootTablesRaw))
+        {
+            return;
+        }
+
+        var lootTableIds = lootTablesRaw.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        if (lootTableIds.Length == 0)
+        {
+            return;
+        }
+
+        await _lootGenerationService.GenerateForContainerAsync(
+            corpse,
+            lootTableIds,
+            LootGenerationMode.OnDeath,
+            cancellationToken
+        );
+    }
+
+    private static string GetCorpseTimerName(Serial corpseId)
+        => $"corpse-decay:{corpseId.Value}";
+
+    private static bool IsLootable(UOItemEntity item)
+    {
+        if (item.ItemId == 0)
+        {
+            return false;
+        }
+
+        if (item.TryGetCustomBoolean("immovable", out var isImmovable) && isImmovable)
+        {
+            return false;
+        }
+
+        if (item.TryGetCustomBoolean("system_item", out var isSystemItem) && isSystemItem)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task MoveItemIntoCorpseAsync(UOItemEntity item, UOItemEntity corpse, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+        var position = ResolveCorpsePosition(corpse.Items.Count);
+        await _itemService.MoveItemToContainerAsync(item.Id, corpse.Id, position);
+        var moved = await _itemService.GetItemAsync(item.Id);
+
+        if (moved is not null && corpse.Items.All(existing => existing.Id != moved.Id))
+        {
+            corpse.AddItem(moved, position);
+            await _itemService.UpsertItemAsync(corpse);
+        }
+    }
+
     private async Task MoveLootToCorpseAsync(
         UOMobileEntity victim,
         UOItemEntity corpse,
@@ -285,66 +373,12 @@ public sealed class DeathService : IDeathService
         }
     }
 
-    private async Task GenerateCorpseLootAsync(
-        UOMobileEntity victim,
-        UOItemEntity corpse,
-        CancellationToken cancellationToken
-    )
+    private static Point2D ResolveCorpsePosition(int index)
     {
-        if (_lootGenerationService is null ||
-            !victim.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var lootTablesRaw) ||
-            string.IsNullOrWhiteSpace(lootTablesRaw))
-        {
-            return;
-        }
+        var column = index % 5;
+        var row = index / 5;
 
-        var lootTableIds = lootTablesRaw.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-
-        if (lootTableIds.Length == 0)
-        {
-            return;
-        }
-
-        await _lootGenerationService.GenerateForContainerAsync(
-            corpse,
-            lootTableIds,
-            Types.Items.LootGenerationMode.OnDeath,
-            cancellationToken
-        );
-    }
-
-    private static bool IsLootable(UOItemEntity item)
-    {
-        if (item.ItemId == 0)
-        {
-            return false;
-        }
-
-        if (item.TryGetCustomBoolean("immovable", out var isImmovable) && isImmovable)
-        {
-            return false;
-        }
-
-        if (item.TryGetCustomBoolean("system_item", out var isSystemItem) && isSystemItem)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private async Task MoveItemIntoCorpseAsync(UOItemEntity item, UOItemEntity corpse, CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-        var position = ResolveCorpsePosition(corpse.Items.Count);
-        await _itemService.MoveItemToContainerAsync(item.Id, corpse.Id, position);
-        var moved = await _itemService.GetItemAsync(item.Id);
-
-        if (moved is not null && corpse.Items.All(existing => existing.Id != moved.Id))
-        {
-            corpse.AddItem(moved, position);
-            await _itemService.UpsertItemAsync(corpse);
-        }
+        return new(20 + column * 18, 20 + row * 18);
     }
 
     private void ScheduleCorpseDecay(UOItemEntity corpse)
@@ -357,38 +391,5 @@ public sealed class DeathService : IDeathService
             () => DecayCorpseAsync(corpse.Id, corpse.MapId, corpse.Location).GetAwaiter().GetResult(),
             repeat: false
         );
-    }
-
-    private async Task DecayCorpseAsync(Serial corpseId, int mapId, Point3D location)
-    {
-        _ = await _itemService.DeleteItemAsync(corpseId);
-        _spatialWorldService.RemoveEntity(corpseId);
-        await _spatialWorldService.BroadcastToPlayersAsync(new DeleteObjectPacket(corpseId), mapId, location);
-    }
-
-    private void EnqueueLuaDeathHook(
-        UOMobileEntity victim,
-        LuaBrainDeathHookType hookType,
-        Serial? killerId,
-        Dictionary<string, object?> payload
-    )
-    {
-        if (victim.IsPlayer || _luaBrainRunner is null)
-        {
-            return;
-        }
-
-        _luaBrainRunner.EnqueueDeath(victim.Id, new LuaBrainDeathContext(hookType, killerId, payload));
-    }
-
-    private static string GetCorpseTimerName(Serial corpseId)
-        => $"corpse-decay:{corpseId.Value}";
-
-    private static Point2D ResolveCorpsePosition(int index)
-    {
-        var column = index % 5;
-        var row = index / 5;
-
-        return new Point2D(20 + column * 18, 20 + row * 18);
     }
 }

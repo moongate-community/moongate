@@ -84,24 +84,6 @@ public class GeneralInformationHandler : BasePacketListener
         return true;
     }
 
-    private static void HandleClientType(GameSession session, ReadOnlySpan<byte> payload)
-    {
-        if (payload.Length < 4)
-        {
-            return;
-        }
-
-        var rawClientType = BinaryPrimitives.ReadUInt32BigEndian(payload);
-        var clientType = rawClientType switch
-        {
-            0x02u => ClientType.KR,
-            0x03u => ClientType.SA,
-            _ => ClientType.Classic
-        };
-
-        session.NetworkSession.SetClientType(clientType);
-    }
-
     private ValueTask HandleAction3DClientAsync(GameSession session, ReadOnlySpan<byte> payload)
     {
         if (session.Character is null)
@@ -138,6 +120,24 @@ public class GeneralInformationHandler : BasePacketListener
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
 
         return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
+    }
+
+    private static void HandleClientType(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (payload.Length < 4)
+        {
+            return;
+        }
+
+        var rawClientType = BinaryPrimitives.ReadUInt32BigEndian(payload);
+        var clientType = rawClientType switch
+        {
+            0x02u => ClientType.KR,
+            0x03u => ClientType.SA,
+            _     => ClientType.Classic
+        };
+
+        session.NetworkSession.SetClientType(clientType);
     }
 
     private ValueTask HandlePartySystemAsync(GameSession session, ReadOnlySpan<byte> payload)

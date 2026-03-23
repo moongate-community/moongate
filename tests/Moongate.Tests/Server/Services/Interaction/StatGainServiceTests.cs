@@ -44,24 +44,6 @@ public sealed class StatGainServiceTests
         ];
 
     [Test]
-    public void TryApply_WhenPrimaryStatRollWins_ShouldIncreasePrimaryStat()
-    {
-        var mobile = CreateMobile();
-        var service = new StatGainService(() => 0.0, () => 0.0);
-
-        var result = service.TryApply(mobile, UOSkillName.Archery);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.StatIncreased, Is.True);
-                Assert.That(result.GainedStat, Is.EqualTo(Stat.Dexterity));
-                Assert.That(mobile.Dexterity, Is.EqualTo(51));
-            }
-        );
-    }
-
-    [Test]
     public void TryApply_WhenPrimaryStatLocked_ShouldFallbackToSecondaryIfAvailable()
     {
         var mobile = CreateMobile();
@@ -76,6 +58,24 @@ public sealed class StatGainServiceTests
                 Assert.That(result.StatIncreased, Is.True);
                 Assert.That(result.GainedStat, Is.EqualTo(Stat.Strength));
                 Assert.That(mobile.Strength, Is.EqualTo(51));
+            }
+        );
+    }
+
+    [Test]
+    public void TryApply_WhenPrimaryStatRollWins_ShouldIncreasePrimaryStat()
+    {
+        var mobile = CreateMobile();
+        var service = new StatGainService(() => 0.0, () => 0.0);
+
+        var result = service.TryApply(mobile, UOSkillName.Archery);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.StatIncreased, Is.True);
+                Assert.That(result.GainedStat, Is.EqualTo(Stat.Dexterity));
+                Assert.That(mobile.Dexterity, Is.EqualTo(51));
             }
         );
     }

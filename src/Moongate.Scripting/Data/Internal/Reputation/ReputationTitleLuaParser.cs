@@ -79,7 +79,7 @@ internal static class ReputationTitleLuaParser
             return false;
         }
 
-        for (var index = 1; ; index++)
+        for (var index = 1;; index++)
         {
             var value = arrayTable.Get(index);
 

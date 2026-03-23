@@ -90,61 +90,6 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
-    public async Task CreateMobileFromTemplate_WhenTemplateDefinesLootTables_ShouldProjectThemToRuntimeCustomProperties()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var templateService = new MobileTemplateService();
-        templateService.Upsert(
-            new()
-            {
-                Id = "loot_mobile",
-                Name = "Loot Mobile",
-                Category = "test",
-                Description = "test",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
-                LootTables = ["undead.low", "gold.small"]
-            }
-        );
-        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
-
-        var mobile = service.CreateMobileFromTemplate("loot_mobile");
-
-        Assert.That(mobile.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var rawLootTables), Is.True);
-        Assert.That(rawLootTables, Is.EqualTo("undead.low,gold.small"));
-    }
-
-    [Test]
-    public async Task CreateMobileFromTemplate_WhenTemplateDefinesDefaultFactionId_ShouldProjectFactionIdToRuntime()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var templateService = new MobileTemplateService();
-        templateService.Upsert(
-            new()
-            {
-                Id = "faction_guard",
-                Name = "Faction Guard",
-                Category = "guards",
-                Description = "guard",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
-                DefaultFactionId = "true_britannians"
-            }
-        );
-        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
-
-        var mobile = service.CreateMobileFromTemplate("faction_guard");
-
-        Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
-    }
-
-    [Test]
     public async Task CreateMobileFromTemplate_ShouldClampHits_WhenMaxHitsIsLower()
     {
         using var temp = new TempDirectory();
@@ -557,6 +502,61 @@ public class MobileFactoryServiceTests
             () => service.CreateMobileFromTemplate("vendor_with_profile"),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("missing sell profile")
         );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesDefaultFactionId_ShouldProjectFactionIdToRuntime()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "faction_guard",
+                Name = "Faction Guard",
+                Category = "guards",
+                Description = "guard",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                DefaultFactionId = "true_britannians"
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("faction_guard");
+
+        Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesLootTables_ShouldProjectThemToRuntimeCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "loot_mobile",
+                Name = "Loot Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                LootTables = ["undead.low", "gold.small"]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("loot_mobile");
+
+        Assert.That(mobile.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var rawLootTables), Is.True);
+        Assert.That(rawLootTables, Is.EqualTo("undead.low,gold.small"));
     }
 
     [Test]

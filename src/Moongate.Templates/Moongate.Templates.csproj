@@ -5,13 +5,13 @@
         TaskFactory="RoslynCodeTaskFactory"
         AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
         <ParameterGroup>
-            <SourceDirectory ParameterType="System.String" Required="true" />
-            <OutputDirectory ParameterType="System.String" Required="true" />
-            <PackageVersion ParameterType="System.String" Required="true" />
+            <SourceDirectory ParameterType="System.String" Required="true"/>
+            <OutputDirectory ParameterType="System.String" Required="true"/>
+            <PackageVersion ParameterType="System.String" Required="true"/>
         </ParameterGroup>
         <Task>
-            <Using Namespace="System" />
-            <Using Namespace="System.IO" />
+            <Using Namespace="System"/>
+            <Using Namespace="System.IO"/>
             <Code Type="Fragment" Language="cs"><![CDATA[
                 if (Directory.Exists(OutputDirectory))
                 {
@@ -63,27 +63,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="content/**" />
-        <EmbeddedResource Remove="content/**" />
-        <None Remove="content/**" />
+        <Compile Remove="content/**"/>
+        <EmbeddedResource Remove="content/**"/>
+        <None Remove="content/**"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="\" Visible="false" />
+        <None Include="README.md" Pack="true" PackagePath="\" Visible="false"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-      </PackageReference>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <Target Name="PackTemplateContent">
         <RenderTemplateContent
             SourceDirectory="$(MSBuildProjectDirectory)/content"
             OutputDirectory="$(TemplateContentDirectory)"
-            PackageVersion="$(Version)" />
+            PackageVersion="$(Version)"/>
 
         <ItemGroup>
             <TfmSpecificPackageFile Include="$(TemplateContentDirectory)/**;$(TemplateContentDirectory)/**/.*">

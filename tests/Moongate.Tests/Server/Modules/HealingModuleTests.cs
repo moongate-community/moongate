@@ -19,6 +19,7 @@ public sealed class HealingModuleTests
         {
             _ = cancellationToken;
             LastBeginMobileId = mobileId;
+
             return Task.FromResult(BeginResult);
         }
 
@@ -26,12 +27,14 @@ public sealed class HealingModuleTests
         {
             _ = cancellationToken;
             LastHasBandageMobileId = mobileId;
+
             return Task.FromResult(HasBandageResult);
         }
 
         public bool IsBandaging(Serial mobileId)
         {
             LastIsBandagingMobileId = mobileId;
+
             return IsBandagingResult;
         }
     }

@@ -7,16 +7,29 @@ namespace Moongate.Tests.UO.Data.Utils;
 
 public class ReputationTitleFormatterTests
 {
-    [SetUp]
-    public void SetUp()
+    [Test]
+    public void FormatDisplayName_WhenMobileHasCustomTitle_ShouldAppendItAfterName()
     {
-        ReputationTitleRuntime.Reset();
+        var mobile = CreateMobile();
+        mobile.Fame = 3000;
+        mobile.Karma = 10000;
+        mobile.Title = "the brave";
+
+        var displayName = ReputationTitleFormatter.FormatDisplayName(mobile);
+
+        Assert.That(displayName, Is.EqualTo("The Great Marcus the brave"));
     }
 
-    [TearDown]
-    public void TearDown()
+    [Test]
+    public void FormatDisplayName_WhenMobileHasLegendaryFame_ShouldIncludeHonorific()
     {
-        ReputationTitleRuntime.Reset();
+        var mobile = CreateMobile();
+        mobile.Fame = 10000;
+        mobile.Karma = 10000;
+
+        var displayName = ReputationTitleFormatter.FormatDisplayName(mobile);
+
+        Assert.That(displayName, Is.EqualTo("The Glorious Lord Marcus"));
     }
 
     [Test]
@@ -42,18 +55,6 @@ public class ReputationTitleFormatterTests
     }
 
     [Test]
-    public void FormatDisplayName_WhenMobileHasLegendaryFame_ShouldIncludeHonorific()
-    {
-        var mobile = CreateMobile();
-        mobile.Fame = 10000;
-        mobile.Karma = 10000;
-
-        var displayName = ReputationTitleFormatter.FormatDisplayName(mobile);
-
-        Assert.That(displayName, Is.EqualTo("The Glorious Lord Marcus"));
-    }
-
-    [Test]
     public void FormatDisplayName_WhenMobileIsLegendaryFemaleWithNegativeKarma_ShouldIncludeLadyHonorific()
     {
         var mobile = CreateMobile();
@@ -65,19 +66,6 @@ public class ReputationTitleFormatterTests
         var displayName = ReputationTitleFormatter.FormatDisplayName(mobile);
 
         Assert.That(displayName, Is.EqualTo("The Dark Lady Minax"));
-    }
-
-    [Test]
-    public void FormatDisplayName_WhenMobileHasCustomTitle_ShouldAppendItAfterName()
-    {
-        var mobile = CreateMobile();
-        mobile.Fame = 3000;
-        mobile.Karma = 10000;
-        mobile.Title = "the brave";
-
-        var displayName = ReputationTitleFormatter.FormatDisplayName(mobile);
-
-        Assert.That(displayName, Is.EqualTo("The Great Marcus the brave"));
     }
 
     [Test]
@@ -106,12 +94,18 @@ public class ReputationTitleFormatterTests
         Assert.That(displayName, Is.EqualTo("The Custom Baron Marcus"));
     }
 
+    [SetUp]
+    public void SetUp()
+        => ReputationTitleRuntime.Reset();
+
+    [TearDown]
+    public void TearDown()
+        => ReputationTitleRuntime.Reset();
+
     private static UOMobileEntity CreateMobile()
-    {
-        return new()
+        => new()
         {
             Name = "Marcus",
             Gender = GenderType.Male
         };
-    }
 }

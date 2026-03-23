@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Moongate.Server.Data.Plugins;
 using Moongate.Server.Json;
 
 namespace Moongate.Tests.Server.Plugins;
@@ -7,26 +6,104 @@ namespace Moongate.Tests.Server.Plugins;
 public class MoongatePluginManifestTests
 {
     [Test]
+    public void Deserialize_DependencyMetadata_ShouldPopulateOptionalAndVersionRange()
+    {
+        const string json = """
+                            {
+                              "id": "my-plugin",
+                              "name": "My Plugin",
+                              "version": "1.0.0",
+                              "authors": ["Squid"],
+                              "entryAssembly": "bin/MyPlugin.dll",
+                              "entryType": "MyPlugin.MyPlugin",
+                              "dependencies": [
+                                {
+                                  "id": "moongate.dialogue",
+                                  "versionRange": ">=1.0.0",
+                                  "optional": true
+                                }
+                              ]
+                            }
+                            """;
+
+        var manifest = JsonSerializer.Deserialize(
+            json,
+            MoongatePluginJsonContext.Default.MoongatePluginManifest
+        );
+
+        Assert.That(manifest, Is.Not.Null);
+        Assert.That(manifest!.Dependencies, Has.Count.EqualTo(1));
+        Assert.That(manifest.Dependencies[0].Id, Is.EqualTo("moongate.dialogue"));
+        Assert.That(manifest.Dependencies[0].VersionRange, Is.EqualTo(">=1.0.0"));
+        Assert.That(manifest.Dependencies[0].Optional, Is.True);
+    }
+
+    [Test]
+    public void Deserialize_EmptyAuthors_ShouldPreserveEmptyList()
+    {
+        const string json = """
+                            {
+                              "id": "my-plugin",
+                              "name": "My Plugin",
+                              "version": "1.0.0",
+                              "authors": [],
+                              "entryAssembly": "bin/MyPlugin.dll",
+                              "entryType": "MyPlugin.MyPlugin"
+                            }
+                            """;
+
+        var manifest = JsonSerializer.Deserialize(
+            json,
+            MoongatePluginJsonContext.Default.MoongatePluginManifest
+        );
+
+        Assert.That(manifest, Is.Not.Null);
+        Assert.That(manifest!.Authors, Is.Empty);
+    }
+
+    [Test]
+    public void Deserialize_MissingId_ShouldLeaveIdUnset()
+    {
+        const string json = """
+                            {
+                              "name": "My Plugin",
+                              "version": "1.0.0",
+                              "authors": [],
+                              "entryAssembly": "bin/MyPlugin.dll",
+                              "entryType": "MyPlugin.MyPlugin"
+                            }
+                            """;
+
+        var manifest = JsonSerializer.Deserialize(
+            json,
+            MoongatePluginJsonContext.Default.MoongatePluginManifest
+        );
+
+        Assert.That(manifest, Is.Not.Null);
+        Assert.That(manifest!.Id, Is.Null);
+    }
+
+    [Test]
     public void Deserialize_ValidManifest_ShouldPopulateAllFields()
     {
         const string json = """
-            {
-              "id": "my-plugin",
-              "name": "My Plugin",
-              "version": "1.0.0",
-              "authors": ["Squid"],
-              "description": "Adds custom world content.",
-              "entryAssembly": "bin/MyPlugin.dll",
-              "entryType": "MyPlugin.MyPlugin",
-              "dependencies": [
-                {
-                  "id": "moongate.dialogue",
-                  "versionRange": ">=1.0.0",
-                  "optional": false
-                }
-              ]
-            }
-            """;
+                            {
+                              "id": "my-plugin",
+                              "name": "My Plugin",
+                              "version": "1.0.0",
+                              "authors": ["Squid"],
+                              "description": "Adds custom world content.",
+                              "entryAssembly": "bin/MyPlugin.dll",
+                              "entryType": "MyPlugin.MyPlugin",
+                              "dependencies": [
+                                {
+                                  "id": "moongate.dialogue",
+                                  "versionRange": ">=1.0.0",
+                                  "optional": false
+                                }
+                              ]
+                            }
+                            """;
 
         var manifest = JsonSerializer.Deserialize(
             json,
@@ -50,83 +127,5 @@ public class MoongatePluginManifestTests
                 Assert.That(manifest.Dependencies[0].Optional, Is.False);
             }
         );
-    }
-
-    [Test]
-    public void Deserialize_MissingId_ShouldLeaveIdUnset()
-    {
-        const string json = """
-            {
-              "name": "My Plugin",
-              "version": "1.0.0",
-              "authors": [],
-              "entryAssembly": "bin/MyPlugin.dll",
-              "entryType": "MyPlugin.MyPlugin"
-            }
-            """;
-
-        var manifest = JsonSerializer.Deserialize(
-            json,
-            MoongatePluginJsonContext.Default.MoongatePluginManifest
-        );
-
-        Assert.That(manifest, Is.Not.Null);
-        Assert.That(manifest!.Id, Is.Null);
-    }
-
-    [Test]
-    public void Deserialize_EmptyAuthors_ShouldPreserveEmptyList()
-    {
-        const string json = """
-            {
-              "id": "my-plugin",
-              "name": "My Plugin",
-              "version": "1.0.0",
-              "authors": [],
-              "entryAssembly": "bin/MyPlugin.dll",
-              "entryType": "MyPlugin.MyPlugin"
-            }
-            """;
-
-        var manifest = JsonSerializer.Deserialize(
-            json,
-            MoongatePluginJsonContext.Default.MoongatePluginManifest
-        );
-
-        Assert.That(manifest, Is.Not.Null);
-        Assert.That(manifest!.Authors, Is.Empty);
-    }
-
-    [Test]
-    public void Deserialize_DependencyMetadata_ShouldPopulateOptionalAndVersionRange()
-    {
-        const string json = """
-            {
-              "id": "my-plugin",
-              "name": "My Plugin",
-              "version": "1.0.0",
-              "authors": ["Squid"],
-              "entryAssembly": "bin/MyPlugin.dll",
-              "entryType": "MyPlugin.MyPlugin",
-              "dependencies": [
-                {
-                  "id": "moongate.dialogue",
-                  "versionRange": ">=1.0.0",
-                  "optional": true
-                }
-              ]
-            }
-            """;
-
-        var manifest = JsonSerializer.Deserialize(
-            json,
-            MoongatePluginJsonContext.Default.MoongatePluginManifest
-        );
-
-        Assert.That(manifest, Is.Not.Null);
-        Assert.That(manifest!.Dependencies, Has.Count.EqualTo(1));
-        Assert.That(manifest.Dependencies[0].Id, Is.EqualTo("moongate.dialogue"));
-        Assert.That(manifest.Dependencies[0].VersionRange, Is.EqualTo(">=1.0.0"));
-        Assert.That(manifest.Dependencies[0].Optional, Is.True);
     }
 }

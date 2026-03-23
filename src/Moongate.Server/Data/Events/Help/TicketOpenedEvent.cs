@@ -25,5 +25,14 @@ public readonly record struct TicketOpenedEvent(
         int mapId,
         Point3D location
     )
-        : this(GameEventBase.CreateNow(), ticketId, senderCharacterId, senderAccountId, category, message, mapId, location) { }
+        : this(
+            GameEventBase.CreateNow(),
+            ticketId,
+            senderCharacterId,
+            senderAccountId,
+            category,
+            message,
+            mapId,
+            location
+        ) { }
 }

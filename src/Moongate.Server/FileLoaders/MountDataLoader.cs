@@ -1,8 +1,8 @@
+using System.Globalization;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Services.Files;
 using Serilog;
-using System.Globalization;
 
 namespace Moongate.Server.FileLoaders;
 
@@ -17,9 +17,7 @@ public sealed class MountDataLoader : IFileLoader
     private readonly string _cfgPath;
 
     public MountDataLoader(MountTileData mountTileData)
-        : this(mountTileData, Path.Combine(AppContext.BaseDirectory, "Assets", "data", "support", "uoconvert.cfg"))
-    {
-    }
+        : this(mountTileData, Path.Combine(AppContext.BaseDirectory, "Assets", "data", "support", "uoconvert.cfg")) { }
 
     internal MountDataLoader(MountTileData mountTileData, string cfgPath)
     {

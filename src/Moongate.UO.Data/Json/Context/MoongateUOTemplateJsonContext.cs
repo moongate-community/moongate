@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
+using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Mobiles;
-using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Templates.SellProfiles;
 
 namespace Moongate.UO.Data.Json.Context;

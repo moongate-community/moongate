@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Data.Internal.Interaction;
 
@@ -33,7 +34,7 @@ internal static class BankBoxOpenHelper
             return "Failed to open bank: bank box not found.";
         }
 
-        character.AddEquippedItem(Moongate.UO.Data.Types.ItemLayerType.Bank, bank);
+        character.AddEquippedItem(ItemLayerType.Bank, bank);
         outgoingPacketQueue.Enqueue(session.SessionId, new DrawContainerAndAddItemCombinedPacket(bank));
 
         return null;

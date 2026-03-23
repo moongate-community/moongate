@@ -34,39 +34,41 @@ internal sealed class PluginBootstrapRegistrations
     public IReadOnlyList<Action<IPersistenceEntityRegistry>> PersistenceDescriptorRegistrations
         => _persistenceDescriptorRegistrations;
 
-    public void AddServiceRegistration(Type serviceType, Type implementationType, int priority)
-    {
-        if (_serviceRegistrations.Any(registration => registration.ServiceType == serviceType &&
-                                                     registration.ImplementationType == implementationType))
-        {
-            return;
-        }
-
-        _serviceRegistrations.Add((serviceType, implementationType, priority));
-    }
-
-    public void AddPacketHandler(Type handlerType)
-        => AddTypeOnce(_packetHandlerTypes, handlerType);
-
-    public void AddGameEventListener(Type listenerType)
-        => AddTypeOnce(_gameEventListenerTypes, listenerType);
-
     public void AddConsoleCommand(Type commandType)
         => AddTypeOnce(_consoleCommandTypes, commandType);
 
     public void AddFileLoader(Type loaderType)
         => AddTypeOnce(_fileLoaderTypes, loaderType);
 
+    public void AddGameEventListener(Type listenerType)
+        => AddTypeOnce(_gameEventListenerTypes, listenerType);
+
     public void AddLuaUserData(Type userDataType)
         => AddTypeOnce(_luaUserDataTypes, userDataType);
 
-    public void AddScriptModule(Type scriptModuleType)
-        => AddTypeOnce(_scriptModuleTypes, scriptModuleType);
+    public void AddPacketHandler(Type handlerType)
+        => AddTypeOnce(_packetHandlerTypes, handlerType);
 
     public void AddPersistenceDescriptorRegistration(Action<IPersistenceEntityRegistry> registration)
     {
         ArgumentNullException.ThrowIfNull(registration);
         _persistenceDescriptorRegistrations.Add(registration);
+    }
+
+    public void AddScriptModule(Type scriptModuleType)
+        => AddTypeOnce(_scriptModuleTypes, scriptModuleType);
+
+    public void AddServiceRegistration(Type serviceType, Type implementationType, int priority)
+    {
+        if (_serviceRegistrations.Any(
+                registration => registration.ServiceType == serviceType &&
+                                registration.ImplementationType == implementationType
+            ))
+        {
+            return;
+        }
+
+        _serviceRegistrations.Add((serviceType, implementationType, priority));
     }
 
     private static void AddTypeOnce(ICollection<Type> registrations, Type type)

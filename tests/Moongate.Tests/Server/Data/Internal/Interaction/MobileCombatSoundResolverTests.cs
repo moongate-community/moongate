@@ -25,6 +25,17 @@ public sealed class MobileCombatSoundResolverTests
     }
 
     [Test]
+    public void TryResolve_ShouldReturnFalseWhenNoRuntimeOrFallbackExists()
+    {
+        var resolver = new MobileCombatSoundResolver();
+        var mobile = new UOMobileEntity();
+
+        var resolved = resolver.TryResolve(mobile, MobileSoundType.Die, out _);
+
+        Assert.That(resolved, Is.False);
+    }
+
+    [Test]
     public void TryResolve_ShouldUseFallbackWhenRuntimeSoundMissing()
     {
         var resolver = new MobileCombatSoundResolver();
@@ -39,16 +50,5 @@ public sealed class MobileCombatSoundResolverTests
                 Assert.That(soundId, Is.GreaterThan(0));
             }
         );
-    }
-
-    [Test]
-    public void TryResolve_ShouldReturnFalseWhenNoRuntimeOrFallbackExists()
-    {
-        var resolver = new MobileCombatSoundResolver();
-        var mobile = new UOMobileEntity();
-
-        var resolved = resolver.TryResolve(mobile, MobileSoundType.Die, out _);
-
-        Assert.That(resolved, Is.False);
     }
 }

@@ -21,11 +21,13 @@ public sealed class DialogueMemoryService : IDialogueMemoryService
     }
 
     private readonly ConcurrentDictionary<Serial, CachedMemoryFile> _cache = [];
+
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         WriteIndented = true,
         TypeInfoResolver = MoongateServerJsonContext.Default
     };
+
     private readonly string _memoriesRootPath;
 
     public DialogueMemoryService(DirectoriesConfig directoriesConfig)
@@ -34,22 +36,22 @@ public sealed class DialogueMemoryService : IDialogueMemoryService
         _memoriesRootPath = Path.Combine(directoriesConfig.Root, "runtime", "dialogue_memory");
     }
 
-    public NpcDialogueMemoryFile LoadOrCreate(Serial npcId)
-        => _cache.GetOrAdd(npcId, LoadMemoryFile).File;
-
     public DialogueMemoryEntry GetOrCreateEntry(Serial npcId, Serial otherMobileId)
     {
         var cached = _cache.GetOrAdd(npcId, LoadMemoryFile);
 
         if (!cached.File.Entries.TryGetValue(otherMobileId.Value, out var entry))
         {
-            entry = new DialogueMemoryEntry();
+            entry = new();
             cached.File.Entries[otherMobileId.Value] = entry;
             cached.Dirty = true;
         }
 
         return entry;
     }
+
+    public NpcDialogueMemoryFile LoadOrCreate(Serial npcId)
+        => _cache.GetOrAdd(npcId, LoadMemoryFile).File;
 
     public void MarkDirty(Serial npcId)
     {
@@ -70,6 +72,24 @@ public sealed class DialogueMemoryService : IDialogueMemoryService
         Directory.CreateDirectory(_memoriesRootPath);
         File.WriteAllText(memoryPath, JsonSerializer.Serialize(cached.File, _jsonOptions));
         cached.Dirty = false;
+    }
+
+    private static NpcDialogueMemoryFile CreateDefaultMemoryFile(Serial npcId)
+        => new()
+        {
+            NpcId = npcId.Value
+        };
+
+    private static string FormatFileName(Serial npcId)
+    {
+        var hex = npcId.Value.ToString("X");
+
+        if (hex.Length < 6)
+        {
+            hex = hex.PadLeft(6, '0');
+        }
+
+        return $"0x{hex}.json";
     }
 
     private CachedMemoryFile LoadMemoryFile(Serial npcId)
@@ -103,24 +123,6 @@ public sealed class DialogueMemoryService : IDialogueMemoryService
             Dirty = false,
             File = defaultFile
         };
-    }
-
-    private static NpcDialogueMemoryFile CreateDefaultMemoryFile(Serial npcId)
-        => new()
-        {
-            NpcId = npcId.Value
-        };
-
-    private static string FormatFileName(Serial npcId)
-    {
-        var hex = npcId.Value.ToString("X");
-
-        if (hex.Length < 6)
-        {
-            hex = hex.PadLeft(6, '0');
-        }
-
-        return $"0x{hex}.json";
     }
 
     private string ResolveMemoryPath(Serial npcId)

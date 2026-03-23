@@ -71,23 +71,6 @@ public sealed class AiRelationService : IAiRelationService
         return AiRelation.Neutral;
     }
 
-    private static bool HasRecentAggression(UOMobileEntity viewer, UOMobileEntity target, DateTime nowUtc)
-        => viewer.Aggressors.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc)) ||
-           viewer.Aggressed.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc));
-
-    private static bool MatchesRecentAggression(AggressorInfo entry, Serial targetId, DateTime nowUtc)
-        => (entry.AttackerId == targetId || entry.DefenderId == targetId) &&
-           nowUtc - entry.LastCombatAtUtc <= AggressionTimeout;
-
-    private static bool IsHostileNpcViewer(UOMobileEntity viewer)
-        => !viewer.IsPlayer &&
-           (viewer.Body.IsMonster ||
-            viewer.Body.IsAnimal ||
-            viewer.Notoriety is Notoriety.CanBeAttacked or
-                Notoriety.Enemy or
-                Notoriety.Criminal or
-                Notoriety.Murdered);
-
     private bool AreEnemyFactions(UOMobileEntity viewer, UOMobileEntity target)
     {
         if (_factionTemplateService is null ||
@@ -120,4 +103,21 @@ public sealed class AiRelationService : IAiRelationService
             declaredEnemy => string.Equals(declaredEnemy, enemyFactionId, StringComparison.OrdinalIgnoreCase)
         );
     }
+
+    private static bool HasRecentAggression(UOMobileEntity viewer, UOMobileEntity target, DateTime nowUtc)
+        => viewer.Aggressors.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc)) ||
+           viewer.Aggressed.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc));
+
+    private static bool IsHostileNpcViewer(UOMobileEntity viewer)
+        => !viewer.IsPlayer &&
+           (viewer.Body.IsMonster ||
+            viewer.Body.IsAnimal ||
+            viewer.Notoriety is Notoriety.CanBeAttacked or
+                                Notoriety.Enemy or
+                                Notoriety.Criminal or
+                                Notoriety.Murdered);
+
+    private static bool MatchesRecentAggression(AggressorInfo entry, Serial targetId, DateTime nowUtc)
+        => (entry.AttackerId == targetId || entry.DefenderId == targetId) &&
+           nowUtc - entry.LastCombatAtUtc <= AggressionTimeout;
 }

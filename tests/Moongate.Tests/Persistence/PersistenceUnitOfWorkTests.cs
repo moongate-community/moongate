@@ -197,52 +197,6 @@ public class PersistenceUnitOfWorkTests
     }
 
     [Test]
-    public async Task HelpTickets_ShouldPersistAcrossSnapshotReload()
-    {
-        using var tempDirectory = new TempDirectory();
-        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await firstUnitOfWork.InitializeAsync();
-
-        var ticket = new HelpTicketEntity
-        {
-            Id = (Serial)(Serial.ItemOffset + 75),
-            SenderCharacterId = (Serial)0x00000042u,
-            SenderAccountId = (Serial)0x00000010u,
-            Category = HelpTicketCategory.Question,
-            Message = "I am stuck behind the innkeeper counter.",
-            MapId = 0,
-            Location = new Point3D(1443, 1692, 0),
-            Status = HelpTicketStatus.Open,
-            CreatedAtUtc = new(2026, 3, 19, 9, 30, 0, DateTimeKind.Utc),
-            LastUpdatedAtUtc = new(2026, 3, 19, 9, 30, 0, DateTimeKind.Utc)
-        };
-
-        await firstUnitOfWork.HelpTickets.UpsertAsync(ticket);
-        await firstUnitOfWork.SaveSnapshotAsync();
-
-        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
-        await secondUnitOfWork.InitializeAsync();
-
-        var restored = await secondUnitOfWork.HelpTickets.GetByIdAsync(ticket.Id);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(restored, Is.Not.Null);
-                Assert.That(restored!.SenderCharacterId, Is.EqualTo(ticket.SenderCharacterId));
-                Assert.That(restored.SenderAccountId, Is.EqualTo(ticket.SenderAccountId));
-                Assert.That(restored.Category, Is.EqualTo(HelpTicketCategory.Question));
-                Assert.That(restored.Message, Is.EqualTo("I am stuck behind the innkeeper counter."));
-                Assert.That(restored.MapId, Is.EqualTo(0));
-                Assert.That(restored.Location, Is.EqualTo(new Point3D(1443, 1692, 0)));
-                Assert.That(restored.Status, Is.EqualTo(HelpTicketStatus.Open));
-                Assert.That(restored.CreatedAtUtc, Is.EqualTo(ticket.CreatedAtUtc));
-                Assert.That(restored.LastUpdatedAtUtc, Is.EqualTo(ticket.LastUpdatedAtUtc));
-            }
-        );
-    }
-
-    [Test]
     public async Task CaptureSnapshotAsync_ShouldReturnSnapshotAndCapturedSequenceId()
     {
         using var tempDirectory = new TempDirectory();
@@ -267,7 +221,10 @@ public class PersistenceUnitOfWorkTests
             () =>
             {
                 Assert.That(captured.Snapshot.EntityBuckets, Has.Length.EqualTo(3));
-                Assert.That(captured.Snapshot.EntityBuckets.Select(static bucket => bucket.TypeName), Is.EquivalentTo(new[] { "account", "mobile", "item" }));
+                Assert.That(
+                    captured.Snapshot.EntityBuckets.Select(static bucket => bucket.TypeName),
+                    Is.EquivalentTo(new[] { "account", "mobile", "item" })
+                );
                 Assert.That(captured.CapturedLastSequenceId, Is.GreaterThan(0));
             }
         );
@@ -460,6 +417,52 @@ public class PersistenceUnitOfWorkTests
             {
                 Assert.That(exists, Is.True);
                 Assert.That(notExists, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HelpTickets_ShouldPersistAcrossSnapshotReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await firstUnitOfWork.InitializeAsync();
+
+        var ticket = new HelpTicketEntity
+        {
+            Id = (Serial)(Serial.ItemOffset + 75),
+            SenderCharacterId = (Serial)0x00000042u,
+            SenderAccountId = (Serial)0x00000010u,
+            Category = HelpTicketCategory.Question,
+            Message = "I am stuck behind the innkeeper counter.",
+            MapId = 0,
+            Location = new(1443, 1692, 0),
+            Status = HelpTicketStatus.Open,
+            CreatedAtUtc = new(2026, 3, 19, 9, 30, 0, DateTimeKind.Utc),
+            LastUpdatedAtUtc = new(2026, 3, 19, 9, 30, 0, DateTimeKind.Utc)
+        };
+
+        await firstUnitOfWork.HelpTickets.UpsertAsync(ticket);
+        await firstUnitOfWork.SaveSnapshotAsync();
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path);
+        await secondUnitOfWork.InitializeAsync();
+
+        var restored = await secondUnitOfWork.HelpTickets.GetByIdAsync(ticket.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored, Is.Not.Null);
+                Assert.That(restored!.SenderCharacterId, Is.EqualTo(ticket.SenderCharacterId));
+                Assert.That(restored.SenderAccountId, Is.EqualTo(ticket.SenderAccountId));
+                Assert.That(restored.Category, Is.EqualTo(HelpTicketCategory.Question));
+                Assert.That(restored.Message, Is.EqualTo("I am stuck behind the innkeeper counter."));
+                Assert.That(restored.MapId, Is.EqualTo(0));
+                Assert.That(restored.Location, Is.EqualTo(new Point3D(1443, 1692, 0)));
+                Assert.That(restored.Status, Is.EqualTo(HelpTicketStatus.Open));
+                Assert.That(restored.CreatedAtUtc, Is.EqualTo(ticket.CreatedAtUtc));
+                Assert.That(restored.LastUpdatedAtUtc, Is.EqualTo(ticket.LastUpdatedAtUtc));
             }
         );
     }
@@ -766,6 +769,68 @@ public class PersistenceUnitOfWorkTests
                         );
 
         Assert.That(playerIds.ToArray(), Is.EqualTo(new[] { (Serial)0x2001 }));
+    }
+
+    [Test]
+    public async Task RegisteredEntityBuckets_ShouldPersistAcrossSnapshotReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await firstUnitOfWork.InitializeAsync();
+        var repository = firstUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+
+        await repository.UpsertAsync(
+            new()
+            {
+                Id = 42,
+                Name = "snapshot-entity"
+            }
+        );
+
+        await firstUnitOfWork.SaveSnapshotAsync();
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await secondUnitOfWork.InitializeAsync();
+        var reloadedRepository = secondUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+        var reloaded = await reloadedRepository.GetByIdAsync(42);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(reloaded, Is.Not.Null);
+                Assert.That(reloaded!.Name, Is.EqualTo("snapshot-entity"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task RegisteredEntityBuckets_ShouldReplayJournalEntriesUsingGenericTypeMetadata()
+    {
+        using var tempDirectory = new TempDirectory();
+        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await firstUnitOfWork.InitializeAsync();
+        var repository = firstUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+
+        await repository.UpsertAsync(
+            new()
+            {
+                Id = 7,
+                Name = "journal-entity"
+            }
+        );
+
+        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
+        await secondUnitOfWork.InitializeAsync();
+        var reloadedRepository = secondUnitOfWork.GetRepository<TestRegisteredEntity, int>();
+        var reloaded = await reloadedRepository.GetByIdAsync(7);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(reloaded, Is.Not.Null);
+                Assert.That(reloaded!.Name, Is.EqualTo("journal-entity"));
+            }
+        );
     }
 
     [Test]
@@ -1174,66 +1239,19 @@ public class PersistenceUnitOfWorkTests
         );
     }
 
-    [Test]
-    public async Task RegisteredEntityBuckets_ShouldPersistAcrossSnapshotReload()
+    private static IPersistenceEntityRegistry CreateRegistryWithTestEntity()
     {
-        using var tempDirectory = new TempDirectory();
-        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
-        await firstUnitOfWork.InitializeAsync();
-        var repository = firstUnitOfWork.GetRepository<TestRegisteredEntity, int>();
-
-        await repository.UpsertAsync(
-            new TestRegisteredEntity
-            {
-                Id = 42,
-                Name = "snapshot-entity"
-            }
+        var registry = new PersistenceEntityRegistry();
+        registry.Register(
+            new PersistenceEntityDescriptor<TestRegisteredEntity, int>(
+                500,
+                "test-registered-entity",
+                1,
+                static entity => entity.Id
+            )
         );
 
-        await firstUnitOfWork.SaveSnapshotAsync();
-
-        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
-        await secondUnitOfWork.InitializeAsync();
-        var reloadedRepository = secondUnitOfWork.GetRepository<TestRegisteredEntity, int>();
-        var reloaded = await reloadedRepository.GetByIdAsync(42);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(reloaded, Is.Not.Null);
-                Assert.That(reloaded!.Name, Is.EqualTo("snapshot-entity"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task RegisteredEntityBuckets_ShouldReplayJournalEntriesUsingGenericTypeMetadata()
-    {
-        using var tempDirectory = new TempDirectory();
-        var firstUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
-        await firstUnitOfWork.InitializeAsync();
-        var repository = firstUnitOfWork.GetRepository<TestRegisteredEntity, int>();
-
-        await repository.UpsertAsync(
-            new TestRegisteredEntity
-            {
-                Id = 7,
-                Name = "journal-entity"
-            }
-        );
-
-        var secondUnitOfWork = CreateUnitOfWork(tempDirectory.Path, CreateRegistryWithTestEntity());
-        await secondUnitOfWork.InitializeAsync();
-        var reloadedRepository = secondUnitOfWork.GetRepository<TestRegisteredEntity, int>();
-        var reloaded = await reloadedRepository.GetByIdAsync(7);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(reloaded, Is.Not.Null);
-                Assert.That(reloaded!.Name, Is.EqualTo("journal-entity"));
-            }
-        );
+        return registry;
     }
 
     private static PersistenceUnitOfWork CreateUnitOfWork(string directory, bool enableFileLock = false)
@@ -1252,21 +1270,6 @@ public class PersistenceUnitOfWorkTests
         );
 
         return new(options, entityRegistry);
-    }
-
-    private static IPersistenceEntityRegistry CreateRegistryWithTestEntity()
-    {
-        var registry = new PersistenceEntityRegistry();
-        registry.Register(
-            new PersistenceEntityDescriptor<TestRegisteredEntity, int>(
-                500,
-                "test-registered-entity",
-                1,
-                static entity => entity.Id
-            )
-        );
-
-        return registry;
     }
 
     private static async Task WriteAccountsWithRetryAsync(

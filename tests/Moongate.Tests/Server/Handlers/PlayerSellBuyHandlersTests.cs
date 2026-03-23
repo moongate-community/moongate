@@ -2,7 +2,6 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Trading;
 using Moongate.Network.Spans;
-using Moongate.Server.Data.Events.Interaction;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Interaction;
@@ -28,32 +27,48 @@ public sealed class PlayerSellBuyHandlersTests
             _ = cancellationToken;
             LastBuySessionId = sessionId;
             LastBuyPacket = packet;
+
             return Task.CompletedTask;
         }
 
-        public Task HandleSellListReplyAsync(long sessionId, SellListReplyPacket packet, CancellationToken cancellationToken = default)
+        public Task HandleSellListReplyAsync(
+            long sessionId,
+            SellListReplyPacket packet,
+            CancellationToken cancellationToken = default
+        )
         {
             _ = cancellationToken;
             LastBuySessionId = sessionId;
             LastSellPacket = packet;
+
             return Task.CompletedTask;
         }
 
-        public Task HandleVendorBuyRequestAsync(long sessionId, Serial vendorSerial, CancellationToken cancellationToken = default)
+        public Task HandleVendorBuyRequestAsync(
+            long sessionId,
+            Serial vendorSerial,
+            CancellationToken cancellationToken = default
+        )
         {
             _ = cancellationToken;
             LastBuySessionId = sessionId;
             LastBuyRequestVendor = vendorSerial;
             LastBuyRequestCallCount++;
+
             return Task.CompletedTask;
         }
 
-        public Task HandleVendorSellRequestAsync(long sessionId, Serial vendorSerial, CancellationToken cancellationToken = default)
+        public Task HandleVendorSellRequestAsync(
+            long sessionId,
+            Serial vendorSerial,
+            CancellationToken cancellationToken = default
+        )
         {
             _ = cancellationToken;
             LastBuySessionId = sessionId;
             LastSellRequestVendor = vendorSerial;
             LastSellRequestCallCount++;
+
             return Task.CompletedTask;
         }
     }
@@ -108,7 +123,7 @@ public sealed class PlayerSellBuyHandlersTests
         var service = new RecordingPlayerSellBuyService();
         var handler = new VendorBuyRequestHandler(service);
 
-        await handler.HandleAsync(new VendorBuyRequestedEvent(42, (Serial)0x00001000u));
+        await handler.HandleAsync(new(42, (Serial)0x00001000u));
 
         Assert.Multiple(
             () =>
@@ -126,7 +141,7 @@ public sealed class PlayerSellBuyHandlersTests
         var service = new RecordingPlayerSellBuyService();
         var handler = new VendorSellRequestHandler(service);
 
-        await handler.HandleAsync(new VendorSellRequestedEvent(77, (Serial)0x00002000u));
+        await handler.HandleAsync(new(77, (Serial)0x00002000u));
 
         Assert.Multiple(
             () =>
@@ -154,6 +169,7 @@ public sealed class PlayerSellBuyHandlersTests
 
         var packet = new BuyItemsPacket();
         Assert.That(packet.TryParse(bytes), Is.True);
+
         return packet;
     }
 
@@ -172,6 +188,7 @@ public sealed class PlayerSellBuyHandlersTests
 
         var packet = new SellListReplyPacket();
         Assert.That(packet.TryParse(bytes), Is.True);
+
         return packet;
     }
 }

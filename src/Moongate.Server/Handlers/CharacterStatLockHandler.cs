@@ -5,6 +5,7 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.UO.Data.Ids;
 
 namespace Moongate.Server.Handlers;
 
@@ -36,7 +37,7 @@ public sealed class CharacterStatLockHandler
 
         var mobile = session.Character;
 
-        if (mobile is null && session.CharacterId != Moongate.UO.Data.Ids.Serial.Zero)
+        if (mobile is null && session.CharacterId != Serial.Zero)
         {
             mobile = await _mobileService.GetAsync(session.CharacterId, cancellationToken);
         }

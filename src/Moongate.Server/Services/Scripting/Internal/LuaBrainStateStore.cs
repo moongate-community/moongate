@@ -34,17 +34,6 @@ internal sealed class LuaBrainStateStore
         }
     }
 
-    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
-    {
-        lock (_sync)
-        {
-            if (_states.TryGetValue(mobileId, out var state))
-            {
-                state.PendingDeath.Enqueue(deathContext);
-            }
-        }
-    }
-
     public void EnqueueCombatHook(Serial mobileId, LuaBrainCombatHookContext combatContext)
     {
         lock (_sync)
@@ -52,6 +41,17 @@ internal sealed class LuaBrainStateStore
             if (_states.TryGetValue(mobileId, out var state))
             {
                 state.PendingCombatHooks.Enqueue(combatContext);
+            }
+        }
+    }
+
+    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
+    {
+        lock (_sync)
+        {
+            if (_states.TryGetValue(mobileId, out var state))
+            {
+                state.PendingDeath.Enqueue(deathContext);
             }
         }
     }
@@ -187,14 +187,6 @@ internal sealed class LuaBrainStateStore
         return false;
     }
 
-    public void UpsertObservedMobile(UOMobileEntity mobile)
-    {
-        lock (_sync)
-        {
-            _observedMobiles[mobile.Id] = mobile;
-        }
-    }
-
     public void UpdateTrackedMobilePosition(Serial mobileId, int mapId, Point3D location)
     {
         lock (_sync)
@@ -229,6 +221,14 @@ internal sealed class LuaBrainStateStore
         lock (_sync)
         {
             _states[state.MobileId] = state;
+        }
+    }
+
+    public void UpsertObservedMobile(UOMobileEntity mobile)
+    {
+        lock (_sync)
+        {
+            _observedMobiles[mobile.Id] = mobile;
         }
     }
 }

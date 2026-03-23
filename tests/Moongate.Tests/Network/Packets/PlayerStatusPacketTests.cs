@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Network.Packets;
 
@@ -150,9 +151,9 @@ public class PlayerStatusPacketTests
         };
         backpack.AddItem(gold, new(1, 1));
         quiver.AddItem(arrows, new(2, 2));
-        mobile.AddEquippedItem(Moongate.UO.Data.Types.ItemLayerType.Backpack, backpack);
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
         mobile.BackpackId = backpack.Id;
-        mobile.AddEquippedItem(Moongate.UO.Data.Types.ItemLayerType.Cloak, quiver);
+        mobile.AddEquippedItem(ItemLayerType.Cloak, quiver);
         var packet = new PlayerStatusPacket(mobile);
 
         var data = Write(packet);

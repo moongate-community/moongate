@@ -17,9 +17,7 @@ public class AddBootstrapHostedServicesExtensionTests
         container.AddBootstrapHostedServices();
 
         var registrations = container.Resolve<List<ServiceRegistrationObject>>();
-        var registration = registrations.SingleOrDefault(
-            x => x.ServiceType == typeof(ICorpseStartupCleanupService)
-        );
+        var registration = registrations.SingleOrDefault(x => x.ServiceType == typeof(ICorpseStartupCleanupService));
 
         Assert.Multiple(
             () =>

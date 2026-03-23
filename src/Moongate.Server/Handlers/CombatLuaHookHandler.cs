@@ -60,26 +60,17 @@ public sealed class CombatLuaHookHandler
         return Task.CompletedTask;
     }
 
-    public Task StartAsync() => Task.CompletedTask;
+    public Task StartAsync()
+        => Task.CompletedTask;
 
-    public Task StopAsync() => Task.CompletedTask;
+    public Task StopAsync()
+        => Task.CompletedTask;
 
-    private void EnqueueIfNpc(
-        UOMobileEntity mobile,
-        LuaBrainCombatHookType hookType,
-        Serial otherMobileId,
-        Dictionary<string, object?> payload
+    private static Dictionary<string, object?> CreatePayload(
+        UOMobileEntity attacker,
+        UOMobileEntity defender,
+        int? damage = null
     )
-    {
-        if (mobile.IsPlayer)
-        {
-            return;
-        }
-
-        _luaBrainRunner.EnqueueCombatHook(mobile.Id, new(hookType, otherMobileId, payload));
-    }
-
-    private static Dictionary<string, object?> CreatePayload(UOMobileEntity attacker, UOMobileEntity defender, int? damage = null)
     {
         var payload = new Dictionary<string, object?>
         {
@@ -97,5 +88,20 @@ public sealed class CombatLuaHookHandler
         }
 
         return payload;
+    }
+
+    private void EnqueueIfNpc(
+        UOMobileEntity mobile,
+        LuaBrainCombatHookType hookType,
+        Serial otherMobileId,
+        Dictionary<string, object?> payload
+    )
+    {
+        if (mobile.IsPlayer)
+        {
+            return;
+        }
+
+        _luaBrainRunner.EnqueueCombatHook(mobile.Id, new(hookType, otherMobileId, payload));
     }
 }

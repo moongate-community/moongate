@@ -39,6 +39,7 @@ public sealed class ScheduledEventDefinitionService : IScheduledEventDefinitionS
         if (_definitions.TryGetValue(eventId.Trim(), out var resolved))
         {
             definition = resolved;
+
             return true;
         }
 
@@ -84,6 +85,76 @@ public sealed class ScheduledEventDefinitionService : IScheduledEventDefinitionS
         return parsed;
     }
 
+    private static string RequireString(Table table, string key, string message)
+    {
+        var value = table.Get(key);
+
+        if (value.Type != DataType.String || string.IsNullOrWhiteSpace(value.String))
+        {
+            throw new InvalidOperationException(message);
+        }
+
+        return value.String.Trim();
+    }
+
+    private static void RequireTime(ScheduledEventDefinition definition)
+    {
+        if (string.IsNullOrWhiteSpace(definition.Time))
+        {
+            throw new InvalidOperationException(
+                $"Scheduled event '{definition.EventId}' recurrence '{definition.RecurrenceType.ToString().ToLowerInvariant()}' requires 'time'."
+            );
+        }
+    }
+
+    private static bool? ResolveOptionalBool(Table table, string key)
+    {
+        var value = table.Get(key);
+
+        return value.Type == DataType.Boolean ? value.Boolean : null;
+    }
+
+    private static int? ResolveOptionalInt(Table table, string key)
+    {
+        var value = table.Get(key);
+
+        return value.Type == DataType.Number ? (int)value.Number : null;
+    }
+
+    private static string? ResolveOptionalString(Table table, string key)
+    {
+        var value = table.Get(key);
+
+        return value.Type == DataType.String && !string.IsNullOrWhiteSpace(value.String) ? value.String.Trim() : null;
+    }
+
+    private static Table? ResolveOptionalTable(Table table, string key)
+    {
+        var value = table.Get(key);
+
+        return value.Type == DataType.Table ? value.Table : null;
+    }
+
+    private static string[] ResolveStringArray(Table table, string key)
+    {
+        var value = table.Get(key);
+
+        if (value.Type != DataType.Table || value.Table is null)
+        {
+            return [];
+        }
+
+        return value.Table
+                    .Pairs
+                    .OrderBy(static pair => pair.Key.CastToNumber())
+                    .Where(static pair => pair.Value.Type == DataType.String)
+                    .Select(static pair => pair.Value.String?.Trim())
+                    .Where(static day => !string.IsNullOrWhiteSpace(day))
+                    .Cast<string>()
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+    }
+
     private static void Validate(ScheduledEventDefinition definition)
     {
         switch (definition.RecurrenceType)
@@ -99,6 +170,7 @@ public sealed class ScheduledEventDefinitionService : IScheduledEventDefinitionS
                 break;
             case ScheduledRecurrenceType.Daily:
                 RequireTime(definition);
+
                 break;
             case ScheduledRecurrenceType.Weekly:
                 RequireTime(definition);
@@ -123,74 +195,5 @@ public sealed class ScheduledEventDefinitionService : IScheduledEventDefinitionS
 
                 break;
         }
-    }
-
-    private static void RequireTime(ScheduledEventDefinition definition)
-    {
-        if (string.IsNullOrWhiteSpace(definition.Time))
-        {
-            throw new InvalidOperationException(
-                $"Scheduled event '{definition.EventId}' recurrence '{definition.RecurrenceType.ToString().ToLowerInvariant()}' requires 'time'."
-            );
-        }
-    }
-
-    private static string RequireString(Table table, string key, string message)
-    {
-        var value = table.Get(key);
-
-        if (value.Type != DataType.String || string.IsNullOrWhiteSpace(value.String))
-        {
-            throw new InvalidOperationException(message);
-        }
-
-        return value.String.Trim();
-    }
-
-    private static string? ResolveOptionalString(Table table, string key)
-    {
-        var value = table.Get(key);
-
-        return value.Type == DataType.String && !string.IsNullOrWhiteSpace(value.String) ? value.String.Trim() : null;
-    }
-
-    private static bool? ResolveOptionalBool(Table table, string key)
-    {
-        var value = table.Get(key);
-
-        return value.Type == DataType.Boolean ? value.Boolean : null;
-    }
-
-    private static int? ResolveOptionalInt(Table table, string key)
-    {
-        var value = table.Get(key);
-
-        return value.Type == DataType.Number ? (int)value.Number : null;
-    }
-
-    private static Table? ResolveOptionalTable(Table table, string key)
-    {
-        var value = table.Get(key);
-
-        return value.Type == DataType.Table ? value.Table : null;
-    }
-
-    private static string[] ResolveStringArray(Table table, string key)
-    {
-        var value = table.Get(key);
-
-        if (value.Type != DataType.Table || value.Table is null)
-        {
-            return [];
-        }
-
-        return value.Table.Pairs
-                    .OrderBy(static pair => pair.Key.CastToNumber())
-                    .Where(static pair => pair.Value.Type == DataType.String)
-                    .Select(static pair => pair.Value.String?.Trim())
-                    .Where(static day => !string.IsNullOrWhiteSpace(day))
-                    .Cast<string>()
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToArray();
     }
 }

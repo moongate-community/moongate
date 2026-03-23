@@ -2,7 +2,6 @@ using Moongate.Server.Services.Interaction;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Services.Templates;
-using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Interaction;
@@ -10,22 +9,13 @@ namespace Moongate.Tests.Server.Services.Interaction;
 public sealed class AiRelationServiceTests
 {
     [Test]
-    public void Compute_WhenViewerTargetsSelf_ShouldReturnFriendly()
-    {
-        var service = new AiRelationService();
-        var mobile = CreateGuard((Serial)0x0100u);
-
-        var result = service.Compute(mobile, mobile);
-
-        Assert.That(result, Is.EqualTo(AiRelation.Friendly));
-    }
-
-    [Test]
-    public void Compute_WhenGuardSeesInnocentPlayer_ShouldReturnNeutral()
+    public void Compute_WhenAggressionEntryIsExpired_ShouldReturnNeutral()
     {
         var service = new AiRelationService();
         var viewer = CreateGuard((Serial)0x0100u);
         var player = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+
+        viewer.Aggressors.Add(new(player.Id, viewer.Id, DateTime.UtcNow.AddMinutes(-3), false, false));
 
         var result = service.Compute(viewer, player);
 
@@ -42,6 +32,18 @@ public sealed class AiRelationServiceTests
         var result = service.Compute(viewer, player);
 
         Assert.That(result, Is.EqualTo(AiRelation.Hostile));
+    }
+
+    [Test]
+    public void Compute_WhenGuardSeesInnocentPlayer_ShouldReturnNeutral()
+    {
+        var service = new AiRelationService();
+        var viewer = CreateGuard((Serial)0x0100u);
+        var player = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+
+        var result = service.Compute(viewer, player);
+
+        Assert.That(result, Is.EqualTo(AiRelation.Neutral));
     }
 
     [Test]
@@ -72,17 +74,17 @@ public sealed class AiRelationServiceTests
     }
 
     [Test]
-    public void Compute_WhenAggressionEntryIsExpired_ShouldReturnNeutral()
+    public void Compute_WhenViewerAndTargetBelongToEnemyFactions_ShouldReturnHostile()
     {
-        var service = new AiRelationService();
+        var service = new AiRelationService(CreateFactionTemplateService());
         var viewer = CreateGuard((Serial)0x0100u);
-        var player = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+        var target = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
+        viewer.FactionId = "true_britannians";
+        target.FactionId = "shadowlords";
 
-        viewer.Aggressors.Add(new(player.Id, viewer.Id, DateTime.UtcNow.AddMinutes(-3), false, false));
+        var result = service.Compute(viewer, target);
 
-        var result = service.Compute(viewer, player);
-
-        Assert.That(result, Is.EqualTo(AiRelation.Neutral));
+        Assert.That(result, Is.EqualTo(AiRelation.Hostile));
     }
 
     [Test]
@@ -100,17 +102,37 @@ public sealed class AiRelationServiceTests
     }
 
     [Test]
-    public void Compute_WhenViewerAndTargetBelongToEnemyFactions_ShouldReturnHostile()
+    public void Compute_WhenViewerTargetsSelf_ShouldReturnFriendly()
     {
-        var service = new AiRelationService(CreateFactionTemplateService());
-        var viewer = CreateGuard((Serial)0x0100u);
-        var target = CreatePlayer((Serial)0x0101u, Notoriety.Innocent);
-        viewer.FactionId = "true_britannians";
-        target.FactionId = "shadowlords";
+        var service = new AiRelationService();
+        var mobile = CreateGuard((Serial)0x0100u);
 
-        var result = service.Compute(viewer, target);
+        var result = service.Compute(mobile, mobile);
 
-        Assert.That(result, Is.EqualTo(AiRelation.Hostile));
+        Assert.That(result, Is.EqualTo(AiRelation.Friendly));
+    }
+
+    private static FactionTemplateService CreateFactionTemplateService()
+    {
+        var service = new FactionTemplateService();
+        service.Upsert(
+            new()
+            {
+                Id = "true_britannians",
+                Name = "True Britannians",
+                EnemyFactionIds = ["shadowlords"]
+            }
+        );
+        service.Upsert(
+            new()
+            {
+                Id = "shadowlords",
+                Name = "Shadowlords",
+                EnemyFactionIds = ["true_britannians"]
+            }
+        );
+
+        return service;
     }
 
     private static UOMobileEntity CreateGuard(Serial id)
@@ -119,15 +141,6 @@ public sealed class AiRelationServiceTests
             Id = id,
             IsPlayer = false,
             Notoriety = Notoriety.Innocent,
-            BaseBody = 0x0190
-        };
-
-    private static UOMobileEntity CreatePlayer(Serial id, Notoriety notoriety)
-        => new()
-        {
-            Id = id,
-            IsPlayer = true,
-            Notoriety = notoriety,
             BaseBody = 0x0190
         };
 
@@ -140,26 +153,12 @@ public sealed class AiRelationServiceTests
             BaseBody = 0x0003
         };
 
-    private static FactionTemplateService CreateFactionTemplateService()
-    {
-        var service = new FactionTemplateService();
-        service.Upsert(
-            new FactionDefinition
-            {
-                Id = "true_britannians",
-                Name = "True Britannians",
-                EnemyFactionIds = ["shadowlords"]
-            }
-        );
-        service.Upsert(
-            new FactionDefinition
-            {
-                Id = "shadowlords",
-                Name = "Shadowlords",
-                EnemyFactionIds = ["true_britannians"]
-            }
-        );
-
-        return service;
-    }
+    private static UOMobileEntity CreatePlayer(Serial id, Notoriety notoriety)
+        => new()
+        {
+            Id = id,
+            IsPlayer = true,
+            Notoriety = notoriety,
+            BaseBody = 0x0190
+        };
 }

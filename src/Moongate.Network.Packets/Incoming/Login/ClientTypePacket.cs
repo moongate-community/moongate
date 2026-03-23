@@ -40,7 +40,7 @@ public class ClientTypePacket : BaseGameNetworkPacket
         {
             0x02 => ClientType.KR,
             0x03 => ClientType.SA,
-            _ => ClientType.Classic
+            _    => ClientType.Classic
         };
 
         return true;

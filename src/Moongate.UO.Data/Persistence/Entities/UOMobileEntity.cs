@@ -29,8 +29,7 @@ public partial class UOMobileEntity : IMobileEntity
     private readonly Dictionary<ItemLayerType, ItemReference> _equippedItemReferences = [];
     private readonly Dictionary<ItemLayerType, UOItemEntity> _equippedItemsRuntime = [];
 
-    [MemoryPackInclude]
-    [MemoryPackOrder(38)]
+    [MemoryPackInclude, MemoryPackOrder(38)]
     private Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.Ordinal);
 
     /// <summary>
@@ -852,19 +851,6 @@ public partial class UOMobileEntity : IMobileEntity
     [MemoryPackOrder(64)]
     public string? FactionId { get; set; }
 
-    [MemoryPackOnDeserialized]
-    private void OnMemoryPackDeserialized()
-    {
-        _customProperties = _customProperties.Count == 0
-            ? new(StringComparer.Ordinal)
-            : new(_customProperties, StringComparer.Ordinal);
-
-        foreach (var skill in Skills)
-        {
-            skill.Value.Skill = ResolveSkillInfo(skill.Key);
-        }
-    }
-
     /// <summary>
     /// Associates an equipped item with this mobile and updates item ownership metadata.
     /// </summary>
@@ -924,6 +910,15 @@ public partial class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
+    /// Clears the current combat state for this mobile.
+    /// </summary>
+    public void ClearCombatState()
+    {
+        CombatantId = Serial.Zero;
+        NextCombatAtUtc = null;
+    }
+
+    /// <summary>
     /// Clears all custom properties.
     /// </summary>
     public void ClearCustomProperties()
@@ -938,12 +933,17 @@ public partial class UOMobileEntity : IMobileEntity
         => AddEquippedItem(layer, item);
 
     /// <summary>
-    /// Clears the current combat state for this mobile.
+    /// Removes expired aggression entries from both aggression collections.
     /// </summary>
-    public void ClearCombatState()
+    public void ExpireAggressors(DateTime nowUtc, TimeSpan timeout)
     {
-        CombatantId = Serial.Zero;
-        NextCombatAtUtc = null;
+        if (timeout <= TimeSpan.Zero)
+        {
+            return;
+        }
+
+        ExpireAggressorList(Aggressors, nowUtc, timeout);
+        ExpireAggressorList(Aggressed, nowUtc, timeout);
     }
 
     /// <summary>
@@ -1051,6 +1051,39 @@ public partial class UOMobileEntity : IMobileEntity
         => Skills.GetValueOrDefault(skillName);
 
     /// <summary>
+    /// Gets the lock state for the requested core stat.
+    /// </summary>
+    public UOSkillLock GetStatLock(Stat stat)
+        => stat switch
+        {
+            Stat.Strength     => StrengthLock,
+            Stat.Dexterity    => DexterityLock,
+            Stat.Intelligence => IntelligenceLock,
+            _                 => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
+        };
+
+    /// <summary>
+    /// Gets the sum of the base strength, dexterity, and intelligence stats.
+    /// </summary>
+    public int GetTotalBaseStats()
+        => Strength + Dexterity + Intelligence;
+
+    /// <summary>
+    /// Gets the total of all persisted skill base values in fixed-point units.
+    /// </summary>
+    public int GetTotalSkillBaseFixedPoint()
+    {
+        var total = 0;
+
+        foreach (var skill in Skills.Values)
+        {
+            total += (int)Math.Round(skill.Base);
+        }
+
+        return total;
+    }
+
+    /// <summary>
     /// Gets whether an item is equipped in the specified layer.
     /// </summary>
     /// <param name="layer">Equipment layer.</param>
@@ -1129,6 +1162,21 @@ public partial class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
+    /// Refreshes or appends a recent aggression relationship.
+    /// </summary>
+    public void RefreshAggressor(
+        Serial attackerId,
+        Serial defenderId,
+        DateTime nowUtc,
+        bool isCriminal = false,
+        bool canReportMurder = false
+    )
+    {
+        RefreshAggressorList(Aggressors, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+        RefreshAggressorList(Aggressed, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
+    }
+
+    /// <summary>
     /// Removes a custom property by key.
     /// </summary>
     /// <param name="key">Property key.</param>
@@ -1139,33 +1187,6 @@ public partial class UOMobileEntity : IMobileEntity
 
         return _customProperties.Remove(key);
     }
-
-    /// <summary>
-    /// Tries to build the virtual mount-layer item reference used for client sync.
-    /// </summary>
-    public bool TryGetMountDisplayItemReference(out ItemReference itemReference)
-    {
-        if (MountedDisplayItemId <= 0)
-        {
-            itemReference = default;
-
-            return false;
-        }
-
-        itemReference = new(
-            (Serial)(Serial.ItemOffset | (Id.Value & MountVirtualSerialMask)),
-            MountedDisplayItemId,
-            0
-        );
-
-        return true;
-    }
-
-    /// <summary>
-    /// Tries to get a configured sound id for the requested mobile sound slot.
-    /// </summary>
-    public bool TryGetSound(MobileSoundType type, out int soundId)
-        => Sounds.TryGetValue(type, out soundId);
 
     /// <summary>
     /// Removes a runtime modifier delta from the aggregated runtime modifiers.
@@ -1203,35 +1224,6 @@ public partial class UOMobileEntity : IMobileEntity
         {
             RuntimeModifiers = null;
         }
-    }
-
-    /// <summary>
-    /// Refreshes or appends a recent aggression relationship.
-    /// </summary>
-    public void RefreshAggressor(
-        Serial attackerId,
-        Serial defenderId,
-        DateTime nowUtc,
-        bool isCriminal = false,
-        bool canReportMurder = false
-    )
-    {
-        RefreshAggressorList(Aggressors, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
-        RefreshAggressorList(Aggressed, attackerId, defenderId, nowUtc, isCriminal, canReportMurder);
-    }
-
-    /// <summary>
-    /// Removes expired aggression entries from both aggression collections.
-    /// </summary>
-    public void ExpireAggressors(DateTime nowUtc, TimeSpan timeout)
-    {
-        if (timeout <= TimeSpan.Zero)
-        {
-            return;
-        }
-
-        ExpireAggressorList(Aggressors, nowUtc, timeout);
-        ExpireAggressorList(Aggressed, nowUtc, timeout);
     }
 
     /// <summary>
@@ -1337,39 +1329,6 @@ public partial class UOMobileEntity : IMobileEntity
     }
 
     /// <summary>
-    /// Gets the total of all persisted skill base values in fixed-point units.
-    /// </summary>
-    public int GetTotalSkillBaseFixedPoint()
-    {
-        var total = 0;
-
-        foreach (var skill in Skills.Values)
-        {
-            total += (int)Math.Round(skill.Base);
-        }
-
-        return total;
-    }
-
-    /// <summary>
-    /// Gets the sum of the base strength, dexterity, and intelligence stats.
-    /// </summary>
-    public int GetTotalBaseStats()
-        => Strength + Dexterity + Intelligence;
-
-    /// <summary>
-    /// Gets the lock state for the requested core stat.
-    /// </summary>
-    public UOSkillLock GetStatLock(Stat stat)
-        => stat switch
-        {
-            Stat.Strength => StrengthLock,
-            Stat.Dexterity => DexterityLock,
-            Stat.Intelligence => IntelligenceLock,
-            _ => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
-        };
-
-    /// <summary>
     /// Sets the lock state for the requested core stat.
     /// </summary>
     public void SetStatLock(Stat stat, UOSkillLock lockState)
@@ -1378,12 +1337,15 @@ public partial class UOMobileEntity : IMobileEntity
         {
             case Stat.Strength:
                 StrengthLock = lockState;
+
                 break;
             case Stat.Dexterity:
                 DexterityLock = lockState;
+
                 break;
             case Stat.Intelligence:
                 IntelligenceLock = lockState;
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(stat), stat, null);
@@ -1486,6 +1448,33 @@ public partial class UOMobileEntity : IMobileEntity
         => _equippedItemReferences.TryGetValue(layer, out itemReference);
 
     /// <summary>
+    /// Tries to build the virtual mount-layer item reference used for client sync.
+    /// </summary>
+    public bool TryGetMountDisplayItemReference(out ItemReference itemReference)
+    {
+        if (MountedDisplayItemId <= 0)
+        {
+            itemReference = default;
+
+            return false;
+        }
+
+        itemReference = new(
+            (Serial)(Serial.ItemOffset | (Id.Value & MountVirtualSerialMask)),
+            MountedDisplayItemId,
+            0
+        );
+
+        return true;
+    }
+
+    /// <summary>
+    /// Tries to get a configured sound id for the requested mobile sound slot.
+    /// </summary>
+    public bool TryGetSound(MobileSoundType type, out int soundId)
+        => Sounds.TryGetValue(type, out soundId);
+
+    /// <summary>
     /// Unequips an item layer and optionally clears metadata on a provided item instance.
     /// </summary>
     /// <param name="layer">Layer to unequip.</param>
@@ -1508,52 +1497,6 @@ public partial class UOMobileEntity : IMobileEntity
         return removed;
     }
 
-    private void RecalculateDisplayedWeaponDamage()
-    {
-        if (TryGetEquippedWeaponWithCombatStats(out var weapon))
-        {
-            MinWeaponDamage = Math.Max(0, weapon.CombatStats?.DamageMin ?? DefaultUnarmedMinWeaponDamage);
-            MaxWeaponDamage = Math.Max(MinWeaponDamage, weapon.CombatStats?.DamageMax ?? DefaultUnarmedMaxWeaponDamage);
-
-            return;
-        }
-
-        MinWeaponDamage = DefaultUnarmedMinWeaponDamage;
-        MaxWeaponDamage = DefaultUnarmedMaxWeaponDamage;
-    }
-
-    private bool TryGetEquippedWeaponWithCombatStats(out UOItemEntity weapon)
-    {
-        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.OneHanded, out weapon))
-        {
-            return true;
-        }
-
-        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.TwoHanded, out weapon))
-        {
-            return true;
-        }
-
-        weapon = null!;
-
-        return false;
-    }
-
-    private bool TryGetEquippedWeaponWithCombatStats(ItemLayerType layer, out UOItemEntity weapon)
-    {
-        if (_equippedItemsRuntime.TryGetValue(layer, out var equippedItem) &&
-            equippedItem.CombatStats is { DamageMin: > 0, DamageMax: > 0 })
-        {
-            weapon = equippedItem;
-
-            return true;
-        }
-
-        weapon = null!;
-
-        return false;
-    }
-
     private static SkillEntry CreateSkillEntry(SkillInfo skillInfo)
         => new()
         {
@@ -1563,6 +1506,22 @@ public partial class UOMobileEntity : IMobileEntity
             Cap = DefaultSkillCap,
             Lock = UOSkillLock.Up
         };
+
+    private static void ExpireAggressorList(List<AggressorInfo> entries, DateTime nowUtc, TimeSpan timeout)
+        => entries.RemoveAll(entry => nowUtc - entry.LastCombatAtUtc >= timeout);
+
+    private int GetCarriedItemWeight()
+    {
+        var visited = new HashSet<Serial>();
+        long total = 0;
+
+        foreach (var equippedItem in _equippedItemsRuntime.Values)
+        {
+            total += SumItemWeightRecursive(equippedItem, visited);
+        }
+
+        return total >= int.MaxValue ? int.MaxValue : (int)total;
+    }
 
     private int GetGold()
     {
@@ -1577,19 +1536,6 @@ public partial class UOMobileEntity : IMobileEntity
         if (TryGetBankBoxRuntime(out var bankBox))
         {
             total += SumGoldRecursive(bankBox, visited);
-        }
-
-        return total >= int.MaxValue ? int.MaxValue : (int)total;
-    }
-
-    private int GetCarriedItemWeight()
-    {
-        var visited = new HashSet<Serial>();
-        long total = 0;
-
-        foreach (var equippedItem in _equippedItemsRuntime.Values)
-        {
-            total += SumItemWeightRecursive(equippedItem, visited);
         }
 
         return total >= int.MaxValue ? int.MaxValue : (int)total;
@@ -1612,8 +1558,53 @@ public partial class UOMobileEntity : IMobileEntity
         return total;
     }
 
-    private static void ExpireAggressorList(List<AggressorInfo> entries, DateTime nowUtc, TimeSpan timeout)
-        => entries.RemoveAll(entry => nowUtc - entry.LastCombatAtUtc >= timeout);
+    private static bool IsZero(MobileModifiers modifiers)
+        => modifiers.StrengthBonus == 0 &&
+           modifiers.DexterityBonus == 0 &&
+           modifiers.IntelligenceBonus == 0 &&
+           modifiers.PhysicalResist == 0 &&
+           modifiers.FireResist == 0 &&
+           modifiers.ColdResist == 0 &&
+           modifiers.PoisonResist == 0 &&
+           modifiers.EnergyResist == 0 &&
+           modifiers.HitChanceIncrease == 0 &&
+           modifiers.DefenseChanceIncrease == 0 &&
+           modifiers.DamageIncrease == 0 &&
+           modifiers.SwingSpeedIncrease == 0 &&
+           modifiers.SpellDamageIncrease == 0 &&
+           modifiers.FasterCasting == 0 &&
+           modifiers.FasterCastRecovery == 0 &&
+           modifiers.LowerManaCost == 0 &&
+           modifiers.LowerReagentCost == 0 &&
+           modifiers.Luck == 0 &&
+           modifiers.SpellChanneling == 0;
+
+    [MemoryPackOnDeserialized]
+    private void OnMemoryPackDeserialized()
+    {
+        _customProperties = _customProperties.Count == 0
+                                ? new(StringComparer.Ordinal)
+                                : new(_customProperties, StringComparer.Ordinal);
+
+        foreach (var skill in Skills)
+        {
+            skill.Value.Skill = ResolveSkillInfo(skill.Key);
+        }
+    }
+
+    private void RecalculateDisplayedWeaponDamage()
+    {
+        if (TryGetEquippedWeaponWithCombatStats(out var weapon))
+        {
+            MinWeaponDamage = Math.Max(0, weapon.CombatStats?.DamageMin ?? DefaultUnarmedMinWeaponDamage);
+            MaxWeaponDamage = Math.Max(MinWeaponDamage, weapon.CombatStats?.DamageMax ?? DefaultUnarmedMaxWeaponDamage);
+
+            return;
+        }
+
+        MinWeaponDamage = DefaultUnarmedMinWeaponDamage;
+        MaxWeaponDamage = DefaultUnarmedMaxWeaponDamage;
+    }
 
     private static void RefreshAggressorList(
         List<AggressorInfo> entries,
@@ -1636,27 +1627,6 @@ public partial class UOMobileEntity : IMobileEntity
 
         entries.Add(new(attackerId, defenderId, nowUtc, isCriminal, canReportMurder));
     }
-
-    private static bool IsZero(MobileModifiers modifiers)
-        => modifiers.StrengthBonus == 0 &&
-           modifiers.DexterityBonus == 0 &&
-           modifiers.IntelligenceBonus == 0 &&
-           modifiers.PhysicalResist == 0 &&
-           modifiers.FireResist == 0 &&
-           modifiers.ColdResist == 0 &&
-           modifiers.PoisonResist == 0 &&
-           modifiers.EnergyResist == 0 &&
-           modifiers.HitChanceIncrease == 0 &&
-           modifiers.DefenseChanceIncrease == 0 &&
-           modifiers.DamageIncrease == 0 &&
-           modifiers.SwingSpeedIncrease == 0 &&
-           modifiers.SpellDamageIncrease == 0 &&
-           modifiers.FasterCasting == 0 &&
-           modifiers.FasterCastRecovery == 0 &&
-           modifiers.LowerManaCost == 0 &&
-           modifiers.LowerReagentCost == 0 &&
-           modifiers.Luck == 0 &&
-           modifiers.SpellChanneling == 0;
 
     private static SkillInfo ResolveSkillInfo(UOSkillName skillName)
     {
@@ -1751,4 +1721,36 @@ public partial class UOMobileEntity : IMobileEntity
 
     private bool TryGetBankBoxRuntime(out UOItemEntity bankBox)
         => _equippedItemsRuntime.TryGetValue(ItemLayerType.Bank, out bankBox);
+
+    private bool TryGetEquippedWeaponWithCombatStats(out UOItemEntity weapon)
+    {
+        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.OneHanded, out weapon))
+        {
+            return true;
+        }
+
+        if (TryGetEquippedWeaponWithCombatStats(ItemLayerType.TwoHanded, out weapon))
+        {
+            return true;
+        }
+
+        weapon = null!;
+
+        return false;
+    }
+
+    private bool TryGetEquippedWeaponWithCombatStats(ItemLayerType layer, out UOItemEntity weapon)
+    {
+        if (_equippedItemsRuntime.TryGetValue(layer, out var equippedItem) &&
+            equippedItem.CombatStats is { DamageMin: > 0, DamageMax: > 0 })
+        {
+            weapon = equippedItem;
+
+            return true;
+        }
+
+        weapon = null!;
+
+        return false;
+    }
 }

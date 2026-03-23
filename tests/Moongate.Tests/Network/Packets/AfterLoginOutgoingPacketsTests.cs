@@ -223,6 +223,52 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
+    public void MobileIncomingPacket_Write_ShouldProjectMountedDisplayItemOnMountLayer()
+    {
+        var beholder = CreateMobile();
+        var beheld = CreateMobile();
+        beheld.MountedDisplayItemId = 0x3E9F;
+
+        var packet = new MobileIncomingPacket(beholder, beheld);
+        var data = Write(packet);
+
+        var entryOffset = 19;
+        var mountSerial = 0u;
+        var mountItemId = 0u;
+
+        while (entryOffset + 4 <= data.Length)
+        {
+            var serial = BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(entryOffset, 4));
+
+            if (serial == 0)
+            {
+                break;
+            }
+
+            var itemId = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(entryOffset + 4, 2));
+            var layer = data[entryOffset + 6];
+
+            if (layer == (byte)ItemLayerType.Mount)
+            {
+                mountSerial = serial;
+                mountItemId = itemId;
+
+                break;
+            }
+
+            entryOffset += 9;
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mountSerial, Is.Not.EqualTo(0u));
+                Assert.That(mountItemId, Is.EqualTo((ushort)0x3E9F));
+            }
+        );
+    }
+
+    [Test]
     public void MobileIncomingPacket_Write_ShouldSerializeHeaderAndTerminator()
     {
         var beholder = CreateMobile();
@@ -320,51 +366,6 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(hairSerial, Is.Not.EqualTo(equipped.Id.Value));
                 Assert.That(facialHairSerial, Is.Not.EqualTo(equipped.Id.Value));
                 Assert.That(hairSerial, Is.Not.EqualTo(facialHairSerial));
-            }
-        );
-    }
-
-    [Test]
-    public void MobileIncomingPacket_Write_ShouldProjectMountedDisplayItemOnMountLayer()
-    {
-        var beholder = CreateMobile();
-        var beheld = CreateMobile();
-        beheld.MountedDisplayItemId = 0x3E9F;
-
-        var packet = new MobileIncomingPacket(beholder, beheld);
-        var data = Write(packet);
-
-        var entryOffset = 19;
-        var mountSerial = 0u;
-        var mountItemId = 0u;
-
-        while (entryOffset + 4 <= data.Length)
-        {
-            var serial = BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(entryOffset, 4));
-
-            if (serial == 0)
-            {
-                break;
-            }
-
-            var itemId = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(entryOffset + 4, 2));
-            var layer = data[entryOffset + 6];
-
-            if (layer == (byte)ItemLayerType.Mount)
-            {
-                mountSerial = serial;
-                mountItemId = itemId;
-                break;
-            }
-
-            entryOffset += 9;
-        }
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mountSerial, Is.Not.EqualTo(0u));
-                Assert.That(mountItemId, Is.EqualTo((ushort)0x3E9F));
             }
         );
     }

@@ -43,6 +43,7 @@ public class VendorBuyListPacketTests
         packet.Write(ref writer);
         var data = writer.ToArray();
         writer.Dispose();
+
         return data;
     }
 }

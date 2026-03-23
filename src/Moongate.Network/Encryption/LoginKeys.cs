@@ -52,25 +52,6 @@ public readonly struct LoginKeys
         return keys;
     }
 
-    private static LoginKeys ComputeKeys(uint major, uint minor, uint revision)
-    {
-        uint key1 = (major << 23) | (minor << 14) | (revision << 4);
-        key1 ^= (revision * revision) << 9;
-        key1 ^= minor * minor;
-        key1 ^= (minor * 11) << 24;
-        key1 ^= (revision * 7) << 19;
-        key1 ^= 0x2C13A5FD;
-
-        uint key2 = (major << 22) | (revision << 13) | (minor << 3);
-        key2 ^= (revision * revision * 3) << 10;
-        key2 ^= minor * minor;
-        key2 ^= (minor * 13) << 23;
-        key2 ^= (revision * 7) << 18;
-        key2 ^= 0xA31D527F;
-
-        return new LoginKeys(key1, key2);
-    }
-
     private static LoginKeys[] BuildLegacyKeys()
     {
         ReadOnlySpan<(uint Major, uint Minor, uint Revision)> versions =
@@ -89,5 +70,24 @@ public readonly struct LoginKeys
         }
 
         return keys;
+    }
+
+    private static LoginKeys ComputeKeys(uint major, uint minor, uint revision)
+    {
+        var key1 = (major << 23) | (minor << 14) | (revision << 4);
+        key1 ^= (revision * revision) << 9;
+        key1 ^= minor * minor;
+        key1 ^= (minor * 11) << 24;
+        key1 ^= (revision * 7) << 19;
+        key1 ^= 0x2C13A5FD;
+
+        var key2 = (major << 22) | (revision << 13) | (minor << 3);
+        key2 ^= (revision * revision * 3) << 10;
+        key2 ^= minor * minor;
+        key2 ^= (minor * 13) << 23;
+        key2 ^= (revision * 7) << 18;
+        key2 ^= 0xA31D527F;
+
+        return new(key1, key2);
     }
 }

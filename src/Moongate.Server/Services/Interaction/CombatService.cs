@@ -1,10 +1,9 @@
 using Moongate.Network.Packets.Outgoing.Combat;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
-using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Combat;
-using Moongate.Server.Data.Session;
+using Moongate.Server.Data.Interaction;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
@@ -66,9 +65,7 @@ public sealed class CombatService : ICombatService
             itemService,
             deathService,
             new SkillGainService(new SkillAntiMacroService(), new StatGainService())
-        )
-    {
-    }
+        ) { }
 
     public CombatService(
         IMobileService mobileService,
@@ -93,6 +90,45 @@ public sealed class CombatService : ICombatService
         _skillGainService = skillGainService;
     }
 
+    private readonly record struct AttackProfile(
+        UOItemEntity? Weapon,
+        UOItemEntity? Quiver,
+        int MaxRange,
+        int? AmmoItemId,
+        int? ProjectileEffectId,
+        int LowerAmmoCost,
+        int RangedDamageIncrease
+    )
+    {
+        public bool IsRanged
+            => Weapon is not null &&
+               AmmoItemId is not null &&
+               ProjectileEffectId is not null &&
+               MaxRange > MeleeRange;
+    }
+
+    public async Task<bool> ClearCombatantAsync(Serial attackerId, CancellationToken cancellationToken = default)
+    {
+        if (attackerId == Serial.Zero)
+        {
+            return false;
+        }
+
+        var attacker = await ResolveMobileAsync(attackerId, cancellationToken);
+
+        if (attacker is null)
+        {
+            return false;
+        }
+
+        attacker.ClearCombatState();
+        await PersistMobileAsync(attacker, cancellationToken);
+        CancelSwing(attacker.Id);
+        SendChangeCombatant(attacker.Id, Serial.Zero);
+
+        return true;
+    }
+
     public async Task<bool> TrySetCombatantAsync(
         Serial attackerId,
         Serial defenderId,
@@ -107,7 +143,11 @@ public sealed class CombatService : ICombatService
         var attacker = await ResolveMobileAsync(attackerId, cancellationToken);
         var defender = await ResolveMobileAsync(defenderId, cancellationToken);
 
-        if (attacker is null || defender is null || !attacker.IsAlive || !defender.IsAlive || attacker.MapId != defender.MapId)
+        if (attacker is null ||
+            defender is null ||
+            !attacker.IsAlive ||
+            !defender.IsAlive ||
+            attacker.MapId != defender.MapId)
         {
             return false;
         }
@@ -138,28 +178,6 @@ public sealed class CombatService : ICombatService
         return true;
     }
 
-    public async Task<bool> ClearCombatantAsync(Serial attackerId, CancellationToken cancellationToken = default)
-    {
-        if (attackerId == Serial.Zero)
-        {
-            return false;
-        }
-
-        var attacker = await ResolveMobileAsync(attackerId, cancellationToken);
-
-        if (attacker is null)
-        {
-            return false;
-        }
-
-        attacker.ClearCombatState();
-        await PersistMobileAsync(attacker, cancellationToken);
-        CancelSwing(attacker.Id);
-        SendChangeCombatant(attacker.Id, Serial.Zero);
-
-        return true;
-    }
-
     private void CancelSwing(Serial attackerId)
     {
         _timerService.UnregisterTimersByName(GetTimerName(attackerId));
@@ -170,301 +188,29 @@ public sealed class CombatService : ICombatService
         }
     }
 
-    private bool HasScheduledSwing(Serial attackerId)
+    private static bool ContainsAmmo(UOItemEntity? container, int ammoItemId)
     {
-        lock (_syncRoot)
+        if (container is null)
         {
-            return _combatSequences.ContainsKey(attackerId);
-        }
-    }
-
-    private static void ExpireAggressorEntries(UOMobileEntity mobile, DateTime nowUtc)
-        => mobile.ExpireAggressors(nowUtc, AggressorTimeout);
-
-    private static string GetTimerName(Serial attackerId)
-        => $"combat:{(uint)attackerId}";
-
-    private async Task<bool> IsCombatAllowedAsync(
-        UOMobileEntity attacker,
-        UOMobileEntity defender,
-        CancellationToken cancellationToken
-    )
-    {
-        var region = _spatialWorldService.ResolveRegion(attacker.MapId, attacker.Location);
-        var isGuardedRegion = region is JsonGuardedRegion ||
-                              region is JsonTownRegion townRegion && !townRegion.GuardsDisabled;
-        var blockedReason = ResolveBlockedReason(attacker, defender);
-        var allowed = blockedReason is null;
-
-        await _gameEventBusService.PublishAsync(
-            new CombatAttemptEvent(
-                attacker.Id,
-                defender.Id,
-                attacker.MapId,
-                attacker.Location,
-                region?.Name,
-                isGuardedRegion,
-                allowed,
-                blockedReason
-            ),
-            cancellationToken
-        );
-
-        return allowed;
-    }
-
-    private async Task PersistMobileAsync(UOMobileEntity mobile, CancellationToken cancellationToken)
-    {
-        await _mobileService.CreateOrUpdateAsync(mobile, cancellationToken);
-        SyncRuntimeMobile(mobile);
-    }
-
-    private static bool ResolveHit(UOMobileEntity attacker, UOMobileEntity defender)
-        => ResolveHitScore(attacker, defender) >= 0.5;
-
-    private static double ResolveHitScore(UOMobileEntity attacker, UOMobileEntity defender)
-    {
-        var attackSkillValue = GetSkillValue(attacker, ResolveAttackSkill(attacker));
-        var defenseSkillValue = GetSkillValue(defender, ResolveDefenseSkill(defender));
-        var modifierDelta = (attacker.EffectiveHitChanceIncrease - defender.EffectiveDefenseChanceIncrease) / 100.0;
-
-        return Math.Clamp(0.5 + ((attackSkillValue - defenseSkillValue) / 200.0) + modifierDelta, 0.0, 1.0);
-    }
-
-    private static string? ResolveBlockedReason(UOMobileEntity attacker, UOMobileEntity defender)
-    {
-        var map = Map.GetMap(attacker.MapId);
-
-        if (map is not null &&
-            map.Rules.HasFlag(MapRules.HarmfulRestrictions) &&
-            defender.IsPlayer &&
-            defender.Notoriety == Notoriety.Innocent)
-        {
-            return "map_harmful_restrictions";
+            return false;
         }
 
-        return null;
-    }
-
-    private static int ResolveDamage(UOMobileEntity attacker)
-        => ResolveDamage(attacker, default);
-
-    private static int ResolveDamage(UOMobileEntity attacker, AttackProfile attackProfile)
-    {
-        var weapon = ResolveWeapon(attacker);
-        var minDamage = weapon?.CombatStats?.DamageMin ?? attacker.MinWeaponDamage;
-        var maxDamage = weapon?.CombatStats?.DamageMax ?? attacker.MaxWeaponDamage;
-
-        if (minDamage <= 0)
+        for (var index = container.Items.Count - 1; index >= 0; index--)
         {
-            minDamage = DefaultMinDamage;
-        }
+            var child = container.Items[index];
 
-        if (maxDamage < minDamage)
-        {
-            maxDamage = minDamage;
-        }
-
-        if (maxDamage == 0)
-        {
-            maxDamage = DefaultMaxDamage;
-        }
-
-        var rolledDamage = Random.Shared.Next(minDamage, maxDamage + 1);
-
-        return Math.Max(1, ScaleDamageAosLike(attacker, rolledDamage, attackProfile.RangedDamageIncrease));
-    }
-
-    private static int ScaleDamageAosLike(UOMobileEntity attacker, int rolledDamage, int rangedDamageIncreaseBonus = 0)
-    {
-        var strengthBonus = GetBonus(attacker.EffectiveStrength, 0.300, 100.0, 5.00);
-        var anatomyBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Anatomy), 0.500, 100.0, 5.00);
-        var tacticsBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Tactics), 0.625, 100.0, 6.25);
-        var totalDamageIncrease = Math.Clamp(Math.Max(0, attacker.EffectiveDamageIncrease + rangedDamageIncreaseBonus), 0, 100);
-        var damageIncreaseBonus = totalDamageIncrease / 100.0;
-        var totalBonus = strengthBonus + anatomyBonus + tacticsBonus + damageIncreaseBonus;
-
-        return (int)(rolledDamage + rolledDamage * totalBonus);
-    }
-
-    private static double GetBonus(double value, double scalar, double threshold, double offset)
-    {
-        var bonus = value * scalar;
-
-        if (value >= threshold)
-        {
-            bonus += offset;
-        }
-
-        return bonus / 100.0;
-    }
-
-    private static double GetSkillValue(UOMobileEntity mobile, UOSkillName skillName)
-        => (mobile.GetSkill(skillName)?.Value ?? 0.0) / 10.0;
-
-    private static UOSkillName ResolveAttackSkill(UOMobileEntity attacker)
-        => ResolveWeapon(attacker)?.WeaponSkill ?? UOSkillName.Wrestling;
-
-    private static UOSkillName ResolveDefenseSkill(UOMobileEntity defender)
-        => ResolveWeapon(defender)?.WeaponSkill ?? UOSkillName.Wrestling;
-
-    private async Task<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
-    {
-        if (_gameNetworkSessionService.TryGetByCharacterId(mobileId, out var session) && session.Character is not null)
-        {
-            return session.Character;
-        }
-
-        var persistedMobile = await _mobileService.GetAsync(mobileId, cancellationToken);
-        var liveMobile = TryResolveLiveMobile(mobileId, persistedMobile);
-
-        return liveMobile ?? persistedMobile;
-    }
-
-    private UOMobileEntity? TryResolveLiveMobile(Serial mobileId, UOMobileEntity? persistedMobile)
-    {
-        if (persistedMobile is not null)
-        {
-            var sector = _spatialWorldService.GetSectorByLocation(persistedMobile.MapId, persistedMobile.Location);
-            var sectorMobile = sector?.GetEntity<UOMobileEntity>(mobileId);
-
-            if (sectorMobile is not null)
+            if (child.ItemId == ammoItemId)
             {
-                return sectorMobile;
+                return true;
             }
 
-            var nearbyMobile = _spatialWorldService.GetNearbyMobiles(
-                persistedMobile.Location,
-                MapSectorConsts.MaxViewRange,
-                persistedMobile.MapId
-            ).FirstOrDefault(mobile => mobile.Id == mobileId);
-
-            if (nearbyMobile is not null)
+            if (ContainsAmmo(child, ammoItemId))
             {
-                return nearbyMobile;
+                return true;
             }
         }
 
-        foreach (var sector in _spatialWorldService.GetActiveSectors())
-        {
-            var sectorMobile = sector.GetEntity<UOMobileEntity>(mobileId);
-
-            if (sectorMobile is not null)
-            {
-                return sectorMobile;
-            }
-        }
-
-        return null;
-    }
-
-    private static UOItemEntity? ResolveWeapon(UOMobileEntity attacker)
-        => attacker.GetEquippedItemsRuntime()
-                   .FirstOrDefault(
-                       item => item.EquippedLayer is ItemLayerType.OneHanded or
-                               ItemLayerType.TwoHanded or
-                               ItemLayerType.FirstValid
-                   );
-
-    private static UOItemEntity? ResolveQuiver(UOMobileEntity attacker)
-        => attacker.GetEquippedItemsRuntime()
-                   .FirstOrDefault(item => item.EquippedLayer == ItemLayerType.Cloak && item.IsQuiver);
-
-    private static AttackProfile ResolveAttackProfile(UOMobileEntity attacker)
-    {
-        var weapon = ResolveWeapon(attacker);
-        var quiver = ResolveQuiver(attacker);
-        var maxRange = weapon?.CombatStats?.RangeMax ?? 0;
-
-        if (maxRange <= 0)
-        {
-            maxRange = MeleeRange;
-        }
-
-        return new(
-            weapon,
-            quiver,
-            maxRange,
-            weapon?.AmmoItemId,
-            weapon?.AmmoEffectId,
-            quiver?.QuiverLowerAmmoCost ?? 0,
-            quiver?.QuiverDamageIncrease ?? 0
-        );
-    }
-
-    private static TimeSpan ResolveSwingDelay(UOMobileEntity attacker)
-    {
-        var weapon = ResolveWeapon(attacker);
-        var attackSpeed = weapon?.CombatStats?.AttackSpeed ?? DefaultAttackSpeed;
-        var speedScale = 1.0 + Math.Max(0, attacker.EffectiveSwingSpeedIncrease) / 100.0;
-        var seconds = Math.Clamp(attackSpeed / 20.0 / speedScale, 0.75, 3.0);
-
-        return TimeSpan.FromSeconds(seconds);
-    }
-
-    private void ScheduleSwing(Serial attackerId, TimeSpan delay)
-    {
-        var timerName = GetTimerName(attackerId);
-        _timerService.UnregisterTimersByName(timerName);
-
-        int sequence;
-
-        lock (_syncRoot)
-        {
-            _combatSequences.TryGetValue(attackerId, out var currentSequence);
-            sequence = currentSequence + 1;
-            _combatSequences[attackerId] = sequence;
-        }
-
-        _timerService.RegisterTimer(
-            timerName,
-            delay,
-            () => ExecuteSwingAsync(attackerId, sequence).AsTask().GetAwaiter().GetResult(),
-            delay
-        );
-    }
-
-    private void SendChangeCombatant(Serial attackerId, Serial defenderId)
-    {
-        if (!_gameNetworkSessionService.TryGetByCharacterId(attackerId, out var session))
-        {
-            return;
-        }
-
-        _outgoingPacketQueue.Enqueue(session.SessionId, new ChangeCombatantPacket(defenderId));
-    }
-
-    private async ValueTask PublishWarModeChangedAsync(UOMobileEntity mobile, CancellationToken cancellationToken)
-        => await _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(mobile), cancellationToken);
-
-    private void SyncRuntimeMobile(UOMobileEntity updatedMobile)
-    {
-        if (_gameNetworkSessionService.TryGetByCharacterId(updatedMobile.Id, out var session))
-        {
-            session.Character = updatedMobile;
-            session.CharacterId = updatedMobile.Id;
-            session.IsMounted = updatedMobile.IsMounted;
-        }
-    }
-
-    private async ValueTask FaceTowardDefenderAsync(UOMobileEntity attacker, UOMobileEntity defender)
-    {
-        var desiredDirection = Point3D.GetBaseDirection(attacker.Location.GetDirectionTo(defender.Location));
-        var currentDirection = Point3D.GetBaseDirection(attacker.Direction);
-
-        if (desiredDirection == currentDirection)
-        {
-            return;
-        }
-
-        attacker.Direction = desiredDirection;
-        SyncRuntimeMobile(attacker);
-
-        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
-            new MobileMovingPacket(attacker),
-            attacker.MapId,
-            attacker.Location
-        );
+        return false;
     }
 
     private async ValueTask ExecuteSwingAsync(Serial attackerId, int expectedSequence)
@@ -482,6 +228,7 @@ public sealed class CombatService : ICombatService
         if (attacker is null || attacker.CombatantId == Serial.Zero || !attacker.IsAlive || !attacker.Warmode)
         {
             await ClearCombatantAsync(attackerId);
+
             return;
         }
 
@@ -490,6 +237,7 @@ public sealed class CombatService : ICombatService
         if (defender is null || !defender.IsAlive || attacker.MapId != defender.MapId)
         {
             await ClearCombatantAsync(attackerId);
+
             return;
         }
 
@@ -503,6 +251,7 @@ public sealed class CombatService : ICombatService
             attacker.NextCombatAtUtc = DateTime.UtcNow.Add(delay);
             await PersistMobileAsync(attacker, CancellationToken.None);
             ScheduleSwing(attacker.Id, delay);
+
             return;
         }
 
@@ -520,6 +269,7 @@ public sealed class CombatService : ICombatService
         if (!await IsCombatAllowedAsync(attacker, defender, CancellationToken.None))
         {
             await ClearCombatantAsync(attacker.Id);
+
             return;
         }
 
@@ -527,6 +277,7 @@ public sealed class CombatService : ICombatService
             !await TryConsumeAmmoAsync(attacker, attackProfile, CancellationToken.None))
         {
             await ClearCombatantAsync(attacker.Id, CancellationToken.None);
+
             return;
         }
 
@@ -636,24 +387,99 @@ public sealed class CombatService : ICombatService
         {
             await _deathService.HandleDeathAsync(defender, attacker, CancellationToken.None);
             await ClearCombatantAsync(attacker.Id);
+
             return;
         }
 
         ScheduleSwing(attacker.Id, delay);
     }
 
-    private bool TryApplyCombatSkillGain(UOMobileEntity attacker, UOMobileEntity defender, bool wasSuccessful)
+    private static void ExpireAggressorEntries(UOMobileEntity mobile, DateTime nowUtc)
+        => mobile.ExpireAggressors(nowUtc, AggressorTimeout);
+
+    private async ValueTask FaceTowardDefenderAsync(UOMobileEntity attacker, UOMobileEntity defender)
     {
-        var successChance = ResolveHitScore(attacker, defender);
-        var context = new SkillGainContext(attacker.Location, defender.Id);
-        var changed = false;
+        var desiredDirection = Point3D.GetBaseDirection(attacker.Location.GetDirectionTo(defender.Location));
+        var currentDirection = Point3D.GetBaseDirection(attacker.Direction);
 
-        changed |= _skillGainService.TryGain(attacker, ResolveAttackSkill(attacker), successChance, wasSuccessful, context).SkillIncreased;
-        changed |= _skillGainService.TryGain(attacker, UOSkillName.Tactics, successChance, wasSuccessful, context).SkillIncreased;
-        changed |= _skillGainService.TryGain(attacker, UOSkillName.Anatomy, successChance, wasSuccessful, context).SkillIncreased;
+        if (desiredDirection == currentDirection)
+        {
+            return;
+        }
 
-        return changed;
+        attacker.Direction = desiredDirection;
+        SyncRuntimeMobile(attacker);
+
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            new MobileMovingPacket(attacker),
+            attacker.MapId,
+            attacker.Location
+        );
     }
+
+    private static double GetBonus(double value, double scalar, double threshold, double offset)
+    {
+        var bonus = value * scalar;
+
+        if (value >= threshold)
+        {
+            bonus += offset;
+        }
+
+        return bonus / 100.0;
+    }
+
+    private static double GetSkillValue(UOMobileEntity mobile, UOSkillName skillName)
+        => (mobile.GetSkill(skillName)?.Value ?? 0.0) / 10.0;
+
+    private static string GetTimerName(Serial attackerId)
+        => $"combat:{(uint)attackerId}";
+
+    private bool HasScheduledSwing(Serial attackerId)
+    {
+        lock (_syncRoot)
+        {
+            return _combatSequences.ContainsKey(attackerId);
+        }
+    }
+
+    private async Task<bool> IsCombatAllowedAsync(
+        UOMobileEntity attacker,
+        UOMobileEntity defender,
+        CancellationToken cancellationToken
+    )
+    {
+        var region = _spatialWorldService.ResolveRegion(attacker.MapId, attacker.Location);
+        var isGuardedRegion = region is JsonGuardedRegion ||
+                              region is JsonTownRegion townRegion && !townRegion.GuardsDisabled;
+        var blockedReason = ResolveBlockedReason(attacker, defender);
+        var allowed = blockedReason is null;
+
+        await _gameEventBusService.PublishAsync(
+            new CombatAttemptEvent(
+                attacker.Id,
+                defender.Id,
+                attacker.MapId,
+                attacker.Location,
+                region?.Name,
+                isGuardedRegion,
+                allowed,
+                blockedReason
+            ),
+            cancellationToken
+        );
+
+        return allowed;
+    }
+
+    private async Task PersistMobileAsync(UOMobileEntity mobile, CancellationToken cancellationToken)
+    {
+        await _mobileService.CreateOrUpdateAsync(mobile, cancellationToken);
+        SyncRuntimeMobile(mobile);
+    }
+
+    private async ValueTask PublishWarModeChangedAsync(UOMobileEntity mobile, CancellationToken cancellationToken)
+        => await _gameEventBusService.PublishAsync(new MobileWarModeChangedEvent(mobile), cancellationToken);
 
     private static void RefreshAggression(
         List<AggressorInfo> entries,
@@ -673,10 +499,231 @@ public sealed class CombatService : ICombatService
         if (index >= 0)
         {
             entries[index] = updatedEntry;
+
             return;
         }
 
         entries.Add(updatedEntry);
+    }
+
+    private void RefreshConsumedAmmoForSession(Serial attackerId, UOItemEntity backpack, UOItemEntity? deletedStack)
+    {
+        if (!_gameNetworkSessionService.TryGetByCharacterId(attackerId, out var session))
+        {
+            return;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, new AddMultipleItemsToContainerPacket(backpack));
+
+        if (deletedStack is not null)
+        {
+            _outgoingPacketQueue.Enqueue(session.SessionId, new DeleteObjectPacket(deletedStack.Id));
+        }
+    }
+
+    private static AttackProfile ResolveAttackProfile(UOMobileEntity attacker)
+    {
+        var weapon = ResolveWeapon(attacker);
+        var quiver = ResolveQuiver(attacker);
+        var maxRange = weapon?.CombatStats?.RangeMax ?? 0;
+
+        if (maxRange <= 0)
+        {
+            maxRange = MeleeRange;
+        }
+
+        return new(
+            weapon,
+            quiver,
+            maxRange,
+            weapon?.AmmoItemId,
+            weapon?.AmmoEffectId,
+            quiver?.QuiverLowerAmmoCost ?? 0,
+            quiver?.QuiverDamageIncrease ?? 0
+        );
+    }
+
+    private static UOSkillName ResolveAttackSkill(UOMobileEntity attacker)
+        => ResolveWeapon(attacker)?.WeaponSkill ?? UOSkillName.Wrestling;
+
+    private static Serial ResolveBackpackId(UOMobileEntity attacker)
+    {
+        if (attacker.BackpackId != Serial.Zero)
+        {
+            return attacker.BackpackId;
+        }
+
+        return attacker.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var backpackId)
+                   ? backpackId
+                   : Serial.Zero;
+    }
+
+    private static string? ResolveBlockedReason(UOMobileEntity attacker, UOMobileEntity defender)
+    {
+        var map = Map.GetMap(attacker.MapId);
+
+        if (map is not null &&
+            map.Rules.HasFlag(MapRules.HarmfulRestrictions) &&
+            defender.IsPlayer &&
+            defender.Notoriety == Notoriety.Innocent)
+        {
+            return "map_harmful_restrictions";
+        }
+
+        return null;
+    }
+
+    private static int ResolveDamage(UOMobileEntity attacker)
+        => ResolveDamage(attacker, default);
+
+    private static int ResolveDamage(UOMobileEntity attacker, AttackProfile attackProfile)
+    {
+        var weapon = ResolveWeapon(attacker);
+        var minDamage = weapon?.CombatStats?.DamageMin ?? attacker.MinWeaponDamage;
+        var maxDamage = weapon?.CombatStats?.DamageMax ?? attacker.MaxWeaponDamage;
+
+        if (minDamage <= 0)
+        {
+            minDamage = DefaultMinDamage;
+        }
+
+        if (maxDamage < minDamage)
+        {
+            maxDamage = minDamage;
+        }
+
+        if (maxDamage == 0)
+        {
+            maxDamage = DefaultMaxDamage;
+        }
+
+        var rolledDamage = Random.Shared.Next(minDamage, maxDamage + 1);
+
+        return Math.Max(1, ScaleDamageAosLike(attacker, rolledDamage, attackProfile.RangedDamageIncrease));
+    }
+
+    private static UOSkillName ResolveDefenseSkill(UOMobileEntity defender)
+        => ResolveWeapon(defender)?.WeaponSkill ?? UOSkillName.Wrestling;
+
+    private static bool ResolveHit(UOMobileEntity attacker, UOMobileEntity defender)
+        => ResolveHitScore(attacker, defender) >= 0.5;
+
+    private static double ResolveHitScore(UOMobileEntity attacker, UOMobileEntity defender)
+    {
+        var attackSkillValue = GetSkillValue(attacker, ResolveAttackSkill(attacker));
+        var defenseSkillValue = GetSkillValue(defender, ResolveDefenseSkill(defender));
+        var modifierDelta = (attacker.EffectiveHitChanceIncrease - defender.EffectiveDefenseChanceIncrease) / 100.0;
+
+        return Math.Clamp(0.5 + (attackSkillValue - defenseSkillValue) / 200.0 + modifierDelta, 0.0, 1.0);
+    }
+
+    private async Task<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
+    {
+        if (_gameNetworkSessionService.TryGetByCharacterId(mobileId, out var session) && session.Character is not null)
+        {
+            return session.Character;
+        }
+
+        var persistedMobile = await _mobileService.GetAsync(mobileId, cancellationToken);
+        var liveMobile = TryResolveLiveMobile(mobileId, persistedMobile);
+
+        return liveMobile ?? persistedMobile;
+    }
+
+    private static UOItemEntity? ResolveQuiver(UOMobileEntity attacker)
+        => attacker.GetEquippedItemsRuntime()
+                   .FirstOrDefault(item => item.EquippedLayer == ItemLayerType.Cloak && item.IsQuiver);
+
+    private static TimeSpan ResolveSwingDelay(UOMobileEntity attacker)
+    {
+        var weapon = ResolveWeapon(attacker);
+        var attackSpeed = weapon?.CombatStats?.AttackSpeed ?? DefaultAttackSpeed;
+        var speedScale = 1.0 + Math.Max(0, attacker.EffectiveSwingSpeedIncrease) / 100.0;
+        var seconds = Math.Clamp(attackSpeed / 20.0 / speedScale, 0.75, 3.0);
+
+        return TimeSpan.FromSeconds(seconds);
+    }
+
+    private static UOItemEntity? ResolveWeapon(UOMobileEntity attacker)
+        => attacker.GetEquippedItemsRuntime()
+                   .FirstOrDefault(
+                       item => item.EquippedLayer is ItemLayerType.OneHanded or
+                                                     ItemLayerType.TwoHanded or
+                                                     ItemLayerType.FirstValid
+                   );
+
+    private static int ScaleDamageAosLike(UOMobileEntity attacker, int rolledDamage, int rangedDamageIncreaseBonus = 0)
+    {
+        var strengthBonus = GetBonus(attacker.EffectiveStrength, 0.300, 100.0, 5.00);
+        var anatomyBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Anatomy), 0.500, 100.0, 5.00);
+        var tacticsBonus = GetBonus(GetSkillValue(attacker, UOSkillName.Tactics), 0.625, 100.0, 6.25);
+        var totalDamageIncrease = Math.Clamp(
+            Math.Max(0, attacker.EffectiveDamageIncrease + rangedDamageIncreaseBonus),
+            0,
+            100
+        );
+        var damageIncreaseBonus = totalDamageIncrease / 100.0;
+        var totalBonus = strengthBonus + anatomyBonus + tacticsBonus + damageIncreaseBonus;
+
+        return (int)(rolledDamage + rolledDamage * totalBonus);
+    }
+
+    private void ScheduleSwing(Serial attackerId, TimeSpan delay)
+    {
+        var timerName = GetTimerName(attackerId);
+        _timerService.UnregisterTimersByName(timerName);
+
+        int sequence;
+
+        lock (_syncRoot)
+        {
+            _combatSequences.TryGetValue(attackerId, out var currentSequence);
+            sequence = currentSequence + 1;
+            _combatSequences[attackerId] = sequence;
+        }
+
+        _timerService.RegisterTimer(
+            timerName,
+            delay,
+            () => ExecuteSwingAsync(attackerId, sequence).AsTask().GetAwaiter().GetResult(),
+            delay
+        );
+    }
+
+    private void SendChangeCombatant(Serial attackerId, Serial defenderId)
+    {
+        if (!_gameNetworkSessionService.TryGetByCharacterId(attackerId, out var session))
+        {
+            return;
+        }
+
+        _outgoingPacketQueue.Enqueue(session.SessionId, new ChangeCombatantPacket(defenderId));
+    }
+
+    private void SyncRuntimeMobile(UOMobileEntity updatedMobile)
+    {
+        if (_gameNetworkSessionService.TryGetByCharacterId(updatedMobile.Id, out var session))
+        {
+            session.Character = updatedMobile;
+            session.CharacterId = updatedMobile.Id;
+            session.IsMounted = updatedMobile.IsMounted;
+        }
+    }
+
+    private bool TryApplyCombatSkillGain(UOMobileEntity attacker, UOMobileEntity defender, bool wasSuccessful)
+    {
+        var successChance = ResolveHitScore(attacker, defender);
+        var context = new SkillGainContext(attacker.Location, defender.Id);
+        var changed = false;
+
+        changed |= _skillGainService.TryGain(attacker, ResolveAttackSkill(attacker), successChance, wasSuccessful, context)
+                                    .SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, UOSkillName.Tactics, successChance, wasSuccessful, context)
+                                    .SkillIncreased;
+        changed |= _skillGainService.TryGain(attacker, UOSkillName.Anatomy, successChance, wasSuccessful, context)
+                                    .SkillIncreased;
+
+        return changed;
     }
 
     private async Task<bool> TryConsumeAmmoAsync(
@@ -690,8 +737,8 @@ public sealed class CombatService : ICombatService
         var backpackId = ResolveBackpackId(attacker);
 
         var backpack = backpackId == Serial.Zero
-            ? null
-            : await _itemService.GetItemAsync(backpackId);
+                           ? null
+                           : await _itemService.GetItemAsync(backpackId);
 
         if (!ContainsAmmo(quiver, ammoItemId) && !ContainsAmmo(backpack, ammoItemId))
         {
@@ -702,6 +749,7 @@ public sealed class CombatService : ICombatService
             Random.Shared.Next(100) < attackProfile.LowerAmmoCost)
         {
             _ = cancellationToken;
+
             return true;
         }
 
@@ -720,6 +768,7 @@ public sealed class CombatService : ICombatService
 
             RefreshConsumedAmmoForSession(attacker.Id, quiver, deletedQuiverStack);
             _ = cancellationToken;
+
             return true;
         }
 
@@ -741,59 +790,8 @@ public sealed class CombatService : ICombatService
 
         RefreshConsumedAmmoForSession(attacker.Id, backpack, deletedStack);
         _ = cancellationToken;
+
         return true;
-    }
-
-    private void RefreshConsumedAmmoForSession(Serial attackerId, UOItemEntity backpack, UOItemEntity? deletedStack)
-    {
-        if (!_gameNetworkSessionService.TryGetByCharacterId(attackerId, out var session))
-        {
-            return;
-        }
-
-        _outgoingPacketQueue.Enqueue(session.SessionId, new AddMultipleItemsToContainerPacket(backpack));
-
-        if (deletedStack is not null)
-        {
-            _outgoingPacketQueue.Enqueue(session.SessionId, new DeleteObjectPacket(deletedStack.Id));
-        }
-    }
-
-    private static Serial ResolveBackpackId(UOMobileEntity attacker)
-    {
-        if (attacker.BackpackId != Serial.Zero)
-        {
-            return attacker.BackpackId;
-        }
-
-        return attacker.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var backpackId)
-                   ? backpackId
-                   : Serial.Zero;
-    }
-
-    private static bool ContainsAmmo(UOItemEntity? container, int ammoItemId)
-    {
-        if (container is null)
-        {
-            return false;
-        }
-
-        for (var index = container.Items.Count - 1; index >= 0; index--)
-        {
-            var child = container.Items[index];
-
-            if (child.ItemId == ammoItemId)
-            {
-                return true;
-            }
-
-            if (ContainsAmmo(child, ammoItemId))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static bool TryConsumeAmmoRecursive(
@@ -836,19 +834,41 @@ public sealed class CombatService : ICombatService
         return false;
     }
 
-    private readonly record struct AttackProfile(
-        UOItemEntity? Weapon,
-        UOItemEntity? Quiver,
-        int MaxRange,
-        int? AmmoItemId,
-        int? ProjectileEffectId,
-        int LowerAmmoCost,
-        int RangedDamageIncrease
-    )
+    private UOMobileEntity? TryResolveLiveMobile(Serial mobileId, UOMobileEntity? persistedMobile)
     {
-        public bool IsRanged => Weapon is not null &&
-                                AmmoItemId is not null &&
-                                ProjectileEffectId is not null &&
-                                MaxRange > MeleeRange;
+        if (persistedMobile is not null)
+        {
+            var sector = _spatialWorldService.GetSectorByLocation(persistedMobile.MapId, persistedMobile.Location);
+            var sectorMobile = sector?.GetEntity<UOMobileEntity>(mobileId);
+
+            if (sectorMobile is not null)
+            {
+                return sectorMobile;
+            }
+
+            var nearbyMobile = _spatialWorldService.GetNearbyMobiles(
+                                                       persistedMobile.Location,
+                                                       MapSectorConsts.MaxViewRange,
+                                                       persistedMobile.MapId
+                                                   )
+                                                   .FirstOrDefault(mobile => mobile.Id == mobileId);
+
+            if (nearbyMobile is not null)
+            {
+                return nearbyMobile;
+            }
+        }
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            var sectorMobile = sector.GetEntity<UOMobileEntity>(mobileId);
+
+            if (sectorMobile is not null)
+            {
+                return sectorMobile;
+            }
+        }
+
+        return null;
     }
 }

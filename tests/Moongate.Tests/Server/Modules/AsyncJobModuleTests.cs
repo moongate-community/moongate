@@ -13,8 +13,8 @@ public sealed class AsyncJobModuleTests
         public string? LastRequestId { get; private set; }
         public Table? LastPayload { get; private set; }
 
-        public bool RunResult { get; set; } = true;
-        public bool TryRunResult { get; set; } = true;
+        public bool RunResult { get; } = true;
+        public bool TryRunResult { get; } = true;
 
         public bool Run(string jobName, string requestId, Table? payload = null)
         {
@@ -22,6 +22,7 @@ public sealed class AsyncJobModuleTests
             LastRequestId = requestId;
             LastPayload = payload;
             LastKey = null;
+
             return RunResult;
         }
 
@@ -31,6 +32,7 @@ public sealed class AsyncJobModuleTests
             LastKey = key;
             LastRequestId = requestId;
             LastPayload = payload;
+
             return TryRunResult;
         }
     }
@@ -40,7 +42,7 @@ public sealed class AsyncJobModuleTests
     {
         var service = new TestAsyncLuaJobService();
         var module = new AsyncJobModule(service);
-        var payload = new Table(new Script()) { ["text"] = "hello" };
+        var payload = new Table(new()) { ["text"] = "hello" };
 
         var ok = module.Run("echo", "req-1", payload);
 
@@ -60,7 +62,7 @@ public sealed class AsyncJobModuleTests
     {
         var service = new TestAsyncLuaJobService();
         var module = new AsyncJobModule(service);
-        var payload = new Table(new Script()) { ["value"] = 7 };
+        var payload = new Table(new()) { ["value"] = 7 };
 
         var ok = module.TryRun("scan", "npc:1", "req-2", payload);
 

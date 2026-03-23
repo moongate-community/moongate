@@ -4,7 +4,6 @@ using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
@@ -31,25 +30,11 @@ public sealed class CombatLuaHookHandlerTests
         public void EnqueueSpeech(SpeechHeardEvent gameEvent)
             => throw new NotSupportedException();
 
-        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(UOMobileEntity mobile, UOMobileEntity? requester)
+        public IReadOnlyList<LuaBrainContextMenuEntry> GetContextMenuEntries(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester
+        )
             => [];
-
-        public void Register(UOMobileEntity mobile, string brainId)
-            => throw new NotSupportedException();
-
-        public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
-            => ValueTask.CompletedTask;
-
-        public bool TryHandleContextMenuSelection(UOMobileEntity mobile, UOMobileEntity? requester, string menuKey, long sessionId)
-            => false;
-
-        public void Unregister(Serial mobileId) { }
-
-        public Task StartAsync()
-            => Task.CompletedTask;
-
-        public Task StopAsync()
-            => Task.CompletedTask;
 
         public Task HandleAsync(SpeechHeardEvent gameEvent, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
@@ -62,6 +47,28 @@ public sealed class CombatLuaHookHandlerTests
 
         public Task HandleAsync(MobileSpawnedFromSpawnerEvent gameEvent, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
+
+        public void Register(UOMobileEntity mobile, string brainId)
+            => throw new NotSupportedException();
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+
+        public ValueTask TickAllAsync(long nowMilliseconds, CancellationToken cancellationToken = default)
+            => ValueTask.CompletedTask;
+
+        public bool TryHandleContextMenuSelection(
+            UOMobileEntity mobile,
+            UOMobileEntity? requester,
+            string menuKey,
+            long sessionId
+        )
+            => false;
+
+        public void Unregister(Serial mobileId) { }
     }
 
     [Test]
@@ -74,17 +81,19 @@ public sealed class CombatLuaHookHandlerTests
             Id = (Serial)0x0100,
             IsPlayer = false,
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
         var defender = new UOMobileEntity
         {
             Id = (Serial)0x0200,
             IsPlayer = false,
             MapId = 1,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
 
-        await handler.HandleAsync(new CombatHitEvent(attacker.Id, defender.Id, attacker.MapId, attacker.Location, 6, attacker, defender));
+        await handler.HandleAsync(
+            new CombatHitEvent(attacker.Id, defender.Id, attacker.MapId, attacker.Location, 6, attacker, defender)
+        );
 
         Assert.Multiple(
             () =>
@@ -108,17 +117,19 @@ public sealed class CombatLuaHookHandlerTests
             Id = (Serial)0x0100,
             IsPlayer = false,
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
         var defender = new UOMobileEntity
         {
             Id = (Serial)0x0200,
             IsPlayer = false,
             MapId = 1,
-            Location = new Point3D(101, 100, 0)
+            Location = new(101, 100, 0)
         };
 
-        await handler.HandleAsync(new CombatMissEvent(attacker.Id, defender.Id, attacker.MapId, attacker.Location, attacker, defender));
+        await handler.HandleAsync(
+            new CombatMissEvent(attacker.Id, defender.Id, attacker.MapId, attacker.Location, attacker, defender)
+        );
 
         Assert.Multiple(
             () =>

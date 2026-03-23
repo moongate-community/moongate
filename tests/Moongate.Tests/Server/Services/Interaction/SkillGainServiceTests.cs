@@ -1,6 +1,5 @@
 using Moongate.Server.Data.Interaction;
 using Moongate.Server.Services.Interaction;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Skills;
@@ -62,20 +61,30 @@ public sealed class SkillGainServiceTests
         ];
 
     [Test]
-    public void TryGain_WhenSkillLockIsNotUp_ShouldNotChangeSkill()
+    public void TryGain_WhenAntiMacroBlocksRepeatedPlayerContext_ShouldStopFurtherGain()
     {
+        var now = new DateTime(2026, 3, 22, 12, 0, 0, DateTimeKind.Utc);
         var mobile = CreateMobile();
-        mobile.SetSkill(UOSkillName.Archery, 500, lockState: UOSkillLock.Locked);
-        var service = new SkillGainService(() => 0.0);
+        mobile.Id = (Serial)0x00000044;
+        mobile.IsPlayer = true;
+        mobile.Location = new(100, 100, 0);
+        mobile.SetSkill(UOSkillName.Archery, 100);
 
-        var result = service.TryGain(mobile, UOSkillName.Archery, 0.25, true);
+        var antiMacroService = new SkillAntiMacroService(() => now);
+        var statGainService = new StatGainService(() => 1.0, () => 0.0);
+        var service = new SkillGainService(() => 0.0, antiMacroService, statGainService);
+        var context = new SkillGainContext(mobile.Location, (Serial)0x00000055);
+
+        _ = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
+        _ = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
+        _ = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
+        var blocked = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(result.SkillIncreased, Is.False);
-                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(500));
-                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Value, Is.EqualTo(500));
+                Assert.That(blocked.SkillIncreased, Is.False);
+                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(103));
             }
         );
     }
@@ -96,6 +105,47 @@ public sealed class SkillGainServiceTests
                 Assert.That(result.SkillName, Is.EqualTo(UOSkillName.Archery));
                 Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(101));
                 Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Value, Is.EqualTo(101));
+            }
+        );
+    }
+
+    [Test]
+    public void TryGain_WhenSkillGainSucceeds_ShouldAlsoApplyStatGain()
+    {
+        var mobile = CreateMobile();
+        mobile.SetSkill(UOSkillName.Archery, 100);
+
+        var antiMacroService = new SkillAntiMacroService(() => DateTime.UtcNow);
+        var statGainService = new StatGainService(() => 0.0, () => 0.0);
+        var service = new SkillGainService(() => 0.0, antiMacroService, statGainService);
+
+        var result = service.TryGain(mobile, UOSkillName.Archery, 0.0, true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.SkillIncreased, Is.True);
+                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(101));
+                Assert.That(mobile.Dexterity, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void TryGain_WhenSkillLockIsNotUp_ShouldNotChangeSkill()
+    {
+        var mobile = CreateMobile();
+        mobile.SetSkill(UOSkillName.Archery, 500, lockState: UOSkillLock.Locked);
+        var service = new SkillGainService(() => 0.0);
+
+        var result = service.TryGain(mobile, UOSkillName.Archery, 0.25, true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.SkillIncreased, Is.False);
+                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(500));
+                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Value, Is.EqualTo(500));
             }
         );
     }
@@ -141,57 +191,6 @@ public sealed class SkillGainServiceTests
                 Assert.That(result.LoweredSkillName, Is.Null);
                 Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(1000));
                 Assert.That(mobile.GetTotalSkillBaseFixedPoint(), Is.EqualTo(7000));
-            }
-        );
-    }
-
-    [Test]
-    public void TryGain_WhenAntiMacroBlocksRepeatedPlayerContext_ShouldStopFurtherGain()
-    {
-        var now = new DateTime(2026, 3, 22, 12, 0, 0, DateTimeKind.Utc);
-        var mobile = CreateMobile();
-        mobile.Id = (Serial)0x00000044;
-        mobile.IsPlayer = true;
-        mobile.Location = new Point3D(100, 100, 0);
-        mobile.SetSkill(UOSkillName.Archery, 100);
-
-        var antiMacroService = new SkillAntiMacroService(() => now);
-        var statGainService = new StatGainService(() => 1.0, () => 0.0);
-        var service = new SkillGainService(() => 0.0, antiMacroService, statGainService);
-        var context = new SkillGainContext(mobile.Location, (Serial)0x00000055);
-
-        _ = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
-        _ = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
-        _ = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
-        var blocked = service.TryGain(mobile, UOSkillName.Archery, 0.0, true, context);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(blocked.SkillIncreased, Is.False);
-                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(103));
-            }
-        );
-    }
-
-    [Test]
-    public void TryGain_WhenSkillGainSucceeds_ShouldAlsoApplyStatGain()
-    {
-        var mobile = CreateMobile();
-        mobile.SetSkill(UOSkillName.Archery, 100);
-
-        var antiMacroService = new SkillAntiMacroService(() => DateTime.UtcNow);
-        var statGainService = new StatGainService(() => 0.0, () => 0.0);
-        var service = new SkillGainService(() => 0.0, antiMacroService, statGainService);
-
-        var result = service.TryGain(mobile, UOSkillName.Archery, 0.0, true);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.SkillIncreased, Is.True);
-                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(101));
-                Assert.That(mobile.Dexterity, Is.EqualTo(1));
             }
         );
     }

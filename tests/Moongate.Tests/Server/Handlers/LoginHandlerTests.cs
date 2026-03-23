@@ -164,6 +164,26 @@ public class LoginHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenClientTypePacketIsReceived_ShouldStoreEnhancedClientTypeInNetworkSession()
+    {
+        var handler = CreateHandler();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = new ClientTypePacket();
+        Assert.That(packet.TryParse([0xE1, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03]), Is.True);
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(session.NetworkSession.IsEnhancedClient, Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_WhenClientVersionPacketIsEmpty_ShouldNotStoreClientVersion()
     {
         var handler = CreateHandler();
@@ -230,26 +250,6 @@ public class LoginHandlerTests
                 Assert.That(session.NetworkSession.Seed, Is.EqualTo(0x12345678U));
                 Assert.That(session.NetworkSession.ClientVersion, Is.Not.Null);
                 Assert.That(session.NetworkSession.ClientVersion!.SourceString, Is.EqualTo("7.0.114.0"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandlePacketAsync_WhenClientTypePacketIsReceived_ShouldStoreEnhancedClientTypeInNetworkSession()
-    {
-        var handler = CreateHandler();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client));
-        var packet = new ClientTypePacket();
-        Assert.That(packet.TryParse([0xE1, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03]), Is.True);
-
-        var handled = await handler.HandlePacketAsync(session, packet);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(session.NetworkSession.IsEnhancedClient, Is.True);
             }
         );
     }

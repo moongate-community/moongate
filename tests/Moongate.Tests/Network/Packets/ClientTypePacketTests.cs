@@ -4,8 +4,18 @@ namespace Moongate.Tests.Network.Packets;
 
 public class ClientTypePacketTests
 {
-    [TestCase(new byte[] { 0xE1, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02 }, 0x02u)]
-    [TestCase(new byte[] { 0xE1, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03 }, 0x03u)]
+    [Test]
+    public void TryParse_ShouldFail_WhenPayloadIsTooShort()
+    {
+        var packet = new ClientTypePacket();
+
+        var ok = packet.TryParse([0xE1, 0x00, 0x05, 0x00, 0x01, 0x00, 0x00]);
+
+        Assert.That(ok, Is.False);
+    }
+
+    [TestCase(new byte[] { 0xE1, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02 }, 0x02u),
+     TestCase(new byte[] { 0xE1, 0x00, 0x07, 0x00, 0x01, 0x00, 0x00, 0x00, 0x03 }, 0x03u)]
     public void TryParse_ShouldReadAdvertisedClientType(byte[] raw, uint advertisedClientType)
     {
         var packet = new ClientTypePacket();
@@ -19,15 +29,5 @@ public class ClientTypePacketTests
                 Assert.That(packet.AdvertisedClientType, Is.EqualTo(advertisedClientType));
             }
         );
-    }
-
-    [Test]
-    public void TryParse_ShouldFail_WhenPayloadIsTooShort()
-    {
-        var packet = new ClientTypePacket();
-
-        var ok = packet.TryParse([0xE1, 0x00, 0x05, 0x00, 0x01, 0x00, 0x00]);
-
-        Assert.That(ok, Is.False);
     }
 }

@@ -40,12 +40,12 @@ using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Movement;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Scripting;
+using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.World;
-using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Maps;
 using Moongate.UO.Data.Interfaces.Names;
@@ -151,6 +151,7 @@ public static class AddBootstrapCoreServicesExtension
             {
                 var registry = new AsyncLuaJobRegistry();
                 _ = registry.TryRegister(resolver.Resolve<EchoAsyncLuaJobHandler>());
+
                 return registry;
             },
             Reuse.Singleton

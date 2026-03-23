@@ -20,6 +20,76 @@ namespace Moongate.Tests.Server.Services.Characters;
 public sealed class CharacterPositionPersistenceServiceTests
 {
     [Test]
+    public async Task HandleAsync_ShouldKeepMountedCreatureInSyncWithRiderPosition()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+
+        try
+        {
+            var riderId = (Serial)0x00000020u;
+            var mountId = (Serial)0x00000021u;
+            await persistence.UnitOfWork.Mobiles.UpsertAsync(
+                new()
+                {
+                    Id = riderId,
+                    Location = new(100, 100, 0),
+                    MapId = 1,
+                    MountedMobileId = mountId
+                }
+            );
+            await persistence.UnitOfWork.Mobiles.UpsertAsync(
+                new()
+                {
+                    Id = mountId,
+                    Location = new(100, 100, 0),
+                    MapId = 1,
+                    RiderMobileId = riderId
+                }
+            );
+
+            var sessions = new FakeGameNetworkSessionService();
+            var bus = new GameEventBusService();
+            var service = new CharacterPositionPersistenceService(bus, sessions, persistence);
+            var session = CreateSession(riderId, new(100, 100, 0), 1);
+            session.Character!.MountedMobileId = mountId;
+            sessions.Add(session);
+
+            await service.HandleAsync(
+                new(
+                    session.SessionId,
+                    session.CharacterId,
+                    1,
+                    2,
+                    new(100, 100, 0),
+                    new(500, 500, 10),
+                    true
+                )
+            );
+
+            var persistedRider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
+            var persistedMount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(persistedRider, Is.Not.Null);
+                    Assert.That(persistedMount, Is.Not.Null);
+                    Assert.That(persistedRider!.MapId, Is.EqualTo(2));
+                    Assert.That(persistedRider.Location, Is.EqualTo(new Point3D(500, 500, 10)));
+                    Assert.That(persistedMount!.MapId, Is.EqualTo(2));
+                    Assert.That(persistedMount.Location, Is.EqualTo(new Point3D(500, 500, 10)));
+                }
+            );
+        }
+        finally
+        {
+            await persistence.StopAsync();
+            persistence.Dispose();
+        }
+    }
+
+    [Test]
     public async Task HandleAsync_ShouldNotOverwritePersistedEquipmentFromStaleSessionCharacter()
     {
         using var temp = new TempDirectory();
@@ -109,76 +179,6 @@ public sealed class CharacterPositionPersistenceServiceTests
             Assert.That(persisted, Is.Not.Null);
             Assert.That(persisted!.Location, Is.EqualTo(new Point3D(101, 100, 0)));
             Assert.That(persisted.MapId, Is.EqualTo(1));
-        }
-        finally
-        {
-            await persistence.StopAsync();
-            persistence.Dispose();
-        }
-    }
-
-    [Test]
-    public async Task HandleAsync_ShouldKeepMountedCreatureInSyncWithRiderPosition()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-
-        try
-        {
-            var riderId = (Serial)0x00000020u;
-            var mountId = (Serial)0x00000021u;
-            await persistence.UnitOfWork.Mobiles.UpsertAsync(
-                new UOMobileEntity
-                {
-                    Id = riderId,
-                    Location = new(100, 100, 0),
-                    MapId = 1,
-                    MountedMobileId = mountId
-                }
-            );
-            await persistence.UnitOfWork.Mobiles.UpsertAsync(
-                new UOMobileEntity
-                {
-                    Id = mountId,
-                    Location = new(100, 100, 0),
-                    MapId = 1,
-                    RiderMobileId = riderId
-                }
-            );
-
-            var sessions = new FakeGameNetworkSessionService();
-            var bus = new GameEventBusService();
-            var service = new CharacterPositionPersistenceService(bus, sessions, persistence);
-            var session = CreateSession(riderId, new(100, 100, 0), 1);
-            session.Character!.MountedMobileId = mountId;
-            sessions.Add(session);
-
-            await service.HandleAsync(
-                new(
-                    session.SessionId,
-                    session.CharacterId,
-                    1,
-                    2,
-                    new(100, 100, 0),
-                    new(500, 500, 10),
-                    true
-                )
-            );
-
-            var persistedRider = await persistence.UnitOfWork.Mobiles.GetByIdAsync(riderId);
-            var persistedMount = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mountId);
-
-            Assert.Multiple(
-                () =>
-                {
-                    Assert.That(persistedRider, Is.Not.Null);
-                    Assert.That(persistedMount, Is.Not.Null);
-                    Assert.That(persistedRider!.MapId, Is.EqualTo(2));
-                    Assert.That(persistedRider.Location, Is.EqualTo(new Point3D(500, 500, 10)));
-                    Assert.That(persistedMount!.MapId, Is.EqualTo(2));
-                    Assert.That(persistedMount.Location, Is.EqualTo(new Point3D(500, 500, 10)));
-                }
-            );
         }
         finally
         {

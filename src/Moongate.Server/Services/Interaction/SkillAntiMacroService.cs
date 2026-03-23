@@ -16,15 +16,23 @@ public sealed class SkillAntiMacroService : ISkillAntiMacroService
     private readonly Dictionary<SkillAntiMacroKey, SkillAntiMacroEntry> _entries = [];
 
     public SkillAntiMacroService()
-        : this(static () => DateTime.UtcNow)
-    {
-    }
+        : this(static () => DateTime.UtcNow) { }
 
     internal SkillAntiMacroService(Func<DateTime> utcNowProvider)
     {
         ArgumentNullException.ThrowIfNull(utcNowProvider);
         _utcNowProvider = utcNowProvider;
     }
+
+    private readonly record struct SkillAntiMacroKey(
+        Serial MobileId,
+        UOSkillName SkillName,
+        Serial TargetId,
+        int BucketX,
+        int BucketY
+    );
+
+    private readonly record struct SkillAntiMacroEntry(int RepeatCount, DateTime LastAttemptAtUtc);
 
     public bool AllowGain(UOMobileEntity mobile, UOSkillName skillName, SkillGainContext? context)
     {
@@ -46,23 +54,14 @@ public sealed class SkillAntiMacroService : ISkillAntiMacroService
 
         if (!_entries.TryGetValue(key, out var entry) || nowUtc - entry.LastAttemptAtUtc > RepeatWindow)
         {
-            _entries[key] = new SkillAntiMacroEntry(1, nowUtc);
+            _entries[key] = new(1, nowUtc);
+
             return true;
         }
 
         var nextRepeatCount = entry.RepeatCount + 1;
-        _entries[key] = new SkillAntiMacroEntry(nextRepeatCount, nowUtc);
+        _entries[key] = new(nextRepeatCount, nowUtc);
 
         return nextRepeatCount <= MaxAllowedRepeats;
     }
-
-    private readonly record struct SkillAntiMacroKey(
-        Serial MobileId,
-        UOSkillName SkillName,
-        Serial TargetId,
-        int BucketX,
-        int BucketY
-    );
-
-    private readonly record struct SkillAntiMacroEntry(int RepeatCount, DateTime LastAttemptAtUtc);
 }

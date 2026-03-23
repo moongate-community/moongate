@@ -182,28 +182,6 @@ public sealed class AddItemBackpackCommandTests
     }
 
     [Test]
-    public async Task ExecuteCommandAsync_WhenArgumentsAreInvalid_ShouldPrintUsage()
-    {
-        var command = new AddItemBackpackCommand(
-            new AddItemBackpackTestItemService(),
-            new AddItemBackpackTestGameNetworkSessionService(),
-            new AddItemBackpackTestCharacterService()
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "add_item_backpack",
-            [],
-            CommandSourceType.InGame,
-            1,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.That(output[^1], Is.EqualTo("Usage: .add_item_backpack <templateId> [amount]"));
-    }
-
-    [Test]
     public async Task ExecuteCommandAsync_WhenAmountIsInvalid_ShouldPrintUsage()
     {
         var command = new AddItemBackpackCommand(
@@ -215,6 +193,28 @@ public sealed class AddItemBackpackCommandTests
         var context = new CommandSystemContext(
             "add_item_backpack arrow nope",
             ["arrow", "nope"],
+            CommandSourceType.InGame,
+            1,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(output[^1], Is.EqualTo("Usage: .add_item_backpack <templateId> [amount]"));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenArgumentsAreInvalid_ShouldPrintUsage()
+    {
+        var command = new AddItemBackpackCommand(
+            new AddItemBackpackTestItemService(),
+            new AddItemBackpackTestGameNetworkSessionService(),
+            new AddItemBackpackTestCharacterService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_item_backpack",
+            [],
             CommandSourceType.InGame,
             1,
             (message, _) => output.Add(message)
@@ -262,6 +262,59 @@ public sealed class AddItemBackpackCommandTests
     }
 
     [Test]
+    public async Task ExecuteCommandAsync_WhenNonStackableAmountGreaterThanOne_ShouldReject()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000002u
+        };
+        var characterService = new AddItemBackpackTestCharacterService
+        {
+            CharacterToReturn = new()
+            {
+                Id = session.CharacterId,
+                BackpackId = (Serial)0x40000011u
+            }
+        };
+        var itemService = new AddItemBackpackTestItemService
+        {
+            SpawnedItem = new()
+            {
+                Id = (Serial)0x40000100u,
+                IsStackable = false,
+                Amount = 1
+            },
+            MoveToContainerResult = true
+        };
+        var command = new AddItemBackpackCommand(
+            itemService,
+            new AddItemBackpackTestGameNetworkSessionService(session),
+            characterService
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_item_backpack crossbow 20",
+            ["crossbow", "20"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemService.SpawnCalls, Is.EqualTo(1));
+                Assert.That(itemService.MoveToContainerCalls, Is.EqualTo(0));
+                Assert.That(output[^1], Is.EqualTo("Failed to add item: template 'crossbow' is not stackable."));
+            }
+        );
+    }
+
+    [Test]
     public async Task ExecuteCommandAsync_WhenSessionIsMissing_ShouldPrintFailure()
     {
         var itemService = new AddItemBackpackTestItemService();
@@ -286,59 +339,6 @@ public sealed class AddItemBackpackCommandTests
             {
                 Assert.That(output[^1], Is.EqualTo("Failed to add item: no active session found."));
                 Assert.That(itemService.SpawnCalls, Is.EqualTo(0));
-            }
-        );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenSuccessful_ShouldSpawnAndMoveItemToBackpack()
-    {
-        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        using var client = new MoongateTCPClient(socket);
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000002u
-        };
-        var characterService = new AddItemBackpackTestCharacterService
-        {
-            CharacterToReturn = new()
-            {
-                Id = session.CharacterId,
-                BackpackId = (Serial)0x40000011u
-            }
-        };
-        var itemService = new AddItemBackpackTestItemService
-        {
-            SpawnedItem = new()
-            {
-                Id = (Serial)0x40000100u
-            },
-            MoveToContainerResult = true
-        };
-        var command = new AddItemBackpackCommand(
-            itemService,
-            new AddItemBackpackTestGameNetworkSessionService(session),
-            characterService
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            "add_item_backpack brick",
-            ["brick"],
-            CommandSourceType.InGame,
-            session.SessionId,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(itemService.SpawnCalls, Is.EqualTo(1));
-                Assert.That(itemService.LastSpawnTemplateId, Is.EqualTo("brick"));
-                Assert.That(itemService.MoveToContainerCalls, Is.EqualTo(1));
-                Assert.That(itemService.LastMoveContainerId, Is.EqualTo((Serial)0x40000011u));
-                Assert.That(output[^1], Is.EqualTo("Added 'brick' to backpack."));
             }
         );
     }
@@ -401,7 +401,7 @@ public sealed class AddItemBackpackCommandTests
     }
 
     [Test]
-    public async Task ExecuteCommandAsync_WhenNonStackableAmountGreaterThanOne_ShouldReject()
+    public async Task ExecuteCommandAsync_WhenSuccessful_ShouldSpawnAndMoveItemToBackpack()
     {
         using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         using var client = new MoongateTCPClient(socket);
@@ -421,9 +421,7 @@ public sealed class AddItemBackpackCommandTests
         {
             SpawnedItem = new()
             {
-                Id = (Serial)0x40000100u,
-                IsStackable = false,
-                Amount = 1
+                Id = (Serial)0x40000100u
             },
             MoveToContainerResult = true
         };
@@ -434,8 +432,8 @@ public sealed class AddItemBackpackCommandTests
         );
         var output = new List<string>();
         var context = new CommandSystemContext(
-            "add_item_backpack crossbow 20",
-            ["crossbow", "20"],
+            "add_item_backpack brick",
+            ["brick"],
             CommandSourceType.InGame,
             session.SessionId,
             (message, _) => output.Add(message)
@@ -447,8 +445,10 @@ public sealed class AddItemBackpackCommandTests
             () =>
             {
                 Assert.That(itemService.SpawnCalls, Is.EqualTo(1));
-                Assert.That(itemService.MoveToContainerCalls, Is.EqualTo(0));
-                Assert.That(output[^1], Is.EqualTo("Failed to add item: template 'crossbow' is not stackable."));
+                Assert.That(itemService.LastSpawnTemplateId, Is.EqualTo("brick"));
+                Assert.That(itemService.MoveToContainerCalls, Is.EqualTo(1));
+                Assert.That(itemService.LastMoveContainerId, Is.EqualTo((Serial)0x40000011u));
+                Assert.That(output[^1], Is.EqualTo("Added 'brick' to backpack."));
             }
         );
     }

@@ -18,9 +18,7 @@ internal sealed class MobileRepository : BaseRepository<UOMobileEntity, Serial>,
         IJournalService journalService,
         IPersistenceEntityDescriptor<UOMobileEntity, Serial> descriptor
     )
-        : base(stateStore, journalService, descriptor)
-    {
-    }
+        : base(stateStore, journalService, descriptor) { }
 
     public ValueTask<IReadOnlyList<TResult>> QueryAsync<TResult>(
         Func<UOMobileEntity, bool> predicate,
@@ -54,7 +52,5 @@ internal sealed class MobileRepository : BaseRepository<UOMobileEntity, Serial>,
     }
 
     protected override void BeforeUpsertLocked(UOMobileEntity entity, UOMobileEntity? existing)
-    {
-        _stateStore.LastMobileId = Math.Max(_stateStore.LastMobileId, (uint)entity.Id);
-    }
+        => _stateStore.LastMobileId = Math.Max(_stateStore.LastMobileId, (uint)entity.Id);
 }

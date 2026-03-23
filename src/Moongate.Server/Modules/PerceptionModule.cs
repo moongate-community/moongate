@@ -2,6 +2,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules.Internal;
+using Moongate.Server.Services.Interaction;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -22,7 +23,7 @@ public sealed class PerceptionModule
         IAiRelationService? aiRelationService = null
     )
     {
-        _aiRelationService = aiRelationService ?? new Services.Interaction.AiRelationService();
+        _aiRelationService = aiRelationService ?? new AiRelationService();
         _spatialWorldService = spatialWorldService;
     }
 
@@ -56,6 +57,24 @@ public sealed class PerceptionModule
         return nearest is null ? null : (uint)nearest.Id;
     }
 
+    [ScriptFunction("find_nearest_friend", "Returns nearest non-player friend mobile serial in range, or nil.")]
+    public uint? FindNearestFriend(uint npcSerial, int range)
+    {
+        if (range <= 0 ||
+            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, npcSerial, out var npc))
+        {
+            return null;
+        }
+
+        var nearest = FindNearestByPredicate(
+            npc!,
+            range,
+            candidate => candidate.Id != npc!.Id && !candidate.IsPlayer
+        );
+
+        return nearest is null ? null : (uint)nearest.Id;
+    }
+
     [ScriptFunction("find_nearest_player_enemy", "Returns nearest player-controlled enemy mobile serial in range, or nil.")]
     public uint? FindNearestPlayerEnemy(uint npcSerial, int range)
     {
@@ -71,24 +90,6 @@ public sealed class PerceptionModule
             candidate => candidate.Id != npc!.Id &&
                          candidate.IsPlayer &&
                          _aiRelationService.Compute(npc!, candidate) == AiRelation.Hostile
-        );
-
-        return nearest is null ? null : (uint)nearest.Id;
-    }
-
-    [ScriptFunction("find_nearest_friend", "Returns nearest non-player friend mobile serial in range, or nil.")]
-    public uint? FindNearestFriend(uint npcSerial, int range)
-    {
-        if (range <= 0 ||
-            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, npcSerial, out var npc))
-        {
-            return null;
-        }
-
-        var nearest = FindNearestByPredicate(
-            npc!,
-            range,
-            candidate => candidate.Id != npc!.Id && !candidate.IsPlayer
         );
 
         return nearest is null ? null : (uint)nearest.Id;

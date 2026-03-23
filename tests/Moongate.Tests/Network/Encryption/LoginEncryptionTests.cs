@@ -19,6 +19,17 @@ public sealed class LoginEncryptionTests
     }
 
     [Test]
+    public void ServerEncrypt_ShouldLeavePayloadUnchanged()
+    {
+        var buffer = new byte[] { 0x80, 0x01, 0x02 };
+        var encryption = new LoginEncryption(0x12345678u, LoginKeys.GetKeys(7, 0, 114));
+
+        encryption.ServerEncrypt(buffer);
+
+        Assert.That(buffer, Is.EqualTo(new byte[] { 0x80, 0x01, 0x02 }));
+    }
+
+    [Test]
     public void TryDecrypt_WhenEncryptedLoginPacketMatchesVersion_ShouldSucceed()
     {
         var seed = 0x12345678u;
@@ -38,17 +49,6 @@ public sealed class LoginEncryptionTests
         );
     }
 
-    [Test]
-    public void ServerEncrypt_ShouldLeavePayloadUnchanged()
-    {
-        var buffer = new byte[] { 0x80, 0x01, 0x02 };
-        var encryption = new LoginEncryption(0x12345678u, LoginKeys.GetKeys(7, 0, 114));
-
-        encryption.ServerEncrypt(buffer);
-
-        Assert.That(buffer, Is.EqualTo(new byte[] { 0x80, 0x01, 0x02 }));
-    }
-
     private static byte[] BuildPlainLoginPacket()
     {
         var payload = new byte[62];
@@ -56,6 +56,7 @@ public sealed class LoginEncryptionTests
         payload[30] = 0x00;
         payload[60] = 0x00;
         payload[61] = 0x5D;
+
         return payload;
     }
 }

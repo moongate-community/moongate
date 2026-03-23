@@ -387,7 +387,7 @@ public class ItemScriptDispatcherTests
     }
 
     [Test]
-    public async Task HasHook_WhenSharedLightScriptIsLoaded_ShouldReturnTrue()
+    public async Task HasHook_WhenSharedBeverageScriptIsLoaded_ShouldReturnTrue()
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
@@ -413,7 +413,7 @@ public class ItemScriptDispatcherTests
                         "moongate_data",
                         "scripts",
                         "items",
-                        "light_source.lua"
+                        "beverage.lua"
                     )
                 )
             )
@@ -428,8 +428,8 @@ public class ItemScriptDispatcherTests
         var hasHook = dispatcher.HasHook(
             new()
             {
-                ScriptId = "items.light_source",
-                Name = "Candle"
+                ScriptId = "items.beverage",
+                Name = "Bottle Of Ale"
             },
             "double_click"
         );
@@ -489,7 +489,7 @@ public class ItemScriptDispatcherTests
     }
 
     [Test]
-    public async Task HasHook_WhenSharedBeverageScriptIsLoaded_ShouldReturnTrue()
+    public async Task HasHook_WhenSharedLightScriptIsLoaded_ShouldReturnTrue()
     {
         using var temp = new TempDirectory();
         var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
@@ -515,7 +515,7 @@ public class ItemScriptDispatcherTests
                         "moongate_data",
                         "scripts",
                         "items",
-                        "beverage.lua"
+                        "light_source.lua"
                     )
                 )
             )
@@ -530,8 +530,8 @@ public class ItemScriptDispatcherTests
         var hasHook = dispatcher.HasHook(
             new()
             {
-                ScriptId = "items.beverage",
-                Name = "Bottle Of Ale"
+                ScriptId = "items.light_source",
+                Name = "Candle"
             },
             "double_click"
         );

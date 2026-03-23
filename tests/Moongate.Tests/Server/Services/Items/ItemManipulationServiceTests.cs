@@ -1,14 +1,12 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Interaction;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
-using Moongate.Network.Packets.Outgoing.System;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
-using Moongate.Server.Interfaces.Services.Events;
-using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.Items;
 using Moongate.Tests.Server.Services.Spatial;
@@ -179,7 +177,7 @@ public sealed class ItemManipulationServiceTests
         public void AddRegion(JsonRegion region) { }
 
         public Task<int> BroadcastToPlayersAsync(
-            Moongate.Network.Packets.Interfaces.IGameNetworkPacket packet,
+            IGameNetworkPacket packet,
             int mapId,
             Point3D location,
             int? range = null,
@@ -202,7 +200,12 @@ public sealed class ItemManipulationServiceTests
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
             => [];
 
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
             => [];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -220,6 +223,150 @@ public sealed class ItemManipulationServiceTests
         public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation) { }
         public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation) { }
         public void RemoveEntity(Serial serial) { }
+    }
+
+    [Test]
+    public async Task HandleDropItemAsync_WhenDroppingAmmoIntoQuiver_ShouldMoveSingleAmmoStack()
+    {
+        var itemService = new ItemManipulationTestItemService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var dragService = new PlayerDragService();
+        var spatialWorldService = new ItemManipulationTestSpatialWorldService();
+        var mobileService = new ItemManipulationTestMobileService();
+        var sessionService = new FakeGameNetworkSessionService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var characterId = (Serial)0x00000020u;
+        var quiverId = (Serial)0x40000100u;
+        var arrowsId = (Serial)0x40000101u;
+        var quiver = new UOItemEntity
+        {
+            Id = quiverId,
+            ItemId = 0x2B02,
+            IsQuiver = true,
+            EquippedMobileId = characterId,
+            EquippedLayer = ItemLayerType.Cloak,
+            GumpId = 0x0108
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = arrowsId,
+            ItemId = 0x0F3F,
+            Amount = 20,
+            IsStackable = true
+        };
+        itemService.Add(quiver);
+        itemService.Add(arrows);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = characterId,
+            Character = new() { Id = characterId, MapId = 0, Location = Point3D.Zero }
+        };
+        sessionService.Add(session);
+        dragService.SetPending(session.SessionId, arrowsId, arrows.Amount, Serial.Zero, Point3D.Zero);
+
+        var service = new ItemManipulationService(
+            itemService,
+            eventBus,
+            dragService,
+            spatialWorldService,
+            mobileService,
+            sessionService,
+            outgoingQueue
+        );
+
+        var result = await service.HandleDropItemAsync(
+                         session,
+                         new()
+                         {
+                             ItemSerial = arrowsId,
+                             DestinationSerial = quiverId,
+                             Location = new(10, 20, 0)
+                         }
+                     );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(arrows.ParentContainerId, Is.EqualTo(quiverId));
+                Assert.That(quiver.ContainedItemIds, Is.EqualTo(new[] { arrowsId }));
+                Assert.That(outgoingQueue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<DrawContainerAndAddItemCombinedPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDropItemAsync_WhenDroppingNonAmmoIntoQuiver_ShouldRejectMove()
+    {
+        var itemService = new ItemManipulationTestItemService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var dragService = new PlayerDragService();
+        var spatialWorldService = new ItemManipulationTestSpatialWorldService();
+        var mobileService = new ItemManipulationTestMobileService();
+        var sessionService = new FakeGameNetworkSessionService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var characterId = (Serial)0x00000020u;
+        var quiverId = (Serial)0x40000110u;
+        var swordId = (Serial)0x40000111u;
+        var quiver = new UOItemEntity
+        {
+            Id = quiverId,
+            ItemId = 0x2B02,
+            IsQuiver = true,
+            EquippedMobileId = characterId,
+            EquippedLayer = ItemLayerType.Cloak
+        };
+        var sword = new UOItemEntity
+        {
+            Id = swordId,
+            ItemId = 0x13B9,
+            Amount = 1
+        };
+        itemService.Add(quiver);
+        itemService.Add(sword);
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = characterId,
+            Character = new() { Id = characterId, MapId = 0, Location = Point3D.Zero }
+        };
+        sessionService.Add(session);
+        dragService.SetPending(session.SessionId, swordId, 1, Serial.Zero, Point3D.Zero);
+
+        var service = new ItemManipulationService(
+            itemService,
+            eventBus,
+            dragService,
+            spatialWorldService,
+            mobileService,
+            sessionService,
+            outgoingQueue
+        );
+
+        var result = await service.HandleDropItemAsync(
+                         session,
+                         new()
+                         {
+                             ItemSerial = swordId,
+                             DestinationSerial = quiverId,
+                             Location = new(10, 20, 0)
+                         }
+                     );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(sword.ParentContainerId, Is.EqualTo(Serial.Zero));
+                Assert.That(quiver.ContainedItemIds, Is.Empty);
+            }
+        );
     }
 
     [Test]
@@ -265,7 +412,7 @@ public sealed class ItemManipulationServiceTests
         var session = new GameSession(new(client))
         {
             CharacterId = characterId,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = characterId,
                 MapId = 0,
@@ -317,149 +464,5 @@ public sealed class ItemManipulationServiceTests
         var statusPacket = packets.OfType<PlayerStatusPacket>().Single();
 
         Assert.That(statusPacket.Mobile, Is.SameAs(persistedMobile));
-    }
-
-    [Test]
-    public async Task HandleDropItemAsync_WhenDroppingAmmoIntoQuiver_ShouldMoveSingleAmmoStack()
-    {
-        var itemService = new ItemManipulationTestItemService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var dragService = new PlayerDragService();
-        var spatialWorldService = new ItemManipulationTestSpatialWorldService();
-        var mobileService = new ItemManipulationTestMobileService();
-        var sessionService = new FakeGameNetworkSessionService();
-        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
-
-        var characterId = (Serial)0x00000020u;
-        var quiverId = (Serial)0x40000100u;
-        var arrowsId = (Serial)0x40000101u;
-        var quiver = new UOItemEntity
-        {
-            Id = quiverId,
-            ItemId = 0x2B02,
-            IsQuiver = true,
-            EquippedMobileId = characterId,
-            EquippedLayer = ItemLayerType.Cloak,
-            GumpId = 0x0108
-        };
-        var arrows = new UOItemEntity
-        {
-            Id = arrowsId,
-            ItemId = 0x0F3F,
-            Amount = 20,
-            IsStackable = true
-        };
-        itemService.Add(quiver);
-        itemService.Add(arrows);
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = characterId,
-            Character = new UOMobileEntity { Id = characterId, MapId = 0, Location = Point3D.Zero }
-        };
-        sessionService.Add(session);
-        dragService.SetPending(session.SessionId, arrowsId, arrows.Amount, Serial.Zero, Point3D.Zero);
-
-        var service = new ItemManipulationService(
-            itemService,
-            eventBus,
-            dragService,
-            spatialWorldService,
-            mobileService,
-            sessionService,
-            outgoingQueue
-        );
-
-        var result = await service.HandleDropItemAsync(
-            session,
-            new DropItemPacket
-            {
-                ItemSerial = arrowsId,
-                DestinationSerial = quiverId,
-                Location = new(10, 20, 0)
-            }
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result, Is.True);
-                Assert.That(arrows.ParentContainerId, Is.EqualTo(quiverId));
-                Assert.That(quiver.ContainedItemIds, Is.EqualTo(new[] { arrowsId }));
-                Assert.That(outgoingQueue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<DrawContainerAndAddItemCombinedPacket>());
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleDropItemAsync_WhenDroppingNonAmmoIntoQuiver_ShouldRejectMove()
-    {
-        var itemService = new ItemManipulationTestItemService();
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var dragService = new PlayerDragService();
-        var spatialWorldService = new ItemManipulationTestSpatialWorldService();
-        var mobileService = new ItemManipulationTestMobileService();
-        var sessionService = new FakeGameNetworkSessionService();
-        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
-
-        var characterId = (Serial)0x00000020u;
-        var quiverId = (Serial)0x40000110u;
-        var swordId = (Serial)0x40000111u;
-        var quiver = new UOItemEntity
-        {
-            Id = quiverId,
-            ItemId = 0x2B02,
-            IsQuiver = true,
-            EquippedMobileId = characterId,
-            EquippedLayer = ItemLayerType.Cloak
-        };
-        var sword = new UOItemEntity
-        {
-            Id = swordId,
-            ItemId = 0x13B9,
-            Amount = 1
-        };
-        itemService.Add(quiver);
-        itemService.Add(sword);
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = characterId,
-            Character = new UOMobileEntity { Id = characterId, MapId = 0, Location = Point3D.Zero }
-        };
-        sessionService.Add(session);
-        dragService.SetPending(session.SessionId, swordId, 1, Serial.Zero, Point3D.Zero);
-
-        var service = new ItemManipulationService(
-            itemService,
-            eventBus,
-            dragService,
-            spatialWorldService,
-            mobileService,
-            sessionService,
-            outgoingQueue
-        );
-
-        var result = await service.HandleDropItemAsync(
-            session,
-            new DropItemPacket
-            {
-                ItemSerial = swordId,
-                DestinationSerial = quiverId,
-                Location = new(10, 20, 0)
-            }
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result, Is.True);
-                Assert.That(sword.ParentContainerId, Is.EqualTo(Serial.Zero));
-                Assert.That(quiver.ContainedItemIds, Is.Empty);
-            }
-        );
     }
 }

@@ -179,6 +179,20 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return true;
     }
 
+    private bool HandleClientTypePacketAsync(GameSession session, ClientTypePacket clientTypePacket)
+    {
+        session.NetworkSession.SetClientType(clientTypePacket.ResolvedClientType);
+
+        _logger.Debug(
+            "Received ClientTypePacket from session {SessionId}: advertised=0x{AdvertisedClientType:X8} resolved={ClientType}",
+            session.SessionId,
+            clientTypePacket.AdvertisedClientType,
+            clientTypePacket.ResolvedClientType
+        );
+
+        return true;
+    }
+
     private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
     {
         var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
@@ -199,20 +213,6 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             session.SessionId,
             clientVersion.SourceString,
             clientVersion.Type
-        );
-
-        return true;
-    }
-
-    private bool HandleClientTypePacketAsync(GameSession session, ClientTypePacket clientTypePacket)
-    {
-        session.NetworkSession.SetClientType(clientTypePacket.ResolvedClientType);
-
-        _logger.Debug(
-            "Received ClientTypePacket from session {SessionId}: advertised=0x{AdvertisedClientType:X8} resolved={ClientType}",
-            session.SessionId,
-            clientTypePacket.AdvertisedClientType,
-            clientTypePacket.ResolvedClientType
         );
 
         return true;

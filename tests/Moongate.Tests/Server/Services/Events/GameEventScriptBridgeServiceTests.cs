@@ -1,11 +1,10 @@
-using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Events.Combat;
+using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Events.Help;
 using Moongate.Server.Data.Events.Scheduling;
 using Moongate.Server.Data.Scripting;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Server.Support;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -15,27 +14,20 @@ namespace Moongate.Tests.Server.Services.Events;
 public class GameEventScriptBridgeServiceTests
 {
     [Test]
-    public async Task HandleAsync_ShouldExecuteScriptCallback_WithSnakeCaseEventName()
-    {
-        var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
-        var service = new GameEventScriptBridgeService(scriptEngine);
-        var gameEvent = new PlayerConnectedEvent(42, "127.0.0.1:2593", 100);
-
-        await service.HandleAsync(gameEvent);
-
-        Assert.That(scriptEngine.LastCallbackName, Is.EqualTo("on_player_connected"));
-        Assert.That(scriptEngine.LastCallbackArgs, Has.Length.EqualTo(1));
-        Assert.That(scriptEngine.LastCallbackArgs![0], Is.EqualTo(gameEvent));
-    }
-
-    [Test]
     public async Task HandleAsync_ShouldExecuteAggressiveActionCallback_WithSnakeCaseEventName()
     {
         var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
         var service = new GameEventScriptBridgeService(scriptEngine);
-        var attacker = new UOMobileEntity { Id = (Serial)0x00000002u, MapId = 0, Location = new Point3D(100, 100, 0) };
-        var defender = new UOMobileEntity { Id = (Serial)0x00000003u, MapId = 0, Location = new Point3D(101, 100, 0) };
-        var gameEvent = new AggressiveActionEvent(attacker.Id, defender.Id, attacker.MapId, attacker.Location, attacker, defender);
+        var attacker = new UOMobileEntity { Id = (Serial)0x00000002u, MapId = 0, Location = new(100, 100, 0) };
+        var defender = new UOMobileEntity { Id = (Serial)0x00000003u, MapId = 0, Location = new(101, 100, 0) };
+        var gameEvent = new AggressiveActionEvent(
+            attacker.Id,
+            defender.Id,
+            attacker.MapId,
+            attacker.Location,
+            attacker,
+            defender
+        );
 
         await service.HandleAsync(gameEvent);
 
@@ -65,6 +57,20 @@ public class GameEventScriptBridgeServiceTests
     }
 
     [Test]
+    public async Task HandleAsync_ShouldExecuteScriptCallback_WithSnakeCaseEventName()
+    {
+        var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
+        var service = new GameEventScriptBridgeService(scriptEngine);
+        var gameEvent = new PlayerConnectedEvent(42, "127.0.0.1:2593", 100);
+
+        await service.HandleAsync(gameEvent);
+
+        Assert.That(scriptEngine.LastCallbackName, Is.EqualTo("on_player_connected"));
+        Assert.That(scriptEngine.LastCallbackArgs, Has.Length.EqualTo(1));
+        Assert.That(scriptEngine.LastCallbackArgs![0], Is.EqualTo(gameEvent));
+    }
+
+    [Test]
     public async Task HandleAsync_ShouldExecuteTicketOpenedCallback_WithSnakeCaseEventName()
     {
         var scriptEngine = new GameEventScriptBridgeTestScriptEngineService();
@@ -76,7 +82,7 @@ public class GameEventScriptBridgeServiceTests
             HelpTicketCategory.Question,
             "I am stuck behind the innkeeper counter.",
             0,
-            new Point3D(1443, 1692, 0)
+            new(1443, 1692, 0)
         );
 
         await service.HandleAsync(gameEvent);

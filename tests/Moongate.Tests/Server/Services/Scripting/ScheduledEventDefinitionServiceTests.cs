@@ -49,20 +49,6 @@ public sealed class ScheduledEventDefinitionServiceTests
     }
 
     [Test]
-    public void Register_WhenTriggerNameIsMissing_ShouldThrow()
-    {
-        var service = new ScheduledEventDefinitionService();
-        var script = new Script();
-        var definition = BuildWeeklyDefinition(script);
-        definition["trigger_name"] = DynValue.Nil;
-
-        Assert.That(
-            () => service.Register("town_crier_morning", definition),
-            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("missing 'trigger_name'")
-        );
-    }
-
-    [Test]
     public void Register_WhenOnceEventHasNoStartAt_ShouldThrow()
     {
         var service = new ScheduledEventDefinitionService();
@@ -76,6 +62,20 @@ public sealed class ScheduledEventDefinitionServiceTests
         Assert.That(
             () => service.Register("one_shot", definition),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("requires 'start_at'")
+        );
+    }
+
+    [Test]
+    public void Register_WhenTriggerNameIsMissing_ShouldThrow()
+    {
+        var service = new ScheduledEventDefinitionService();
+        var script = new Script();
+        var definition = BuildWeeklyDefinition(script);
+        definition["trigger_name"] = DynValue.Nil;
+
+        Assert.That(
+            () => service.Register("town_crier_morning", definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("missing 'trigger_name'")
         );
     }
 
@@ -94,8 +94,7 @@ public sealed class ScheduledEventDefinitionServiceTests
     }
 
     private static Table BuildWeeklyDefinition(Script script)
-    {
-        return new Table(script)
+        => new(script)
         {
             ["enabled"] = true,
             ["trigger_name"] = "town_crier_announcement",
@@ -112,5 +111,4 @@ public sealed class ScheduledEventDefinitionServiceTests
                 ["message"] = "Hear ye!"
             }
         };
-    }
 }

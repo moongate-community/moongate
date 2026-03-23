@@ -13,8 +13,8 @@ public class LootTemplateDefinition : LootTemplateDefinitionBase
     public LootTemplateMode Mode { get; set; } = LootTemplateMode.Weighted;
 
     /// <summary>
-     /// Number of weighted rolls performed for this table.
-     /// </summary>
+    /// Number of weighted rolls performed for this table.
+    /// </summary>
     public int Rolls { get; set; } = 1;
 
     /// <summary>

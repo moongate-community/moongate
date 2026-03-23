@@ -44,6 +44,35 @@ public class CharactersStartingLocationsPacketTests
     }
 
     [Test]
+    public void Write_WhenEnhancedClientIsEnabled_ShouldIncludeKrAndUo3DFlags()
+    {
+        var packet = new CharactersStartingLocationsPacket
+        {
+            IsEnhancedClient = true
+        };
+        packet.FillCharacters([new CharacterEntry("alpha")]);
+
+        var writer = new SpanWriter(1024, true);
+        packet.Write(ref writer);
+        var data = writer.ToArray();
+        writer.Dispose();
+
+        var flagsOffset = 3 + 1 + 7 * 60 + 1;
+        var flags = (CharacterListFlags)((data[flagsOffset] << 24) |
+                                         (data[flagsOffset + 1] << 16) |
+                                         (data[flagsOffset + 2] << 8) |
+                                         data[flagsOffset + 3]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(flags.HasFlag(CharacterListFlags.KR), Is.True);
+                Assert.That(flags.HasFlag(CharacterListFlags.UO3DClientType), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public void Write_WithOneCharacterAndNoCities_ShouldSerializeHeaderAndFlags()
     {
         var packet = new CharactersStartingLocationsPacket();
@@ -77,35 +106,6 @@ public class CharactersStartingLocationsPacketTests
                 Assert.That((flags & 0x40) != 0, Is.True);   // SixthCharacterSlot
                 Assert.That((flags & 0x1000) != 0, Is.True); // SeventhCharacterSlot
                 Assert.That(terminator, Is.EqualTo(-1));
-            }
-        );
-    }
-
-    [Test]
-    public void Write_WhenEnhancedClientIsEnabled_ShouldIncludeKrAndUo3DFlags()
-    {
-        var packet = new CharactersStartingLocationsPacket
-        {
-            IsEnhancedClient = true
-        };
-        packet.FillCharacters([new CharacterEntry("alpha")]);
-
-        var writer = new SpanWriter(1024, true);
-        packet.Write(ref writer);
-        var data = writer.ToArray();
-        writer.Dispose();
-
-        var flagsOffset = 3 + 1 + 7 * 60 + 1;
-        var flags = (CharacterListFlags)((data[flagsOffset] << 24) |
-                                         (data[flagsOffset + 1] << 16) |
-                                         (data[flagsOffset + 2] << 8) |
-                                         data[flagsOffset + 3]);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(flags.HasFlag(CharacterListFlags.KR), Is.True);
-                Assert.That(flags.HasFlag(CharacterListFlags.UO3DClientType), Is.True);
             }
         );
     }

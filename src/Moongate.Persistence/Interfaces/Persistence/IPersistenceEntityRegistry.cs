@@ -13,25 +13,9 @@ public interface IPersistenceEntityRegistry
     bool IsFrozen { get; }
 
     /// <summary>
-    /// Registers a persisted entity descriptor.
-    /// </summary>
-    void Register<TEntity, TKey>(PersistenceEntityDescriptor<TEntity, TKey> descriptor)
-        where TKey : notnull;
-
-    /// <summary>
     /// Prevents further registrations.
     /// </summary>
     void Freeze();
-
-    /// <summary>
-    /// Returns true when a descriptor exists for the type id.
-    /// </summary>
-    bool IsRegistered(ushort typeId);
-
-    /// <summary>
-    /// Returns true when a descriptor exists for the entity and key type pair.
-    /// </summary>
-    bool IsRegistered<TEntity, TKey>();
 
     /// <summary>
     /// Gets a descriptor by type id.
@@ -47,4 +31,20 @@ public interface IPersistenceEntityRegistry
     /// Returns all registered descriptors.
     /// </summary>
     IReadOnlyCollection<IPersistenceEntityDescriptor> GetRegisteredDescriptors();
+
+    /// <summary>
+    /// Returns true when a descriptor exists for the type id.
+    /// </summary>
+    bool IsRegistered(ushort typeId);
+
+    /// <summary>
+    /// Returns true when a descriptor exists for the entity and key type pair.
+    /// </summary>
+    bool IsRegistered<TEntity, TKey>();
+
+    /// <summary>
+    /// Registers a persisted entity descriptor.
+    /// </summary>
+    void Register<TEntity, TKey>(PersistenceEntityDescriptor<TEntity, TKey> descriptor)
+        where TKey : notnull;
 }

@@ -30,9 +30,11 @@ public sealed class CombatHitSoundHandler : IGameEventListener<CombatHitEvent>, 
         await PublishIfResolvedAsync(gameEvent.Defender, MobileSoundType.Defend, cancellationToken);
     }
 
-    public Task StartAsync() => Task.CompletedTask;
+    public Task StartAsync()
+        => Task.CompletedTask;
 
-    public Task StopAsync() => Task.CompletedTask;
+    public Task StopAsync()
+        => Task.CompletedTask;
 
     private async Task PublishIfResolvedAsync(
         UOMobileEntity mobile,

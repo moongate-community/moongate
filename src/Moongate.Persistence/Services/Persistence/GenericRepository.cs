@@ -11,7 +11,5 @@ internal sealed class GenericRepository<TEntity, TKey> : BaseRepository<TEntity,
         IJournalService journalService,
         IPersistenceEntityDescriptor<TEntity, TKey> descriptor
     )
-        : base(stateStore, journalService, descriptor)
-    {
-    }
+        : base(stateStore, journalService, descriptor) { }
 }

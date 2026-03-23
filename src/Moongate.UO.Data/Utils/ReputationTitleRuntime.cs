@@ -7,12 +7,10 @@ namespace Moongate.UO.Data.Utils;
 /// </summary>
 public static class ReputationTitleRuntime
 {
-    private static ReputationTitleConfiguration _current = ReputationTitleConfiguration.Default;
-
     /// <summary>
     /// Gets the current active reputation title configuration.
     /// </summary>
-    public static ReputationTitleConfiguration Current => _current;
+    public static ReputationTitleConfiguration Current { get; private set; } = ReputationTitleConfiguration.Default;
 
     /// <summary>
     /// Replaces the active configuration.
@@ -20,14 +18,12 @@ public static class ReputationTitleRuntime
     public static void Configure(ReputationTitleConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
-        _current = configuration;
+        Current = configuration;
     }
 
     /// <summary>
     /// Restores the built-in default configuration.
     /// </summary>
     public static void Reset()
-    {
-        _current = ReputationTitleConfiguration.Default;
-    }
+        => Current = ReputationTitleConfiguration.Default;
 }

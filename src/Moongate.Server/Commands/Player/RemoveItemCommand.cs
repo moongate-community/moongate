@@ -163,6 +163,12 @@ public sealed class RemoveItemCommand : ICommandExecutor
         context.Print("Removed NPC {0}.", ResolveMobileName(target));
     }
 
+    private static string ResolveItemName(UOItemEntity item)
+        => string.IsNullOrWhiteSpace(item.Name) ? item.Id.ToString() : item.Name;
+
+    private static string ResolveMobileName(UOMobileEntity target)
+        => string.IsNullOrWhiteSpace(target.Name) ? target.Id.ToString() : target.Name;
+
     private UOMobileEntity? ResolveTargetMobile(Serial targetSerial)
     {
         if (_gameNetworkSessionService.TryGetByCharacterId(targetSerial, out var session) && session.Character is not null)
@@ -172,10 +178,4 @@ public sealed class RemoveItemCommand : ICommandExecutor
 
         return _mobileService.GetAsync(targetSerial).GetAwaiter().GetResult();
     }
-
-    private static string ResolveItemName(UOItemEntity item)
-        => string.IsNullOrWhiteSpace(item.Name) ? item.Id.ToString() : item.Name;
-
-    private static string ResolveMobileName(UOMobileEntity target)
-        => string.IsNullOrWhiteSpace(target.Name) ? target.Id.ToString() : target.Name;
 }

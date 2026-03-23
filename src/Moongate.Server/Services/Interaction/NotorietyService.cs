@@ -69,14 +69,6 @@ public sealed class NotorietyService : INotorietyService
         return target.Notoriety;
     }
 
-    private static bool HasRecentAggression(UOMobileEntity source, UOMobileEntity target, DateTime nowUtc)
-        => source.Aggressors.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc)) ||
-           source.Aggressed.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc));
-
-    private static bool MatchesRecentAggression(AggressorInfo entry, Serial targetId, DateTime nowUtc)
-        => (entry.AttackerId == targetId || entry.DefenderId == targetId) &&
-           nowUtc - entry.LastCombatAtUtc <= AggressionTimeout;
-
     private bool AreEnemyFactions(UOMobileEntity source, UOMobileEntity target)
     {
         if (_factionTemplateService is null ||
@@ -109,4 +101,12 @@ public sealed class NotorietyService : INotorietyService
             declaredEnemy => string.Equals(declaredEnemy, enemyFactionId, StringComparison.OrdinalIgnoreCase)
         );
     }
+
+    private static bool HasRecentAggression(UOMobileEntity source, UOMobileEntity target, DateTime nowUtc)
+        => source.Aggressors.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc)) ||
+           source.Aggressed.Any(entry => MatchesRecentAggression(entry, target.Id, nowUtc));
+
+    private static bool MatchesRecentAggression(AggressorInfo entry, Serial targetId, DateTime nowUtc)
+        => (entry.AttackerId == targetId || entry.DefenderId == targetId) &&
+           nowUtc - entry.LastCombatAtUtc <= AggressionTimeout;
 }

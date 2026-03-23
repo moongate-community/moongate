@@ -203,7 +203,8 @@ public sealed class DeathServiceTests
 
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => Task.FromResult(
-                Items.Values.Where(item => item.ParentContainerId == containerId)
+                Items.Values
+                     .Where(item => item.ParentContainerId == containerId)
                      .ToList()
             );
 
@@ -319,7 +320,12 @@ public sealed class DeathServiceTests
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
             => [];
 
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
             => [];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -427,7 +433,7 @@ public sealed class DeathServiceTests
         var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
-            Game = new MoongateGameConfig
+            Game = new()
             {
                 CorpseDecaySeconds = 300
             }
@@ -479,7 +485,7 @@ public sealed class DeathServiceTests
         var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
-            Game = new MoongateGameConfig
+            Game = new()
             {
                 CorpseDecaySeconds = 300
             }
@@ -522,6 +528,65 @@ public sealed class DeathServiceTests
     }
 
     [Test]
+    public async Task HandleDeathAsync_WhenCorpseDecayTimerFires_ShouldDeleteCorpseAndBroadcastDeleteObject()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var config = new MoongateConfig
+        {
+            Game = new()
+            {
+                CorpseDecaySeconds = 5
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000050u,
+            Name = "Zombie",
+            Body = 0x0003,
+            MapId = 1,
+            Location = new(140, 240, 0),
+            Hits = 0,
+            MaxHits = 30,
+            IsAlive = false
+        };
+        mobileService.Mobiles[victim.Id] = victim;
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            config
+        );
+
+        var handled = await service.HandleDeathAsync(victim, null);
+        Assert.That(handled, Is.True);
+
+        var corpse = itemService.Items.Values.Single(item => item.ItemId == 0x2006);
+
+        timerService.RegisteredTimers[0].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemService.DeletedIds, Contains.Item(corpse.Id));
+                Assert.That(spatial.RemovedEntities, Contains.Item(corpse.Id));
+                Assert.That(
+                    spatial.BroadcastPackets.OfType<DeleteObjectPacket>().Any(packet => packet.Serial == corpse.Id),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleDeathAsync_WhenNpcDies_ShouldCreateCorpseMoveLootScheduleDecayAndBroadcastAnimation()
     {
         var mobileService = new InMemoryMobileService();
@@ -539,7 +604,7 @@ public sealed class DeathServiceTests
         var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
-            Game = new MoongateGameConfig
+            Game = new()
             {
                 CorpseDecaySeconds = 300
             }
@@ -630,13 +695,85 @@ public sealed class DeathServiceTests
                 Assert.That(eventBus.Events.Any(gameEvent => gameEvent is MobileDeathEvent), Is.True);
                 Assert.That(eventBus.Events.Any(gameEvent => gameEvent is MobileAfterDeathEvent), Is.True);
                 Assert.That(
-                    spatial.BroadcastPackets.OfType<MobileDeathAnimationPacket>()
+                    spatial.BroadcastPackets
+                           .OfType<MobileDeathAnimationPacket>()
                            .Any(packet => packet.KilledMobileId == victim.Id && packet.CorpseId == corpse.Id),
                     Is.True
                 );
-                Assert.That(spatial.BroadcastPackets.OfType<ObjectInformationPacket>().Any(packet => packet.Serial == corpse.Id), Is.True);
-                Assert.That(spatial.BroadcastPackets.OfType<AddMultipleItemsToContainerPacket>().Any(packet => packet.Container.Id == corpse.Id), Is.True);
-                Assert.That(spatial.BroadcastPackets.OfType<CorpseClothingPacket>().Any(packet => packet.Corpse?.Id == corpse.Id), Is.True);
+                Assert.That(
+                    spatial.BroadcastPackets.OfType<ObjectInformationPacket>().Any(packet => packet.Serial == corpse.Id),
+                    Is.True
+                );
+                Assert.That(
+                    spatial.BroadcastPackets
+                           .OfType<AddMultipleItemsToContainerPacket>()
+                           .Any(packet => packet.Container.Id == corpse.Id),
+                    Is.True
+                );
+                Assert.That(
+                    spatial.BroadcastPackets.OfType<CorpseClothingPacket>().Any(packet => packet.Corpse?.Id == corpse.Id),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDeathAsync_WhenNpcDiesWithPlayerKiller_ShouldAwardFameAndKarma()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var config = new MoongateConfig
+        {
+            Game = new()
+            {
+                CorpseDecaySeconds = 300
+            }
+        };
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000060u,
+            Name = "Ogre",
+            MapId = 1,
+            Location = new(120, 220, 0),
+            Hits = 0,
+            MaxHits = 50,
+            IsAlive = false,
+            Fame = 3000,
+            Karma = -3000
+        };
+        var killer = new UOMobileEntity
+        {
+            Id = (Serial)0x00000061u,
+            Name = "Tommy",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(121, 220, 0)
+        };
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            config
+        );
+
+        var handled = await service.HandleDeathAsync(victim, killer);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(fameKarmaService.Awards, Has.Count.EqualTo(1));
+                Assert.That(fameKarmaService.Awards[0].Victim, Is.SameAs(victim));
+                Assert.That(fameKarmaService.Awards[0].Killer, Is.SameAs(killer));
             }
         );
     }
@@ -653,7 +790,7 @@ public sealed class DeathServiceTests
         var lootGenerationService = new LootGenerationServiceSpy();
         var config = new MoongateConfig
         {
-            Game = new MoongateGameConfig
+            Game = new()
             {
                 CorpseDecaySeconds = 300
             }
@@ -731,125 +868,6 @@ public sealed class DeathServiceTests
     }
 
     [Test]
-    public async Task HandleDeathAsync_WhenCorpseDecayTimerFires_ShouldDeleteCorpseAndBroadcastDeleteObject()
-    {
-        var mobileService = new InMemoryMobileService();
-        var itemService = new InMemoryItemService();
-        var timerService = new TimerServiceSpy();
-        var spatial = new SpatialWorldServiceSpy();
-        var eventBus = new RecordingEventBus();
-        var fameKarmaService = new FameKarmaServiceSpy();
-        var config = new MoongateConfig
-        {
-            Game = new MoongateGameConfig
-            {
-                CorpseDecaySeconds = 5
-            }
-        };
-        var victim = new UOMobileEntity
-        {
-            Id = (Serial)0x00000050u,
-            Name = "Zombie",
-            Body = 0x0003,
-            MapId = 1,
-            Location = new(140, 240, 0),
-            Hits = 0,
-            MaxHits = 30,
-            IsAlive = false
-        };
-        mobileService.Mobiles[victim.Id] = victim;
-
-        IDeathService service = new DeathService(
-            mobileService,
-            itemService,
-            spatial,
-            timerService,
-            eventBus,
-            fameKarmaService,
-            config
-        );
-
-        var handled = await service.HandleDeathAsync(victim, null);
-        Assert.That(handled, Is.True);
-
-        var corpse = itemService.Items.Values.Single(item => item.ItemId == 0x2006);
-
-        timerService.RegisteredTimers[0].Callback.Invoke();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(itemService.DeletedIds, Contains.Item(corpse.Id));
-                Assert.That(spatial.RemovedEntities, Contains.Item(corpse.Id));
-                Assert.That(
-                    spatial.BroadcastPackets.OfType<DeleteObjectPacket>().Any(packet => packet.Serial == corpse.Id),
-                    Is.True
-                );
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleDeathAsync_WhenNpcDiesWithPlayerKiller_ShouldAwardFameAndKarma()
-    {
-        var mobileService = new InMemoryMobileService();
-        var itemService = new InMemoryItemService();
-        var timerService = new TimerServiceSpy();
-        var spatial = new SpatialWorldServiceSpy();
-        var eventBus = new RecordingEventBus();
-        var fameKarmaService = new FameKarmaServiceSpy();
-        var config = new MoongateConfig
-        {
-            Game = new MoongateGameConfig
-            {
-                CorpseDecaySeconds = 300
-            }
-        };
-        var victim = new UOMobileEntity
-        {
-            Id = (Serial)0x00000060u,
-            Name = "Ogre",
-            MapId = 1,
-            Location = new(120, 220, 0),
-            Hits = 0,
-            MaxHits = 50,
-            IsAlive = false,
-            Fame = 3000,
-            Karma = -3000
-        };
-        var killer = new UOMobileEntity
-        {
-            Id = (Serial)0x00000061u,
-            Name = "Tommy",
-            IsPlayer = true,
-            MapId = 1,
-            Location = new(121, 220, 0)
-        };
-
-        IDeathService service = new DeathService(
-            mobileService,
-            itemService,
-            spatial,
-            timerService,
-            eventBus,
-            fameKarmaService,
-            config
-        );
-
-        var handled = await service.HandleDeathAsync(victim, killer);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(fameKarmaService.Awards, Has.Count.EqualTo(1));
-                Assert.That(fameKarmaService.Awards[0].Victim, Is.SameAs(victim));
-                Assert.That(fameKarmaService.Awards[0].Killer, Is.SameAs(killer));
-            }
-        );
-    }
-
-    [Test]
     public async Task HandleDeathAsync_WhenPlayerDies_ShouldNotAwardFameAndKarma()
     {
         var mobileService = new InMemoryMobileService();
@@ -860,7 +878,7 @@ public sealed class DeathServiceTests
         var fameKarmaService = new FameKarmaServiceSpy();
         var config = new MoongateConfig
         {
-            Game = new MoongateGameConfig
+            Game = new()
             {
                 CorpseDecaySeconds = 300
             }

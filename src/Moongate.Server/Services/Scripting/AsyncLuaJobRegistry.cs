@@ -23,6 +23,7 @@ public sealed class AsyncLuaJobRegistry : IAsyncLuaJobRegistry
         if (string.IsNullOrWhiteSpace(jobName))
         {
             handler = null;
+
             return false;
         }
 

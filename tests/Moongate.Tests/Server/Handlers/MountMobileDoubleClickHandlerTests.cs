@@ -1,12 +1,12 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Entity;
-using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
@@ -19,7 +19,7 @@ public sealed class MountMobileDoubleClickHandlerTests
         public Dictionary<Serial, UOMobileEntity> MobilesById { get; } = [];
         public Serial LastRiderId { get; private set; } = Serial.Zero;
         public Serial LastMountId { get; private set; } = Serial.Zero;
-        public bool TryMountResult { get; set; } = true;
+        public bool TryMountResult { get; } = true;
 
         public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
@@ -43,7 +43,7 @@ public sealed class MountMobileDoubleClickHandlerTests
 
         public Task<UOMobileEntity> SpawnFromTemplateAsync(
             string templateId,
-            Moongate.UO.Data.Geometry.Point3D location,
+            Point3D location,
             int mapId,
             Serial? accountId = null,
             CancellationToken cancellationToken = default
@@ -60,7 +60,7 @@ public sealed class MountMobileDoubleClickHandlerTests
 
         public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
             string templateId,
-            Moongate.UO.Data.Geometry.Point3D location,
+            Point3D location,
             int mapId,
             Serial? accountId = null,
             CancellationToken cancellationToken = default
@@ -101,7 +101,7 @@ public sealed class MountMobileDoubleClickHandlerTests
         sessions.Add(session);
         var handler = new MountMobileDoubleClickHandler(mobiles, sessions, outgoing);
 
-        await handler.HandleAsync(new MobileDoubleClickEvent(session.SessionId, mount.Id));
+        await handler.HandleAsync(new(session.SessionId, mount.Id));
 
         Assert.Multiple(
             () =>
@@ -147,7 +147,7 @@ public sealed class MountMobileDoubleClickHandlerTests
         sessions.Add(session);
         var handler = new MountMobileDoubleClickHandler(mobiles, sessions, outgoing);
 
-        await handler.HandleAsync(new MobileDoubleClickEvent(session.SessionId, target.Id));
+        await handler.HandleAsync(new(session.SessionId, target.Id));
 
         Assert.Multiple(
             () =>

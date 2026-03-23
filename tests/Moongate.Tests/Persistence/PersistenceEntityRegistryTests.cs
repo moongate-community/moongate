@@ -7,35 +7,6 @@ namespace Moongate.Tests.Persistence;
 public sealed class PersistenceEntityRegistryTests
 {
     [Test]
-    public void Register_ShouldRejectDuplicateTypeIds()
-    {
-        var registry = new PersistenceEntityRegistry();
-        registry.Register(CreateTestDescriptor(500));
-
-        var act = () => registry.Register(
-                      new PersistenceEntityDescriptor<string, int>(
-                          500,
-                          "duplicate-type-id",
-                          1,
-                          static entity => entity.Length
-                      )
-                  );
-
-        Assert.That(act, Throws.InvalidOperationException);
-    }
-
-    [Test]
-    public void Register_ShouldRejectDuplicateEntityAndKeyPairs()
-    {
-        var registry = new PersistenceEntityRegistry();
-        registry.Register(CreateTestDescriptor(500));
-
-        var act = () => registry.Register(CreateTestDescriptor(501));
-
-        Assert.That(act, Throws.InvalidOperationException);
-    }
-
-    [Test]
     public void Freeze_ShouldPreventFurtherRegistrations()
     {
         var registry = new PersistenceEntityRegistry();
@@ -71,6 +42,35 @@ public sealed class PersistenceEntityRegistryTests
         var descriptors = registry.GetRegisteredDescriptors().ToArray();
 
         Assert.That(descriptors.Select(static descriptor => descriptor.TypeId), Is.EqualTo(new ushort[] { 500, 600 }));
+    }
+
+    [Test]
+    public void Register_ShouldRejectDuplicateEntityAndKeyPairs()
+    {
+        var registry = new PersistenceEntityRegistry();
+        registry.Register(CreateTestDescriptor(500));
+
+        var act = () => registry.Register(CreateTestDescriptor(501));
+
+        Assert.That(act, Throws.InvalidOperationException);
+    }
+
+    [Test]
+    public void Register_ShouldRejectDuplicateTypeIds()
+    {
+        var registry = new PersistenceEntityRegistry();
+        registry.Register(CreateTestDescriptor(500));
+
+        var act = () => registry.Register(
+                      new PersistenceEntityDescriptor<string, int>(
+                          500,
+                          "duplicate-type-id",
+                          1,
+                          static entity => entity.Length
+                      )
+                  );
+
+        Assert.That(act, Throws.InvalidOperationException);
     }
 
     private static PersistenceEntityDescriptor<TestRegisteredEntity, int> CreateTestDescriptor(ushort typeId)

@@ -100,6 +100,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
         mobile.RecalculateMaxStats();
         InitializeTemplateSkills(mobile, template);
         mobile.Sounds = new(template.Sounds);
+
         if (template.LootTables.Count > 0)
         {
             mobile.SetCustomString(MobileCustomParamKeys.Loot.LootTables, string.Join(',', template.LootTables));

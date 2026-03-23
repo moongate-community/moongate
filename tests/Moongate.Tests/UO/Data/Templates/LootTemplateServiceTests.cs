@@ -18,7 +18,7 @@ public sealed class LootTemplateServiceTests
             NoDropWeight = 0,
             Entries =
             [
-                new LootTemplateEntry
+                new()
                 {
                     ItemTemplateId = "gold",
                     Weight = 1,

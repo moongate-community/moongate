@@ -441,9 +441,6 @@ public sealed class ItemFactoryService : IItemFactoryService
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
     }
 
-    private static int? ToNullableItemId(int itemId)
-        => itemId > 0 ? itemId : null;
-
     private static int? ResolveGumpId(ItemTemplateDefinition template)
     {
         var templateGumpId = ParseOptionalInt(template.GumpId);
@@ -468,4 +465,7 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         return null;
     }
+
+    private static int? ToNullableItemId(int itemId)
+        => itemId > 0 ? itemId : null;
 }

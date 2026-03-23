@@ -262,28 +262,6 @@ public class CharacterService : ICharacterService
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
     }
 
-    private static UOItemEntity CloneItem(UOItemEntity item)
-        => new()
-        {
-            Id = item.Id,
-            Location = item.Location,
-            Name = item.Name,
-            Weight = item.Weight,
-            Amount = item.Amount,
-            IsStackable = item.IsStackable,
-            Rarity = item.Rarity,
-            ItemId = item.ItemId,
-            Hue = item.Hue,
-            GumpId = item.GumpId,
-            ParentContainerId = item.ParentContainerId,
-            ContainerPosition = item.ContainerPosition,
-            EquippedMobileId = item.EquippedMobileId,
-            EquippedLayer = item.EquippedLayer
-        };
-
-    private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
-        => new(character.Profession, character.Race, character.Gender);
-
     private static void ApplyItemArgument(UOItemEntity item, string key, JsonElement value)
     {
         var normalizedKey = key.Trim();
@@ -349,6 +327,28 @@ public class CharacterService : ICharacterService
         }
     }
 
+    private static UOItemEntity CloneItem(UOItemEntity item)
+        => new()
+        {
+            Id = item.Id,
+            Location = item.Location,
+            Name = item.Name,
+            Weight = item.Weight,
+            Amount = item.Amount,
+            IsStackable = item.IsStackable,
+            Rarity = item.Rarity,
+            ItemId = item.ItemId,
+            Hue = item.Hue,
+            GumpId = item.GumpId,
+            ParentContainerId = item.ParentContainerId,
+            ContainerPosition = item.ContainerPosition,
+            EquippedMobileId = item.EquippedMobileId,
+            EquippedLayer = item.EquippedLayer
+        };
+
+    private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
+        => new(character.Profession, character.Race, character.Gender);
+
     private async Task EnsureStarterBackpackAsync(UOMobileEntity character)
     {
         if (character.HasEquippedItem(ItemLayerType.Backpack))
@@ -367,63 +367,6 @@ public class CharacterService : ICharacterService
         character.AddEquippedItem(ItemLayerType.Backpack, backpack);
         character.BackpackId = backpack.Id;
         await _persistenceService.UnitOfWork.Items.UpsertAsync(backpack);
-    }
-
-    private async Task PersistBackpackItemAsync(
-        UOMobileEntity character,
-        UOItemEntity backpack,
-        StartupLoadoutItem itemDefinition,
-        int index
-    )
-    {
-        var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
-        ApplyItemDefinition(item, itemDefinition);
-
-        var position = new Moongate.UO.Data.Geometry.Point2D(index + 1, index + 1);
-        backpack.AddItem(item, position);
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-        _logger.Debug(
-            "Created starter backpack item {TemplateId} for character {CharacterId}",
-            itemDefinition.TemplateId,
-            character.Id
-        );
-    }
-
-    private async Task PersistEquippedItemAsync(UOMobileEntity character, StartupLoadoutItem itemDefinition)
-    {
-        if (itemDefinition.Layer is null)
-        {
-            throw new InvalidOperationException(
-                $"Startup equip item '{itemDefinition.TemplateId}' is missing required layer."
-            );
-        }
-
-        if (character.HasEquippedItem(itemDefinition.Layer.Value))
-        {
-            return;
-        }
-
-        var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
-        item.ParentContainerId = Serial.Zero;
-        item.ContainerPosition = Point2D.Zero;
-        item.EquippedMobileId = character.Id;
-        item.EquippedLayer = itemDefinition.Layer.Value;
-
-        if (itemDefinition.Layer == ItemLayerType.Bank && item.GumpId is null)
-        {
-            item.GumpId = 0x0042;
-        }
-
-        ApplyItemDefinition(item, itemDefinition);
-        character.AddEquippedItem(itemDefinition.Layer.Value, item);
-
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
-        _logger.Debug(
-            "Created starter equipped item {TemplateId} on layer {Layer} for {CharacterId}",
-            itemDefinition.TemplateId,
-            itemDefinition.Layer.Value,
-            character.Id
-        );
     }
 
     private async Task EnsureStarterInventoryAsync(UOMobileEntity character)
@@ -450,17 +393,6 @@ public class CharacterService : ICharacterService
             await PersistEquippedItemAsync(character, equippedItem);
         }
     }
-
-    private static string MapItemArgumentKey(string key)
-        => key.ToLowerInvariant() switch
-        {
-            "title" => ItemCustomParamKeys.Book.Title,
-            "author" => ItemCustomParamKeys.Book.Author,
-            "content" => ItemCustomParamKeys.Book.Content,
-            "pages" => ItemCustomParamKeys.Book.Pages,
-            "writable" => ItemCustomParamKeys.Book.Writable,
-            _ => key
-        };
 
     private async Task HydrateCharacterEquipmentRuntimeAsync(UOMobileEntity character)
     {
@@ -542,14 +474,6 @@ public class CharacterService : ICharacterService
         character.HydrateEquipmentRuntime(equippedItems);
     }
 
-    private async Task HydrateEquippedContainerContentsAsync(IEnumerable<UOItemEntity> equippedItems)
-    {
-        foreach (var equippedItem in equippedItems)
-        {
-            await HydrateContainedItemsRecursiveAsync(equippedItem);
-        }
-    }
-
     private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)
     {
         var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
@@ -563,5 +487,81 @@ public class CharacterService : ICharacterService
             container.AddItem(cloned, item.ContainerPosition);
             await HydrateContainedItemsRecursiveAsync(cloned);
         }
+    }
+
+    private async Task HydrateEquippedContainerContentsAsync(IEnumerable<UOItemEntity> equippedItems)
+    {
+        foreach (var equippedItem in equippedItems)
+        {
+            await HydrateContainedItemsRecursiveAsync(equippedItem);
+        }
+    }
+
+    private static string MapItemArgumentKey(string key)
+        => key.ToLowerInvariant() switch
+        {
+            "title"    => ItemCustomParamKeys.Book.Title,
+            "author"   => ItemCustomParamKeys.Book.Author,
+            "content"  => ItemCustomParamKeys.Book.Content,
+            "pages"    => ItemCustomParamKeys.Book.Pages,
+            "writable" => ItemCustomParamKeys.Book.Writable,
+            _          => key
+        };
+
+    private async Task PersistBackpackItemAsync(
+        UOMobileEntity character,
+        UOItemEntity backpack,
+        StartupLoadoutItem itemDefinition,
+        int index
+    )
+    {
+        var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
+        ApplyItemDefinition(item, itemDefinition);
+
+        var position = new Point2D(index + 1, index + 1);
+        backpack.AddItem(item, position);
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Debug(
+            "Created starter backpack item {TemplateId} for character {CharacterId}",
+            itemDefinition.TemplateId,
+            character.Id
+        );
+    }
+
+    private async Task PersistEquippedItemAsync(UOMobileEntity character, StartupLoadoutItem itemDefinition)
+    {
+        if (itemDefinition.Layer is null)
+        {
+            throw new InvalidOperationException(
+                $"Startup equip item '{itemDefinition.TemplateId}' is missing required layer."
+            );
+        }
+
+        if (character.HasEquippedItem(itemDefinition.Layer.Value))
+        {
+            return;
+        }
+
+        var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
+        item.ParentContainerId = Serial.Zero;
+        item.ContainerPosition = Point2D.Zero;
+        item.EquippedMobileId = character.Id;
+        item.EquippedLayer = itemDefinition.Layer.Value;
+
+        if (itemDefinition.Layer == ItemLayerType.Bank && item.GumpId is null)
+        {
+            item.GumpId = 0x0042;
+        }
+
+        ApplyItemDefinition(item, itemDefinition);
+        character.AddEquippedItem(itemDefinition.Layer.Value, item);
+
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
+        _logger.Debug(
+            "Created starter equipped item {TemplateId} on layer {Layer} for {CharacterId}",
+            itemDefinition.TemplateId,
+            itemDefinition.Layer.Value,
+            character.Id
+        );
     }
 }

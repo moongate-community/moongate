@@ -1,16 +1,13 @@
-using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
+using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
-using Moongate.Server.Data.Internal.Entities;
-using Moongate.Server.Data.Scripting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Services.Scripting;
 using Moongate.Tests.TestSupport;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -62,6 +59,7 @@ public sealed class DialogueRuntimeServiceTests
         )
         {
             Calls.Add((speaker.Id, text, messageType));
+
             return Task.FromResult(1);
         }
     }
@@ -72,9 +70,10 @@ public sealed class DialogueRuntimeServiceTests
 
         public void Clear() { }
 
-        public IReadOnlyCollection<GameSession> GetAll() => [];
+        public IReadOnlyCollection<GameSession> GetAll()
+            => [];
 
-        public GameSession GetOrCreate(Moongate.Network.Client.MoongateTCPClient client)
+        public GameSession GetOrCreate(MoongateTCPClient client)
             => throw new NotImplementedException();
 
         public bool Remove(long sessionId)
@@ -83,14 +82,164 @@ public sealed class DialogueRuntimeServiceTests
         public bool TryGet(long sessionId, out GameSession gameSession)
         {
             gameSession = null!;
+
             return false;
         }
 
         public bool TryGetByCharacterId(Serial characterId, out GameSession gameSession)
         {
             gameSession = null!;
+
             return false;
         }
+    }
+
+    [Test]
+    public async Task ChooseAsync_ShouldApplyEffects_AdvanceNode_AndPersistMemory()
+    {
+        using var tempDirectory = new TempDirectory();
+        var runtime = CreateRuntime(tempDirectory.Path, out var definitions, out _);
+        RegisterConversation(
+            definitions,
+            BuildConversation(
+                new(),
+                """
+                return {
+                    start = "start",
+                    nodes = {
+                        start = {
+                            text = "Start",
+                            options = {
+                                {
+                                    text = "Accept",
+                                    effects = function(ctx)
+                                        ctx:set_memory_flag("accepted", true)
+                                        ctx:add_memory_number("rooms_rented", 1)
+                                        ctx:set_flag("visited", true)
+                                    end,
+                                    goto_ = "done"
+                                }
+                            }
+                        },
+                        done = { text = "Done", options = {} }
+                    }
+                }
+                """
+            )
+        );
+
+        var npc = CreateNpc();
+        var listener = CreateListener();
+
+        _ = await runtime.StartAsync(npc, listener, "innkeeper");
+        var session = await runtime.ChooseAsync(npc, listener, 1);
+
+        var memoryService = new DialogueMemoryService(new(tempDirectory.Path, Enum.GetNames<DirectoryType>()));
+        var entry = memoryService.GetOrCreateEntry(npc.Id, listener.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(session, Is.Not.Null);
+                Assert.That(session!.CurrentNodeId, Is.EqualTo("done"));
+                Assert.That(session.SessionFlags["visited"], Is.True);
+                Assert.That(entry.Flags["accepted"], Is.True);
+                Assert.That(entry.Numbers["rooms_rented"], Is.EqualTo(1));
+                Assert.That(entry.LastNode, Is.EqualTo("done"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ChooseAsync_WhenEffectEndsConversation_ShouldRemoveSession()
+    {
+        using var tempDirectory = new TempDirectory();
+        var runtime = CreateRuntime(tempDirectory.Path, out var definitions, out var speech);
+        RegisterConversation(
+            definitions,
+            BuildConversation(
+                new(),
+                """
+                return {
+                    start = "start",
+                    nodes = {
+                        start = {
+                            text = "Start",
+                            options = {
+                                {
+                                    text = "Bye",
+                                    effects = function(ctx)
+                                        ctx:emote("*waves*")
+                                        ctx:end_conversation()
+                                    end,
+                                    goto_ = "done"
+                                }
+                            }
+                        },
+                        done = { text = "Done", options = {} }
+                    }
+                }
+                """
+            )
+        );
+
+        var npc = CreateNpc();
+        var listener = CreateListener();
+
+        _ = await runtime.StartAsync(npc, listener, "innkeeper");
+        var result = await runtime.ChooseAsync(npc, listener, 1);
+        var stillActive = runtime.TryGetActiveSession(npc.Id, listener.Id, out _);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Null);
+                Assert.That(stillActive, Is.False);
+                Assert.That(speech.Calls, Has.Count.EqualTo(1));
+                Assert.That(speech.Calls[0].MessageType, Is.EqualTo(ChatMessageType.Emote));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleTopicAsync_ShouldMatchAlias_AndJumpToTopicRoute()
+    {
+        using var tempDirectory = new TempDirectory();
+        var runtime = CreateRuntime(tempDirectory.Path, out var definitions, out _);
+        RegisterConversation(
+            definitions,
+            BuildConversation(
+                new(),
+                """
+                return {
+                    start = "start",
+                    topics = {
+                        room = { "room", "stanza" }
+                    },
+                    topic_routes = {
+                        room = "room_offer"
+                    },
+                    nodes = {
+                        start = { text = "Start", options = {} },
+                        room_offer = { text = "A room costs 15 gold.", options = {} }
+                    }
+                }
+                """
+            )
+        );
+
+        var npc = CreateNpc();
+        var listener = CreateListener();
+        var session = await runtime.HandleTopicAsync(npc, listener, "innkeeper", "Hai una stanza libera?");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(session, Is.Not.Null);
+                Assert.That(session!.CurrentNodeId, Is.EqualTo("room_offer"));
+                Assert.That(session.LastTopicId, Is.EqualTo("room"));
+            }
+        );
     }
 
     [Test]
@@ -139,169 +288,8 @@ public sealed class DialogueRuntimeServiceTests
         );
     }
 
-    [Test]
-    public async Task ChooseAsync_ShouldApplyEffects_AdvanceNode_AndPersistMemory()
-    {
-        using var tempDirectory = new TempDirectory();
-        var runtime = CreateRuntime(tempDirectory.Path, out var definitions, out _);
-        RegisterConversation(
-            definitions,
-            BuildConversation(
-                new Script(),
-                """
-                return {
-                    start = "start",
-                    nodes = {
-                        start = {
-                            text = "Start",
-                            options = {
-                                {
-                                    text = "Accept",
-                                    effects = function(ctx)
-                                        ctx:set_memory_flag("accepted", true)
-                                        ctx:add_memory_number("rooms_rented", 1)
-                                        ctx:set_flag("visited", true)
-                                    end,
-                                    goto_ = "done"
-                                }
-                            }
-                        },
-                        done = { text = "Done", options = {} }
-                    }
-                }
-                """
-            )
-        );
-
-        var npc = CreateNpc();
-        var listener = CreateListener();
-
-        _ = await runtime.StartAsync(npc, listener, "innkeeper");
-        var session = await runtime.ChooseAsync(npc, listener, 1);
-
-        var memoryService = new DialogueMemoryService(new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>()));
-        var entry = memoryService.GetOrCreateEntry(npc.Id, listener.Id);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(session, Is.Not.Null);
-                Assert.That(session!.CurrentNodeId, Is.EqualTo("done"));
-                Assert.That(session.SessionFlags["visited"], Is.True);
-                Assert.That(entry.Flags["accepted"], Is.True);
-                Assert.That(entry.Numbers["rooms_rented"], Is.EqualTo(1));
-                Assert.That(entry.LastNode, Is.EqualTo("done"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleTopicAsync_ShouldMatchAlias_AndJumpToTopicRoute()
-    {
-        using var tempDirectory = new TempDirectory();
-        var runtime = CreateRuntime(tempDirectory.Path, out var definitions, out _);
-        RegisterConversation(
-            definitions,
-            BuildConversation(
-                new Script(),
-                """
-                return {
-                    start = "start",
-                    topics = {
-                        room = { "room", "stanza" }
-                    },
-                    topic_routes = {
-                        room = "room_offer"
-                    },
-                    nodes = {
-                        start = { text = "Start", options = {} },
-                        room_offer = { text = "A room costs 15 gold.", options = {} }
-                    }
-                }
-                """
-            )
-        );
-
-        var npc = CreateNpc();
-        var listener = CreateListener();
-        var session = await runtime.HandleTopicAsync(npc, listener, "innkeeper", "Hai una stanza libera?");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(session, Is.Not.Null);
-                Assert.That(session!.CurrentNodeId, Is.EqualTo("room_offer"));
-                Assert.That(session.LastTopicId, Is.EqualTo("room"));
-            }
-        );
-    }
-
-    [Test]
-    public async Task ChooseAsync_WhenEffectEndsConversation_ShouldRemoveSession()
-    {
-        using var tempDirectory = new TempDirectory();
-        var runtime = CreateRuntime(tempDirectory.Path, out var definitions, out var speech);
-        RegisterConversation(
-            definitions,
-            BuildConversation(
-                new Script(),
-                """
-                return {
-                    start = "start",
-                    nodes = {
-                        start = {
-                            text = "Start",
-                            options = {
-                                {
-                                    text = "Bye",
-                                    effects = function(ctx)
-                                        ctx:emote("*waves*")
-                                        ctx:end_conversation()
-                                    end,
-                                    goto_ = "done"
-                                }
-                            }
-                        },
-                        done = { text = "Done", options = {} }
-                    }
-                }
-                """
-            )
-        );
-
-        var npc = CreateNpc();
-        var listener = CreateListener();
-
-        _ = await runtime.StartAsync(npc, listener, "innkeeper");
-        var result = await runtime.ChooseAsync(npc, listener, 1);
-        var stillActive = runtime.TryGetActiveSession(npc.Id, listener.Id, out _);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result, Is.Null);
-                Assert.That(stillActive, Is.False);
-                Assert.That(speech.Calls, Has.Count.EqualTo(1));
-                Assert.That(speech.Calls[0].MessageType, Is.EqualTo(ChatMessageType.Emote));
-            }
-        );
-    }
-
-    private static void RegisterConversation(IDialogueDefinitionService definitions, Table definition)
-        => definitions.Register("innkeeper", definition, "scripts/dialogues/innkeeper.lua");
-
     private static Table BuildConversation(Script script, string body)
         => script.DoString(body).Table!;
-
-    private static UOMobileEntity CreateNpc()
-        => new()
-        {
-            Id = (Serial)0x100u,
-            Name = "Innkeeper",
-            IsAlive = true,
-            MapId = 1,
-            Location = new Point3D(100, 100, 0)
-        };
 
     private static UOMobileEntity CreateListener()
         => new()
@@ -311,7 +299,17 @@ public sealed class DialogueRuntimeServiceTests
             IsAlive = true,
             IsPlayer = true,
             MapId = 1,
-            Location = new Point3D(100, 101, 0)
+            Location = new(100, 101, 0)
+        };
+
+    private static UOMobileEntity CreateNpc()
+        => new()
+        {
+            Id = (Serial)0x100u,
+            Name = "Innkeeper",
+            IsAlive = true,
+            MapId = 1,
+            Location = new(100, 100, 0)
         };
 
     private static DialogueRuntimeService CreateRuntime(
@@ -321,14 +319,17 @@ public sealed class DialogueRuntimeServiceTests
     )
     {
         definitions = new DialogueDefinitionService();
-        var memoryService = new DialogueMemoryService(new DirectoriesConfig(root, Enum.GetNames<DirectoryType>()));
-        speechService = new DialogueRuntimeSpeechServiceStub();
+        var memoryService = new DialogueMemoryService(new(root, Enum.GetNames<DirectoryType>()));
+        speechService = new();
 
-        return new DialogueRuntimeService(
+        return new(
             definitions,
             memoryService,
             speechService,
             new DialogueRuntimeSessionServiceStub()
         );
     }
+
+    private static void RegisterConversation(IDialogueDefinitionService definitions, Table definition)
+        => definitions.Register("innkeeper", definition, "scripts/dialogues/innkeeper.lua");
 }

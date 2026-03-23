@@ -19,12 +19,26 @@ public sealed class PotionEffectsModuleTests
         private readonly Queue<Func<Task>> _backgroundJobs = new();
         private readonly Queue<Action> _gameLoopActions = new();
 
-        public void EnqueueBackground(Action job)
-            => _backgroundJobs.Enqueue(() =>
+        public void DrainBackground()
+        {
+            while (_backgroundJobs.Count > 0)
             {
-                job();
-                return Task.CompletedTask;
-            });
+                _backgroundJobs.Dequeue()().GetAwaiter().GetResult();
+            }
+        }
+
+        public void DrainGameLoop()
+            => _ = ExecutePendingOnGameLoop(int.MaxValue);
+
+        public void EnqueueBackground(Action job)
+            => _backgroundJobs.Enqueue(
+                () =>
+                {
+                    job();
+
+                    return Task.CompletedTask;
+                }
+            );
 
         public void EnqueueBackground(Func<Task> job)
             => _backgroundJobs.Enqueue(job);
@@ -64,17 +78,59 @@ public sealed class PotionEffectsModuleTests
 
         public Task StopAsync()
             => Task.CompletedTask;
+    }
 
-        public void DrainBackground()
+    [Test]
+    public void ApplyTemporaryStrength_WhenDurationExpires_ShouldAddThenRemoveRuntimeModifier()
+    {
+        var sessionService = new FakeGameNetworkSessionService();
+        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        var backgroundJobs = new PotionEffectsModuleTestBackgroundJobService();
+        var module = new PotionEffectsModule(sessionService, outgoingQueue, backgroundJobService: backgroundJobs);
+        var mobile = new UOMobileEntity
         {
-            while (_backgroundJobs.Count > 0)
+            Id = (Serial)0x403u,
+            Name = "Potion Tester",
+            IsAlive = true,
+            Strength = 50,
+            Hits = 50,
+            MaxHits = 50
+        };
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = mobile.Id,
+            Character = mobile
+        };
+        sessionService.Add(session);
+
+        var applied = module.ApplyTemporaryStrength(0x403, 10, 0);
+
+        Assert.Multiple(
+            () =>
             {
-                _backgroundJobs.Dequeue()().GetAwaiter().GetResult();
+                Assert.That(applied, Is.True);
+                Assert.That(mobile.RuntimeModifiers, Is.Not.Null);
+                Assert.That(mobile.RuntimeModifiers!.StrengthBonus, Is.EqualTo(10));
+                Assert.That(mobile.EffectiveStrength, Is.EqualTo(60));
             }
+        );
+
+        backgroundJobs.DrainBackground();
+        backgroundJobs.DrainGameLoop();
+
+        Assert.That(mobile.RuntimeModifiers, Is.Null);
+        Assert.That(mobile.EffectiveStrength, Is.EqualTo(50));
+
+        var packets = new List<OutgoingGamePacket>();
+
+        while (outgoingQueue.TryDequeue(out var packet))
+        {
+            packets.Add(packet);
         }
 
-        public void DrainGameLoop()
-            => _ = ExecutePendingOnGameLoop(int.MaxValue);
+        Assert.That(packets.Count(packet => packet.Packet is PlayerStatusPacket), Is.EqualTo(2));
     }
 
     [Test]
@@ -146,57 +202,5 @@ public sealed class PotionEffectsModuleTests
                 Assert.That(mobile.Stamina, Is.EqualTo(20));
             }
         );
-    }
-
-    [Test]
-    public void ApplyTemporaryStrength_WhenDurationExpires_ShouldAddThenRemoveRuntimeModifier()
-    {
-        var sessionService = new FakeGameNetworkSessionService();
-        var outgoingQueue = new BasePacketListenerTestOutgoingPacketQueue();
-        var backgroundJobs = new PotionEffectsModuleTestBackgroundJobService();
-        var module = new PotionEffectsModule(sessionService, outgoingQueue, backgroundJobService: backgroundJobs);
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x403u,
-            Name = "Potion Tester",
-            IsAlive = true,
-            Strength = 50,
-            Hits = 50,
-            MaxHits = 50
-        };
-
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var session = new GameSession(new(client))
-        {
-            CharacterId = mobile.Id,
-            Character = mobile
-        };
-        sessionService.Add(session);
-
-        var applied = module.ApplyTemporaryStrength(0x403, 10, 0);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(applied, Is.True);
-                Assert.That(mobile.RuntimeModifiers, Is.Not.Null);
-                Assert.That(mobile.RuntimeModifiers!.StrengthBonus, Is.EqualTo(10));
-                Assert.That(mobile.EffectiveStrength, Is.EqualTo(60));
-            }
-        );
-
-        backgroundJobs.DrainBackground();
-        backgroundJobs.DrainGameLoop();
-
-        Assert.That(mobile.RuntimeModifiers, Is.Null);
-        Assert.That(mobile.EffectiveStrength, Is.EqualTo(50));
-
-        var packets = new List<OutgoingGamePacket>();
-        while (outgoingQueue.TryDequeue(out var packet))
-        {
-            packets.Add(packet);
-        }
-
-        Assert.That(packets.Count(packet => packet.Packet is PlayerStatusPacket), Is.EqualTo(2));
     }
 }

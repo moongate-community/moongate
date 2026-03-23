@@ -45,7 +45,13 @@ public sealed class UndeadBrainAssetTests
         using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
         var zombie = document.RootElement
                              .EnumerateArray()
-                             .First(element => string.Equals(element.GetProperty("id").GetString(), "zombie_npc", StringComparison.Ordinal));
+                             .First(
+                                 element => string.Equals(
+                                     element.GetProperty("id").GetString(),
+                                     "zombie_npc",
+                                     StringComparison.Ordinal
+                                 )
+                             );
 
         Assert.Multiple(
             () =>

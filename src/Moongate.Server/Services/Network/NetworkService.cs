@@ -178,121 +178,6 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         while (_pendingClientDataQueue.TryDequeue(out _)) { }
     }
 
-    private async Task StartPingServersAsync()
-    {
-        if (!_pingServerEnabled || _pingServerPort <= 0 || _pingServers.Count > 0)
-        {
-            return;
-        }
-
-        _pingServerCancellationTokenSource = new CancellationTokenSource();
-
-        foreach (var ipEndpoint in GetListeningAddresses(new(IPAddress.Any, _pingServerPort)))
-        {
-            var pingServer = CreatePingServer(new(ipEndpoint.Address, _pingServerPort));
-
-            if (pingServer is null)
-            {
-                continue;
-            }
-
-            _pingServers.Add(pingServer);
-            _pingServerTasks.Add(RunPingServerAsync(pingServer, _pingServerCancellationTokenSource.Token));
-            _logger.Information("UDP ping server listening on {LocalEndPoint}", pingServer.Client.LocalEndPoint);
-        }
-
-        await Task.CompletedTask;
-    }
-
-    private async Task StopPingServersAsync()
-    {
-        if (_pingServerCancellationTokenSource is not null)
-        {
-            await _pingServerCancellationTokenSource.CancelAsync();
-            _pingServerCancellationTokenSource.Dispose();
-            _pingServerCancellationTokenSource = null;
-        }
-
-        for (var i = _pingServers.Count - 1; i >= 0; i--)
-        {
-            _pingServers[i].Close();
-            _pingServers[i].Dispose();
-        }
-
-        _pingServers.Clear();
-
-        if (_pingServerTasks.Count > 0)
-        {
-            try
-            {
-                await Task.WhenAll(_pingServerTasks);
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (SocketException)
-            {
-            }
-        }
-
-        _pingServerTasks.Clear();
-    }
-
-    private UdpClient? CreatePingServer(IPEndPoint ipEndpoint)
-    {
-        var socket = new Socket(ipEndpoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp)
-        {
-            ExclusiveAddressUse = false
-        };
-
-        try
-        {
-            socket.Bind(ipEndpoint);
-
-            return new UdpClient
-            {
-                Client = socket
-            };
-        }
-        catch (SocketException ex)
-        {
-            _logger.Warning(ex, "Failed to bind UDP ping listener on {Address}:{Port}", ipEndpoint.Address, ipEndpoint.Port);
-            socket.Dispose();
-            return null;
-        }
-    }
-
-    private async Task RunPingServerAsync(UdpClient pingServer, CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            try
-            {
-                var result = await pingServer.ReceiveAsync(cancellationToken);
-                await pingServer.SendAsync(result.Buffer, result.RemoteEndPoint, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                break;
-            }
-            catch (ObjectDisposedException)
-            {
-                break;
-            }
-            catch (SocketException) when (cancellationToken.IsCancellationRequested)
-            {
-                break;
-            }
-            catch (Exception ex)
-            {
-                _logger.Warning(ex, "UDP ping server loop failed");
-            }
-        }
-    }
-
     public bool TryDequeueParsedPacket(out IncomingGamePacket gamePacket)
         => _parsedPackets.TryDequeue(out gamePacket);
 
@@ -356,6 +241,31 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         catch (Exception ex)
         {
             _logger.Error(ex, "Failed to close client for session {SessionId}", sessionId);
+        }
+    }
+
+    private UdpClient? CreatePingServer(IPEndPoint ipEndpoint)
+    {
+        var socket = new Socket(ipEndpoint.AddressFamily, SocketType.Dgram, ProtocolType.Udp)
+        {
+            ExclusiveAddressUse = false
+        };
+
+        try
+        {
+            socket.Bind(ipEndpoint);
+
+            return new()
+            {
+                Client = socket
+            };
+        }
+        catch (SocketException ex)
+        {
+            _logger.Warning(ex, "Failed to bind UDP ping listener on {Address}:{Port}", ipEndpoint.Address, ipEndpoint.Port);
+            socket.Dispose();
+
+            return null;
         }
     }
 
@@ -513,6 +423,14 @@ public class NetworkService : INetworkService, INetworkMetricsSource
 
     private void OnClientException(object? sender, MoongateTCPExceptionEventArgs e)
         => _logger.Error(e.Exception, "Client exception: {Message}", e.Exception.Message);
+
+    private static void OverwritePendingBytes(List<byte> pendingBytes, byte[] decryptedPacket)
+    {
+        for (var i = 0; i < decryptedPacket.Length; i++)
+        {
+            pendingBytes[i] = decryptedPacket[i];
+        }
+    }
 
     private void ParseAvailablePackets(
         List<byte> pendingBytes,
@@ -814,85 +732,157 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         return BinaryPrimitives.ReadUInt16BigEndian(lengthBuffer);
     }
 
-    private bool TryDetectHandshakeEncryption(
-        List<byte> pendingBytes,
-        GameSession session,
-        NetworkParserSessionMetrics metrics
-    )
+    private void RunNetworkIngressLoop()
     {
-        var networkSession = session.NetworkSession;
-
-        if (networkSession.Encryption is not null || networkSession.State != NetworkSessionState.Login || pendingBytes.Count == 0)
+        while (!_networkIngressLoopStopRequested)
         {
-            return true;
-        }
-
-        var packetId = pendingBytes[0];
-
-        if (packetId == PacketDefinition.LoginSeedPacket)
-        {
-            return true;
-        }
-
-        if (packetId is PacketDefinition.AccountLoginPacket or PacketDefinition.GameLoginPacket)
-        {
-            if (!_encryptionMode.HasFlag(EncryptionMode.Unencrypted))
+            if (!_pendingClientDataQueue.TryDequeue(out var pending))
             {
-                DisconnectSession(session, "Unencrypted client rejected by encryption policy.", metrics, pendingBytes);
-                return false;
+                _pendingClientDataSignal.WaitOne(5);
+
+                continue;
             }
 
-            return true;
-        }
-
-        if (_packetRegistry.TryGetDescriptor(packetId, out _))
-        {
-            return true;
-        }
-
-        var looksLikeLoginHandshake = pendingBytes.Count == 62 ||
-                                      (networkSession.ClientVersion is not null && pendingBytes.Count >= 62);
-        var looksLikeGameHandshake = pendingBytes.Count >= 65;
-
-        if (!looksLikeLoginHandshake && !looksLikeGameHandshake)
-        {
-            return true;
-        }
-
-        if (!_encryptionMode.HasFlag(EncryptionMode.Encrypted))
-        {
-            DisconnectSession(session, "Encrypted client rejected by encryption policy.", metrics, pendingBytes);
-            return false;
-        }
-
-        if (looksLikeLoginHandshake)
-        {
-            if (pendingBytes.Count < 62)
+            try
             {
-                return false;
+                ProcessClientData(pending.Client, pending.Data);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Unhandled exception in network ingress loop.");
+            }
+        }
+    }
+
+    private async Task RunPingServerAsync(UdpClient pingServer, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            try
+            {
+                var result = await pingServer.ReceiveAsync(cancellationToken);
+                await pingServer.SendAsync(result.Buffer, result.RemoteEndPoint, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (ObjectDisposedException)
+            {
+                break;
+            }
+            catch (SocketException) when (cancellationToken.IsCancellationRequested)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.Warning(ex, "UDP ping server loop failed");
+            }
+        }
+    }
+
+    private void ShowRegisteredPackets()
+    {
+        _logger.Information("Registered packets: {Count}", _packetRegistry.RegisteredPackets.Count);
+
+        foreach (var packet in _packetRegistry.RegisteredPackets)
+        {
+            _logger.Verbose(
+                " - OpCode: 0x{OpCode:X2}, Type: {PacketType}, Sizing: {PacketSizing}, Length: {Length}, Description: {Description}",
+                packet.OpCode,
+                packet.HandlerType.Name,
+                packet.Sizing,
+                packet.Length,
+                packet.Description
+            );
+        }
+    }
+
+    private void StartNetworkIngressLoop()
+    {
+        if (_networkIngressLoopThread is not null)
+        {
+            return;
+        }
+
+        _networkIngressLoopStopRequested = false;
+        _networkIngressLoopThread = new(RunNetworkIngressLoop)
+        {
+            IsBackground = true,
+            Name = "Moongate-NetworkIngressLoop"
+        };
+        _networkIngressLoopThread.Start();
+    }
+
+    private async Task StartPingServersAsync()
+    {
+        if (!_pingServerEnabled || _pingServerPort <= 0 || _pingServers.Count > 0)
+        {
+            return;
+        }
+
+        _pingServerCancellationTokenSource = new();
+
+        foreach (var ipEndpoint in GetListeningAddresses(new(IPAddress.Any, _pingServerPort)))
+        {
+            var pingServer = CreatePingServer(new(ipEndpoint.Address, _pingServerPort));
+
+            if (pingServer is null)
+            {
+                continue;
             }
 
-            if (!TryActivateLoginEncryption(pendingBytes, session))
+            _pingServers.Add(pingServer);
+            _pingServerTasks.Add(RunPingServerAsync(pingServer, _pingServerCancellationTokenSource.Token));
+            _logger.Information("UDP ping server listening on {LocalEndPoint}", pingServer.Client.LocalEndPoint);
+        }
+
+        await Task.CompletedTask;
+    }
+
+    private void StopNetworkIngressLoop()
+    {
+        if (_networkIngressLoopThread is null)
+        {
+            return;
+        }
+
+        _networkIngressLoopStopRequested = true;
+        _pendingClientDataSignal.Set();
+        _networkIngressLoopThread.Join(TimeSpan.FromSeconds(2));
+        _networkIngressLoopThread = null;
+    }
+
+    private async Task StopPingServersAsync()
+    {
+        if (_pingServerCancellationTokenSource is not null)
+        {
+            await _pingServerCancellationTokenSource.CancelAsync();
+            _pingServerCancellationTokenSource.Dispose();
+            _pingServerCancellationTokenSource = null;
+        }
+
+        for (var i = _pingServers.Count - 1; i >= 0; i--)
+        {
+            _pingServers[i].Close();
+            _pingServers[i].Dispose();
+        }
+
+        _pingServers.Clear();
+
+        if (_pingServerTasks.Count > 0)
+        {
+            try
             {
-                DisconnectSession(session, "Encrypted login detection failed.", metrics, pendingBytes);
-                return false;
+                await Task.WhenAll(_pingServerTasks);
             }
-
-            return true;
+            catch (OperationCanceledException) { }
+            catch (ObjectDisposedException) { }
+            catch (SocketException) { }
         }
 
-        if (pendingBytes.Count < 65)
-        {
-            return false;
-        }
-
-        if (!TryActivateGameEncryption(pendingBytes, session))
-        {
-            DisconnectSession(session, "Encrypted game login detection failed.", metrics, pendingBytes);
-            return false;
-        }
-
-        return true;
+        _pingServerTasks.Clear();
     }
 
     private bool TryActivateGameEncryption(List<byte> pendingBytes, GameSession session)
@@ -944,7 +934,8 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         var seed = session.NetworkSession.Seed ?? 0u;
         var encryptedPacket = pendingBytes.Take(62).ToArray();
 
-        if (!LoginEncryption.TryDecrypt(major, minor, revision, seed, encryptedPacket, out var encryption) || encryption is null)
+        if (!LoginEncryption.TryDecrypt(major, minor, revision, seed, encryptedPacket, out var encryption) ||
+            encryption is null)
         {
             if (_encryptionDebug)
             {
@@ -966,80 +957,91 @@ public class NetworkService : INetworkService, INetworkMetricsSource
         return true;
     }
 
-    private static void OverwritePendingBytes(List<byte> pendingBytes, byte[] decryptedPacket)
+    private bool TryDetectHandshakeEncryption(
+        List<byte> pendingBytes,
+        GameSession session,
+        NetworkParserSessionMetrics metrics
+    )
     {
-        for (var i = 0; i < decryptedPacket.Length; i++)
+        var networkSession = session.NetworkSession;
+
+        if (networkSession.Encryption is not null ||
+            networkSession.State != NetworkSessionState.Login ||
+            pendingBytes.Count == 0)
         {
-            pendingBytes[i] = decryptedPacket[i];
+            return true;
         }
-    }
 
-    private void RunNetworkIngressLoop()
-    {
-        while (!_networkIngressLoopStopRequested)
+        var packetId = pendingBytes[0];
+
+        if (packetId == PacketDefinition.LoginSeedPacket)
         {
-            if (!_pendingClientDataQueue.TryDequeue(out var pending))
-            {
-                _pendingClientDataSignal.WaitOne(5);
+            return true;
+        }
 
-                continue;
+        if (packetId is PacketDefinition.AccountLoginPacket or PacketDefinition.GameLoginPacket)
+        {
+            if (!_encryptionMode.HasFlag(EncryptionMode.Unencrypted))
+            {
+                DisconnectSession(session, "Unencrypted client rejected by encryption policy.", metrics, pendingBytes);
+
+                return false;
             }
 
-            try
+            return true;
+        }
+
+        if (_packetRegistry.TryGetDescriptor(packetId, out _))
+        {
+            return true;
+        }
+
+        var looksLikeLoginHandshake = pendingBytes.Count == 62 ||
+                                      networkSession.ClientVersion is not null && pendingBytes.Count >= 62;
+        var looksLikeGameHandshake = pendingBytes.Count >= 65;
+
+        if (!looksLikeLoginHandshake && !looksLikeGameHandshake)
+        {
+            return true;
+        }
+
+        if (!_encryptionMode.HasFlag(EncryptionMode.Encrypted))
+        {
+            DisconnectSession(session, "Encrypted client rejected by encryption policy.", metrics, pendingBytes);
+
+            return false;
+        }
+
+        if (looksLikeLoginHandshake)
+        {
+            if (pendingBytes.Count < 62)
             {
-                ProcessClientData(pending.Client, pending.Data);
+                return false;
             }
-            catch (Exception ex)
+
+            if (!TryActivateLoginEncryption(pendingBytes, session))
             {
-                _logger.Error(ex, "Unhandled exception in network ingress loop.");
+                DisconnectSession(session, "Encrypted login detection failed.", metrics, pendingBytes);
+
+                return false;
             }
-        }
-    }
 
-    private void ShowRegisteredPackets()
-    {
-        _logger.Information("Registered packets: {Count}", _packetRegistry.RegisteredPackets.Count);
-
-        foreach (var packet in _packetRegistry.RegisteredPackets)
-        {
-            _logger.Verbose(
-                " - OpCode: 0x{OpCode:X2}, Type: {PacketType}, Sizing: {PacketSizing}, Length: {Length}, Description: {Description}",
-                packet.OpCode,
-                packet.HandlerType.Name,
-                packet.Sizing,
-                packet.Length,
-                packet.Description
-            );
-        }
-    }
-
-    private void StartNetworkIngressLoop()
-    {
-        if (_networkIngressLoopThread is not null)
-        {
-            return;
+            return true;
         }
 
-        _networkIngressLoopStopRequested = false;
-        _networkIngressLoopThread = new(RunNetworkIngressLoop)
+        if (pendingBytes.Count < 65)
         {
-            IsBackground = true,
-            Name = "Moongate-NetworkIngressLoop"
-        };
-        _networkIngressLoopThread.Start();
-    }
-
-    private void StopNetworkIngressLoop()
-    {
-        if (_networkIngressLoopThread is null)
-        {
-            return;
+            return false;
         }
 
-        _networkIngressLoopStopRequested = true;
-        _pendingClientDataSignal.Set();
-        _networkIngressLoopThread.Join(TimeSpan.FromSeconds(2));
-        _networkIngressLoopThread = null;
+        if (!TryActivateGameEncryption(pendingBytes, session))
+        {
+            DisconnectSession(session, "Encrypted game login detection failed.", metrics, pendingBytes);
+
+            return false;
+        }
+
+        return true;
     }
 
     private bool TryProcessInitialHandshake(List<byte> pendingBytes, GameSession session)

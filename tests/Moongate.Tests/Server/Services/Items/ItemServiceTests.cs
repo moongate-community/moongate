@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Data.Events.Items;
@@ -17,7 +18,6 @@ using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
-using System.Globalization;
 
 namespace Moongate.Tests.Server.Services.Items;
 
@@ -46,9 +46,7 @@ public class ItemServiceTests
             => throw new NotSupportedException();
 
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
-        {
-            return Templates.TryGetValue(itemTemplateId, out template);
-        }
+            => Templates.TryGetValue(itemTemplateId, out template);
     }
 
     [Test]
@@ -85,6 +83,24 @@ public class ItemServiceTests
     }
 
     [Test]
+    public async Task Clone_ShouldKeepSerial_WhenGenerateNewSerialIsFalse()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
+        var originalId = persistence.UnitOfWork.AllocateNextItemId();
+        var item = new UOItemEntity
+        {
+            Id = originalId,
+            ItemId = 0x0E75
+        };
+
+        var clone = service.Clone(item, false);
+
+        Assert.That(clone.Id, Is.EqualTo(originalId));
+    }
+
+    [Test]
     public async Task Clone_ShouldPreserveRangedCombatMetadata()
     {
         using var temp = new TempDirectory();
@@ -110,24 +126,6 @@ public class ItemServiceTests
                 Assert.That(clone.AmmoEffectId, Is.EqualTo(0x1BFE));
             }
         );
-    }
-
-    [Test]
-    public async Task Clone_ShouldKeepSerial_WhenGenerateNewSerialIsFalse()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        IItemService service = new ItemService(persistence, new NetworkServiceTestGameEventBusService());
-        var originalId = persistence.UnitOfWork.AllocateNextItemId();
-        var item = new UOItemEntity
-        {
-            Id = originalId,
-            ItemId = 0x0E75
-        };
-
-        var clone = service.Clone(item, false);
-
-        Assert.That(clone.Id, Is.EqualTo(originalId));
     }
 
     [Test]
@@ -281,82 +279,6 @@ public class ItemServiceTests
     }
 
     [Test]
-    public async Task MoveItemToWorldAsync_WhenRemovingLastItemFromRefillableLootContainer_ShouldSetRefillReadyAtUtc()
-    {
-        TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["loot_test_chest"] = new()
-        {
-            Id = "loot_test_chest",
-            Description = "Refillable loot test chest",
-            GoldValue = GoldValueSpec.FromValue(0),
-            ItemId = "0x0E75",
-            ScriptId = "none",
-            LootTables = ["loot_test_chest_basic"],
-            Params = new(StringComparer.OrdinalIgnoreCase)
-            {
-                ["loot_refillable"] = new() { Type = ItemTemplateParamType.String, Value = "true" },
-                ["loot_refill_seconds"] = new() { Type = ItemTemplateParamType.String, Value = "300" }
-            }
-        };
-        IItemService service = new ItemService(
-            persistence,
-            new NetworkServiceTestGameEventBusService(),
-            itemFactory
-        );
-        var containerId = persistence.UnitOfWork.AllocateNextItemId();
-        var itemId = persistence.UnitOfWork.AllocateNextItemId();
-        var container = new UOItemEntity
-        {
-            Id = containerId,
-            ItemId = 0x0E75,
-            MapId = 1
-        };
-        container.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "loot_test_chest");
-        var containedItem = new UOItemEntity
-        {
-            Id = itemId,
-            ItemId = 0x0EED,
-            MapId = 1
-        };
-        container.AddItem(containedItem, Point2D.Zero);
-        await persistence.UnitOfWork.Items.UpsertAsync(container);
-        await persistence.UnitOfWork.Items.UpsertAsync(containedItem);
-        var before = DateTime.UtcNow;
-
-        var moved = await service.MoveItemToWorldAsync(itemId, new Point3D(10, 20, 0), 1);
-
-        var reloadedContainer = await persistence.UnitOfWork.Items.GetByIdAsync(containerId);
-        var after = DateTime.UtcNow;
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(moved, Is.True);
-                Assert.That(reloadedContainer, Is.Not.Null);
-                Assert.That(reloadedContainer!.ContainedItemIds, Is.Empty);
-                Assert.That(
-                    reloadedContainer.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyRaw),
-                    Is.True
-                );
-                Assert.That(
-                    DateTime.TryParse(
-                        refillReadyRaw,
-                        CultureInfo.InvariantCulture,
-                        DateTimeStyles.RoundtripKind,
-                        out var refillReadyAtUtc
-                    ),
-                    Is.True
-                );
-                Assert.That(refillReadyAtUtc, Is.GreaterThanOrEqualTo(before.AddSeconds(300)));
-                Assert.That(refillReadyAtUtc, Is.LessThanOrEqualTo(after.AddSeconds(301)));
-            }
-        );
-    }
-
-    [Test]
     public async Task EquipItemAsync_ShouldSetItemEquipmentAndMobileLayer()
     {
         using var temp = new TempDirectory();
@@ -422,6 +344,336 @@ public class ItemServiceTests
     }
 
     [Test]
+    public async Task EquipItemAsync_WhenDexterityIsTooLow_ShouldReturnFalse()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["leather_arms"] = new()
+        {
+            Id = "leather_arms",
+            Layer = ItemLayerType.Arms
+        };
+
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50, Dexterity = 10 }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
+
+        var item = new UOItemEntity
+        {
+            Id = itemId,
+            ItemId = 0x13CD,
+            ParentContainerId = containerId,
+            CombatStats = new()
+            {
+                MinDexterity = 20
+            }
+        };
+        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "leather_arms");
+        await persistence.UnitOfWork.Items.UpsertAsync(item);
+
+        var equipped = await service.EquipItemAsync(itemId, mobileId, ItemLayerType.Arms);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(equipped, Is.False);
+                Assert.That(gameEventBus.Events.OfType<ItemEquippedEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task EquipItemAsync_WhenEquippingOneHandedWeapon_ShouldUnequipBlockingTwoHandedWeapon()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["dagger"] = new()
+        {
+            Id = "dagger",
+            Layer = ItemLayerType.OneHanded,
+            WeaponSkill = UOSkillName.Fencing
+        };
+
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var equippedBowId = persistence.UnitOfWork.AllocateNextItemId();
+        var daggerId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mobileId,
+                Name = "equip-target",
+                MapId = 3,
+                Strength = 80,
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.TwoHanded] = equippedBowId
+                }
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = equippedBowId,
+                ItemId = 0x13B2,
+                EquippedMobileId = mobileId,
+                EquippedLayer = ItemLayerType.TwoHanded,
+                MapId = 3,
+                WeaponSkill = UOSkillName.Archery,
+                CombatStats = new() { DamageMin = 9, DamageMax = 41, RangeMin = 1, RangeMax = 10 }
+            }
+        );
+        var dagger = new UOItemEntity
+        {
+            Id = daggerId,
+            ItemId = 0x0F52,
+            ParentContainerId = containerId,
+            CombatStats = new()
+            {
+                MinStrength = 10,
+                DamageMin = 10,
+                DamageMax = 11
+            },
+            WeaponSkill = UOSkillName.Fencing
+        };
+        dagger.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "dagger");
+        await persistence.UnitOfWork.Items.UpsertAsync(dagger);
+
+        var equipped = await service.EquipItemAsync(daggerId, mobileId, ItemLayerType.OneHanded);
+        var reloadedDagger = await persistence.UnitOfWork.Items.GetByIdAsync(daggerId);
+        var reloadedBow = await persistence.UnitOfWork.Items.GetByIdAsync(equippedBowId);
+        var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(equipped, Is.True);
+                Assert.That(reloadedDagger!.EquippedLayer, Is.EqualTo(ItemLayerType.OneHanded));
+                Assert.That(reloadedBow!.EquippedMobileId, Is.EqualTo(Serial.Zero));
+                Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.TwoHanded), Is.False);
+                Assert.That(reloadedMobile.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo(daggerId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task EquipItemAsync_WhenEquippingOneHandedWeaponWithShieldEquipped_ShouldPreserveShield()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["dagger"] = new()
+        {
+            Id = "dagger",
+            Layer = ItemLayerType.OneHanded,
+            WeaponSkill = UOSkillName.Fencing
+        };
+
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var shieldId = persistence.UnitOfWork.AllocateNextItemId();
+        var daggerId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mobileId,
+                Name = "equip-target",
+                MapId = 3,
+                Strength = 80,
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.TwoHanded] = shieldId
+                }
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = shieldId,
+                ItemId = 0x1B73,
+                EquippedMobileId = mobileId,
+                EquippedLayer = ItemLayerType.TwoHanded,
+                MapId = 3,
+                CombatStats = new() { Defense = 10, MinStrength = 20 }
+            }
+        );
+        var dagger = new UOItemEntity
+        {
+            Id = daggerId,
+            ItemId = 0x0F52,
+            ParentContainerId = containerId,
+            CombatStats = new()
+            {
+                MinStrength = 10,
+                DamageMin = 10,
+                DamageMax = 11
+            },
+            WeaponSkill = UOSkillName.Fencing
+        };
+        dagger.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "dagger");
+        await persistence.UnitOfWork.Items.UpsertAsync(dagger);
+
+        var equipped = await service.EquipItemAsync(daggerId, mobileId, ItemLayerType.OneHanded);
+        var reloadedShield = await persistence.UnitOfWork.Items.GetByIdAsync(shieldId);
+        var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(equipped, Is.True);
+                Assert.That(reloadedShield!.EquippedMobileId, Is.EqualTo(mobileId));
+                Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.TwoHanded], Is.EqualTo(shieldId));
+                Assert.That(reloadedMobile.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo(daggerId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task EquipItemAsync_WhenEquippingTwoHandedWeapon_ShouldUnequipOneHandedWeapon()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["bow"] = new()
+        {
+            Id = "bow",
+            Layer = ItemLayerType.TwoHanded,
+            WeaponSkill = UOSkillName.Archery
+        };
+
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var equippedOneHandedId = persistence.UnitOfWork.AllocateNextItemId();
+        var bowId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = mobileId,
+                Name = "equip-target",
+                MapId = 3,
+                Strength = 80,
+                EquippedItemIds = new()
+                {
+                    [ItemLayerType.OneHanded] = equippedOneHandedId
+                }
+            }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = equippedOneHandedId,
+                ItemId = 0x0F52,
+                EquippedMobileId = mobileId,
+                EquippedLayer = ItemLayerType.OneHanded,
+                MapId = 3,
+                WeaponSkill = UOSkillName.Fencing,
+                CombatStats = new() { DamageMin = 10, DamageMax = 11 }
+            }
+        );
+        var bow = new UOItemEntity
+        {
+            Id = bowId,
+            ItemId = 0x13B2,
+            ParentContainerId = containerId,
+            CombatStats = new()
+            {
+                MinStrength = 30,
+                DamageMin = 9,
+                DamageMax = 41,
+                RangeMin = 1,
+                RangeMax = 10
+            },
+            WeaponSkill = UOSkillName.Archery
+        };
+        bow.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "bow");
+        await persistence.UnitOfWork.Items.UpsertAsync(bow);
+
+        var equipped = await service.EquipItemAsync(bowId, mobileId, ItemLayerType.TwoHanded);
+        var reloadedBow = await persistence.UnitOfWork.Items.GetByIdAsync(bowId);
+        var reloadedOneHanded = await persistence.UnitOfWork.Items.GetByIdAsync(equippedOneHandedId);
+        var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(equipped, Is.True);
+                Assert.That(reloadedBow!.EquippedLayer, Is.EqualTo(ItemLayerType.TwoHanded));
+                Assert.That(reloadedOneHanded!.EquippedMobileId, Is.EqualTo(Serial.Zero));
+                Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OneHanded), Is.False);
+                Assert.That(reloadedMobile.EquippedItemIds[ItemLayerType.TwoHanded], Is.EqualTo(bowId));
+            }
+        );
+    }
+
+    [Test]
+    public async Task EquipItemAsync_WhenIntelligenceIsTooLow_ShouldReturnFalse()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["circlet"] = new()
+        {
+            Id = "circlet",
+            Layer = ItemLayerType.Helm
+        };
+
+        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
+        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50, Intelligence = 5 }
+        );
+        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
+
+        var item = new UOItemEntity
+        {
+            Id = itemId,
+            ItemId = 0x2B6E,
+            ParentContainerId = containerId,
+            CombatStats = new()
+            {
+                MinIntelligence = 10
+            }
+        };
+        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "circlet");
+        await persistence.UnitOfWork.Items.UpsertAsync(item);
+
+        var equipped = await service.EquipItemAsync(itemId, mobileId, ItemLayerType.Helm);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(equipped, Is.False);
+                Assert.That(gameEventBus.Events.OfType<ItemEquippedEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
     public async Task EquipItemAsync_WhenRequestedLayerDiffersFromTemplate_ShouldReturnFalseWithoutChangingState()
     {
         using var temp = new TempDirectory();
@@ -439,7 +691,9 @@ public class ItemServiceTests
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50 });
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50 }
+        );
         await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
 
         var item = new UOItemEntity
@@ -448,7 +702,7 @@ public class ItemServiceTests
             ItemId = 0x1517,
             ParentContainerId = containerId,
             ContainerPosition = new(3, 3),
-            CombatStats = new ItemCombatStats()
+            CombatStats = new()
         };
         item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "shirt");
         await persistence.UnitOfWork.Items.UpsertAsync(item);
@@ -522,7 +776,7 @@ public class ItemServiceTests
             ItemId = 0x1415,
             ParentContainerId = containerId,
             ContainerPosition = new(4, 4),
-            CombatStats = new ItemCombatStats
+            CombatStats = new()
             {
                 MinStrength = 95
             }
@@ -553,96 +807,6 @@ public class ItemServiceTests
     }
 
     [Test]
-    public async Task EquipItemAsync_WhenDexterityIsTooLow_ShouldReturnFalse()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["leather_arms"] = new()
-        {
-            Id = "leather_arms",
-            Layer = ItemLayerType.Arms
-        };
-
-        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
-        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
-        var containerId = persistence.UnitOfWork.AllocateNextItemId();
-        var itemId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50, Dexterity = 10 });
-        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
-
-        var item = new UOItemEntity
-        {
-            Id = itemId,
-            ItemId = 0x13CD,
-            ParentContainerId = containerId,
-            CombatStats = new ItemCombatStats
-            {
-                MinDexterity = 20
-            }
-        };
-        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "leather_arms");
-        await persistence.UnitOfWork.Items.UpsertAsync(item);
-
-        var equipped = await service.EquipItemAsync(itemId, mobileId, ItemLayerType.Arms);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(equipped, Is.False);
-                Assert.That(gameEventBus.Events.OfType<ItemEquippedEvent>(), Is.Empty);
-            }
-        );
-    }
-
-    [Test]
-    public async Task EquipItemAsync_WhenIntelligenceIsTooLow_ShouldReturnFalse()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["circlet"] = new()
-        {
-            Id = "circlet",
-            Layer = ItemLayerType.Helm
-        };
-
-        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
-        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
-        var containerId = persistence.UnitOfWork.AllocateNextItemId();
-        var itemId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50, Intelligence = 5 });
-        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
-
-        var item = new UOItemEntity
-        {
-            Id = itemId,
-            ItemId = 0x2B6E,
-            ParentContainerId = containerId,
-            CombatStats = new ItemCombatStats
-            {
-                MinIntelligence = 10
-            }
-        };
-        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "circlet");
-        await persistence.UnitOfWork.Items.UpsertAsync(item);
-
-        var equipped = await service.EquipItemAsync(itemId, mobileId, ItemLayerType.Helm);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(equipped, Is.False);
-                Assert.That(gameEventBus.Events.OfType<ItemEquippedEvent>(), Is.Empty);
-            }
-        );
-    }
-
-    [Test]
     public async Task EquipItemAsync_WhenTemplateLayerAndRequirementsMatch_ShouldEquipItem()
     {
         using var temp = new TempDirectory();
@@ -665,7 +829,9 @@ public class ItemServiceTests
         var containerId = persistence.UnitOfWork.AllocateNextItemId();
         var itemId = persistence.UnitOfWork.AllocateNextItemId();
 
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50, Dexterity = 25, Intelligence = 25 });
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new() { Id = mobileId, Name = "equip-target", MapId = 3, Strength = 50, Dexterity = 25, Intelligence = 25 }
+        );
         await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
 
         var item = new UOItemEntity
@@ -673,7 +839,7 @@ public class ItemServiceTests
             Id = itemId,
             ItemId = 0x140C,
             ParentContainerId = containerId,
-            CombatStats = new ItemCombatStats
+            CombatStats = new()
             {
                 MinStrength = 40,
                 MinDexterity = 10,
@@ -696,242 +862,6 @@ public class ItemServiceTests
                 Assert.That(reloadedItem.EquippedLayer, Is.EqualTo(ItemLayerType.Helm));
                 Assert.That(reloadedMobile, Is.Not.Null);
                 Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.Helm], Is.EqualTo(itemId));
-            }
-        );
-    }
-
-    [Test]
-    public async Task EquipItemAsync_WhenEquippingTwoHandedWeapon_ShouldUnequipOneHandedWeapon()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["bow"] = new()
-        {
-            Id = "bow",
-            Layer = ItemLayerType.TwoHanded,
-            WeaponSkill = UOSkillName.Archery
-        };
-
-        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
-        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
-        var containerId = persistence.UnitOfWork.AllocateNextItemId();
-        var equippedOneHandedId = persistence.UnitOfWork.AllocateNextItemId();
-        var bowId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(
-            new()
-            {
-                Id = mobileId,
-                Name = "equip-target",
-                MapId = 3,
-                Strength = 80,
-                EquippedItemIds = new()
-                {
-                    [ItemLayerType.OneHanded] = equippedOneHandedId
-                }
-            }
-        );
-        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = equippedOneHandedId,
-                ItemId = 0x0F52,
-                EquippedMobileId = mobileId,
-                EquippedLayer = ItemLayerType.OneHanded,
-                MapId = 3,
-                WeaponSkill = UOSkillName.Fencing,
-                CombatStats = new ItemCombatStats { DamageMin = 10, DamageMax = 11 }
-            }
-        );
-        var bow = new UOItemEntity
-        {
-            Id = bowId,
-            ItemId = 0x13B2,
-            ParentContainerId = containerId,
-            CombatStats = new ItemCombatStats
-            {
-                MinStrength = 30,
-                DamageMin = 9,
-                DamageMax = 41,
-                RangeMin = 1,
-                RangeMax = 10
-            },
-            WeaponSkill = UOSkillName.Archery
-        };
-        bow.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "bow");
-        await persistence.UnitOfWork.Items.UpsertAsync(bow);
-
-        var equipped = await service.EquipItemAsync(bowId, mobileId, ItemLayerType.TwoHanded);
-        var reloadedBow = await persistence.UnitOfWork.Items.GetByIdAsync(bowId);
-        var reloadedOneHanded = await persistence.UnitOfWork.Items.GetByIdAsync(equippedOneHandedId);
-        var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(equipped, Is.True);
-                Assert.That(reloadedBow!.EquippedLayer, Is.EqualTo(ItemLayerType.TwoHanded));
-                Assert.That(reloadedOneHanded!.EquippedMobileId, Is.EqualTo(Serial.Zero));
-                Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.OneHanded), Is.False);
-                Assert.That(reloadedMobile.EquippedItemIds[ItemLayerType.TwoHanded], Is.EqualTo(bowId));
-            }
-        );
-    }
-
-    [Test]
-    public async Task EquipItemAsync_WhenEquippingOneHandedWeapon_ShouldUnequipBlockingTwoHandedWeapon()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["dagger"] = new()
-        {
-            Id = "dagger",
-            Layer = ItemLayerType.OneHanded,
-            WeaponSkill = UOSkillName.Fencing
-        };
-
-        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
-        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
-        var containerId = persistence.UnitOfWork.AllocateNextItemId();
-        var equippedBowId = persistence.UnitOfWork.AllocateNextItemId();
-        var daggerId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(
-            new()
-            {
-                Id = mobileId,
-                Name = "equip-target",
-                MapId = 3,
-                Strength = 80,
-                EquippedItemIds = new()
-                {
-                    [ItemLayerType.TwoHanded] = equippedBowId
-                }
-            }
-        );
-        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = equippedBowId,
-                ItemId = 0x13B2,
-                EquippedMobileId = mobileId,
-                EquippedLayer = ItemLayerType.TwoHanded,
-                MapId = 3,
-                WeaponSkill = UOSkillName.Archery,
-                CombatStats = new ItemCombatStats { DamageMin = 9, DamageMax = 41, RangeMin = 1, RangeMax = 10 }
-            }
-        );
-        var dagger = new UOItemEntity
-        {
-            Id = daggerId,
-            ItemId = 0x0F52,
-            ParentContainerId = containerId,
-            CombatStats = new ItemCombatStats
-            {
-                MinStrength = 10,
-                DamageMin = 10,
-                DamageMax = 11
-            },
-            WeaponSkill = UOSkillName.Fencing
-        };
-        dagger.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "dagger");
-        await persistence.UnitOfWork.Items.UpsertAsync(dagger);
-
-        var equipped = await service.EquipItemAsync(daggerId, mobileId, ItemLayerType.OneHanded);
-        var reloadedDagger = await persistence.UnitOfWork.Items.GetByIdAsync(daggerId);
-        var reloadedBow = await persistence.UnitOfWork.Items.GetByIdAsync(equippedBowId);
-        var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(equipped, Is.True);
-                Assert.That(reloadedDagger!.EquippedLayer, Is.EqualTo(ItemLayerType.OneHanded));
-                Assert.That(reloadedBow!.EquippedMobileId, Is.EqualTo(Serial.Zero));
-                Assert.That(reloadedMobile!.EquippedItemIds.ContainsKey(ItemLayerType.TwoHanded), Is.False);
-                Assert.That(reloadedMobile.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo(daggerId));
-            }
-        );
-    }
-
-    [Test]
-    public async Task EquipItemAsync_WhenEquippingOneHandedWeaponWithShieldEquipped_ShouldPreserveShield()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var gameEventBus = new NetworkServiceTestGameEventBusService();
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["dagger"] = new()
-        {
-            Id = "dagger",
-            Layer = ItemLayerType.OneHanded,
-            WeaponSkill = UOSkillName.Fencing
-        };
-
-        IItemService service = new ItemService(persistence, gameEventBus, itemFactory);
-        var mobileId = persistence.UnitOfWork.AllocateNextMobileId();
-        var containerId = persistence.UnitOfWork.AllocateNextItemId();
-        var shieldId = persistence.UnitOfWork.AllocateNextItemId();
-        var daggerId = persistence.UnitOfWork.AllocateNextItemId();
-
-        await persistence.UnitOfWork.Mobiles.UpsertAsync(
-            new()
-            {
-                Id = mobileId,
-                Name = "equip-target",
-                MapId = 3,
-                Strength = 80,
-                EquippedItemIds = new()
-                {
-                    [ItemLayerType.TwoHanded] = shieldId
-                }
-            }
-        );
-        await persistence.UnitOfWork.Items.UpsertAsync(new() { Id = containerId, ItemId = 0x0E75 });
-        await persistence.UnitOfWork.Items.UpsertAsync(
-            new()
-            {
-                Id = shieldId,
-                ItemId = 0x1B73,
-                EquippedMobileId = mobileId,
-                EquippedLayer = ItemLayerType.TwoHanded,
-                MapId = 3,
-                CombatStats = new ItemCombatStats { Defense = 10, MinStrength = 20 }
-            }
-        );
-        var dagger = new UOItemEntity
-        {
-            Id = daggerId,
-            ItemId = 0x0F52,
-            ParentContainerId = containerId,
-            CombatStats = new ItemCombatStats
-            {
-                MinStrength = 10,
-                DamageMin = 10,
-                DamageMax = 11
-            },
-            WeaponSkill = UOSkillName.Fencing
-        };
-        dagger.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "dagger");
-        await persistence.UnitOfWork.Items.UpsertAsync(dagger);
-
-        var equipped = await service.EquipItemAsync(daggerId, mobileId, ItemLayerType.OneHanded);
-        var reloadedShield = await persistence.UnitOfWork.Items.GetByIdAsync(shieldId);
-        var reloadedMobile = await persistence.UnitOfWork.Mobiles.GetByIdAsync(mobileId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(equipped, Is.True);
-                Assert.That(reloadedShield!.EquippedMobileId, Is.EqualTo(mobileId));
-                Assert.That(reloadedMobile!.EquippedItemIds[ItemLayerType.TwoHanded], Is.EqualTo(shieldId));
-                Assert.That(reloadedMobile.EquippedItemIds[ItemLayerType.OneHanded], Is.EqualTo(daggerId));
             }
         );
     }
@@ -1028,53 +958,6 @@ public class ItemServiceTests
     }
 
     [Test]
-    public async Task GetItemAsync_WhenPersistedRangedMetadataIsMissing_ShouldBackfillItFromTemplate()
-    {
-        using var temp = new TempDirectory();
-        var persistence = await CreatePersistenceServiceAsync(temp.Path);
-        var itemFactory = new ItemServiceTestsItemFactoryService();
-        itemFactory.Templates["bow"] = new()
-        {
-            Id = "bow",
-            ItemId = "0x13B2",
-            GoldValue = GoldValueSpec.FromValue(0),
-            WeaponSkill = UOSkillName.Archery,
-            BaseRange = 1,
-            MaxRange = 10,
-            Ammo = 0x0F3F,
-            AmmoFx = 0x1BFE
-        };
-        IItemService service = new ItemService(
-            persistence,
-            new NetworkServiceTestGameEventBusService(),
-            itemFactory
-        );
-        var itemId = persistence.UnitOfWork.AllocateNextItemId();
-        var item = new UOItemEntity
-        {
-            Id = itemId,
-            ItemId = 0x13B2
-        };
-        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "bow");
-        await persistence.UnitOfWork.Items.UpsertAsync(item);
-
-        var loaded = await service.GetItemAsync(itemId);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(loaded, Is.Not.Null);
-                Assert.That(loaded!.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
-                Assert.That(loaded.AmmoItemId, Is.EqualTo(0x0F3F));
-                Assert.That(loaded.AmmoEffectId, Is.EqualTo(0x1BFE));
-                Assert.That(loaded.CombatStats, Is.Not.Null);
-                Assert.That(loaded.CombatStats!.RangeMin, Is.EqualTo(1));
-                Assert.That(loaded.CombatStats.RangeMax, Is.EqualTo(10));
-            }
-        );
-    }
-
-    [Test]
     public async Task GetItemAsync_ShouldHydrateNestedContainersRecursively()
     {
         using var temp = new TempDirectory();
@@ -1126,6 +1009,53 @@ public class ItemServiceTests
                 Assert.That(nested.Items[0].Id, Is.EqualTo(nestedItemId));
                 Assert.That(nested.Items[0].Location, Is.EqualTo(new Point3D(8, 9, 0)));
                 Assert.That(nested.ContainedItemReferences.ContainsKey(nestedItemId), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GetItemAsync_WhenPersistedRangedMetadataIsMissing_ShouldBackfillItFromTemplate()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["bow"] = new()
+        {
+            Id = "bow",
+            ItemId = "0x13B2",
+            GoldValue = GoldValueSpec.FromValue(0),
+            WeaponSkill = UOSkillName.Archery,
+            BaseRange = 1,
+            MaxRange = 10,
+            Ammo = 0x0F3F,
+            AmmoFx = 0x1BFE
+        };
+        IItemService service = new ItemService(
+            persistence,
+            new NetworkServiceTestGameEventBusService(),
+            itemFactory
+        );
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+        var item = new UOItemEntity
+        {
+            Id = itemId,
+            ItemId = 0x13B2
+        };
+        item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "bow");
+        await persistence.UnitOfWork.Items.UpsertAsync(item);
+
+        var loaded = await service.GetItemAsync(itemId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(loaded, Is.Not.Null);
+                Assert.That(loaded!.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
+                Assert.That(loaded.AmmoItemId, Is.EqualTo(0x0F3F));
+                Assert.That(loaded.AmmoEffectId, Is.EqualTo(0x1BFE));
+                Assert.That(loaded.CombatStats, Is.Not.Null);
+                Assert.That(loaded.CombatStats!.RangeMin, Is.EqualTo(1));
+                Assert.That(loaded.CombatStats.RangeMax, Is.EqualTo(10));
             }
         );
     }
@@ -1368,6 +1298,82 @@ public class ItemServiceTests
                 Assert.That(movedEvent.OldContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(movedEvent.NewContainerId, Is.EqualTo(Serial.Zero));
                 Assert.That(movedEvent.MapId, Is.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
+    public async Task MoveItemToWorldAsync_WhenRemovingLastItemFromRefillableLootContainer_ShouldSetRefillReadyAtUtc()
+    {
+        TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var itemFactory = new ItemServiceTestsItemFactoryService();
+        itemFactory.Templates["loot_test_chest"] = new()
+        {
+            Id = "loot_test_chest",
+            Description = "Refillable loot test chest",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x0E75",
+            ScriptId = "none",
+            LootTables = ["loot_test_chest_basic"],
+            Params = new(StringComparer.OrdinalIgnoreCase)
+            {
+                ["loot_refillable"] = new() { Type = ItemTemplateParamType.String, Value = "true" },
+                ["loot_refill_seconds"] = new() { Type = ItemTemplateParamType.String, Value = "300" }
+            }
+        };
+        IItemService service = new ItemService(
+            persistence,
+            new NetworkServiceTestGameEventBusService(),
+            itemFactory
+        );
+        var containerId = persistence.UnitOfWork.AllocateNextItemId();
+        var itemId = persistence.UnitOfWork.AllocateNextItemId();
+        var container = new UOItemEntity
+        {
+            Id = containerId,
+            ItemId = 0x0E75,
+            MapId = 1
+        };
+        container.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "loot_test_chest");
+        var containedItem = new UOItemEntity
+        {
+            Id = itemId,
+            ItemId = 0x0EED,
+            MapId = 1
+        };
+        container.AddItem(containedItem, Point2D.Zero);
+        await persistence.UnitOfWork.Items.UpsertAsync(container);
+        await persistence.UnitOfWork.Items.UpsertAsync(containedItem);
+        var before = DateTime.UtcNow;
+
+        var moved = await service.MoveItemToWorldAsync(itemId, new(10, 20, 0), 1);
+
+        var reloadedContainer = await persistence.UnitOfWork.Items.GetByIdAsync(containerId);
+        var after = DateTime.UtcNow;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moved, Is.True);
+                Assert.That(reloadedContainer, Is.Not.Null);
+                Assert.That(reloadedContainer!.ContainedItemIds, Is.Empty);
+                Assert.That(
+                    reloadedContainer.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyRaw),
+                    Is.True
+                );
+                Assert.That(
+                    DateTime.TryParse(
+                        refillReadyRaw,
+                        CultureInfo.InvariantCulture,
+                        DateTimeStyles.RoundtripKind,
+                        out var refillReadyAtUtc
+                    ),
+                    Is.True
+                );
+                Assert.That(refillReadyAtUtc, Is.GreaterThanOrEqualTo(before.AddSeconds(300)));
+                Assert.That(refillReadyAtUtc, Is.LessThanOrEqualTo(after.AddSeconds(301)));
             }
         );
     }

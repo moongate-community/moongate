@@ -85,8 +85,8 @@ public sealed class CharacterPositionPersistenceService
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(persistedMobile, cancellationToken);
 
         var mountedMobileId = persistedMobile.MountedMobileId != Serial.Zero
-            ? persistedMobile.MountedMobileId
-            : session.Character.MountedMobileId;
+                                  ? persistedMobile.MountedMobileId
+                                  : session.Character.MountedMobileId;
 
         if (mountedMobileId != Serial.Zero)
         {

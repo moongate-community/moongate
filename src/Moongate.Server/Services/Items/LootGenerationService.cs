@@ -8,9 +8,9 @@ using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Loot;
+using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
 using Serilog;
 
@@ -71,13 +71,13 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         return await GenerateLootAsync(
-            container,
-            containerTemplate.LootTables,
-            LootGenerationMode.FirstOpen,
-            containerTemplate.Id,
-            refillDelay,
-            cancellationToken
-        );
+                   container,
+                   containerTemplate.LootTables,
+                   LootGenerationMode.FirstOpen,
+                   containerTemplate.Id,
+                   refillDelay,
+                   cancellationToken
+               );
     }
 
     public async Task<UOItemEntity> GenerateForContainerAsync(
@@ -97,13 +97,154 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         return await GenerateLootAsync(
-            container,
-            lootTableIds,
-            mode,
-            null,
-            null,
-            cancellationToken
-        );
+                   container,
+                   lootTableIds,
+                   mode,
+                   null,
+                   null,
+                   cancellationToken
+               );
+    }
+
+    private List<UOItemEntity> CreateItemsFromAdditiveLootTable(LootTemplateDefinition lootTable)
+    {
+        var items = new List<UOItemEntity>();
+
+        foreach (var entry in lootTable.Entries)
+        {
+            if (!ShouldGenerateAdditiveEntry(entry))
+            {
+                continue;
+            }
+
+            var amount = ResolveEntryAmount(entry);
+
+            if (amount <= 0)
+            {
+                continue;
+            }
+
+            items.AddRange(CreateItemsFromLootEntry(entry, amount));
+        }
+
+        return items;
+    }
+
+    private List<UOItemEntity> CreateItemsFromLootEntry(LootTemplateEntry entry, int amount)
+    {
+        if (amount <= 0)
+        {
+            return [];
+        }
+
+        var item = CreateLootItem(entry);
+
+        if (item is null)
+        {
+            return [];
+        }
+
+        if (amount == 1)
+        {
+            return [item];
+        }
+
+        if (item.IsStackable)
+        {
+            item.Amount = amount;
+
+            return [item];
+        }
+
+        var items = new List<UOItemEntity>(amount)
+        {
+            item
+        };
+
+        for (var i = 1; i < amount; i++)
+        {
+            var duplicate = CreateLootItem(entry);
+
+            if (duplicate is not null)
+            {
+                items.Add(duplicate);
+            }
+        }
+
+        return items;
+    }
+
+    private List<UOItemEntity> CreateItemsFromLootTable(LootTemplateDefinition lootTable)
+        => lootTable.Mode switch
+        {
+            LootTemplateMode.Additive => CreateItemsFromAdditiveLootTable(lootTable),
+            _                         => CreateItemsFromWeightedLootTable(lootTable)
+        };
+
+    private List<UOItemEntity> CreateItemsFromWeightedLootTable(LootTemplateDefinition lootTable)
+    {
+        var items = new List<UOItemEntity>();
+        var rolls = Math.Max(1, lootTable.Rolls);
+
+        for (var rollIndex = 0; rollIndex < rolls; rollIndex++)
+        {
+            var rolledEntry = RollEntry(lootTable);
+
+            if (rolledEntry is null)
+            {
+                continue;
+            }
+
+            items.AddRange(CreateItemsFromLootEntry(rolledEntry, rolledEntry.Amount));
+        }
+
+        return items;
+    }
+
+    private static ContainerLayout CreateLayout(UOItemEntity container)
+    {
+        var layout = new ContainerLayout(ContainerLayoutSystem.GetContainerSize(container));
+
+        foreach (var containedItem in container.Items)
+        {
+            layout.MarkSpaceOccupied(containedItem.ContainerPosition, ContainerLayoutSystem.GetItemSize(containedItem));
+        }
+
+        return layout;
+    }
+
+    private UOItemEntity? CreateLootItem(LootTemplateEntry entry)
+    {
+        if (!string.IsNullOrWhiteSpace(entry.ItemTemplateId))
+        {
+            return _itemFactoryService.CreateItemFromTemplate(entry.ItemTemplateId.Trim());
+        }
+
+        if (!string.IsNullOrWhiteSpace(entry.ItemTag))
+        {
+            var taggedTemplate = ResolveTemplateByTag(entry.ItemTag.Trim());
+
+            if (taggedTemplate is not null)
+            {
+                return _itemFactoryService.CreateItemFromTemplate(taggedTemplate.Id);
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(entry.ItemId))
+        {
+            return null;
+        }
+
+        var rawItem = _itemFactoryService.CreateItemFromTemplate("static");
+        rawItem.ItemId = ParseItemId(entry.ItemId);
+        rawItem.GumpId = null;
+
+        var tile = TileData.ItemTable[rawItem.ItemId];
+        rawItem.Name = tile.Name;
+        rawItem.Weight = tile.Weight;
+        rawItem.IsStackable = tile[UOTileFlag.Generic];
+
+        return rawItem;
     }
 
     private async Task<UOItemEntity> GenerateLootAsync(
@@ -173,162 +314,21 @@ public sealed class LootGenerationService : ILootGenerationService
         return refreshedContainer;
     }
 
-    private static ContainerLayout CreateLayout(UOItemEntity container)
+    private static bool IsRefillDue(UOItemEntity container, TimeSpan? refillDelay)
     {
-        var layout = new ContainerLayout(ContainerLayoutSystem.GetContainerSize(container));
-
-        foreach (var containedItem in container.Items)
+        if (refillDelay is null || container.Items.Count > 0)
         {
-            layout.MarkSpaceOccupied(containedItem.ContainerPosition, ContainerLayoutSystem.GetItemSize(containedItem));
+            return false;
         }
 
-        return layout;
-    }
-
-    private List<UOItemEntity> CreateItemsFromLootEntry(LootTemplateEntry entry, int amount)
-    {
-        if (amount <= 0)
-        {
-            return [];
-        }
-
-        var item = CreateLootItem(entry);
-
-        if (item is null)
-        {
-            return [];
-        }
-
-        if (amount == 1)
-        {
-            return [item];
-        }
-
-        if (item.IsStackable)
-        {
-            item.Amount = amount;
-
-            return [item];
-        }
-
-        var items = new List<UOItemEntity>(amount)
-        {
-            item
-        };
-
-        for (var i = 1; i < amount; i++)
-        {
-            var duplicate = CreateLootItem(entry);
-
-            if (duplicate is not null)
-            {
-                items.Add(duplicate);
-            }
-        }
-
-        return items;
-    }
-
-    private List<UOItemEntity> CreateItemsFromAdditiveLootTable(LootTemplateDefinition lootTable)
-    {
-        var items = new List<UOItemEntity>();
-
-        foreach (var entry in lootTable.Entries)
-        {
-            if (!ShouldGenerateAdditiveEntry(entry))
-            {
-                continue;
-            }
-
-            var amount = ResolveEntryAmount(entry);
-
-            if (amount <= 0)
-            {
-                continue;
-            }
-
-            items.AddRange(CreateItemsFromLootEntry(entry, amount));
-        }
-
-        return items;
-    }
-
-    private List<UOItemEntity> CreateItemsFromLootTable(LootTemplateDefinition lootTable)
-    {
-        return lootTable.Mode switch
-        {
-            LootTemplateMode.Additive => CreateItemsFromAdditiveLootTable(lootTable),
-            _ => CreateItemsFromWeightedLootTable(lootTable)
-        };
-    }
-
-    private List<UOItemEntity> CreateItemsFromWeightedLootTable(LootTemplateDefinition lootTable)
-    {
-        var items = new List<UOItemEntity>();
-        var rolls = Math.Max(1, lootTable.Rolls);
-
-        for (var rollIndex = 0; rollIndex < rolls; rollIndex++)
-        {
-            var rolledEntry = RollEntry(lootTable);
-
-            if (rolledEntry is null)
-            {
-                continue;
-            }
-
-            items.AddRange(CreateItemsFromLootEntry(rolledEntry, rolledEntry.Amount));
-        }
-
-        return items;
-    }
-
-    private UOItemEntity? CreateLootItem(LootTemplateEntry entry)
-    {
-        if (!string.IsNullOrWhiteSpace(entry.ItemTemplateId))
-        {
-            return _itemFactoryService.CreateItemFromTemplate(entry.ItemTemplateId.Trim());
-        }
-
-        if (!string.IsNullOrWhiteSpace(entry.ItemTag))
-        {
-            var taggedTemplate = ResolveTemplateByTag(entry.ItemTag.Trim());
-
-            if (taggedTemplate is not null)
-            {
-                return _itemFactoryService.CreateItemFromTemplate(taggedTemplate.Id);
-            }
-        }
-
-        if (string.IsNullOrWhiteSpace(entry.ItemId))
-        {
-            return null;
-        }
-
-        var rawItem = _itemFactoryService.CreateItemFromTemplate("static");
-        rawItem.ItemId = ParseItemId(entry.ItemId);
-        rawItem.GumpId = null;
-
-        var tile = TileData.ItemTable[rawItem.ItemId];
-        rawItem.Name = tile.Name;
-        rawItem.Weight = tile.Weight;
-        rawItem.IsStackable = tile[UOTileFlag.Generic];
-
-        return rawItem;
-    }
-
-    private ItemTemplateDefinition? ResolveTemplateByTag(string itemTag)
-    {
-        var taggedTemplates = _itemTemplateService.GetAll()
-            .Where(template => template.Tags.Any(tag => string.Equals(tag, itemTag, StringComparison.OrdinalIgnoreCase)))
-            .OrderBy(template => template.Id, StringComparer.OrdinalIgnoreCase)
-            .ToList();
-
-        if (taggedTemplates.Count == 0)
-        {
-            return null;
-        }
-
-        return taggedTemplates[Random.Shared.Next(taggedTemplates.Count)];
+        return container.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyAtRaw) &&
+               DateTime.TryParse(
+                   refillReadyAtRaw,
+                   CultureInfo.InvariantCulture,
+                   DateTimeStyles.RoundtripKind,
+                   out var refillReadyAtUtc
+               ) &&
+               refillReadyAtUtc <= DateTime.UtcNow;
     }
 
     private static int ParseItemId(string itemId)
@@ -343,14 +343,54 @@ public sealed class LootGenerationService : ILootGenerationService
         return int.Parse(trimmed, CultureInfo.InvariantCulture);
     }
 
+    private static int ResolveEntryAmount(LootTemplateEntry entry)
+    {
+        if (entry.AmountMin.HasValue && entry.AmountMax.HasValue)
+        {
+            if (entry.AmountMin.Value == entry.AmountMax.Value)
+            {
+                return entry.AmountMin.Value;
+            }
+
+            return Random.Shared.Next(entry.AmountMin.Value, entry.AmountMax.Value + 1);
+        }
+
+        return entry.Amount;
+    }
+
+    private ItemTemplateDefinition? ResolveTemplateByTag(string itemTag)
+    {
+        var taggedTemplates = _itemTemplateService.GetAll()
+                                                  .Where(
+                                                      template => template.Tags.Any(
+                                                          tag => string.Equals(
+                                                              tag,
+                                                              itemTag,
+                                                              StringComparison.OrdinalIgnoreCase
+                                                          )
+                                                      )
+                                                  )
+                                                  .OrderBy(template => template.Id, StringComparer.OrdinalIgnoreCase)
+                                                  .ToList();
+
+        if (taggedTemplates.Count == 0)
+        {
+            return null;
+        }
+
+        return taggedTemplates[Random.Shared.Next(taggedTemplates.Count)];
+    }
+
     private static LootTemplateEntry? RollEntry(LootTemplateDefinition definition)
     {
         var eligibleEntries = definition.Entries
-                                        .Where(static entry =>
-                                            entry.Weight > 0 &&
-                                            (!string.IsNullOrWhiteSpace(entry.ItemTemplateId) ||
-                                             !string.IsNullOrWhiteSpace(entry.ItemTag) ||
-                                             !string.IsNullOrWhiteSpace(entry.ItemId)))
+                                        .Where(
+                                            static entry =>
+                                                entry.Weight > 0 &&
+                                                (!string.IsNullOrWhiteSpace(entry.ItemTemplateId) ||
+                                                 !string.IsNullOrWhiteSpace(entry.ItemTag) ||
+                                                 !string.IsNullOrWhiteSpace(entry.ItemId))
+                                        )
                                         .ToList();
         var totalWeight = definition.NoDropWeight + eligibleEntries.Sum(static entry => entry.Weight);
 
@@ -379,21 +419,6 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         return null;
-    }
-
-    private static int ResolveEntryAmount(LootTemplateEntry entry)
-    {
-        if (entry.AmountMin.HasValue && entry.AmountMax.HasValue)
-        {
-            if (entry.AmountMin.Value == entry.AmountMax.Value)
-            {
-                return entry.AmountMin.Value;
-            }
-
-            return Random.Shared.Next(entry.AmountMin.Value, entry.AmountMax.Value + 1);
-        }
-
-        return entry.Amount;
     }
 
     private static bool ShouldGenerateAdditiveEntry(LootTemplateEntry entry)
@@ -429,22 +454,5 @@ public sealed class LootGenerationService : ILootGenerationService
         }
 
         return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
-    }
-
-    private static bool IsRefillDue(UOItemEntity container, TimeSpan? refillDelay)
-    {
-        if (refillDelay is null || container.Items.Count > 0)
-        {
-            return false;
-        }
-
-        return container.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyAtRaw) &&
-               DateTime.TryParse(
-                   refillReadyAtRaw,
-                   CultureInfo.InvariantCulture,
-                   DateTimeStyles.RoundtripKind,
-                   out var refillReadyAtUtc
-               ) &&
-               refillReadyAtUtc <= DateTime.UtcNow;
     }
 }

@@ -565,53 +565,6 @@ public class ItemHandlerTests
     }
 
     [Test]
-    public async Task HandleAsync_ItemAddedInSectorEvent_WhenSessionIsGameMaster_ShouldSendMovableFlag()
-    {
-        var eventBus = new NetworkServiceTestGameEventBusService();
-        var itemService = new ItemHandlerTestItemService
-        {
-            ItemsById =
-            {
-                [(Serial)0x40000099u] = new()
-                {
-                    Id = (Serial)0x40000099u,
-                    ItemId = 0x0EED,
-                    MapId = 0,
-                    Location = new(100, 100, 0)
-                }
-            }
-        };
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var sessionService = new FakeGameNetworkSessionService();
-        var spatialService = new ItemHandlerTestSpatialWorldService();
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var gmSession = new GameSession(new(client))
-        {
-            AccountType = AccountType.GameMaster
-        };
-        spatialService.SessionsInRange.Add(gmSession);
-
-        var handler = new ItemHandler(
-            queue,
-            itemService,
-            eventBus,
-            sessionService,
-            new PlayerDragService(),
-            spatialService,
-            new ItemHandlerTestMobileService()
-        );
-
-        await handler.HandleAsync(
-            new ItemAddedInSectorEvent((Serial)0x40000099u, 0, 0, 0),
-            CancellationToken.None
-        );
-
-        Assert.That(queue.TryDequeue(out var outbound), Is.True);
-        Assert.That(outbound.Packet, Is.TypeOf<ObjectInformationPacket>());
-        Assert.That(((ObjectInformationPacket)outbound.Packet).Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
-    }
-
-    [Test]
     public async Task HandleAsync_ItemAddedInSectorEvent_WhenItemIsCorpse_ShouldSendCorpseContentsAndClothing()
     {
         var eventBus = new NetworkServiceTestGameEventBusService();
@@ -681,6 +634,53 @@ public class ItemHandlerTests
                 Assert.That(packetTypes, Does.Contain(typeof(CorpseClothingPacket)));
             }
         );
+    }
+
+    [Test]
+    public async Task HandleAsync_ItemAddedInSectorEvent_WhenSessionIsGameMaster_ShouldSendMovableFlag()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new ItemHandlerTestItemService
+        {
+            ItemsById =
+            {
+                [(Serial)0x40000099u] = new()
+                {
+                    Id = (Serial)0x40000099u,
+                    ItemId = 0x0EED,
+                    MapId = 0,
+                    Location = new(100, 100, 0)
+                }
+            }
+        };
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatialService = new ItemHandlerTestSpatialWorldService();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var gmSession = new GameSession(new(client))
+        {
+            AccountType = AccountType.GameMaster
+        };
+        spatialService.SessionsInRange.Add(gmSession);
+
+        var handler = new ItemHandler(
+            queue,
+            itemService,
+            eventBus,
+            sessionService,
+            new PlayerDragService(),
+            spatialService,
+            new ItemHandlerTestMobileService()
+        );
+
+        await handler.HandleAsync(
+            new ItemAddedInSectorEvent((Serial)0x40000099u, 0, 0, 0),
+            CancellationToken.None
+        );
+
+        Assert.That(queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<ObjectInformationPacket>());
+        Assert.That(((ObjectInformationPacket)outbound.Packet).Flags.HasFlag(ObjectInfoFlags.Movable), Is.True);
     }
 
     [Test]

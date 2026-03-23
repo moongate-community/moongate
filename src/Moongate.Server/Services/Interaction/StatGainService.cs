@@ -17,9 +17,7 @@ public sealed class StatGainService : IStatGainService
     private readonly Func<double> _selectionRollProvider;
 
     public StatGainService()
-        : this(static () => Random.Shared.NextDouble(), static () => Random.Shared.NextDouble())
-    {
-    }
+        : this(static () => Random.Shared.NextDouble(), static () => Random.Shared.NextDouble()) { }
 
     internal StatGainService(Func<double> attemptRollProvider, Func<double> selectionRollProvider)
     {
@@ -44,8 +42,8 @@ public sealed class StatGainService : IStatGainService
         }
 
         var preferredStat = _selectionRollProvider() <= PrimaryStatBias
-            ? skillInfo.PrimaryStat
-            : skillInfo.SecondaryStat;
+                                ? skillInfo.PrimaryStat
+                                : skillInfo.SecondaryStat;
         var fallbackStat = preferredStat == skillInfo.PrimaryStat ? skillInfo.SecondaryStat : skillInfo.PrimaryStat;
 
         if (TryIncreaseStat(mobile, preferredStat, out var loweredPrimary))
@@ -66,19 +64,34 @@ public sealed class StatGainService : IStatGainService
         return new(false, null, null);
     }
 
-    private static bool TryResolveSkillInfo(UOSkillName skillName, out SkillInfo skillInfo)
-    {
-        foreach (var entry in SkillInfo.Table)
+    private static int GetStatValue(UOMobileEntity mobile, Stat stat)
+        => stat switch
         {
-            if (entry.SkillID == (int)skillName)
-            {
-                skillInfo = entry;
-                return true;
-            }
-        }
+            Stat.Strength     => mobile.Strength,
+            Stat.Dexterity    => mobile.Dexterity,
+            Stat.Intelligence => mobile.Intelligence,
+            _                 => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
+        };
 
-        skillInfo = default!;
-        return false;
+    private static void SetStatValue(UOMobileEntity mobile, Stat stat, int value)
+    {
+        switch (stat)
+        {
+            case Stat.Strength:
+                mobile.Strength = value;
+
+                break;
+            case Stat.Dexterity:
+                mobile.Dexterity = value;
+
+                break;
+            case Stat.Intelligence:
+                mobile.Intelligence = value;
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(stat), stat, null);
+        }
     }
 
     private static bool TryIncreaseStat(UOMobileEntity mobile, Stat stat, out Stat? loweredStat)
@@ -136,30 +149,20 @@ public sealed class StatGainService : IStatGainService
         return null;
     }
 
-    private static int GetStatValue(UOMobileEntity mobile, Stat stat)
-        => stat switch
-        {
-            Stat.Strength => mobile.Strength,
-            Stat.Dexterity => mobile.Dexterity,
-            Stat.Intelligence => mobile.Intelligence,
-            _ => throw new ArgumentOutOfRangeException(nameof(stat), stat, null)
-        };
-
-    private static void SetStatValue(UOMobileEntity mobile, Stat stat, int value)
+    private static bool TryResolveSkillInfo(UOSkillName skillName, out SkillInfo skillInfo)
     {
-        switch (stat)
+        foreach (var entry in SkillInfo.Table)
         {
-            case Stat.Strength:
-                mobile.Strength = value;
-                break;
-            case Stat.Dexterity:
-                mobile.Dexterity = value;
-                break;
-            case Stat.Intelligence:
-                mobile.Intelligence = value;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(stat), stat, null);
+            if (entry.SkillID == (int)skillName)
+            {
+                skillInfo = entry;
+
+                return true;
+            }
         }
+
+        skillInfo = default!;
+
+        return false;
     }
 }

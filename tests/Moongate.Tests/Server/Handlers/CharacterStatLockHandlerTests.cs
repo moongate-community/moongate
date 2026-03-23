@@ -1,14 +1,11 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
-using Moongate.Network.Packets.Interfaces;
-using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Services.Entities;
-using Moongate.Server.Interfaces.Services.Packets;
-using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.Tests.Server.Support;
 using Moongate.Tests.Server.Services.Spatial;
+using Moongate.Tests.Server.Support;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -17,6 +14,63 @@ namespace Moongate.Tests.Server.Handlers;
 
 public sealed class CharacterStatLockHandlerTests
 {
+    private sealed class InMemoryMobileService : IMobileService
+    {
+        private readonly Dictionary<Serial, UOMobileEntity> _mobiles = new();
+
+        public void Add(UOMobileEntity mobile)
+            => _mobiles[mobile.Id] = mobile;
+
+        public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            _mobiles[mobile.Id] = mobile;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+
+            return Task.FromResult(_mobiles.Remove(id));
+        }
+
+        public Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            _mobiles.TryGetValue(id, out var mobile);
+
+            return Task.FromResult(mobile);
+        }
+
+        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+            int mapId,
+            int sectorX,
+            int sectorY,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(new List<UOMobileEntity>());
+
+        public Task<UOMobileEntity> SpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromException<UOMobileEntity>(new NotSupportedException());
+
+        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult((false, (UOMobileEntity?)null));
+    }
+
     [Test]
     public async Task HandleAsync_WhenRequestIsValid_ShouldPersistStrengthLock()
     {
@@ -43,7 +97,7 @@ public sealed class CharacterStatLockHandlerTests
 
         var handler = new CharacterStatLockHandler(outgoingQueue, mobileService, sessionService);
 
-        await handler.HandleAsync(new StatLockChangeRequestedEvent(session.SessionId, Stat.Strength, UOSkillLock.Down));
+        await handler.HandleAsync(new(session.SessionId, Stat.Strength, UOSkillLock.Down));
 
         Assert.Multiple(
             () =>
@@ -52,42 +106,5 @@ public sealed class CharacterStatLockHandlerTests
                 Assert.That(session.Character!.StrengthLock, Is.EqualTo(UOSkillLock.Down));
             }
         );
-    }
-
-    private sealed class InMemoryMobileService : IMobileService
-    {
-        private readonly Dictionary<Serial, UOMobileEntity> _mobiles = new();
-
-        public void Add(UOMobileEntity mobile)
-            => _mobiles[mobile.Id] = mobile;
-
-        public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
-        {
-            _ = cancellationToken;
-            _mobiles[mobile.Id] = mobile;
-            return Task.CompletedTask;
-        }
-
-        public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
-        {
-            _ = cancellationToken;
-            return Task.FromResult(_mobiles.Remove(id));
-        }
-
-        public Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default)
-        {
-            _ = cancellationToken;
-            _mobiles.TryGetValue(id, out var mobile);
-            return Task.FromResult(mobile);
-        }
-
-        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(int mapId, int sectorX, int sectorY, CancellationToken cancellationToken = default)
-            => Task.FromResult(new List<UOMobileEntity>());
-
-        public Task<UOMobileEntity> SpawnFromTemplateAsync(string templateId, Moongate.UO.Data.Geometry.Point3D location, int mapId, Serial? accountId = null, CancellationToken cancellationToken = default)
-            => Task.FromException<UOMobileEntity>(new NotSupportedException());
-
-        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(string templateId, Moongate.UO.Data.Geometry.Point3D location, int mapId, Serial? accountId = null, CancellationToken cancellationToken = default)
-            => Task.FromResult((false, (UOMobileEntity?)null));
     }
 }

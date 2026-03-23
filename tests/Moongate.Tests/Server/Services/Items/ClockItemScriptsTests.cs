@@ -3,15 +3,15 @@ using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Scripting.Services;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Speech;
-using Moongate.Scripting.Data.Config;
-using Moongate.Scripting.Data.Internal;
-using Moongate.Scripting.Services;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Items;
 using Moongate.Tests.Server.Services.Spatial;
@@ -43,7 +43,12 @@ public sealed class ClockItemScriptsTests
         public Task<bool> DeleteItemAsync(Serial itemId)
             => throw new NotSupportedException();
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
             => throw new NotSupportedException();
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -84,19 +89,43 @@ public sealed class ClockItemScriptsTests
         public Task<int> BroadcastFromServerAsync(string text, short hue = 946, short font = 3, string language = "ENU")
             => Task.FromResult(0);
 
-        public Task HandleOpenChatWindowAsync(GameSession session, Moongate.Network.Packets.Incoming.Speech.OpenChatWindowPacket packet, CancellationToken cancellationToken = default)
+        public Task HandleOpenChatWindowAsync(
+            GameSession session,
+            OpenChatWindowPacket packet,
+            CancellationToken cancellationToken = default
+        )
             => Task.CompletedTask;
 
-        public Task<Moongate.Network.Packets.Outgoing.Speech.UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(GameSession session, Moongate.Network.Packets.Incoming.Speech.UnicodeSpeechPacket speechPacket, CancellationToken cancellationToken = default)
-            => Task.FromResult<Moongate.Network.Packets.Outgoing.Speech.UnicodeSpeechMessagePacket?>(null);
+        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<UnicodeSpeechMessagePacket?>(null);
 
-        public Task<bool> SendMessageFromServerAsync(GameSession session, string text, short hue = 946, short font = 3, string language = "ENU")
+        public Task<bool> SendMessageFromServerAsync(
+            GameSession session,
+            string text,
+            short hue = 946,
+            short font = 3,
+            string language = "ENU"
+        )
         {
             SentMessages.Add((session.SessionId, text));
+
             return Task.FromResult(true);
         }
 
-        public Task<int> SpeakAsMobileAsync(UOMobileEntity speaker, string text, int range = 12, ChatMessageType messageType = ChatMessageType.Regular, short hue = SpeechHues.Default, short font = SpeechHues.DefaultFont, string language = "ENU", CancellationToken cancellationToken = default)
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            ChatMessageType messageType = ChatMessageType.Regular,
+            short hue = SpeechHues.Default,
+            short font = SpeechHues.DefaultFont,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
             => Task.FromResult(0);
     }
 
@@ -149,17 +178,19 @@ public sealed class ClockItemScriptsTests
         container.RegisterInstance<IGameNetworkSessionService>(sessionService);
         container.RegisterInstance<ISpeechService>(speechService);
         container.RegisterInstance<IItemService>(new ClockItemScriptsTestItemService());
-        container.RegisterInstance(new MoongateSpatialConfig
-        {
-            LightWorldStartUtc = "1997-09-01T00:00:00Z",
-            LightSecondsPerUoMinute = 5
-        });
+        container.RegisterInstance(
+            new MoongateSpatialConfig
+            {
+                LightWorldStartUtc = "1997-09-01T00:00:00Z",
+                LightSecondsPerUoMinute = 5
+            }
+        );
 
         using var scriptEngine = new LuaScriptEngineService(
             directories,
             [new(typeof(SpeechModule)), new(typeof(ClockModule))],
             container,
-            new LuaEngineConfig(temp.Path, scriptsDirectory, "0.1.0"),
+            new(temp.Path, scriptsDirectory, "0.1.0"),
             []
         );
         await scriptEngine.StartAsync();
@@ -171,18 +202,18 @@ public sealed class ClockItemScriptsTests
         );
 
         var dispatched = await dispatcher.DispatchAsync(
-            new ItemScriptContext(
-                session,
-                new()
-                {
-                    Id = (Serial)0x440,
-                    Name = "Clock",
-                    ScriptId = "items.clock",
-                    ItemId = 0x104B
-                },
-                "double_click"
-            )
-        );
+                             new(
+                                 session,
+                                 new()
+                                 {
+                                     Id = (Serial)0x440,
+                                     Name = "Clock",
+                                     ScriptId = "items.clock",
+                                     ItemId = 0x104B
+                                 },
+                                 "double_click"
+                             )
+                         );
 
         Assert.Multiple(
             () =>

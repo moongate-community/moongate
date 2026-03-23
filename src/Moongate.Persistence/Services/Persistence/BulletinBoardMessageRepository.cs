@@ -6,9 +6,9 @@ using Serilog;
 
 namespace Moongate.Persistence.Services.Persistence;
 
-internal sealed class BulletinBoardMessageRepository :
-    BaseRepository<BulletinBoardMessageEntity, Serial>,
-    IBulletinBoardMessageRepository
+internal sealed class BulletinBoardMessageRepository
+    : BaseRepository<BulletinBoardMessageEntity, Serial>,
+      IBulletinBoardMessageRepository
 {
     private readonly ILogger _logger = Log.ForContext<BulletinBoardMessageRepository>();
 
@@ -17,9 +17,7 @@ internal sealed class BulletinBoardMessageRepository :
         IJournalService journalService,
         IPersistenceEntityDescriptor<BulletinBoardMessageEntity, Serial> descriptor
     )
-        : base(stateStore, journalService, descriptor)
-    {
-    }
+        : base(stateStore, journalService, descriptor) { }
 
     public ValueTask<IReadOnlyList<BulletinBoardMessageEntity>> GetByBoardIdAsync(
         Serial boardId,

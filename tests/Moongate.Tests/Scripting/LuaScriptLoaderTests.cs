@@ -34,19 +34,6 @@ public class LuaScriptLoaderTests
     }
 
     [Test]
-    public void ScriptFileExists_WhenModuleExists_ShouldReturnTrue()
-    {
-        using var temp = new TempDirectory();
-        var scriptsDir = temp.Path;
-        File.WriteAllText(Path.Combine(scriptsDir, "test_module.lua"), "return 42");
-        var loader = new LuaScriptLoader(scriptsDir);
-
-        var exists = loader.ScriptFileExists("test_module");
-
-        Assert.That(exists, Is.True);
-    }
-
-    [Test]
     public void LoadFile_WhenPluginNamespacedModuleExists_ShouldReturnPluginModuleContent()
     {
         using var temp = new TempDirectory();
@@ -62,5 +49,18 @@ public class LuaScriptLoaderTests
         var content = loader.LoadFile("plugin.helpplus.gumps.window", table);
 
         Assert.That(content, Is.EqualTo(expected));
+    }
+
+    [Test]
+    public void ScriptFileExists_WhenModuleExists_ShouldReturnTrue()
+    {
+        using var temp = new TempDirectory();
+        var scriptsDir = temp.Path;
+        File.WriteAllText(Path.Combine(scriptsDir, "test_module.lua"), "return 42");
+        var loader = new LuaScriptLoader(scriptsDir);
+
+        var exists = loader.ScriptFileExists("test_module");
+
+        Assert.That(exists, Is.True);
     }
 }

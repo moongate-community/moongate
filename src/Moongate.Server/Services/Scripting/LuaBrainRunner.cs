@@ -14,6 +14,7 @@ using Moongate.Server.Interfaces.Services.Metrics;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Metrics.Data;
+using Moongate.Server.Services.Interaction;
 using Moongate.Server.Services.Scripting.Internal;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -66,9 +67,9 @@ public sealed class LuaBrainRunner
         _luaBrainRegistry = luaBrainRegistry;
         _ = directoriesConfig;
         _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript;
-        _stateStore = new LuaBrainStateStore(
-            notorietyService ?? new Services.Interaction.NotorietyService(),
-            aiRelationService ?? new Services.Interaction.AiRelationService()
+        _stateStore = new(
+            notorietyService ?? new NotorietyService(),
+            aiRelationService ?? new AiRelationService()
         );
 
         var configuredMaxBrains = config?.Scripting?.LuaBrainMaxBrainsPerTick ?? 0;

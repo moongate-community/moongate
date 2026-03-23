@@ -4,6 +4,7 @@ using Moongate.Abstractions.Extensions;
 using Moongate.Abstractions.Types;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Extensions.Container;
+using Moongate.Persistence.Interfaces.Persistence;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Server.Data.Config;
@@ -30,7 +31,6 @@ using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.World;
-using Moongate.Persistence.Interfaces.Persistence;
 
 namespace Moongate.Server.Extensions.Bootstrap;
 

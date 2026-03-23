@@ -16,9 +16,9 @@ public partial class UOItemEntity : IItemEntity
     private readonly List<UOItemEntity> _items = new();
     private readonly Dictionary<Serial, ItemReference> _containedItemReferences = [];
 
-    [MemoryPackInclude]
-    [MemoryPackOrder(21)]
+    [MemoryPackInclude, MemoryPackOrder(21)]
     private Dictionary<string, ItemCustomProperty> _customProperties = new(StringComparer.OrdinalIgnoreCase);
+
     [MemoryPackOrder(0)]
     public Serial Id { get; set; }
 
@@ -30,17 +30,22 @@ public partial class UOItemEntity : IItemEntity
     /// </summary>
     [MemoryPackOrder(2)]
     public int MapId { get; set; }
+
     [MemoryPackOrder(3)]
     public string? Name { get; set; }
+
     [MemoryPackOrder(4)]
     public int Weight { get; set; }
 
     [MemoryPackOrder(5)]
     public int Amount { get; set; } = 1;
+
     [MemoryPackOrder(6)]
     public int ItemId { get; set; }
+
     [MemoryPackOrder(7)]
     public int Hue { get; set; }
+
     [MemoryPackOrder(8)]
     public int? GumpId { get; set; }
 
@@ -49,19 +54,25 @@ public partial class UOItemEntity : IItemEntity
     /// </summary>
     [MemoryPackOrder(9)]
     public DirectionType Direction { get; set; }
+
     [MemoryPackOrder(10)]
     public bool IsStackable { get; set; }
 
     [MemoryPackIgnore]
     public bool IsDoor => TileData.ItemTable[ItemId][UOTileFlag.Door];
+
     [MemoryPackOrder(11)]
     public string ScriptId { get; set; }
+
     [MemoryPackOrder(12)]
     public ItemRarity Rarity { get; set; }
+
     [MemoryPackOrder(13)]
     public AccountType Visibility { get; set; } = AccountType.Regular;
+
     [MemoryPackOrder(14)]
     public ItemCombatStats? CombatStats { get; set; }
+
     [MemoryPackOrder(15)]
     public ItemModifiers? Modifiers { get; set; }
 
@@ -181,15 +192,6 @@ public partial class UOItemEntity : IItemEntity
     /// </summary>
     [MemoryPackIgnore]
     public IReadOnlyDictionary<string, ItemCustomProperty> CustomProperties => _customProperties;
-
-    [MemoryPackOnDeserialized]
-    private void OnMemoryPackDeserialized()
-    {
-        Amount = Amount <= 0 ? 1 : Amount;
-        _customProperties = _customProperties.Count == 0
-            ? new(StringComparer.OrdinalIgnoreCase)
-            : new(_customProperties, StringComparer.OrdinalIgnoreCase);
-    }
 
     [MemoryPackIgnore]
     public bool IsContainer => IsQuiver || TileData.ItemTable[ItemId][UOTileFlag.Container];
@@ -596,5 +598,14 @@ public partial class UOItemEntity : IItemEntity
         }
 
         return false;
+    }
+
+    [MemoryPackOnDeserialized]
+    private void OnMemoryPackDeserialized()
+    {
+        Amount = Amount <= 0 ? 1 : Amount;
+        _customProperties = _customProperties.Count == 0
+                                ? new(StringComparer.OrdinalIgnoreCase)
+                                : new(_customProperties, StringComparer.OrdinalIgnoreCase);
     }
 }

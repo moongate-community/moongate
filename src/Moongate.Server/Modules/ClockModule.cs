@@ -36,7 +36,12 @@ public sealed class ClockModule
                                   ? spatialConfig.LightSecondsPerUoMinute
                                   : DefaultSecondsPerUoMinute;
 
-        if (!DateTime.TryParse(spatialConfig?.LightWorldStartUtc, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsedWorldStart))
+        if (!DateTime.TryParse(
+                spatialConfig?.LightWorldStartUtc,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal,
+                out var parsedWorldStart
+            ))
         {
             _worldStartUtc = DefaultWorldStartUtc;
 
@@ -130,7 +135,7 @@ public sealed class ClockModule
         }
 
         if (_spatialWorldService is not null &&
-            MobileScriptResolver.TryResolveMobile(_spatialWorldService, (uint)mobileId.Value, out mobile))
+            MobileScriptResolver.TryResolveMobile(_spatialWorldService, mobileId.Value, out mobile))
         {
             return true;
         }

@@ -9,7 +9,6 @@ using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Services.Templates;
-using Moongate.UO.Data.Templates.Factions;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
@@ -265,7 +264,7 @@ public sealed class PerceptionModuleTests
     {
         var service = new FactionTemplateService();
         service.Upsert(
-            new FactionDefinition
+            new()
             {
                 Id = "true_britannians",
                 Name = "True Britannians",
@@ -273,7 +272,7 @@ public sealed class PerceptionModuleTests
             }
         );
         service.Upsert(
-            new FactionDefinition
+            new()
             {
                 Id = "shadowlords",
                 Name = "Shadowlords",

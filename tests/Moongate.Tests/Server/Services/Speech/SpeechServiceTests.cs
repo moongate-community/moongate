@@ -186,13 +186,13 @@ public class SpeechServiceTests
     }
 
     [Test]
-    public async Task ProcessIncomingSpeechAsync_WhenTextIsWrappedInAsterisks_ShouldBroadcastAsEmote()
+    public async Task ProcessIncomingSpeechAsync_WhenSpeechStartsWithDot_ShouldDispatchCommandAndReturnNull()
     {
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
         var gameEventBusService = new GameEventBusService();
-        var spatialWorldService = new SpeechServiceTestsSpatialWorldService();
+        var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
         var speechService = new SpeechService(
             commandSystemService,
             outgoingPacketQueue,
@@ -212,7 +212,6 @@ public class SpeechServiceTests
                 BaseBody = 0x0190
             }
         };
-        spatialWorldService.PlayersInRange.Add(session);
 
         var packet = new UnicodeSpeechPacket
         {
@@ -220,24 +219,21 @@ public class SpeechServiceTests
             Hue = 0x0035,
             Font = 0x0003,
             Language = "ENU",
-            Text = "*grrr*"
+            Text = ".help"
         };
 
         var result = await speechService.ProcessIncomingSpeechAsync(session, packet);
-        var dequeued = outgoingPacketQueue.TryDequeue(out var outbound);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(result, Is.Null);
-                Assert.That(dequeued, Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
+                Assert.That(commandSystemService.ExecuteCallCount, Is.EqualTo(1));
+                Assert.That(commandSystemService.LastCommandWithArgs, Is.EqualTo("help"));
+                Assert.That(commandSystemService.LastSource, Is.EqualTo(CommandSourceType.InGame));
+                Assert.That(commandSystemService.LastSession, Is.SameAs(session));
             }
         );
-
-        var speechMessagePacket = (UnicodeSpeechMessagePacket)outbound.Packet;
-
-        Assert.That(speechMessagePacket.MessageType, Is.EqualTo(ChatMessageType.Emote));
     }
 
     [Test]
@@ -363,13 +359,13 @@ public class SpeechServiceTests
     }
 
     [Test]
-    public async Task ProcessIncomingSpeechAsync_WhenSpeechStartsWithDot_ShouldDispatchCommandAndReturnNull()
+    public async Task ProcessIncomingSpeechAsync_WhenTextIsWrappedInAsterisks_ShouldBroadcastAsEmote()
     {
         var commandSystemService = new MockCommandSystemService();
         var outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
         var gameNetworkSessionService = new SpeechServiceTestGameNetworkSessionService();
         var gameEventBusService = new GameEventBusService();
-        var spatialWorldService = new RegionDataLoaderTestSpatialWorldService();
+        var spatialWorldService = new SpeechServiceTestsSpatialWorldService();
         var speechService = new SpeechService(
             commandSystemService,
             outgoingPacketQueue,
@@ -389,6 +385,7 @@ public class SpeechServiceTests
                 BaseBody = 0x0190
             }
         };
+        spatialWorldService.PlayersInRange.Add(session);
 
         var packet = new UnicodeSpeechPacket
         {
@@ -396,21 +393,24 @@ public class SpeechServiceTests
             Hue = 0x0035,
             Font = 0x0003,
             Language = "ENU",
-            Text = ".help"
+            Text = "*grrr*"
         };
 
         var result = await speechService.ProcessIncomingSpeechAsync(session, packet);
+        var dequeued = outgoingPacketQueue.TryDequeue(out var outbound);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(result, Is.Null);
-                Assert.That(commandSystemService.ExecuteCallCount, Is.EqualTo(1));
-                Assert.That(commandSystemService.LastCommandWithArgs, Is.EqualTo("help"));
-                Assert.That(commandSystemService.LastSource, Is.EqualTo(CommandSourceType.InGame));
-                Assert.That(commandSystemService.LastSession, Is.SameAs(session));
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<UnicodeSpeechMessagePacket>());
             }
         );
+
+        var speechMessagePacket = (UnicodeSpeechMessagePacket)outbound.Packet;
+
+        Assert.That(speechMessagePacket.MessageType, Is.EqualTo(ChatMessageType.Emote));
     }
 
     [Test]

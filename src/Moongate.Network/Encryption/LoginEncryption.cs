@@ -22,40 +22,6 @@ public sealed class LoginEncryption : IClientEncryption
         _table2 = ((seed ^ 0x43210000) >> 16) | ((~seed ^ 0xABCDFFFF) & 0xFFFF0000);
     }
 
-    public static bool TryDecrypt(
-        int? major,
-        int? minor,
-        int? revision,
-        uint seed,
-        ReadOnlySpan<byte> encryptedPacket,
-        out LoginEncryption? encryption
-    )
-    {
-        encryption = null;
-
-        if (encryptedPacket.Length < LoginPacketSize)
-        {
-            return false;
-        }
-
-        if (major.HasValue && minor.HasValue && revision.HasValue)
-        {
-            var keys = LoginKeys.GetKeys(major.Value, minor.Value, revision.Value);
-            return keys is not { Key1: 0, Key2: 0 } &&
-                   TryDecryptWithKeys(keys, seed, encryptedPacket, out encryption);
-        }
-
-        foreach (var legacyKeys in LoginKeys.LegacyKeys)
-        {
-            if (TryDecryptWithKeys(legacyKeys, seed, encryptedPacket, out encryption))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public void ClientDecrypt(Span<byte> buffer)
     {
         for (var i = 0; i < buffer.Length; i++)
@@ -84,8 +50,41 @@ public sealed class LoginEncryption : IClientEncryption
     }
 
     public void ServerEncrypt(Span<byte> buffer)
+        => _ = buffer;
+
+    public static bool TryDecrypt(
+        int? major,
+        int? minor,
+        int? revision,
+        uint seed,
+        ReadOnlySpan<byte> encryptedPacket,
+        out LoginEncryption? encryption
+    )
     {
-        _ = buffer;
+        encryption = null;
+
+        if (encryptedPacket.Length < LoginPacketSize)
+        {
+            return false;
+        }
+
+        if (major.HasValue && minor.HasValue && revision.HasValue)
+        {
+            var keys = LoginKeys.GetKeys(major.Value, minor.Value, revision.Value);
+
+            return keys is not { Key1: 0, Key2: 0 } &&
+                   TryDecryptWithKeys(keys, seed, encryptedPacket, out encryption);
+        }
+
+        foreach (var legacyKeys in LoginKeys.LegacyKeys)
+        {
+            if (TryDecryptWithKeys(legacyKeys, seed, encryptedPacket, out encryption))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryDecryptWithKeys(
@@ -104,10 +103,12 @@ public sealed class LoginEncryption : IClientEncryption
         if (decrypted[0] != 0x80 || decrypted[30] != 0x00 || decrypted[60] != 0x00)
         {
             encryption = null;
+
             return false;
         }
 
-        encryption = new LoginEncryption(seed, keys);
+        encryption = new(seed, keys);
+
         return true;
     }
 }

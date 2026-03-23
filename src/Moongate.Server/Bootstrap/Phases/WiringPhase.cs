@@ -44,7 +44,10 @@ internal sealed class WiringPhase : IBootstrapPhase
     private static void RegisterGameEventListeners(BootstrapContext context)
     {
         BootstrapGameEventListenerRegistration.Subscribe(context.Container);
-        BootstrapGameEventListenerRegistration.Subscribe(context.Container, context.PluginRegistrations.GameEventListenerTypes);
+        BootstrapGameEventListenerRegistration.Subscribe(
+            context.Container,
+            context.PluginRegistrations.GameEventListenerTypes
+        );
     }
 
     private static void RegisterPacketHandlers(BootstrapContext context)

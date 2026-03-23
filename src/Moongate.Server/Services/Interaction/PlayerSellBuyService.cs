@@ -2,13 +2,13 @@ using Moongate.Network.Packets.Incoming.Trading;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Trading;
 using Moongate.Server.Data.Internal.Interaction;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.Server.Data.Session;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
@@ -56,10 +56,18 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
     public Task HandleBuyItemsAsync(long sessionId, BuyItemsPacket packet, CancellationToken cancellationToken = default)
         => HandleBuyItemsCoreAsync(sessionId, packet, cancellationToken);
 
-    public Task HandleSellListReplyAsync(long sessionId, SellListReplyPacket packet, CancellationToken cancellationToken = default)
+    public Task HandleSellListReplyAsync(
+        long sessionId,
+        SellListReplyPacket packet,
+        CancellationToken cancellationToken = default
+    )
         => HandleSellListReplyCoreAsync(sessionId, packet, cancellationToken);
 
-    public async Task HandleVendorBuyRequestAsync(long sessionId, Serial vendorSerial, CancellationToken cancellationToken = default)
+    public async Task HandleVendorBuyRequestAsync(
+        long sessionId,
+        Serial vendorSerial,
+        CancellationToken cancellationToken = default
+    )
     {
         var context = await TryResolveContextAsync(sessionId, vendorSerial, cancellationToken);
 
@@ -142,7 +150,7 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         _outgoingPacketQueue.Enqueue(
             sessionId,
             new DrawContainerPacket(
-                new UOItemEntity
+                new()
                 {
                     Id = vendor.Id,
                     ItemId = DefaultShopContainerItemId,
@@ -153,7 +161,11 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         _outgoingPacketQueue.Enqueue(sessionId, new PlayerStatusPacket(character, 1));
     }
 
-    public async Task HandleVendorSellRequestAsync(long sessionId, Serial vendorSerial, CancellationToken cancellationToken = default)
+    public async Task HandleVendorSellRequestAsync(
+        long sessionId,
+        Serial vendorSerial,
+        CancellationToken cancellationToken = default
+    )
     {
         var context = await TryResolveContextAsync(sessionId, vendorSerial, cancellationToken);
 
@@ -215,6 +227,40 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         _outgoingPacketQueue.Enqueue(sessionId, sellPacket);
     }
 
+    private static void ConsumeGoldRecursive(
+        UOItemEntity container,
+        ref int remaining,
+        ICollection<UOItemEntity> changedGoldStacks,
+        ICollection<UOItemEntity> deletedGoldStacks
+    )
+    {
+        for (var i = container.Items.Count - 1; i >= 0 && remaining > 0; i--)
+        {
+            var child = container.Items[i];
+
+            if (child.ItemId == 0x0EED)
+            {
+                var consumed = Math.Min(remaining, child.Amount);
+                child.Amount -= consumed;
+                remaining -= consumed;
+
+                if (child.Amount <= 0)
+                {
+                    container.RemoveItem(child.Id);
+                    deletedGoldStacks.Add(child);
+                }
+                else
+                {
+                    changedGoldStacks.Add(child);
+                }
+
+                continue;
+            }
+
+            ConsumeGoldRecursive(child, ref remaining, changedGoldStacks, deletedGoldStacks);
+        }
+    }
+
     private WornItemPacket CreateVendorPackPacket(UOMobileEntity vendor, Serial itemSerial, ItemLayerType layer)
         => new(vendor, new(itemSerial, DefaultShopContainerItemId, 0), layer);
 
@@ -238,6 +284,7 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         {
             goldStack.Amount += amount;
             await _itemService.UpsertItemAsync(goldStack);
+
             return true;
         }
 
@@ -250,32 +297,25 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         goldItem.Amount = amount;
         backpack.AddItem(goldItem, new(1, 1));
         await _itemService.CreateItemAsync(goldItem);
+
         return true;
     }
 
-    private static UOItemEntity? FindGoldStack(UOItemEntity container)
-        => EnumerateItemsRecursive(container).FirstOrDefault(static item => item.ItemId == 0x0EED);
-
-    private static bool TryFindContainedItem(UOItemEntity container, Serial itemSerial, out UOItemEntity? parent, out UOItemEntity? item)
+    private async Task EnsureGoldContainersLoadedAsync(UOMobileEntity character)
     {
-        foreach (var child in container.Items)
-        {
-            if (child.Id == itemSerial)
-            {
-                parent = container;
-                item = child;
-                return true;
-            }
+        var backpack = await _characterService.GetBackpackWithItemsAsync(character);
 
-            if (TryFindContainedItem(child, itemSerial, out parent, out item))
-            {
-                return true;
-            }
+        if (backpack is not null)
+        {
+            character.AddEquippedItem(ItemLayerType.Backpack, backpack);
         }
 
-        parent = null;
-        item = null;
-        return false;
+        var bankBox = await _characterService.GetBankBoxWithItemsAsync(character);
+
+        if (bankBox is not null)
+        {
+            character.AddEquippedItem(ItemLayerType.Bank, bankBox);
+        }
     }
 
     private static IEnumerable<UOItemEntity> EnumerateItemsRecursive(UOItemEntity container)
@@ -291,75 +331,8 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         }
     }
 
-    private bool MatchesAcceptedItem(UOItemEntity item, SellProfileAcceptedItemDefinition definition)
-    {
-        if (string.IsNullOrWhiteSpace(definition.ItemTemplateId))
-        {
-            return false;
-        }
-
-        if (!_itemFactoryService.TryGetItemTemplate(definition.ItemTemplateId, out var template) || template is null)
-        {
-            return false;
-        }
-
-        return item.ItemId == ParseItemId(template);
-    }
-
-    private static Serial NextVirtualItemSerial()
-        => (Serial)(Serial.ItemOffset + (uint)Random.Shared.Next(1, int.MaxValue / 2));
-
-    private static int ParseItemId(ItemTemplateDefinition template)
-        => template.ItemId.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
-               ? Convert.ToInt32(template.ItemId[2..], 16)
-               : int.Parse(template.ItemId);
-
-    private int ResolveVendorStock(Serial vendorId, SellProfileVendorItemDefinition vendorItem)
-    {
-        var key = (vendorId, vendorItem.ItemTemplateId);
-
-        if (_vendorStock.TryGetValue(key, out var stock))
-        {
-            return stock;
-        }
-
-        stock = Math.Max(0, vendorItem.MaxStock);
-        _vendorStock[key] = stock;
-
-        return stock;
-    }
-
-    private async Task<(GameSession Session, UOMobileEntity Character, UOMobileEntity Vendor, SellProfileTemplateDefinition SellProfile)?>
-        TryResolveContextAsync(long sessionId, Serial vendorSerial, CancellationToken cancellationToken)
-    {
-        if (!_sessionService.TryGet(sessionId, out var session) || session.Character is null)
-        {
-            return null;
-        }
-
-        var character = session.Character;
-        var vendor = await _mobileService.GetAsync(vendorSerial, cancellationToken);
-
-        if (vendor is null)
-        {
-            return null;
-        }
-
-        if (vendor.MapId != character.MapId || !character.Location.InRange(vendor.Location, 4))
-        {
-            return null;
-        }
-
-        if (!vendor.TryGetCustomString(SellProfileIdKey, out var sellProfileId) ||
-            string.IsNullOrWhiteSpace(sellProfileId) ||
-            !_sellProfileTemplateService.TryGet(sellProfileId, out var sellProfile) ||
-            sellProfile is null)
-        {
-            return null;
-        }
-
-        return (session, character, vendor, sellProfile);
-    }
+    private static UOItemEntity? FindGoldStack(UOItemEntity container)
+        => EnumerateItemsRecursive(container).FirstOrDefault(static item => item.ItemId == 0x0EED);
 
     private async Task HandleBuyItemsCoreAsync(long sessionId, BuyItemsPacket packet, CancellationToken cancellationToken)
     {
@@ -424,6 +397,7 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
             await _itemService.CreateItemAsync(boughtItem);
 
             var stockKey = (state.VendorSerial, entry.ItemTemplateId);
+
             if (_vendorStock.TryGetValue(stockKey, out var stock))
             {
                 _vendorStock[stockKey] = Math.Max(0, stock - amount);
@@ -436,7 +410,11 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         _pendingBuyStates.Remove(sessionId);
     }
 
-    private async Task HandleSellListReplyCoreAsync(long sessionId, SellListReplyPacket packet, CancellationToken cancellationToken)
+    private async Task HandleSellListReplyCoreAsync(
+        long sessionId,
+        SellListReplyPacket packet,
+        CancellationToken cancellationToken
+    )
     {
         _ = cancellationToken;
 
@@ -492,21 +470,42 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         _pendingSellStates.Remove(sessionId);
     }
 
-    private async Task EnsureGoldContainersLoadedAsync(UOMobileEntity character)
+    private bool MatchesAcceptedItem(UOItemEntity item, SellProfileAcceptedItemDefinition definition)
     {
-        var backpack = await _characterService.GetBackpackWithItemsAsync(character);
-
-        if (backpack is not null)
+        if (string.IsNullOrWhiteSpace(definition.ItemTemplateId))
         {
-            character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+            return false;
         }
 
-        var bankBox = await _characterService.GetBankBoxWithItemsAsync(character);
-
-        if (bankBox is not null)
+        if (!_itemFactoryService.TryGetItemTemplate(definition.ItemTemplateId, out var template) || template is null)
         {
-            character.AddEquippedItem(ItemLayerType.Bank, bankBox);
+            return false;
         }
+
+        return item.ItemId == ParseItemId(template);
+    }
+
+    private static Serial NextVirtualItemSerial()
+        => (Serial)(Serial.ItemOffset + (uint)Random.Shared.Next(1, int.MaxValue / 2));
+
+    private static int ParseItemId(ItemTemplateDefinition template)
+        => template.ItemId.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+               ? Convert.ToInt32(template.ItemId[2..], 16)
+               : int.Parse(template.ItemId);
+
+    private int ResolveVendorStock(Serial vendorId, SellProfileVendorItemDefinition vendorItem)
+    {
+        var key = (vendorId, vendorItem.ItemTemplateId);
+
+        if (_vendorStock.TryGetValue(key, out var stock))
+        {
+            return stock;
+        }
+
+        stock = Math.Max(0, vendorItem.MaxStock);
+        _vendorStock[key] = stock;
+
+        return stock;
     }
 
     private static bool TryConsumeGold(
@@ -540,37 +539,65 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         return remaining == 0;
     }
 
-    private static void ConsumeGoldRecursive(
+    private static bool TryFindContainedItem(
         UOItemEntity container,
-        ref int remaining,
-        ICollection<UOItemEntity> changedGoldStacks,
-        ICollection<UOItemEntity> deletedGoldStacks
+        Serial itemSerial,
+        out UOItemEntity? parent,
+        out UOItemEntity? item
     )
     {
-        for (var i = container.Items.Count - 1; i >= 0 && remaining > 0; i--)
+        foreach (var child in container.Items)
         {
-            var child = container.Items[i];
-
-            if (child.ItemId == 0x0EED)
+            if (child.Id == itemSerial)
             {
-                var consumed = Math.Min(remaining, child.Amount);
-                child.Amount -= consumed;
-                remaining -= consumed;
+                parent = container;
+                item = child;
 
-                if (child.Amount <= 0)
-                {
-                    container.RemoveItem(child.Id);
-                    deletedGoldStacks.Add(child);
-                }
-                else
-                {
-                    changedGoldStacks.Add(child);
-                }
-
-                continue;
+                return true;
             }
 
-            ConsumeGoldRecursive(child, ref remaining, changedGoldStacks, deletedGoldStacks);
+            if (TryFindContainedItem(child, itemSerial, out parent, out item))
+            {
+                return true;
+            }
         }
+
+        parent = null;
+        item = null;
+
+        return false;
+    }
+
+    private async Task<(GameSession Session, UOMobileEntity Character, UOMobileEntity Vendor, SellProfileTemplateDefinition
+            SellProfile)?>
+        TryResolveContextAsync(long sessionId, Serial vendorSerial, CancellationToken cancellationToken)
+    {
+        if (!_sessionService.TryGet(sessionId, out var session) || session.Character is null)
+        {
+            return null;
+        }
+
+        var character = session.Character;
+        var vendor = await _mobileService.GetAsync(vendorSerial, cancellationToken);
+
+        if (vendor is null)
+        {
+            return null;
+        }
+
+        if (vendor.MapId != character.MapId || !character.Location.InRange(vendor.Location, 4))
+        {
+            return null;
+        }
+
+        if (!vendor.TryGetCustomString(SellProfileIdKey, out var sellProfileId) ||
+            string.IsNullOrWhiteSpace(sellProfileId) ||
+            !_sellProfileTemplateService.TryGet(sellProfileId, out var sellProfile) ||
+            sellProfile is null)
+        {
+            return null;
+        }
+
+        return (session, character, vendor, sellProfile);
     }
 }
