@@ -72,15 +72,17 @@ def merge_templates_into_category_file(category_file: Path, generated_templates:
     existing_templates = load_existing_templates(category_file)
     existing_by_id = {str(template["id"]): template for template in existing_templates}
 
+    new_templates: List[Dict[str, object]] = []
     for template in generated_templates:
         template_id = str(template["id"])
         if template_id not in existing_by_id:
-            existing_templates.append(template)
             existing_by_id[template_id] = template
+            new_templates.append(template)
 
-    existing_templates.sort(key=lambda template: str(template["id"]))
+    new_templates.sort(key=lambda template: str(template["id"]))
+    final_templates = existing_templates + new_templates
     category_file.parent.mkdir(parents=True, exist_ok=True)
-    category_file.write_text(f"{json.dumps(existing_templates, indent=2)}\n", encoding="utf-8")
+    category_file.write_text(f"{json.dumps(final_templates, indent=2)}\n", encoding="utf-8")
 
 
 def group_templates_by_category(category_templates: List[Tuple[str, Dict[str, object]]]) -> Dict[str, List[Dict[str, object]]]:

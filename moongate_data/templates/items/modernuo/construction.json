@@ -2201,5 +2201,39 @@
       "construction",
       "flippable"
     ]
+  },
+  {
+    "type": "item",
+    "id": "decorative_daxe_north",
+    "name": "Decorative DAxe North",
+    "category": "Construction",
+    "description": "Imported from ModernUO (DecorativeDAxeNorth).",
+    "itemId": "0x1569",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.decorative_daxe_north",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "construction"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "decorative_daxe_west",
+    "name": "Decorative DAxe West",
+    "category": "Construction",
+    "description": "Imported from ModernUO (DecorativeDAxeWest).",
+    "itemId": "0x156A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.decorative_daxe_west",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "construction"
+    ]
   }
 ]

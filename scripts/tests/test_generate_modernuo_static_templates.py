@@ -96,6 +96,34 @@ class MergeTemplatesIntoCategoryFileTests(unittest.TestCase):
             data = json.loads(category_file.read_text(encoding="utf-8"))
             self.assertEqual(["bamboo_chair", "barrel_lid"], [item["id"] for item in data])
 
+    def test_preserves_existing_order_and_appends_new_items(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            category_file = Path(tmp_dir) / "construction.json"
+            category_file.write_text(
+                json.dumps(
+                    [
+                        {"id": "z_existing", "name": "Z Existing"},
+                        {"id": "a_existing", "name": "A Existing"},
+                    ],
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            merge_templates_into_category_file(
+                category_file,
+                [
+                    {"id": "b_new", "name": "B New"},
+                    {"id": "c_new", "name": "C New"},
+                ],
+            )
+
+            data = json.loads(category_file.read_text(encoding="utf-8"))
+            self.assertEqual(
+                ["z_existing", "a_existing", "b_new", "c_new"],
+                [item["id"] for item in data],
+            )
+
 
 class GroupTemplatesByCategoryTests(unittest.TestCase):
     def test_groups_templates_by_category_id(self) -> None:
