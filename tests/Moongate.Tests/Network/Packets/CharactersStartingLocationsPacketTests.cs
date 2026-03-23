@@ -44,7 +44,7 @@ public class CharactersStartingLocationsPacketTests
     }
 
     [Test]
-    public void Write_WhenEnhancedClientIsEnabled_ShouldIncludeKrAndUo3DFlags()
+    public void Write_WhenEnhancedClientIsEnabled_ShouldNotForceKrAndUo3DFlags()
     {
         var packet = new CharactersStartingLocationsPacket
         {
@@ -66,8 +66,8 @@ public class CharactersStartingLocationsPacketTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(flags.HasFlag(CharacterListFlags.KR), Is.True);
-                Assert.That(flags.HasFlag(CharacterListFlags.UO3DClientType), Is.True);
+                Assert.That(flags.HasFlag(CharacterListFlags.KR), Is.False);
+                Assert.That(flags.HasFlag(CharacterListFlags.UO3DClientType), Is.False);
             }
         );
     }

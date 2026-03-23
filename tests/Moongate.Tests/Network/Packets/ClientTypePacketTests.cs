@@ -30,4 +30,38 @@ public class ClientTypePacketTests
             }
         );
     }
+
+    [Test]
+    public void TryParse_ShouldReadEnhancedClientTypeAndVersion_WhenPacketCarriesVersionString()
+    {
+        var packet = new ClientTypePacket();
+
+        var ok = packet.TryParse(
+            [
+                0xE1,
+                0x00,
+                0x0D,
+                0x00,
+                0x03,
+                (byte)'7',
+                (byte)'.',
+                (byte)'0',
+                (byte)'.',
+                (byte)'6',
+                (byte)'1',
+                (byte)'.',
+                (byte)'0'
+            ]
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(packet.AdvertisedClientType, Is.EqualTo(0x03u));
+                Assert.That(packet.ResolvedClientType, Is.EqualTo(Moongate.UO.Data.Version.ClientType.SA));
+                Assert.That(packet.VersionString, Is.EqualTo("7.0.61.0"));
+            }
+        );
+    }
 }

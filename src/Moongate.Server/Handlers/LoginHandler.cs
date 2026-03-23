@@ -183,11 +183,19 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
     {
         session.NetworkSession.SetClientType(clientTypePacket.ResolvedClientType);
 
+        if (!string.IsNullOrWhiteSpace(clientTypePacket.VersionString))
+        {
+            var clientVersion = new ClientVersion(clientTypePacket.VersionString);
+            session.SetClientVersion(clientVersion);
+            session.NetworkSession.SetClientVersion(clientVersion);
+        }
+
         _logger.Debug(
-            "Received ClientTypePacket from session {SessionId}: advertised=0x{AdvertisedClientType:X8} resolved={ClientType}",
+            "Received ClientTypePacket from session {SessionId}: advertised=0x{AdvertisedClientType:X8} resolved={ClientType} version={ClientVersion}",
             session.SessionId,
             clientTypePacket.AdvertisedClientType,
-            clientTypePacket.ResolvedClientType
+            clientTypePacket.ResolvedClientType,
+            string.IsNullOrWhiteSpace(clientTypePacket.VersionString) ? "<none>" : clientTypePacket.VersionString
         );
 
         return true;
@@ -250,7 +258,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         session.AccountCharactersCache = characters;
         characterListPacket.FillCharacters(characters);
 
-        Enqueue(session, new SupportFeaturesPacket());
+        Enqueue(session, new SupportFeaturesPacket(GetSupportFeatureFlags(), UseExtendedSupportFeatures(session)));
         Enqueue(session, characterListPacket);
 
         return true;
@@ -339,4 +347,12 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         return IPAddress.Loopback;
     }
+
+    private static FeatureFlags GetSupportFeatureFlags()
+        => Moongate.UO.Data.Expansions.ExpansionInfo.Table is { Length: > 0 }
+            ? Moongate.UO.Data.Expansions.ExpansionInfo.CoreExpansion.SupportedFeatures
+            : FeatureFlags.ExpansionEJ;
+
+    private static bool UseExtendedSupportFeatures(GameSession session)
+        => session.NetworkSession.ClientVersion?.ProtocolChanges.HasFlag(ProtocolChanges.ExtendedSupportedFeatures) ?? true;
 }

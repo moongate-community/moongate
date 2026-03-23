@@ -184,6 +184,47 @@ public class LoginHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_WhenClientTypePacketCarriesVersionString_ShouldStoreEnhancedClientVersionInSession()
+    {
+        var handler = CreateHandler();
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = new ClientTypePacket();
+        Assert.That(
+            packet.TryParse(
+                [
+                    0xE1,
+                    0x00,
+                    0x0D,
+                    0x00,
+                    0x03,
+                    (byte)'7',
+                    (byte)'.',
+                    (byte)'0',
+                    (byte)'.',
+                    (byte)'6',
+                    (byte)'1',
+                    (byte)'.',
+                    (byte)'0'
+                ]
+            ),
+            Is.True
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(session.NetworkSession.ClientType, Is.EqualTo(Moongate.UO.Data.Version.ClientType.SA));
+                Assert.That(session.NetworkSession.IsEnhancedClient, Is.True);
+                Assert.That(session.NetworkSession.ClientVersion?.SourceString, Is.EqualTo("7.0.61.0"));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_WhenClientVersionPacketIsEmpty_ShouldNotStoreClientVersion()
     {
         var handler = CreateHandler();

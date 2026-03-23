@@ -169,7 +169,7 @@ Current notable outgoing packet classes:
   - reads effective mobile state from `UOMobileEntity`
 - `CharactersStartingLocationsPacket`
   - outgoing `0xA9`
-  - sets the KR/UO3D-compatible flags when `session.IsEnhancedClient` is true
+  - uses the modern `7.x` character-list shape without forcing extra KR/UO3D bits beyond the expansion flags
 - `MobileIncomingPacket`
   - outgoing `0x78`
   - chooses the new mobile format from the recipient session capability instead of assuming one global client shape

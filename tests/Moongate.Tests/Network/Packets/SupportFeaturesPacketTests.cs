@@ -8,10 +8,10 @@ namespace Moongate.Tests.Network.Packets;
 public class SupportFeaturesPacketTests
 {
     [Test]
-    public void Write_ShouldSerializeOpcodeAndFeatureFlags()
+    public void Write_WhenExtendedFormatIsEnabled_ShouldSerializeOpcodeAnd32BitFeatureFlags()
     {
         const FeatureFlags flags = FeatureFlags.LiveAccount | FeatureFlags.SeventhCharacterSlot;
-        var packet = new SupportFeaturesPacket(flags);
+        var packet = new SupportFeaturesPacket(flags, true);
 
         var writer = new SpanWriter(16, true);
         packet.Write(ref writer);
@@ -26,6 +26,30 @@ public class SupportFeaturesPacketTests
                 Assert.That(
                     BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(1, 4)),
                     Is.EqualTo((uint)flags)
+                );
+            }
+        );
+    }
+
+    [Test]
+    public void Write_WhenExtendedFormatIsDisabled_ShouldSerializeOpcodeAnd16BitFeatureFlags()
+    {
+        const FeatureFlags flags = FeatureFlags.LiveAccount | FeatureFlags.SE;
+        var packet = new SupportFeaturesPacket(flags, false);
+
+        var writer = new SpanWriter(16, true);
+        packet.Write(ref writer);
+        var data = writer.ToArray();
+        writer.Dispose();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data.Length, Is.EqualTo(3));
+                Assert.That(data[0], Is.EqualTo(0xB9));
+                Assert.That(
+                    BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)),
+                    Is.EqualTo((ushort)flags)
                 );
             }
         );

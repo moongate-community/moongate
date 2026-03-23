@@ -17,25 +17,42 @@ public class ClientTypePacket : BaseGameNetworkPacket
 
     public ClientType ResolvedClientType { get; private set; } = ClientType.Classic;
 
+    public string VersionString { get; private set; } = string.Empty;
+
     public ClientTypePacket()
         : base(0xE1) { }
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        if (reader.Remaining < 8)
+        if (reader.Remaining < 4)
         {
             return false;
         }
 
         var declaredLength = reader.ReadUInt16();
 
-        if (declaredLength < 7 || declaredLength - 3 > reader.Remaining)
+        if (declaredLength < 5)
         {
             return false;
         }
 
-        _ = reader.ReadUInt16();
-        AdvertisedClientType = reader.ReadUInt32();
+        if (reader.Remaining > 6)
+        {
+            AdvertisedClientType = reader.ReadUInt16();
+            VersionString = reader.Remaining == 0 ? string.Empty : reader.ReadAscii(reader.Remaining).TrimEnd('\0').Trim();
+        }
+        else
+        {
+            if (reader.Remaining < 6)
+            {
+                return false;
+            }
+
+            _ = reader.ReadUInt16();
+            AdvertisedClientType = reader.ReadUInt32();
+            VersionString = string.Empty;
+        }
+
         ResolvedClientType = AdvertisedClientType switch
         {
             0x02 => ClientType.KR,
