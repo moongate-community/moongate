@@ -1,4 +1,3 @@
-using System.Buffers.Binary;
 using Moongate.Network.Packets.Incoming.System;
 using Moongate.Network.Spans;
 
@@ -54,8 +53,7 @@ public sealed class SpyOnClientPacketTests
     {
         var packet = new SpyOnClientPacket();
         var payload = BuildPacketPayload();
-
-        BinaryPrimitives.WriteUInt16BigEndian(payload.AsSpan(1, 2), 0xFFFF);
+        payload[0] = 0xD8;
         var parsed = packet.TryParse(payload);
 
         Assert.That(parsed, Is.False);
@@ -66,7 +64,6 @@ public sealed class SpyOnClientPacketTests
         var writer = new SpanWriter(300, true);
 
         writer.Write((byte)0xD9);
-        writer.Write((ushort)0); // placeholder length
         writer.Write((byte)0x02);
         writer.Write(0x11223344u);
         writer.Write(10u);
@@ -91,12 +88,10 @@ public sealed class SpyOnClientPacketTests
         writer.Write((byte)1);
         writer.Write((byte)1);
         writer.Write((byte)0);
-        writer.Write((byte)0);
         writer.WriteLittleUni("ENU", 4);
         writer.WriteAscii("tail", 64);
 
         var payload = writer.ToArray();
-        BinaryPrimitives.WriteUInt16BigEndian(payload.AsSpan(1, 2), (ushort)payload.Length);
         writer.Dispose();
 
         return payload;

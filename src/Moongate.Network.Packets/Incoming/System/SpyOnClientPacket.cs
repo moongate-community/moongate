@@ -5,7 +5,7 @@ using Moongate.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming.System;
 
-[PacketHandler(0xD9, PacketSizing.Variable, Description = "Spy On Client")]
+[PacketHandler(0xD9, PacketSizing.Fixed, Length = 0x10C, Description = "Spy On Client")]
 
 /// <summary>
 /// Represents SpyOnClientPacket.
@@ -71,18 +71,6 @@ public class SpyOnClientPacket : BaseGameNetworkPacket
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        if (reader.Remaining < 3)
-        {
-            return false;
-        }
-
-        var declaredLength = reader.ReadUInt16();
-
-        if (declaredLength != reader.Length)
-        {
-            return false;
-        }
-
         ClientInfoVersion = reader.ReadByte();
         InstanceId = reader.ReadUInt32();
         OsMajor = reader.ReadUInt32();
@@ -107,9 +95,9 @@ public class SpyOnClientPacket : BaseGameNetworkPacket
         ClientsRunning = reader.ReadByte();
         ClientsInstalled = reader.ReadByte();
         PartialInstalled = reader.ReadByte();
-        UnknownFlag = reader.ReadByte();
         LanguageCode = reader.ReadLittleUniSafe(4).TrimEnd();
         UnknownEnding = reader.ReadAsciiSafe(64).TrimEnd();
+        UnknownFlag = 0;
 
         return true;
     }
