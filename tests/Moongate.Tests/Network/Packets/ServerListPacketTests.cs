@@ -54,7 +54,7 @@ public class ServerListPacketTests
     }
 
     [Test]
-    public void Write_WithSingleShard_ShouldSerializeIpAddressInNetworkByteOrder()
+    public void Write_WithSingleShard_ShouldSerializeIpAddressLikeModernUoServerList()
     {
         var packet = new ServerListPacket(
             new GameServerEntry
@@ -73,10 +73,10 @@ public class ServerListPacketTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(data[^4], Is.EqualTo(0xC0));
-                Assert.That(data[^3], Is.EqualTo(0xA8));
-                Assert.That(data[^2], Is.EqualTo(0x00));
-                Assert.That(data[^1], Is.EqualTo(0xCE));
+                Assert.That(data[^4], Is.EqualTo(0xCE));
+                Assert.That(data[^3], Is.EqualTo(0x00));
+                Assert.That(data[^2], Is.EqualTo(0xA8));
+                Assert.That(data[^1], Is.EqualTo(0xC0));
             }
         );
     }
