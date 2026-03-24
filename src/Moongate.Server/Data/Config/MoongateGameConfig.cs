@@ -9,8 +9,6 @@ public class MoongateGameConfig
 {
     public string ShardName { get; set; } = "Moongate Shard";
 
-    public string? ServerListingAddress { get; set; }
-
     public bool PingServerEnabled { get; set; } = true;
 
     public int PingServerPort { get; set; } = 12000;
