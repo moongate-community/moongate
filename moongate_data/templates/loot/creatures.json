@@ -1653,5 +1653,204 @@
         "amount": 1
       }
     ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.low_scrolls",
+    "name": "Low Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.med_scrolls",
+    "name": "Med Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.high_scrolls",
+    "name": "High Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.gems",
+    "name": "Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.potions",
+    "name": "Potions",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "entries": [
+      {
+        "itemTemplateId": "agility_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "strength_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "refresh_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_cure_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_heal_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.poor",
+    "name": "Poor Pack",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 10,
+        "amountMax": 30
+      },
+      {
+        "itemTemplateId": "bone",
+        "chance": 0.25,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.meager",
+    "name": "Meager Pack",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 20,
+        "amountMax": 50
+      },
+      {
+        "itemTemplateId": "left_arm",
+        "chance": 0.1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "right_arm",
+        "chance": 0.1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "torso",
+        "chance": 0.1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bone",
+        "chance": 0.7,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.average",
+    "name": "Average Pack",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 50,
+        "amountMax": 100
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 0.35,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "agility_potion",
+        "chance": 0.25,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "strength_potion",
+        "chance": 0.25,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "refresh_potion",
+        "chance": 0.25,
+        "amount": 1
+      }
+    ]
   }
 ]
