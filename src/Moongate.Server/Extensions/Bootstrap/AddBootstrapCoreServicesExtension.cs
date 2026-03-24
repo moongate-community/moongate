@@ -88,6 +88,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IOutboundPacketSender, OutboundPacketSender>(Reuse.Singleton);
         container.Register<IPacketDispatchService, PacketDispatchService>(Reuse.Singleton);
         container.Register<IGameNetworkSessionService, GameNetworkSessionService>(Reuse.Singleton);
+        container.Register<IGameLoginHandoffService, GameLoginHandoffService>(Reuse.Singleton);
         container.Register<ISpatialWorldService, SpatialWorldService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<IChatSystemService, ChatSystemService>(Reuse.Singleton);

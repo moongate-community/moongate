@@ -44,6 +44,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
     private readonly ICharacterService _characterService;
     private readonly IGameEventBusService _gameEventBusService;
 
+    private readonly IGameLoginHandoffService _gameLoginHandoffService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly IOutboundPacketSender _outboundPacketSender;
 
@@ -55,6 +56,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         ICharacterService characterService,
         IGameEventBusService gameEventBusService,
         MoongateConfig serverConfig,
+        IGameLoginHandoffService gameLoginHandoffService,
         IGameNetworkSessionService gameNetworkSessionService,
         IOutboundPacketSender outboundPacketSender
     ) : base(outgoingPacketQueue)
@@ -63,6 +65,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         _characterService = characterService;
         _gameEventBusService = gameEventBusService;
         _serverConfig = serverConfig;
+        _gameLoginHandoffService = gameLoginHandoffService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _outboundPacketSender = outboundPacketSender;
     }
@@ -238,6 +241,25 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             gameLoginPacket.AccountName
         );
 
+        if (_gameLoginHandoffService.TryConsume(gameLoginPacket.SessionKey, out var handoff))
+        {
+            session.NetworkSession.SetClientType(handoff.ClientType);
+
+            if (handoff.ClientVersion is not null)
+            {
+                session.SetClientVersion(handoff.ClientVersion);
+                session.NetworkSession.SetClientVersion(handoff.ClientVersion);
+            }
+
+            _logger.Debug(
+                "Applied game login handoff for session {SessionId}: session key 0x{SessionKey:X8}, client type {ClientType}, version {ClientVersion}",
+                session.SessionId,
+                gameLoginPacket.SessionKey,
+                handoff.ClientType,
+                handoff.ClientVersion?.SourceString ?? "<none>"
+            );
+        }
+
         var account = await _accountService.LoginAsync(gameLoginPacket.AccountName, gameLoginPacket.Password);
 
         if (account == null)
@@ -324,6 +346,11 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             };
 
             session.NetworkSession.SetSeed((uint)sessionKey);
+            _gameLoginHandoffService.Store(
+                connectToServer.SessionKey,
+                session.NetworkSession.ClientType,
+                session.NetworkSession.ClientVersion
+            );
 
             _logger.Debug(
                 "Received ServerSelectPacket from session {SessionId} with shard index {ShardIndex}; redirecting to {IPAddress}:{Port} with session key 0x{SessionKey:X8}",
