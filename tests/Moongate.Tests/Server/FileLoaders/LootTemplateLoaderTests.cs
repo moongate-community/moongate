@@ -40,6 +40,61 @@ public sealed class LootTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenRepositoryContainsBasePackTables_ShouldLoadThemWithExpectedModes()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var lootTemplateService = new LootTemplateService();
+        var loader = new LootTemplateLoader(directoriesConfig, lootTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lootTemplateService.TryGet("pack.low_scrolls", out var lowScrolls), Is.True);
+                Assert.That(lowScrolls, Is.Not.Null);
+                Assert.That(lowScrolls!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(lowScrolls.Entries[0].ItemTemplateId, Is.EqualTo("clumsy_scroll"));
+
+                Assert.That(lootTemplateService.TryGet("pack.med_scrolls", out var medScrolls), Is.True);
+                Assert.That(medScrolls, Is.Not.Null);
+                Assert.That(medScrolls!.Entries[0].ItemTemplateId, Is.EqualTo("arch_cure_scroll"));
+
+                Assert.That(lootTemplateService.TryGet("pack.high_scrolls", out var highScrolls), Is.True);
+                Assert.That(highScrolls, Is.Not.Null);
+                Assert.That(highScrolls!.Entries[0].ItemTemplateId, Is.EqualTo("summon_air_elemental_scroll"));
+
+                Assert.That(lootTemplateService.TryGet("pack.gems", out var gems), Is.True);
+                Assert.That(gems, Is.Not.Null);
+                Assert.That(gems!.Entries[0].ItemTemplateId, Is.EqualTo("amber"));
+
+                Assert.That(lootTemplateService.TryGet("pack.potions", out var potions), Is.True);
+                Assert.That(potions, Is.Not.Null);
+                Assert.That(potions!.Mode, Is.EqualTo(LootTemplateMode.Weighted));
+                Assert.That(potions.Rolls, Is.EqualTo(1));
+                Assert.That(potions.Entries, Has.Count.EqualTo(6));
+
+                Assert.That(lootTemplateService.TryGet("pack.poor", out var poor), Is.True);
+                Assert.That(poor, Is.Not.Null);
+                Assert.That(poor!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(poor.Entries.Any(entry => entry.ItemTemplateId == "gold"), Is.True);
+
+                Assert.That(lootTemplateService.TryGet("pack.meager", out var meager), Is.True);
+                Assert.That(meager, Is.Not.Null);
+                Assert.That(meager!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(meager.Entries.Any(entry => entry.ItemTemplateId == "left_arm"), Is.True);
+
+                Assert.That(lootTemplateService.TryGet("pack.average", out var average), Is.True);
+                Assert.That(average, Is.Not.Null);
+                Assert.That(average!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(average.Entries.Any(entry => entry.ItemTemplateId == "amber"), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenTemplateDefinesAdditiveMode_ShouldLoadChanceAndAmountRange()
     {
         using var tempDirectory = new TempDirectory();
