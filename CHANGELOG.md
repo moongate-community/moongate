@@ -1,3 +1,69 @@
+## [1.1.0](https://github.com/moongate-community/moongate/compare/v1.0.0...v1.1.0) (2026-03-24)
+
+### Features
+
+* add additive loot template support ([930355c](https://github.com/moongate-community/moongate/commit/930355c093c1f52cd93efb857875c771b23a2114))
+* add city guard and vendor npc data ([2ff5025](https://github.com/moongate-community/moongate/commit/2ff5025ed78303d2666d5c9349d37a1a0029c33c))
+* add combat-driven skill gain ([64f99c9](https://github.com/moongate-community/moongate/commit/64f99c920a5595ed588533e0ea7500c645f98afc))
+* add contributor attribution to release notes ([cf21e6d](https://github.com/moongate-community/moongate/commit/cf21e6d3fa2be88143897129350141359acdf38d))
+* add enhanced client session support ([f381262](https://github.com/moongate-community/moongate/commit/f3812627702e57304ff26bc0e5b035642f3b504f))
+* add factions v1 for ai and notoriety ([b3e2efb](https://github.com/moongate-community/moongate/commit/b3e2efb7ac9913367e1bccac0d23da503f05bd99))
+* add guard in-range greetings and threat reactions ([3a0f1a4](https://github.com/moongate-community/moongate/commit/3a0f1a40c936d15fef2fc3ae3db01e6294628835))
+* add guard positioning behaviors ([c2cfe7f](https://github.com/moongate-community/moongate/commit/c2cfe7f5cf7818ed41d6096f813bdc4923309df9))
+* add lua-configurable reputation titles ([6006916](https://github.com/moongate-community/moongate/commit/60069163aa7b251589dd571c5fa32b38e9ee19de))
+* add ModernUO static template generator ([f37bc40](https://github.com/moongate-community/moongate/commit/f37bc4076e5f65b723389ba452539daa60e93e50))
+* add moongate plugin template package ([3118db3](https://github.com/moongate-community/moongate/commit/3118db3a71aa3643f9cc1a0ba89d130db00d694b))
+* add npc self-bandage behavior ([5ae3576](https://github.com/moongate-community/moongate/commit/5ae357639fa7fc99c472811e744f7da4e7351b06))
+* add quiver support for ranged combat ([0b94f8e](https://github.com/moongate-community/moongate/commit/0b94f8e7f022a59e8eb24bd6e606b5f4e3aae4f8))
+* add ranged combat v1 for bows and crossbows ([4e30f9f](https://github.com/moongate-community/moongate/commit/4e30f9f27aeacb7da7baf20ac26618ece5d0b213))
+* add ranged spacing behavior for guard archers ([d976102](https://github.com/moongate-community/moongate/commit/d976102e2b3b69d5680af88fa39ef353333c0220))
+* add reusable base loot packs ([70d8a16](https://github.com/moongate-community/moongate/commit/70d8a167bab46cfcdfd80ecaffd8caf9aebf873d))
+* add skill gain anti-macro and stat progression ([cc9d794](https://github.com/moongate-community/moongate/commit/cc9d794eb7ecf0e572fb615ad0407051784fb2b4))
+* add undead melee zombie brain ([dd6bd75](https://github.com/moongate-community/moongate/commit/dd6bd7522e7d2834cb8aec4a7a361faab18ad37b))
+* add vendor consumables and clock item scripts ([e9c86e2](https://github.com/moongate-community/moongate/commit/e9c86e2a1cdf723d335ece7fb62ea6d26cacf40d))
+* add viewer-relative ai relations for npc brains ([3f5ab53](https://github.com/moongate-community/moongate/commit/3f5ab53f2c6980615f57c11c2d460995e957703c))
+* add viewer-relative ai relations for npc brains ([33f5f38](https://github.com/moongate-community/moongate/commit/33f5f38182e322bf368ca448ec0dc7cbff1f2ed3))
+* add weapon combat sounds and blood hit effects ([3639d8d](https://github.com/moongate-community/moongate/commit/3639d8d092b7565634c8fee2deaf0eb3845ff5a3))
+* append missing ModernUO static item templates ([33e5471](https://github.com/moongate-community/moongate/commit/33e54711a44bccc3f41395194d13e279713ab011))
+* award fame and karma for npc kills ([e30bb1c](https://github.com/moongate-community/moongate/commit/e30bb1c0de3559af0ef5ac03d940fbece369f6c5))
+* enhance command execution with user authorization checks ([d5fa5fc](https://github.com/moongate-community/moongate/commit/d5fa5fc104a81d61305ab15c6774764d42f04a03))
+* expand ModernUO item template coverage ([a366f76](https://github.com/moongate-community/moongate/commit/a366f76fee0861491333cab2945f4de0b46e8a83))
+* extend loot generation for tags and corpses ([4fa2760](https://github.com/moongate-community/moongate/commit/4fa27605aa8b2c5880286b92883befedca5e0a0f))
+* implement player character profile packet flow ([3a57653](https://github.com/moongate-community/moongate/commit/3a5765364d8bc4594f4727c0d6f970214e53ba67))
+* import creature and container loot templates ([352e0c3](https://github.com/moongate-community/moongate/commit/352e0c3d308a37240005227a0f21418ee3f9afa3))
+* integrate pending gameplay and infrastructure updates ([275c24a](https://github.com/moongate-community/moongate/commit/275c24a70d00d8d4e114ead348fc1d219dd882e2))
+* purge persisted corpses on startup ([c658fea](https://github.com/moongate-community/moongate/commit/c658fead0538eeec03e813baa65be21a300ea321))
+* support encrypted UO client handshakes ([14e5112](https://github.com/moongate-community/moongate/commit/14e511277e1d2fddb95ad9b4cec7606478801279))
+
+### Bug Fixes
+
+* align enhanced client login handshake ([4453d32](https://github.com/moongate-community/moongate/commit/4453d327bd94b8af40c195e4c5760178a8582d99))
+* align enhanced client shard redirect flow ([47e68a6](https://github.com/moongate-community/moongate/commit/47e68a6d501b79170221aad96407e1976de56bf7))
+* align enhanced client shard selection handshake ([dcbaea1](https://github.com/moongate-community/moongate/commit/dcbaea12fc5f77c9b5bb6e4616d102a492da069d))
+* allow command endpoint without jwt ([c635259](https://github.com/moongate-community/moongate/commit/c6352598ef144a779cb3500b5424df5435788b31))
+* allow configured shard redirect address ([030c4ee](https://github.com/moongate-community/moongate/commit/030c4eeaffde9f5b61fe838dd5ec9ccd16dcbff0))
+* allow configured shard redirect address ([d092583](https://github.com/moongate-community/moongate/commit/d09258317e948f9971dc9f9633d0f1d99313af4c))
+* correct enhanced client server list ip order ([1230609](https://github.com/moongate-community/moongate/commit/1230609787bbe955aa5df4b5278c9574c4a178c0))
+* correct enhanced client server list ip order ([8caa529](https://github.com/moongate-community/moongate/commit/8caa529dfe19ad5ffb2c73f8e2a9d9cf6d69b2c0))
+* enhanced client funziona ([7b24bd5](https://github.com/moongate-community/moongate/commit/7b24bd583fe2ded972d790269b0a7ef0bdb18bfa))
+* exclude template payload from docfx metadata ([41ff039](https://github.com/moongate-community/moongate/commit/41ff039f09e461900e145ad0fae45461169b739d))
+* hydrate equipped container contents for status values ([da25373](https://github.com/moongate-community/moongate/commit/da25373bed18a389beda6886bc5740ebc04ceb79))
+* parse enhanced client hardware info before shard select ([9a022f5](https://github.com/moongate-community/moongate/commit/9a022f589a07219949a2b15861977f35efe4356d))
+* preserve enhanced client metadata across shard redirect ([9aaa731](https://github.com/moongate-community/moongate/commit/9aaa731a0a77eb110eb2f02af38ec78ddf1cb08c))
+* resolve post-merge skill gain regressions ([5dc1eb4](https://github.com/moongate-community/moongate/commit/5dc1eb48e204510cd3c3e674bef7899cc9af8f43))
+* restore item template startup integrity ([cfa5843](https://github.com/moongate-community/moongate/commit/cfa584399ff739b8ecaf0cf9abd01bca5144f2bf))
+* restore modernuo server list address encoding ([15d12eb](https://github.com/moongate-community/moongate/commit/15d12eba932403906645d8cfd0c74ee348c5b0bc))
+* restore ModernUO server list address encoding ([ee21f5a](https://github.com/moongate-community/moongate/commit/ee21f5af6910a7d802552fe4e06f59c539908603))
+* send effective carried weight in player status ([5884671](https://github.com/moongate-community/moongate/commit/58846719bb3632e9c4b8c00358fd99b02ac055df))
+* stabilize guard combat behaviors ([dd5f596](https://github.com/moongate-community/moongate/commit/dd5f5965abbcb5ae189c35ffbab562335640717a))
+* stabilize guard hostility and corpse visuals ([16b0c95](https://github.com/moongate-community/moongate/commit/16b0c95b09a1e8e6214b8b43c483252dbdaca30b))
+* tighten combat and inventory live sync ([64357b6](https://github.com/moongate-community/moongate/commit/64357b6b582460e8a49907f370dd145a872265a6))
+
+### Contributors
+
+- tom
+- Agent 57951
+
 ## [1.0.0](https://github.com/moongate-community/moongate/compare/v0.36.0...v1.0.0) (2026-03-20)
 
 ### ⚠ BREAKING CHANGES
