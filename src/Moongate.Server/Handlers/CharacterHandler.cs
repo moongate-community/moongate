@@ -116,6 +116,9 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new ClientVersionPacket());
         Enqueue(session, new LoginConfirmPacket(character));
+        Enqueue(session, GeneralInformationFactory.CreateSetCursorHueSetMap(character.Map));
+        Enqueue(session, GeneralInformationFactory.CreateEnableMapDiffMapPatches());
+        Enqueue(session, new SeasonPacket(character.Map.Season));
         Enqueue(session, new SupportFeaturesPacket(GetSupportFeatureFlags(), UseExtendedSupportFeatures(session)));
         Enqueue(session, new DrawPlayerPacket(character));
         Enqueue(session, new MovementSpeedControlPacket(MovementSpeedControlType.Disable));
@@ -126,14 +129,12 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         await EnqueueBackpackAsync(session, character);
 
         Enqueue(session, new WarModePacket(character));
-        Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
         var globalLight = _lightService?.ComputeGlobalLightLevel(character.MapId, character.Location) ??
                           (int)LightLevelType.Day;
         var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
         var personalLightLevel = (LightLevelType)0;
         Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
         Enqueue(session, new PersonalLightLevelPacket(personalLightLevel, character));
-        Enqueue(session, new SeasonPacket(character.Map.Season));
 
         Enqueue(session, new LoginCompletePacket());
 

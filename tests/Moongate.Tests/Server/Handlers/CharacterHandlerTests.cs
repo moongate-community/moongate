@@ -1,9 +1,13 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Movement;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Spans;
+using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
@@ -208,6 +212,62 @@ public sealed class CharacterHandlerTests
         );
     }
 
+    [Test]
+    public async Task HandleCharacterLoggedIn_ShouldEnqueueMapChangeAndMapPatchesBeforeSupportFeatures()
+    {
+        EnsureMapRegistered();
+
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var characterService = new MovementHandlerTestCharacterService();
+        var entityFactoryService = new CharacterHandlerTestEntityFactoryService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var gameNetworkSessionService = new FakeGameNetworkSessionService();
+        var backgroundJobs = new CharacterHandlerTestBackgroundJobService();
+        var handler = new CharacterHandler(
+            queue,
+            characterService,
+            entityFactoryService,
+            eventBus,
+            gameNetworkSessionService,
+            new RegionDataLoaderTestSpatialWorldService(),
+            backgroundJobService: backgroundJobs
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            AccountId = (Serial)0x01020304,
+            AccountType = AccountType.Regular
+        };
+
+        var result = await handler.HandleCharacterLoggedIn(session, (Serial)0x00000099);
+        var packets = DequeuePackets(queue).Select(outgoing => outgoing.Packet).ToList();
+
+        var loginConfirmIndex = packets.FindIndex(packet => packet is LoginConfirmPacket);
+        var mapChangeIndex = packets.FindIndex(
+            packet => packet is GeneralInformationPacket general &&
+                      general.SubcommandType == GeneralInformationSubcommandType.SetCursorHueSetMap
+        );
+        var mapPatchesIndex = packets.FindIndex(
+            packet => packet is GeneralInformationPacket general &&
+                      general.SubcommandType == GeneralInformationSubcommandType.EnableMapDiff
+        );
+        var supportFeaturesIndex = packets.FindIndex(packet => packet is SupportFeaturesPacket);
+        var drawPlayerIndex = packets.FindIndex(packet => packet is DrawPlayerPacket);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(loginConfirmIndex, Is.GreaterThanOrEqualTo(0));
+                Assert.That(mapChangeIndex, Is.GreaterThan(loginConfirmIndex));
+                Assert.That(mapPatchesIndex, Is.GreaterThan(mapChangeIndex));
+                Assert.That(supportFeaturesIndex, Is.GreaterThan(mapPatchesIndex));
+                Assert.That(drawPlayerIndex, Is.GreaterThan(supportFeaturesIndex));
+            }
+        );
+    }
+
     private static byte[] BuildCharacterCreationPayload()
     {
         var writer = new SpanWriter(106, true);
@@ -268,5 +328,17 @@ public sealed class CharacterHandlerTests
                 MapRules.FeluccaRules
             );
         }
+    }
+
+    private static List<OutgoingGamePacket> DequeuePackets(BasePacketListenerTestOutgoingPacketQueue queue)
+    {
+        var packets = new List<OutgoingGamePacket>();
+
+        while (queue.TryDequeue(out var outgoing))
+        {
+            packets.Add(outgoing);
+        }
+
+        return packets;
     }
 }

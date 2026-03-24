@@ -21,6 +21,8 @@ public class RequestCharProfilePacket : BaseGameNetworkPacket
 
     public ushort? CommandType { get; private set; }
 
+    public ushort? IgnoredField { get; private set; }
+
     public ushort? CharacterCount { get; private set; }
 
     public string? ProfileText { get; private set; }
@@ -45,12 +47,13 @@ public class RequestCharProfilePacket : BaseGameNetworkPacket
         Mode = reader.ReadByte();
         TargetId = (Serial)reader.ReadUInt32();
         CommandType = null;
+        IgnoredField = null;
         CharacterCount = null;
         ProfileText = null;
 
         if (Mode == 0x00)
         {
-            return reader.Remaining == 0;
+            return true;
         }
 
         if (Mode != 0x01 || reader.Remaining < 4)
@@ -59,21 +62,48 @@ public class RequestCharProfilePacket : BaseGameNetworkPacket
         }
 
         CommandType = reader.ReadUInt16();
-        CharacterCount = reader.ReadUInt16();
+        var nextField = reader.ReadUInt16();
 
-        if (CharacterCount.Value > MaximumProfileCharacters)
+        if (TryParseProfileText(ref reader, nextField))
+        {
+            return true;
+        }
+
+        if (reader.Remaining < 2)
         {
             return false;
         }
 
-        var requiredBytes = CharacterCount.Value * 2;
+        IgnoredField = nextField;
+        var characterCount = reader.ReadUInt16();
 
-        if (reader.Remaining != requiredBytes)
+        return TryParseProfileText(ref reader, characterCount);
+    }
+
+    private bool TryParseProfileText(ref SpanReader reader, ushort characterCount)
+    {
+        if (characterCount > MaximumProfileCharacters)
         {
             return false;
         }
 
-        ProfileText = CharacterCount.Value == 0 ? string.Empty : reader.ReadBigUni(CharacterCount.Value);
+        var requiredBytes = characterCount * 2;
+        var allowsTrailingTerminator = reader.Remaining == requiredBytes + 2 &&
+                                       reader.Buffer[reader.Position + requiredBytes] == 0x00 &&
+                                       reader.Buffer[reader.Position + requiredBytes + 1] == 0x00;
+
+        if (reader.Remaining != requiredBytes && !allowsTrailingTerminator)
+        {
+            return false;
+        }
+
+        CharacterCount = characterCount;
+        ProfileText = characterCount == 0 ? string.Empty : reader.ReadBigUni(characterCount);
+
+        if (allowsTrailingTerminator)
+        {
+            reader.ReadUInt16();
+        }
 
         return reader.Remaining == 0;
     }

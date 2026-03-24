@@ -9,6 +9,7 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -149,6 +150,42 @@ public class AfterLoginOutgoingPacketsTests
         var data = Write(packet);
 
         Assert.That(data, Is.EqualTo(new byte[] { 0xBF, 0x00, 0x06, 0x00, 0x08, 0x00 }));
+    }
+
+    [Test]
+    public void GeneralInformationFactory_CreateEnableMapDiffMapPatches_ShouldSerializeModernUoShape()
+    {
+        var packet = GeneralInformationFactory.CreateEnableMapDiffMapPatches();
+
+        var data = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data.Length, Is.EqualTo(41));
+                Assert.That(data[0], Is.EqualTo(0xBF));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)41));
+                Assert.That(
+                    BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(3, 2)),
+                    Is.EqualTo((ushort)GeneralInformationSubcommandType.EnableMapDiff)
+                );
+                Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(5, 4)), Is.EqualTo(4));
+            }
+        );
+
+        for (var index = 0; index < 4; index++)
+        {
+            var patch = Map.Maps[index]?.Tiles.Patch;
+            var offset = 9 + index * 8;
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(offset, 4)), Is.EqualTo(patch?.StaticBlocks ?? 0));
+                    Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(offset + 4, 4)), Is.EqualTo(patch?.LandBlocks ?? 0));
+                }
+            );
+        }
     }
 
     [Test]
