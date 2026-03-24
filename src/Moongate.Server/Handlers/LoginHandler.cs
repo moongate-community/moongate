@@ -391,22 +391,6 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private IPAddress ResolveShardAddress(GameSession session)
     {
-        var configuredAddress = _serverConfig.Game.ServerListingAddress;
-
-        if (!string.IsNullOrWhiteSpace(configuredAddress))
-        {
-            if (IPAddress.TryParse(configuredAddress, out var configuredIp))
-            {
-                return configuredIp;
-            }
-
-            _logger.Warning(
-                "Configured server listing address '{ServerListingAddress}' is invalid. Falling back to detected local IP for session {SessionId}.",
-                configuredAddress,
-                session.SessionId
-            );
-        }
-
         var rawAddress = session.NetworkSession.LocalIpAddress;
 
         if (!string.IsNullOrWhiteSpace(rawAddress) && IPAddress.TryParse(rawAddress, out var resolved))

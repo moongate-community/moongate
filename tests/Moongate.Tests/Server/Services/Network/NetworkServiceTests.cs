@@ -8,6 +8,8 @@ using Moongate.Network.Encryption;
 using Moongate.Network.Events;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Spans;
 using Moongate.Network.Types.Encryption;
 using Moongate.Server.Data.Events.Connections;
 using Moongate.Server.Data.Internal.Network;
@@ -438,6 +440,49 @@ public class NetworkServiceTests
     }
 
     [Test]
+    public void OnClientData_WhenHardwareInfoPacketPrecedesServerSelect_ShouldParseBothPackets()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        InvokeOnClientData(service, client, BuildLoginSeedPacket(0x12345678, 67, 0, 114, 0));
+        Assert.That(service.TryDequeueParsedPacket(out var loginSeedPacket), Is.True);
+        Assert.That(loginSeedPacket.Packet, Is.TypeOf<LoginSeedPacket>());
+
+        InvokeOnClientData(service, client, BuildHardwareInfoPacket());
+        InvokeOnClientData(service, client, [0xA0, 0x00, 0x00]);
+
+        var hasHardwarePacket = service.TryDequeueParsedPacket(out var hardwarePacket);
+        var hasServerSelectPacket = service.TryDequeueParsedPacket(out var serverSelectPacket);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasHardwarePacket, Is.True);
+                Assert.That(hasServerSelectPacket, Is.True);
+                Assert.That(hardwarePacket.PacketId, Is.EqualTo(0xD9));
+                Assert.That(hardwarePacket.Packet, Is.TypeOf<SpyOnClientPacket>());
+                Assert.That(serverSelectPacket.PacketId, Is.EqualTo(0xA0));
+                Assert.That(serverSelectPacket.Packet, Is.TypeOf<ServerSelectPacket>());
+            }
+        );
+    }
+
+    [Test]
     public void OnClientData_WhenReconnectSeedIsZero_ShouldDiscardAndWaitForNewHandshakeData()
     {
         var messageBus = new NetworkServiceTestMessageBusService();
@@ -739,6 +784,44 @@ public class NetworkServiceTests
         WriteInt32BigEndian(payload, 9, minor);
         WriteInt32BigEndian(payload, 13, revision);
         WriteInt32BigEndian(payload, 17, patch);
+
+        return payload;
+    }
+
+    private static byte[] BuildHardwareInfoPacket()
+    {
+        var writer = new SpanWriter(300, true);
+
+        writer.Write((byte)0xD9);
+        writer.Write((byte)0x02);
+        writer.Write(0x45AFB128u);
+        writer.Write(6u);
+        writer.Write(2u);
+        writer.Write(9200u);
+        writer.Write((byte)1);
+        writer.Write(15u);
+        writer.Write(4u);
+        writer.Write(3160u);
+        writer.Write((byte)4);
+        writer.Write(3416u);
+        writer.Write(1368u);
+        writer.Write(1365u);
+        writer.Write(32u);
+        writer.Write((ushort)9);
+        writer.Write((ushort)0);
+        writer.WriteLittleUni("Parallels Display Adapter (WDDM)", 64);
+        writer.Write(0u);
+        writer.Write(0u);
+        writer.Write(0u);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.WriteLittleUni("ENU", 4);
+        writer.WriteAscii(string.Empty, 64);
+
+        var payload = writer.ToArray();
+        writer.Dispose();
 
         return payload;
     }
