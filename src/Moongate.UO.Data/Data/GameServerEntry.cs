@@ -21,7 +21,7 @@ public class GameServerEntry
         writer.WriteAscii(ServerName, 32);
         writer.Write((byte)0);
         writer.Write((byte)0);
-        writer.Write(IpAddress.ToRawAddress());
+        writer.WriteLE(IpAddress.ToRawAddress());
 
         return writer.ToArray().AsMemory();
     }
