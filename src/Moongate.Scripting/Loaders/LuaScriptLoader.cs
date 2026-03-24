@@ -104,11 +104,25 @@ public class LuaScriptLoader : ScriptLoaderBase
             return pluginPath;
         }
 
+        var canonicalRoot = Path.GetFullPath(_scriptsDirectory)
+                                .TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
         // Try each module path pattern
         foreach (var pattern in ModulePaths)
         {
             var fileName = pattern.Replace("?", moduleName);
-            var fullPath = Path.Combine(_scriptsDirectory, fileName);
+            var fullPath = Path.GetFullPath(Path.Combine(_scriptsDirectory, fileName));
+
+            if (!fullPath.StartsWith(canonicalRoot, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.Warning(
+                    "Rejected path traversal attempt for module '{ModuleName}': {FullPath}",
+                    moduleName,
+                    fullPath
+                );
+
+                continue;
+            }
 
             if (File.Exists(fullPath))
             {
@@ -119,7 +133,18 @@ public class LuaScriptLoader : ScriptLoaderBase
         }
 
         // If no pattern matched, try the direct path
-        var directPath = Path.Combine(_scriptsDirectory, moduleName);
+        var directPath = Path.GetFullPath(Path.Combine(_scriptsDirectory, moduleName));
+
+        if (!directPath.StartsWith(canonicalRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.Warning(
+                "Rejected path traversal attempt for module '{ModuleName}': {DirectPath}",
+                moduleName,
+                directPath
+            );
+
+            return null;
+        }
 
         if (File.Exists(directPath))
         {
@@ -157,10 +182,24 @@ public class LuaScriptLoader : ScriptLoaderBase
             return null;
         }
 
+        var canonicalPluginRoot = Path.GetFullPath(pluginRoot)
+                                      .TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
         foreach (var pattern in ModulePaths)
         {
             var fileName = pattern.Replace("?", relativeModulePath);
-            var fullPath = Path.Combine(pluginRoot, fileName);
+            var fullPath = Path.GetFullPath(Path.Combine(pluginRoot, fileName));
+
+            if (!fullPath.StartsWith(canonicalPluginRoot, StringComparison.OrdinalIgnoreCase))
+            {
+                _logger.Warning(
+                    "Rejected path traversal attempt for plugin module '{ModuleName}': {FullPath}",
+                    moduleName,
+                    fullPath
+                );
+
+                continue;
+            }
 
             if (File.Exists(fullPath))
             {
@@ -174,7 +213,18 @@ public class LuaScriptLoader : ScriptLoaderBase
             }
         }
 
-        var directPath = Path.Combine(pluginRoot, relativeModulePath);
+        var directPath = Path.GetFullPath(Path.Combine(pluginRoot, relativeModulePath));
+
+        if (!directPath.StartsWith(canonicalPluginRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.Warning(
+                "Rejected path traversal attempt for plugin module '{ModuleName}': {DirectPath}",
+                moduleName,
+                directPath
+            );
+
+            return null;
+        }
 
         if (File.Exists(directPath))
         {
