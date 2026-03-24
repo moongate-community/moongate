@@ -620,7 +620,7 @@ internal static class MoongateHttpRouteExtensions
         CancellationToken cancellationToken
     )
     {
-        if (!IsAdministrativeUser(user))
+        if (context.JwtOptions.IsEnabled && !IsAdministrativeUser(user))
         {
             return user.Identity?.IsAuthenticated == true ? TypedResults.Forbid() : TypedResults.Unauthorized();
         }
