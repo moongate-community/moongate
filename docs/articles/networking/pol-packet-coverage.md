@@ -112,7 +112,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xA7` | Request tip / notice window | C -> S | `?Packet=0xA7` | `RequestTipNoticeWindowPacket` | `parse-only` | Tip flow missing |
 | `0xB3` | Chat text | C -> S | `?Packet=0xB3` | `ChatTextPacket` | `handler` | ModernUO-style conference chat action dispatch via `IChatSystemService` |
 | `0xB6` | Help / tip request | C -> S | `?Packet=0xB6` | `SendHelpTipRequestPacket` | `parse-only` | Tip flow missing |
-| `0xB8` | Character profile request | C -> S | `?Packet=0xB8` | `RequestCharProfilePacket` | `parse-only` | Profile flow missing |
+| `0xB8` | Character profile request | C -> S | `?Packet=0xB8` | `RequestCharProfilePacket` | `handler` | `CharacterProfileHandler` | Player-only profile display and self-edit flow with lock and account-age footer |
 | `0xBE` | Assist version | C -> S | `?Packet=0xBE` | `AssistVersionPacket` | `parse-only` | No behavior attached |
 | `0xC2` | Unicode text entry | C -> S | `?Packet=0xC2` | `UnicodeTextEntryPacket` | `parse-only` | Text entry flow missing |
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |

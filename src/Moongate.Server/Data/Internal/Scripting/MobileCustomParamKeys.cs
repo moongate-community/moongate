@@ -1,6 +1,6 @@
 namespace Moongate.Server.Data.Internal.Scripting;
 
-public static class MobileCustomParamKeys
+public static partial class MobileCustomParamKeys
 {
     public static class Loot
     {
