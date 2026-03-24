@@ -1,0 +1,52 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.healer",
+    "name": "Healer Vendor",
+    "category": "vendors",
+    "description": "Sell profile for basic town healer vendors.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "bandage",
+        "price": 3,
+        "maxStock": 100,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "heal_scroll",
+        "price": 18,
+        "maxStock": 30,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "cure_scroll",
+        "price": 18,
+        "maxStock": 30,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "greater_heal_scroll",
+        "price": 24,
+        "maxStock": 20,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "heal_scroll",
+        "price": 7,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "cure_scroll",
+        "price": 7,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "greater_heal_scroll",
+        "price": 10,
+        "enabled": true
+      }
+    ]
+  }
+]

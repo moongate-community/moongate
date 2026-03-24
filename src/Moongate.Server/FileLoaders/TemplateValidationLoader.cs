@@ -365,6 +365,8 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Mobile template '{mobile.Id}' references missing sell profile '{mobile.SellProfileId}'.");
             }
 
+            ValidateMobileLootTables(mobile, errors);
+
             if (!string.IsNullOrWhiteSpace(mobile.DefaultFactionId) &&
                 !_factionTemplateService.TryGet(mobile.DefaultFactionId, out _))
             {
@@ -373,6 +375,24 @@ public sealed class TemplateValidationLoader : IFileLoader
 
             ValidateFixedEquipment(mobile, errors);
             ValidateRandomEquipment(mobile, errors);
+        }
+    }
+
+    private void ValidateMobileLootTables(MobileTemplateDefinition mobile, List<string> errors)
+    {
+        foreach (var lootTableId in mobile.LootTables)
+        {
+            if (string.IsNullOrWhiteSpace(lootTableId))
+            {
+                errors.Add($"Mobile template '{mobile.Id}' has an empty loot table id.");
+
+                continue;
+            }
+
+            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
+            {
+                errors.Add($"Mobile template '{mobile.Id}' references missing loot table '{lootTableId}'.");
+            }
         }
     }
 

@@ -10,6 +10,100 @@ namespace Moongate.Tests.Server.FileLoaders;
 public sealed class LootTemplateLoaderTests
 {
     [Test]
+    public async Task LoadAsync_WhenRepositoryContainsGuardLootTables_ShouldLoadGuardLootDefinitions()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var lootTemplateService = new LootTemplateService();
+        var loader = new LootTemplateLoader(directoriesConfig, lootTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lootTemplateService.TryGet("guard.warrior", out var warriorLoot), Is.True);
+                Assert.That(warriorLoot, Is.Not.Null);
+                Assert.That(warriorLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(warriorLoot.Entries, Has.Count.EqualTo(1));
+                Assert.That(warriorLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+                Assert.That(warriorLoot.Entries[0].AmountMin, Is.EqualTo(10));
+                Assert.That(warriorLoot.Entries[0].AmountMax, Is.EqualTo(25));
+
+                Assert.That(lootTemplateService.TryGet("guard.archer", out var archerLoot), Is.True);
+                Assert.That(archerLoot, Is.Not.Null);
+                Assert.That(archerLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(archerLoot.Entries, Has.Count.EqualTo(2));
+                Assert.That(archerLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+                Assert.That(archerLoot.Entries[0].AmountMin, Is.EqualTo(10));
+                Assert.That(archerLoot.Entries[0].AmountMax, Is.EqualTo(25));
+                Assert.That(archerLoot.Entries[1].ItemTemplateId, Is.EqualTo("arrow"));
+                Assert.That(archerLoot.Entries[1].Amount, Is.EqualTo(250));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenRepositoryContainsVendorLootTables_ShouldLoadVendorLootDefinitions()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var lootTemplateService = new LootTemplateService();
+        var loader = new LootTemplateLoader(directoriesConfig, lootTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lootTemplateService.TryGet("vendor.blacksmith", out var blacksmithLoot), Is.True);
+                Assert.That(blacksmithLoot, Is.Not.Null);
+                Assert.That(blacksmithLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(blacksmithLoot.Entries, Has.Count.EqualTo(1));
+                Assert.That(blacksmithLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+                Assert.That(blacksmithLoot.Entries[0].AmountMin, Is.EqualTo(5));
+                Assert.That(blacksmithLoot.Entries[0].AmountMax, Is.EqualTo(15));
+
+                Assert.That(lootTemplateService.TryGet("vendor.weaponsmith", out var weaponsmithLoot), Is.True);
+                Assert.That(weaponsmithLoot, Is.Not.Null);
+                Assert.That(weaponsmithLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(weaponsmithLoot.Entries, Has.Count.EqualTo(1));
+                Assert.That(weaponsmithLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+
+                Assert.That(lootTemplateService.TryGet("vendor.armorer", out var armorerLoot), Is.True);
+                Assert.That(armorerLoot, Is.Not.Null);
+                Assert.That(armorerLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(armorerLoot.Entries, Has.Count.EqualTo(1));
+                Assert.That(armorerLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+                Assert.That(armorerLoot.Entries[0].AmountMin, Is.EqualTo(5));
+                Assert.That(armorerLoot.Entries[0].AmountMax, Is.EqualTo(15));
+
+                Assert.That(lootTemplateService.TryGet("vendor.provisioner", out var provisionerLoot), Is.True);
+                Assert.That(provisionerLoot, Is.Not.Null);
+                Assert.That(provisionerLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(provisionerLoot.Entries, Has.Count.EqualTo(2));
+                Assert.That(provisionerLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+                Assert.That(provisionerLoot.Entries[1].ItemTemplateId, Is.EqualTo("torch"));
+
+                Assert.That(lootTemplateService.TryGet("vendor.mage", out var mageLoot), Is.True);
+                Assert.That(mageLoot, Is.Not.Null);
+                Assert.That(mageLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(mageLoot.Entries, Has.Count.EqualTo(1));
+                Assert.That(mageLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+
+                Assert.That(lootTemplateService.TryGet("vendor.healer", out var healerLoot), Is.True);
+                Assert.That(healerLoot, Is.Not.Null);
+                Assert.That(healerLoot!.Mode, Is.EqualTo(LootTemplateMode.Additive));
+                Assert.That(healerLoot.Entries, Has.Count.EqualTo(2));
+                Assert.That(healerLoot.Entries[0].ItemTemplateId, Is.EqualTo("gold"));
+                Assert.That(healerLoot.Entries[1].ItemTemplateId, Is.EqualTo("bandage"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenRepositoryContainsGeneratedLootFiles_ShouldLoadGeneratedModes()
     {
         var repositoryRoot = ResolveRepositoryRoot();

@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Incoming.Trading;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Trading;
 using Moongate.Server.Data.Internal.Interaction;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -374,6 +375,11 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
             totalCost += entry.Price * item.Amount;
         }
 
+        if (!HasEnoughGold(backpack, bankBox, totalCost))
+        {
+            return;
+        }
+
         if (!TryConsumeGold(backpack, bankBox, totalCost, out var changedGoldStacks, out var deletedGoldStacks))
         {
             return;
@@ -477,6 +483,16 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
             return false;
         }
 
+        if (item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var runtimeTemplateId) &&
+            !string.IsNullOrWhiteSpace(runtimeTemplateId))
+        {
+            return string.Equals(
+                runtimeTemplateId.Trim(),
+                definition.ItemTemplateId.Trim(),
+                StringComparison.OrdinalIgnoreCase
+            );
+        }
+
         if (!_itemFactoryService.TryGetItemTemplate(definition.ItemTemplateId, out var template) || template is null)
         {
             return false;
@@ -537,6 +553,36 @@ public sealed class PlayerSellBuyService : IPlayerSellBuyService
         }
 
         return remaining == 0;
+    }
+
+    private static bool HasEnoughGold(UOItemEntity? backpack, UOItemEntity? bankBox, int amount)
+    {
+        if (amount <= 0)
+        {
+            return true;
+        }
+
+        return CountGold(backpack) + CountGold(bankBox) >= amount;
+    }
+
+    private static int CountGold(UOItemEntity? container)
+    {
+        if (container is null)
+        {
+            return 0;
+        }
+
+        var total = 0;
+
+        foreach (var item in EnumerateItemsRecursive(container))
+        {
+            if (item.ItemId == 0x0EED)
+            {
+                total += item.Amount;
+            }
+        }
+
+        return total;
     }
 
     private static bool TryFindContainedItem(
