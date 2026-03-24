@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
@@ -24,33 +25,68 @@ public class ClientTypePacket : BaseGameNetworkPacket
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        if (reader.Remaining < 4)
+        if (reader.Remaining < 2)
         {
             return false;
         }
 
         var declaredLength = reader.ReadUInt16();
+        var payloadLength = declaredLength - 3;
 
-        if (declaredLength < 5)
+        if (declaredLength < 5 || payloadLength != reader.Remaining)
         {
             return false;
         }
 
-        if (reader.Remaining > 6)
-        {
-            AdvertisedClientType = reader.ReadUInt16();
-            VersionString = reader.Remaining == 0 ? string.Empty : reader.ReadAscii(reader.Remaining).TrimEnd('\0').Trim();
-        }
-        else
-        {
-            if (reader.Remaining < 6)
-            {
-                return false;
-            }
+        var payload = reader.ReadBytes(payloadLength);
+        var payloadReader = new SpanReader(payload);
 
-            _ = reader.ReadUInt16();
-            AdvertisedClientType = reader.ReadUInt32();
-            VersionString = string.Empty;
+        try
+        {
+            if (payloadLength == 4)
+            {
+                AdvertisedClientType = payloadReader.ReadUInt32();
+                VersionString = string.Empty;
+            }
+            else if (payloadLength >= 4)
+            {
+                var firstField = BinaryPrimitives.ReadUInt16BigEndian(payload);
+
+                if (payloadLength > 4)
+                {
+                    var secondField = BinaryPrimitives.ReadUInt16BigEndian(payload.AsSpan(2));
+
+                    if (secondField is 0x02 or 0x03)
+                    {
+                        _ = payloadReader.ReadUInt16();
+                        AdvertisedClientType = payloadReader.ReadUInt16();
+                        VersionString = payloadReader.ReadAscii(payloadLength - 4).TrimEnd('\0').Trim();
+                    }
+                    else if (firstField is 0x02 or 0x03)
+                    {
+                        AdvertisedClientType = payloadReader.ReadUInt16();
+                        VersionString = payloadReader.ReadAscii(payloadLength - 2).TrimEnd('\0').Trim();
+                    }
+                    else if (payloadLength == 6)
+                    {
+                        _ = payloadReader.ReadUInt16();
+                        AdvertisedClientType = payloadReader.ReadUInt32();
+                        VersionString = string.Empty;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        finally
+        {
+            payloadReader.Dispose();
         }
 
         ResolvedClientType = AdvertisedClientType switch
