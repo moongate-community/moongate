@@ -7,6 +7,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Accounting;
+using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Ids;
@@ -366,6 +367,7 @@ public class LoginHandlerTests
             characterService,
             new NetworkServiceTestGameEventBusService(),
             new(),
+            new GameLoginHandoffService(),
             new FakeGameNetworkSessionService(),
             sender
         );
@@ -411,6 +413,7 @@ public class LoginHandlerTests
             new LoginHandlerTestCharacterService(),
             new NetworkServiceTestGameEventBusService(),
             new(),
+            new GameLoginHandoffService(),
             new FakeGameNetworkSessionService(),
             sender
         );
@@ -434,6 +437,94 @@ public class LoginHandlerTests
                 Assert.That(sender.SentPackets, Has.Count.EqualTo(1));
                 Assert.That(sender.SentPackets[0].Packet, Is.TypeOf<ServerRedirectPacket>());
                 Assert.That(queue.CurrentQueueDepth, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenGameLoginFollowsEnhancedRedirect_ShouldPreserveEnhancedClientMetadata()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sender = new GameLoopTestOutboundPacketSender();
+        var accountService = new LoginHandlerTestAccountService
+        {
+            NextLoginResult = new()
+            {
+                Id = (Serial)0x00000001,
+                Username = "admin",
+                PasswordHash = "x"
+            }
+        };
+        var characterService = new LoginHandlerTestCharacterService();
+        var sessionService = new FakeGameNetworkSessionService();
+        var handoffService = new GameLoginHandoffService();
+        var handler = new LoginHandler(
+            queue,
+            accountService,
+            characterService,
+            new NetworkServiceTestGameEventBusService(),
+            new(),
+            handoffService,
+            sessionService,
+            sender
+        );
+
+        using var loginClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var loginSession = new GameSession(new(loginClient));
+        sessionService.Add(loginSession);
+
+        var clientTypePacket = new ClientTypePacket();
+        Assert.That(
+            clientTypePacket.TryParse(
+                [
+                    0xE1,
+                    0x00,
+                    0x11,
+                    0x00,
+                    0x00,
+                    0x00,
+                    0x03,
+                    (byte)'6',
+                    (byte)'7',
+                    (byte)'.',
+                    (byte)'0',
+                    (byte)'.',
+                    (byte)'0',
+                    (byte)'.',
+                    (byte)'1',
+                    (byte)'1',
+                    (byte)'4'
+                ]
+            ),
+            Is.True
+        );
+
+        _ = await handler.HandlePacketAsync(loginSession, clientTypePacket);
+        _ = await handler.HandlePacketAsync(loginSession, new ServerSelectPacket { SelectedServerIndex = 0 });
+
+        var redirectPacket = sender.SentPackets.Select(static packet => packet.Packet).OfType<ServerRedirectPacket>().Single();
+
+        using var gameClient = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var gameSession = new GameSession(new(gameClient));
+        sessionService.Add(gameSession);
+
+        var handled = await handler.HandlePacketAsync(
+            gameSession,
+            new GameLoginPacket
+            {
+                SessionKey = redirectPacket.SessionKey,
+                AccountName = "admin",
+                Password = "password"
+            }
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(gameSession.NetworkSession.ClientType, Is.EqualTo(Moongate.UO.Data.Version.ClientType.SA));
+                Assert.That(gameSession.NetworkSession.IsEnhancedClient, Is.True);
+                Assert.That(gameSession.NetworkSession.ClientVersion?.SourceString, Is.EqualTo("67.0.0.114"));
             }
         );
     }
@@ -464,6 +555,7 @@ public class LoginHandlerTests
             new LoginHandlerTestCharacterService(),
             new NetworkServiceTestGameEventBusService(),
             new(),
+            new GameLoginHandoffService(),
             new FakeGameNetworkSessionService(),
             new GameLoopTestOutboundPacketSender()
         );
